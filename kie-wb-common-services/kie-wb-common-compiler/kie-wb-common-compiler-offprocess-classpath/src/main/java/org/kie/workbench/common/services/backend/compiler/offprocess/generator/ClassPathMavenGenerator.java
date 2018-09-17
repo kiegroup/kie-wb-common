@@ -52,7 +52,7 @@ public class ClassPathMavenGenerator {
 
     public static void main(String[] args) throws Exception {
         String kieVersion = args[0];
-        String mavenRepo = getMavenRepo();
+        String mavenRepoPath = getMavenRepo();
         Path pwd = Paths.get("").toAbsolutePath();
         StringBuilder sb = new StringBuilder();
         sb.append(pwd.toAbsolutePath()).append(SEP).
@@ -63,7 +63,7 @@ public class ClassPathMavenGenerator {
         Path filePath = Paths.get(sb.toString());
 
         String content = new String(Files.readAllBytes(filePath));
-        String replaced = content.replace(mavenRepo, MAVEN_REPO_PLACEHOLDER);
+        String replaced = content.replace(mavenRepoPath, MAVEN_REPO_PLACEHOLDER);
         replaced = replaceTargetInTheClassPathFile(kieVersion, replaced);
 
         StringBuilder sbo = new StringBuilder();
@@ -118,25 +118,25 @@ public class ClassPathMavenGenerator {
 
     public static String getMavenRepo() throws Exception {
         List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
-        String mavenRepo = "";
+        String mavenRepoPath = "";
         for (String repo : repos) {
             if (System.getenv(repo) != null) {
-                mavenRepo = System.getenv(repo);
+                mavenRepoPath = System.getenv(repo);
                 break;
             }
         }
-        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
+        return StringUtils.isEmpty(mavenRepoPath) ? createMavenRepo().toAbsolutePath().toString() : mavenRepoPath;
     }
 
     public static Path createMavenRepo() throws Exception {
-        Path mavenRepository = Paths.get(System.getProperty("user.home"), ".m2/repository");
-        if (!Files.exists(mavenRepository)) {
-            logger.info("Creating a m2_repo into " + mavenRepository);
-            if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
-                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
+        Path mavenRepoPathsitory = Paths.get(System.getProperty("user.home"), ".m2/repository");
+        if (!Files.exists(mavenRepoPathsitory)) {
+            logger.info("Creating a m2_repo into " + mavenRepoPathsitory);
+            if (!Files.exists(Files.createDirectories(mavenRepoPathsitory))) {
+                logger.error("Folder not writable to create Maven repo{}", mavenRepoPathsitory);
+                throw new Exception("Folder not writable to create Maven repo:"+mavenRepoPathsitory);
             }
         }
-        return mavenRepository;
+        return mavenRepoPathsitory;
     }
 }

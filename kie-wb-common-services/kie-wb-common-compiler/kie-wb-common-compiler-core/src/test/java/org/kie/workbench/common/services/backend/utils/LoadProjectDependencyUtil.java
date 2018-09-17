@@ -31,12 +31,15 @@ public class LoadProjectDependencyUtil {
             clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
             assertThat(clazz.isInterface()).isFalse();
 
-            Method m = clazz.getMethod("getLogger", String.class);
-            Logger logger = (Logger) m.invoke(clazz, "Dummy");
+            Method m = clazz.getMethod("getLogger",
+                                       String.class);
+            Logger logger = (Logger) m.invoke(clazz,
+                                              "Dummy");
             assertThat(logger.getName()).isEqualTo("Dummy");
             logger.info("dependency loaded from the prj classpath");
         } catch (ClassNotFoundException e) {
-            fail("Test fail due ClassNotFoundException.", e);
+            fail("Test fail due ClassNotFoundException.",
+                 e);
         }
     }
 
@@ -57,7 +60,8 @@ public class LoadProjectDependencyUtil {
             assertThat(greeting.toString()).isEqualTo("Hello World !");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            fail("Test fail due ClassNotFoundException.", e);
+            fail("Test fail due ClassNotFoundException.",
+                 e);
         }
     }
 }

@@ -47,6 +47,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.rest.MVELEvaluatorProducer;
 import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
@@ -62,10 +63,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MavenRestClientTest {
 
     private static Path tmpRoot;
-    private static Path mavenRepo;
+    private static Path mavenRepoPath;
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
     private static String maven = "Apache Maven";
+    private static String mavenSettingsPath;
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
      */
@@ -90,6 +92,7 @@ public class MavenRestClientTest {
         setRunIntoMavenCLI();
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
+        mavenSettingsPath = TestUtilMaven.getSettingsFile();
     }
 
     public static void tearDown() {
@@ -104,7 +107,8 @@ public class MavenRestClientTest {
     public static Archive getDeployment() throws Exception {
         setup();
         setRunIntoMavenCLI();
-        final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
+        final WebArchive war = ShrinkWrap.create(WebArchive.class,
+                                                 "compiler.war");
         final File[] metaInfFilesFiles;
         if (runIntoMavenCLI) {
             war.setWebXML(new File("target/test-classes/web.xml"));
@@ -118,7 +122,8 @@ public class MavenRestClientTest {
         war.addClasses(MavenRestHandler.class);
         war.addClass(MVELEvaluatorProducer.class);
         war.addClass(TestUtil.class);
-        war.addPackages(true, "org.kie.workbench.common.services.backend.compiler.rest");
+        war.addPackages(true,
+                        "org.kie.workbench.common.services.backend.compiler.rest");
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
         }
@@ -193,45 +198,58 @@ public class MavenRestClientTest {
             if (!runIntoMavenCLI) {
                 pom = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/pom.xml";
             }
-            ioService.write(fs.getPath("/kjar-2-single-resources/pom.xml"), new String(java.nio.file.Files.readAllBytes(new File(pom).toPath())));
+            ioService.write(fs.getPath("/kjar-2-single-resources/pom.xml"),
+                            new String(java.nio.file.Files.readAllBytes(new File(pom).toPath())));
 
             String personDotJava = "target/test-classes/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java";
             if (!runIntoMavenCLI) {
                 personDotJava = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java";
             }
-            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java"), new String(java.nio.file.Files.readAllBytes(new File(personDotJava).toPath())));
+            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java"),
+                            new String(java.nio.file.Files.readAllBytes(new File(personDotJava).toPath())));
 
             String simpleRulesDotDRL = "target/test-classes/kjar-2-single-resources/src/main/resources/AllResourcesTypes/simple-rules.drl";
             if (!runIntoMavenCLI) {
                 simpleRulesDotDRL = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/src/main/resources/AllResourceTypes/simple-rules.drl";
             }
-            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/resources/AllResourcesTypes/simple-rules.drl"), new String(java.nio.file.Files.readAllBytes(new File(simpleRulesDotDRL).toPath())));
+            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/resources/AllResourcesTypes/simple-rules.drl"),
+                            new String(java.nio.file.Files.readAllBytes(new File(simpleRulesDotDRL).toPath())));
 
             String kmodule = "target/test-classes/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml";
             if (!runIntoMavenCLI) {
                 kmodule = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml";
             }
-            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml"), new String(java.nio.file.Files.readAllBytes(new File(kmodule).toPath())));
+            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml"),
+                            new String(java.nio.file.Files.readAllBytes(new File(kmodule).toPath())));
 
             ioService.endBatch();
 
             Path tmpRootCloned = Files.createTempDirectory("cloned");
-            Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(), "dummy"));
+            Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
+                                                               "dummy"));
 
-            final File gitClonedFolder = new File(tmpCloned.toFile(), ".clone.git");
+            final File gitClonedFolder = new File(tmpCloned.toFile(),
+                                                  ".clone.git");
 
             final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
 
             assertThat(cloned).isNotNull();
-            mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
+            mavenRepoPath = Paths.get(System.getProperty("user.home"),
+                                      ".m2",
+                                      "repository");
             tmpRoot = Paths.get(gitClonedFolder + "/dummy/");
 
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/");
             MultivaluedMap headersMap = new MultivaluedHashMap();
-            headersMap.add("project", tmpRoot.toAbsolutePath().toString() + "/dummy");
-            headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());
-            Future<Response> responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
+            headersMap.add("project",
+                           tmpRoot.toAbsolutePath().toString() + "/dummy");
+            headersMap.add("mavenrepo",
+                           mavenRepoPath.toAbsolutePath().toString());
+            headersMap.add("settings_xml",
+                           mavenSettingsPath);
+            Future<Response> responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class,
+                                                                                                              MediaType.TEXT_PLAIN));
             Response response = responseFuture.get();
             assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
             InputStream is = response.readEntity(InputStream.class);

@@ -92,10 +92,10 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         return "";
     }
 
-    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath, String uuid) {
-        String classpath = classpathTemplate.replace(placeholder, mavenRepo);
+    private CompilationResponse internalBuild(String mavenRepoPath, String projectPath, String alternateSettingsAbsPath, String uuid) {
+        String classpath = classpathTemplate.replace(placeholder, mavenRepoPath);
         try {
-            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, queueName);
+            invokeServerBuild(mavenRepoPath, projectPath, uuid, classpath, alternateSettingsAbsPath, queueName);
             if(logger.isDebugEnabled()) {
                 logger.debug("invokeServerBuild completed");
             }
@@ -115,18 +115,18 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         }
     }
 
-    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, String queueName) throws Exception {
+    private void invokeServerBuild(String mavenRepoPath, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, String queueName) throws Exception {
         String[] commandArrayServer =
                 {
                         javaBin,
                         "-cp",
-                        getClasspathIncludedCurrentModuleDep(mavenRepo, classpath),
+                        getClasspathIncludedCurrentModuleDep(mavenRepoPath, classpath),
                         "-Dorg.uberfire.nio.git.daemon.enabled=false",
                         "-Dorg.uberfire.nio.ssh.daemon.enabled=false",
                         ServerIPCImpl.class.getCanonicalName(),
                         uuid,
                         projectPath,
-                        mavenRepo,
+                        mavenRepoPath,
                         alternateSettingsAbsPath,
                         queueName
                 };
@@ -140,10 +140,10 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         writeStdOut(serverPb);
     }
 
-    private String getClasspathIncludedCurrentModuleDep(String mavenRepo, String classpath){
+    private String getClasspathIncludedCurrentModuleDep(String mavenRepoPath, String classpath){
         StringBuilder sb = new StringBuilder();
         this.getClass().getPackage();
-        sb.append(mavenRepo).
+        sb.append(mavenRepoPath).
                 append(File.separator).append("org").
                 append(File.separator).append("kie").
                 append(File.separator).append("workbench").

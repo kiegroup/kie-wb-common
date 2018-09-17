@@ -44,8 +44,11 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     private Set<String> eventsTypeClasses;
     private DefaultCompilationResponse defaultResponse;
 
-    public DefaultKieCompilationResponse(Boolean successful, String requestUUID) {
-        this(successful, Collections.emptyList(), requestUUID);
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         String requestUUID) {
+        this(successful,
+             Collections.emptyList(),
+             requestUUID);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -122,9 +125,9 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         this.eventsTypeClasses = Optional.ofNullable(res.getEventTypeClasses()).orElse(Collections.emptySet());
     }
 
-    private Path getWorkingDir(String workingDir){
-        if(workingDir!= null){
-           return Paths.get("file://"+workingDir);
+    private Path getWorkingDir(String workingDir) {
+        if (workingDir != null) {
+            return Paths.get("file://" + workingDir);
         }
         return null;
     }

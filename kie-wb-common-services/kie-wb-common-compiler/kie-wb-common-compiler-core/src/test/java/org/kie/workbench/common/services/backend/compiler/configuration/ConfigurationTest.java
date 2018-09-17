@@ -77,7 +77,8 @@ public class ConfigurationTest {
         try {
             removePropertyFromFile();
         } catch (Exception ex) {
-            fail("Removing property from the file failed.", ex);
+            fail("Removing property from the file failed.",
+                 ex);
         }
 
         ConfigurationStrategy strategy = new ConfigurationPropertiesStrategy();
@@ -88,7 +89,8 @@ public class ConfigurationTest {
         try {
             addPropertyBackToFile();
         } catch (Exception ex) {
-            fail("Adding property back to the file failed.", ex);
+            fail("Adding property back to the file failed.",
+                 ex);
         }
     }
 
@@ -124,20 +126,34 @@ public class ConfigurationTest {
         ConfigurationUtil util = new ConfigurationUtil();
         Properties prop = util.loadKieVersionProperties();
         Map conf = new HashMap<>();
-        conf.put(ConfigurationKey.COMPILER.name(), prop.get(ConfigurationKey.COMPILER.name()));
-        conf.put(ConfigurationKey.SOURCE_VERSION.name(), prop.get(ConfigurationKey.SOURCE_VERSION.name()));
-        conf.put(ConfigurationKey.TARGET_VERSION.name(), prop.get(ConfigurationKey.TARGET_VERSION.name()));
-        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name(), prop.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));
-        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name(), prop.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
-        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name(), prop.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name()));
-        conf.put(ConfigurationKey.FAIL_ON_ERROR.name(), prop.get(ConfigurationKey.FAIL_ON_ERROR.name()));
-        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name(), prop.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()));
-        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name(), prop.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
-        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name(), prop.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name()));
-        conf.put(ConfigurationKey.KIE_PLUGIN_GROUP.name(), prop.get(ConfigurationKey.KIE_PLUGIN_GROUP.name()));
-        conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT.name(), prop.get(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT.name()));
-        conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT.name(), prop.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT.name()));
-        conf.put(ConfigurationKey.KIE_VERSION.name(), prop.getProperty(ConfigurationUtil.KIE_VERSION_KEY));
+        conf.put(ConfigurationKey.COMPILER.name(),
+                 prop.get(ConfigurationKey.COMPILER.name()));
+        conf.put(ConfigurationKey.SOURCE_VERSION.name(),
+                 prop.get(ConfigurationKey.SOURCE_VERSION.name()));
+        conf.put(ConfigurationKey.TARGET_VERSION.name(),
+                 prop.get(ConfigurationKey.TARGET_VERSION.name()));
+        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name(),
+                 prop.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));
+        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name(),
+                 prop.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
+        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name(),
+                 prop.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name()));
+        conf.put(ConfigurationKey.FAIL_ON_ERROR.name(),
+                 prop.get(ConfigurationKey.FAIL_ON_ERROR.name()));
+        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name(),
+                 prop.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()));
+        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name(),
+                 prop.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
+        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name(),
+                 prop.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name()));
+        conf.put(ConfigurationKey.KIE_PLUGIN_GROUP.name(),
+                 prop.get(ConfigurationKey.KIE_PLUGIN_GROUP.name()));
+        conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT.name(),
+                 prop.get(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT.name()));
+        conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT.name(),
+                 prop.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT.name()));
+        conf.put(ConfigurationKey.KIE_VERSION.name(),
+                 prop.getProperty(ConfigurationUtil.KIE_VERSION_KEY));
         return conf;
     }
 
@@ -147,7 +163,8 @@ public class ConfigurationTest {
         try (FileOutputStream out = createOutputStream()) {
             removedPropValue = properties.getProperty(ConfigurationKey.KIE_VERSION.name());
             properties.remove(ConfigurationKey.KIE_VERSION.name());
-            properties.store(out, PROPERTIES_FILE);
+            properties.store(out,
+                             PROPERTIES_FILE);
         }
     }
 
@@ -155,8 +172,10 @@ public class ConfigurationTest {
         Properties properties = loadPropertiesFile();
 
         try (FileOutputStream out = createOutputStream()) {
-            properties.put(ConfigurationKey.KIE_VERSION.name(), removedPropValue);
-            properties.store(out, PROPERTIES_FILE);
+            properties.put(ConfigurationKey.KIE_VERSION.name(),
+                           removedPropValue);
+            properties.store(out,
+                             PROPERTIES_FILE);
         }
     }
 

@@ -24,10 +24,9 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigurationUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationUtil.class);
-
-    public final String KIE_VERSION_FILE = "IncrementalCompiler.properties";
     public final static String KIE_VERSION_KEY = "KIE_VERSION";
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationUtil.class);
+    public final String KIE_VERSION_FILE = "IncrementalCompiler.properties";
 
     public Properties loadKieVersionProperties() {
         Properties prop = new Properties();

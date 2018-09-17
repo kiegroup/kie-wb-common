@@ -42,7 +42,7 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
 
     @Test
     public void processTest() {
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
@@ -69,7 +69,7 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
     public void processDisabledMavenDefaultCompilerTest() {
 
         Properties props = loadProperties("IncrementalCompiler.properties");
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
@@ -100,7 +100,8 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         Properties prop = new Properties();
         InputStream in = getClass().getClassLoader().getResourceAsStream(propName);
         if (in == null) {
-            logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n", propName);
+            logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n",
+                        propName);
         } else {
             try {
                 prop.load(in);

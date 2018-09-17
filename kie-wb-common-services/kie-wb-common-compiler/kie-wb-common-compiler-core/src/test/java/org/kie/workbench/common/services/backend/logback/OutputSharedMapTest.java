@@ -29,8 +29,10 @@ public class OutputSharedMapTest {
     public void addMessageTest() {
         List<String> msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).isEmpty();
-        OutputSharedMap.addMsgToLog(KEY, "msg");
-        OutputSharedMap.addMsgToLog(KEY, "msgOne");
+        OutputSharedMap.addMsgToLog(KEY,
+                                    "msg");
+        OutputSharedMap.addMsgToLog(KEY,
+                                    "msgOne");
         msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).hasSize(2);
         OutputSharedMap.purgeAll();
@@ -40,7 +42,8 @@ public class OutputSharedMapTest {
     public void getMessageTest() {
         List<String> msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).isEmpty();
-        OutputSharedMap.addMsgToLog(KEY, "msg");
+        OutputSharedMap.addMsgToLog(KEY,
+                                    "msg");
         msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).isEqualTo("msg");
@@ -51,7 +54,8 @@ public class OutputSharedMapTest {
     public void getRemoveMessageTest() {
         List<String> msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).isEmpty();
-        OutputSharedMap.addMsgToLog(KEY, "msg");
+        OutputSharedMap.addMsgToLog(KEY,
+                                    "msg");
         msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).isEqualTo("msg");
@@ -65,10 +69,13 @@ public class OutputSharedMapTest {
     public void getPurgeAllTest() {
         List<String> msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).isEmpty();
-        OutputSharedMap.addMsgToLog(KEY, "msg");
-        OutputSharedMap.addMsgToLog(KEY, "msgOne");
+        OutputSharedMap.addMsgToLog(KEY,
+                                    "msg");
+        OutputSharedMap.addMsgToLog(KEY,
+                                    "msgOne");
         msgs = OutputSharedMap.getLog(KEY);
-        assertThat(msgs).hasSize(2).contains("msg", "msgOne");
+        assertThat(msgs).hasSize(2).contains("msg",
+                                             "msgOne");
         OutputSharedMap.purgeAll();
         msgs = OutputSharedMap.getLog(KEY);
         assertThat(msgs).isEmpty();

@@ -51,8 +51,10 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         UUIDThreadNameDiscriminator discriminator = getDiscriminator();
         PatternLayoutEncoder pl = getPatternLayoutEncoder();
 
-        ConsoleAppender consoleAppender = setConsoleAppender(loggerContext, pl);
-        SiftingAppender appender = setSiftingAppender(loggerContext, discriminator);
+        ConsoleAppender consoleAppender = setConsoleAppender(loggerContext,
+                                                             pl);
+        SiftingAppender appender = setSiftingAppender(loggerContext,
+                                                      discriminator);
 
         Logger log = loggerContext.getLogger("root");
         log.setLevel(Level.INFO);
@@ -88,14 +90,16 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         return pl;
     }
 
-    private SiftingAppender setSiftingAppender(LoggerContext loggerContext, Discriminator discriminator) {
+    private SiftingAppender setSiftingAppender(LoggerContext loggerContext,
+                                               Discriminator discriminator) {
         KieSiftingAppender appender = new KieSiftingAppender();
         appender.setName(MavenConfig.COMPILATION_ID);
         appender.setDiscriminator(discriminator);
         appender.setAppenderFactory(new AppenderFactory<ILoggingEvent>() {
 
             @Override
-            public Appender<ILoggingEvent> buildAppender(Context context, String discriminatingValue) throws JoranException {
+            public Appender<ILoggingEvent> buildAppender(Context context,
+                                                         String discriminatingValue) throws JoranException {
                 KieSiftingAppender kieAppender = new KieSiftingAppender();
                 kieAppender.setName(discriminatingValue);
                 kieAppender.setContext(loggerContext);
@@ -108,7 +112,8 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         return appender;
     }
 
-    private ConsoleAppender setConsoleAppender(LoggerContext loggerContext, PatternLayoutEncoder pl) {
+    private ConsoleAppender setConsoleAppender(LoggerContext loggerContext,
+                                               PatternLayoutEncoder pl) {
         ConsoleAppender consoleAppender = new ConsoleAppender<>();
         consoleAppender.setName("consoleAppender");
         consoleAppender.setContext(loggerContext);

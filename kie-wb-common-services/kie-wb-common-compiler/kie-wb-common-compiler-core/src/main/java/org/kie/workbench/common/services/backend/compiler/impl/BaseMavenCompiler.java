@@ -47,7 +47,7 @@ import org.uberfire.java.nio.file.StandardOpenOption;
  * MavenCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of( KieDecorator.ENABLE_LOGGING );
  * <p>
  * WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
- * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE}, Boolean.TRUE );
+ * CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath, info,new String[]{MavenArgs.COMPILE}, Boolean.TRUE );
  * CompilationResponse res = compiler.compileSync(req);
  */
 public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompiler<T> {
@@ -60,13 +60,14 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     private IncrementalCompilerEnabler enabler;
 
-    public BaseMavenCompiler(boolean enableIncremental, boolean enableLogging) {
+    public BaseMavenCompiler(boolean enableIncremental,
+                             boolean enableLogging) {
         cli = new ReusableAFMavenCli();
         enabler = new DefaultIncrementalCompilerEnabler();
-        if(!enableIncremental){
+        if (!enableIncremental) {
             changedPoms = true;
         }
-        if(!enableLogging){
+        if (!enableLogging) {
             skipLog = true;
         }
     }
@@ -77,16 +78,18 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     @Override
     public T compile(CompilationRequest req) {
-        if(!skipLog) {
+        if (!skipLog) {
             MDC.clear();
-            MDC.put(MavenConfig.COMPILATION_ID, req.getRequestUUID());
+            MDC.put(MavenConfig.COMPILATION_ID,
+                    req.getRequestUUID());
             Thread.currentThread().setName(req.getRequestUUID());
             if (logger.isDebugEnabled()) {
-                logger.debug("KieCompilationRequest:{}", req);
+                logger.debug("KieCompilationRequest:{}",
+                             req);
             }
         }
 
-        if(!changedPoms) {
+        if (!changedPoms) {
             enabler.process(req);
             changedPoms = true;
         }
@@ -100,15 +103,19 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
          */
 
         ClassLoader original = Thread.currentThread().getContextClassLoader();
-        ClassWorld kieClassWorld = new ClassWorld("plexus.core", getClass().getClassLoader());
+        ClassWorld kieClassWorld = new ClassWorld("plexus.core",
+                                                  getClass().getClassLoader());
 
-        int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
+        int exitCode = cli.doMain(req.getKieCliRequest(),
+                                  kieClassWorld);
 
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
-            return (T) new DefaultKieCompilationResponse(Boolean.TRUE, req.getRequestUUID());
+            return (T) new DefaultKieCompilationResponse(Boolean.TRUE,
+                                                         req.getRequestUUID());
         } else {
-            return (T) new DefaultKieCompilationResponse(Boolean.FALSE, req.getRequestUUID());
+            return (T) new DefaultKieCompilationResponse(Boolean.FALSE,
+                                                         req.getRequestUUID());
         }
     }
 
@@ -122,11 +129,15 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
             InputStream input = entry.getValue();
             try {
                 boolean isChanged = Files.exists(path);
-                backup.add(new BackupItem(path, isChanged ? Files.readAllBytes(path) : null, isChanged));
+                backup.add(new BackupItem(path,
+                                          isChanged ? Files.readAllBytes(path) : null,
+                                          isChanged));
                 if (!Files.exists(path.getParent())) {
                     Files.createDirectories(path.getParent());
                 }
-                Files.write(path, readAllBytes(input), StandardOpenOption.CREATE,
+                Files.write(path,
+                            readAllBytes(input),
+                            StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException e) {
                 logger.error("Path not writed:" + entry.getKey() + "\n");
@@ -140,7 +151,8 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         if (req.getRestoreOverride()) {
             for (BackupItem item : backup) {
                 if (item.isAChange()) {
-                    Files.write(item.getPath(), item.getContent());
+                    Files.write(item.getPath(),
+                                item.getContent());
                 } else {
                     Files.delete(item.getPath());
                 }
@@ -152,16 +164,20 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     public byte[] readAllBytes(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(in, out);
+        copy(in,
+             out);
         out.close();
         return out.toByteArray();
     }
 
-    public void copy(InputStream in, OutputStream out) throws IOException {
+    public void copy(InputStream in,
+                     OutputStream out) throws IOException {
         byte[] bytes = new byte[writeBlockSize];
         int len;
         while ((len = in.read(bytes)) != -1) {
-            out.write(bytes, 0, len);
+            out.write(bytes,
+                      0,
+                      len);
         }
     }
 
@@ -171,7 +187,9 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         private Path path;
         private boolean isAChange;
 
-        public BackupItem(Path path, byte[] content, boolean isAChange) {
+        public BackupItem(Path path,
+                          byte[] content,
+                          boolean isAChange) {
             this.path = path;
             this.content = content;
             this.isAChange = isAChange;

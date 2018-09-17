@@ -146,7 +146,7 @@ public class AFCliRequest {
         return request;
     }
 
-    public Properties getBannedEnvVars(){
+    public Properties getBannedEnvVars() {
         return bannedEnvVars;
     }
 

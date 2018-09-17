@@ -35,7 +35,7 @@ public class TestUtilGit {
         } catch (IOException e) {
             Assert.fail("Can't find free port!");
         }
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("Found free port " + port);
         }
         return port;

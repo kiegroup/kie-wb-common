@@ -29,26 +29,33 @@ import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilatio
  */
 public class MavenRestClient {
 
-    public CompletableFuture<KieCompilationResponse> call(String projectPath, String mavenRepo, String url) {
+    public CompletableFuture<KieCompilationResponse> call(String projectPath,
+                                                          String mavenRepoPath,
+                                                          String settingsXmlPath,
+                                                          String url) {
 
         final CompletableFuture<KieCompilationResponse> cfInternal = new CompletableFuture<>();
 
         Future<?> future = ClientBuilder.newBuilder().build()
                 .target(url)
-                .request().header("project", projectPath).header("mavenrepo", mavenRepo)
+                .request().header("project",
+                                  projectPath).header("mavenrepo",
+                                                      mavenRepoPath).header("settings_xml",
+                                                                            settingsXmlPath)
                 .accept(MediaType.APPLICATION_OCTET_STREAM)
                 .async()
-                .post(null, new InvocationCallback<KieCompilationResponse>() {
-                    @Override
-                    public void completed(final KieCompilationResponse result) {
-                        cfInternal.complete(result);
-                    }
+                .post(null,
+                      new InvocationCallback<KieCompilationResponse>() {
+                          @Override
+                          public void completed(final KieCompilationResponse result) {
+                              cfInternal.complete(result);
+                          }
 
-                    @Override
-                    public void failed(final Throwable throwable) {
-                        cfInternal.completeExceptionally(throwable);
-                    }
-                });
+                          @Override
+                          public void failed(final Throwable throwable) {
+                              cfInternal.completeExceptionally(throwable);
+                          }
+                      });
 
         return cfInternal.whenComplete((result, exception) -> {
             if (CancellationException.class.isInstance(exception)) {

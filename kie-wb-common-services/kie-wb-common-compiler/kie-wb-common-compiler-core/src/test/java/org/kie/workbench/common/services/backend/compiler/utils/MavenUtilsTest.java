@@ -73,7 +73,8 @@ public class MavenUtilsTest {
 
     @Test
     public void getMavenGlobalRepoDirTest() {
-        System.setProperty(GLOBAL_M2_REPO_NAME, Aether.getAether().getLocalRepository().getUrl());
+        System.setProperty(GLOBAL_M2_REPO_NAME,
+                           Aether.getAether().getLocalRepository().getUrl());
         String testRepo = MavenUtils.getMavenRepoDir(MavenRepos.GLOBAL);
         assertThat(testRepo).endsWith(".m2/repository/");
     }

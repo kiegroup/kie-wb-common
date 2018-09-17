@@ -39,9 +39,11 @@ public class UUIDThreadNameDiscriminatorTest {
                                               (ch.qos.logback.classic.Logger) logger,
                                               Level.INFO,
                                               "I'm a beatiful test message :)",
-                                              null, args);
+                                              null,
+                                              args);
         Map<String, String> mdcMap = new HashMap<>();
-        mdcMap.put(MavenConfig.COMPILATION_ID, compilationID);
+        mdcMap.put(MavenConfig.COMPILATION_ID,
+                   compilationID);
         event.setMDCPropertyMap(mdcMap);
 
         UUIDThreadNameDiscriminator discriminator = new UUIDThreadNameDiscriminator();

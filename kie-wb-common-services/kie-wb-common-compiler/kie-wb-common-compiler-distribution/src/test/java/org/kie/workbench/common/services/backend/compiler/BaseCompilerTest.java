@@ -29,28 +29,32 @@ import org.uberfire.java.nio.file.Paths;
 public class BaseCompilerTest implements Serializable {
 
     protected static Path tmpRoot;
-    protected String mavenRepo;
+    protected String mavenRepoPath;
     protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
 
-    @BeforeClass
-    public static void setup() {
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
-    }
-
     public BaseCompilerTest(String prjName) {
         try {
-            mavenRepo = TestUtilMaven.getMavenRepo();
+            mavenRepoPath = TestUtilMaven.getMavenRepo();
             tmpRoot = Files.createTempDirectory("repo");
             alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
-            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-            TestUtil.copyTree(Paths.get(prjName), tmp);
+            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                         "dummy"));
+            TestUtil.copyTree(Paths.get(prjName),
+                              tmp);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    @BeforeClass
+    public static void setup() {
+        System.setProperty("org.uberfire.nio.git.daemon.enabled",
+                           "false");
+        System.setProperty("org.uberfire.nio.git.ssh.enabled",
+                           "false");
     }
 
     @AfterClass

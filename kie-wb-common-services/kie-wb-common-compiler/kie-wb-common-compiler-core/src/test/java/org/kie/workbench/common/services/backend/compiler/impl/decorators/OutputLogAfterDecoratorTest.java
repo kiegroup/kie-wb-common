@@ -47,12 +47,13 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
     @Test
     public void compileTest() {
 
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(true,true));
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(true,
+                                                                                              true));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
@@ -66,15 +67,18 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
         Map<Path, InputStream> override = new HashMap<>();
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(tmpRoot + "/src/main/java/dummy/DummyOverride.java");
         InputStream input = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE + "/src/main/java/dummy/DummyOverride.java"));
-        override.put(path, input);
+        override.put(path,
+                     input);
 
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(true,true));
-        CompilationResponse res = decorator.compile(req, override);
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(true,
+                                                                                              true));
+        CompilationResponse res = decorator.compile(req,
+                                                    override);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
             softly.assertThat(res.getMavenOutput().size()).isGreaterThan(0);
@@ -83,12 +87,14 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
     @Test
     public void compileFailedTest() throws Exception {
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               createdNewPrjInRepo("dummy-fail", ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
+                                                               createdNewPrjInRepo("dummy-fail",
+                                                                                   ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(true,true));
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(true,
+                                                                                              true));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isFalse();

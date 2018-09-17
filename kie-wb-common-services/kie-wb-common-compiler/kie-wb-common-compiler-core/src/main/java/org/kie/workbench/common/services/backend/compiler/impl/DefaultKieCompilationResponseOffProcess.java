@@ -51,7 +51,8 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     private List<URI> targetContentAsURI = Collections.emptyList();
     private List<URL> targetContentAsURL = Collections.emptyList();
 
-    public DefaultKieCompilationResponseOffProcess(boolean successful, String requestUUID) {
+    public DefaultKieCompilationResponseOffProcess(boolean successful,
+                                                   String requestUUID) {
         this.successful = successful;
         this.requestUUID = requestUUID;
         this.targetContent = Collections.emptyList();

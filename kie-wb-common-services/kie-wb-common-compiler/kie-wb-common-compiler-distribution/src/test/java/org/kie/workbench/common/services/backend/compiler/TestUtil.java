@@ -38,8 +38,10 @@ public class TestUtil {
         try {
             FileUtils.deleteDirectory(f);
         } catch (Exception e) {
-            logger.error("Couldn't delete file {}", f);
-            logger.error(e.getMessage(), e);
+            logger.error("Couldn't delete file {}",
+                         f);
+            logger.error(e.getMessage(),
+                         e);
         }
     }
 }

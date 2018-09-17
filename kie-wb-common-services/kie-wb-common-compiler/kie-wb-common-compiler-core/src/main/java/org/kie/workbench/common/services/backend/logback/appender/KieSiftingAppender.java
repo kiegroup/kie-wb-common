@@ -30,7 +30,8 @@ public class KieSiftingAppender extends SiftingAppender {
         if (!eventObject.getMDCPropertyMap().isEmpty()) {
             StringBuilder sb = new StringBuilder();
             sb.append(eventObject.getLevel()).append(" ").append(eventObject.getFormattedMessage());
-            OutputSharedMap.addMsgToLog(eventObject.getMDCPropertyMap().get(MavenConfig.COMPILATION_ID), sb.toString());
+            OutputSharedMap.addMsgToLog(eventObject.getMDCPropertyMap().get(MavenConfig.COMPILATION_ID),
+                                        sb.toString());
         }
     }
 }

@@ -41,7 +41,7 @@ public class CompilerChronicleCoordinatorTest {
 
     private static Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
     private static Path prjPath;
-    private static String mavenRepo;
+    private static String mavenRepoPath;
     private static String alternateSettingsAbsPath;
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
@@ -50,7 +50,7 @@ public class CompilerChronicleCoordinatorTest {
     public static void setup() throws Exception{
         queueProvider = new QueueProvider(queueName);
         logger.info("queue on test setup:{}", queueProvider.getAbsolutePath());
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
         prjPath = Paths.get("file://"+System.getProperty("user.dir")+"/target/test-classes/kjar-2-single-resources");
@@ -69,7 +69,7 @@ public class CompilerChronicleCoordinatorTest {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
         String uuid = UUID.randomUUID().toString();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,
@@ -92,7 +92,7 @@ public class CompilerChronicleCoordinatorTest {
 
         // First Build
         String uuid = UUID.randomUUID().toString();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,
@@ -109,7 +109,7 @@ public class CompilerChronicleCoordinatorTest {
 
         // Second Build
         String secondUuid = UUID.randomUUID().toString();
-        DefaultCompilationRequest secondRequest = new DefaultCompilationRequest(mavenRepo,
+        DefaultCompilationRequest secondRequest = new DefaultCompilationRequest(mavenRepoPath,
                                                                                 info,
                                                                                 new String[]{
                                                                                         MavenCLIArgs.COMPILE,

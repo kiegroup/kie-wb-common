@@ -45,16 +45,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieDefaultMavenIncrementalCompilerTest {
 
-    private String mavenRepo;
+    @Rule
+    public TestName testName = new TestName();
+    private String mavenRepoPath;
     private Path tmpRoot;
     private Path temp;
 
-    @Rule
-    public TestName testName = new TestName();
-
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
     }
 
     @After
@@ -66,11 +65,13 @@ public class KieDefaultMavenIncrementalCompilerTest {
 
     private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
         tmpRoot = Files.createTempDirectory("repo");
-        temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                 "dummy",
+                                                 ResourcesConstants.DUMMY_DIR);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                mavenPhases,
                                                                Boolean.FALSE);
@@ -80,14 +81,20 @@ public class KieDefaultMavenIncrementalCompilerTest {
     @Test
     public void testIsValidMavenHome() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.VERSION);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
     }
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
@@ -99,18 +106,23 @@ public class KieDefaultMavenIncrementalCompilerTest {
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
         tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                     "dummy",
+                                                     ResourcesConstants.DUMMY_DIR);
         //end NIO
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_INCREMENTAL_BUILD));
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         res = compiler.compile(req);
@@ -129,19 +141,24 @@ public class KieDefaultMavenIncrementalCompilerTest {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_INCREMENTAL);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.DUMMY_KIE_INCREMENTAL);
         //end NIO
 
         //compiler
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING));
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         //checks
         assertThat(res.isSuccessful()).isTrue();
@@ -163,7 +180,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
         long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
         List<String> output = res.getMavenOutput();
-        assertThat(isTextPresent(output, "Previous incremental build state does not exist, performing full build")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Previous incremental build state does not exist, performing full build")).isTrue();
         assertThat(isTextPresent(output,
                                  "Compiled 2 out of 2 sources ")).isTrue();
 
@@ -174,7 +192,10 @@ public class KieDefaultMavenIncrementalCompilerTest {
 
         //second compilation
         res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         //checks
         assertThat(res.isSuccessful()).isTrue();
 

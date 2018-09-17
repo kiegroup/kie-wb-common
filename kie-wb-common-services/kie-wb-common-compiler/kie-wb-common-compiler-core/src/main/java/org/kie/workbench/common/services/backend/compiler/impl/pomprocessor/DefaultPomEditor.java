@@ -115,7 +115,8 @@ public class DefaultPomEditor implements PomEditor {
                 request.getInfo().lateAdditionKiePluginPresent(plugs.isKiePluginPresent());
                 if (!request.skipProjectDependenciesCreationList()) {
                     // we add the mvn cli args to run the dependency:build-classpath
-                    String args[] = addCreateClasspathMavenArgs(request.getKieCliRequest().getArgs(), request);
+                    String args[] = addCreateClasspathMavenArgs(request.getKieCliRequest().getArgs(),
+                                                                request);
                     request.getKieCliRequest().setArgs(args);
                 }
                 if (plugs.pomOverwriteRequired()) {
@@ -160,7 +161,8 @@ public class DefaultPomEditor implements PomEditor {
             build = model.getBuild();
         }
 
-        PluginsContainer dto = checkPlugins(model, build,
+        PluginsContainer dto = checkPlugins(model,
+                                            build,
                                             conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP),
                                             conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT),
                                             conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP),
@@ -169,10 +171,19 @@ public class DefaultPomEditor implements PomEditor {
                                             conf.get(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT),
                                             conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT));
 
-        return updatePOMModel(build, dto);
+        return updatePOMModel(build,
+                              dto);
     }
 
-    private PluginsContainer checkPlugins(Model model, Build build, String MAVEN_COMPILER_GROUP_ID, String MAVEN_COMPILER_ARTIFACT_ID, String TAKARI_COMPILER_GROUP_ID, String TAKARI_COMPILER_ARTIFACT_ID, String KIE_PLUGIN_GROUP_ID, String KIE_PLUGIN_ARTIFACT_ID, String KIE_TAKARI_PLUGIN_ARTIFACT_ID) {
+    private PluginsContainer checkPlugins(Model model,
+                                          Build build,
+                                          String MAVEN_COMPILER_GROUP_ID,
+                                          String MAVEN_COMPILER_ARTIFACT_ID,
+                                          String TAKARI_COMPILER_GROUP_ID,
+                                          String TAKARI_COMPILER_ARTIFACT_ID,
+                                          String KIE_PLUGIN_GROUP_ID,
+                                          String KIE_PLUGIN_ARTIFACT_ID,
+                                          String KIE_TAKARI_PLUGIN_ARTIFACT_ID) {
         PluginsContainer dto = new PluginsContainer();
         if (model.getPackaging().equals(KJAR_EXT)) {
             dto.setKiePluginPresent(Boolean.TRUE);
@@ -205,15 +216,20 @@ public class DefaultPomEditor implements PomEditor {
         return dto;
     }
 
-    private DefaultPluginPresents updatePOMModel(Build build, PluginsContainer dto) {
+    private DefaultPluginPresents updatePOMModel(Build build,
+                                                 PluginsContainer dto) {
 
-        checkAlternativeCompilerPlugin(build, dto);
+        checkAlternativeCompilerPlugin(build,
+                                       dto);
 
-        checkDefaultCompilerPlugin(build, dto);
+        checkDefaultCompilerPlugin(build,
+                                   dto);
 
-        checkCompilerPluginsPositions(build, dto);
+        checkCompilerPluginsPositions(build,
+                                      dto);
 
-        changeKieMavenIntoKieTakariPlugin(build, dto);
+        changeKieMavenIntoKieTakariPlugin(build,
+                                          dto);
 
         return new DefaultPluginPresents(dto.getDefaultCompilerPluginPresent(),
                                          dto.getAlternativeCompilerPluginPresent(),
@@ -221,7 +237,8 @@ public class DefaultPomEditor implements PomEditor {
                                          dto.getOverwritePOM());
     }
 
-    private void changeKieMavenIntoKieTakariPlugin(Build build, PluginsContainer dto) {
+    private void changeKieMavenIntoKieTakariPlugin(Build build,
+                                                   PluginsContainer dto) {
         // Change the kie-maven-plugin into kie-takari-plugin
         if (dto.getKiePluginPresent() && !dto.getKieTakariPresent()) {
             List<Plugin> plugins = build.getPlugins();
@@ -232,27 +249,32 @@ public class DefaultPomEditor implements PomEditor {
                                                                 conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT),
                                                                 kieMavenPlugin.getVersion(),
                                                                 Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
-                plugins.set(dto.getKieMavenPluginPosition(), kieTakariPlugin);
+                plugins.set(dto.getKieMavenPluginPosition(),
+                            kieTakariPlugin);
                 build.setPlugins(plugins);
                 dto.setOverwritePOM(Boolean.TRUE);
             }
         }
     }
 
-    private void checkCompilerPluginsPositions(Build build, PluginsContainer dto) {
+    private void checkCompilerPluginsPositions(Build build,
+                                               PluginsContainer dto) {
         if (dto.getDefaultCompilerPluginPresent() && dto.getAlternativeCompilerPluginPresent()) {
             if (dto.getDefaultMavenCompilerPosition() <= dto.getAlternativeCompilerPosition()) {
                 //swap the positions
                 Plugin defaultMavenCompiler = build.getPlugins().get(dto.getDefaultMavenCompilerPosition());
                 Plugin alternativeCompiler = build.getPlugins().get(dto.getAlternativeCompilerPosition());
-                build.getPlugins().set(dto.getDefaultMavenCompilerPosition(), alternativeCompiler);
-                build.getPlugins().set(dto.getAlternativeCompilerPosition(), defaultMavenCompiler);
+                build.getPlugins().set(dto.getDefaultMavenCompilerPosition(),
+                                       alternativeCompiler);
+                build.getPlugins().set(dto.getAlternativeCompilerPosition(),
+                                       defaultMavenCompiler);
                 dto.setOverwritePOM(Boolean.TRUE);
             }
         }
     }
 
-    private void checkDefaultCompilerPlugin(Build build, PluginsContainer dto) {
+    private void checkDefaultCompilerPlugin(Build build,
+                                            PluginsContainer dto) {
         if (!dto.getDefaultCompilerPluginPresent()) {
             //if default maven compiler is not present we add the skip and phase none  to avoid its use
             Plugin disabledDefaultCompiler = MavenAPIUtil.getPlugin(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP),
@@ -266,7 +288,8 @@ public class DefaultPomEditor implements PomEditor {
         }
     }
 
-    private void checkAlternativeCompilerPlugin(Build build, PluginsContainer dto) {
+    private void checkAlternativeCompilerPlugin(Build build,
+                                                PluginsContainer dto) {
         if (!dto.getAlternativeCompilerPluginPresent()) {
             build.addPlugin(MavenAPIUtil.getNewCompilerPlugin(conf));
             dto.setAlternativeCompilerPluginPresent(Boolean.TRUE);
@@ -274,8 +297,10 @@ public class DefaultPomEditor implements PomEditor {
         }
     }
 
-    private String[] addCreateClasspathMavenArgs(String[] args, CompilationRequest req) {
-        String[] newArgs = Arrays.copyOf(args, args.length + 2);
+    private String[] addCreateClasspathMavenArgs(String[] args,
+                                                 CompilationRequest req) {
+        String[] newArgs = Arrays.copyOf(args,
+                                         args.length + 2);
         newArgs[args.length] = MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH;
         newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_PLUGING_LOCAL_REPOSITORY + req.getMavenRepo();
         return newArgs;

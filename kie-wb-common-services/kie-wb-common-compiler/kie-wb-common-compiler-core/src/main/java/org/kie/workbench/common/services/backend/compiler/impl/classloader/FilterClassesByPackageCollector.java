@@ -32,7 +32,8 @@ public class FilterClassesByPackageCollector implements Collector<String, List<S
     private String packageNameWithSlash;
 
     public FilterClassesByPackageCollector(String packageName) {
-        this.packageNameWithSlash = packageName.replace(CommonConstants.DOT, CommonConstants.SEPARATOR) + CommonConstants.SEPARATOR;//fix for the wildcard
+        this.packageNameWithSlash = packageName.replace(CommonConstants.DOT,
+                                                        CommonConstants.SEPARATOR) + CommonConstants.SEPARATOR;//fix for the wildcard
     }
 
     @Override
@@ -68,7 +69,9 @@ public class FilterClassesByPackageCollector implements Collector<String, List<S
     }
 
     private String getFiltered(String item) {
-        String one = item.substring(item.lastIndexOf(CommonConstants.MAVEN_TARGET) + CommonConstants.MAVEN_TARGET.length(), item.lastIndexOf(CommonConstants.DOT));
-        return one.contains(CommonConstants.SEPARATOR) ? one.replace(CommonConstants.SEPARATOR, CommonConstants.DOT) : one;
+        String one = item.substring(item.lastIndexOf(CommonConstants.MAVEN_TARGET) + CommonConstants.MAVEN_TARGET.length(),
+                                    item.lastIndexOf(CommonConstants.DOT));
+        return one.contains(CommonConstants.SEPARATOR) ? one.replace(CommonConstants.SEPARATOR,
+                                                                     CommonConstants.DOT) : one;
     }
 }

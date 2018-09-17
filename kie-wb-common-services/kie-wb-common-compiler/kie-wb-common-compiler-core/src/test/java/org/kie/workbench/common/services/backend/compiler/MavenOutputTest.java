@@ -36,14 +36,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenOutputTest {
 
-    private String mavenRepo;
-
     @Rule
     public TestName testName = new TestName();
+    private String mavenRepoPath;
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
     }
 
     @Test
@@ -55,14 +54,18 @@ public class MavenOutputTest {
                           tmpNio);
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpNio, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpNio,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput().size()).isGreaterThan(0);
 

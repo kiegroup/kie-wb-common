@@ -50,15 +50,15 @@ public class ServerIPCImpl {
         checksUUIDLength(uuid);
         String workingDir = args[1];
         checksWorkingDir(workingDir);
-        String mavenRepo = args[2];
-        checksMavenRepo(mavenRepo);
+        String mavenRepoPath = args[2];
+        checksMavenRepo(mavenRepoPath);
         String alternateSettingsAbsPath = args[3];
         checksSettingFile(alternateSettingsAbsPath);
         String queueName = args[4];
         checksQueueNameLenght(queueName);
         String threadName = Thread.currentThread().getName();
         QueueProvider provider = new QueueProvider(queueName, true);
-        execute(workingDir, mavenRepo, alternateSettingsAbsPath, uuid, provider);
+        execute(workingDir, mavenRepoPath, alternateSettingsAbsPath, uuid, provider);
         Thread.currentThread().setName(threadName);// restore the previous name to avoid the override of the maven output
     }
 
@@ -69,10 +69,10 @@ public class ServerIPCImpl {
         }
     }
 
-    private static void checksMavenRepo(String mavenRepo) {
-        if(!new File(mavenRepo).isDirectory()){
-            logger.error("mavenRepo dir doesn't exists:{}",mavenRepo);
-            throw new RuntimeException("MavenRepo dir  doesn't exists:"+mavenRepo);
+    private static void checksMavenRepo(String mavenRepoPath) {
+        if(!new File(mavenRepoPath).isDirectory()){
+            logger.error("mavenRepoPath dir doesn't exists:{}",mavenRepoPath);
+            throw new RuntimeException("MavenRepo dir  doesn't exists:"+mavenRepoPath);
         }
     }
 
@@ -104,11 +104,11 @@ public class ServerIPCImpl {
         }
     }
 
-    public static void execute(String workingDir, String mavenRepo, String alternateSettingsAbsPath, String uuid, QueueProvider provider) throws Exception {
-        DefaultKieCompilationResponseOffProcess res = build(workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
+    public static void execute(String workingDir, String mavenRepoPath, String alternateSettingsAbsPath, String uuid, QueueProvider provider) throws Exception {
+        DefaultKieCompilationResponseOffProcess res = build(workingDir, mavenRepoPath, alternateSettingsAbsPath, uuid);
         byte[] bytez = serialize(res);
         if (bytez == null) {
-            logger.warn("The serialized response is null, working dir:{}\n mavenrepo:{} \n alternateSettingsAbsPath:{} \n uuid:{}", workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
+            logger.warn("The serialized response is null, working dir:{}\n mavenrepo:{} \n alternateSettingsAbsPath:{} \n uuid:{}", workingDir, mavenRepoPath, alternateSettingsAbsPath, uuid);
             return;
         }
         writeOnQueue(bytez, provider);
@@ -125,12 +125,12 @@ public class ServerIPCImpl {
         }
     }
 
-    private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {
+    private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepoPath, String alternateSettingsAbsPath, String uuid) {
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.STORE_KIE_OBJECTS ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get("file://"+prjPath));
         CompilationRequest req;
         if (StringUtils.isNotEmpty(alternateSettingsAbsPath)) {
-            req = new DefaultCompilationRequest(mavenRepo,
+            req = new DefaultCompilationRequest(mavenRepoPath,
                                                 info,
                                                 new String[]{
                                                         MavenCLIArgs.DEPENDENCY_RESOLVE,
@@ -140,7 +140,7 @@ public class ServerIPCImpl {
                                                 Boolean.FALSE,
                                                 uuid);
         } else {
-            req = new DefaultCompilationRequest(mavenRepo,
+            req = new DefaultCompilationRequest(mavenRepoPath,
                                                 info,
                                                 new String[]{
                                                         MavenCLIArgs.DEPENDENCY_RESOLVE,

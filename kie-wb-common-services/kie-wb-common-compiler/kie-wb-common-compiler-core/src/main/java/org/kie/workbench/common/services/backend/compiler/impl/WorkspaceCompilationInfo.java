@@ -35,7 +35,8 @@ public class WorkspaceCompilationInfo {
         bannedEnvVars = MavenBannedVars.getBannedProperties();
     }
 
-    public WorkspaceCompilationInfo(Path prjPath, Properties bannedEnvVars) {
+    public WorkspaceCompilationInfo(Path prjPath,
+                                    Properties bannedEnvVars) {
         this.prjPath = prjPath;
         this.bannedEnvVars = bannedEnvVars;
     }
@@ -60,7 +61,7 @@ public class WorkspaceCompilationInfo {
         return prjPath;
     }
 
-    public Properties getBennedEnvVars(){
+    public Properties getBennedEnvVars() {
         return bannedEnvVars;
     }
 
