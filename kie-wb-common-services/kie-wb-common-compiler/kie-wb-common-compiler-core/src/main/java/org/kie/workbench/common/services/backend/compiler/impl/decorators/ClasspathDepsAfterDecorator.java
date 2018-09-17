@@ -55,16 +55,21 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
     @Override
     public CompilationResponse compile(CompilationRequest req) {
         T res = compiler.compile(req);
-        return handleClasspath(req, res);
+        return handleClasspath(req,
+                               res);
     }
 
     @Override
-    public CompilationResponse compile(CompilationRequest req, Map override) {
-        T res = (T) compiler.compile(req, override);
-        return handleClasspath(req, res);
+    public CompilationResponse compile(CompilationRequest req,
+                                       Map override) {
+        T res = (T) compiler.compile(req,
+                                     override);
+        return handleClasspath(req,
+                               res);
     }
 
-    private T handleClasspath(CompilationRequest req, T res) {
+    private T handleClasspath(CompilationRequest req,
+                              T res) {
         T t;
         Map<String, Object> kieMap = req.getMap();
         String classpathKey = req.getRequestUUID() + "." + STRING_CLASSPATH_KEY;

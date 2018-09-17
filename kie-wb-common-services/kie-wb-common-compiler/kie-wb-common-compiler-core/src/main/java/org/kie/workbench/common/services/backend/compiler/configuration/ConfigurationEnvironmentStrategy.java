@@ -59,7 +59,8 @@ public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy {
                 valid = Boolean.FALSE;
                 break;
             } else {
-                conf.put(key, value);
+                conf.put(key,
+                         value);
             }
         }
     }

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 
@@ -33,7 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     public CompilerClassloaderUtilsTest() {
-        super("target/test-classes/kjar-2-single-resources", EnumSet.of(KieDecorator.STORE_KIE_OBJECTS , KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD));
+        super("target/test-classes/kjar-2-single-resources",
+              EnumSet.of(KieDecorator.STORE_KIE_OBJECTS,
+                         KieDecorator.STORE_BUILD_CLASSPATH,
+                         KieDecorator.ENABLE_INCREMENTAL_BUILD));
     }
 
     @Test
@@ -49,16 +53,20 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/io/akka/test/C.class");
         targets.add("/target/classes/com/acme/test/D.class");
 
-        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                              "org.kie");
         assertThat(orgKie).hasSize(1);
 
-        List<String> akkaTest = CompilerClassloaderUtils.filterClassesByPackage(targets, "akka.test");
+        List<String> akkaTest = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                                "akka.test");
         assertThat(akkaTest).hasSize(1);
 
-        List<String> com = CompilerClassloaderUtils.filterClassesByPackage(targets, "com");
+        List<String> com = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                           "com");
         assertThat(com).hasSize(1);
 
-        List<String> it = CompilerClassloaderUtils.filterClassesByPackage(targets, "it");
+        List<String> it = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                          "it");
         assertThat(it).isEmpty();
     }
 
@@ -70,9 +78,12 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/org/kie/test/child/son/C.class");
         targets.add("/target/classes/org/kie-test/T.class");
 
-        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                              "org.kie");
         assertThat(orgKie).hasSize(3)
-                .containsExactlyInAnyOrder("org.kie.test.A", "org.kie.test.child.B", "org.kie.test.child.son.C")
+                .containsExactlyInAnyOrder("org.kie.test.A",
+                                           "org.kie.test.child.B",
+                                           "org.kie.test.child.son.C")
                 .doesNotContain("org.kie-test/T");
     }
 
@@ -86,11 +97,14 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/org/kie/test/P.properties");
         targets.add("/target/classes/org/kie/test/X.xml");
 
-        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                              "org.kie");
         assertThat(orgKie).hasSize(1).containsExactlyInAnyOrder("org.kie.test.A");
 
-        List<String> empty = CompilerClassloaderUtils.filterClassesByPackage(targets, "");
-        assertThat(empty).hasSize(2).containsExactlyInAnyOrder("B", "org.kie.test.A");
+        List<String> empty = CompilerClassloaderUtils.filterClassesByPackage(targets,
+                                                                             "");
+        assertThat(empty).hasSize(2).containsExactlyInAnyOrder("B",
+                                                               "org.kie.test.A");
     }
 
     @Test
@@ -101,10 +115,11 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/io/akka/test/C.class");
         targets.add("/target/classes/com/acme/test/D.class");
         targets.add("/target/classes/com/acme/test/E.class");
-        targets.add(mavenRepo + "/junit/junit/4.12/junit.jar");
-        targets.add(mavenRepo + "/junit/junit/4.12/junit-4.12.jar");
+        targets.add(mavenRepoPath + "/junit/junit/4.12/junit.jar");
+        targets.add(mavenRepoPath + "/junit/junit/4.12/junit-4.12.jar");
 
-        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo);
+        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets,
+                                                                        mavenRepoPath);
         assertThat(orgKie).hasSize(5);
     }
 
@@ -116,13 +131,18 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/org/kie/test/child/son/C.class");
         targets.add("/target/classes/org/kie-test/T.class");
 
-        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo);
-        assertThat(orgKie).hasSize(4).contains("org.kie.test", "org.kie.test.child", "org.kie.test.child.son", "org.kie-test");
+        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets,
+                                                                        mavenRepoPath);
+        assertThat(orgKie).hasSize(4).contains("org.kie.test",
+                                               "org.kie.test.child",
+                                               "org.kie.test.child.son",
+                                               "org.kie-test");
     }
 
     @Test
     public void loadDependenciesClassloaderFromProject() {
-        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(tmpRoot.toString(), mavenRepo);
+        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(tmpRoot.toString(),
+                                                                                                            mavenRepoPath);
         assertThat(classloader).isPresent();
     }
 
@@ -130,7 +150,8 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     public void loadDependenciesClassloaderFromProjectWithPomList() {
         List<String> pomList = MavenUtils.searchPoms(tmpRoot);
         assertThat(pomList).hasSize(1);
-        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList, mavenRepo);
+        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList,
+                                                                                                            mavenRepoPath);
         assertThat(classloader).isPresent();
     }
 
@@ -143,7 +164,9 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void getClassloaderFromAllDependencies() {
-        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo);
+        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy",
+                                                                                                       mavenRepoPath,
+                                                                                                       TestUtilMaven.getSettingsFile());
         assertThat(classLoader).isPresent();
     }
 

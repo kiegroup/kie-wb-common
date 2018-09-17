@@ -40,11 +40,13 @@ public class OutputSharedMap {
         map.remove(key);
     }
 
-    public static void addMsgToLog(String key, String msg) {
+    public static void addMsgToLog(String key,
+                                   String msg) {
         if (map.containsKey(key)) {
             map.get(key).add(msg);
         } else {
-            map.put(key, new ArrayList<>());
+            map.put(key,
+                    new ArrayList<>());
             map.get(key).add(msg);
         }
     }

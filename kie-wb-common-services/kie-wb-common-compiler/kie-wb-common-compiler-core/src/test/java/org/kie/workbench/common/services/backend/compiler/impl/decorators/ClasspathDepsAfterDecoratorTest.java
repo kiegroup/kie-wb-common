@@ -42,7 +42,7 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
     @Test
     public void compileTest() {
 
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,
@@ -50,7 +50,8 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
                                                                },
                                                                Boolean.FALSE);
 
-        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(true,false));
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(true,
+                                                                                                      false));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
@@ -60,15 +61,17 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
 
     @Test
     public void failCompileTest() throws IOException {
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               createdNewPrjInRepo("dummy-fail", ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
+                                                               createdNewPrjInRepo("dummy-fail",
+                                                                                   ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.FALSE);
 
-        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(false,false));
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(false,
+                                                                                                      false));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isFalse();

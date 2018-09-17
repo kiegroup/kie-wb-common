@@ -53,7 +53,12 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final String requestUUID) {
 
-        this(successful,mavenOutput,workingDir, Collections.emptyList(), Collections.emptyList(), requestUUID);
+        this(successful,
+             mavenOutput,
+             workingDir,
+             Collections.emptyList(),
+             Collections.emptyList(),
+             requestUUID);
     }
 
     public DefaultCompilationResponse(final Boolean successful,
@@ -61,7 +66,12 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final List<String> projectDependencies,
                                       final String requestUUID) {
-        this(successful,mavenOutput,workingDir, Collections.emptyList(), projectDependencies, requestUUID);
+        this(successful,
+             mavenOutput,
+             workingDir,
+             Collections.emptyList(),
+             projectDependencies,
+             requestUUID);
     }
 
     public DefaultCompilationResponse(final Boolean successful,

@@ -48,7 +48,8 @@ public class KieMavenCompilerFactory {
         boolean enableLogging = decorators.contains(KieDecorator.ENABLE_LOGGING);
 
         //Order of the construction of the decorators matters, DO not change the order.
-        AFCompiler compiler = new BaseMavenCompiler(enableIncremental, enableLogging);
+        AFCompiler compiler = new BaseMavenCompiler(enableIncremental,
+                                                    enableLogging);
 
         if (decorators.contains(KieDecorator.STORE_BUILD_CLASSPATH)) {
             compiler = new ClasspathDepsAfterDecorator(compiler);

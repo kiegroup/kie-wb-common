@@ -40,32 +40,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieMavenOutputTest {
 
-    private String mavenRepo;
-
     @Rule
     public TestName testName = new TestName();
+    private String mavenRepoPath;
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
     }
 
     @Test
     public void testOutputWithTakari() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmpNio = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path tmpNio = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                        "dummy",
+                                                        ResourcesConstants.DUMMY_DIR);
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING));
         //final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput().size()).isGreaterThan(0);
 

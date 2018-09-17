@@ -54,14 +54,12 @@ import static org.kie.workbench.common.services.backend.constants.TestConstants.
 
 public class JGITCompilerBeforeDecoratorTest {
 
-    private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
-    private IOService ioService;
-    private String mavenRepo;
     private static Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecoratorTest.class);
-
     @Rule
     public TestName testName = new TestName();
-
+    private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
+    private IOService ioService;
+    private String mavenRepoPath;
 
     @BeforeClass
     public static void setupSystemProperties() {
@@ -87,7 +85,7 @@ public class JGITCompilerBeforeDecoratorTest {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
     }
 
     @After
@@ -101,16 +99,20 @@ public class JGITCompilerBeforeDecoratorTest {
         final FileSystem fileSystem = createFileSystem("myrepodecorator");
 
         //Compile the repo
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,false));
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,
+                                                                                                     false));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         assertThat(res.isSuccessful()).isTrue();
 
@@ -126,21 +128,28 @@ public class JGITCompilerBeforeDecoratorTest {
 
         //Compile the repo
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
 
         Map<Path, InputStream> override = new HashMap<>();
-        org.uberfire.java.nio.file.Path path = fileSystem.getPath("/", "/dummyA/src/main/java/dummy/Person.java");
+        org.uberfire.java.nio.file.Path path = fileSystem.getPath("/",
+                                                                  "/dummyA/src/main/java/dummy/Person.java");
         InputStream input = new FileInputStream(new File("target/test-classes/kjar-2-single-resources_override/src/main/java/dummy/PersonOverride.java"));
-        override.put(path, input);
+        override.put(path,
+                     input);
 
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,false));
-        CompilationResponse res = compiler.compile(req, override);
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,
+                                                                                                     false));
+        CompilationResponse res = compiler.compile(req,
+                                                   override);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         assertThat(res.isSuccessful()).isTrue();
 
@@ -157,19 +166,24 @@ public class JGITCompilerBeforeDecoratorTest {
         //Compile the repo
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
 
         Map<Path, InputStream> override = new HashMap<>();
 
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,false));
-        CompilationResponse res = compiler.compile(req, override);
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,
+                                                                                                     false));
+        CompilationResponse res = compiler.compile(req,
+                                                   override);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
 
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(tempPath.toUri() + TARGET_TAKARI_PLUGIN);
@@ -180,10 +194,13 @@ public class JGITCompilerBeforeDecoratorTest {
 
     private FileSystem createFileSystem(String repoName) throws Exception {
         HashMap<String, Object> env = new HashMap<>();
-        env.put("init", Boolean.TRUE);
-        env.put("internal", Boolean.TRUE);
+        env.put("init",
+                Boolean.TRUE);
+        env.put("internal",
+                Boolean.TRUE);
 
-        final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName), env);
+        final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName),
+                                                                           env);
 
         ioService.startBatch(fs);
 

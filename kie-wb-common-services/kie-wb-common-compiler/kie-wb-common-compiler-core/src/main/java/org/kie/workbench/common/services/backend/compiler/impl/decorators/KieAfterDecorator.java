@@ -72,32 +72,47 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     @Override
     public T compile(CompilationRequest req) {
         T res = compiler.compile(req);
-        return handleAfter(req, res);
+        return handleAfter(req,
+                           res);
     }
 
     @Override
-    public CompilationResponse compile(CompilationRequest req, Map override) {
-        T res = (T) compiler.compile(req, override);
-        return handleAfter(req, res);
+    public CompilationResponse compile(CompilationRequest req,
+                                       Map override) {
+        T res = (T) compiler.compile(req,
+                                     override);
+        return handleAfter(req,
+                           res);
     }
 
-    private T handleAfter(CompilationRequest req, T res) {
+    private T handleAfter(CompilationRequest req,
+                          T res) {
         if (req.getInfo().isKiePluginPresent()) {
-            return (T) handleKieMavenPlugin(req, res);
+            return (T) handleKieMavenPlugin(req,
+                                            res);
         }
-        return (T) handleNormalBuild(req, res);
+        return (T) handleNormalBuild(req,
+                                     res);
     }
 
     private KieCompilationResponse handleKieMavenPlugin(CompilationRequest req,
                                                         CompilationResponse res) {
 
-        final KieTuple kieModuleMetaInfoTuple = read(req, KieModuleMetaInfo.class.getName(), "kieModuleMetaInfo not present in the map");
-        final KieTuple kieModuleTuple = read(req, FileKieModule.class.getName(), "kieModule not present in the map");
+        final KieTuple kieModuleMetaInfoTuple = read(req,
+                                                     KieModuleMetaInfo.class.getName(),
+                                                     "kieModuleMetaInfo not present in the map");
+        final KieTuple kieModuleTuple = read(req,
+                                             FileKieModule.class.getName(),
+                                             "kieModule not present in the map");
 
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
             final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
-            final KieTuple kieProjectClassloaderStore = read(req, prjClassloaderStoreKey, "ProjectClassLoaderStore Map not present in the map");
-            final KieTuple eventClasses = read(req, eventClassesKey, "EventClasses Set not present in the map");
+            final KieTuple kieProjectClassloaderStore = read(req,
+                                                             prjClassloaderStoreKey,
+                                                             "ProjectClassLoaderStore Map not present in the map");
+            final KieTuple eventClasses = read(req,
+                                               eventClassesKey,
+                                               "EventClasses Set not present in the map");
             final Set<String> events = getEventTypes(eventClasses);
             final Map<String, byte[]> store = getDroolsGeneratedClasses(kieProjectClassloaderStore);
 
@@ -120,7 +135,10 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
                 msgs.add("[ERROR] Error in the kieModule :" + kieModuleTuple.getErrorMsg().get());
             }
             msgs.addAll(res.getMavenOutput());
-            return new DefaultKieCompilationResponse(Boolean.FALSE, msgs, req.getInfo().getPrjPath(), req.getRequestUUID());
+            return new DefaultKieCompilationResponse(Boolean.FALSE,
+                                                     msgs,
+                                                     req.getInfo().getPrjPath(),
+                                                     req.getRequestUUID());
         }
     }
 
@@ -151,7 +169,9 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         }
     }
 
-    private KieTuple read(CompilationRequest req, String keyName, String errorMsg) {
+    private KieTuple read(CompilationRequest req,
+                          String keyName,
+                          String errorMsg) {
         final StringBuilder sb = new StringBuilder(req.getKieCliRequest().getRequestUUID()).append(".").append(keyName);
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
         if (o != null) {

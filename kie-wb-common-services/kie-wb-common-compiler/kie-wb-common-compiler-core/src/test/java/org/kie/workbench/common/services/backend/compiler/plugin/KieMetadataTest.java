@@ -55,25 +55,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieMetadataTest {
 
-    private String mavenRepo;
+    @Rule
+    public TestName testName = new TestName();
+    private String mavenRepoPath;
     private String alternateSettingsAbsPath;
     private Path tmpRoot;
     private Logger logger = LoggerFactory.getLogger(KieMetadataTest.class);
-
-    @Rule
-    public TestName testName = new TestName();
 
     @After
     public void tearDown() {
         if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }
-        mavenRepo = null;
+        mavenRepoPath = null;
     }
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         tmpRoot = Files.createTempDirectory("repo");
     }
@@ -83,15 +82,23 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_ALL_RESOURCES);
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH , KieDecorator.ENABLE_INCREMENTAL_BUILD));
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.KJAR_2_ALL_RESOURCES);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.STORE_KIE_OBJECTS,
+                                                                                   KieDecorator.STORE_BUILD_CLASSPATH,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
             for (String msg : msgs) {
@@ -111,7 +118,6 @@ public class KieMetadataTest {
         Map<String, TypeMetaInfo> typesMI = kieModuleMetaInfo.getTypeMetaInfos();
         assertThat(typesMI).hasSize(35);
 
-
         Map<String, byte[]> projectClasloaderStore = res.getProjectClassLoaderStore();
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         assertThat(kieModuleOptional).isPresent();
@@ -130,16 +136,24 @@ public class KieMetadataTest {
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
         try {
-            Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
+            Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                         "dummy",
+                                                         ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-            final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+            final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                       KieDecorator.STORE_KIE_OBJECTS,
+                                                                                       KieDecorator.STORE_BUILD_CLASSPATH,
+                                                                                       KieDecorator.ENABLE_INCREMENTAL_BUILD));
             WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
-            CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+            CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                    info,
                                                                    new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                    Boolean.FALSE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-            TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+            TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp,
+                                                                     res,
+                                                                     this.getClass(),
+                                                                     testName);
 
             if (!res.isSuccessful()) {
                 List<String> msgs = res.getMavenOutput();
@@ -174,16 +188,23 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                     "dummy",
+                                                     ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS,
+                                                                                   KieDecorator.STORE_BUILD_CLASSPATH,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();

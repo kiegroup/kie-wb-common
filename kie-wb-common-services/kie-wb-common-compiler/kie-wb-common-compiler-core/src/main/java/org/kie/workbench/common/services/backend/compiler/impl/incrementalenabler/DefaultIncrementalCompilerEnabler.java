@@ -45,19 +45,22 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
         ConfigurationContextProvider confProvider = new ConfigurationContextProvider();
         isValidConfiguration = confProvider.isValid();
         if (isValidConfiguration) {
-            editor = new DefaultPomEditor(new HashSet<>(), confProvider);
+            editor = new DefaultPomEditor(new HashSet<>(),
+                                          confProvider);
         }
     }
 
     @Override
     public ProcessedPoms process(final CompilationRequest req) {
         if (!isValidConfiguration) {
-            return new ProcessedPoms(Boolean.FALSE, Collections.emptyList());
+            return new ProcessedPoms(Boolean.FALSE,
+                                     Collections.emptyList());
         }
         Path mainPom = Paths.get(URI.create(FILE_URI + req.getKieCliRequest().getWorkingDirectory() + "/" + POM_NAME));
 
         if (!Files.isReadable(mainPom)) {
-            return new ProcessedPoms(Boolean.FALSE, Collections.emptyList());
+            return new ProcessedPoms(Boolean.FALSE,
+                                     Collections.emptyList());
         }
 
         PomPlaceHolder placeHolder = editor.readSingle(mainPom);
@@ -85,7 +88,8 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
             Path tmpPom = Paths.get(URI.create(FILE_URI + pom));
             PomPlaceHolder tmpPlaceHolder = editor.readSingle(tmpPom);
             if (!isPresent(tmpPlaceHolder)) {
-                result = result && editor.write(tmpPom, request);
+                result = result && editor.write(tmpPom,
+                                                request);
             }
         }
         return result;

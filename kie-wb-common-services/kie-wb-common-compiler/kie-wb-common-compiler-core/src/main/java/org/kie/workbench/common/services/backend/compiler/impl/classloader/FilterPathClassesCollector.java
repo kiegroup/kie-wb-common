@@ -28,12 +28,12 @@ import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 
 public class FilterPathClassesCollector implements Collector<String, Set<String>, Set<String>> {
 
-    private static String mavenRepo;
-    private static int mavenRepoLength;
+    private static String mavenRepoPath;
+    private static int mavenRepoPathLength;
 
-    public FilterPathClassesCollector(String mavenRepo, int mavenRepoLength) {
-        this.mavenRepo = mavenRepo;
-        this.mavenRepoLength = mavenRepoLength;
+    public FilterPathClassesCollector(String mavenRepoPath) {
+        this.mavenRepoPath = mavenRepoPath;
+        this.mavenRepoPathLength = mavenRepoPath == null ? 0 : mavenRepoPath.length();
     }
 
     @Override
@@ -47,7 +47,9 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
             if (item.endsWith(CommonConstants.JAVA_CLASS_EXT)) {
                 filtered.add(getFilteredOnJavaClass(item));
             } else if (item.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
-                filtered.add(getFilteredOnJar(item, mavenRepo, mavenRepoLength));
+                filtered.add(getFilteredOnJar(item,
+                                              mavenRepoPath,
+                                              mavenRepoPathLength));
             }
         };
     }
@@ -73,13 +75,20 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
     private String getFilteredOnJavaClass(String item) {
         String path = item.substring(item.lastIndexOf(CommonConstants.MAVEN_TARGET) + CommonConstants.MAVEN_TARGET.length());
         if (path.contains(CommonConstants.SEPARATOR)) {
-            return path.substring(0, path.lastIndexOf(CommonConstants.SEPARATOR)).replace(CommonConstants.SEPARATOR, CommonConstants.DOT);
+            return path.substring(0,
+                                  path.lastIndexOf(CommonConstants.SEPARATOR)).replace(CommonConstants.SEPARATOR,
+                                                                                       CommonConstants.DOT);
         } else {
-            return path.substring(0, path.lastIndexOf(CommonConstants.DOT));
+            return path.substring(0,
+                                  path.lastIndexOf(CommonConstants.DOT));
         }
     }
 
-    private String getFilteredOnJar(String item, String mavenRepo, int mavenRepoLength) {
-        return item.substring(item.lastIndexOf(mavenRepo) + mavenRepoLength, item.lastIndexOf(CommonConstants.SEPARATOR)).replace(CommonConstants.SEPARATOR, CommonConstants.DOT);
+    private String getFilteredOnJar(String item,
+                                    String mavenRepoPath,
+                                    int mavenRepoPathLength) {
+        return item.substring(item.lastIndexOf(mavenRepoPath) + mavenRepoPathLength,
+                              item.lastIndexOf(CommonConstants.SEPARATOR)).replace(CommonConstants.SEPARATOR,
+                                                                                   CommonConstants.DOT);
     }
 }

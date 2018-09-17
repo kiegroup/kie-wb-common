@@ -32,7 +32,7 @@ public class CompilerOffProcessServiceTest {
 
     private static Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
     private static Path prjPath;
-    private static String mavenRepo;
+    private static String mavenRepoPath;
     private static String alternateSettingsAbsPath;
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
@@ -41,7 +41,7 @@ public class CompilerOffProcessServiceTest {
     @BeforeClass
     public static void setup() throws Exception{
         executor = Executors.newCachedThreadPool();
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
         queueProvider = new QueueProvider(queueName);
@@ -72,7 +72,7 @@ public class CompilerOffProcessServiceTest {
         CompilerOffprocessService service = new CompilerOffprocessServiceImpl(executor, queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
         String uuid = UUID.randomUUID().toString();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,

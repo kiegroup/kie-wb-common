@@ -61,7 +61,8 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
     public T compile(CompilationRequest req) {
         final Optional<Git> git = getGit(req);
 
-        return git.map(g -> compiler.compile(handleBefore(g, req))
+        return git.map(g -> compiler.compile(handleBefore(g,
+                                                          req))
         ).orElseGet(() -> compiler.compile(req));
     }
 
@@ -71,8 +72,11 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         final Optional<Git> git = getGit(req);
 
         return git.map(g -> {
-                           final Map<Path, InputStream> _override = handleMap(g, override);
-                           final T result = compiler.compile(handleBefore(g, req), _override);
+                           final Map<Path, InputStream> _override = handleMap(g,
+                                                                              override);
+                           final T result = compiler.compile(handleBefore(g,
+                                                                          req),
+                                                             _override);
                            try {
                                g.reset().setMode(ResetCommand.ResetType.HARD).call();
                            } catch (GitAPIException e) {
@@ -80,7 +84,8 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
                            }
                            return result;
                        }
-        ).orElseGet(() -> compiler.compile(req, override));
+        ).orElseGet(() -> compiler.compile(req,
+                                           override));
     }
 
     private Map<Path, InputStream> handleMap(final Git git,
@@ -89,7 +94,8 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
             if (entry.getKey().getFileSystem() instanceof JGitFileSystem) {
                 final Path convertedToCheckedPath = Paths.get(git.getRepository().getDirectory().toPath().getParent().resolve(entry.getKey().toString().substring(1)).toUri());
-                result.put(convertedToCheckedPath, entry.getValue());
+                result.put(convertedToCheckedPath,
+                           entry.getValue());
             }
         }
         return result;
@@ -119,7 +125,9 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         if (projectPath.getFileSystem() instanceof JGitFileSystem) {
             final JGitFileSystem fs = (JGitFileSystem) projectPath.getFileSystem();
             if (!gitMap.containsKey(fs)) {
-                gitMap.put(fs, JGitUtils.tempClone(fs, req.getRequestUUID()));
+                gitMap.put(fs,
+                           JGitUtils.tempClone(fs,
+                                               req.getRequestUUID()));
             }
             return Optional.of(gitMap.get(fs));
         }

@@ -27,7 +27,7 @@ public class MavenBannedVars {
     private static final Logger logger = LoggerFactory.getLogger(MavenBannedVars.class);
     private static final String BANNED_PROPERTIES_FILE = "BannedEnvVars.properties";
 
-    public static Properties getBannedProperties(){
+    public static Properties getBannedProperties() {
         return loadProperties(BANNED_PROPERTIES_FILE);
     }
 
@@ -35,7 +35,8 @@ public class MavenBannedVars {
         Properties prop = new Properties();
         try (InputStream in = MavenBannedVars.class.getClassLoader().getResourceAsStream(propName)) {
             if (in == null) {
-                logger.info("{} not available with the classloader no Banned EnvVars Found . \n", propName);
+                logger.info("{} not available with the classloader no Banned EnvVars Found . \n",
+                            propName);
             } else {
                 prop.load(in);
             }
@@ -44,5 +45,4 @@ public class MavenBannedVars {
         }
         return prop;
     }
-
 }

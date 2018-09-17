@@ -33,67 +33,87 @@ public class DefaultCompilationRequest implements CompilationRequest {
     private WorkspaceCompilationInfo info;
     private String requestUUID;
     private String[] originalArgs;
-    private String mavenRepo;
+    private String mavenRepoPath;
     private Boolean skipPrjDependenciesCreationList;
     private Boolean restoreOverride;
     private Properties bannedEnvVars;
 
     /***
-     * @param mavenRepo a string representation of the Path
+     * @param mavenRepoPath a string representation of the Path
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
      */
-    public DefaultCompilationRequest(String mavenRepo,
+    public DefaultCompilationRequest(String mavenRepoPath,
                                      WorkspaceCompilationInfo info,
                                      String[] args) {
-        this(mavenRepo, info, args, UUID.randomUUID().toString());
+        this(mavenRepoPath,
+             info,
+             args,
+             UUID.randomUUID().toString());
     }
 
     /***
      * @param uuid a unique uuid identifier
-     * @param mavenRepo a string representation of the Path
+     * @param mavenRepoPath a string representation of the Path
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
      */
-    public DefaultCompilationRequest(String mavenRepo,
+    public DefaultCompilationRequest(String mavenRepoPath,
                                      WorkspaceCompilationInfo info,
-                                     String[] args, String uuid) {
+                                     String[] args,
+                                     String uuid) {
 
-        this(mavenRepo, info, args, Boolean.TRUE, Boolean.FALSE, uuid);
+        this(mavenRepoPath,
+             info,
+             args,
+             Boolean.TRUE,
+             Boolean.FALSE,
+             uuid);
     }
 
     /***
-     * @param mavenRepo a string representation of the Path
+     * @param mavenRepoPath a string representation of the Path
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
      * @param skipPrjDependenciesCreationList if false a List with all dependencies of the project will be available in the response
      */
-    public DefaultCompilationRequest(String mavenRepo,
-                                     WorkspaceCompilationInfo info,
-                                     String[] args,
-                                     Boolean skipPrjDependenciesCreationList, String uuid) {
-        this(mavenRepo, info, args, skipPrjDependenciesCreationList, true, uuid);
-    }
-
-    /***
-     * @param mavenRepo a string representation of the Path
-     * @param info
-     * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
-     * @param skipPrjDependenciesCreationList if false a List with all dependencies of the project will be available in the response
-     */
-    public DefaultCompilationRequest(String mavenRepo,
-                                     WorkspaceCompilationInfo info,
-                                     String[] args,
-                                     Boolean skipPrjDependenciesCreationList) {
-        this(mavenRepo, info, args, skipPrjDependenciesCreationList, true);
-    }
-
-    public DefaultCompilationRequest(String mavenRepo,
+    public DefaultCompilationRequest(String mavenRepoPath,
                                      WorkspaceCompilationInfo info,
                                      String[] args,
                                      Boolean skipPrjDependenciesCreationList,
-                                     boolean restoreOverride, String uuid) {
-        this.mavenRepo = mavenRepo;
+                                     String uuid) {
+        this(mavenRepoPath,
+             info,
+             args,
+             skipPrjDependenciesCreationList,
+             true,
+             uuid);
+    }
+
+    /***
+     * @param mavenRepoPath a string representation of the Path
+     * @param info
+     * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
+     * @param skipPrjDependenciesCreationList if false a List with all dependencies of the project will be available in the response
+     */
+    public DefaultCompilationRequest(String mavenRepoPath,
+                                     WorkspaceCompilationInfo info,
+                                     String[] args,
+                                     Boolean skipPrjDependenciesCreationList) {
+        this(mavenRepoPath,
+             info,
+             args,
+             skipPrjDependenciesCreationList,
+             true);
+    }
+
+    public DefaultCompilationRequest(String mavenRepoPath,
+                                     WorkspaceCompilationInfo info,
+                                     String[] args,
+                                     Boolean skipPrjDependenciesCreationList,
+                                     boolean restoreOverride,
+                                     String uuid) {
+        this.mavenRepoPath = mavenRepoPath;
         this.info = info;
         this.skipPrjDependenciesCreationList = skipPrjDependenciesCreationList;
         this.requestUUID = uuid.trim().isEmpty() ? UUID.randomUUID().toString() : uuid;
@@ -101,7 +121,8 @@ public class DefaultCompilationRequest implements CompilationRequest {
         this.originalArgs = args;
         this.bannedEnvVars = info.getBennedEnvVars();
         Map internalMap = new HashMap();
-        internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
+        internalMap.put(MavenConfig.COMPILATION_ID,
+                        this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     args,
                                     internalMap,
@@ -109,12 +130,17 @@ public class DefaultCompilationRequest implements CompilationRequest {
                                     this.bannedEnvVars);
     }
 
-    public DefaultCompilationRequest(String mavenRepo,
+    public DefaultCompilationRequest(String mavenRepoPath,
                                      WorkspaceCompilationInfo info,
                                      String[] args,
                                      Boolean skipPrjDependenciesCreationList,
                                      boolean restoreOverride) {
-        this(mavenRepo, info, args, skipPrjDependenciesCreationList, restoreOverride, UUID.randomUUID().toString());
+        this(mavenRepoPath,
+             info,
+             args,
+             skipPrjDependenciesCreationList,
+             restoreOverride,
+             UUID.randomUUID().toString());
     }
 
     @Override
@@ -143,7 +169,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
     @Override
     public String getMavenRepo() {
-        return mavenRepo;
+        return mavenRepoPath;
     }
 
     @Override
@@ -170,5 +196,4 @@ public class DefaultCompilationRequest implements CompilationRequest {
     public Properties getBannedEnvVars() {
         return bannedEnvVars;
     }
-
 }

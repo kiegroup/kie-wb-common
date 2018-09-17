@@ -38,18 +38,55 @@ import org.uberfire.java.nio.file.Paths;
 public class BaseCompilerTest {
 
     protected static Path tmpRoot;
-    protected String mavenRepo;
     protected static Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
+    @Rule
+    public TestName testName = new TestName();
+    protected String mavenRepoPath;
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;
     protected KieCompilationResponse res;
 
+    public BaseCompilerTest(String prjName) {
+        try {
+            mavenRepoPath = TestUtilMaven.getMavenRepo();
+            tmpRoot = Files.createTempDirectory("repo");
+            alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
+            Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                         "dummy",
+                                                         prjName);
+            info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public BaseCompilerTest(String prjName,
+                            Set<KieDecorator> decorators) {
+        this(prjName);
+        try {
+            compiler = KieMavenCompilerFactory.getCompiler(decorators);
+            CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
+                                                                   info,
+                                                                   new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                                   Boolean.FALSE);
+            res = (KieCompilationResponse) compiler.compile(req);
+            TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot,
+                                                                     res,
+                                                                     this.getClass(),
+                                                                     testName);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
     @BeforeClass
     public static void setupSystemProperties() {
         int freePort = TestUtilGit.findFreePort();
-        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
-        logger.info("Git port used:{}", freePort);
+        System.setProperty("org.uberfire.nio.git.daemon.port",
+                           String.valueOf(freePort));
+        logger.info("Git port used:{}",
+                    freePort);
     }
 
     @AfterClass
@@ -60,40 +97,11 @@ public class BaseCompilerTest {
         }
     }
 
-    @Rule
-    public TestName testName = new TestName();
-
-    public BaseCompilerTest(String prjName) {
-        try {
-            mavenRepo = TestUtilMaven.getMavenRepo();
-            tmpRoot = Files.createTempDirectory("repo");
-            alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
-            Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", prjName);
-            info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    public BaseCompilerTest(String prjName, Set<KieDecorator> decorators) {
-        this(prjName);
-        try {
-            compiler = KieMavenCompilerFactory.getCompiler(decorators);
-            CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                                   info,
-                                                                   new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                                   Boolean.FALSE);
-            res = (KieCompilationResponse) compiler.compile(req);
-            TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot, res, this.getClass(), testName);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    protected WorkspaceCompilationInfo createdNewPrjInRepo(String dirName, String prjName) throws IOException {
-        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, dirName, prjName);
+    protected WorkspaceCompilationInfo createdNewPrjInRepo(String dirName,
+                                                           String prjName) throws IOException {
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                     dirName,
+                                                     prjName);
         return new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
     }
-
-
 }

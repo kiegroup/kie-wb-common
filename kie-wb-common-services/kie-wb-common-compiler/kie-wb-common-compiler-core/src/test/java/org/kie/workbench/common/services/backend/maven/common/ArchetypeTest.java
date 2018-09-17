@@ -39,22 +39,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArchetypeTest {
 
-    private Path mavenRepo;
-
+    @Rule
+    public TestName testName = new TestName();
+    private Path mavenRepoPath;
     private String groupId = "org.kie.wonderland";
     private String artifactId = "maven.archetype";
     private String archetypeArtifactId = "maven-archetype-quickstart";
 
-    @Rule
-    public TestName testName = new TestName();
-
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
+        mavenRepoPath = Paths.get(System.getProperty("user.home"),
+                                  "/.m2/repository");
 
-        if (!Files.exists(mavenRepo)) {
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
+        if (!Files.exists(mavenRepoPath)) {
+            if (!Files.exists(Files.createDirectories(mavenRepoPath))) {
                 throw new Exception("Folder not writable in the project");
             }
         }
@@ -67,9 +65,9 @@ public class ArchetypeTest {
         Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString());
         assertThat(isDirEmpty(tmpRoot)).isTrue();
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{
                                                                        MavenConfig.ARCHETYPE_GENERATE,
@@ -81,21 +79,30 @@ public class ArchetypeTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
 
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput().size()).isGreaterThan(0);
         assertThat(isDirEmpty(tmpRoot)).isFalse();
 
-        Path prj = Paths.get(tmpRoot.toAbsolutePath().toString(), artifactId);
+        Path prj = Paths.get(tmpRoot.toAbsolutePath().toString(),
+                             artifactId);
         assertThat(isDirEmpty(prj)).isFalse();
 
-        Path appDir = Paths.get(prj.toAbsolutePath().toString(), "/src/main/java/" + (groupId.replace(".", "/")));
+        Path appDir = Paths.get(prj.toAbsolutePath().toString(),
+                                "/src/main/java/" + (groupId.replace(".",
+                                                                     "/")));
         assertThat(isDirEmpty(appDir)).isFalse();
 
-        Path testDir = Paths.get(prj.toAbsolutePath().toString(), "/src/test/java/" + (groupId.replace(".", "/")));
+        Path testDir = Paths.get(prj.toAbsolutePath().toString(),
+                                 "/src/test/java/" + (groupId.replace(".",
+                                                                      "/")));
         assertThat(isDirEmpty(testDir)).isFalse();
 
-        Path pom = Paths.get(tmpRoot.toAbsolutePath().toString(), artifactId + "/pom.xml");
+        Path pom = Paths.get(tmpRoot.toAbsolutePath().toString(),
+                             artifactId + "/pom.xml");
         assertThat(Files.exists(pom)).isTrue();
 
         TestUtil.rm(tmpRoot.toFile());

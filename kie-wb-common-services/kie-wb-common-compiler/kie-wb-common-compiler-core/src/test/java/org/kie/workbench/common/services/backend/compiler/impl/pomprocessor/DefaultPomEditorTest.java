@@ -32,16 +32,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultPomEditorTest extends BaseCompilerTest {
 
+    private DefaultPomEditor editor;
+
     public DefaultPomEditorTest() {
         super(ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
     }
 
-    private DefaultPomEditor editor;
-
     @Before
     public void setUp() {
         ConfigurationContextProvider provider = new ConfigurationContextProvider();
-        editor = new DefaultPomEditor(new HashSet<>(), provider);
+        editor = new DefaultPomEditor(new HashSet<>(),
+                                      provider);
     }
 
     @Test
@@ -60,23 +61,25 @@ public class DefaultPomEditorTest extends BaseCompilerTest {
     @Test
     public void writeTest() {
         assertThat(editor.getHistory()).isEmpty();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        assertThat(editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"), req)).isTrue();
+        assertThat(editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"),
+                                req)).isTrue();
     }
 
     @Test
     public void cleanHistoryTest() {
         assertThat(editor.getHistory()).isEmpty();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"), req);
+        editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"),
+                     req);
         assertThat(editor.getHistory()).isNotEmpty();
 
         editor.cleanHistory();

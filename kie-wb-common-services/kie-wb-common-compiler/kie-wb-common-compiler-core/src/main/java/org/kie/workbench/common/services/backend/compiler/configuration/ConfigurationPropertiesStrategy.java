@@ -77,7 +77,8 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
                 valid = Boolean.FALSE;
                 break;
             } else {
-                conf.put(key, value);
+                conf.put(key,
+                         value);
             }
         }
     }
@@ -86,7 +87,8 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
         Properties prop = new Properties();
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(propName)) {
             if (in == null) {
-                logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n", propName);
+                logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n",
+                            propName);
                 valid = Boolean.FALSE;
             } else {
                 prop.load(in);
@@ -104,7 +106,8 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
         Properties prop = new Properties();
         try (InputStream propFileInpStream = Files.newInputStream(propertiesPath)) {
             if (propFileInpStream == null) {
-                logger.info("{} not available, skip to the next ConfigurationStrategy. \n", propertiesPath.toString());
+                logger.info("{} not available, skip to the next ConfigurationStrategy. \n",
+                            propertiesPath.toString());
                 valid = Boolean.FALSE;
             } else {
                 prop.load(propFileInpStream);

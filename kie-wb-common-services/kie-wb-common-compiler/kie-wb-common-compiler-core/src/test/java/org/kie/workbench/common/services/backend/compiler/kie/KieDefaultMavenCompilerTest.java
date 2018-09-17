@@ -65,18 +65,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KieDefaultMavenCompilerTest {
 
     private static final Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
-    private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
-    private IOService ioService;
-    private String mavenRepo;
-
     @Rule
     public TestName testName = new TestName();
+    private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
+    private IOService ioService;
+    private String mavenRepoPath;
 
     @BeforeClass
     public static void setupSystemProperties() {
         int freePort = TestUtilGit.findFreePort();
-        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
-        logger.info("Git port used:{}", freePort);
+        System.setProperty("org.uberfire.nio.git.daemon.port",
+                           String.valueOf(freePort));
+        logger.info("Git port used:{}",
+                    freePort);
     }
 
     @AfterClass
@@ -88,7 +89,7 @@ public class KieDefaultMavenCompilerTest {
     public void setUp() throws Exception {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
-        mavenRepo = TestUtilMaven.getMavenRepo();
+        mavenRepoPath = TestUtilMaven.getMavenRepo();
     }
 
     @After
@@ -143,14 +144,18 @@ public class KieDefaultMavenCompilerTest {
                                          StandardCharsets.UTF_8);
         assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
         Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile()).exists();
@@ -216,14 +221,18 @@ public class KieDefaultMavenCompilerTest {
 
         Path prjFolder = Paths.get(tmpCloned + "/");
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         assertThat(res.isSuccessful()).isTrue();
 
@@ -275,12 +284,15 @@ public class KieDefaultMavenCompilerTest {
 
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"),
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -341,14 +353,18 @@ public class KieDefaultMavenCompilerTest {
 
         assertThat(cloned).isNotNull();
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.ENABLE_LOGGING ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD,
+                                                                                   KieDecorator.ENABLE_LOGGING));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -364,7 +380,10 @@ public class KieDefaultMavenCompilerTest {
 
         //recompile
         res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         TestUtil.rm(tmpRootCloned.toFile());
@@ -376,12 +395,16 @@ public class KieDefaultMavenCompilerTest {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/dummy"), temp);
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
+        TestUtil.copyTree(Paths.get("target/test-classes/dummy"),
+                          temp);
         //end NIO
 
         byte[] pomOverride = Files.readAllBytes(Paths.get("target/test-classes/dummy_override/pom.xml"));
-        Files.write(Paths.get(temp.toString(), "pom.xml"), pomOverride);
+        Files.write(Paths.get(temp.toString(),
+                              "pom.xml"),
+                    pomOverride);
 
         byte[] encoded = Files.readAllBytes(Paths.get(temp.toString(),
                                                       "/src/main/java/dummy/Dummy.java"));
@@ -391,15 +414,18 @@ public class KieDefaultMavenCompilerTest {
                                                           "        this.age = age;\n" +
                                                           "    }");
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
 
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         assertThat(res.isSuccessful()).isTrue();
         assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class")).doesNotExist();
@@ -409,14 +435,17 @@ public class KieDefaultMavenCompilerTest {
 
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath() + "/src/main/java/dummy/DummyOverride.java");
         InputStream input = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE + "/src/main/java/dummy/DummyOverride.java"));
-        override.put(path, input);
+        override.put(path,
+                     input);
 
         org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath() + "/src/main/java/dummy/Dummy.java");
         InputStream inputTwo = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE + "/src/main/java/dummy/Dummy.java"));
-        override.put(pathTwo, inputTwo);
+        override.put(pathTwo,
+                     inputTwo);
 
         //recompile
-        res = compiler.compile(req, override);
+        res = compiler.compile(req,
+                               override);
         assertThat(res.isSuccessful()).isTrue();
 
         assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/Dummy.class").exists()).isFalse();
@@ -424,7 +453,8 @@ public class KieDefaultMavenCompilerTest {
 
         encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
                                                "/src/main/java/dummy/Dummy.java"));
-        dummyAsAstring = new String(encoded, StandardCharsets.UTF_8);
+        dummyAsAstring = new String(encoded,
+                                    StandardCharsets.UTF_8);
         assertThat(dummyAsAstring).contains("public Dummy(String name) {\n" +
                                                     "        this.name = name;\n" +
                                                     "    }");
@@ -449,14 +479,19 @@ public class KieDefaultMavenCompilerTest {
 
         ioService.startBatch(origin);
 
-        ioService.write(origin.getPath("master", "/pom.xml"), //git://buildCompileWithOverrideOnGitVFS/dummy/pom.xml
+        ioService.write(origin.getPath("master",
+                                       "/pom.xml"),
+                        //git://buildCompileWithOverrideOnGitVFS/dummy/pom.xml
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy_override/pom.xml").toPath())));
-        ioService.write(origin.getPath("master", "/src/main/java/dummy/Dummy.java"), //git://buildCompileWithOverrideOnGitVFS/dummy/src/main/java/dummy/Dummy.java
+        ioService.write(origin.getPath("master",
+                                       "/src/main/java/dummy/Dummy.java"),
+                        //git://buildCompileWithOverrideOnGitVFS/dummy/src/main/java/dummy/Dummy.java
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/src/main/java/dummy/Dummy.java").toPath())));
 
         ioService.endBatch();
 
-        byte[] encoded = ioService.readAllBytes(origin.getPath("master", "/src/main/java/dummy/Dummy.java"));
+        byte[] encoded = ioService.readAllBytes(origin.getPath("master",
+                                                               "/src/main/java/dummy/Dummy.java"));
 
         String dummyAsAstring = new String(encoded,
                                            StandardCharsets.UTF_8);
@@ -464,14 +499,19 @@ public class KieDefaultMavenCompilerTest {
                                                           "        this.age = age;\n" +
                                                           "    }");
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.ENABLE_LOGGING ));
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("master", "/")); // git://buildCompileWithOverrideOnGitVFS/dummy/
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD,
+                                                                                   KieDecorator.ENABLE_LOGGING));
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("master",
+                                                                                    "/")); // git://buildCompileWithOverrideOnGitVFS/dummy/
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(res.getWorkingDir().get(), res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(res.getWorkingDir().get(),
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         assertThat(res.isSuccessful()).isTrue();
 
@@ -480,16 +520,21 @@ public class KieDefaultMavenCompilerTest {
         //change some files
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
 
-        org.uberfire.java.nio.file.Path path = origin.getPath("master", "/src/main/java/dummy/DummyOverride.java");
+        org.uberfire.java.nio.file.Path path = origin.getPath("master",
+                                                              "/src/main/java/dummy/DummyOverride.java");
         InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
-        override.put(path, input);
+        override.put(path,
+                     input);
 
-        org.uberfire.java.nio.file.Path pathTwo = origin.getPath("master", "/src/main/java/dummy/Dummy.java");
+        org.uberfire.java.nio.file.Path pathTwo = origin.getPath("master",
+                                                                 "/src/main/java/dummy/Dummy.java");
         InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
-        override.put(pathTwo, inputTwo);
+        override.put(pathTwo,
+                     inputTwo);
 
         //recompile
-        res = compiler.compile(req, override);
+        res = compiler.compile(req,
+                               override);
         assertThat(res.isSuccessful()).isTrue();
 
         assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/Dummy.class")).doesNotExist();
@@ -497,7 +542,8 @@ public class KieDefaultMavenCompilerTest {
 
         encoded = Files.readAllBytes(Paths.get(res.getWorkingDir().get().toString(),
                                                "/src/main/java/dummy/Dummy.java"));
-        dummyAsAstring = new String(encoded, StandardCharsets.UTF_8);
+        dummyAsAstring = new String(encoded,
+                                    StandardCharsets.UTF_8);
         assertThat(dummyAsAstring).contains("public Dummy(String name) {\n" +
                                                     "        this.name = name;\n" +
                                                     "    }");

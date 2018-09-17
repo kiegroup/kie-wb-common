@@ -46,7 +46,7 @@ public class JGitUtilsTest {
     private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private Path mavenRepo;
+    private Path mavenRepoPath;
 
     @BeforeClass
     public static void setupSystemProperties() {
@@ -70,12 +70,13 @@ public class JGitUtilsTest {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
+        mavenRepoPath = Paths.get(System.getProperty("user.home"),
+                                  ".m2",
+                                  "repository");
 
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
+        if (!Files.exists(mavenRepoPath)) {
+            logger.info("Creating a m2_repo into " + mavenRepoPath);
+            if (!Files.exists(Files.createDirectories(mavenRepoPath))) {
                 throw new Exception("Folder not writable in the project");
             }
         }
@@ -115,7 +116,8 @@ public class JGitUtilsTest {
         ioService.endBatch();
 
         String uuid = UUID.randomUUID().toString();
-        Git git = JGitUtils.tempClone(fs, uuid);
+        Git git = JGitUtils.tempClone(fs,
+                                      uuid);
 
         assertThat(git).isNotNull();
         assertThat(git.getRepository().getBranch()).isEqualTo("master");
@@ -153,7 +155,8 @@ public class JGitUtilsTest {
         ioService.endBatch();
 
         String uuid = UUID.randomUUID().toString();
-        Git git = JGitUtils.tempClone(origin, uuid);
+        Git git = JGitUtils.tempClone(origin,
+                                      uuid);
 
         assertThat(git).isNotNull();
         assertThat(git.getRepository().getBranch()).isEqualTo("master");
