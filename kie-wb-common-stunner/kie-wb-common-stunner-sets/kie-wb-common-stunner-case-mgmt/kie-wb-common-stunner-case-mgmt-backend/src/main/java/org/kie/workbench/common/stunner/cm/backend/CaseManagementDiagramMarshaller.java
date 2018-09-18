@@ -23,6 +23,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.backend.BaseDiagramMarshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.Bpmn2Marshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -30,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Diagram
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
+import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementMarshaller;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -129,5 +131,10 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
         }
 
         return false;
+    }
+
+    @Override
+    protected Bpmn2Marshaller createBpmn2Marshaller(DefinitionManager definitionManager, OryxManager oryxManager) {
+        return new CaseManagementMarshaller(definitionManager, oryxManager);
     }
 }
