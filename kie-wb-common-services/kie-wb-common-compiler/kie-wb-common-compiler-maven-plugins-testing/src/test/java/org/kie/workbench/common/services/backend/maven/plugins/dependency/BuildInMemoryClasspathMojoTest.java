@@ -70,7 +70,7 @@ public class BuildInMemoryClasspathMojoTest {
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_simple");
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH ));
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(path.toAbsolutePath().toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{ MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath, MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
@@ -87,7 +87,7 @@ public class BuildInMemoryClasspathMojoTest {
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_complex");
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH ));
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(path.toAbsolutePath().toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath, MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},

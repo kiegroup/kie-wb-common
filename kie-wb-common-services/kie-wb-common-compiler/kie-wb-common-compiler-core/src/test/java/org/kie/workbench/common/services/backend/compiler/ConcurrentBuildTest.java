@@ -158,72 +158,89 @@ public class ConcurrentBuildTest {
     }
 
     private KieCompilationResponse compileAndloadKieJarSingleMetadataWithPackagedJar() {
+
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                     "dummy"));
         try {
-            TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_SINGLE_RESOURCES), tmp);
+            TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_SINGLE_RESOURCES),
+                              tmp);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_LOGGING ));
-        final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
-        final CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
-                                                                     info,
-                                                                     new String[]{
-                                                                             MavenCLIArgs.COMPILE,
-                                                                             MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
-                                                                     },
-                                                                     Boolean.FALSE);
-        final KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS,
+                                                                                   KieDecorator.ENABLE_LOGGING));
+        final KieCompilationResponse res;
 
-        logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
-        if (!res.isSuccessful()) {
-            try {
-                logger.error(" Fail, writing output on target folder:" + tmp + " UUID:" + req.getRequestUUID());
-                TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                          "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar_" + req.getRequestUUID());
-            } catch (Exception e) {
-                logger.error(e.getMessage());
+        try {
+            final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+            final CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
+                                                                         info,
+                                                                         new String[]{
+                                                                                 MavenCLIArgs.COMPILE,
+                                                                                 MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                         },
+                                                                         Boolean.FALSE);
+            res = (KieCompilationResponse) compiler.compile(req);
+
+            logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+            if (!res.isSuccessful()) {
+                try {
+                    logger.error(" Fail, writing output on target folder:" + tmp + " UUID:" + req.getRequestUUID());
+                    TestUtil.writeMavenOutputIntoTargetFolder(tmp,
+                                                              res.getMavenOutput(),
+                                                              "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar_" + req.getRequestUUID());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
             }
+        } finally {
+            latch.countDown();
         }
-        latch.countDown();
         return res;
     }
 
     private KieCompilationResponse compileAndLoadKieJarMetadataAllResourcesPackagedJar() {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                     "dummy"));
         try {
-            TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_ALL_RESOURCES), tmp);
+            TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_ALL_RESOURCES),
+                              tmp);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+        final KieCompilationResponse res;
+        try {
+            final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS,
+                                                                                       KieDecorator.ENABLE_LOGGING));
+            final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
+            final CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
+                                                                         info,
+                                                                         new String[]{
+                                                                                 MavenCLIArgs.COMPILE,
+                                                                                 MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                         },
+                                                                         Boolean.FALSE);
+            res = (KieCompilationResponse) compiler.compile(req);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_LOGGING ));
-        final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        final CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
-                                                                     info,
-                                                                     new String[]{
-                                                                             MavenCLIArgs.COMPILE,
-                                                                             MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
-                                                                     },
-                                                                     Boolean.FALSE);
-        final KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-
-        logger.info("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
-        if (!res.isSuccessful()) {
-            try {
-                logger.error("writing output on target folder:" + tmp);
-                TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                          "ConcurrentBuildTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar_" + req.getRequestUUID());
-            } catch (Exception e) {
-                logger.error(e.getMessage());
+            logger.info("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+            if (!res.isSuccessful()) {
+                try {
+                    logger.error("writing output on target folder:" + tmp);
+                    TestUtil.writeMavenOutputIntoTargetFolder(tmp,
+                                                              res.getMavenOutput(),
+                                                              "ConcurrentBuildTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar_" + req.getRequestUUID());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
             }
+        } finally {
+            latch.countDown();
         }
-        latch.countDown();
         return res;
     }
 }
