@@ -113,9 +113,10 @@ public class MavenRestClientTest {
             war.setWebXML(new File("target/test-classes/web.xml"));
             metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
         } else {
-            war.addAsResource(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/IncrementalCompiler.properties"));
-            war.setWebXML(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/web.xml"));
-            metaInfFilesFiles = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/META-INF").listFiles();
+            File webXML = java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/web.xml").toFile();
+            war.setWebXML(webXML);
+            metaInfFilesFiles = java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/META-INF").toFile().listFiles();
+
         }
 
         war.addClasses(MavenRestHandler.class);
@@ -125,8 +126,8 @@ public class MavenRestClientTest {
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
         }
-
-        String settings = runIntoMavenCLI ? "src/test/settings.xml" : "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/src/test/settings.xml";
+        //String settings = java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/settings.xml").toString();
+        String settings = runIntoMavenCLI ? "src/test/settings.xml" : java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/settings.xml").toString();
 
         final File[] files = Maven.configureResolver().
                 fromFile(settings).
