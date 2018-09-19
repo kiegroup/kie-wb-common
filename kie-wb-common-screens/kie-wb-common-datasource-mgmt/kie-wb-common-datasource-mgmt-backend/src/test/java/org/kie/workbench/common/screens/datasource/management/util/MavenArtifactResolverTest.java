@@ -37,19 +37,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MavenArtifactResolverTest {
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         deleteArtifactIFPresent();
     }
 
-    private void deleteArtifactIFPresent() {
+    private void deleteArtifactIFPresent() throws ArtifactResolutionException {
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(getArtifact());
-        try {
-            ArtifactResult result = Aether.getAether().getSystem().resolveArtifact(Aether.getAether().getSession(),
-                                                                                   artifactRequest);
+        ArtifactResult result = Aether.getAether().getSystem().resolveArtifact(MavenArtifactResolver.getAetherSessionWithGlobalRepo(),
+                                                                               artifactRequest);
+        if (!result.isMissing()) {
             File artifactFile = result.getArtifact().getFile();
             assertThat(artifactFile.delete()).isTrue();
-        } catch (Exception ex) {
         }
     }
 
@@ -63,7 +62,7 @@ public class MavenArtifactResolverTest {
 
     @Test
     public void resolveArtifact() throws Exception {
-        RepositorySystemSession session = Aether.getAether().getSession();
+        RepositorySystemSession session = MavenArtifactResolver.getAetherSessionWithGlobalRepo();
         assertThat(checksIfArtifactIsPresent(session)).isFalse();
 
         File file = new File("target/test-classes/uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
@@ -90,7 +89,7 @@ public class MavenArtifactResolverTest {
                                    artifact.getArtifactId(),
                                    artifact.getVersion());
         assertThat(uri).isNotNull();
-        assertThat(uri.getPath()).endsWith(File.separator + "uberfire-m2repo-editor-backend" + File.separator + "100-SNAPSHOT" + File.separator + "uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
+        assertThat(uri.getPath()).endsWith("repositories" + File.separator + "kie" + File.separator + "global" + File.separator + "org" + File.separator + "uberfire" + File.separator + "uberfire-m2repo-editor-backend" + File.separator + "100-SNAPSHOT" + File.separator + "uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
         result = Aether.getAether().getSystem().resolveArtifact(session,
                                                                 artifactRequest);
         assertThat(result.isMissing()).isFalse();
