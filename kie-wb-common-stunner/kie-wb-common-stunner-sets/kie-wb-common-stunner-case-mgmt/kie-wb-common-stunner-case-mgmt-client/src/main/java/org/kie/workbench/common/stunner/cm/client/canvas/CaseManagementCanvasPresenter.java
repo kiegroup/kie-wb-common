@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.stunner.cm.client.canvas;
 
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -27,6 +29,7 @@ import org.kie.workbench.common.stunner.client.lienzo.Lienzo;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.widgets.canvas.view.LienzoPanel;
 import org.kie.workbench.common.stunner.client.widgets.canvas.wires.WiresCanvasPresenter;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.Layer;
@@ -72,5 +75,26 @@ public class CaseManagementCanvasPresenter extends WiresCanvasPresenter {
 
         log(Level.FINE, "Adding child [" + child.getUUID() + "] into parent [" + parent.getUUID() + "]");
         return this;
+    }
+
+    @Override
+    protected void clearShapes() {
+        // the child shapes are not ordered
+        // clear the child shapes recursively in the right order
+        shapes.values().stream().filter(s -> {
+            CaseManagementShapeView view = (CaseManagementShapeView) s.getShapeView();
+            return !(view.getParent() instanceof CaseManagementShapeView);
+        }).collect(Collectors.toList()).forEach(this::clearShape);
+
+        shapes.clear();
+    }
+
+    private void clearShape(Shape shape) {
+        CaseManagementShapeView view = (CaseManagementShapeView) shape.getShapeView();
+        List<Shape> childShapes = view.getChildShapes().toList().stream()
+                .map(v -> shapes.get(((CaseManagementShapeView) v).getUUID())).collect(Collectors.toList());
+
+        deleteShape(shape);
+        childShapes.forEach(this::clearShape);
     }
 }

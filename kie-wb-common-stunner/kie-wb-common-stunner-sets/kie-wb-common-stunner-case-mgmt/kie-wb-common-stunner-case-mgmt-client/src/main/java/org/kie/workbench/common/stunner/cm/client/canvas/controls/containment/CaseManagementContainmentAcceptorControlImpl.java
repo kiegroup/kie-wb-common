@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.cm.client.canvas.controls.containment;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -24,11 +25,11 @@ import javax.inject.Inject;
 import com.ait.lienzo.client.core.shape.wires.IContainmentAcceptor;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.AbstractAcceptorControl;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory;
-import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 import org.kie.workbench.common.stunner.cm.client.wires.CaseManagementContainmentStateHolder;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -173,9 +174,7 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
             if (state.getGhost().isPresent() &&
                     containmentAllowed(wiresContainer,
                                        wiresShapes)) {
-                final CaseManagementShapeView container = (CaseManagementShapeView) wiresContainer;
-                final CaseManagementShapeView ghost = state.getGhost().get();
-                final int index = container.getIndex(ghost);
+                final int index = getAddIndex(wiresShapes[0], wiresContainer);
                 if (index >= 0) {
                     final Optional<Integer> newIndex = Optional.of(index);
                     final Optional<WiresContainer> originalContainer = state.getOriginalParent();
@@ -211,6 +210,41 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
                                      index,
                                      originalParent,
                                      originalIndex);
+        }
+
+        private int getAddIndex(final WiresShape wiresShape,
+                                final WiresContainer container) {
+            Node parent = WiresUtils.getNode(getCanvasHandler(), container);
+
+            if (parent.getInEdges().size() == 0) {  // Add to the canvas horizontally
+                double shapeX = wiresShape.getComputedLocation().getX();
+
+                final NFastArrayList<WiresShape> nChildren = container.getChildShapes().copy();
+                final List<WiresShape> children = nChildren.remove(wiresShape).toList();
+
+                int targetIndex = children.size();
+
+                for (int idx = 0; idx < children.size(); idx++) {
+                    final WiresShape child = children.get(idx);
+                    if (shapeX < child.getComputedLocation().getX()) {
+                        targetIndex = idx;
+                        break;
+                    }
+                }
+
+                if (state.getOriginalIndex().isPresent()) {
+                    int oldIndex = state.getOriginalIndex().get();
+                    targetIndex = targetIndex > oldIndex ? targetIndex - 1 : targetIndex;
+                }
+
+                return targetIndex;
+            } else {    // Add to a stage vertically
+                if (state.getOriginalParent().isPresent() && state.getOriginalParent().get().equals(container)) {  // same stage
+                    return parent.getOutEdges().size() - 1;
+                } else {
+                    return parent.getOutEdges().size();
+                }
+            }
         }
     }
 }

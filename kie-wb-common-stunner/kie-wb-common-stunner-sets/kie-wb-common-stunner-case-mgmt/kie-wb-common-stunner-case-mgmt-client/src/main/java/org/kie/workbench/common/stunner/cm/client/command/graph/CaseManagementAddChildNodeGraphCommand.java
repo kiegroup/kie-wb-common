@@ -38,7 +38,7 @@ public class CaseManagementAddChildNodeGraphCommand extends org.kie.workbench.co
         this.addCommand(new RegisterNodeCommand(child));
         this.addCommand(new CaseManagementSetChildNodeGraphCommand(parent,
                                                                    child,
-                                                                   Optional.of(0),
+                                                                   Optional.of(parent.getOutEdges().size()),
                                                                    Optional.empty(),
                                                                    Optional.empty()));
         return this;
