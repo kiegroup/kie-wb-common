@@ -45,7 +45,7 @@ public class MavenUtilsTest {
         List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_KIE_UNVALID_UNTOUCHED_DIR));
         assertThat(pomList).hasSize(3);
         pomList.forEach((pom) -> {
-            assertThat(pom).endsWith("/pom.xml");
+            assertThat(pom).endsWith("pom.xml");
         });
     }
 
@@ -73,7 +73,8 @@ public class MavenUtilsTest {
 
     @Test
     public void getMavenGlobalRepoDirTest() {
-        System.setProperty(GLOBAL_M2_REPO_NAME, Aether.getAether().getLocalRepository().getUrl());
+        System.setProperty(GLOBAL_M2_REPO_NAME,
+                           Aether.getAether().getLocalRepository().getUrl());
         String testRepo = MavenUtils.getMavenRepoDir(MavenRepos.GLOBAL);
         assertThat(testRepo).endsWith(".m2/repository/");
     }

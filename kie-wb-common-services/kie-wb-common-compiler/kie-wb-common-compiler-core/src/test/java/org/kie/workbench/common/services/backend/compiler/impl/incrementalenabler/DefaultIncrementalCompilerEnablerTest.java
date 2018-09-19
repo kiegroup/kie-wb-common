@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
@@ -58,8 +59,16 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         assertThat(poms.getResult()).isTrue();
         assertThat(poms.getProjectPoms()).hasSize(1);
         String pom = poms.getProjectPoms().get(0);
-        assertThat(pom).isEqualTo(tmpRoot.toString() + "/dummy/pom.xml");
-        encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
+        String pomExpected = tmpRoot.toAbsolutePath().toString();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            pom = pom.replace("\\",
+                              "/");
+            pomExpected = tmpRoot.toAbsolutePath().toUri().toString().replace("\\",
+                                                                              "/");
+        }
+
+        assertThat(pom).isEqualTo(pomExpected + "/dummy/pom.xml");
+        encoded = Files.readAllBytes(Paths.get(tmpRoot.toUri().toString() + "/dummy/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
         assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
@@ -86,8 +95,16 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         assertThat(poms.getResult()).isTrue();
         assertThat(poms.getProjectPoms()).hasSize(1);
         String pom = poms.getProjectPoms().get(0);
-        assertThat(pom).isEqualTo(tmpRoot.toString() + "/dummy/pom.xml");
-        encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
+        String pomExpected = tmpRoot.toAbsolutePath().toString();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            pom = pom.replace("\\",
+                              "/");
+            pomExpected = tmpRoot.toAbsolutePath().toUri().toString().replace("\\",
+                                                                              "/");
+        }
+
+        assertThat(pom).isEqualTo(pomExpected + "/dummy/pom.xml");
+        encoded = Files.readAllBytes(Paths.get(tmpRoot.toUri().toString() + "/dummy/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
         assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
@@ -100,7 +117,8 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         Properties prop = new Properties();
         InputStream in = getClass().getClassLoader().getResourceAsStream(propName);
         if (in == null) {
-            logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n", propName);
+            logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n",
+                        propName);
         } else {
             try {
                 prop.load(in);
