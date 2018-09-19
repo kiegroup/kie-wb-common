@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -213,7 +214,8 @@ public class ReusableAFMavenCli {
         }
 
         SystemProperties.addSystemProperties(systemProperties);
-        purgeBannedProperties(systemProperties, bannedEnvVars);// purged from the env vars who breaks the build
+        purgeBannedProperties(systemProperties,
+                              bannedEnvVars);// purged from the env vars who breaks the build
 
         // ----------------------------------------------------------------------
         // Properties containing info about the currently running version of Maven
@@ -231,8 +233,9 @@ public class ReusableAFMavenCli {
                                      mavenBuildVersion);
     }
 
-    private static void purgeBannedProperties(Properties toPurge, Properties itemsToRemove){
-        for(Object key: itemsToRemove.keySet()){
+    private static void purgeBannedProperties(Properties toPurge,
+                                              Properties itemsToRemove) {
+        for (Object key : itemsToRemove.keySet()) {
             toPurge.remove(key);
         }
     }
@@ -348,7 +351,8 @@ public class ReusableAFMavenCli {
         List<String> args = new ArrayList<String>();
 
         try {
-            Path configFile = Paths.get(cliRequest.getMultiModuleProjectDirectory(),
+            URI uri = URI.create("file:" + cliRequest.getMultiModuleProjectDirectory());
+            Path configFile = Paths.get(Paths.get(uri).toString(),
                                         ".mvn/maven.config");
 
             if (java.nio.file.Files.isRegularFile(configFile)) {
@@ -469,11 +473,14 @@ public class ReusableAFMavenCli {
         }
 
         if (reusableContainer == null) {
-            reusableContainer = createNewPlexusContainer(cliRequest, classWorld);
+            reusableContainer = createNewPlexusContainer(cliRequest,
+                                                         classWorld);
         } else {
             ((DefaultPlexusContainer) reusableContainer).getLoggerManager().setThresholds(cliRequest.getRequest().getLoggingLevel());
             Thread.currentThread().setContextClassLoader(reusableContainer.getContainerRealm());
-            setEventSpyContextData(reusableEventSpyContext, reusableContainer, cliRequest);
+            setEventSpyContextData(reusableEventSpyContext,
+                                   reusableContainer,
+                                   cliRequest);
         }
         return reusableContainer;
     }
@@ -598,7 +605,8 @@ public class ReusableAFMavenCli {
             return Collections.emptyList();
         }
 
-        Path extensionsFile = Paths.get(cliRequest.getMultiModuleProjectDirectory().toString(),
+        URI uri = URI.create("file:" + cliRequest.getMultiModuleProjectDirectory());
+        Path extensionsFile = Paths.get(Paths.get(uri).toString(),
                                         EXTENSIONS_FILENAME);
         if (!java.nio.file.Files.isRegularFile(extensionsFile)) {
             return Collections.emptyList();
@@ -1278,15 +1286,6 @@ public class ReusableAFMavenCli {
         return container.lookup(ModelProcessor.class);
     }
 
-    static class ExitException extends Exception {
-
-        public int exitCode;
-
-        public ExitException(int exitCode) {
-            this.exitCode = exitCode;
-        }
-    }
-
     public Boolean cleanInternals() {
         if (reusableDispatcher != null) {
             reusableDispatcher = null;
@@ -1325,5 +1324,14 @@ public class ReusableAFMavenCli {
             reusableToolchainsBuilder = null;
         }
         return Boolean.TRUE;
+    }
+
+    static class ExitException extends Exception {
+
+        public int exitCode;
+
+        public ExitException(int exitCode) {
+            this.exitCode = exitCode;
+        }
     }
 }

@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.io.File;
+
 public class CommonConstants {
 
     public static final String DOT = ".";
@@ -27,7 +29,9 @@ public class CommonConstants {
     public static final String SCENARIO_EXT = ".scenario";
     public static final String FILE_URI = "file://";
     public static final String FILE = "file:";
-    public static final String MAVEN_TARGET = "target/classes/";
+    public static final String MAVEN_TARGET = "target" + File.separator + "classes" + File.separator;
+    public static final String TARGET = "target";
+    public static final String CLASSES = "classes";
     public static final String META_INF = "META-INF";
     public static final String SEPARATOR = "/";
     public final static String POM_NAME = "pom.xml";

@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.drools.core.util.IoUtils;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -100,7 +101,7 @@ public class CompilerClassloaderUtils {
              * */
             if (!res.getDependencies().isEmpty()) {
                 Optional<ClassLoader> urlClassLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
-                if (urlClassLoader != null) {
+                if (urlClassLoader.isPresent()) {
                     return urlClassLoader;
                 }
             }
@@ -139,8 +140,10 @@ public class CompilerClassloaderUtils {
 
     public static Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
                                                                                String localRepo) {
+        /*List<String> poms =
+                MavenUtils.searchPoms(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));*/
         List<String> poms =
-                MavenUtils.searchPoms(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
+                MavenUtils.searchPoms(Paths.get(prjPath));
         List<URL> urls = getDependenciesURL(poms,
                                             localRepo);
         return buildResult(urls);
@@ -190,7 +193,8 @@ public class CompilerClassloaderUtils {
             List<URL> targetModulesUrls = new ArrayList(pomsPaths.size());
             try {
                 for (String pomPath : pomsPaths) {
-                    Path path = Paths.get(URI.create(CommonConstants.FILE_URI + pomPath));
+                    Path path = Paths.get(pomPath);
+                    //Path path = Paths.get(URI.create(CommonConstants.FILE_URI + pomPath));
                     StringBuilder sb = new StringBuilder(CommonConstants.FILE_URI)
                             .append(path.getParent().toAbsolutePath().toString())
                             .append(CommonConstants.SEPARATOR).append(CommonConstants.MAVEN_TARGET);
@@ -228,7 +232,7 @@ public class CompilerClassloaderUtils {
         List<URL> deps = new ArrayList<>();
         for (String dep : prjDeps) {
             try {
-                deps.add(new URL(dep));
+                deps.add(new URL(CommonConstants.FILE_URI + dep));
             } catch (MalformedURLException e) {
                 logger.error(e.getMessage());
             }
@@ -251,18 +255,31 @@ public class CompilerClassloaderUtils {
     public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
 
         Set<String> items = new HashSet<>();
+        if (SystemUtils.IS_OS_LINUX) {
+            items = process(depsModules,
+                            ":");
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            items = process(depsModules,
+                            ";");
+        }
+        return new ArrayList<>(items);
+    }
+
+    private static Set<String> process(Set<String> depsModules,
+                                       String delim) {
+        Set<String> items = new HashSet<>();
         Iterator<String> iter = depsModules.iterator();
         while (iter.hasNext()) {
             StringTokenizer token = new StringTokenizer(iter.next());
             while (token.hasMoreElements()) {
-                String item = token.nextToken(":");
+                String item = token.nextToken(delim);
                 if (item.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
                     StringBuilder sb = new StringBuilder(CommonConstants.FILE).append(item);
                     items.add(sb.toString());
                 }
             }
         }
-        return new ArrayList<>(items);
+        return items;
     }
 
     public static List<String> getStringFromTargets(Path prjPath) {
@@ -277,7 +294,9 @@ public class CompilerClassloaderUtils {
 
     public static List<String> getStringFromTargetWithStream(Path pathIn,
                                                              String... extensions) {
-        java.nio.file.Path prjPath = java.nio.file.Paths.get(pathIn.toAbsolutePath().toString());
+        URI uri = URI.create(CommonConstants.FILE + pathIn.toAbsolutePath().toString());
+        java.nio.file.Path prjPath = java.nio.file.Paths.get(java.nio.file.Paths.get(uri).toString());
+
         List<String> joined = Collections.emptyList();
         try (Stream<java.nio.file.Path> stream = java.nio.file.Files.walk(prjPath)) {
             joined = stream

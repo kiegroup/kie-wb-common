@@ -54,7 +54,7 @@ public class MavenUtils {
         Set<Artifact> deps = new HashSet<>();
         try {
             for (String pomx : pomsPaths) {
-                Path pom = Paths.get(URI.create("default:///" + pomx));
+                Path pom = Paths.get(pomx);
                 Model model = reader.read(new ByteArrayInputStream(Files.readAllBytes(pom)));
                 if (model.getDependencyManagement() != null && model.getDependencyManagement().getDependencies() != null) {
                     createArtifacts(model.getDependencyManagement().getDependencies(),

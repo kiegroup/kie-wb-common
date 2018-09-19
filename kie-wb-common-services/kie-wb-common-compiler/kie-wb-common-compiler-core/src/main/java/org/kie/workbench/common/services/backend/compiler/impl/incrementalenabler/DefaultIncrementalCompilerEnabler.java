@@ -54,7 +54,8 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
         if (!isValidConfiguration) {
             return new ProcessedPoms(Boolean.FALSE, Collections.emptyList());
         }
-        Path mainPom = Paths.get(URI.create(FILE_URI + req.getKieCliRequest().getWorkingDirectory() + "/" + POM_NAME));
+
+        Path mainPom = Paths.get(req.getKieCliRequest().getWorkingDirectory() , POM_NAME);
 
         if (!Files.isReadable(mainPom)) {
             return new ProcessedPoms(Boolean.FALSE, Collections.emptyList());

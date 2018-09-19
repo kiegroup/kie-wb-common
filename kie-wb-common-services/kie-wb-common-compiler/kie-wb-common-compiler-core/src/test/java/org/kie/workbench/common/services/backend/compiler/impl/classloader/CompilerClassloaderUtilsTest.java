@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
@@ -167,16 +168,33 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void tokenizerTest() {
-        String cpString = "file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/kie-api/7.9.0-SNAPSHOT/kie-api-7.9.0-SNAPSHOT.jar:" +
-                "file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/soup/kie-soup-maven-support/7.9.0-SNAPSHOT/" +
-                "kie-soup-maven-support-7.9.0-SNAPSHOT.jar:file:/home/sesame/.m2/" +
-                "repository/repositories/kie/global/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar";
-        Set<String> deps = new HashSet<>();
-        deps.add(cpString);
-        List<String> items = CompilerClassloaderUtils.readItemsFromClasspathString(deps);
-        assertThat(items).hasSize(3);
-        assertThat(items.contains("file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/kie-api/7.9.0-SNAPSHOT/kie-api-7.9.0-SNAPSHOT.jar")).isTrue();
-        assertThat(items.contains("file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/soup/kie-soup-maven-support/7.9.0-SNAPSHOT/kie-soup-maven-support-7.9.0-SNAPSHOT.jar")).isTrue();
-        assertThat(items.contains("file:/home/sesame/.m2/repository/repositories/kie/global/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar")).isTrue();
+        if(SystemUtils.IS_OS_LINUX) {
+
+            String cpString = "file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/kie-api/7.9.0-SNAPSHOT/kie-api-7.9.0-SNAPSHOT.jar:" +
+                    "file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/soup/kie-soup-maven-support/7.9.0-SNAPSHOT/" +
+                    "kie-soup-maven-support-7.9.0-SNAPSHOT.jar:file:/home/sesame/.m2/" +
+                    "repository/repositories/kie/global/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar";
+            Set<String> deps = new HashSet<>();
+            deps.add(cpString);
+            List<String> items = CompilerClassloaderUtils.readItemsFromClasspathString(deps);
+            assertThat(items).hasSize(3);
+            assertThat(items.contains("file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/kie-api/7.9.0-SNAPSHOT/kie-api-7.9.0-SNAPSHOT.jar")).isTrue();
+            assertThat(items.contains("file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/soup/kie-soup-maven-support/7.9.0-SNAPSHOT/kie-soup-maven-support-7.9.0-SNAPSHOT.jar")).isTrue();
+            assertThat(items.contains("file:/home/sesame/.m2/repository/repositories/kie/global/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar")).isTrue();
+        }
+        if(SystemUtils.IS_OS_WINDOWS) {
+
+            String cpString = "file:C:\\Users\\sesame\\.m2\\repository\\repositories\\kie\\global\\org\\kie\\kie-api\\7.9.0-SNAPSHOT\\kie-api-7.9.0-SNAPSHOT.jar;" +
+                    "file:C:\\Users\\sesame\\.m2\\repository\\repositories\\kie\\global\\org\\kie\\soup\\kie-soup-maven-support\\7.9.0-SNAPSHOT\\" +
+                    "kie-soup-maven-support-7.9.0-SNAPSHOT.jar;file:C:\\Users\\sesame\\.m2\\" +
+                    "repository\\repositories\\kie\\global\\org\\slf4j\\slf4j-api\\1.7.25\\slf4j-api-1.7.25.jar";
+            Set<String> deps = new HashSet<>();
+            deps.add(cpString);
+            List<String> items = CompilerClassloaderUtils.readItemsFromClasspathString(deps);
+            assertThat(items).hasSize(3);
+            assertThat(items.contains("file:C:\\Users\\sesame\\.m2\\repository\\repositories\\kie\\global\\org\\kie\\kie-api\\7.9.0-SNAPSHOT\\kie-api-7.9.0-SNAPSHOT.jar")).isTrue();
+            assertThat(items.contains("file:C:\\Users\\sesame\\.m2\\repository\\repositories\\kie\\global\\org\\kie\\soup\\kie-soup-maven-support\\7.9.0-SNAPSHOT\\kie-soup-maven-support-7.9.0-SNAPSHOT.jar")).isTrue();
+            assertThat(items.contains("file:C:\\Users\\sesame\\.m2\\repository\\repositories\\kie\\global\\org\\slf4j\\slf4j-api\\1.7.25\\slf4j-api-1.7.25.jar")).isTrue();
+        }
     }
 }

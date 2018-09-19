@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.impl.pomprocessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public class DefaultPomEditor implements PomEditor {
     public final String POM_NAME = "pom.xml";
     public final String KJAR_EXT = "kjar";
     protected final Logger logger = LoggerFactory.getLogger(DefaultPomEditor.class);
-    protected String FILE_URI = "file://";
+    //protected String FILE_URI = "file://";
     protected Map<ConfigurationKey, String> conf;
     protected MavenXpp3Reader reader;
     protected MavenXpp3Writer writer;
@@ -128,16 +129,17 @@ public class DefaultPomEditor implements PomEditor {
                                                 StandardCharsets.UTF_8));
                     }
 
-                    Path pomParent = Paths.get(URI.create(
+                    Path pomParent = Paths.get(
                             new StringBuffer().
-                                    append(FILE_URI).
                                     append(pom.getParent().toAbsolutePath().toString()).
-                                    append("/").
-                                    append(POM_NAME).toString()));
-                    Files.delete(pomParent);
-                    Files.write(pomParent,
-                                baos.toByteArray(),
-                                StandardOpenOption.CREATE_NEW);//enhanced pom
+                                    append(File.separator).
+                                    append(POM_NAME).toString());
+                    if(Files.exists(pomParent)) {
+                        Files.delete(pomParent);
+                        Files.write(pomParent,
+                                    baos.toByteArray(),
+                                    StandardOpenOption.CREATE_NEW);//enhanced pom
+                    }
                 }
                 history.add(pomPH);
             }
