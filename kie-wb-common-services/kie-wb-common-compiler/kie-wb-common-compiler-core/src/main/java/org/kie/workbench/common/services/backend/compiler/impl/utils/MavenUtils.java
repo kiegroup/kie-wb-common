@@ -17,7 +17,6 @@
 package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
 import java.io.ByteArrayInputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

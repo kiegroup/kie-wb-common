@@ -29,8 +29,8 @@ import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 
 public class FilterClassesByPackageCollector implements Collector<String, List<String>, List<String>> {
 
-    private static final String mask = CommonConstants.TARGET + CommonConstants.SEPARATOR + CommonConstants.CLASSES + CommonConstants.SEPARATOR;
     private String packageNameWithSlash;
+    private String mask = CommonConstants.TARGET + CommonConstants.SEPARATOR + CommonConstants.CLASSES;
 
     public FilterClassesByPackageCollector(String packageName) {
         this.packageNameWithSlash = packageName.replace(CommonConstants.DOT,
@@ -70,7 +70,7 @@ public class FilterClassesByPackageCollector implements Collector<String, List<S
     }
 
     private String getFiltered(String item) {
-        String one = item.substring(item.lastIndexOf(mask) + mask.length(),
+        String one = item.substring(item.lastIndexOf(mask) + mask.length() + 1,
                                     item.lastIndexOf(CommonConstants.DOT));
         return one.contains(CommonConstants.SEPARATOR) ? one.replace(CommonConstants.SEPARATOR,
                                                                      CommonConstants.DOT) : one;

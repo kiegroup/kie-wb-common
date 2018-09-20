@@ -132,7 +132,7 @@ public class DefaultMavenCompilerTest {
 
         Path prjFolder = Paths.get(tmpCloned.toString(),
                                    ".clone.git");
-        byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
+        byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + File.separator + "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
@@ -156,7 +156,7 @@ public class DefaultMavenCompilerTest {
         Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile()).exists();
 
-        encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
+        encoded = Files.readAllBytes(Paths.get(prjFolder + File.separator + "pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
         assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);

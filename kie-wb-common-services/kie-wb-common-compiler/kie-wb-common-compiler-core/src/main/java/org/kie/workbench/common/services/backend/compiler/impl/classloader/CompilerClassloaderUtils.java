@@ -65,6 +65,7 @@ import org.uberfire.java.nio.file.Paths;
 public class CompilerClassloaderUtils {
 
     protected static final Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtils.class);
+    public static final String delimiter = SystemUtils.IS_OS_WINDOWS ? ";" : ":";
 
     private CompilerClassloaderUtils() {
     }
@@ -140,8 +141,6 @@ public class CompilerClassloaderUtils {
 
     public static Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
                                                                                String localRepo) {
-        /*List<String> poms =
-                MavenUtils.searchPoms(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));*/
         List<String> poms =
                 MavenUtils.searchPoms(Paths.get(prjPath));
         List<URL> urls = getDependenciesURL(poms,
@@ -194,7 +193,6 @@ public class CompilerClassloaderUtils {
             try {
                 for (String pomPath : pomsPaths) {
                     Path path = Paths.get(pomPath);
-                    //Path path = Paths.get(URI.create(CommonConstants.FILE_URI + pomPath));
                     StringBuilder sb = new StringBuilder(CommonConstants.FILE_URI)
                             .append(path.getParent().toAbsolutePath().toString())
                             .append(CommonConstants.SEPARATOR).append(CommonConstants.MAVEN_TARGET);
@@ -253,15 +251,7 @@ public class CompilerClassloaderUtils {
     }
 
     public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
-
-        Set<String> items = new HashSet<>();
-        if (SystemUtils.IS_OS_LINUX) {
-            items = process(depsModules,
-                            ":");
-        } else if (SystemUtils.IS_OS_WINDOWS) {
-            items = process(depsModules,
-                            ";");
-        }
+        Set<String> items = process(depsModules, delimiter);
         return new ArrayList<>(items);
     }
 
@@ -274,8 +264,12 @@ public class CompilerClassloaderUtils {
             while (token.hasMoreElements()) {
                 String item = token.nextToken(delim);
                 if (item.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
-                    StringBuilder sb = new StringBuilder(CommonConstants.FILE).append(item);
-                    items.add(sb.toString());
+                    if(SystemUtils.IS_OS_WINDOWS){
+                        items.add(item);
+                    }else {
+                        StringBuilder sb = new StringBuilder(CommonConstants.FILE).append(item);
+                        items.add(sb.toString());
+                    }
                 }
             }
         }
@@ -296,7 +290,6 @@ public class CompilerClassloaderUtils {
                                                              String... extensions) {
         URI uri = URI.create(CommonConstants.FILE + pathIn.toAbsolutePath().toString());
         java.nio.file.Path prjPath = java.nio.file.Paths.get(java.nio.file.Paths.get(uri).toString());
-
         List<String> joined = Collections.emptyList();
         try (Stream<java.nio.file.Path> stream = java.nio.file.Files.walk(prjPath)) {
             joined = stream

@@ -28,9 +28,9 @@ import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 
 public class FilterPathClassesCollector implements Collector<String, Set<String>, Set<String>> {
 
-    private static final String mask = CommonConstants.TARGET + CommonConstants.SEPARATOR + CommonConstants.CLASSES + CommonConstants.SEPARATOR;
     private static String mavenRepoPath;
     private static int mavenRepoPathLength;
+    private String mask = CommonConstants.TARGET + CommonConstants.SEPARATOR + CommonConstants.CLASSES + CommonConstants.SEPARATOR;
 
     public FilterPathClassesCollector(String mavenRepoPath) {
         this.mavenRepoPath = mavenRepoPath;

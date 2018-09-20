@@ -41,11 +41,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultMavenIncrementalCompilerTest {
 
-    private String mavenRepoPath;
-    private Path tmpRoot;
-
     @Rule
     public TestName testName = new TestName();
+    private String mavenRepoPath;
+    private Path tmpRoot;
 
     @Before
     public void setUp() throws Exception {
@@ -62,7 +61,9 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testIsValidMavenHome() throws Exception {
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.DUMMY_DIR);
 
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -71,22 +72,31 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.VERSION},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
     }
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.DUMMY_DIR);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
@@ -96,16 +106,22 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.DUMMY_DIR);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         assertThat(res.isSuccessful()).isTrue();
 
         res = compiler.compile(req);
@@ -121,17 +137,23 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_INCREMENTAL_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.DUMMY_INCREMENTAL_DIR);
 
         //compiler
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
 
         //checks
         assertThat(res.isSuccessful()).isTrue();
@@ -192,22 +214,29 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testError() throws Exception {
-        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot,
+                                                      "dummy",
+                                                      ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR);
 
         //compiler
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING,
+                                                                                   KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp,
+                                                                 res,
+                                                                 this.getClass(),
+                                                                 testName);
         //checks
         assertThat(res.isSuccessful()).isTrue();
 
         List<String> fileNames = new ArrayList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/dummyA/target/classes/dummy"))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp.toAbsolutePath().toString(),
+                                                                                        "/dummyA/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
@@ -220,7 +249,8 @@ public class DefaultMavenIncrementalCompilerTest {
         assertThat(dummyAJava).isNotNull();
 
         fileNames = new ArrayList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/dummyB/target/classes/dummy"))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp.toAbsolutePath().toString(),
+                                                                                        "/dummyB/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }

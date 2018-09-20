@@ -126,8 +126,7 @@ public class MavenRestClientTest {
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
         }
-        //String settings = java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/settings.xml").toString();
-        String settings = runIntoMavenCLI ? "src/test/settings.xml" : java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/settings.xml").toString();
+        String settings = runIntoMavenCLI ? "src/test/settings.xml" :  java.nio.file.Paths.get(".").toAbsolutePath().resolve("target/test-classes/settings.xml").toString();
 
         final File[] files = Maven.configureResolver().
                 fromFile(settings).

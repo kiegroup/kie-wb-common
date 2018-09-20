@@ -63,12 +63,11 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         if (SystemUtils.IS_OS_WINDOWS) {
             pom = pom.replace("\\",
                               "/");
-            pomExpected = tmpRoot.toAbsolutePath().toUri().toString().replace("\\",
-                                                                              "/");
+            pomExpected = tmpRoot.toAbsolutePath().toUri().toString().replace("default:///",
+                                                                              "");
         }
-
         assertThat(pom).isEqualTo(pomExpected + "/dummy/pom.xml");
-        encoded = Files.readAllBytes(Paths.get(tmpRoot.toUri().toString() + "/dummy/pom.xml"));
+        encoded = getEncodedPomFromDummyProject();
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
         assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
@@ -99,18 +98,21 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         if (SystemUtils.IS_OS_WINDOWS) {
             pom = pom.replace("\\",
                               "/");
-            pomExpected = tmpRoot.toAbsolutePath().toUri().toString().replace("\\",
-                                                                              "/");
+            pomExpected = tmpRoot.toAbsolutePath().toUri().toString().replace("default:///",
+                                                                              "");
         }
-
         assertThat(pom).isEqualTo(pomExpected + "/dummy/pom.xml");
-        encoded = Files.readAllBytes(Paths.get(tmpRoot.toUri().toString() + "/dummy/pom.xml"));
+        encoded = getEncodedPomFromDummyProject();
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
         assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
         assertThat(pomAsAstring).contains(TestConstants.MAVEN_ARTIFACT);
         String mavenCompilerVersion = props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name());
         assertThat(pomAsAstring).contains("<version>" + mavenCompilerVersion + "</version>");
+    }
+
+    private byte[] getEncodedPomFromDummyProject() {
+        return  Files.readAllBytes(Paths.get(tmpRoot.toUri().toString() + "/dummy/pom.xml"));
     }
 
     private Properties loadProperties(String propName) {
