@@ -28,8 +28,10 @@ import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbench
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
+import org.uberfire.experimental.client.service.ClientExperimentalFeaturesRegistryService;
 import org.uberfire.ext.preferences.client.admin.page.AdminPage;
 import org.uberfire.ext.preferences.client.admin.page.AdminPageOptions;
+import org.uberfire.mvp.Command;
 import org.uberfire.preferences.shared.PreferenceScope;
 import org.uberfire.preferences.shared.PreferenceScopeFactory;
 import org.uberfire.rpc.SessionInfo;
@@ -45,6 +47,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DefaultAdminPageHelperTest {
@@ -52,6 +55,7 @@ public class DefaultAdminPageHelperTest {
     private static String LIBRARY_PREFERENCES = "LibraryPreferences";
     private static String ARTIFACT_REPOSITORY_PREFERENCES = "ArtifactRepositoryPreference";
     private static String STUNNER_PREFERENCES = "StunnerPreferences";
+    private static String EXPERIMENTAL_SETTINGS = "ExperimentalSettings";
 
     @Mock
     private AdminPage adminPage;
@@ -67,6 +71,9 @@ public class DefaultAdminPageHelperTest {
 
     @Mock
     private PreferenceScopeFactory scopeFactory;
+
+    @Mock
+    private ClientExperimentalFeaturesRegistryService experimentalFeaturesRegistryService;
 
     @InjectMocks
     private DefaultAdminPageHelper defaultAdminPageHelper;
@@ -300,6 +307,31 @@ public class DefaultAdminPageHelperTest {
         verifyStunnerPreferencesWasAdded(0);
     }
 
+    @Test
+    public void experimentalFeaturesAddedTest() {
+        verifyExperimentalFeatureAdded(true);
+    }
+
+    @Test
+    public void experimentalFeaturesWasNotAddedTest() {
+        verifyExperimentalFeatureAdded(false);
+    }
+
+    private void verifyExperimentalFeatureAdded(final boolean addExperimental) {
+        doReturn(true).when(authorizationManager).authorize(any(ResourceRef.class), any(User.class));
+
+        when(experimentalFeaturesRegistryService.isExperimentalEnabled()).thenReturn(addExperimental);
+
+        defaultAdminPageHelper.setup();
+
+        verify(adminPage,
+               addExperimental ? times(1) : never()).addTool(eq("root"),
+                                                                        eq(EXPERIMENTAL_SETTINGS),
+                                                                        eq("fa-flask"),
+                                                                        eq("general"),
+                                                                        any(Command.class));
+    }
+
     private void verifyLibraryPreferencesWasAddedInGlobalScope() {
         verify(adminPage,
                times(1)).addPreference(eq("root"),
@@ -347,12 +379,12 @@ public class DefaultAdminPageHelperTest {
     private void verifyStunnerPreferencesWasAdded(int timesAdded) {
         verify(adminPage,
                times(timesAdded)).addPreference(eq("root"),
-                                           eq(STUNNER_PREFERENCES),
-                                           anyString(),
-                                           anyString(),
-                                           anyString(),
-                                           any(PreferenceScope.class),
-                                           eq(AdminPageOptions.WITH_BREADCRUMBS));
+                                                eq(STUNNER_PREFERENCES),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                any(PreferenceScope.class),
+                                                eq(AdminPageOptions.WITH_BREADCRUMBS));
     }
 
     private void mockConstants() {

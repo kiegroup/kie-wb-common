@@ -33,6 +33,7 @@ import org.kie.workbench.common.workbench.client.admin.resources.i18n.Preference
 import org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.experimental.client.service.ClientExperimentalFeaturesRegistryService;
 import org.uberfire.ext.preferences.client.admin.page.AdminPage;
 import org.uberfire.ext.preferences.client.admin.page.AdminPageOptions;
 import org.uberfire.ext.security.management.api.AbstractEntityManager;
@@ -85,6 +86,9 @@ public class DefaultAdminPageHelper {
     @Inject
     private LanguageConfigurationHandler languageConfigurationHandler;
 
+    @Inject
+    private ClientExperimentalFeaturesRegistryService experimentalFeaturesService;
+
     public void setup() {
         setup(true,
               true,
@@ -106,6 +110,7 @@ public class DefaultAdminPageHelper {
                              artifactRepositoryPreferencesEnabled);
         addGeneralPreferences();
         addStunnerPreferences(stunnerEnabled);
+        addExperimentalPreferences();
     }
 
     private void addGeneralPreferences() {
@@ -117,7 +122,7 @@ public class DefaultAdminPageHelper {
     }
 
     private void addStunnerPreferences(boolean stunnerEnabled) {
-        if(stunnerEnabled) {
+        if (stunnerEnabled) {
             adminPage.addPreference("root",
                                     "StunnerPreferences",
                                     constants.StunnerDesignerPreferences(),
@@ -125,6 +130,22 @@ public class DefaultAdminPageHelper {
                                     "general",
                                     scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
                                     AdminPageOptions.WITH_BREADCRUMBS);
+        }
+    }
+
+    private void addExperimentalPreferences() {
+        if (hasAccessToPerspective(PerspectiveIds.EXPERIMENTAL_FEATURES) && experimentalFeaturesService.isExperimentalEnabled()) {
+            adminPage.addTool("root",
+                              constants.ExperimentalSettings(),
+                              "fa-flask",
+                              "general",
+                              () -> {
+                                  final Command accessExperimentals = () -> placeManager.goTo(PerspectiveIds.EXPERIMENTAL_FEATURES);
+                                  accessExperimentals.execute();
+                                  addAdminBreadcrumbs(PerspectiveIds.EXPERIMENTAL_FEATURES,
+                                                      constants.ExperimentalSettings(),
+                                                      accessExperimentals);
+                              });
         }
     }
 
