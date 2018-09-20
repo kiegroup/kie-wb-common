@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -164,8 +165,8 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private String getClasspathIncludedCurrentModuleDep(String mavenRepo,
                                                         String classpath) {
+        String separator = SystemUtils.IS_OS_WINDOWS ? ";" : ":";
         StringBuilder sb = new StringBuilder();
-        this.getClass().getPackage();
         sb.append(mavenRepo).
                 append(File.separator).append("org").
                 append(File.separator).append("kie").
@@ -174,7 +175,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
                 append(File.separator).append(mavenModuleName).
                 append(File.separator).append(kieVersion).
                 append(File.separator).append(mavenModuleName).
-                append("-").append(kieVersion).append(".jar").append(":").
+                append("-").append(kieVersion).append(".jar").append(separator).
                 append(classpath);
         return sb.toString();
     }
