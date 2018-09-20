@@ -29,9 +29,9 @@ public class CommonConstants {
     public static final String SCENARIO_EXT = ".scenario";
     public static final String FILE_URI = "file://";
     public static final String FILE = "file:";
-    public static final String MAVEN_TARGET = "target" + File.separator + "classes" + File.separator;
     public static final String TARGET = "target";
     public static final String CLASSES = "classes";
+    public static final String MAVEN_TARGET = TARGET + File.separator + CLASSES + File.separator;
     public static final String META_INF = "META-INF";
     public static final String SEPARATOR = "/";
     public final static String POM_NAME = "pom.xml";
