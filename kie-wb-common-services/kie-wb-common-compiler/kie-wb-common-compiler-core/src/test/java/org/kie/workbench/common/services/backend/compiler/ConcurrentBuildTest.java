@@ -105,7 +105,7 @@ public class ConcurrentBuildTest {
             logger.info("\nFinished all threads ");
             assertThat(results).hasSize(4);
             for (Future<KieCompilationResponse> result : results) {
-                logger.info("Working dir:" + result.get().getWorkingDir().get() + " success:" + result.get().isSuccessful());
+                logger.info("Working dir:{}  success:{}", result.get().getWorkingDir().get(), result.get().isSuccessful());
             }
             for (Future<KieCompilationResponse> result : results) {
                 assertThat(result.get().isSuccessful()).isTrue();
@@ -192,10 +192,10 @@ public class ConcurrentBuildTest {
                                                                          Boolean.FALSE);
             res = (KieCompilationResponse) compiler.compile(req);
 
-            logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+            logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:{} UUID:{} res.getMavenOutput().isEmpty():" , tmp, req.getRequestUUID(), res.getMavenOutput().isEmpty());
             if (!res.isSuccessful()) {
                 try {
-                    logger.error(" Fail, writing output on target folder:" + tmp + " UUID:" + req.getRequestUUID());
+                    logger.error(" Fail, writing output on target folder:{}  UUID:", tmp,req.getRequestUUID());
                     TestUtil.writeMavenOutputIntoTargetFolder(tmp,
                                                               res.getMavenOutput(),
                                                               "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar_" + req.getRequestUUID());
