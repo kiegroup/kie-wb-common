@@ -30,11 +30,9 @@ import com.google.common.io.Resources;
 import org.drools.core.rule.TypeMetaInfo;
 import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
-import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
-import org.guvnor.m2repo.backend.server.M2ServletContextListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -161,13 +159,6 @@ public class BuilderTest
 
     @Test
     public void testBuilderKModuleHasSnapshotDependency() throws Exception {
-        M2ServletContextListener context = new M2ServletContextListener();
-        GAV gav = new GAV("org.kie.workbench.common.services.builder.tests",
-                          "dependency-test1-snapshot",
-                          "1.0-SNAPSHOT");
-        URL urlJar = this.getClass().getResource("/dependency-test1-snapshot-1.0-SNAPSHOT.jar");
-        context.deploy(gav,
-                       urlJar.getPath());
         URL url = this.getClass().getResource("/GuvnorM2RepoDependencyExample2Snapshot");
         SimpleFileSystemProvider p = new SimpleFileSystemProvider();
         org.uberfire.java.nio.file.Path path = p.getPath(url.toURI());
@@ -379,8 +370,7 @@ public class BuilderTest
 
         BuildResults buildResults = builder.build();
         List<BuildMessage> errorMessages = buildResults.getErrorMessages();
-        assertEquals(2,
-                     errorMessages.size());
+        assertEquals(2, errorMessages.size());
         assertTrue(errorMessages.get(0).getText().contains("mismatched input 'Build' expecting one of the following tokens:"));
     }
 
