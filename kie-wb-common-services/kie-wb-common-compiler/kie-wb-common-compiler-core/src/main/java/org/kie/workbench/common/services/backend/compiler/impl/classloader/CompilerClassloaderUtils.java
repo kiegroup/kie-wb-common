@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
 import java.io.File;
@@ -65,7 +66,8 @@ import org.uberfire.java.nio.file.Paths;
 public class CompilerClassloaderUtils {
 
     protected static final Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtils.class);
-    public static final String delimiter = SystemUtils.IS_OS_WINDOWS ? ";" : ":";
+
+    private static final String delimiter = SystemUtils.IS_OS_WINDOWS ? ";" : ":";
 
     private CompilerClassloaderUtils() {
     }
@@ -81,7 +83,13 @@ public class CompilerClassloaderUtils {
                                                                           String settingsXmlPath) {
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH));
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
+        WorkspaceCompilationInfo info;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            info = new WorkspaceCompilationInfo(Paths.get(CommonConstants.FILE_URI + prjPath));
+        } else {
+            URI uri = URI.create(CommonConstants.FILE + prjPath);
+            info = new WorkspaceCompilationInfo(Paths.get(java.nio.file.Paths.get(uri).toString()));
+        }
         CompilationRequest req;
         if (settingsXmlPath != null) {
             req = new DefaultCompilationRequest(localRepo,
@@ -241,17 +249,22 @@ public class CompilerClassloaderUtils {
     public static List<URI> readAllDepsAsUris(List<String> prjDeps) {
         List<URI> deps = new ArrayList<>();
         for (String dep : prjDeps) {
-            try {
-                deps.add(new URI(dep));
-            } catch (URISyntaxException e) {
-                logger.error(e.getMessage());
+            if (SystemUtils.IS_OS_WINDOWS) {
+                deps.add(new File(dep).toURI());
+            } else {
+                try {
+                    deps.add(new URI(dep));
+                } catch (URISyntaxException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return deps;
     }
 
     public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
-        Set<String> items = process(depsModules, delimiter);
+        Set<String> items = process(depsModules,
+                                    delimiter);
         return new ArrayList<>(items);
     }
 
@@ -264,9 +277,9 @@ public class CompilerClassloaderUtils {
             while (token.hasMoreElements()) {
                 String item = token.nextToken(delim);
                 if (item.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
-                    if(SystemUtils.IS_OS_WINDOWS){
+                    if (SystemUtils.IS_OS_WINDOWS) {
                         items.add(item);
-                    }else {
+                    } else {
                         StringBuilder sb = new StringBuilder(CommonConstants.FILE).append(item);
                         items.add(sb.toString());
                     }
