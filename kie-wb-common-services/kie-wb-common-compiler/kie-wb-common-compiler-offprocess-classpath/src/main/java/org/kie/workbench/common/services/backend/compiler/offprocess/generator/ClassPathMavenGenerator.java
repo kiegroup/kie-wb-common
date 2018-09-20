@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,16 +40,16 @@ import org.slf4j.LoggerFactory;
  */
 public class ClassPathMavenGenerator {
 
-    private static Logger logger = LoggerFactory.getLogger(ClassPathMavenGenerator.class);
     private static final String servicesMod = "kie-wb-common-services",
-    compilerMod = "kie-wb-common-compiler",
-    offprocessMod = "kie-wb-common-compiler-offprocess-classpath",
-    cpathPathFile = "offprocess.cpath",
-    classPathFile = "offprocess.classpath.template",
-    TARGET = "target",
-    MAVEN_REPO_PLACEHOLDER = "<maven_repo>",
-    JAR_EXT = ".jar",
-    SEP = File.separator;
+            compilerMod = "kie-wb-common-compiler",
+            offprocessMod = "kie-wb-common-compiler-offprocess-classpath",
+            cpathPathFile = "offprocess.cpath",
+            classPathFile = "offprocess.classpath.template",
+            TARGET = "target",
+            MAVEN_REPO_PLACEHOLDER = "<maven_repo>",
+            JAR_EXT = ".jar",
+            SEP = File.separator;
+    private static Logger logger = LoggerFactory.getLogger(ClassPathMavenGenerator.class);
 
     public static void main(String[] args) throws Exception {
         String kieVersion = args[0];
@@ -63,44 +64,65 @@ public class ClassPathMavenGenerator {
         Path filePath = Paths.get(sb.toString());
 
         String content = new String(Files.readAllBytes(filePath));
-        String replaced = content.replace(mavenRepo, MAVEN_REPO_PLACEHOLDER);
-        replaced = replaceTargetInTheClassPathFile(kieVersion, replaced);
+        logger.info("content template:{}",
+                    content);
+        String replaced = content.replace(mavenRepo,
+                                          MAVEN_REPO_PLACEHOLDER);
+        replaced = replaceTargetInTheClassPathFile(kieVersion,
+                                                   replaced);
 
         StringBuilder sbo = new StringBuilder();
-                    sbo.append(pwd.toAbsolutePath()).append(SEP).
-                            append(servicesMod).append(SEP).
-                            append(compilerMod).append(SEP).
-                            append(offprocessMod).append(SEP).
-                            append(TARGET).append(SEP).
-                            append("classes").append(SEP).
-                            append(classPathFile);
+        sbo.append(pwd.toAbsolutePath()).append(SEP).
+                append(servicesMod).append(SEP).
+                append(compilerMod).append(SEP).
+                append(offprocessMod).append(SEP).
+                append(TARGET).append(SEP).
+                append("classes").append(SEP).
+                append(classPathFile);
         Path offProcessModule = Paths.get(sbo.toString());
-        write(offProcessModule.toAbsolutePath().toString(), replaced);
-        logger.info("\n************************************\nSaving {} to {} \n************************************\n\n",classPathFile, offProcessModule.toAbsolutePath().toString());
+        write(offProcessModule.toAbsolutePath().toString(),
+              replaced);
+        logger.info("\n************************************\nSaving {} to {} \n************************************\n\n",
+                    classPathFile,
+                    offProcessModule.toAbsolutePath().toString());
     }
 
-    private static String replaceTargetInTheClassPathFile(String kieVersion, String replaced) {
-        String[] deps = replaced.split(":");
+    private static String replaceTargetInTheClassPathFile(String kieVersion,
+                                                          String replaced) {
+        String delimiter = SystemUtils.IS_OS_WINDOWS ? ";" : ":";
+        String[] deps = replaced.split(delimiter);
         int i = 0;
-        for(String dep : deps){
-            if(dep.contains(TARGET)){
-                cleanFromTarget(kieVersion, deps, i, dep);
+        for (String dep : deps) {
+            if (dep.contains(TARGET)) {
+                cleanFromTarget(kieVersion,
+                                deps,
+                                i,
+                                dep);
             }
             i++;
         }
-        return String.join(":", deps);
+        return String.join(delimiter,
+                           deps);
     }
 
-    private static void cleanFromTarget(String kieVersion, String[] deps, int i, String dep) {
+    private static void cleanFromTarget(String kieVersion,
+                                        String[] deps,
+                                        int i,
+                                        String dep) {
         String tmp = dep.substring(dep.lastIndexOf(TARGET) + 6);
-        String jarTmp = tmp.substring(0, tmp.indexOf(JAR_EXT));
-        String artifact = jarTmp.substring(jarTmp.lastIndexOf(File.separator)+1);
-        String artifactNoVersionTmp = artifact.replace(kieVersion,"");
-        String artifactNoVersion = artifactNoVersionTmp.substring(0,artifactNoVersionTmp.length() - 1);
-        deps[i] = composeNewDependencyString(kieVersion, artifactNoVersion);
+        String jarTmp = tmp.substring(0,
+                                      tmp.indexOf(JAR_EXT));
+        String artifact = jarTmp.substring(jarTmp.lastIndexOf(File.separator) + 1);
+        String artifactNoVersionTmp = artifact.replace(kieVersion,
+                                                       "");
+        String artifactNoVersion = artifactNoVersionTmp.substring(0,
+                                                                  artifactNoVersionTmp.length() - 1);
+        deps[i] = composeNewDependencyString(kieVersion,
+                                             artifactNoVersion);
     }
 
-    private static String composeNewDependencyString(String kieVersion, String artifactNoVersion) {
+    private static String composeNewDependencyString(String kieVersion,
+                                                     String artifactNoVersion) {
         StringBuilder sbi = new StringBuilder();
         sbi.append(MAVEN_REPO_PLACEHOLDER).
                 append(SEP).
@@ -110,14 +132,18 @@ public class ClassPathMavenGenerator {
         return sbi.toString();
     }
 
-    private static void write(String filename, String content) throws IOException {
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+    private static void write(String filename,
+                              String content) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             writer.write(content);
         }
     }
 
     public static String getMavenRepo() throws Exception {
-        List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
+        List<String> repos = Arrays.asList("M2_REPO",
+                                           "MAVEN_REPO_LOCAL",
+                                           "MAVEN_REPO",
+                                           "M2_REPO_LOCAL");
         String mavenRepo = "";
         for (String repo : repos) {
             if (System.getenv(repo) != null) {
@@ -129,12 +155,14 @@ public class ClassPathMavenGenerator {
     }
 
     public static Path createMavenRepo() throws Exception {
-        Path mavenRepository = Paths.get(System.getProperty("user.home"), ".m2/repository");
+        Path mavenRepository = Paths.get(System.getProperty("user.home"),
+                                         ".m2/repository");
         if (!Files.exists(mavenRepository)) {
             logger.info("Creating a m2_repo into " + mavenRepository);
             if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
-                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
+                logger.error("Folder not writable to create Maven repo{}",
+                             mavenRepository);
+                throw new Exception("Folder not writable to create Maven repo:" + mavenRepository);
             }
         }
         return mavenRepository;

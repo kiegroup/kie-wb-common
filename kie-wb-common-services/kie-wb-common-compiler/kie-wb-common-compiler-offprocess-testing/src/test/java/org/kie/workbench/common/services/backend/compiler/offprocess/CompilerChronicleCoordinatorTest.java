@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
+import java.net.URL;
 import java.util.UUID;
 
 import net.openhft.chronicle.core.io.IOTools;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,6 +35,7 @@ import org.kie.workbench.common.services.backend.compiler.offprocess.impl.Compil
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.QueueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
@@ -47,13 +51,20 @@ public class CompilerChronicleCoordinatorTest {
     private static QueueProvider queueProvider;
 
     @BeforeClass
-    public static void setup() throws Exception{
+    public static void setup() throws Exception {
         queueProvider = new QueueProvider(queueName);
-        logger.info("queue on test setup:{}", queueProvider.getAbsolutePath());
+        logger.info("queue on test setup:{}",
+                    queueProvider.getAbsolutePath());
         mavenRepo = TestUtilMaven.getMavenRepo();
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
-        prjPath = Paths.get("file://"+System.getProperty("user.dir")+"/target/test-classes/kjar-2-single-resources");
+        System.setProperty("org.uberfire.nio.git.daemon.enabled",
+                           "false");
+        System.setProperty("org.uberfire.nio.git.ssh.enabled",
+                           "false");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            prjPath = Paths.get(new URL("file:/" + System.getProperty("user.dir") + "/target/test-classes/kjar-2-single-resources").toURI());
+        } else {
+            prjPath = Paths.get("file://" + System.getProperty("user.dir") + "/target/test-classes/kjar-2-single-resources");
+        }
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
@@ -75,20 +86,26 @@ public class CompilerChronicleCoordinatorTest {
                                                                        MavenCLIArgs.COMPILE,
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
-                                                               Boolean.FALSE, uuid);
+                                                               Boolean.FALSE,
+                                                               uuid);
         CompilationResponse res = compiler.compile(req);
         logger.info("offProcessOneBuildTest first build completed");
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase(kres.getRequestUUID());
     }
 
     @Test
     public void offProcessTwoBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
+        /*if(SystemUtils.IS_OS_WINDOWS){
+            info = new WorkspaceCompilationInfo(prjPath);
+        }else{
+            info = new WorkspaceCompilationInfo(Paths.get(prjPath.toAbsolutePath().toString().replace("\\","/")));
+        }*/
 
         // First Build
         String uuid = UUID.randomUUID().toString();
@@ -98,14 +115,15 @@ public class CompilerChronicleCoordinatorTest {
                                                                        MavenCLIArgs.COMPILE,
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
-                                                               Boolean.FALSE, uuid);
+                                                               Boolean.FALSE,
+                                                               uuid);
         CompilationResponse res = compiler.compile(req);
         logger.info("offProcessTwoBuildTest first build completed");
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase(kres.getRequestUUID());
 
         // Second Build
         String secondUuid = UUID.randomUUID().toString();
@@ -115,7 +133,8 @@ public class CompilerChronicleCoordinatorTest {
                                                                                         MavenCLIArgs.COMPILE,
                                                                                         MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                                 },
-                                                                                Boolean.FALSE, secondUuid);
+                                                                                Boolean.FALSE,
+                                                                                secondUuid);
         CompilationResponse secondRes = compiler.compile(secondRequest);
         logger.info("offProcessTwoBuildTest second build completed");
         assertThat(secondRes).isNotNull();

@@ -40,10 +40,10 @@ import org.slf4j.LoggerFactory;
  */
 public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
-    private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
     private static final String placeholder = "<maven_repo>";
     private static final String mavenModuleName = "kie-wb-common-compiler-offprocess-core";
     private static final String classpathFile = "offprocess.classpath.template";
+    private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
     private String javaHome;
     private String javaBin;
     private String classpathTemplate;
@@ -58,30 +58,33 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         this.queueName = provider.getAbsolutePath();
         this.provider = provider;
         responseMap = new ResponseSharedMap();
-        clientIPC = new ClientIPCImpl(responseMap, provider);
+        clientIPC = new ClientIPCImpl(responseMap,
+                                      provider);
         javaHome = System.getProperty("java.home");
         javaBin = javaHome + File.separator + "bin" + File.separator + "java";
         try {
-            classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream(classpathFile), StandardCharsets.UTF_8);
+            classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream(classpathFile),
+                                                 StandardCharsets.UTF_8);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            logger.error(e.getMessage(),
+                         e);
         }
     }
 
     @Override
     public CompilationResponse compile(CompilationRequest req) {
         return internalBuild(req.getMavenRepo(),
-                             req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                             getAlternateSettings(req.getOriginalArgs()),  req.getRequestUUID());
+                             req.getInfo().getPrjPath().toAbsolutePath().toString().replace("\\",
+                                                                                            "/"),
+                             getAlternateSettings(req.getOriginalArgs()),
+                             req.getRequestUUID());
     }
 
-
-    private String getKieVersion(){
+    private String getKieVersion() {
         ConfigurationPropertiesStrategy prop = new ConfigurationPropertiesStrategy();
         Map<ConfigurationKey, String> conf = prop.loadConfiguration();
         return conf.get(ConfigurationKey.KIE_VERSION);
     }
-
 
     private String getAlternateSettings(String[] args) {
         for (String arg : args) {
@@ -92,17 +95,28 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         return "";
     }
 
-    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath, String uuid) {
-        String classpath = classpathTemplate.replace(placeholder, mavenRepo);
+    private CompilationResponse internalBuild(String mavenRepo,
+                                              String projectPath,
+                                              String alternateSettingsAbsPath,
+                                              String uuid) {
+        String classpath = classpathTemplate.replace(placeholder,
+                                                     mavenRepo);
         try {
-            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, queueName);
-            if(logger.isDebugEnabled()) {
+            invokeServerBuild(mavenRepo,
+                              projectPath,
+                              uuid,
+                              classpath,
+                              alternateSettingsAbsPath,
+                              queueName);
+            if (logger.isDebugEnabled()) {
                 logger.debug("invokeServerBuild completed");
             }
             return getCompilationResponse(uuid);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return new DefaultKieCompilationResponse(false, "");
+            logger.error(e.getMessage(),
+                         e);
+            return new DefaultKieCompilationResponse(false,
+                                                     "");
         }
     }
 
@@ -111,16 +125,23 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         if (res != null) {
             return res;
         } else {
-            return new DefaultKieCompilationResponse(true, "");
+            return new DefaultKieCompilationResponse(true,
+                                                     "");
         }
     }
 
-    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, String queueName) throws Exception {
+    private void invokeServerBuild(String mavenRepo,
+                                   String projectPath,
+                                   String uuid,
+                                   String classpath,
+                                   String alternateSettingsAbsPath,
+                                   String queueName) throws Exception {
         String[] commandArrayServer =
                 {
                         javaBin,
                         "-cp",
-                        getClasspathIncludedCurrentModuleDep(mavenRepo, classpath),
+                        getClasspathIncludedCurrentModuleDep(mavenRepo,
+                                                             classpath),
                         "-Dorg.uberfire.nio.git.daemon.enabled=false",
                         "-Dorg.uberfire.nio.ssh.daemon.enabled=false",
                         ServerIPCImpl.class.getCanonicalName(),
@@ -131,7 +152,8 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
                         queueName
                 };
         if (logger.isDebugEnabled()) {
-            logger.debug("************************** \n Invoking server in a separate process with args: \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n**************************", commandArrayServer);
+            logger.debug("************************** \n Invoking server in a separate process with args: \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n**************************",
+                         commandArrayServer);
         }
         ProcessBuilder serverPb = new ProcessBuilder(commandArrayServer);
         serverPb.directory(new File(projectPath));
@@ -140,7 +162,8 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         writeStdOut(serverPb);
     }
 
-    private String getClasspathIncludedCurrentModuleDep(String mavenRepo, String classpath){
+    private String getClasspathIncludedCurrentModuleDep(String mavenRepo,
+                                                        String classpath) {
         StringBuilder sb = new StringBuilder();
         this.getClass().getPackage();
         sb.append(mavenRepo).
@@ -153,7 +176,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
                 append(File.separator).append(mavenModuleName).
                 append("-").append(kieVersion).append(".jar").append(":").
                 append(classpath);
-        return  sb.toString();
+        return sb.toString();
     }
 
     private void writeStdOut(ProcessBuilder builder) throws Exception {
