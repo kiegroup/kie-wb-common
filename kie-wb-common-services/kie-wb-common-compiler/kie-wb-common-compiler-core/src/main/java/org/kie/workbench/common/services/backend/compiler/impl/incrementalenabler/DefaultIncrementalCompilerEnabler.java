@@ -15,9 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +36,6 @@ import org.uberfire.java.nio.file.Paths;
 public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEnabler {
 
     private final String POM_NAME = "pom.xml";
-    protected String FILE_URI = "file://";
     private boolean isValidConfiguration;
     private DefaultPomEditor editor;
 
@@ -58,8 +54,6 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
             return new ProcessedPoms(Boolean.FALSE,
                                      Collections.emptyList());
         }
-        //Path mainPom = Paths.get(URI.create(FILE_URI + req.getKieCliRequest().getWorkingDirectory() + "/" + POM_NAME));
-        //URI uri = URI.create("file:"+req.getKieCliRequest().getWorkingDirectory());
         Path mainPom = Paths.get(req.getKieCliRequest().getWorkingDirectory(),
                                  POM_NAME);
         if (!Files.isReadable(mainPom)) {
@@ -89,7 +83,6 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
 
         boolean result = true;
         for (String pom : poms) {
-            //Path tmpPom = Paths.get(URI.create(FILE_URI + pom));
             Path tmpPom = Paths.get(pom);
             PomPlaceHolder tmpPlaceHolder = editor.readSingle(tmpPom);
             if (!isPresent(tmpPlaceHolder)) {

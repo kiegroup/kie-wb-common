@@ -101,12 +101,6 @@ public class CompilerChronicleCoordinatorTest {
     public void offProcessTwoBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
-        /*if(SystemUtils.IS_OS_WINDOWS){
-            info = new WorkspaceCompilationInfo(prjPath);
-        }else{
-            info = new WorkspaceCompilationInfo(Paths.get(prjPath.toAbsolutePath().toString().replace("\\","/")));
-        }*/
-
         // First Build
         String uuid = UUID.randomUUID().toString();
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
