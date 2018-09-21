@@ -217,7 +217,7 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
             Node parent = WiresUtils.getNode(getCanvasHandler(), container);
 
             if (parent.getInEdges().size() == 0) {  // Add to the canvas horizontally
-                double shapeX = wiresShape.getComputedLocation().getX();
+                final double shapeX = wiresShape.getComputedLocation().getX();
 
                 final NFastArrayList<WiresShape> nChildren = container.getChildShapes().copy();
                 final List<WiresShape> children = nChildren.remove(wiresShape).toList();
@@ -232,7 +232,9 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
                     }
                 }
 
-                if (state.getOriginalIndex().isPresent()) {
+                //  if move a top level stage
+                if (state.getGhost().isPresent() && container.equals(state.getGhost().get().getParent())
+                        && state.getOriginalIndex().isPresent()) {
                     int oldIndex = state.getOriginalIndex().get();
                     targetIndex = targetIndex > oldIndex ? targetIndex - 1 : targetIndex;
                 }

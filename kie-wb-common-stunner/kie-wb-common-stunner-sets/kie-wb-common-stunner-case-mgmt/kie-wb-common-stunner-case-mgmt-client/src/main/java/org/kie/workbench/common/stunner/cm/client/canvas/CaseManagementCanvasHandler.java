@@ -162,7 +162,8 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
         if (!isRenderable(shape)) {
             return;
         }
-        super.applyElementMutation(shape, candidate, applyPosition, applyProperties, mutationContext);
+//        super.applyElementMutation(shape, candidate, applyPosition, applyProperties, mutationContext);
+        this.applyElementMutation(shape, candidate);
     }
 
     @Override
