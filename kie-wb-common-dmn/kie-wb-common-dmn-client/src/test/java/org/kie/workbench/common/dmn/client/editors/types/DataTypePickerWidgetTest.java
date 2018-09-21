@@ -24,9 +24,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.thirdparty.guava.common.collect.Ordering;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
+import org.jboss.errai.common.client.dom.Anchor;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public class DataTypePickerWidgetTest {
     private static final String WIDGET_VALUE = "[][string][feel]";
 
     @Mock
-    private Button typeButton;
+    private Anchor typeButton;
 
     @Mock
     private TranslationService translationService;
@@ -309,7 +309,6 @@ public class DataTypePickerWidgetTest {
     public void testDisable() {
         picker.setEnabled(false);
 
-        verify(typeButton).setEnabled(eq(false));
         verify(typeSelector).setEnabled(eq(false));
 
         assertFalse(picker.isEnabled());
@@ -319,7 +318,6 @@ public class DataTypePickerWidgetTest {
     public void testEnable() {
         picker.setEnabled(true);
 
-        verify(typeButton).setEnabled(eq(true));
         verify(typeSelector).setEnabled(eq(true));
 
         assertTrue(picker.isEnabled());

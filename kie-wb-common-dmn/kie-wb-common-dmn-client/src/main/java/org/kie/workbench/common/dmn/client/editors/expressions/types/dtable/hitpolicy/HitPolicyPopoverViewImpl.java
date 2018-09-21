@@ -17,24 +17,31 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
+import org.jboss.errai.common.client.dom.Div;
+import org.jboss.errai.common.client.dom.Span;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTableOrientation;
 import org.kie.workbench.common.dmn.api.definition.v1_1.HitPolicy;
+import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
+import org.uberfire.client.views.pfly.widgets.JQueryProducer;
+import org.uberfire.client.views.pfly.widgets.Popover;
+import org.uberfire.client.views.pfly.widgets.PopoverOptions;
 import org.uberfire.client.views.pfly.widgets.Select;
 import org.uberfire.mvp.Command;
 
 @Templated
 @ApplicationScoped
-public class HitPolicyEditorViewImpl implements HitPolicyEditorView {
-
-    private static final String OPEN = "open";
+public class HitPolicyPopoverViewImpl implements HitPolicyPopoverView {
 
     @DataField("lstHitPolicies")
     private Select lstHitPolicies;
@@ -45,23 +52,63 @@ public class HitPolicyEditorViewImpl implements HitPolicyEditorView {
     @DataField("lstDecisionTableOrientation")
     private Select lstDecisionTableOrientation;
 
+    @DataField("popover")
+    private Div popoverElement;
+
+    @DataField("popover-content")
+    private Div popoverContentElement;
+
+    @DataField("hitPolicyLabel")
+    private Span hitPolicyLabel;
+
+    @DataField("builtinAggregatorLabel")
+    private Span builtinAggregatorLabel;
+
+    @DataField("decisionTableOrientationLabel")
+    private Span decisionTableOrientationLabel;
+
     private BuiltinAggregatorUtils builtinAggregatorUtils;
 
-    private HitPolicyEditorView.Presenter presenter;
+    private JQueryProducer.JQuery<Popover> jQueryPopover;
 
-    public HitPolicyEditorViewImpl() {
+    private TranslationService translationService;
+
+    private Popover popover;
+
+    private HitPolicyPopoverView.Presenter presenter;
+
+    public HitPolicyPopoverViewImpl() {
         //CDI proxy
     }
 
     @Inject
-    public HitPolicyEditorViewImpl(final Select lstHitPolicies,
-                                   final Select lstBuiltinAggregator,
-                                   final Select lstDecisionTableOrientation,
-                                   final BuiltinAggregatorUtils builtinAggregatorUtils) {
+    public HitPolicyPopoverViewImpl(final Select lstHitPolicies,
+                                    final Select lstBuiltinAggregator,
+                                    final Select lstDecisionTableOrientation,
+                                    final BuiltinAggregatorUtils builtinAggregatorUtils,
+                                    final Div popoverElement,
+                                    final Div popoverContentElement,
+                                    final Span hitPolicyLabel,
+                                    final Span builtinAggregatorLabel,
+                                    final Span decisionTableOrientationLabel,
+                                    final JQueryProducer.JQuery<Popover> jQueryPopover,
+                                    final TranslationService translationService) {
         this.lstHitPolicies = lstHitPolicies;
         this.lstBuiltinAggregator = lstBuiltinAggregator;
         this.lstDecisionTableOrientation = lstDecisionTableOrientation;
         this.builtinAggregatorUtils = builtinAggregatorUtils;
+
+        this.popoverElement = popoverElement;
+        this.popoverContentElement = popoverContentElement;
+        this.hitPolicyLabel = hitPolicyLabel;
+        this.builtinAggregatorLabel = builtinAggregatorLabel;
+        this.decisionTableOrientationLabel = decisionTableOrientationLabel;
+        this.jQueryPopover = jQueryPopover;
+        this.translationService = translationService;
+
+        this.hitPolicyLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_HitPolicyLabel));
+        this.builtinAggregatorLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_BuiltinAggregatorLabel));
+        this.decisionTableOrientationLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_DecisionTableOrientationLabel));
 
         setupHitPolicyEventHandler();
         setupBuiltinAggregatorEventHandler();
@@ -101,7 +148,7 @@ public class HitPolicyEditorViewImpl implements HitPolicyEditorView {
     }
 
     @Override
-    public void init(final HitPolicyEditorView.Presenter presenter) {
+    public void init(final HitPolicyPopoverView.Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -169,12 +216,22 @@ public class HitPolicyEditorViewImpl implements HitPolicyEditorView {
     }
 
     @Override
-    public void show() {
-        getElement().getClassList().add(OPEN);
+    public void show(final Optional<String> editorTitle) {
+        final PopoverOptions options = new PopoverOptions();
+        options.setContent((element) -> popoverContentElement);
+        options.setHtml(true);
+
+        editorTitle.ifPresent(t -> popoverElement.setAttribute("title", t));
+        popover = jQueryPopover.wrap(this.getElement());
+        popover.popover(options);
+        popover.show();
     }
 
     @Override
     public void hide() {
-        getElement().getClassList().remove(OPEN);
+        if (Objects.nonNull(popover)) {
+            popover.hide();
+            popover.destroy();
+        }
     }
 }

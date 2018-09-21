@@ -17,13 +17,14 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.function.parameters;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
 import org.uberfire.client.mvp.UberElement;
 
-public interface ParametersEditorView extends org.jboss.errai.ui.client.local.api.IsElement,
-                                              UberElement<ParametersEditorView.Presenter> {
+public interface ParametersPopoverView extends org.jboss.errai.ui.client.local.api.IsElement,
+                                               UberElement<ParametersPopoverView.Presenter> {
 
     interface Presenter extends HasCellEditorControls.Editor<HasParametersControl> {
 
@@ -39,7 +40,7 @@ public interface ParametersEditorView extends org.jboss.errai.ui.client.local.ap
 
     void focusParameter(final int index);
 
-    void show();
+    void show(final Optional<String> editorTitle);
 
     void hide();
 }

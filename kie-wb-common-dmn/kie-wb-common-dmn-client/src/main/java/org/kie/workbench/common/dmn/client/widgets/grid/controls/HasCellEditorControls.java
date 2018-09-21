@@ -24,7 +24,7 @@ public interface HasCellEditorControls {
 
     interface Editor<T> extends IsElement {
 
-        void show();
+        void show(final Optional<String> editorTitle);
 
         void hide();
 

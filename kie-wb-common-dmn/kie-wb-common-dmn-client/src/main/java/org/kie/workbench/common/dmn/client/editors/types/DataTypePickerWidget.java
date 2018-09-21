@@ -33,9 +33,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
+import org.jboss.errai.common.client.dom.Anchor;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -60,7 +60,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     static final Comparator<ItemDefinition> ITEM_DEFINITION_COMPARATOR = Comparator.comparing(o -> o.getName().getValue());
 
     @DataField
-    private Button typeButton;
+    private Anchor typeButton;
 
     @DataField
     private Select typeSelector;
@@ -82,7 +82,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     }
 
     @Inject
-    public DataTypePickerWidget(final Button typeButton,
+    public DataTypePickerWidget(final Anchor typeButton,
                                 final TranslationService translationService,
                                 final QNameConverter qNameConverter,
                                 final DMNGraphUtils dmnGraphUtils,
@@ -218,7 +218,6 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
-        typeButton.setEnabled(enabled);
-        typeSelector.setEnabled(enabled);
+        this.typeSelector.setEnabled(enabled);
     }
 }

@@ -18,6 +18,8 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.function.p
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -32,12 +34,13 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.SinkNative;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
+import org.uberfire.client.views.pfly.widgets.JQueryProducer;
+import org.uberfire.client.views.pfly.widgets.Popover;
+import org.uberfire.client.views.pfly.widgets.PopoverOptions;
 
 @Templated
 @ApplicationScoped
-public class ParametersEditorViewImpl implements ParametersEditorView {
-
-    static final String OPEN = "open";
+public class ParametersPopoverViewImpl implements ParametersPopoverView {
 
     @DataField("parametersContainer")
     private Div parametersContainer;
@@ -45,22 +48,39 @@ public class ParametersEditorViewImpl implements ParametersEditorView {
     @DataField("addParameter")
     private Div addParameter;
 
+    @DataField("popover")
+    private Div popoverElement;
+
+    @DataField("popover-content")
+    private Div popoverContentElement;
+
+    private JQueryProducer.JQuery<Popover> jQueryPopover;
+
+    private Popover popover;
+
     private ManagedInstance<ParameterView> parameterViews;
     private final List<ParameterView> parameterViewInstances = new ArrayList<>();
 
     private Presenter presenter;
 
-    public ParametersEditorViewImpl() {
+    public ParametersPopoverViewImpl() {
         //CDI proxy
     }
 
     @Inject
-    public ParametersEditorViewImpl(final Div parametersContainer,
-                                    final Div addParameter,
-                                    final ManagedInstance<ParameterView> parameterViews) {
+    public ParametersPopoverViewImpl(final Div parametersContainer,
+                                     final Div addParameter,
+                                     final ManagedInstance<ParameterView> parameterViews,
+                                     final Div popoverElement,
+                                     final Div popoverContentElement,
+                                     final JQueryProducer.JQuery<Popover> jQueryPopover) {
         this.parametersContainer = parametersContainer;
         this.addParameter = addParameter;
         this.parameterViews = parameterViews;
+
+        this.popoverElement = popoverElement;
+        this.popoverContentElement = popoverContentElement;
+        this.jQueryPopover = jQueryPopover;
     }
 
     @Override
@@ -90,8 +110,23 @@ public class ParametersEditorViewImpl implements ParametersEditorView {
     }
 
     @Override
-    public void show() {
-        getElement().getClassList().add(OPEN);
+    public void show(final Optional<String> editorTitle) {
+        final PopoverOptions options = new PopoverOptions();
+        options.setContent((element) -> popoverContentElement);
+        options.setHtml(true);
+
+        editorTitle.ifPresent(t -> popoverElement.setAttribute("title", t));
+        popover = jQueryPopover.wrap(this.getElement());
+        popover.popover(options);
+        popover.show();
+    }
+
+    @Override
+    public void hide() {
+        if (Objects.nonNull(popover)) {
+            popover.hide();
+            popover.destroy();
+        }
     }
 
     @Override
@@ -100,11 +135,6 @@ public class ParametersEditorViewImpl implements ParametersEditorView {
             return;
         }
         parameterViewInstances.get(index).focus();
-    }
-
-    @Override
-    public void hide() {
-        getElement().getClassList().remove(OPEN);
     }
 
     @EventHandler("addParameter")
