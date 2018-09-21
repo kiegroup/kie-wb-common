@@ -111,8 +111,17 @@ public class DefaultAdminPageHelper {
                              artifactRepositoryPreferencesEnabled);
         addGeneralPreferences();
         addStunnerPreferences(stunnerEnabled);
-        addExperimentalPreferences();
-        addSSHKeys();
+        addProfilesPreferences(); 
+    }
+    
+    private void addProfilesPreferences() {
+        adminPage.addPreference("root",
+                "ProfilesPreferences",
+                translationService.format(PreferencesConstants.ProfilesPreferences_Title),
+                "fa-list",
+                "general",
+                scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
+                AdminPageOptions.WITH_BREADCRUMBS);
     }
 
     private void addGeneralPreferences() {

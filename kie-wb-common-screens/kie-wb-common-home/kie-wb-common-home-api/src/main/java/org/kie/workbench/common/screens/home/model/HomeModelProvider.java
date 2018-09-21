@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.screens.home.model;
 
+import org.kie.workbench.common.profile.api.preferences.ProfilesPreferences;
+
 public interface HomeModelProvider {
 
-    HomeModel get();
+    HomeModel get(ProfilesPreferences profilesPreferences);
 }
