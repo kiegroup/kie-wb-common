@@ -17,15 +17,15 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTableOrientation;
 import org.kie.workbench.common.dmn.api.definition.v1_1.HitPolicy;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.popover.PopoverView;
 import org.uberfire.client.mvp.UberElement;
 
-public interface HitPolicyPopoverView extends org.jboss.errai.ui.client.local.api.IsElement,
+public interface HitPolicyPopoverView extends PopoverView,
                                               UberElement<HitPolicyPopoverView.Presenter> {
 
     interface Presenter extends HasCellEditorControls.Editor<HasHitPolicyControl> {
@@ -54,8 +54,4 @@ public interface HitPolicyPopoverView extends org.jboss.errai.ui.client.local.ap
     void enableBuiltinAggregators(final boolean enabled);
 
     void enableDecisionTableOrientation(final boolean enabled);
-
-    void show(final Optional<String> editorTitle);
-
-    void hide();
 }

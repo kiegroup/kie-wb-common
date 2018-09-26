@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-.kie-dmn-cell-editor-controls {
-  position: absolute;
-  //Prevent text selection by double-click (of underlying cell and consequent display of editor controls)
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+package org.kie.workbench.common.dmn.client.widgets.grid.controls.popover;
+
+import java.util.Optional;
+
+public interface PopoverView extends org.jboss.errai.ui.client.local.api.IsElement {
+
+    void show(final Optional<String> editorTitle);
+
+    void hide();
 }

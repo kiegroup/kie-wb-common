@@ -16,9 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -33,13 +30,13 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.popover.AbstractPopoverViewImpl;
 import org.uberfire.client.views.pfly.widgets.JQueryProducer;
 import org.uberfire.client.views.pfly.widgets.Popover;
-import org.uberfire.client.views.pfly.widgets.PopoverOptions;
 
 @Templated
 @ApplicationScoped
-public class NameAndDataTypePopoverViewImpl implements NameAndDataTypePopoverView {
+public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl implements NameAndDataTypePopoverView {
 
     @DataField("nameEditor")
     private Input nameEditor;
@@ -47,23 +44,11 @@ public class NameAndDataTypePopoverViewImpl implements NameAndDataTypePopoverVie
     @DataField("typeRefSelector")
     private DataTypePickerWidget typeRefEditor;
 
-    @DataField("popover")
-    private Div popoverElement;
-
-    @DataField("popover-content")
-    private Div popoverContentElement;
-
     @DataField("nameLabel")
     private Span nameLabel;
 
     @DataField("dataTypeLabel")
     private Span dataTypeLabel;
-
-    private JQueryProducer.JQuery<Popover> jQueryPopover;
-
-    private TranslationService translationService;
-
-    private Popover popover;
 
     private Presenter presenter;
 
@@ -80,6 +65,10 @@ public class NameAndDataTypePopoverViewImpl implements NameAndDataTypePopoverVie
                                           final Span dataTypeLabel,
                                           final JQueryProducer.JQuery<Popover> jQueryPopover,
                                           final TranslationService translationService) {
+        super(popoverElement,
+              popoverContentElement,
+              jQueryPopover);
+
         this.nameEditor = nameEditor;
         this.typeRefEditor = typeRefEditor;
         this.popoverElement = popoverElement;
@@ -87,7 +76,6 @@ public class NameAndDataTypePopoverViewImpl implements NameAndDataTypePopoverVie
         this.nameLabel = nameLabel;
         this.dataTypeLabel = dataTypeLabel;
         this.jQueryPopover = jQueryPopover;
-        this.translationService = translationService;
 
         this.nameLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.NameAndDataTypePopover_NameLabel));
         this.dataTypeLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.NameAndDataTypePopover_DataTypeLabel));
@@ -114,26 +102,6 @@ public class NameAndDataTypePopoverViewImpl implements NameAndDataTypePopoverVie
     public void initSelectedTypeRef(final QName typeRef) {
         typeRefEditor.setValue(typeRef,
                                false);
-    }
-
-    @Override
-    public void show(final Optional<String> editorTitle) {
-        final PopoverOptions options = new PopoverOptions();
-        options.setContent((element) -> popoverContentElement);
-        options.setHtml(true);
-
-        editorTitle.ifPresent(t -> popoverElement.setAttribute("title", t));
-        popover = jQueryPopover.wrap(this.getElement());
-        popover.popover(options);
-        popover.show();
-    }
-
-    @Override
-    public void hide() {
-        if (Objects.nonNull(popover)) {
-            popover.hide();
-            popover.destroy();
-        }
     }
 
     @EventHandler("nameEditor")

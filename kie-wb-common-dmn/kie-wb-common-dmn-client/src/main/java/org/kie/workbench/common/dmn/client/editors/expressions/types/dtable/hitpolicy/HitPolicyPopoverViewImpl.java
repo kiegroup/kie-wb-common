@@ -17,8 +17,6 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -33,15 +31,15 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTableOrientation;
 import org.kie.workbench.common.dmn.api.definition.v1_1.HitPolicy;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.popover.AbstractPopoverViewImpl;
 import org.uberfire.client.views.pfly.widgets.JQueryProducer;
 import org.uberfire.client.views.pfly.widgets.Popover;
-import org.uberfire.client.views.pfly.widgets.PopoverOptions;
 import org.uberfire.client.views.pfly.widgets.Select;
 import org.uberfire.mvp.Command;
 
 @Templated
 @ApplicationScoped
-public class HitPolicyPopoverViewImpl implements HitPolicyPopoverView {
+public class HitPolicyPopoverViewImpl extends AbstractPopoverViewImpl implements HitPolicyPopoverView {
 
     @DataField("lstHitPolicies")
     private Select lstHitPolicies;
@@ -51,12 +49,6 @@ public class HitPolicyPopoverViewImpl implements HitPolicyPopoverView {
 
     @DataField("lstDecisionTableOrientation")
     private Select lstDecisionTableOrientation;
-
-    @DataField("popover")
-    private Div popoverElement;
-
-    @DataField("popover-content")
-    private Div popoverContentElement;
 
     @DataField("hitPolicyLabel")
     private Span hitPolicyLabel;
@@ -68,12 +60,6 @@ public class HitPolicyPopoverViewImpl implements HitPolicyPopoverView {
     private Span decisionTableOrientationLabel;
 
     private BuiltinAggregatorUtils builtinAggregatorUtils;
-
-    private JQueryProducer.JQuery<Popover> jQueryPopover;
-
-    private TranslationService translationService;
-
-    private Popover popover;
 
     private HitPolicyPopoverView.Presenter presenter;
 
@@ -93,18 +79,18 @@ public class HitPolicyPopoverViewImpl implements HitPolicyPopoverView {
                                     final Span decisionTableOrientationLabel,
                                     final JQueryProducer.JQuery<Popover> jQueryPopover,
                                     final TranslationService translationService) {
+        super(popoverElement,
+              popoverContentElement,
+              jQueryPopover);
+
         this.lstHitPolicies = lstHitPolicies;
         this.lstBuiltinAggregator = lstBuiltinAggregator;
         this.lstDecisionTableOrientation = lstDecisionTableOrientation;
         this.builtinAggregatorUtils = builtinAggregatorUtils;
 
-        this.popoverElement = popoverElement;
-        this.popoverContentElement = popoverContentElement;
         this.hitPolicyLabel = hitPolicyLabel;
         this.builtinAggregatorLabel = builtinAggregatorLabel;
         this.decisionTableOrientationLabel = decisionTableOrientationLabel;
-        this.jQueryPopover = jQueryPopover;
-        this.translationService = translationService;
 
         this.hitPolicyLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_HitPolicyLabel));
         this.builtinAggregatorLabel.setTextContent(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_BuiltinAggregatorLabel));
@@ -213,25 +199,5 @@ public class HitPolicyPopoverViewImpl implements HitPolicyPopoverView {
     @Override
     public void enableDecisionTableOrientation(final boolean enabled) {
         enableSelect(lstDecisionTableOrientation, enabled);
-    }
-
-    @Override
-    public void show(final Optional<String> editorTitle) {
-        final PopoverOptions options = new PopoverOptions();
-        options.setContent((element) -> popoverContentElement);
-        options.setHtml(true);
-
-        editorTitle.ifPresent(t -> popoverElement.setAttribute("title", t));
-        popover = jQueryPopover.wrap(this.getElement());
-        popover.popover(options);
-        popover.show();
-    }
-
-    @Override
-    public void hide() {
-        if (Objects.nonNull(popover)) {
-            popover.hide();
-            popover.destroy();
-        }
     }
 }

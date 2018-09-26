@@ -16,14 +16,13 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
-import java.util.Optional;
-
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.popover.PopoverView;
 import org.uberfire.client.mvp.UberElement;
 
-public interface NameAndDataTypePopoverView extends org.jboss.errai.ui.client.local.api.IsElement,
+public interface NameAndDataTypePopoverView extends PopoverView,
                                                     UberElement<NameAndDataTypePopoverView.Presenter> {
 
     interface Presenter extends HasCellEditorControls.Editor<HasNameAndTypeRef> {
@@ -38,8 +37,4 @@ public interface NameAndDataTypePopoverView extends org.jboss.errai.ui.client.lo
     void initName(final String name);
 
     void initSelectedTypeRef(final QName typeRef);
-
-    void show(final Optional<String> editorTitle);
-
-    void hide();
 }

@@ -27,6 +27,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,6 +74,9 @@ public class DataTypePickerWidgetTest {
 
     @Mock
     private Anchor typeButton;
+
+    @Mock
+    private Span manageLabel;
 
     @Mock
     private TranslationService translationService;
@@ -132,6 +136,7 @@ public class DataTypePickerWidgetTest {
         when(translationService.getTranslation(anyString())).thenAnswer(i -> i.getArguments()[0]);
 
         this.picker = spy(new DataTypePickerWidget(typeButton,
+                                                   manageLabel,
                                                    translationService,
                                                    qNameConverter,
                                                    dmnGraphUtils,
@@ -143,9 +148,11 @@ public class DataTypePickerWidgetTest {
     public void testInitialisation() {
         verify(typeSelector).setShowTick(eq(true));
         verify(typeSelector).setLiveSearch(eq(true));
-        verify(typeSelector).setLiveSearchPlaceholder(eq(DMNEditorConstants.TypePickerWidget_Choose));
         verify(typeSelectorElement).setAttribute(eq("data-container"), eq("body"));
         verify(typeSelector).refresh();
+
+        verify(typeSelector).setLiveSearchPlaceholder(eq(DMNEditorConstants.TypePickerWidget_Choose));
+        verify(manageLabel).setTextContent(eq(DMNEditorConstants.TypePickerWidget_Manage));
     }
 
     @Test
