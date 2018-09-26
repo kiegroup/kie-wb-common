@@ -21,6 +21,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
+import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.api.ClientDefinitionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
@@ -162,6 +163,11 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
         if (!isRenderable(shape)) {
             return;
         }
+
+        if (shape instanceof CaseManagementShape) {
+            ((CaseManagementShape) shape).getShapeView().refresh();
+        }
+
 //        super.applyElementMutation(shape, candidate, applyPosition, applyProperties, mutationContext);
         this.applyElementMutation(shape, candidate);
     }
