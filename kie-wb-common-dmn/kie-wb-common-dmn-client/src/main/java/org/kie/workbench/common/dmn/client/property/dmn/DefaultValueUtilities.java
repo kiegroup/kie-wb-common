@@ -70,7 +70,7 @@ public class DefaultValueUtilities {
         }
     }
 
-    public static long getMaxUnusedIndex(final Collection<String> values,
+    public static int getMaxUnusedIndex(final Collection<String> values,
                                          final String prefix) {
         int maxIndex = 0;
         for (final String value : values) {
