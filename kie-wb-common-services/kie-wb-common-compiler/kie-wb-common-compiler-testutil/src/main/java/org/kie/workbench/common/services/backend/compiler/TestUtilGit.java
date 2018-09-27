@@ -25,9 +25,10 @@ import org.slf4j.LoggerFactory;
 public class TestUtilGit extends ExternalResource {
 
     private static Logger logger = LoggerFactory.getLogger(TestUtilGit.class);
+    private static int SELECT_RANDOM_PORT_OPTION = 0;
 
     public static int findFreePort() {
-        try (ServerSocket socket = new ServerSocket(0)) {
+        try (ServerSocket socket = new ServerSocket(SELECT_RANDOM_PORT_OPTION)) {
             socket.setReuseAddress(true);
             int port = socket.getLocalPort();
             try {
