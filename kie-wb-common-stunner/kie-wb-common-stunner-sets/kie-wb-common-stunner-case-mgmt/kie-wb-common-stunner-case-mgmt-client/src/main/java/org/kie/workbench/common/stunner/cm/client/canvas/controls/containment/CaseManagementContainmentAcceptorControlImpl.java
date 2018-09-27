@@ -51,7 +51,7 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
 
     private final CaseManagementCanvasCommandFactory canvasCommandFactory;
     private final CaseManagementContainmentStateHolder state;
-    private final IContainmentAcceptor containmentAcceptor;
+    final IContainmentAcceptor containmentAcceptor;
 
     @Inject
     public CaseManagementContainmentAcceptorControlImpl(final @CaseManagementEditor CaseManagementCanvasCommandFactory canvasCommandFactory,
@@ -212,7 +212,7 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
                                      originalIndex);
         }
 
-        private int getAddIndex(final WiresShape wiresShape,
+        int getAddIndex(final WiresShape wiresShape,
                                 final WiresContainer container) {
             Node parent = WiresUtils.getNode(getCanvasHandler(), container);
 

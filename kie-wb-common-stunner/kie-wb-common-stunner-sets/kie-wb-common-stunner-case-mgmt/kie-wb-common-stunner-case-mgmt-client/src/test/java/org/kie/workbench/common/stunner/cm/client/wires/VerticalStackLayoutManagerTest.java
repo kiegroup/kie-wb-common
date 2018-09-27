@@ -53,20 +53,20 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
 
     @Test
     public void orderChildrenInsertShape0At0() {
-        //Mouse Y needs to be before target index Y as insertion happens when Shape is dragged before target
+        // Insert after the ghost, index = end - 1
         addShapeAtIndex(shapes.get(0),
                         shapes.get(0).getY() - PADDING);
         assertChildrenOrder(new Check(0,
-                                      0),
-                            new Check(1,
                                       1),
+                            new Check(1,
+                                      0),
                             new Check(2,
                                       2));
     }
 
     @Test
     public void orderChildrenInsertShape0At1() {
-        //Mouse Y needs to be after target index Y as insertion happens when Shape is dragged after target
+        // Insert after the ghost, index = end - 1
         addShapeAtIndex(shapes.get(0),
                         shapes.get(1).getY() + PADDING);
         assertChildrenOrder(new Check(0,
@@ -79,22 +79,9 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
 
     @Test
     public void orderChildrenInsertShape0At2() {
-        //Mouse Y needs to be after target index Y as insertion happens when Shape is dragged after target
+        // Insert after the ghost, index = end - 1
         addShapeAtIndex(shapes.get(0),
                         shapes.get(2).getY() + PADDING);
-        assertChildrenOrder(new Check(0,
-                                      2),
-                            new Check(1,
-                                      0),
-                            new Check(2,
-                                      1));
-    }
-
-    @Test
-    public void orderChildrenInsertShape1At0() {
-        //Mouse Y needs to be before target index Y as insertion happens when Shape is dragged before target
-        addShapeAtIndex(shapes.get(1),
-                        shapes.get(0).getY() - PADDING);
         assertChildrenOrder(new Check(0,
                                       1),
                             new Check(1,
@@ -104,8 +91,21 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
     }
 
     @Test
+    public void orderChildrenInsertShape1At0() {
+        // Insert after the ghost, index = end - 1
+        addShapeAtIndex(shapes.get(1),
+                        shapes.get(0).getY() - PADDING);
+        assertChildrenOrder(new Check(0,
+                                      0),
+                            new Check(1,
+                                      1),
+                            new Check(2,
+                                      2));
+    }
+
+    @Test
     public void orderChildrenInsertShape1At1() {
-        //Mouse Y needs to be after target index Y as insertion happens when Shape is dragged after target
+        // Insert after the ghost, index = end - 1
         addShapeAtIndex(shapes.get(1),
                         shapes.get(1).getY() + PADDING);
         assertChildrenOrder(new Check(0,
@@ -118,46 +118,46 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
 
     @Test
     public void orderChildrenInsertShape1At2() {
-        //Mouse Y needs to be after target index Y as insertion happens when Shape is dragged after target
+        // Insert after the ghost, index = end - 1
         addShapeAtIndex(shapes.get(1),
                         shapes.get(2).getY() + PADDING);
         assertChildrenOrder(new Check(0,
                                       0),
                             new Check(1,
-                                      2),
+                                      1),
                             new Check(2,
-                                      1));
+                                      2));
     }
 
     @Test
     public void orderChildrenInsertShape2At0() {
-        //Mouse Y needs to be before target index Y as insertion happens when Shape is dragged before target
+        // Insert at the ghost, index = end
         addShapeAtIndex(shapes.get(2),
                         shapes.get(0).getY() - PADDING);
         assertChildrenOrder(new Check(0,
-                                      1),
+                                      0),
                             new Check(1,
-                                      2),
+                                      1),
                             new Check(2,
-                                      0));
+                                      2));
     }
 
     @Test
     public void orderChildrenInsertShape2At1() {
-        //Mouse Y needs to be before target index Y as insertion happens when Shape is dragged before target
+        // Insert at the ghost, index = end
         addShapeAtIndex(shapes.get(2),
                         shapes.get(1).getY() - PADDING);
         assertChildrenOrder(new Check(0,
                                       0),
                             new Check(1,
-                                      2),
+                                      1),
                             new Check(2,
-                                      1));
+                                      2));
     }
 
     @Test
     public void orderChildrenInsertShape2At2() {
-        //Mouse Y needs to be after target index Y as insertion happens when Shape is dragged after target
+        // Insert at the ghost, index = end
         addShapeAtIndex(shapes.get(2),
                         shapes.get(2).getY() + PADDING);
         assertChildrenOrder(new Check(0,

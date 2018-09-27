@@ -16,45 +16,100 @@
 
 package org.kie.workbench.common.stunner.cm.factory;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
+import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
+import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
+import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
+import org.kie.workbench.common.stunner.core.rule.RuleManager;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CaseManagementGraphFactoryImplTest {
 
-//    @Mock
-//    private BPMNGraphFactory bpmnGraphFactory;
-//
-//    private CaseManagementGraphFactoryImpl factory;
-//
-//    @Before
-//    public void setup() {
-//        this.factory = new CaseManagementGraphFactoryImpl(bpmnGraphFactory);
-//    }
-//
-//    @Test
-//    public void assertSetDiagramType() {
-//        factory.init();
-//        verify(bpmnGraphFactory,
-//               times(1)).setDiagramType(eq(CaseManagementDiagram.class));
-//    }
-//
-//    @Test
-//    public void assertFactoryType() {
-//        // It is important that CaseManagementGraphFactoryImpl declares it relates to the CaseManagementGraphFactory
-//        // otherwise all sorts of things break. This test attempts to drawer the importance of this to future changes
-//        // should someone decide to change the apparent innocuous method in CaseManagementGraphFactoryImpl.
-//        assertEquals(CaseManagementGraphFactory.class,
-//                     factory.getFactoryType());
-//    }
-//
-//    @Test
-//    public void testBuild() {
-//        factory.init();
-//        factory.build("uuid1",
-//                      "defSet1");
-//        verify(bpmnGraphFactory,
-//               times(1)).build(eq("uuid1"),
-//                               eq("defSet1"));
-//    }
+    @Mock
+    private DefinitionManager definitionManager;
+    @Mock
+    private FactoryManager factoryManager;
+    @Mock
+    private RuleManager ruleManager;
+    @Mock
+    private GraphCommandManager graphCommandManager;
+    @Mock
+    private GraphCommandFactory graphCommandFactory;
+    @Mock
+    private GraphIndexBuilder<?> indexBuilder;
+
+    private CaseManagementGraphFactoryImpl factory;
+
+    @Before
+    public void setup() {
+        factory = new CaseManagementGraphFactoryImpl(definitionManager,
+                                                     factoryManager,
+                                                     ruleManager,
+                                                     graphCommandManager,
+                                                     graphCommandFactory,
+                                                     indexBuilder);
+    }
+
+    @Test
+    public void assertFactoryType() {
+        // It is important that CaseManagementGraphFactoryImpl declares it relates to the CaseManagementGraphFactory
+        // otherwise all sorts of things break. This test attempts to drawer the importance of this to future changes
+        // should someone decide to change the apparent innocuous method in CaseManagementGraphFactoryImpl.
+        assertEquals(CaseManagementGraphFactory.class,
+                     factory.getFactoryType());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testBuild() {
+        final Node diagramNode = mock(Node.class);
+        when(factoryManager.newElement(anyString(),
+                                       eq(CaseManagementDiagram.class))).thenReturn(diagramNode);
+
+        final Graph<DefinitionSet, Node> graph = factory.build("uuid1",
+                                                              "defSetId");
+        assertNotNull(graph);
+        assertEquals("uuid1",
+                     graph.getUUID());
+        assertEquals(1,
+                     graph.getLabels().size());
+        assertTrue(graph.getLabels().contains("defSetId"));
+        final ArgumentCaptor<Command> commandCaptor = ArgumentCaptor.forClass(Command.class);
+        verify(graphCommandFactory,
+               times(1)).addNode(eq(diagramNode));
+
+        verify(graphCommandManager,
+               times(1)).execute(any(GraphCommandExecutionContext.class),
+                                 commandCaptor.capture());
+        final Command command = commandCaptor.getValue();
+        assertTrue(command instanceof CompositeCommand);
+        final CompositeCommand compositeCommand = (CompositeCommand) command;
+        assertEquals(1,
+                     compositeCommand.size());
+    }
 }

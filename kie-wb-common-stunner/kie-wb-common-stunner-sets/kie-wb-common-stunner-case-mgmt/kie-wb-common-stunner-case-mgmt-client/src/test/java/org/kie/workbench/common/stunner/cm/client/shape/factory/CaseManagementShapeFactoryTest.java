@@ -16,223 +16,371 @@
 
 package org.kie.workbench.common.stunner.cm.client.shape.factory;
 
+import java.util.function.Consumer;
+
+import com.ait.lienzo.client.core.shape.MultiPath;
+import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.gwt.safehtml.shared.SafeUri;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnectorDef;
+import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.Lane;
+import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
+import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
+import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.cm.client.canvas.CaseManagementCanvasHandler;
+import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory;
+import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
+import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.client.shape.Shape;
+import org.kie.workbench.common.stunner.core.client.shape.factory.DelegateShapeFactory;
+import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeDefFunctionalFactory;
+import org.kie.workbench.common.stunner.core.client.shape.impl.AbstractElementShape;
+import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
+import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
+import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
+import org.kie.workbench.common.stunner.shapes.client.BasicConnectorShape;
+import org.kie.workbench.common.stunner.shapes.client.factory.BasicShapesFactory;
+import org.kie.workbench.common.stunner.shapes.client.view.AbstractConnectorView;
+import org.kie.workbench.common.stunner.shapes.client.view.PictureShapeView;
+import org.kie.workbench.common.stunner.shapes.client.view.ShapeViewFactory;
+import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeFactory;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeViewResource;
+import org.mockito.Mock;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyDouble;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementShapeFactoryTest {
 
-//    @Mock
-//    private DefinitionManager definitionManager;
-//
-//    @Mock
-//    private FactoryManager factoryManager;
-//
-//    @Mock
-//    private AdapterManager adapterManager;
-//
-//    @Mock
-//    private DefinitionAdapter definitionAdapter;
-//
-//    @Mock
-//    private ShapeViewFactory basicViewFactory;
-//
-//    @Mock
-//    private CaseManagementCanvasHandler canvasHandler;
-//
-//    @Mock
-//    private Glyph glyph;
-//
-//    @Mock
-//    private AbstractConnectorView connectorShapeView;
-//
-//    private Consumer<Shape> nullAssertions = (shape) -> {
-//        assertNotNull(shape.getShapeView());
-//        assertTrue(shape instanceof NullShape);
-//        assertTrue(shape.getShapeView() instanceof NullView);
-//        assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof OldCMNullShapeDef);
-//    };
-//
-//    private Consumer<Shape> stageAssertions = (shape) -> {
-//        assertNotNull(shape.getShapeView());
-//        assertTrue(shape instanceof CMContainerShape);
-//        assertTrue(shape.getShapeView() instanceof StageView);
-//        assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof OldCMSubprocessShapeDef);
-//    };
-//
-//    private Consumer<Shape> activityAssertions = (shape) -> {
-//        assertNotNull(shape.getShapeView());
-//        assertTrue(shape instanceof ActivityShape);
-//        assertTrue(shape.getShapeView() instanceof ActivityView);
-//        assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof OldCMTaskShapeDef);
-//    };
-//
-//    private Consumer<Shape> reusableSubprocessActivityAssertions = (shape) -> {
-//        assertNotNull(shape.getShapeView());
-//        assertTrue(shape instanceof ActivityShape);
-//        assertTrue(shape.getShapeView() instanceof ActivityView);
-//        assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof OldCMReusableSubprocessTaskShapeDef);
-//    };
-//
-//    private Consumer<Shape> connectorAssertions = (shape) -> {
-//        assertNotNull(shape.getShapeView());
-//        assertTrue(shape instanceof BasicConnectorShape);
-//        assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof SequenceFlowConnectorDef);
-//    };
-//
-//    private CaseManagementShapeFactory factory;
-//    private DelegateShapeFactory delegate;
-//    private CaseManagementShapeViewFactory cmShapeViewFactory;
-//    private PictureShapeView pictureShapeView;
-//
-//    @Before
-//    @SuppressWarnings("unchecked")
-//    public void setup() {
-//        this.pictureShapeView = new PictureShapeView(new MultiPath().rect(0,
-//                                                                          0,
-//                                                                          10,
-//                                                                          10));
-//        this.cmShapeViewFactory = new CaseManagementShapeViewFactory();
-//        final BasicShapesFactory basicShapesFactory = new BasicShapesFactory(new ShapeDefFunctionalFactory<>(),
-//                                                                             basicViewFactory);
-//        basicShapesFactory.init();
-//        final CaseManagementShapeDefFactory cmShapeDefFactory = new CaseManagementShapeDefFactory(cmShapeViewFactory,
-//                                                                                                  basicViewFactory,
-//                                                                                                  new ShapeDefFunctionalFactory<>());
-//        cmShapeDefFactory.init();
-//        this.delegate = spy(new DelegateShapeFactory());
-//        doReturn(glyph).when(delegate).getGlyph(anyString());
-//        this.factory = new CaseManagementShapeFactory(cmShapeDefFactory,
-//                                                      basicShapesFactory,
-//                                                      delegate);
-//        this.factory.init();
-//
-//        when(basicViewFactory.pictureFromUri(any(SafeUri.class),
-//                                             anyDouble(),
-//                                             anyDouble())).thenReturn(pictureShapeView);
-//        when(basicViewFactory.connector(anyDouble(),
-//                                        anyDouble(),
-//                                        anyDouble(),
-//                                        anyDouble())).thenReturn(connectorShapeView);
-//        when(definitionManager.adapters()).thenReturn(adapterManager);
-//        when(adapterManager.forDefinition()).thenReturn(definitionAdapter);
-//    }
-//
-//    @Test
-//    public void checkCMDiagram() {
-//        assertShapeConstruction(new CaseManagementDiagram(),
-//                                (shape) -> {
-//                                    assertNotNull(shape.getShapeView());
-//                                    assertTrue(shape instanceof CMContainerShape);
-//                                    assertTrue(shape.getShapeView() instanceof DiagramView);
-//                                    assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof CaseManagementSvgDiagramShapeDef);
-//                                });
-//        assertShapeGlyph(new CaseManagementDiagram());
-//    }
-//
-//    @Test
-//    public void checkLane() {
-//        assertShapeConstruction(new Lane(),
-//                                nullAssertions);
-//        assertShapeGlyph(new Lane());
-//    }
-//
-//    @Test
-//    public void checkNoneTask() {
-//        assertShapeConstruction(new NoneTask(),
-//                                activityAssertions);
-//        assertShapeGlyph(new NoneTask());
-//    }
-//
-//    @Test
-//    public void checkUserTask() {
-//        assertShapeConstruction(new UserTask(),
-//                                activityAssertions);
-//        assertShapeGlyph(new UserTask());
-//    }
-//
-//    @Test
-//    public void checkBusinessRuleTask() {
-//        assertShapeConstruction(new BusinessRuleTask(),
-//                                activityAssertions);
-//        assertShapeGlyph(new BusinessRuleTask());
-//    }
-//
-//    @Test
-//    public void checkStartNoneEvent() {
-//        assertShapeConstruction(new StartNoneEvent(),
-//                                nullAssertions);
-//        assertShapeGlyph(new StartNoneEvent());
-//    }
-//
-//    @Test
-//    public void checkEndNoneEvent() {
-//        assertShapeConstruction(new EndNoneEvent(),
-//                                nullAssertions);
-//        assertShapeGlyph(new EndNoneEvent());
-//    }
-//
-//    @Test
-//    public void checkEndTerminateEvent() {
-//        assertShapeConstruction(new EndTerminateEvent(),
-//                                nullAssertions);
-//        assertShapeGlyph(new EndTerminateEvent());
-//    }
-//
-//    @Test
-//    public void checkParallelGateway() {
-//        assertShapeConstruction(new ParallelGateway(),
-//                                nullAssertions);
-//        assertShapeGlyph(new ParallelGateway());
-//    }
-//
-//    @Test
-//    public void checkExclusiveDatabasedGateway() {
-//        assertShapeConstruction(new ExclusiveGateway(),
-//                                nullAssertions);
-//        assertShapeGlyph(new ExclusiveGateway());
-//    }
-//
-//    @Test
-//    public void checkAdHocSubprocess() {
-//        assertShapeConstruction(new AdHocSubprocess(),
-//                                stageAssertions);
-//        assertShapeGlyph(new AdHocSubprocess());
-//    }
-//
-//    @Test
-//    public void checkReusableSubprocess() {
-//        assertShapeConstruction(new ReusableSubprocess(),
-//                                reusableSubprocessActivityAssertions);
-//        assertShapeGlyph(new ReusableSubprocess());
-//    }
-//
-//    @Test
-//    public void checkSequenceFlow() {
-//        assertShapeConstruction(new SequenceFlow(),
-//                                connectorAssertions);
-//        assertShapeGlyph(new SequenceFlow());
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    private void assertShapeConstruction(final BPMNDefinition definition,
-//                                         final Consumer<Shape> o) {
-//        when(definitionAdapter.getId(eq(definition))).thenReturn(definition.getClass().getName());
-//
-//        final Shape<? extends ShapeView> shape = factory.newShape(definition);
-//        assertNotNull(shape);
-//        assertNotNull(((AbstractElementShape) shape).getShapeDefinition());
-//
-//        o.accept(shape);
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    private void assertShapeGlyph(final BPMNDefinition definition) {
-//        final String id = BindableAdapterUtils.getDefinitionId(definition.getClass());
-//        final Glyph glyph = factory.getGlyph(id);
-//        verify(delegate,
-//               times(1)).getGlyph(eq(id));
-//        assertEquals(this.glyph,
-//                     glyph);
-//    }
+    @Mock
+    private DefinitionManager definitionManager;
+
+    @Mock
+    private FactoryManager factoryManager;
+
+    @Mock
+    private AdapterManager adapterManager;
+
+    @Mock
+    private DefinitionAdapter definitionAdapter;
+
+    @Mock
+    private ShapeViewFactory basicViewFactory;
+
+    @Mock
+    private CaseManagementCanvasHandler canvasHandler;
+
+    @Mock
+    private Glyph glyph;
+
+    @Mock
+    private AbstractConnectorView connectorShapeView;
+
+    @Mock
+    private SyncBeanManager beanManager;
+
+    private SVGPrimitiveShape stageShape;
+    private SVGPrimitiveShape taskShape;
+    private SVGPrimitiveShape subprocessShape;
+    private SVGPrimitiveShape subcaseShape;
+    private SVGPrimitiveShape rectangleShape;
+
+    private Consumer<Shape> stageAssertions = (shape) -> {
+        assertNotNull(shape.getShapeView());
+        assertTrue(shape instanceof CaseManagementShape);
+        assertTrue(shape.getShapeView() instanceof CaseManagementShapeView);
+        assertSame(((CaseManagementShapeView) shape.getShapeView()).getPrimitive(),
+                   stageShape);
+    };
+
+    private Consumer<Shape> taskAssertions = (shape) -> {
+        assertNotNull(shape.getShapeView());
+        assertTrue(shape instanceof CaseManagementShape);
+        assertTrue(shape.getShapeView() instanceof CaseManagementShapeView);
+        assertSame(((CaseManagementShapeView) shape.getShapeView()).getPrimitive(),
+                   taskShape);
+    };
+
+    private Consumer<Shape> reusableSubprocessAssertions = (shape) -> {
+        assertNotNull(shape.getShapeView());
+        assertTrue(shape instanceof CaseManagementShape);
+        assertTrue(shape.getShapeView() instanceof CaseManagementShapeView);
+        assertSame(((CaseManagementShapeView) shape.getShapeView()).getPrimitive(),
+                   subcaseShape);
+    };
+
+    private Consumer<Shape> embeddedSubprocessAssertions = (shape) -> {
+        assertNotNull(shape.getShapeView());
+        assertTrue(shape instanceof CaseManagementShape);
+        assertTrue(shape.getShapeView() instanceof CaseManagementShapeView);
+        assertSame(((CaseManagementShapeView) shape.getShapeView()).getPrimitive(),
+                   subprocessShape);
+    };
+
+    private Consumer<Shape> connectorAssertions = (shape) -> {
+        assertNotNull(shape.getShapeView());
+        assertTrue(shape instanceof BasicConnectorShape);
+        assertTrue(((AbstractElementShape) shape).getShapeDefinition() instanceof SequenceFlowConnectorDef);
+    };
+
+    private CaseManagementShapeFactory factory;
+    private DelegateShapeFactory delegate;
+
+    @Before
+    @SuppressWarnings("unchecked")
+    public void setup() {
+        final PictureShapeView pictureShapeView = new PictureShapeView(new MultiPath().rect(0,
+                                                                                      0,
+                                                                                      10,
+                                                                                      10));
+
+        this.stageShape = new SVGPrimitiveShape(new Rectangle(0.0d, 0.0d));
+        this.taskShape = new SVGPrimitiveShape(new Rectangle(0.0d, 0.0d));
+        this.subprocessShape = new SVGPrimitiveShape(new Rectangle(0.0d, 0.0d));
+        this.subcaseShape = new SVGPrimitiveShape(new Rectangle(0.0d, 0.0d));
+        this.rectangleShape = new SVGPrimitiveShape(new Rectangle(0.0d, 0.0d));
+
+        final SyncBeanDef beanDef = mock(SyncBeanDef.class);
+        when(beanDef.getInstance()).thenReturn(new CaseManagementSVGViewFactory() {
+
+            @Override
+            public SVGShapeViewResource stage() {
+                return new SVGShapeViewResource(arg ->
+                                                        new CaseManagementShapeView("stage",
+                                                                                    stageShape,
+                                                                                    0.0d,
+                                                                                    0.0d,
+                                                                                    false));
+            }
+
+            @Override
+            public SVGShapeViewResource task() {
+                return new SVGShapeViewResource(arg ->
+                                                        new CaseManagementShapeView("task",
+                                                                                    taskShape,
+                                                                                    0.0d,
+                                                                                    0.0d,
+                                                                                    false));
+            }
+
+            @Override
+            public SVGShapeViewResource subprocess() {
+                return new SVGShapeViewResource(arg ->
+                                                        new CaseManagementShapeView("subprocess",
+                                                                                    subprocessShape,
+                                                                                    0.0d,
+                                                                                    0.0d,
+                                                                                    false));
+            }
+
+            @Override
+            public SVGShapeViewResource subcase() {
+                return new SVGShapeViewResource(arg ->
+                                                        new CaseManagementShapeView("subcase",
+                                                                                    subcaseShape,
+                                                                                    0.0d,
+                                                                                    0.0d,
+                                                                                    false));
+            }
+
+            @Override
+            public SVGShapeViewResource rectangle() {
+                return new SVGShapeViewResource(arg ->
+                                                        new CaseManagementShapeView("rectangle",
+                                                                                    rectangleShape,
+                                                                                    0.0d,
+                                                                                    0.0d,
+                                                                                    false));
+            }
+        });
+
+        when(beanManager.lookupBean(eq(CaseManagementSVGViewFactory.class))).thenReturn(beanDef);
+
+        final ShapeDefFunctionalFactory functionalFactory = new ShapeDefFunctionalFactory();
+        final SVGShapeFactory cmShapeViewFactory = new SVGShapeFactory(beanManager, functionalFactory);
+        cmShapeViewFactory.init();
+
+        final BasicShapesFactory basicShapesFactory = new BasicShapesFactory(new ShapeDefFunctionalFactory<>(),
+                                                                             basicViewFactory);
+        basicShapesFactory.init();
+        final CaseManagementShapeDefFactory cmShapeDefFactory = new CaseManagementShapeDefFactory(cmShapeViewFactory,
+                                                                                                  new CaseManagementShapeDefFunctionalFactory<>());
+        cmShapeDefFactory.init();
+        this.delegate = spy(new DelegateShapeFactory());
+        doReturn(glyph).when(delegate).getGlyph(anyString());
+        this.factory = new CaseManagementShapeFactory(basicShapesFactory,
+                                                      cmShapeDefFactory,
+                                                      delegate);
+        this.factory.init();
+
+        when(basicViewFactory.pictureFromUri(any(SafeUri.class),
+                                             anyDouble(),
+                                             anyDouble())).thenReturn(pictureShapeView);
+        when(basicViewFactory.connector(anyDouble(),
+                                        anyDouble(),
+                                        anyDouble(),
+                                        anyDouble())).thenReturn(connectorShapeView);
+        when(definitionManager.adapters()).thenReturn(adapterManager);
+        when(adapterManager.forDefinition()).thenReturn(definitionAdapter);
+    }
+
+    @Test
+    public void checkCMDiagram() {
+        assertShapeConstruction(new CaseManagementDiagram(),
+                                (shape) -> {
+                                    assertNotNull(shape.getShapeView());
+                                    assertTrue(shape instanceof CaseManagementShape);
+                                    assertTrue(shape.getShapeView() instanceof CaseManagementShapeView);
+                                    assertSame(((CaseManagementShapeView) shape.getShapeView()).getPrimitive(),
+                                               rectangleShape);
+                                });
+        assertShapeGlyph(new CaseManagementDiagram());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkLane() {
+        assertShapeConstruction(new Lane(),
+                                null);
+        assertShapeGlyph(new Lane());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkNoneTask() {
+        assertShapeConstruction(new NoneTask(),
+                                null);
+        assertShapeGlyph(new NoneTask());
+    }
+
+    @Test
+    public void checkUserTask() {
+        assertShapeConstruction(new UserTask(),
+                                taskAssertions);
+        assertShapeGlyph(new UserTask());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkBusinessRuleTask() {
+        assertShapeConstruction(new BusinessRuleTask(),
+                                null);
+        assertShapeGlyph(new BusinessRuleTask());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkStartNoneEvent() {
+        assertShapeConstruction(new StartNoneEvent(),
+                                null);
+        assertShapeGlyph(new StartNoneEvent());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkEndNoneEvent() {
+        assertShapeConstruction(new EndNoneEvent(),
+                                null);
+        assertShapeGlyph(new EndNoneEvent());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkEndTerminateEvent() {
+        assertShapeConstruction(new EndTerminateEvent(),
+                                null);
+        assertShapeGlyph(new EndTerminateEvent());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkParallelGateway() {
+        assertShapeConstruction(new ParallelGateway(),
+                                null);
+        assertShapeGlyph(new ParallelGateway());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkExclusiveDatabasedGateway() {
+        assertShapeConstruction(new ExclusiveGateway(),
+                                null);
+        assertShapeGlyph(new ExclusiveGateway());
+    }
+
+    @Test
+    public void checkAdHocSubprocess() {
+        assertShapeConstruction(new AdHocSubprocess(),
+                                stageAssertions);
+        assertShapeGlyph(new AdHocSubprocess());
+    }
+
+    @Test
+    public void checkReusableSubprocess() {
+        assertShapeConstruction(new ReusableSubprocess(),
+                                reusableSubprocessAssertions);
+        assertShapeGlyph(new ReusableSubprocess());
+    }
+
+    @Test
+    public void checkEmbeddedSubprocess() {
+        assertShapeConstruction(new EmbeddedSubprocess(),
+                                embeddedSubprocessAssertions);
+        assertShapeGlyph(new EmbeddedSubprocess());
+    }
+
+    @Test
+    public void checkSequenceFlow() {
+        assertShapeConstruction(new SequenceFlow(),
+                                connectorAssertions);
+        assertShapeGlyph(new SequenceFlow());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void assertShapeConstruction(final BPMNDefinition definition,
+                                         final Consumer<Shape> o) {
+        when(definitionAdapter.getId(eq(definition))).thenReturn(definition.getClass().getName());
+
+        final Shape<? extends ShapeView> shape = factory.newShape(definition);
+        assertNotNull(shape);
+        assertNotNull(shape.getShapeView());
+
+        o.accept(shape);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void assertShapeGlyph(final BPMNDefinition definition) {
+        final String id = BindableAdapterUtils.getDefinitionId(definition.getClass());
+        final Glyph glyph = factory.getGlyph(id);
+        verify(delegate,
+               times(1)).getGlyph(eq(id));
+        assertEquals(this.glyph,
+                     glyph);
+    }
 }

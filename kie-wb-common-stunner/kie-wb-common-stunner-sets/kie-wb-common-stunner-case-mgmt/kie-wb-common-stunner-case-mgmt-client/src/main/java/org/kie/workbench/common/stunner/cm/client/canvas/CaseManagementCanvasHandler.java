@@ -88,19 +88,27 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
     }
 
     @Override
-    public void register(final Shape shape, final Element<View<?>> candidate, final boolean fireEvents) {
+    public void register(final Shape shape,
+                         final Element<View<?>> candidate,
+                         final boolean fireEvents) {
         if (!isRenderable(shape)) {
             return;
         }
-        super.register(shape, candidate, fireEvents);
+        super.register(shape,
+                       candidate,
+                       fireEvents);
     }
 
     @Override
-    public void deregister(final Shape shape, final Element element, final boolean fireEvents) {
+    public void deregister(final Shape shape,
+                           final Element element,
+                           final boolean fireEvents) {
         if (!isRenderable(shape)) {
             return;
         }
-        super.deregister(shape, element, fireEvents);
+        super.deregister(shape,
+                         element,
+                         fireEvents);
     }
 
     @Override
@@ -108,34 +116,37 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
         if (!isRenderable(shape)) {
             return;
         }
-
         super.addShape(shape);
     }
 
     @Override
-    public void addChild(final Element parent, final Element child) {
-
+    public void addChild(final Element parent,
+                         final Element child) {
         final Shape parentShape = getCanvas().getShape(parent.getUUID());
         final Shape childShape = getCanvas().getShape(child.getUUID());
-
-        if (!isRenderable(parentShape, childShape)) {
+        if (!isRenderable(parentShape,
+                          childShape)) {
             return;
         }
-        super.addChild(parent, child);
+        super.addChild(parent,
+                       child);
     }
 
     @SuppressWarnings("unchecked")
-    public void addChild(final Element parent, final Element child, final int index) {
-
+    public void addChild(final Element parent,
+                         final Element child,
+                         final int index) {
         final Shape parentShape = getCanvas().getShape(parent.getUUID());
         final Shape childShape = getCanvas().getShape(child.getUUID());
-
-        if (!isRenderable(parentShape, childShape)) {
+        if (!isRenderable(parentShape,
+                          childShape)) {
             return;
         }
 
         final CaseManagementCanvasPresenter caseManagementCanvasPresenter = (CaseManagementCanvasPresenter) getCanvas();
-        caseManagementCanvasPresenter.addChildShape(parentShape, childShape, index);
+        caseManagementCanvasPresenter.addChildShape(parentShape,
+                                                    childShape,
+                                                    index);
     }
 
     @Override
@@ -147,19 +158,24 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
     }
 
     @Override
-    public void removeChild(final Element parent, final Element child) {
-
+    public void removeChild(final Element parent,
+                            final Element child) {
         final Shape parentShape = getCanvas().getShape(parent.getUUID());
         final Shape childShape = getCanvas().getShape(child.getUUID());
-        if (!isRenderable(parentShape, childShape)) {
+        if (!isRenderable(parentShape,
+                          childShape)) {
             return;
         }
-        super.removeChild(parent, child);
+        super.removeChild(parent,
+                          child);
     }
 
     @Override
-    public void applyElementMutation(final Shape shape, final Element candidate, final boolean applyPosition,
-                                     final boolean applyProperties, final MutationContext mutationContext) {
+    public void applyElementMutation(final Shape shape,
+                                     final Element candidate,
+                                     final boolean applyPosition,
+                                     final boolean applyProperties,
+                                     final MutationContext mutationContext) {
         if (!isRenderable(shape)) {
             return;
         }
@@ -168,19 +184,29 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
             ((CaseManagementShape) shape).getShapeView().refresh();
         }
 
-//        super.applyElementMutation(shape, candidate, applyPosition, applyProperties, mutationContext);
-        this.applyElementMutation(shape, candidate);
+//        super.applyElementMutation(shape,
+//                                   candidate,
+//                                   applyPosition,
+//                                   applyProperties,
+//                                   mutationContext);
+
+        this.applyElementMutation(shape,
+                                  candidate);
     }
 
     @Override
-    public void applyElementMutation(final Element candidate, final boolean applyPosition, final boolean applyProperties,
+    public void applyElementMutation(final Element candidate,
+                                     final boolean applyPosition,
+                                     final boolean applyProperties,
                                      final MutationContext mutationContext) {
-
         final Shape candidateShape = getCanvas().getShape(candidate.getUUID());
         if (!isRenderable(candidateShape)) {
             return;
         }
-        super.applyElementMutation(candidate, applyPosition, applyProperties, mutationContext);
+        super.applyElementMutation(candidate,
+                                   applyPosition,
+                                   applyProperties,
+                                   mutationContext);
     }
 
     boolean isRenderable(final Shape... shapes) {

@@ -94,7 +94,7 @@ public class CaseManagementOryxManagerTest {
     @Test
     public void checkGetDefinitionClasses() {
         final Set<Class<?>> classes = oryxManager.getDefinitionClasses();
-        assertEquals(17,
+        assertEquals(18,
                      classes.size());
         assertTrue(classes.contains(CaseManagementDiagram.class));
         assertTrue(classes.contains(Lane.class));

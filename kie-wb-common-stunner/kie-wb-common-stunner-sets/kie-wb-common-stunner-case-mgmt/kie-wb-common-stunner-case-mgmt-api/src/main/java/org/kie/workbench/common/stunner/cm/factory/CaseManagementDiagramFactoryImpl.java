@@ -16,8 +16,11 @@
 
 package org.kie.workbench.common.stunner.cm.factory;
 
+import java.util.function.Function;
+
 import javax.enterprise.context.Dependent;
 
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.factory.AbstractBPMNDiagramFactory;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
@@ -26,6 +29,8 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 
 @Dependent
@@ -53,5 +58,10 @@ public class CaseManagementDiagramFactoryImpl
         final AbstractDiagram<Graph, Metadata> result = new DiagramImpl(name, metadata);
         result.setGraph(graph);
         return result;
+    }
+
+    @Override
+    protected void setDiagramProvider(Function<Graph, Node<Definition<BPMNDiagram>, ?>> diagramProvider) {
+        super.setDiagramProvider(diagramProvider);
     }
 }

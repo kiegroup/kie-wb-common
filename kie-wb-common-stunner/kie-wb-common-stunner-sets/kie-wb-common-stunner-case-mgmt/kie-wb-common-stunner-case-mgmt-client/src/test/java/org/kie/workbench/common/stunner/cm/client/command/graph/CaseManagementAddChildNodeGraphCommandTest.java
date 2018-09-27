@@ -42,10 +42,10 @@ public class CaseManagementAddChildNodeGraphCommandTest extends AbstractGraphCom
                      parent.getOutEdges().size());
         assertEquals(1,
                      candidate.getInEdges().size());
-        assertEquals(parent.getOutEdges().get(0),
+        assertEquals(parent.getOutEdges().get(parent.getOutEdges().size() - 1),
                      candidate.getInEdges().get(0));
 
-        final Edge edge = parent.getOutEdges().get(0);
+        final Edge edge = parent.getOutEdges().get(parent.getOutEdges().size() - 1);
         assertEquals(parent,
                      edge.getSourceNode());
         assertEquals(candidate,

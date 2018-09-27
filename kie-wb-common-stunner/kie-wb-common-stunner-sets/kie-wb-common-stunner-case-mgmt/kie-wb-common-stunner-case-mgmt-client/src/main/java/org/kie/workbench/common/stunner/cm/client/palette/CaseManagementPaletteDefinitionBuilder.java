@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
@@ -36,6 +37,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.client.widgets.components.glyph.BS3IconTypeGlyph;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementImageResources;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
@@ -78,14 +80,22 @@ public class CaseManagementPaletteDefinitionBuilder
     @SuppressWarnings("unchecked")
     private final static Map<String, Glyph> CATEGORY_GLYPHS = new HashMap<String, Glyph>(4) {{
 
-        put(STAGES, SvgDataUriGlyph.Builder.build(
-                CaseManagementImageResources.INSTANCE.categoryStages().getSafeUri()));
-        put(TASKS, SvgDataUriGlyph.Builder.build(
-                CaseManagementImageResources.INSTANCE.categoryTasks().getSafeUri()));
-        put(SUBPROCESSES, SvgDataUriGlyph.Builder.build(
-                CaseManagementImageResources.INSTANCE.categorySubprocesses().getSafeUri()));
-        put(SUBCASES, SvgDataUriGlyph.Builder.build(
-                CaseManagementImageResources.INSTANCE.categorySubcases().getSafeUri()));
+        put(STAGES, CaseManagementImageResources.INSTANCE != null ?
+                SvgDataUriGlyph.Builder.build(
+                        CaseManagementImageResources.INSTANCE.categoryStages().getSafeUri())
+                : BS3IconTypeGlyph.create(IconType.STAR));
+        put(TASKS, CaseManagementImageResources.INSTANCE != null ?
+                SvgDataUriGlyph.Builder.build(
+                        CaseManagementImageResources.INSTANCE.categoryTasks().getSafeUri())
+                : BS3IconTypeGlyph.create(IconType.TASKS));
+        put(SUBPROCESSES, CaseManagementImageResources.INSTANCE != null ?
+                SvgDataUriGlyph.Builder.build(
+                        CaseManagementImageResources.INSTANCE.categorySubprocesses().getSafeUri())
+                : BS3IconTypeGlyph.create(IconType.TASKS));
+        put(SUBCASES, CaseManagementImageResources.INSTANCE != null ?
+                SvgDataUriGlyph.Builder.build(
+                        CaseManagementImageResources.INSTANCE.categorySubcases().getSafeUri())
+                : BS3IconTypeGlyph.create(IconType.TASKS));
     }};
 
     private static final Map<String, String> DEFINITION_CATEGORY_MAPPINGS = new HashMap<String, String>(4) {{
