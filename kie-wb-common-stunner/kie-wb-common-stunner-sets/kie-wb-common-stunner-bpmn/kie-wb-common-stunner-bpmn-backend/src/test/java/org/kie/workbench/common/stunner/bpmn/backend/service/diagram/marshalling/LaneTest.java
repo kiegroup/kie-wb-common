@@ -128,7 +128,7 @@ public class LaneTest extends BPMNDiagramMarshallerBase {
 
     private Lane getLaneNodeById(Diagram<Graph, Metadata> diagram, String id) {
         Node<? extends Definition, ?> node = getNodebyId(diagram, id);
-        return Lane.class.cast(node.getContent().getDefinition());
+        return (Lane) node.getContent().getDefinition();
     }
 
     private Node<? extends Definition, ?> getNodebyId(Diagram<Graph, Metadata> diagram, String id) {
