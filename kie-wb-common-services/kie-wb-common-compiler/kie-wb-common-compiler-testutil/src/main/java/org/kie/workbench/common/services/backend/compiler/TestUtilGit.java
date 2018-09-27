@@ -31,11 +31,6 @@ public class TestUtilGit extends ExternalResource {
         try (ServerSocket socket = new ServerSocket(SELECT_RANDOM_PORT_OPTION)) {
             socket.setReuseAddress(true);
             int port = socket.getLocalPort();
-            try {
-                socket.close();
-            } catch (IOException e) {
-                // Ignore IOException on close()
-            }
             logger.debug("Found free port {}", port);
             return port;
         } catch (IOException e) {
