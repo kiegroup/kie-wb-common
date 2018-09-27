@@ -18,7 +18,6 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,17 +26,29 @@ public class TestUtilGit {
     private static Logger logger = LoggerFactory.getLogger(TestUtilGit.class);
 
     public static int findFreePort() {
-        int port = 0;
+        ServerSocket socket = null;
         try {
-            ServerSocket server = new ServerSocket(0);
-            port = server.getLocalPort();
-            server.close();
+            socket = new ServerSocket(0);
+            socket.setReuseAddress(true);
+            int port = socket.getLocalPort();
+            try {
+                socket.close();
+            } catch (IOException e) {
+                // Ignore IOException on close()
+            }
+            logger.debug("Found free port {}", port);
+            return port;
         } catch (IOException e) {
-            Assert.fail("Can't find free port!");
+            // nop = ok
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    // Ignore IOException on close()
+                }
+            }
         }
-        if(logger.isDebugEnabled()) {
-            logger.debug("Found free port " + port);
-        }
-        return port;
+        throw new IllegalStateException("Could not find a free TCP/IP port to start git-daemon.");
     }
 }
