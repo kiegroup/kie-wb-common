@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -43,6 +44,8 @@ import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConsta
 @Dependent
 @Templated
 public class DataTypeSelectView implements DataTypeSelect.View {
+
+    static final Comparator<DataType> DATA_TYPE_COMPARATOR = Comparator.comparing(DataType::getName);
 
     @DataField("type-text")
     private final HTMLDivElement typeText;
@@ -117,11 +120,12 @@ public class DataTypeSelectView implements DataTypeSelect.View {
 
         optionGroup.label = groupTitle;
 
-        dataTypes.forEach(dataType -> {
-            final String optionValue = dataTypeConsumer.apply(dataType);
-            final HTMLOptionElement option = makeOption(optionValue);
-            optionGroup.appendChild(option);
-        });
+        dataTypes.stream()
+                .sorted(DATA_TYPE_COMPARATOR)
+                .forEach(dataType -> {
+                    final HTMLOptionElement option = makeOption(dataType, dataTypeConsumer);
+                    optionGroup.appendChild(option);
+                });
 
         return optionGroup;
     }
@@ -130,10 +134,13 @@ public class DataTypeSelectView implements DataTypeSelect.View {
         return typeSelectStructureOptGroup;
     }
 
-    HTMLOptionElement makeOption(final String value) {
+    HTMLOptionElement makeOption(final DataType dataType,
+                                 final Function<DataType, String> dataTypeConsumer) {
+        final String optionValue = dataTypeConsumer.apply(dataType);
+
         final HTMLOptionElement option = makeHTMLOptionElement();
-        option.text = value;
-        option.value = value;
+        option.text = optionValue;
+        option.value = optionValue;
         return option;
     }
 

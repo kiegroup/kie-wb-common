@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.thirdparty.guava.common.collect.Ordering;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.gwtbootstrap3.extras.select.client.ui.OptGroup;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.jboss.errai.common.client.dom.Anchor;
@@ -97,6 +98,10 @@ public class DataTypePickerWidgetTest {
     @GwtMock
     @SuppressWarnings("unused")
     private Option option;
+
+    @GwtMock
+    @SuppressWarnings("unused")
+    private OptGroup group;
 
     @Mock
     private com.google.gwt.user.client.Element optionElement;
@@ -210,7 +215,6 @@ public class DataTypePickerWidgetTest {
 
         picker.setDMNModel(dmnModel);
 
-        verify(picker, never()).addDivider();
         verify(picker, never()).makeTypeSelector(any(ItemDefinition.class));
     }
 
@@ -221,7 +225,6 @@ public class DataTypePickerWidgetTest {
         picker.setDMNModel(dmnModel);
 
         order.verify(picker, atLeastOnce()).makeTypeSelector(any(BuiltInType.class));
-        order.verify(picker).addDivider();
         order.verify(picker, atLeastOnce()).makeTypeSelector(any(ItemDefinition.class));
     }
 
