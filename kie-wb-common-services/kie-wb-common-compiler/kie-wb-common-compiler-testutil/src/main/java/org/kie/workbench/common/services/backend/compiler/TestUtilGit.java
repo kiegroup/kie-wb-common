@@ -18,11 +18,10 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestUtilGit extends ExternalResource {
+public class TestUtilGit {
 
     private static Logger logger = LoggerFactory.getLogger(TestUtilGit.class);
     private static int SELECT_RANDOM_PORT_OPTION = 0;
