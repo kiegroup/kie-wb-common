@@ -27,9 +27,7 @@ public class TestUtilGit extends ExternalResource {
     private static Logger logger = LoggerFactory.getLogger(TestUtilGit.class);
 
     public static int findFreePort() {
-        ServerSocket socket = null;
-        try {
-            socket = new ServerSocket(0);
+        try (ServerSocket socket = new ServerSocket(0)) {
             socket.setReuseAddress(true);
             int port = socket.getLocalPort();
             try {
@@ -41,14 +39,6 @@ public class TestUtilGit extends ExternalResource {
             return port;
         } catch (IOException e) {
             // nop = ok
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    // Ignore IOException on close()
-                }
-            }
         }
         throw new IllegalStateException("Could not find a free TCP/IP port to start git-daemon.");
     }
