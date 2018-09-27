@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import com.google.gwt.thirdparty.guava.common.collect.Ordering;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.DOMTokenList;
 import elemental2.dom.Element;
@@ -34,23 +33,27 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.commons.util.Lists;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeUtils;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.JQuerySelectPickerEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.JQuerySelectPickerTarget;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.HiddenHelper.HIDDEN_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeSelectView_CustomTitle;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeSelectView_DefaultTitle;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -82,14 +85,23 @@ public class DataTypeSelectViewTest {
     @Mock
     private TranslationService translationService;
 
+    @Mock
+    private DataTypeStore dataTypeStore;
+
+    @Mock
+    private DataTypeManager dataTypeManager;
+
     @Captor
     private ArgumentCaptor<DataType> dataTypeCaptor;
+
+    private DataTypeUtils dataTypeUtils;
 
     private DataTypeSelectView view;
 
     @Before
     public void setup() {
         view = spy(new DataTypeSelectView(typeText, typeSelect, typeSelectOptGroup, typeSelectOption, null, translationService));
+        dataTypeUtils = new DataTypeUtils(dataTypeStore, dataTypeManager);
 
         doNothing().when(view).setupDropdown();
 
@@ -162,25 +174,49 @@ public class DataTypeSelectViewTest {
     public void testOptionGroupSorting() {
         final HTMLOptGroupElement groupElement = mock(HTMLOptGroupElement.class);
         final HTMLOptionElement optionElement = mock(HTMLOptionElement.class);
+        final DataType customDataType1 = makeDataType("b");
+        final DataType customDataType2 = makeDataType("a");
+        final List<DataType> customDataTypes = new Lists.Builder().add(customDataType1).add(customDataType2).build();
 
         doReturn(groupElement).when(view).makeHTMLOptGroupElement();
         doReturn(optionElement).when(view).makeHTMLOptionElement();
 
-        final List<DataType> dataTypes = new ArrayList<>();
-        final DataType dataType1 = makeDataType("z");
-        final DataType dataType2 = makeDataType("a");
-        dataTypes.add(dataType1);
-        dataTypes.add(dataType2);
+        when(translationService.format(DataTypeSelectView_DefaultTitle)).thenReturn("Default");
+        when(translationService.format(DataTypeSelectView_CustomTitle)).thenReturn("Custom");
+        when(dataTypeStore.getTopLevelDataTypes()).thenReturn(customDataTypes);
 
-        view.makeOptionGroup("title", dataTypes, DataType::getName);
+        doAnswer(i -> {
+            final BuiltInType bit = (BuiltInType) i.getArguments()[0];
+            final DataTypeManager dtm = mock(DataTypeManager.class);
+            final DataType dt = makeDataType(bit.getName());
+            when(dtm.get()).thenReturn(dt);
+            return dtm;
+        }).when(dataTypeManager).from(any(BuiltInType.class));
+
+        doAnswer(i -> dataTypeUtils.defaultDataTypes()).when(presenter).getDefaultDataTypes();
+        doAnswer(i -> dataTypeUtils.customDataTypes()).when(presenter).getCustomDataTypes();
+
+        view.setupDropdownItems();
 
         //Check all items were added to the group
-        verify(view, times(dataTypes.size())).makeOption(dataTypeCaptor.capture(), any(Function.class));
-        final List<DataType> dataTypesAddedToWidget = dataTypeCaptor.getAllValues();
-        assertThat(dataTypes).hasSameElementsAs(dataTypesAddedToWidget);
+        verify(view, times(BuiltInType.values().length + customDataTypes.size())).makeOption(dataTypeCaptor.capture(), any(Function.class));
+        final List<DataType> dataTypes = dataTypeCaptor.getAllValues();
 
         //Check the items were sorted correctly
-        assertTrue(Ordering.from(DataTypeSelectView.DATA_TYPE_COMPARATOR).isOrdered(dataTypesAddedToWidget));
+        assertEquals("any", dataTypes.get(0).getType());
+        assertEquals("boolean", dataTypes.get(1).getType());
+        assertEquals("context", dataTypes.get(2).getType());
+        assertEquals("date", dataTypes.get(3).getType());
+        assertEquals("date and time", dataTypes.get(4).getType());
+        assertEquals("days and time duration", dataTypes.get(5).getType());
+        assertEquals("number", dataTypes.get(6).getType());
+        assertEquals("string", dataTypes.get(7).getType());
+        assertEquals("time", dataTypes.get(8).getType());
+        assertEquals("years and months duration", dataTypes.get(9).getType());
+
+        final int customDataTypesOffset = BuiltInType.values().length;
+        assertEquals("a", dataTypes.get(customDataTypesOffset).getType());
+        assertEquals("b", dataTypes.get(customDataTypesOffset + 1).getType());
     }
 
     @Test

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -44,8 +43,6 @@ import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConsta
 @Dependent
 @Templated
 public class DataTypeSelectView implements DataTypeSelect.View {
-
-    static final Comparator<DataType> DATA_TYPE_COMPARATOR = Comparator.comparing(DataType::getName);
 
     @DataField("type-text")
     private final HTMLDivElement typeText;
@@ -121,7 +118,6 @@ public class DataTypeSelectView implements DataTypeSelect.View {
         optionGroup.label = groupTitle;
 
         dataTypes.stream()
-                .sorted(DATA_TYPE_COMPARATOR)
                 .forEach(dataType -> {
                     final HTMLOptionElement option = makeOption(dataType, dataTypeConsumer);
                     optionGroup.appendChild(option);
