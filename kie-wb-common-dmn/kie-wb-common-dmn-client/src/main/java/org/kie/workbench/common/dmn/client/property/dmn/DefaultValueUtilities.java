@@ -71,7 +71,7 @@ public class DefaultValueUtilities {
     }
 
     public static int getMaxUnusedIndex(final Collection<String> values,
-                                         final String prefix) {
+                                        final String prefix) {
         int maxIndex = 0;
         for (final String value : values) {
             final Optional<Integer> index = extractIndex(value, prefix);
