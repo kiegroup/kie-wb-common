@@ -141,10 +141,14 @@ public class PersistencePresenterTest {
 
         verify(propertiesListPresenter).setup(any(),
                                               any(),
+                                              any(),
+                                              any(),
                                               any());
         verify(newPersistableDataObjectModal).setup(any(),
                                                     any());
         verify(persistableDataObjectsListPresenter).setup(any(),
+                                                          any(),
+                                                          any(),
                                                           any(),
                                                           any());
         verify(view).setPersistenceUnit(model.getDescriptorModel().getPersistenceUnit().getName());

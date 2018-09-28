@@ -34,6 +34,11 @@ public class PersistableDataObjectsItemView implements PersistableDataObjectsIte
     private HTMLAnchorElement removeButton;
 
     @Inject
+    @DataField("edit-button")
+    @SuppressWarnings("PMD.UnusedPrivateField")
+    private HTMLAnchorElement editButton;
+    
+    @Inject
     @Named("span")
     @DataField("class-name")
     private HTMLElement className;
@@ -48,6 +53,11 @@ public class PersistableDataObjectsItemView implements PersistableDataObjectsIte
     @EventHandler("remove-button")
     public void onRemove(final ClickEvent ignore) {
         presenter.remove();
+    }
+    
+    @EventHandler("edit-button")
+    public void onEdit(final ClickEvent ignore) {
+        presenter.openEditModal(className.textContent);
     }
 
     @Override

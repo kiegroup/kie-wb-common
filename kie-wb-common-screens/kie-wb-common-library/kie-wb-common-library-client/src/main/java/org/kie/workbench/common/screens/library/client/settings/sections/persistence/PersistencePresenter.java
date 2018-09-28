@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.screens.library.client.settings.sections.persistence;
 
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
+
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -23,8 +25,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import elemental2.dom.Element;
-import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -37,20 +37,20 @@ import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryCon
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.properties.PropertiesItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.sections.MenuItem;
-import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
-import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionView;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue.AddDoubleValueModal;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
+import org.kie.workbench.common.screens.library.client.settings.util.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionView;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.widgets.client.widget.ListPresenter;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
-
+import elemental2.dom.Element;
+import elemental2.promise.Promise;
 public class PersistencePresenter extends Section<ProjectScreenModel> {
 
     private final View view;
@@ -158,7 +158,9 @@ public class PersistencePresenter extends Section<ProjectScreenModel> {
         propertiesListPresenter.setup(
                 view.getPropertiesTable(),
                 getPersistenceUnitModel().getProperties(),
-                (property, presenter) -> presenter.setup(property, this));
+                (property, presenter) -> presenter.setup(property, this),
+                null,
+                newPropertyModal);
     }
 
     private void setupPersistableDataObjectsTable() {
@@ -168,7 +170,9 @@ public class PersistencePresenter extends Section<ProjectScreenModel> {
         persistableDataObjectsListPresenter.setup(
                 view.getPersistableDataObjectsTable(),
                 getPersistenceUnitModel().getClasses(),
-                (className, presenter) -> presenter.setup(className, this));
+                (className, presenter) -> presenter.setup(className, this),
+                newPersistableDataObjectModal,
+                null);
     }
 
     @Override
@@ -258,20 +262,23 @@ public class PersistencePresenter extends Section<ProjectScreenModel> {
     }
 
     @Dependent
-    public static class PersistableDataObjectsListPresenter extends ListPresenter<String, PersistableDataObjectsItemPresenter> {
+    public static class PersistableDataObjectsListPresenter extends SectionListPresenter<String, PersistableDataObjectsItemPresenter> {
 
         @Inject
         public PersistableDataObjectsListPresenter(final ManagedInstance<PersistableDataObjectsItemPresenter> itemPresenters) {
             super(itemPresenters);
         }
+        
     }
 
     @Dependent
-    public static class PropertiesListPresenter extends ListPresenter<Property, PropertiesItemPresenter> {
+    public static class PropertiesListPresenter extends SectionListPresenter<Property, PropertiesItemPresenter> {
 
         @Inject
         public PropertiesListPresenter(final ManagedInstance<PropertiesItemPresenter> itemPresenters) {
             super(itemPresenters);
         }
+
     }
+
 }

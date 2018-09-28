@@ -46,6 +46,10 @@ public class AddDoubleValueModal extends Elemental2Modal<AddDoubleValueModal.Vie
         void setNameLabel(final String label);
 
         void setValueLabel(final String label);
+        
+        void setName(final String name);
+        
+        void setValue(final String value);
     }
 
     @Inject
@@ -68,6 +72,12 @@ public class AddDoubleValueModal extends Elemental2Modal<AddDoubleValueModal.Vie
     public void show(final BiConsumer<String, String> onAdd) {
         this.onAdd = onAdd;
         getView().clearForm();
+        super.show();
+        getView().focus();
+    }
+    
+    public void showEditModal(final BiConsumer<String, String> onAdd) {
+        this.onAdd = onAdd;
         super.show();
         getView().focus();
     }

@@ -115,4 +115,9 @@ public class AddSingleValueModalView implements AddSingleValueModal.View {
     public void setLabel(final String label) {
         this.label.textContent = label;
     }
+    
+    @Override
+    public void setValue(final String value) {
+        this.value.value = value;
+    }
 }
