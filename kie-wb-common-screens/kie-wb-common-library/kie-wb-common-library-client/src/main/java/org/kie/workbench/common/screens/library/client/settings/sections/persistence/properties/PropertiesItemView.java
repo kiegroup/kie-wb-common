@@ -36,6 +36,10 @@ public class PropertiesItemView implements PropertiesItemPresenter.View,
     private HTMLAnchorElement removeButton;
 
     @Inject
+    @DataField("edit-button")
+    private HTMLAnchorElement editButton;
+
+    @Inject
     @Named("span")
     @DataField("name")
     private HTMLElement name;
@@ -50,6 +54,11 @@ public class PropertiesItemView implements PropertiesItemPresenter.View,
     @Override
     public void init(final PropertiesItemPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @EventHandler("edit-button")
+    public void onEdit(final ClickEvent ignore) {
+        presenter.openEditModal();
     }
 
     @EventHandler("remove-button")

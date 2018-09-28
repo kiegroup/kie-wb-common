@@ -20,7 +20,9 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue.AddDoubleValueModal;
 import org.kie.workbench.common.widgets.client.widget.ListItemPresenter;
 import org.kie.workbench.common.widgets.client.widget.ListItemView;
 
@@ -36,10 +38,13 @@ public class PropertiesItemPresenter extends ListItemPresenter<Property, Persist
 
     PersistencePresenter parentPresenter;
     private Property property;
+    private AddDoubleValueModal newPropertyModal;
 
     @Inject
-    public PropertiesItemPresenter(final View view) {
+    public PropertiesItemPresenter(final View view, final AddDoubleValueModal newPropertyModal) {
+
         super(view);
+        this.newPropertyModal = newPropertyModal;
     }
 
     @Override
@@ -53,12 +58,27 @@ public class PropertiesItemPresenter extends ListItemPresenter<Property, Persist
         view.setName(property.getName());
         view.setValue(property.getValue());
 
+        this.newPropertyModal.setup(LibraryConstants.EditProperty,
+                                    LibraryConstants.Name,
+                                    LibraryConstants.Value);
         return this;
     }
 
     @Override
     public Property getObject() {
         return property;
+    }
+
+    public void openEditModal() {
+        newPropertyModal.show((n, v) -> {
+                                  property.setName(n);
+                                  view.setName(n);
+                                  property.setValue(v);
+                                  view.setValue(v);
+                                  parentPresenter.fireChangeEvent();
+                              },
+                              property.getName(),
+                              property.getValue());
     }
 
     @Override

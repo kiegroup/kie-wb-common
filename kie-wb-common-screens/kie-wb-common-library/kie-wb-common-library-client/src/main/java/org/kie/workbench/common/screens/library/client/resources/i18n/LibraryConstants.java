@@ -354,6 +354,9 @@ public class LibraryConstants {
     public static final String AddPersistableDataObject = "AddPersistableDataObject";
 
     @TranslationKey(defaultValue = "")
+    public static final String EditPersistableDataObject = "EditPersistableDataObject";
+
+    @TranslationKey(defaultValue = "")
     public static final String AddKnowledgeBase = "AddKnowledgeBase";
 
     @TranslationKey(defaultValue = "")
@@ -376,6 +379,9 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String AddProperty = "AddProperty";
+
+    @TranslationKey(defaultValue = "")
+    public static final String EditProperty = "EditProperty";
 
     @TranslationKey(defaultValue = "")
     public static final String MigrationWasSuccessful = "MigrationWasSuccessful";
