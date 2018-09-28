@@ -126,9 +126,9 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
         typeSelector.refresh();
     }
 
-    private void addBuiltInTypes() {
+    void addBuiltInTypes() {
         final OptGroup group = GWT.create(OptGroup.class);
-        group.setLabel(translationService.format(DMNEditorConstants.DataTypeSelectView_DefaultTitle));
+        group.setLabel(translationService.getTranslation(DMNEditorConstants.DataTypeSelectView_DefaultTitle));
 
         Stream.of(BuiltInType.values())
                 .sorted(BUILT_IN_TYPE_COMPARATOR)
@@ -151,12 +151,12 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
         return itemDefinitionUtils.normaliseTypeRef(typeRef);
     }
 
-    private void addItemDefinitions() {
+    void addItemDefinitions() {
         final Definitions definitions = dmnGraphUtils.getDefinitions();
         final List<ItemDefinition> itemDefinitions = definitions != null ? definitions.getItemDefinition() : Collections.emptyList();
 
         final OptGroup group = GWT.create(OptGroup.class);
-        group.setLabel(translationService.format(DMNEditorConstants.DataTypeSelectView_CustomTitle));
+        group.setLabel(translationService.getTranslation(DMNEditorConstants.DataTypeSelectView_CustomTitle));
 
         itemDefinitions.stream()
                 .sorted(ITEM_DEFINITION_COMPARATOR)
