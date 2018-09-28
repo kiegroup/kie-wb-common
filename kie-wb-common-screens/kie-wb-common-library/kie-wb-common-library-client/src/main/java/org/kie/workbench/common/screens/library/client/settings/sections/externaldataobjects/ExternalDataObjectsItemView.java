@@ -38,11 +38,20 @@ public class ExternalDataObjectsItemView implements ExternalDataObjectsItemPrese
     @DataField("remove-button")
     private HTMLAnchorElement removeButton;
 
+    @Inject
+    @DataField("edit-button")
+    private HTMLAnchorElement editButton;
+
     private ExternalDataObjectsItemPresenter presenter;
 
     @EventHandler("remove-button")
     public void onRemove(final ClickEvent ignore) {
         presenter.remove();
+    }
+
+    @EventHandler("edit-button")
+    public void onEdit(final ClickEvent ignore) {
+        presenter.openEditModal();
     }
 
     @Override
