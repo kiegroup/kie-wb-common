@@ -8,12 +8,15 @@ import org.guvnor.common.services.project.model.Dependency;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.NewDependencyPopup;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.dependencies.NormalEnhancedDependency;
 import org.kie.workbench.common.services.shared.dependencies.TransitiveEnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.callbacks.Callback;
 
 import static java.util.Collections.emptySet;
 import static org.mockito.Matchers.any;
@@ -30,9 +33,13 @@ public class DependenciesItemPresenterTest {
     @Mock
     private DependenciesItemPresenter.View view;
 
+    @Mock
+    private NewDependencyPopup newDependencyPopup;
+
     @Before
     public void before() {
-        dependenciesItemPresenter = spy(new DependenciesItemPresenter(view));
+        dependenciesItemPresenter = spy(new DependenciesItemPresenter(view,
+                                                                      newDependencyPopup));
     }
 
     @Test
@@ -106,5 +113,33 @@ public class DependenciesItemPresenterTest {
         dependenciesItemPresenter.remove();
 
         verify(parentPresenter).remove(eq(enhancedDependency));
+    }
+
+    @Test
+    public void testShowEditDependencyPopup() {
+        final DependenciesPresenter parentPresenter = mock(DependenciesPresenter.class);
+        final Dependency src = mock(Dependency.class);
+        final EnhancedDependency enhancedDependency = new NormalEnhancedDependency(src, emptySet());
+
+        dependenciesItemPresenter.parentPresenter = parentPresenter;
+        dependenciesItemPresenter.enhancedDependency = enhancedDependency;
+
+        ArgumentCaptor<Callback> captor = ArgumentCaptor.forClass(Callback.class);
+        dependenciesItemPresenter.showEditDependencyPopup();
+
+        verify(newDependencyPopup).show(captor.capture(), any());
+        Dependency dependency = new Dependency();
+        dependency.setArtifactId("org.kie.workbench.screens.test");
+        dependency.setGroupId("kie-wb-common-library");
+        dependency.setVersion("0.0.1");
+        captor.getValue().callback(dependency);
+
+        verify(view).setArtifactId("org.kie.workbench.screens.test");
+        verify(view).setGroupId("kie-wb-common-library");
+        verify(view).setVersion("0.0.1");
+
+        verify(src).setArtifactId("org.kie.workbench.screens.test");
+        verify(src).setGroupId("kie-wb-common-library");
+        verify(src).setVersion("0.0.1");
     }
 }
