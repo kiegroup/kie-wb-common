@@ -59,6 +59,7 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -90,6 +91,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                         final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                         final Event<ExpressionEditorChanged> editorSelectedEvent,
                         final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                        final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                         final CellEditorControlsView.Presenter cellEditorControls,
                         final ListSelectorView.Presenter listSelector,
                         final TranslationService translationService,
@@ -113,6 +115,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
               canvasCommandFactory,
               editorSelectedEvent,
               refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
               translationService,
@@ -361,11 +364,11 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                                          uiModelMapper,
                                                                          () -> {
                                                                              resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                             selectParentCell();
+                                                                             selectCell(0, 0, false, false);
                                                                          },
                                                                          () -> {
                                                                              resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                             selectFirstCell();
+                                                                             selectExpressionEditorFirstCell(0, 0);
                                                                          }));
         });
     }

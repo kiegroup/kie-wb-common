@@ -82,6 +82,7 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
@@ -238,6 +239,9 @@ public class DecisionTableGridTest {
     @Mock
     private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
 
+    @Mock
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
+
     @Captor
     private ArgumentCaptor<AddInputClauseCommand> addInputClauseCommandCaptor;
 
@@ -295,6 +299,7 @@ public class DecisionTableGridTest {
                                                             canvasCommandFactory,
                                                             editorSelectedEvent,
                                                             refreshFormPropertiesEvent,
+                                                            domainObjectSelectionEvent,
                                                             listSelector,
                                                             translationService,
                                                             hitPolicyEditor,

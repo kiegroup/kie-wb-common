@@ -65,6 +65,7 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
@@ -190,6 +191,9 @@ public class RelationGridTest {
     private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
 
     @Mock
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
+
+    @Mock
     private NameAndDataTypePopoverView.Presenter headerEditor;
 
     @Captor
@@ -241,6 +245,7 @@ public class RelationGridTest {
                                                   canvasCommandFactory,
                                                   editorSelectedEvent,
                                                   refreshFormPropertiesEvent,
+                                                  domainObjectSelectionEvent,
                                                   listSelector,
                                                   translationService,
                                                   headerEditor);
