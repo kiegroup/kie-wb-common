@@ -21,9 +21,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.DOMUtil;
-import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -37,10 +36,7 @@ public class CollapsedDefinitionPaletteItemWidgetViewImpl implements CollapsedDe
                                                                      IsElement {
 
     @DataField
-    private Anchor itemAnchor;
-
-    @DataField
-    private Span icon;
+    private Button icon;
 
     private DOMGlyphRenderers domGlyphRenderers;
 
@@ -51,10 +47,8 @@ public class CollapsedDefinitionPaletteItemWidgetViewImpl implements CollapsedDe
     }
 
     @Inject
-    public CollapsedDefinitionPaletteItemWidgetViewImpl(final Anchor itemAnchor,
-                                                        final Span icon,
+    public CollapsedDefinitionPaletteItemWidgetViewImpl(final Button icon,
                                                         final DOMGlyphRenderers domGlyphRenderers) {
-        this.itemAnchor = itemAnchor;
         this.icon = icon;
         this.domGlyphRenderers = domGlyphRenderers;
     }
@@ -73,13 +67,13 @@ public class CollapsedDefinitionPaletteItemWidgetViewImpl implements CollapsedDe
 
         final String tooltip = presenter.getItem().getTooltip();
         if (!isEmpty(tooltip)) {
-            itemAnchor.setTitle(tooltip);
+            icon.setTitle(tooltip);
         } else {
-            itemAnchor.setTitle("");
+            icon.setTitle("");
         }
     }
 
-    @EventHandler("itemAnchor")
+    @EventHandler("icon")
     public void onMouseDown(final MouseDownEvent mouseDownEvent) {
         presenter.onMouseDown(mouseDownEvent.getClientX(),
                               mouseDownEvent.getClientY(),
@@ -89,7 +83,6 @@ public class CollapsedDefinitionPaletteItemWidgetViewImpl implements CollapsedDe
 
     @PreDestroy
     public void destroy() {
-        DOMUtil.removeAllChildren(itemAnchor);
         DOMUtil.removeAllChildren(icon);
         presenter = null;
     }

@@ -37,8 +37,6 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 public class CollapsedPaletteDefinitionBuilder
         extends AbstractPaletteDefinitionBuilder<CollapsedPaletteDefinitionBuilder> {
 
-    static final int ICON_SIZE = 35;
-
     @Inject
     public CollapsedPaletteDefinitionBuilder(final DefinitionUtils definitionUtils,
                                              final DefinitionsCacheRegistry definitionsRegistry,
@@ -63,7 +61,6 @@ public class CollapsedPaletteDefinitionBuilder
                 .setItemId(id)
                 .setDefinitionId(id)
                 .setTooltip(title)
-                .setIconSize(ICON_SIZE)
                 .build();
     }
 }

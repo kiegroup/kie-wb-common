@@ -17,9 +17,8 @@
 package org.kie.workbench.common.stunner.client.widgets.palette.collapsed;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.HTMLElement;
-import org.jboss.errai.common.client.dom.Span;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,10 +50,7 @@ public class CollapsedDefinitionPaletteItemWidgetViewImplTest {
     private static final int Y = 1;
 
     @Mock
-    private Anchor itemAnchor;
-
-    @Mock
-    private Span icon;
+    private Button icon;
 
     @Mock
     private DOMGlyphRenderers domGlyphRenderers;
@@ -81,8 +77,7 @@ public class CollapsedDefinitionPaletteItemWidgetViewImplTest {
 
     @Before
     public void setup() {
-        this.view = new CollapsedDefinitionPaletteItemWidgetViewImpl(itemAnchor,
-                                                                     icon,
+        this.view = new CollapsedDefinitionPaletteItemWidgetViewImpl(icon,
                                                                      domGlyphRenderers);
         this.view.init(presenter);
 
@@ -101,7 +96,7 @@ public class CollapsedDefinitionPaletteItemWidgetViewImplTest {
 
         verify(icon).appendChild(eq(glyphHtmlElement));
 
-        verify(itemAnchor).setTitle(eq(""));
+        verify(icon).setTitle(eq(""));
     }
 
     @Test
@@ -112,7 +107,7 @@ public class CollapsedDefinitionPaletteItemWidgetViewImplTest {
 
         verify(icon).appendChild(eq(glyphHtmlElement));
 
-        verify(itemAnchor).setTitle(eq(GLYPH_TOOLTIP));
+        verify(icon).setTitle(eq(GLYPH_TOOLTIP));
     }
 
     @Test

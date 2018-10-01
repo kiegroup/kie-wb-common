@@ -99,6 +99,6 @@ public class CollapsedPaletteDefinitionBuilderTest {
         assertEquals(DEF1_TITLE, item.getTitle());
         assertEquals(DEF1_TITLE, item.getTooltip());
         assertEquals(DEF1_TITLE, item.getDescription());
-        assertEquals(CollapsedPaletteDefinitionBuilder.ICON_SIZE, item.getIconSize());
+        assertEquals(DefaultPaletteDefinitionBuilders.CollapsedItemBuilder.ICON_SIZE, item.getIconSize());
     }
 }
