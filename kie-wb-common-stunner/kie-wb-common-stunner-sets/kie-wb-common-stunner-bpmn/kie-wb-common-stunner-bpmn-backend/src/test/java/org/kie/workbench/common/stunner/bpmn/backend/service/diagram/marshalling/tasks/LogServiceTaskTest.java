@@ -16,21 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.tasks;
 
-import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.tasks.ServiceTask<ServiceTask> {
 
@@ -110,12 +102,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                              HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
@@ -124,12 +116,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                    HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
@@ -138,12 +130,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                              HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -164,12 +156,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
         assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
 
         assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_NOT_ASYNC,
-                                           NOT_AD_HOC_AUTOSTART);
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_NOT_ASYNC,
+                                      NOT_AD_HOC_AUTOSTART);
         assertDataIOSet(emptyTopLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -202,12 +194,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                     HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
@@ -216,12 +208,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                           HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
@@ -230,12 +222,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                     HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -255,12 +247,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_NOT_ASYNC,
-                                           NOT_AD_HOC_AUTOSTART);
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_NOT_ASYNC,
+                                      NOT_AD_HOC_AUTOSTART);
         assertDataIOSet(emptySubprocessLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -293,12 +285,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
@@ -307,12 +299,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                    HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
@@ -321,12 +313,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -346,12 +338,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                         HAS_OUTCOME_EDGE);
         assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_NOT_ASYNC,
-                                           NOT_AD_HOC_AUTOSTART);
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_NOT_ASYNC,
+                                      NOT_AD_HOC_AUTOSTART);
         assertDataIOSet(emptyTopLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -371,12 +363,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                HAS_OUTCOME_EDGE);
         assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_NOT_ASYNC,
-                                           NOT_AD_HOC_AUTOSTART);
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_NOT_ASYNC,
+                                      NOT_AD_HOC_AUTOSTART);
         assertDataIOSet(emptySubprocessLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -409,12 +401,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
@@ -423,12 +415,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                           HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
@@ -437,12 +429,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -475,12 +467,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
@@ -489,12 +481,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                    HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
@@ -503,12 +495,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -528,12 +520,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                         HAS_OUTCOME_EDGE);
         assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_NOT_ASYNC,
-                                           NOT_AD_HOC_AUTOSTART);
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_NOT_ASYNC,
+                                      NOT_AD_HOC_AUTOSTART);
         assertDataIOSet(emptyTopLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -553,12 +545,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                HAS_OUTCOME_EDGE);
         assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           EMPTY_VALUE,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_NOT_ASYNC,
-                                           NOT_AD_HOC_AUTOSTART);
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      EMPTY_VALUE,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_NOT_ASYNC,
+                                      NOT_AD_HOC_AUTOSTART);
         assertDataIOSet(emptySubprocessLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
     }
 
@@ -591,12 +583,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVA,
-                                           TASK_SCRIPT_JAVA_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVA,
+                                      TASK_SCRIPT_JAVA_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
@@ -605,12 +597,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                           HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_JAVASCRIPT,
-                                           TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_JAVASCRIPT,
+                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
@@ -619,12 +611,12 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
-                                           TASK_ON_ENTRY_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           TASK_ON_EXIT_ACTION_MVEL,
-                                           TASK_SCRIPT_MVEL_LANGUAGE,
-                                           IS_ASYNC,
-                                           AD_HOC_AUTOSTART);
+                                      TASK_ON_ENTRY_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      TASK_ON_EXIT_ACTION_MVEL,
+                                      TASK_SCRIPT_MVEL_LANGUAGE,
+                                      IS_ASYNC,
+                                      AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
