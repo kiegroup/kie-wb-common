@@ -30,6 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.client.widgets.components.glyph.DOMGlyphRenderers;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 @Templated
 @Dependent
@@ -72,14 +73,14 @@ public class DefinitionPaletteItemWidgetViewImpl implements DefinitionPaletteIte
                                          height);
         icon.appendChild(glyphElement.getElement());
         final String title = presenter.getItem().getTitle();
-        if (!isEmpty(title)) {
+        if (!StringUtils.isEmpty(title)) {
             name.setTextContent(presenter.getItem().getTitle());
         } else {
             name.getStyle().setProperty(DISPLAY, DISPLAY_NONE);
             icon.getStyle().setProperty(PADDING_RIGHT, "0");
         }
         final String tooltip = presenter.getItem().getTooltip();
-        if (!isEmpty(tooltip)) {
+        if (!StringUtils.isEmpty(tooltip)) {
             itemAnchor.setTitle(tooltip);
         } else {
             itemAnchor.setTitle("");
@@ -100,9 +101,5 @@ public class DefinitionPaletteItemWidgetViewImpl implements DefinitionPaletteIte
         DOMUtil.removeAllChildren(icon);
         DOMUtil.removeAllChildren(name);
         presenter = null;
-    }
-
-    private static boolean isEmpty(final String s) {
-        return null == s || s.trim().length() == 0;
     }
 }

@@ -29,6 +29,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.client.widgets.components.glyph.DOMGlyphRenderers;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 @Templated
 @Dependent
@@ -66,7 +67,7 @@ public class CollapsedDefinitionPaletteItemWidgetViewImpl implements CollapsedDe
         icon.appendChild(glyphElement.getElement());
 
         final String tooltip = presenter.getItem().getTooltip();
-        if (!isEmpty(tooltip)) {
+        if (!StringUtils.isEmpty(tooltip)) {
             icon.setTitle(tooltip);
         } else {
             icon.setTitle("");
@@ -85,9 +86,5 @@ public class CollapsedDefinitionPaletteItemWidgetViewImpl implements CollapsedDe
     public void destroy() {
         DOMUtil.removeAllChildren(icon);
         presenter = null;
-    }
-
-    private static boolean isEmpty(final String s) {
-        return null == s || s.trim().length() == 0;
     }
 }
