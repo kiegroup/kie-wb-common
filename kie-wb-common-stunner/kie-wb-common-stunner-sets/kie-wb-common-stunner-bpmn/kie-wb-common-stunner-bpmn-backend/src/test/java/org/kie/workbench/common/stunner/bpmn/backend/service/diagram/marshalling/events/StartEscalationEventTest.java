@@ -33,8 +33,8 @@ public class StartEscalationEventTest extends StartEvent<StartEscalationEvent> {
 
     private static final String FILLED_TOP_LEVEL_EVENT_ID = "_364A2074-C369-4DB1-8934-69CF40B9E025";
     private static final String EMPTY_TOP_LEVEL_EVENT_ID = "_CF77BB90-5F75-4246-9E17-21383063007D";
-    private static final String FILLED_SUBPROCESS_LEVEL_EVENT_ID = "_61ACC872-BECA-4CC8-B04E-377C31129A53";
-    private static final String EMPTY_SUBPROCESS_LEVEL_EVENT_ID = "_9191AEA9-2BA4-4428-9BAE-18F8A09D3309";
+    private static final String FILLED_SUBPROCESS_LEVEL_EVENT_ID = "_A983FF22-5128-4C06-9D47-AB7525DF8039";
+    private static final String EMPTY_SUBPROCESS_LEVEL_EVENT_ID = "_1DC85B0B-28D9-4EAC-A53C-F0C1303E2B19";
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 10;
 
@@ -96,7 +96,7 @@ public class StartEscalationEventTest extends StartEvent<StartEscalationEvent> {
 
         StartEscalationEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartEscalationEvent.class);
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertEscalationEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, INTERRUPTING);
+        assertEscalationEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING);
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 
