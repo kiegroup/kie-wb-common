@@ -22,15 +22,15 @@ package org.kie.workbench.common.stunner.core.client.preferences;
  */
 public interface StunnerTextPreferences {
 
-    public double getTextAlpha();
+    double getTextAlpha();
 
-    public String getTextFontFamily();
+    String getTextFontFamily();
 
-    public double getTextFontSize();
+    double getTextFontSize();
 
-    public String getTextFillColor();
+    String getTextFillColor();
 
-    public String getTextStrokeColor();
+    String getTextStrokeColor();
 
-    public double getTextStrokeWidth();
+    double getTextStrokeWidth();
 }

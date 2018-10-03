@@ -17,10 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.client.preferences;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Specializes;
 
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
 import org.kie.workbench.common.stunner.bpmn.client.shape.factory.BPMNShapeFactory;
-import org.kie.workbench.common.stunner.core.client.preferences.StunnerTextPreferences;
+import org.kie.workbench.common.stunner.core.client.preferences.DefaultStunnerTextPreferences;
 
 /**
  * Centralize the Text properties used on BPMN Diagram.
@@ -29,7 +30,8 @@ import org.kie.workbench.common.stunner.core.client.preferences.StunnerTextPrefe
  * {@link BPMNShapeFactory} injects these properties when creating the shapes.
  */
 @Dependent
-public class BPMNTextPreferences implements StunnerTextPreferences {
+@Specializes
+public class BPMNTextPreferences extends DefaultStunnerTextPreferences {
 
     //Constant values from BPMNSVGViewFactory.PATH_CSS
     public static final int TEXT_ALPHA = 1;
@@ -46,65 +48,5 @@ public class BPMNTextPreferences implements StunnerTextPreferences {
         setTextFillColor(TEXT_FILL_COLOR);
         setTextStrokeColor(TEXT_STROKE_COLOR);
         setTextStrokeWidth(TEXT_STROKE_WIDTH);
-    }
-
-    double textAlpha;
-
-    String textFontFamily;
-
-    double textFontSize;
-
-    String textFillColor;
-
-    String textStrokeColor;
-
-    double textStrokeWidth;
-
-    public double getTextAlpha() {
-        return textAlpha;
-    }
-
-    public void setTextAlpha(double textAlpha) {
-        this.textAlpha = textAlpha;
-    }
-
-    public String getTextFontFamily() {
-        return textFontFamily;
-    }
-
-    public void setTextFontFamily(String textFontFamily) {
-        this.textFontFamily = textFontFamily;
-    }
-
-    public double getTextFontSize() {
-        return textFontSize;
-    }
-
-    public void setTextFontSize(double textFontSize) {
-        this.textFontSize = textFontSize;
-    }
-
-    public String getTextFillColor() {
-        return textFillColor;
-    }
-
-    public void setTextFillColor(String textFillColor) {
-        this.textFillColor = textFillColor;
-    }
-
-    public String getTextStrokeColor() {
-        return textStrokeColor;
-    }
-
-    public void setTextStrokeColor(String textStrokeColor) {
-        this.textStrokeColor = textStrokeColor;
-    }
-
-    public double getTextStrokeWidth() {
-        return textStrokeWidth;
-    }
-
-    public void setTextStrokeWidth(double textStrokeWidth) {
-        this.textStrokeWidth = textStrokeWidth;
     }
 }
