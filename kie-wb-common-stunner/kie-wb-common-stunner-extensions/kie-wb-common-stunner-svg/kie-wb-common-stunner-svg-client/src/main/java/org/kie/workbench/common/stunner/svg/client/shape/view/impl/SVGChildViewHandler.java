@@ -85,8 +85,4 @@ public class SVGChildViewHandler {
         final String name = child.getName();
         return svgChildren.stream().anyMatch(c -> name.equals(c.getName()));
     }
-
-    public WiresShapeView<?> getView() {
-        return view;
-    }
 }

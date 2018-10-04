@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.cm.definition;
 
+import java.util.Objects;
+
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
@@ -28,12 +30,12 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ReusableSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
@@ -50,57 +52,47 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         policy = FieldPolicy.ONLY_MARKED,
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)}
 )
-// This is a clone of org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess with different labels and title.
+// This is a clone of org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess with different labels, containment rule and title.
 // Unfortunately extending the foregoing and providing a new set of labels leads to errai-data-binding to barf
 // presumably because there are two fields called "labels" (although I've also tried with a different name field
 // and it leads to the same errors).
-public class ReusableSubprocess extends BaseSubprocess implements DataIOModel {
+public class EmbeddedSubprocess extends BaseSubprocess implements DataIOModel {
 
     @PropertySet
-    @FormField(
-            afterElement = "general"
-    )
+    @FormField(afterElement = "general")
     @Valid
-    protected ReusableSubprocessTaskExecutionSet executionSet;
+    private EmbeddedSubprocessExecutionSet executionSet;
 
     @PropertySet
-    @FormField(
-            afterElement = "executionSet"
-    )
+    @FormField(afterElement = "executionSet")
     @Valid
-    protected DataIOSet dataIOSet;
+    private ProcessData processData;
 
-    public ReusableSubprocess() {
-        this(new BPMNGeneralSet("Subcase"),
-             new ReusableSubprocessTaskExecutionSet(),
-             new DataIOSet(),
-             new BackgroundSet(),
-             new FontSet(),
-             new RectangleDimensionsSet(),
-             new SimulationSet());
+    public EmbeddedSubprocess() {
+        this(
+                new BPMNGeneralSet("Subprocess"),
+                new BackgroundSet(),
+                new FontSet(),
+                new RectangleDimensionsSet(),
+                new SimulationSet(),
+                new EmbeddedSubprocessExecutionSet(),
+                new ProcessData());
     }
 
-    public ReusableSubprocess(final @MapsTo("general") BPMNGeneralSet general,
-                              final @MapsTo("executionSet") ReusableSubprocessTaskExecutionSet executionSet,
-                              final @MapsTo("dataIOSet") DataIOSet dataIOSet,
+    public EmbeddedSubprocess(final @MapsTo("general") BPMNGeneralSet general,
                               final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                               final @MapsTo("fontSet") FontSet fontSet,
                               final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
-                              final @MapsTo("simulationSet") SimulationSet simulationSet) {
+                              final @MapsTo("simulationSet") SimulationSet simulationSet,
+                              final @MapsTo("executionSet") EmbeddedSubprocessExecutionSet executionSet,
+                              final @MapsTo("processData") ProcessData processData) {
         super(general,
               backgroundSet,
               fontSet,
               dimensionsSet,
               simulationSet);
         this.executionSet = executionSet;
-        this.dataIOSet = dataIOSet;
-    }
-
-    @Override
-    protected void initLabels() {
-        super.initLabels();
-        labels.add("cm_activity");
-        labels.remove("cm_stage");
+        this.processData = processData;
     }
 
     @Override
@@ -123,37 +115,45 @@ public class ReusableSubprocess extends BaseSubprocess implements DataIOModel {
         return false;
     }
 
-    public ReusableSubprocessTaskExecutionSet getExecutionSet() {
+    @Override
+    protected void initLabels() {
+        super.initLabels();
+        labels.add("cm_activity");
+        labels.remove("cm_stage");
+    }
+
+    public ProcessData getProcessData() {
+        return processData;
+    }
+
+    public void setProcessData(final ProcessData processData) {
+        this.processData = processData;
+    }
+
+    public EmbeddedSubprocessExecutionSet getExecutionSet() {
         return executionSet;
     }
 
-    public DataIOSet getDataIOSet() {
-        return dataIOSet;
-    }
-
-    public void setExecutionSet(final ReusableSubprocessTaskExecutionSet executionSet) {
+    public void setExecutionSet(EmbeddedSubprocessExecutionSet executionSet) {
         this.executionSet = executionSet;
-    }
-
-    public void setDataIOSet(final DataIOSet dataIOSet) {
-        this.dataIOSet = dataIOSet;
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
-                                         executionSet.hashCode(),
-                                         dataIOSet.hashCode());
+                                         Objects.hashCode(executionSet),
+                                         Objects.hashCode(processData));
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ReusableSubprocess) {
-            ReusableSubprocess other = (ReusableSubprocess) o;
-
+        if (o instanceof EmbeddedSubprocess) {
+            EmbeddedSubprocess other = (EmbeddedSubprocess) o;
             return super.equals(other) &&
-                    executionSet.equals(other.executionSet) &&
-                    dataIOSet.equals(other.dataIOSet);
+                    Objects.equals(executionSet,
+                                   other.executionSet) &&
+                    Objects.equals(processData,
+                                   other.processData);
         }
         return false;
     }

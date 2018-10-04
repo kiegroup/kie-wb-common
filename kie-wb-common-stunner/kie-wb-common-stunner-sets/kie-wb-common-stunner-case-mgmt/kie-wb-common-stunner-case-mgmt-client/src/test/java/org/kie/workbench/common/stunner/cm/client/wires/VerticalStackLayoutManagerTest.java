@@ -53,85 +53,85 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
 
     @Test
     public void orderChildrenInsertShape0At0() {
-        // Insert after the ghost, index = end - 1
+        // Insert to the end
         addShapeAtIndex(shapes.get(0),
                         shapes.get(0).getY() - PADDING);
         assertChildrenOrder(new Check(0,
-                                      1),
+                                      2),
                             new Check(1,
                                       0),
                             new Check(2,
-                                      2));
+                                      1));
     }
 
     @Test
     public void orderChildrenInsertShape0At1() {
-        // Insert after the ghost, index = end - 1
+        // Insert to the end
         addShapeAtIndex(shapes.get(0),
                         shapes.get(1).getY() + PADDING);
         assertChildrenOrder(new Check(0,
-                                      1),
+                                      2),
                             new Check(1,
                                       0),
                             new Check(2,
-                                      2));
+                                      1));
     }
 
     @Test
     public void orderChildrenInsertShape0At2() {
-        // Insert after the ghost, index = end - 1
+        // Insert to the end
         addShapeAtIndex(shapes.get(0),
                         shapes.get(2).getY() + PADDING);
         assertChildrenOrder(new Check(0,
-                                      1),
+                                      2),
                             new Check(1,
                                       0),
                             new Check(2,
-                                      2));
+                                      1));
     }
 
     @Test
     public void orderChildrenInsertShape1At0() {
-        // Insert after the ghost, index = end - 1
+        // Insert to the end
         addShapeAtIndex(shapes.get(1),
                         shapes.get(0).getY() - PADDING);
         assertChildrenOrder(new Check(0,
                                       0),
                             new Check(1,
-                                      1),
+                                      2),
                             new Check(2,
-                                      2));
+                                      1));
     }
 
     @Test
     public void orderChildrenInsertShape1At1() {
-        // Insert after the ghost, index = end - 1
+        // Insert to the end
         addShapeAtIndex(shapes.get(1),
                         shapes.get(1).getY() + PADDING);
         assertChildrenOrder(new Check(0,
                                       0),
                             new Check(1,
-                                      1),
+                                      2),
                             new Check(2,
-                                      2));
+                                      1));
     }
 
     @Test
     public void orderChildrenInsertShape1At2() {
-        // Insert after the ghost, index = end - 1
+        // Insert to the end
         addShapeAtIndex(shapes.get(1),
                         shapes.get(2).getY() + PADDING);
         assertChildrenOrder(new Check(0,
                                       0),
                             new Check(1,
-                                      1),
+                                      2),
                             new Check(2,
-                                      2));
+                                      1));
     }
 
     @Test
     public void orderChildrenInsertShape2At0() {
-        // Insert at the ghost, index = end
+        // Insert to the end
         addShapeAtIndex(shapes.get(2),
                         shapes.get(0).getY() - PADDING);
         assertChildrenOrder(new Check(0,
@@ -144,7 +144,7 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
 
     @Test
     public void orderChildrenInsertShape2At1() {
-        // Insert at the ghost, index = end
+        // Insert to the end
         addShapeAtIndex(shapes.get(2),
                         shapes.get(1).getY() - PADDING);
         assertChildrenOrder(new Check(0,
@@ -157,7 +157,7 @@ public class VerticalStackLayoutManagerTest extends BaseLayoutManagerTest {
 
     @Test
     public void orderChildrenInsertShape2At2() {
-        // Insert at the ghost, index = end
+        // Insert to the end
         addShapeAtIndex(shapes.get(2),
                         shapes.get(2).getY() + PADDING);
         assertChildrenOrder(new Check(0,

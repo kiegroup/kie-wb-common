@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.cm.client.canvas.controls.containment;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -25,10 +26,10 @@ import javax.inject.Inject;
 import com.ait.lienzo.client.core.shape.wires.IContainmentAcceptor;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
-import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.AbstractAcceptorControl;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
+import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresShapeView;
 import org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory;
 import org.kie.workbench.common.stunner.cm.client.wires.CaseManagementContainmentStateHolder;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
@@ -219,8 +220,10 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
             if (parent.getInEdges().size() == 0) {  // Add to the canvas horizontally
                 final double shapeX = wiresShape.getComputedLocation().getX();
 
-                final NFastArrayList<WiresShape> nChildren = container.getChildShapes().copy();
-                final List<WiresShape> children = nChildren.remove(wiresShape).toList();
+                // exclude the shape and its ghost
+                final List<WiresShape> children  = container.getChildShapes().toList().stream()
+                        .filter(s -> !((WiresShapeView) s).getUUID().equals(((WiresShapeView) wiresShape).getUUID()))
+                        .collect(Collectors.toList());
 
                 int targetIndex = children.size();
 
@@ -230,13 +233,6 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
                         targetIndex = idx;
                         break;
                     }
-                }
-
-                //  if move a top level stage
-                if (state.getGhost().isPresent() && container.equals(state.getGhost().get().getParent())
-                        && state.getOriginalIndex().isPresent()) {
-                    int oldIndex = state.getOriginalIndex().get();
-                    targetIndex = targetIndex > oldIndex ? targetIndex - 1 : targetIndex;
                 }
 
                 return targetIndex;

@@ -43,7 +43,8 @@ public class SVGShapeFactory
     private final ShapeDefFunctionalFactory<Object, SVGShapeDef, Shape> functionalFactory;
 
     protected SVGShapeFactory() {
-        this(null, null);
+        this(null,
+             null);
     }
 
     @Inject
@@ -58,22 +59,22 @@ public class SVGShapeFactory
     public void init() {
         // Set the shape instance builders for each supported svg shape definition..
         functionalFactory
-                .set(SVGShapeDef.class, this::newSVGShape)
-                .set(SVGShapeViewDef.class, this::newSVGMutableShape);
+                .set(SVGShapeDef.class,
+                     this::newSVGShape)
+                .set(SVGShapeViewDef.class,
+                     this::newSVGMutableShape);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public SVGShape<?> newShape(final Object instance,
                                 final SVGShapeDef shapeDef) {
-
         return (SVGShape<?>) functionalFactory.newShape(instance,
                                                         shapeDef);
     }
 
     private SVGShape<?> newSVGShape(final Object instance,
                                     final SVGShapeDef shapeDef) {
-
         return new SVGShapeImpl(newSVGShapeView(instance,
                                                 shapeDef));
     }
@@ -81,17 +82,16 @@ public class SVGShapeFactory
     @SuppressWarnings("unchecked")
     private SVGShape<?> newSVGMutableShape(final Object instance,
                                            final SVGShapeDef shapeDef) {
-
         final SVGShapeViewDef mutableShapeDef = (SVGShapeViewDef) shapeDef;
-        final SVGShapeView view = newSVGShapeView(instance, mutableShapeDef);
-
-        return new SVGMutableShapeImpl<>(mutableShapeDef, (SVGShapeViewImpl) view);
+        final SVGShapeView view = newSVGShapeView(instance,
+                                                  mutableShapeDef);
+        return new SVGMutableShapeImpl<Object, SVGShapeViewDef<Object, Object>>(mutableShapeDef,
+                                                                                (SVGShapeViewImpl) view);
     }
 
     @SuppressWarnings("unchecked")
     private SVGShapeViewImpl newSVGShapeView(final Object instance,
                                              final SVGShapeDef shapeDef) {
-
         final Object factory = getViewFactory(shapeDef);
         return (SVGShapeViewImpl) shapeDef.newViewInstance(factory,
                                                            instance);

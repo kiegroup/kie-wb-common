@@ -32,13 +32,16 @@ public class CaseManagementAddChildNodeCanvasCommand extends AbstractCanvasComma
     private final Node parent;
     private final Node child;
     private final String shapeSetId;
+    private final int index;
 
     public CaseManagementAddChildNodeCanvasCommand(final Node parent,
                                                    final Node child,
-                                                   final String shapeSetId) {
+                                                   final String shapeSetId,
+                                                   final int index) {
         this.parent = parent;
         this.child = child;
         this.shapeSetId = shapeSetId;
+        this.index = index;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class CaseManagementAddChildNodeCanvasCommand extends AbstractCanvasComma
                                                      shapeSetId))
                 .addCommand(new CaseManagementSetChildNodeCanvasCommand(parent,
                                                                         child,
-                                                                        Optional.of(0),
+                                                                        Optional.of(index),
                                                                         Optional.empty(),
                                                                         Optional.empty()))
                 .build()

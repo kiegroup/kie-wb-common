@@ -24,7 +24,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.client.lienzo.Lienzo;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.widgets.canvas.view.LienzoPanel;
@@ -70,7 +69,6 @@ public class CaseManagementCanvasPresenter extends WiresCanvasPresenter {
     @SuppressWarnings("unchecked")
     public Canvas addChildShape(final Shape parent, final Shape child, final int index) {
 
-        GWT.log("Adding child [" + child.getUUID() + "] into parent [" + parent.getUUID() + "]");
         ((CaseManagementCanvasView) view).addChildShape(parent.getShapeView(), child.getShapeView(), index);
 
         log(Level.FINE, "Adding child [" + child.getUUID() + "] into parent [" + parent.getUUID() + "]");

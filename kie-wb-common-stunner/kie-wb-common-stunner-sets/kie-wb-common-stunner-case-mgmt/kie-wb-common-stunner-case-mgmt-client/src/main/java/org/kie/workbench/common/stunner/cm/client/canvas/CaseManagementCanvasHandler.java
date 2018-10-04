@@ -22,11 +22,13 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.api.ClientDefinitionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandlerImpl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementAddedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementRemovedEvent;
@@ -181,17 +183,25 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
         }
 
         if (shape instanceof CaseManagementShape) {
-            ((CaseManagementShape) shape).getShapeView().refresh();
-        }
+            CaseManagementShape caseManagementShape = (CaseManagementShape) shape;
 
-//        super.applyElementMutation(shape,
-//                                   candidate,
-//                                   applyPosition,
-//                                   applyProperties,
-//                                   mutationContext);
+            if (applyProperties) {
+                applyElementTitle(caseManagementShape,
+                                  candidate);
+            }
+
+            caseManagementShape.getShapeView().refresh();
+        }
 
         this.applyElementMutation(shape,
                                   candidate);
+    }
+
+    private void applyElementTitle(final CaseManagementShape shape,
+                                   final Element candidate) {
+        final TextPropertyProvider textPropertyProvider = this.getTextPropertyProviderFactory().getProvider(candidate);
+        final String name = textPropertyProvider.getText(candidate);
+        ((CaseManagementShapeView) shape.getShapeView()).setLabel(name);
     }
 
     @Override

@@ -47,7 +47,8 @@ public class CaseManagementAddChildNodeCanvasCommandTest extends AbstractCanvasC
     private CaseManagementAddChildNodeCanvasCommand addChildNode() {
         final CaseManagementAddChildNodeCanvasCommand command = new CaseManagementAddChildNodeCanvasCommand(parent,
                                                                                                             candidate,
-                                                                                                            SHAPE_SET_ID);
+                                                                                                            SHAPE_SET_ID,
+                                                                                                            0);
 
         command.execute(canvasHandler);
         return command;

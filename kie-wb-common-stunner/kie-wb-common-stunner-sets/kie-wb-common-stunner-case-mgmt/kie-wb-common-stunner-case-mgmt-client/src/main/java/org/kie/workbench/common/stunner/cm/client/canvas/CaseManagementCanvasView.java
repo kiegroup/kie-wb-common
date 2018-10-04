@@ -59,7 +59,7 @@ public class CaseManagementCanvasView extends WiresCanvasView {
         CaseManagementShapeView parentCMView = (CaseManagementShapeView) parent;
         CaseManagementShapeView childCMView = (CaseManagementShapeView) child;
 
-        parentCMView.addShapeAtNextIndex(childCMView);
+        parentCMView.addShape(childCMView, index);
 
         return this;
     }

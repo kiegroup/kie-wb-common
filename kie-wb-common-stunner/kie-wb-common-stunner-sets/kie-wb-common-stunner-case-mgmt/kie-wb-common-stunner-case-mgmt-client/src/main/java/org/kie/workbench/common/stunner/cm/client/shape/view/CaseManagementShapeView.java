@@ -15,16 +15,16 @@
  */
 package org.kie.workbench.common.stunner.cm.client.shape.view;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
-import com.google.gwt.core.client.GWT;
+import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresShapeView;
 import org.kie.workbench.common.stunner.cm.client.wires.VerticalStackLayoutManager;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
@@ -84,27 +84,21 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         getLayoutHandler().requestLayout(this);
     }
 
-    public void addShapeAtNextIndex(final WiresShape shape) {
-        addShape(shape, getChildShapes().size());
-    }
-
     public void addShape(final WiresShape shape, final int targetIndex) {
 
         if (shape == null || (targetIndex < 0 || targetIndex > getChildShapes().size())) {
             return;
         }
-        final List<WiresShape> existingChildShapes = new ArrayList<>();
 
-        GWT.log("targetIndex: " + targetIndex);
-        GWT.log("number of child shapes: " + getChildShapes().toList().size());
-        existingChildShapes.addAll(getChildShapes().toList());
-        existingChildShapes.forEach(WiresShape::removeFromParent);
+        final List<WiresShape> childShapes = getChildShapes().toList();
+        childShapes.forEach(WiresShape::removeFromParent);
 
-        int existIndex = existingChildShapes.indexOf(shape);
-        if (existIndex >= 0) {
-            existingChildShapes.remove(shape);
-        }
-        existingChildShapes.add((existIndex >= 0 && existIndex < targetIndex) ? targetIndex -1 : targetIndex, shape);
+        // exclude the shape and its ghost
+        final List<WiresShape> existingChildShapes = childShapes.stream()
+                .filter(s -> !((WiresShapeView) s).getUUID().equals(((WiresShapeView) shape).getUUID()))
+                .collect(Collectors.toList());
+
+        existingChildShapes.add(targetIndex, shape);
 
         //call to add(..) causes ILayoutHandler to be invoked
         existingChildShapes.forEach(this::add);

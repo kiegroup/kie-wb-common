@@ -25,10 +25,15 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.RegisterNodeComm
 @SuppressWarnings("unchecked")
 public class CaseManagementAddChildNodeGraphCommand extends org.kie.workbench.common.stunner.core.graph.command.impl.AddChildNodeCommand {
 
+    private final int index;
+
     public CaseManagementAddChildNodeGraphCommand(final Node parent,
-                                                  final Node child) {
+                                                  final Node child,
+                                                  final int index) {
         super(parent,
               child);
+
+        this.index = index;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class CaseManagementAddChildNodeGraphCommand extends org.kie.workbench.co
         this.addCommand(new RegisterNodeCommand(child));
         this.addCommand(new CaseManagementSetChildNodeGraphCommand(parent,
                                                                    child,
-                                                                   Optional.of(parent.getOutEdges().size()),
+                                                                   Optional.of(index),
                                                                    Optional.empty(),
                                                                    Optional.empty()));
         return this;

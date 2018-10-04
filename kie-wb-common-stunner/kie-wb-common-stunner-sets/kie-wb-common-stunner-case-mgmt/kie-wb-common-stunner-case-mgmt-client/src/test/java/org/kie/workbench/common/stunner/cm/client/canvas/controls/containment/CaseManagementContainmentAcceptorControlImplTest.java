@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.cm.client.canvas.controls.containment;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.client.core.shape.wires.IContainmentAcceptor;
@@ -304,7 +305,7 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
         int result = ((CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor) control.containmentAcceptor).getAddIndex(childShape, parentShape);
 
-        assertTrue(parent.getOutEdges().size() - 1 == result);
+        assertTrue(0 == result);
     }
 
     @Test
@@ -322,7 +323,7 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
         int result = ((CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor) control.containmentAcceptor).getAddIndex(childShape, parentShape);
 
-        assertTrue(parent.getOutEdges().size() == result);
+        assertTrue(1 == result);
     }
 
     @Test
@@ -338,12 +339,13 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
         CaseManagementShapeView mockChildShape = spy((CaseManagementShapeView) makeWiresShape());
         when(mockChildShape.getComputedLocation()).thenReturn(new Point2D(10.0d, 10.0d));
+        when(mockChildShape.getUUID()).thenReturn(UUID.randomUUID().toString());
 
-        parentShape.add(makeWiresShape());
-        parentShape.add(makeWiresShape());
+        parentShape.add(makeWiresShape(UUID.randomUUID().toString()));
+        parentShape.add(makeWiresShape(UUID.randomUUID().toString()));
         parentShape.add(mockChildShape);
 
-        state.setGhost(Optional.of((CaseManagementShapeView) makeWiresShape()));
+        state.setGhost(Optional.of(makeWiresShape(CANDIDATE_UUID)));
 
         int result = ((CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor) control.containmentAcceptor).getAddIndex(childShape, parentShape);
 
@@ -361,13 +363,13 @@ public class CaseManagementContainmentAcceptorControlImplTest {
         final WiresShape parentShape = makeWiresShape(PARENT_UUID);
         final WiresShape childShape = makeWiresShape(CANDIDATE_UUID);
 
-        parentShape.add(makeWiresShape());
+        parentShape.add(makeWiresShape(UUID.randomUUID().toString()));
 
-        state.setGhost(Optional.of((CaseManagementShapeView) makeWiresShape()));
+        state.setGhost(Optional.of(makeWiresShape(CANDIDATE_UUID)));
 
         int result = ((CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor) control.containmentAcceptor).getAddIndex(childShape, parentShape);
 
-        assertTrue(parentShape.getChildShapes().size() == result);
+        assertTrue(1 == result);
     }
 
     @Test
@@ -381,16 +383,16 @@ public class CaseManagementContainmentAcceptorControlImplTest {
         final WiresShape parentShape = makeWiresShape(PARENT_UUID);
         final WiresShape childShape = makeWiresShape(CANDIDATE_UUID);
 
-        parentShape.add(makeWiresShape());
+        parentShape.add(makeWiresShape(UUID.randomUUID().toString()));
 
-        CaseManagementShapeView ghost = (CaseManagementShapeView) makeWiresShape();
-        ghost.setParent(parentShape);
+        CaseManagementShapeView ghost = makeWiresShape(CANDIDATE_UUID);
+        parentShape.add(ghost);
 
         state.setGhost(Optional.of(ghost));
-        state.setOriginalIndex(Optional.of(parentShape.getChildShapes().size() - 2));
+        state.setOriginalIndex(Optional.of(parentShape.getChildShapes().size() - 1));
 
         int result = ((CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor) control.containmentAcceptor).getAddIndex(childShape, parentShape);
 
-        assertTrue(parentShape.getChildShapes().size() - 1 == result);
+        assertTrue(1 == result);
     }
 }
