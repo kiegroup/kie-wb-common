@@ -20,9 +20,6 @@ import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -53,14 +50,13 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskFilledProperties() {
         final String TASK_NAME = "Task01 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
         final String TASK_DOCUMENTATION = "Task01 doc\n ~!@#$%^&*()_+`1234567890-={}[]:\"|;'\\<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
+        NoneTask filledTopLevelTask = getTaskNodeById(getDiagram(),
                                                       FILLED_TOP_LEVEL_TASK_ID,
                                                       ZERO_INCOME_EDGES,
                                                       HAS_NO_OUTCOME_EDGE);
@@ -70,11 +66,10 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelEmptyTaskProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelEmptyTaskProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask emptyTopLevelTask = getTaskNodeById(diagram,
+        NoneTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                      EMPTY_TOP_LEVEL_TASK_ID,
                                                      ZERO_INCOME_EDGES,
                                                      HAS_NO_OUTCOME_EDGE);
@@ -84,14 +79,13 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskFilledProperties() {
         final String TASK_NAME = "Task03 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
         final String TASK_DOCUMENTATION = "Task03 doc\n ~!@#$%^&*()_+`1234567890-={}[]:\"|;'\\<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledSubprocessLevelTask = getTaskNodeById(diagram,
+        NoneTask filledSubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                              FILLED_SUBPROCESS_LEVEL_TASK_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
@@ -101,11 +95,10 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        NoneTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                             EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
@@ -115,14 +108,13 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() {
         final String TASK_NAME = "Task02 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
         final String TASK_DOCUMENTATION = "Task02 doc\n ~!@#$%^&*()_+`1234567890-={}[]:\"|;'\\<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
+        NoneTask filledTopLevelTask = getTaskNodeById(getDiagram(),
                                                       FILLED_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                       ONE_INCOME_EDGE,
                                                       HAS_OUTCOME_EDGE);
@@ -132,11 +124,10 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask emptyTopLevelTask = getTaskNodeById(diagram,
+        NoneTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                      EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                      ONE_INCOME_EDGE,
                                                      HAS_OUTCOME_EDGE);
@@ -146,11 +137,10 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        NoneTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                             EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
@@ -160,14 +150,13 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() {
         final String TASK_NAME = "Task04 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
         final String TASK_DOCUMENTATION = "Task04 doc\n ~!@#$%^&*()_+`1234567890-={}[]:\"|;'\\<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledSubprocessLevelTask = getTaskNodeById(diagram,
+        NoneTask filledSubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                              FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
@@ -177,14 +166,13 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() {
         final String TASK_NAME = "Task05 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
         final String TASK_DOCUMENTATION = "Task05 doc\n ~!@#$%^&*()_+`1234567890-={}[]:\"|;'\\<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
+        NoneTask filledTopLevelTask = getTaskNodeById(getDiagram(),
                                                       FILLED_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                       TWO_INCOME_EDGES,
                                                       HAS_OUTCOME_EDGE);
@@ -194,11 +182,10 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
+        NoneTask filledTopLevelTask = getTaskNodeById(getDiagram(),
                                                       EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                       TWO_INCOME_EDGES,
                                                       HAS_OUTCOME_EDGE);
@@ -208,11 +195,10 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        NoneTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                             EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
@@ -222,14 +208,13 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() {
         final String TASK_NAME = "Task06 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
         final String TASK_DOCUMENTATION = "Task06 doc\n ~!@#$%^&*()_+`1234567890-={}[]:\"|;'\\<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledSubprocessLevelTask = getTaskNodeById(diagram,
+        NoneTask filledSubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                              FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);

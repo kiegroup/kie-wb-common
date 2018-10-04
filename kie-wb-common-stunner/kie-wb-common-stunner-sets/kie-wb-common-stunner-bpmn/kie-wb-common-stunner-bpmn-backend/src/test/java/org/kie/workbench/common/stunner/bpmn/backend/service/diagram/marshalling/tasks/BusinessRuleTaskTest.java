@@ -26,9 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSe
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -94,7 +91,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskFilledProperties() {
         final String TASK_NAME_JAVA = "Task01 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "Task01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from Business Rule Task.\");";
@@ -113,10 +110,9 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         final String RULE_FLOW_GROUP = "Group01";
         final String TASK_DATA_INPUT_OUTPUT = "|input:String||output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask filledTopLevelTaskJava = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                   FILLED_TOP_LEVEL_TASK_JAVA_ID,
                                                                   ZERO_INCOME_EDGES,
                                                                   HAS_NO_OUTCOME_EDGE);
@@ -135,7 +131,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                         FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                         ZERO_INCOME_EDGES,
                                                                         HAS_NO_OUTCOME_EDGE);
@@ -154,7 +150,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                   FILLED_TOP_LEVEL_TASK_MVEL_ID,
                                                                   ZERO_INCOME_EDGES,
                                                                   HAS_NO_OUTCOME_EDGE);
@@ -176,11 +172,10 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelEmptyTaskProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelEmptyTaskProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                              EMPTY_TOP_LEVEL_TASK_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
@@ -202,7 +197,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskFilledProperties() {
         final String TASK_NAME_JAVA = "Task10 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "Task10 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from Business Rule Task.\");";
@@ -221,10 +216,9 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         final String RULE_FLOW_GROUP = "Group01";
         final String TASK_DATA_INPUT_OUTPUT = "|input:String||output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask filledSubprocessLevelTaskJava = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                          FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                          ZERO_INCOME_EDGES,
                                                                          HAS_NO_OUTCOME_EDGE);
@@ -243,7 +237,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                                FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                                ZERO_INCOME_EDGES,
                                                                                HAS_NO_OUTCOME_EDGE);
@@ -262,7 +256,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                          FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                          ZERO_INCOME_EDGES,
                                                                          HAS_NO_OUTCOME_EDGE);
@@ -284,11 +278,10 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                                     EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                                     ZERO_INCOME_EDGES,
                                                                     HAS_NO_OUTCOME_EDGE);
@@ -310,7 +303,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() {
         final String TASK_NAME_JAVA = "Task02 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "Task02 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from Business Rule Task.\");";
@@ -329,10 +322,9 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         final String RULE_FLOW_GROUP = "Group01";
         final String TASK_DATA_INPUT_OUTPUT = "|input:String||output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask filledTopLevelTaskJava = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                   FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID,
                                                                   ONE_INCOME_EDGE,
                                                                   HAS_OUTCOME_EDGE);
@@ -351,7 +343,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                         FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                         ONE_INCOME_EDGE,
                                                                         HAS_OUTCOME_EDGE);
@@ -370,7 +362,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                   FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID,
                                                                   ONE_INCOME_EDGE,
                                                                   HAS_OUTCOME_EDGE);
@@ -392,11 +384,10 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                              EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
@@ -418,11 +409,10 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                                     EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                                     ONE_INCOME_EDGE,
                                                                     HAS_OUTCOME_EDGE);
@@ -444,7 +434,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() {
         final String TASK_NAME_JAVA = "Task11 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "Task11 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from Business Rule Task.\");";
@@ -463,10 +453,9 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         final String RULE_FLOW_GROUP = "Group01";
         final String TASK_DATA_INPUT_OUTPUT = "|input:String||output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask filledSubprocessLevelTaskJava = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                          FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                          ONE_INCOME_EDGE,
                                                                          HAS_OUTCOME_EDGE);
@@ -485,7 +474,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                                FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                                ONE_INCOME_EDGE,
                                                                                HAS_OUTCOME_EDGE);
@@ -504,7 +493,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                          FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                          ONE_INCOME_EDGE,
                                                                          HAS_OUTCOME_EDGE);
@@ -526,7 +515,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() {
         final String TASK_NAME_JAVA = "Task03 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "Task03 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from Business Rule Task.\");";
@@ -545,10 +534,9 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         final String RULE_FLOW_GROUP = "Group01";
         final String TASK_DATA_INPUT_OUTPUT = "|input:String||output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask filledTopLevelTaskJava = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                   FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID,
                                                                   TWO_INCOME_EDGES,
                                                                   HAS_OUTCOME_EDGE);
@@ -567,7 +555,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                         FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                         TWO_INCOME_EDGES,
                                                                         HAS_OUTCOME_EDGE);
@@ -586,7 +574,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
+        BusinessRuleTask filledTopLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                   FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID,
                                                                   TWO_INCOME_EDGES,
                                                                   HAS_OUTCOME_EDGE);
@@ -608,11 +596,10 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                              EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);
@@ -634,11 +621,10 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                                     EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                                     TWO_INCOME_EDGES,
                                                                     HAS_OUTCOME_EDGE);
@@ -660,7 +646,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() {
         final String TASK_NAME_JAVA = "Task12 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "Task12 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from Business Rule Task.\");";
@@ -679,10 +665,9 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         final String RULE_FLOW_GROUP = "Group01";
         final String TASK_DATA_INPUT_OUTPUT = "|input:String||output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask filledSubprocessLevelTaskJava = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                          FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                          TWO_INCOME_EDGES,
                                                                          HAS_OUTCOME_EDGE);
@@ -701,7 +686,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                                FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                                TWO_INCOME_EDGES,
                                                                                HAS_OUTCOME_EDGE);
@@ -720,7 +705,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
+        BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                          FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                          TWO_INCOME_EDGES,
                                                                          HAS_OUTCOME_EDGE);
@@ -741,13 +726,12 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
     }
 
     @Test
-    public void testUnmarshallDMNRuleLanguageProperties() throws Exception {
+    public void testUnmarshallDMNRuleLanguageProperties() {
         final String DMN_LANGUAGE_TASK_NAME = "DMN Task";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(diagram,
+        BusinessRuleTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                              DMN_RULE_LANGUAGE_TASK_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
@@ -776,7 +760,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testMarshallTopLevelTaskFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskFilledProperties() {
         checkTaskMarshalling(FILLED_TOP_LEVEL_TASK_JAVA_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TOP_LEVEL_TASK_MVEL_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
@@ -784,7 +768,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testMarshallSubprocessLevelTaskFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskFilledProperties() {
         checkTaskMarshalling(FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
@@ -792,7 +776,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testMarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskOneIncomeFilledProperties() {
         checkTaskMarshalling(FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
@@ -800,7 +784,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() {
         checkTaskMarshalling(FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
@@ -808,7 +792,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testMarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskTwoIncomesFilledProperties() {
         checkTaskMarshalling(FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
@@ -816,14 +800,14 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     @Override
-    public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() {
         checkTaskMarshalling(FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallDMNRuleLanguageProperties() throws Exception {
+    public void testMarshallDMNRuleLanguageProperties() {
         checkTaskMarshalling(DMN_RULE_LANGUAGE_TASK_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 

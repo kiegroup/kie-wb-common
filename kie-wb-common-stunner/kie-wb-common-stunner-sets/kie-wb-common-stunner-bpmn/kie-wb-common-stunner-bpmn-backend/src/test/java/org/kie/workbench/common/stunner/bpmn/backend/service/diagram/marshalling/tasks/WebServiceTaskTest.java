@@ -20,9 +20,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 
 public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.tasks.ServiceTask<ServiceTask> {
 
@@ -75,7 +72,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskFilledProperties() {
         final String TASK_NAME_JAVA = "WebService task01 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "WebService task01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from WebService Task.\");";
@@ -93,10 +90,9 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
         final String TASK_DATA_INPUT_OUTPUT = "|Endpoint:String,Interface:String,Mode:String,Namespace:String,Operation:String,Parameter:String,Url:String,input:String||Result:java.lang.Object,output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask filledTopLevelTaskJava = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskJava = getTaskNodeById(getDiagram(),
                                                              FILLED_TOP_LEVEL_TASK_JAVA_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
@@ -110,7 +106,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                    FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
@@ -124,7 +120,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                              FILLED_TOP_LEVEL_TASK_MVEL_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
@@ -145,11 +141,10 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
             "https://issues.jboss.org/browse/JBPM-7726")
     @Test
     @Override
-    public void testUnmarshallTopLevelEmptyTaskProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelEmptyTaskProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask emptyTopLevelTask = getTaskNodeById(diagram,
+        ServiceTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                         EMPTY_TOP_LEVEL_TASK_ID,
                                                         ZERO_INCOME_EDGES,
                                                         HAS_NO_OUTCOME_EDGE);
@@ -167,7 +162,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskFilledProperties() {
         final String TASK_NAME_JAVA = "WebService task10 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "WebService task10 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from WebService Task.\");";
@@ -185,10 +180,9 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
         final String TASK_DATA_INPUT_OUTPUT = "|Endpoint:String,Interface:String,Mode:String,Namespace:String,Operation:String,Parameter:String,Url:String,input:String||Result:java.lang.Object,output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask filledSubprocessLevelTaskJava = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                     FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                     ZERO_INCOME_EDGES,
                                                                     HAS_NO_OUTCOME_EDGE);
@@ -202,7 +196,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                           FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                           ZERO_INCOME_EDGES,
                                                                           HAS_NO_OUTCOME_EDGE);
@@ -216,7 +210,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                     FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                     ZERO_INCOME_EDGES,
                                                                     HAS_NO_OUTCOME_EDGE);
@@ -237,11 +231,10 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
             "https://issues.jboss.org/browse/JBPM-7726")
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        ServiceTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                                EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                                ZERO_INCOME_EDGES,
                                                                HAS_NO_OUTCOME_EDGE);
@@ -258,7 +251,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() {
         final String TASK_NAME_JAVA = "WebService task02 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "WebService task02 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from WebService Task.\");";
@@ -276,10 +269,9 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
         final String TASK_DATA_INPUT_OUTPUT = "|Endpoint:String,Interface:String,Mode:String,Namespace:String,Operation:String,Parameter:String,Url:String,input:String||Result:java.lang.Object,output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask filledTopLevelTaskJava = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskJava = getTaskNodeById(getDiagram(),
                                                              FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID,
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
@@ -293,7 +285,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                    FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
@@ -307,7 +299,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                              FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID,
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
@@ -328,11 +320,10 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
             "https://issues.jboss.org/browse/JBPM-7726")
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask emptyTopLevelTask = getTaskNodeById(diagram,
+        ServiceTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                         EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                         ONE_INCOME_EDGE,
                                                         HAS_OUTCOME_EDGE);
@@ -353,11 +344,10 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
             "https://issues.jboss.org/browse/JBPM-7726")
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        ServiceTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                                EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                                ONE_INCOME_EDGE,
                                                                HAS_OUTCOME_EDGE);
@@ -374,7 +364,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() {
         final String TASK_NAME_JAVA = "WebService task11 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "WebService task11 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from WebService Task.\");";
@@ -392,10 +382,9 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
         final String TASK_DATA_INPUT_OUTPUT = "|Endpoint:String,Interface:String,Mode:String,Namespace:String,Operation:String,Parameter:String,Url:String,input:String||Result:java.lang.Object,output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask filledSubprocessLevelTaskJava = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                     FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                     ONE_INCOME_EDGE,
                                                                     HAS_OUTCOME_EDGE);
@@ -409,7 +398,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                           FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                           ONE_INCOME_EDGE,
                                                                           HAS_OUTCOME_EDGE);
@@ -423,7 +412,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                     FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                     ONE_INCOME_EDGE,
                                                                     HAS_OUTCOME_EDGE);
@@ -440,7 +429,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() {
         final String TASK_NAME_JAVA = "WebService task03 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "WebService task03 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from WebService Task.\");";
@@ -458,10 +447,9 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
         final String TASK_DATA_INPUT_OUTPUT = "|Endpoint:String,Interface:String,Mode:String,Namespace:String,Operation:String,Parameter:String,Url:String,input:String||Result:java.lang.Object,output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask filledTopLevelTaskJava = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskJava = getTaskNodeById(getDiagram(),
                                                              FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID,
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);
@@ -475,7 +463,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                    FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
@@ -489,7 +477,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledTopLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledTopLevelTaskMvel = getTaskNodeById(diagram,
+        ServiceTask filledTopLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                              FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID,
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);
@@ -510,11 +498,10 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
             "https://issues.jboss.org/browse/JBPM-7726")
     @Test
     @Override
-    public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask emptyTopLevelTask = getTaskNodeById(diagram,
+        ServiceTask emptyTopLevelTask = getTaskNodeById(getDiagram(),
                                                         EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                         TWO_INCOME_EDGES,
                                                         HAS_OUTCOME_EDGE);
@@ -535,11 +522,10 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
             "https://issues.jboss.org/browse/JBPM-7726")
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+    public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() {
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+        ServiceTask emptySubprocessLevelTask = getTaskNodeById(getDiagram(),
                                                                EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                                TWO_INCOME_EDGES,
                                                                HAS_OUTCOME_EDGE);
@@ -556,7 +542,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() {
         final String TASK_NAME_JAVA = "WebService task12 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String TASK_DOCUMENTATION_JAVA = "WebService task12 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String TASK_ON_ENTRY_ACTION_JAVA = "System.out.println(\"On Entry Action from WebService Task.\");";
@@ -574,10 +560,9 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
         final String TASK_DATA_INPUT_OUTPUT = "|Endpoint:String,Interface:String,Mode:String,Namespace:String,Operation:String,Parameter:String,Url:String,input:String||Result:java.lang.Object,output:String|[din]processGlobalVar->input,[dout]output->processGlobalVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
-        assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        assertDiagram(getDiagram(), AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        ServiceTask filledSubprocessLevelTaskJava = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskJava = getTaskNodeById(getDiagram(),
                                                                     FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                     TWO_INCOME_EDGES,
                                                                     HAS_OUTCOME_EDGE);
@@ -591,7 +576,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJava.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskJavascript = getTaskNodeById(getDiagram(),
                                                                           FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                           TWO_INCOME_EDGES,
                                                                           HAS_OUTCOME_EDGE);
@@ -605,7 +590,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
                                       AD_HOC_AUTOSTART);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
-        ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(diagram,
+        ServiceTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
                                                                     FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                     TWO_INCOME_EDGES,
                                                                     HAS_OUTCOME_EDGE);
@@ -622,7 +607,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testMarshallTopLevelTaskFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskFilledProperties() {
         checkTaskMarshalling(FILLED_TOP_LEVEL_TASK_JAVA_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TOP_LEVEL_TASK_MVEL_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
@@ -630,7 +615,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testMarshallSubprocessLevelTaskFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskFilledProperties() {
         checkTaskMarshalling(FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
@@ -638,7 +623,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testMarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskOneIncomeFilledProperties() {
         checkTaskMarshalling(FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
@@ -646,7 +631,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() {
         checkTaskMarshalling(FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID, ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
@@ -654,7 +639,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testMarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskTwoIncomesFilledProperties() {
         checkTaskMarshalling(FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
@@ -662,7 +647,7 @@ public class WebServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
 
     @Test
     @Override
-    public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() {
         checkTaskMarshalling(FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
         checkTaskMarshalling(FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID, TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);

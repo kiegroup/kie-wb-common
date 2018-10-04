@@ -22,12 +22,10 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBase;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
-import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -49,8 +47,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     static final boolean HAS_OUTCOME_EDGE = true;
     static final boolean HAS_NO_OUTCOME_EDGE = false;
 
-    protected DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller = null;
-
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
@@ -58,87 +54,112 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         });
     }
 
+    private static Diagram<Graph, Metadata> old_diagram;
+    private static Diagram<Graph, Metadata> old_roundTripDiagram;
+
+    private static Diagram<Graph, Metadata> new_diagram;
+    private static Diagram<Graph, Metadata> new_roundTripDiagram;
+
+    private static Class clazz = null;
+
+    private Marshaller currentMarshaller;
+
     Task(Marshaller marshallerType) {
         super.init();
-        switch (marshallerType) {
-            case OLD:
-                marshaller = oldMarshaller;
-                break;
-            case NEW:
-                marshaller = newMarshaller;
-                break;
+
+        currentMarshaller = marshallerType;
+
+        if (this.getClass() != clazz) {
+            marshallDiagramWithNewMarshaller();
+            marshallDiagramWithOldMarshaller();
+            clazz = this.getClass();
+        }
+    }
+
+    private void marshallDiagramWithNewMarshaller() {
+        try {
+            new_diagram = unmarshall(newMarshaller, getBpmnTaskFilePath());
+            new_roundTripDiagram = unmarshall(newMarshaller, getStream(newMarshaller.marshall(new_diagram)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void marshallDiagramWithOldMarshaller() {
+        try {
+            old_diagram = unmarshall(oldMarshaller, getBpmnTaskFilePath());
+            old_roundTripDiagram = unmarshall(oldMarshaller, getStream(oldMarshaller.marshall(old_diagram)));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Test
-    public void testMigration() throws Exception {
-        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnTaskFilePath());
-        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, getBpmnTaskFilePath());
-
+    public void testMigration() {
         // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertDiagramEquals(oldDiagram, newDiagram, getBpmnTaskFilePath());
+        assertDiagramEquals(old_diagram, new_diagram, getBpmnTaskFilePath());
     }
 
     @Test
-    public void testMarshallTopLevelTaskFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskFilledProperties() {
         checkTaskMarshalling(getFilledTopLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallTopLevelTaskEmptyProperties() throws Exception {
+    public void testMarshallTopLevelTaskEmptyProperties() {
         checkTaskMarshalling(getEmptyTopLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallSubprocessLevelTaskFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskFilledProperties() {
         checkTaskMarshalling(getFilledSubprocessLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallSubprocessLevelTaskEmptyProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskEmptyProperties() {
         checkTaskMarshalling(getEmptySubprocessLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskOneIncomeFilledProperties() {
         checkTaskMarshalling(getFilledTopLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallTopLevelTaskOneIncomeEmptyProperties() throws Exception {
+    public void testMarshallTopLevelTaskOneIncomeEmptyProperties() {
         checkTaskMarshalling(getEmptyTopLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() {
         checkTaskMarshalling(getFilledSubprocessLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskOneIncomeEmptyProperties() {
         checkTaskMarshalling(getEmptySubprocessLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testMarshallTopLevelTaskTwoIncomesFilledProperties() {
         checkTaskMarshalling(getFilledTopLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallTopLevelTaskTwoIncomesEmptyProperties() throws Exception {
+    public void testMarshallTopLevelTaskTwoIncomesEmptyProperties() {
         checkTaskMarshalling(getEmptyTopLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() {
         checkTaskMarshalling(getFilledSubprocessLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
     }
 
     @Test
-    public void testMarshallSubprocessLevelTaskTwoIncomesEmptyProperties() throws Exception {
+    public void testMarshallSubprocessLevelTaskTwoIncomesEmptyProperties() {
         checkTaskMarshalling(getEmptySubprocessLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
     }
 
@@ -167,6 +188,32 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     public abstract void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception;
 
     abstract String getBpmnTaskFilePath();
+
+    public Diagram<Graph, Metadata> getDiagram() {
+        switch (currentMarshaller) {
+            case OLD:
+                return old_diagram;
+            case NEW:
+                return new_diagram;
+            default:
+                throw new IllegalArgumentException("Unexpected value, Marshaller can be NEW or OLD.");
+        }
+    }
+
+    public Diagram<Graph, Metadata> getRoundTripDiagram() {
+        switch (currentMarshaller) {
+            case OLD:
+                return old_roundTripDiagram;
+            case NEW:
+                return new_roundTripDiagram;
+            default:
+                throw new IllegalArgumentException("Unexpected value, Marshaller can be NEW or OLD.");
+        }
+    }
+
+    public int getInitialAmountOfNodes() {
+        return getNodes(getDiagram()).size();
+    }
 
     abstract Class<T> getTaskType();
 
@@ -214,13 +261,11 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     }
 
     @SuppressWarnings("unchecked")
-    void checkTaskMarshalling(String nodeID, int amountOfIncomeEdges, boolean hasOutcomeEdge) throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, getBpmnTaskFilePath());
-        final int AMOUNT_OF_NODES_IN_DIAGRAM = getNodes(initialDiagram).size();
-        String resultXml = marshaller.marshall(initialDiagram);
+    void checkTaskMarshalling(String nodeID, int amountOfIncomeEdges, boolean hasOutcomeEdge) {
+        Diagram<Graph, Metadata> initialDiagram = getDiagram();
 
-        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
-        assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+        Diagram<Graph, Metadata> marshalledDiagram = getRoundTripDiagram();
+        assertDiagram(marshalledDiagram, getInitialAmountOfNodes());
 
         assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, amountOfIncomeEdges, hasOutcomeEdge);
     }
