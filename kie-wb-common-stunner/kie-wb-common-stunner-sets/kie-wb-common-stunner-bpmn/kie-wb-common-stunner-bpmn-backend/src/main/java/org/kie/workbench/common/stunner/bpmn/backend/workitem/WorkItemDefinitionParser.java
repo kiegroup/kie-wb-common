@@ -44,9 +44,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
 import org.kie.workbench.common.stunner.bpmn.workitem.IconDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.core.backend.util.URLUtils;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.kie.workbench.common.stunner.core.util.StringUtils.nonEmpty;
 
 public class WorkItemDefinitionParser {
 
@@ -189,7 +190,7 @@ public class WorkItemDefinitionParser {
 
         // Icon data-uri.
         final String icon = workDefinition.getIcon();
-        if (!StringUtils.isEmpty(icon)) {
+        if (nonEmpty(icon)) {
             final String iconData = dataUriProvider.apply(icon);
             workDefinition.setIcon(icon);
             workDefinition.setIconEncoded(iconData);
@@ -281,7 +282,7 @@ public class WorkItemDefinitionParser {
                             final String defaultValue,
                             final Consumer<String> consumer) {
         final String value = (String) map.get(key);
-        if (!StringUtils.isEmpty(value)) {
+        if (nonEmpty(value)) {
             consumer.accept(value);
         } else if (null != defaultValue) {
             consumer.accept(defaultValue);
