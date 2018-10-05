@@ -30,6 +30,7 @@ import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpression
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphLayout;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
@@ -44,11 +45,14 @@ import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationServic
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.AutomaticLayoutService;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
+import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -81,6 +85,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final DecisionNavigatorDock decisionNavigatorDock;
+    private final AutomaticLayoutService layoutService;
+    private final DMNGraphLayout graphLayout;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -102,7 +108,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller,
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                            final DecisionNavigatorDock decisionNavigatorDock) {
+                            final DecisionNavigatorDock decisionNavigatorDock,
+                            final AutomaticLayoutService layoutService,
+                            final DMNGraphLayout graphLayout) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -123,6 +131,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.decisionNavigatorDock = decisionNavigatorDock;
+        this.graphLayout = graphLayout;
+        this.layoutService = layoutService;
     }
 
     @OnStartup
@@ -130,6 +140,14 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                           final PlaceRequest place) {
         superDoStartUp(path, place);
         decisionNavigatorDock.init(PerspectiveIds.LIBRARY);
+    }
+
+    @Override
+    public void open(final ProjectDiagram diagram) {
+        final Graph graph = diagram.getGraph();
+        final AutomaticLayoutService.Layout layout = layoutService.getLayout(graph);
+        this.graphLayout.applyLayout(layout, graph);
+        super.open(diagram);
     }
 
     @Override

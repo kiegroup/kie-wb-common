@@ -52,7 +52,6 @@ public final class Layer {
         this.vertices.add(new Vertex(vertexId));
     }
 
-    @Override
     public Layer clone() {
         final Layer clone = new Layer(this.level);
         ArrayList<Vertex> cloneVertices = clone.getVertices();

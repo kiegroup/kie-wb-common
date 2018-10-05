@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphLayout;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
@@ -34,6 +35,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.AutomaticLayoutService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -75,6 +77,12 @@ public class SessionDiagramEditorScreenTest {
     @Captor
     private ArgumentCaptor<Consumer<EditorSession>> clientFullSessionConsumer;
 
+    @Mock
+    private DMNGraphLayout dmnGraphLayout;
+
+    @Mock
+    private AutomaticLayoutService layoutService;
+
     private SessionDiagramEditorScreen editor;
 
     @Before
@@ -110,7 +118,9 @@ public class SessionDiagramEditorScreenTest {
                                                     null,
                                                     screenPanelView,
                                                     null,
-                                                    decisionNavigatorDock));
+                                                    decisionNavigatorDock,
+                                                    layoutService,
+                                                    dmnGraphLayout));
     }
 
     @Test

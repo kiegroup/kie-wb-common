@@ -113,7 +113,7 @@ public class VertexOrdering {
                                 Layer north,
                                 Layer south) {
 
-        ArrayList<String> southPos = new ArrayList(south.getVertices().size());
+        ArrayList<String> southPos = new ArrayList<>(south.getVertices().size());
         for (int i = 0; i < south.getVertices().size(); i++) {
             southPos.add(south.getVertices().get(i).getId());
         }

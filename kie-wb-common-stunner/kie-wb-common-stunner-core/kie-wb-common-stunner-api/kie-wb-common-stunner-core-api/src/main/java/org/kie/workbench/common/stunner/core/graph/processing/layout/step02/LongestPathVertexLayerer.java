@@ -42,7 +42,7 @@ public final class LongestPathVertexLayerer {
         this.layers = new ArrayList<>();
         this.graph = graph;
         this.vertices = new Vertex[graphVertices.length];
-        this.vertexHeight = new HashMap();
+        this.vertexHeight = new HashMap<>();
 
         for (int i = 0; i < graphVertices.length; i++) {
             String v = graphVertices[i];
