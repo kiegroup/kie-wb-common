@@ -24,7 +24,6 @@ public final class Vertex implements Comparable<Vertex>,
     private final String id;
     private double median;
     private boolean isVirtual;
-    private boolean isStartVertex;
     private int x;
     private int y;
 
@@ -112,13 +111,5 @@ public final class Vertex implements Comparable<Vertex>,
 
     public String getId() {
         return this.id;
-    }
-
-    public boolean isStartVertex() {
-        return isStartVertex;
-    }
-
-    public void setStartVertex(boolean startVertex) {
-        isStartVertex = startVertex;
     }
 }

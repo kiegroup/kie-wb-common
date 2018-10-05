@@ -29,24 +29,25 @@ public class ReorderedGraph {
         this.edges = new HashSet<>();
     }
 
-    public ReorderedGraph(String[][] edgesMatrix) {
+    public ReorderedGraph(final String[][] edgesMatrix) {
         this();
         for (int i = 0; i < edgesMatrix.length; i++) {
             addEdge(edgesMatrix[i][0], edgesMatrix[i][1]);
         }
     }
 
-    public void addEdge(String from, String to) {
+    public void addEdge(final String from,
+                        final String to) {
         addEdge(new Edge(from, to));
     }
 
-    public void addEdge(Edge edge) {
+    public void addEdge(final Edge edge) {
         this.edges.add(edge);
-        if(!this.vertices.contains(edge.getFrom()))        {
+        if (!this.vertices.contains(edge.getFrom())) {
             this.vertices.add(edge.getFrom());
         }
 
-        if(!this.vertices.contains(edge.getTo()))        {
+        if (!this.vertices.contains(edge.getTo())) {
             this.vertices.add(edge.getTo());
         }
     }
@@ -70,14 +71,15 @@ public class ReorderedGraph {
         return true;
     }
 
-    private boolean leadsToACycle(String vertex, HashSet<String> visited) {
+    private boolean leadsToACycle(final String vertex,
+                                  final HashSet<String> visited) {
         if (visited.contains(vertex)) {
             return true;
         }
 
         visited.add(vertex);
 
-        String[] verticesFromThis = getVerticesFrom(vertex);
+        final String[] verticesFromThis = getVerticesFrom(vertex);
         for (String nextVertex :
                 verticesFromThis) {
             if (leadsToACycle(nextVertex, visited)) {

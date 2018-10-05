@@ -35,7 +35,7 @@ public class VertexOrdering {
 
     /**
      * Maximum number of iterations to perform.
-     * Reference: Gansner et al 1993
+     * 24 is the optimal number (Gansner et al 1993).
      */
     private final int MaxIterations = 24;
 
@@ -65,8 +65,7 @@ public class VertexOrdering {
             transpose(virtualized, edges);
             if (crossing(best, edges) > crossing(virtualized, edges)) {
                 best = clone(virtualized);
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -83,7 +82,7 @@ public class VertexOrdering {
                            ArrayList<Edge> edges) {
 
         boolean improved = true;
-        ArrayList<Layer> pair = new ArrayList<>();
+
         while (improved) {
             improved = false;
             Layer current;
@@ -93,19 +92,14 @@ public class VertexOrdering {
                 previous = layers.get(r - 1);
                 ArrayList<Vertex> vertices = current.getVertices();
 
-                pair.clear();
-                pair.add(current);
-                pair.add(previous);
-
                 for (int i = 1; i < vertices.size(); i++) {
 
-                    int currentCrossing = crossing(pair, edges);
+                    int currentCrossing = crossing(edges, previous, current);
 
                     Collections.swap(vertices, i, i - 1);
 
-                    int newCrossing = crossing(pair, edges);
+                    int newCrossing = crossing(edges, previous, current);
                     if (newCrossing >= currentCrossing) {
-                        // undo and continue
                         Collections.swap(vertices, i - 1, i);
                     } else {
                         improved = true;
@@ -144,6 +138,8 @@ public class VertexOrdering {
                                Layer north,
                                Layer south) {
 
+        final int DefaultVertexWeight = 1;
+
         Object[] southEntries = flat(edges, north, south);
 
         int firstIndex = 1;
@@ -154,27 +150,28 @@ public class VertexOrdering {
         firstIndex -= 1;
         int[] tree = new int[treeSize];
 
-        int cc = 0;
+        int crossings = 0;
 
         for (Object entry :
                 southEntries) {
             int index = ((Integer) entry) + firstIndex;
-            if(index <0){
+            if (index < 0) {
                 continue;
             }
-            tree[index] += 1;//entry.weight;
+            tree[index] += DefaultVertexWeight;
             int weightSum = 0;
             while (index > 0) {
                 if (index % 2 != 0) {
                     weightSum += tree[index + 1];
                 }
                 index = (index - 1) >> 1;
-                tree[index] += 1; //entry.weight;
+                tree[index] += DefaultVertexWeight;
+                ;
             }
-            cc += weightSum;//entry.weight * weightSum;
+            crossings += DefaultVertexWeight * weightSum;
         }
 
-        return cc;
+        return crossings;
     }
 
     public static int crossing(ArrayList<Layer> layers,

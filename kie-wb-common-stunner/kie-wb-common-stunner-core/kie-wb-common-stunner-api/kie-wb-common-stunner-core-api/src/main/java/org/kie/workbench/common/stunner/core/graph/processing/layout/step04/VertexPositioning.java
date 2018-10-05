@@ -123,6 +123,7 @@ public class VertexPositioning {
         }
 
         y+= DefaultLayerSpace;
+
         return y;
     }
 

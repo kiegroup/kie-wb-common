@@ -67,7 +67,7 @@ public final class Layer {
     public String toString() {
         StringBuilder str = new StringBuilder("LAYER " + this.level + " [");
         for (int i = 0; i < this.vertices.size(); i++) {
-            if (i >= 1 && i < this.vertices.size() - 1) {
+            if (i >= 1) {
                 str.append(", ");
             }
             str.append(this.vertices.get(i).getId());
