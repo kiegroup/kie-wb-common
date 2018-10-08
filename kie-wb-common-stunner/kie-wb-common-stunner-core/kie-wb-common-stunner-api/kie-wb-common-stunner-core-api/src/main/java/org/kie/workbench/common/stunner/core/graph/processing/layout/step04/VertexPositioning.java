@@ -36,8 +36,10 @@ public class VertexPositioning {
 
     public static final int DefaultVertexWidth = 100;
     public static final int DefaultVertexHeight = 50;
-    public static final int DefaultVertexSpace = 50;
+    public static final int DefaultVertexSpace = 75;
     public static final int DefaultLayerSpace = 125;
+    private static final int DefaultLayerHorizontalPadding = 50;
+    private static final int DefaultLayerVerticalPadding = 50;
 
     /*
      * Pre:
@@ -84,10 +86,11 @@ public class VertexPositioning {
             int layerWidth = layersWidth.get(i);
             int firstHalf = layerWidth/2;
             int startPoint = middle - firstHalf;
+            startPoint+= DefaultLayerHorizontalPadding;
             layersStartX.put(i, startPoint);
         }
 
-        int y = 0;
+        int y = DefaultLayerVerticalPadding;
         switch (arrangement){
             case TopDown:
                 for (int i = 0; i < layers.size(); i++) {
@@ -104,8 +107,8 @@ public class VertexPositioning {
 
     }
 
-    private int distributeVertices(ArrayList<Layer> layers,
-                                   HashMap<Integer, Integer> layersStartX,
+    private int distributeVertices(final ArrayList<Layer> layers,
+                                   final HashMap<Integer, Integer> layersStartX,
                                    int y,
                                    int i) {
 
@@ -127,8 +130,8 @@ public class VertexPositioning {
         return y;
     }
 
-    private void removeVirtualVerticesFromLayers(ArrayList<Layer> layers,
-                                                 Set<Vertex> vertices) {
+    private void removeVirtualVerticesFromLayers(final ArrayList<Layer> layers,
+                                                 final Set<Vertex> vertices) {
         Set<String> ids = vertices.stream().map(Vertex::getId).collect(Collectors.toSet());
         for (Layer layer :
                 layers) {

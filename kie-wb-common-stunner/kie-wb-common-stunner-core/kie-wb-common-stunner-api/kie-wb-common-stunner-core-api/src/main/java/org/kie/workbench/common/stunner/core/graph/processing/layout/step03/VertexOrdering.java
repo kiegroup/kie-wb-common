@@ -62,7 +62,7 @@ public class VertexOrdering {
 
         for (int i = 0; i < MaxIterations; i++) {
             median(virtualized, edges, i);
-            transpose(virtualized, edges);
+            transpose(virtualized, edges, i);
             if (crossing(best, edges) > crossing(virtualized, edges)) {
                 best = clone(virtualized);
             } else {
@@ -78,35 +78,56 @@ public class VertexOrdering {
      * @param layers The layers with vertices.
      * @param edges The edges connecting vertices.
      */
-    private void transpose(ArrayList<Layer> layers,
-                           ArrayList<Edge> edges) {
+    private void transpose(final ArrayList<Layer> layers,
+                           final ArrayList<Edge> edges,
+                           final int currentIteration) {
 
         boolean improved = true;
+        boolean bottomUp = (currentIteration % 2) == 0;
 
         while (improved) {
             improved = false;
-            Layer current;
-            Layer previous;
-            for (int r = 1; r < layers.size(); r++) {
-                current = layers.get(r);
-                previous = layers.get(r - 1);
-                ArrayList<Vertex> vertices = current.getVertices();
 
-                for (int i = 1; i < vertices.size(); i++) {
-
-                    int currentCrossing = crossing(edges, previous, current);
-
-                    Collections.swap(vertices, i, i - 1);
-
-                    int newCrossing = crossing(edges, previous, current);
-                    if (newCrossing >= currentCrossing) {
-                        Collections.swap(vertices, i - 1, i);
-                    } else {
-                        improved = true;
-                    }
+            if (bottomUp) {
+                for (int index = layers.size() - 1; index > 0; index--) {
+                    Layer current;
+                    Layer previous;
+                    current = layers.get(index - 1);
+                    previous = layers.get(index);
+                    improved = doTranspose(current, previous, edges);
+                }
+            } else {
+                for (int index = 1; index < layers.size(); index++) {
+                    Layer current;
+                    Layer previous;
+                    current = layers.get(index);
+                    previous = layers.get(index - 1);
+                    improved = doTranspose(current, previous, edges);
                 }
             }
         }
+    }
+
+    private boolean doTranspose(final Layer current,
+                                final Layer previous,
+                                final ArrayList<Edge> edges) {
+
+        ArrayList<Vertex> vertices = current.getVertices();
+        boolean improved = false;
+        for (int i = 1; i < vertices.size(); i++) {
+
+            int currentCrossing = crossing(edges, previous, current);
+
+            Collections.swap(vertices, i, i - 1);
+
+            int newCrossing = crossing(edges, previous, current);
+            if (newCrossing >= currentCrossing) {
+                Collections.swap(vertices, i - 1, i);
+            } else {
+                improved = true;
+            }
+        }
+        return improved;
     }
 
     public static Object[] flat(ArrayList<Edge> edges,

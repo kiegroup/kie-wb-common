@@ -89,7 +89,7 @@ public final class AutomaticLayoutService {
     }
 
     private Layout buildLayout(final HashMap<String, Node> indexByUuid,
-                                          final ArrayList<Layer> layers) {
+                               final ArrayList<Layer> layers) {
 
         Layout layout = new Layout();
 
@@ -132,41 +132,6 @@ public final class AutomaticLayoutService {
 
         return layout;
     }
-
-/*
-    private static void setNodesPositions(final HashMap<String, Node> indexByUuid,
-                                          final ArrayList<Layer> layers) {
-        for (int i = layers.size() - 1; i >= 0; i--) {
-            Layer layer = layers.get(i);
-            for (Vertex v :
-                    layer.getVertices()) {
-                Node n = indexByUuid.get(v.getId());
-
-                int x = v.getX();
-                int y = v.getY();
-
-                Bounds currentBounds = ((HasBounds) n.getContent()).getBounds();
-                Bounds.Bound lowerRight = currentBounds.getLowerRight();
-                int x2;
-                if (isCloseToZero(lowerRight.getX())) {
-                    x2 = x + VertexPositioning.DefaultVertexWidth;
-                } else {
-                    x2 = (int) (x + lowerRight.getX());
-                }
-
-                int y2;
-                if (isCloseToZero(lowerRight.getY())) {
-                    y2 = y + VertexPositioning.DefaultVertexHeight;
-                } else {
-                    y2 = (int) (y + lowerRight.getY());
-                }
-
-                ((HasBounds) n.getContent()).setBounds(BoundsImpl.build(
-                        x, y, x2, y2
-                ));
-            }
-        }
-    }*/
 
     private static boolean hasLayoutInformation(final Graph<?, ?> graph) {
 
