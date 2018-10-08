@@ -31,8 +31,6 @@ public class DroolsSystemPropertiesInitializer implements SystemPropertiesInitia
         setSystemProperty(preferences,
                           ApplicationPreferences.DATE_FORMAT);
         setSystemProperty(preferences,
-                          ApplicationPreferences.DATE_TIME_FORMAT);
-        setSystemProperty(preferences,
                           ApplicationPreferences.DEFAULT_LANGUAGE);
         setSystemProperty(preferences,
                           ApplicationPreferences.DEFAULT_COUNTRY);

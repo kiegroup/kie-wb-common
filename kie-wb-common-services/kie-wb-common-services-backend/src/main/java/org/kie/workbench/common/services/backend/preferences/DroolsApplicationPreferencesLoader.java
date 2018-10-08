@@ -36,8 +36,6 @@ public class DroolsApplicationPreferencesLoader implements ApplicationPreference
         addSystemProperty( preferences,
                            ApplicationPreferences.DATE_FORMAT );
         addSystemProperty( preferences,
-                           ApplicationPreferences.DATE_TIME_FORMAT );
-        addSystemProperty( preferences,
                            ApplicationPreferences.DEFAULT_LANGUAGE );
         addSystemProperty( preferences,
                            ApplicationPreferences.DEFAULT_COUNTRY );
