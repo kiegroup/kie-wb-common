@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 import java.util.Collections;
 import java.util.Optional;
 
+import org.drools.core.util.StringUtils;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.di.BPMNPlane;
@@ -41,7 +42,7 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
     @Override
     public String getName() {
         String name = super.getName();
-        if (name == null || name.isEmpty()) {
+        if (StringUtils.isEmpty(name)) {
             return "";
         } else {
             return name;
@@ -51,7 +52,7 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
     @Override
     public String getDocumentation() {
         String documentation = super.getDocumentation();
-        if (documentation == null || documentation.isEmpty()) {
+        if (StringUtils.isEmpty(documentation)) {
             return "";
         } else {
             return documentation;
