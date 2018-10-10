@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public final class Layer {
 
@@ -54,9 +55,8 @@ public final class Layer {
 
     public Layer clone() {
         final Layer clone = new Layer(this.level);
-        ArrayList<Vertex> cloneVertices = clone.getVertices();
-        for (Vertex v :
-                this.vertices) {
+        final ArrayList<Vertex> cloneVertices = clone.getVertices();
+        for (Vertex v : this.vertices) {
             cloneVertices.add(v.clone());
         }
         return clone;
@@ -64,15 +64,8 @@ public final class Layer {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("LAYER " + this.level + " [");
-        for (int i = 0; i < this.vertices.size(); i++) {
-            if (i >= 1) {
-                str.append(", ");
-            }
-            str.append(this.vertices.get(i).getId());
-        }
-        str.append("]");
-
-        return str.toString();
+        return vertices.stream()
+                .map(vertex -> vertex.getId())
+                .collect(Collectors.joining(", ", "LAYER " + this.level + " [", "]"));
     }
 }

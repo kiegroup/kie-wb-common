@@ -31,7 +31,7 @@ public final class Vertex implements Comparable<Vertex> {
     }
 
     public Vertex(final String id,
-                  final boolean isVirtual){
+                  final boolean isVirtual) {
         this.id = id;
         this.isVirtual = isVirtual;
     }

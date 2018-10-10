@@ -19,17 +19,45 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.step01.CycleBreaker;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.step02.LongestPathVertexLayerer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step02.VertexLayerer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.step03.VertexOrdering;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step04.DefaultVertexPositioning;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.step04.VertexPositioning;
 
 public final class AutomaticLayoutService {
+
+    private static final double closeToZeroTolerance = 0.1;
+
+    private final CycleBreaker cycleBreaker;
+    private final VertexLayerer vertexLayerer;
+    private final VertexOrdering vertexOrdering;
+    private final VertexPositioning vertexPositioning;
+
+    /**
+     * Default constructor.
+     * @param cycleBreaker The strategy used to break cycles in cycle graphs.
+     * @param vertexLayerer The strategy used to choose the layer for each vertex.
+     * @param vertexOrdering The strategy used to order vertices inside each layer.
+     * @param vertexPositioning The strategy used to position vertices on screen (x,y coordinates).
+     */
+    @Inject
+    public AutomaticLayoutService(final CycleBreaker cycleBreaker,
+                                  final VertexLayerer vertexLayerer,
+                                  final VertexOrdering vertexOrdering,
+                                  final VertexPositioning vertexPositioning) {
+        this.cycleBreaker = cycleBreaker;
+        this.vertexLayerer = vertexLayerer;
+        this.vertexOrdering = vertexOrdering;
+        this.vertexPositioning = vertexPositioning;
+    }
 
     public Layout getLayout(final Graph<?, ?> graph) {
 
@@ -40,8 +68,7 @@ public final class AutomaticLayoutService {
         final HashMap<String, Node> indexByUuid = new HashMap<>();
         final ReorderedGraph reorderedGraph = new ReorderedGraph();
 
-        for (Node n :
-                graph.nodes()) {
+        for (Node n : graph.nodes()) {
 
             if (!(n.getContent() instanceof HasBounds)) {
                 continue;
@@ -49,8 +76,7 @@ public final class AutomaticLayoutService {
 
             indexByUuid.put(n.getUUID(), n);
 
-            for (Object e :
-                    n.getInEdges()) {
+            for (Object e : n.getInEdges()) {
 
                 Edge edge = (Edge) e;
 
@@ -59,8 +85,7 @@ public final class AutomaticLayoutService {
                 reorderedGraph.addEdge(from, to);
             }
 
-            for (Object e :
-                    n.getOutEdges()) {
+            for (Object e : n.getOutEdges()) {
 
                 Edge edge = (Edge) e;
 
@@ -70,33 +95,24 @@ public final class AutomaticLayoutService {
             }
         }
 
-        final CycleBreaker cycleBreaker = new CycleBreaker(reorderedGraph);
+        this.cycleBreaker.breakCycle(reorderedGraph);
+        this.vertexLayerer.createLayers(reorderedGraph);
+        this.vertexOrdering.orderVertices(reorderedGraph);
+        this.vertexPositioning.calculateVerticesPositions(reorderedGraph,
+                                                          DefaultVertexPositioning.LayerArrangement.BottomUp);
 
-        final ReorderedGraph acyclic = cycleBreaker.breakCycle();
-
-        final LongestPathVertexLayerer layerer = new LongestPathVertexLayerer(acyclic);
-        final ArrayList<Layer> layers = layerer.execute();
-
-        final VertexOrdering vertexOrdering = new VertexOrdering(acyclic, layers);
-        final VertexOrdering.Ordered ordered = vertexOrdering.process();
-        final VertexPositioning vertexPositioning = new VertexPositioning();
-        vertexPositioning.execute(ordered.getLayers(),
-                                  ordered.getEdges(),
-                                  VertexPositioning.LayerArrangement.BottomUp);
-
-        ArrayList<Layer> layers1 = ordered.getLayers();
-        return buildLayout(indexByUuid, layers1);
+        ArrayList<Layer> orderedLayers = reorderedGraph.getLayers();
+        return buildLayout(indexByUuid, orderedLayers);
     }
 
     private Layout buildLayout(final HashMap<String, Node> indexByUuid,
                                final ArrayList<Layer> layers) {
 
-        Layout layout = new Layout();
+        final Layout layout = new Layout();
 
         for (int i = layers.size() - 1; i >= 0; i--) {
             Layer layer = layers.get(i);
-            for (Vertex v :
-                    layer.getVertices()) {
+            for (Vertex v : layer.getVertices()) {
                 Node n = indexByUuid.get(v.getId());
 
                 int x = v.getX();
@@ -106,14 +122,14 @@ public final class AutomaticLayoutService {
                 Bounds.Bound lowerRight = currentBounds.getLowerRight();
                 int x2;
                 if (isCloseToZero(lowerRight.getX())) {
-                    x2 = x + VertexPositioning.DefaultVertexWidth;
+                    x2 = x + DefaultVertexPositioning.DefaultVertexWidth;
                 } else {
                     x2 = (int) (x + lowerRight.getX());
                 }
 
                 int y2;
                 if (isCloseToZero(lowerRight.getY())) {
-                    y2 = y + VertexPositioning.DefaultVertexHeight;
+                    y2 = y + DefaultVertexPositioning.DefaultVertexHeight;
                 } else {
                     y2 = (int) (y + lowerRight.getY());
                 }
@@ -121,10 +137,6 @@ public final class AutomaticLayoutService {
                 NodePosition position = new NodePosition(v.getId(),
                                                          new NodePosition.Point(x, y),
                                                          new NodePosition.Point(x2, y2));
-
-                /*((HasBounds) n.getContent()).setBounds(BoundsImpl.build(
-                        x, y, x2, y2
-                ));*/
 
                 layout.getNodePositions().add(position);
             }
@@ -137,12 +149,11 @@ public final class AutomaticLayoutService {
 
         boolean hasLayoutInformation = false;
 
-        for (Node n :
-                graph.nodes()) {
+        for (Node n : graph.nodes()) {
 
             final Object content = n.getContent();
             if (content instanceof HasBounds) {
-                if (!isNullOrEmpty(((HasBounds) content).getBounds())) {
+                if (!isNullOrCloseToZero(((HasBounds) content).getBounds())) {
                     hasLayoutInformation = true;
                 }
             }
@@ -155,7 +166,7 @@ public final class AutomaticLayoutService {
         return hasLayoutInformation;
     }
 
-    private static boolean isNullOrEmpty(final Bounds bounds) {
+    private static boolean isNullOrCloseToZero(final Bounds bounds) {
 
         if (bounds == null) {
             return true;
@@ -170,14 +181,14 @@ public final class AutomaticLayoutService {
     }
 
     private static boolean isCloseToZero(final double value) {
-        final double tolerance = 0.1;
-        return Math.abs(value - 0) < tolerance;
+        return Math.abs(value - 0) < closeToZeroTolerance;
     }
 
-    public final class Layout{
+    public final class Layout {
+
         private final ArrayList<NodePosition> nodePositions;
 
-        public Layout(){
+        public Layout() {
             this.nodePositions = new ArrayList<>();
         }
 
@@ -186,14 +197,15 @@ public final class AutomaticLayoutService {
         }
     }
 
-    public static final class NodePosition{
+    public static final class NodePosition {
+
         private final String nodeId;
         private final Point upperLeft;
         private final Point bottomRight;
 
         public NodePosition(final String nodeId,
                             final Point upperLeft,
-                            final Point bottomRight){
+                            final Point bottomRight) {
             this.nodeId = nodeId;
             this.upperLeft = upperLeft;
             this.bottomRight = bottomRight;
@@ -211,7 +223,8 @@ public final class AutomaticLayoutService {
             return this.bottomRight;
         }
 
-        public static final class Point{
+        public static final class Point {
+
             private final int x;
             private final int y;
 

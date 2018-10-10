@@ -16,68 +16,66 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout.step02;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+
+import javax.enterprise.inject.Default;
 
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 
 /**
- * Assign each vertex in a graph to a layers, using the longest path algorithm.
+ * Assign each vertex in a graph to a layer, using the longest path algorithm.
  */
-public final class LongestPathVertexLayerer {
+@Default
+public final class LongestPathVertexLayerer implements VertexLayerer {
 
-    private final Vertex[] vertices;
+    private Vertex[] vertices;
     private final HashMap<String, Integer> vertexHeight;
-    private final ReorderedGraph graph;
-    private final ArrayList<Layer> layers;
+    private ReorderedGraph graph;
 
-    public LongestPathVertexLayerer(final ReorderedGraph graph) {
-
-        String[] graphVertices = graph.getVertices();
-
-        this.layers = new ArrayList<>();
-        this.graph = graph;
-        this.vertices = new Vertex[graphVertices.length];
+    public LongestPathVertexLayerer() {
         this.vertexHeight = new HashMap<>();
+    }
 
-        for (int i = 0; i < graphVertices.length; i++) {
-            String v = graphVertices[i];
+    /**
+     * Create layers for the graph and assign each vertex to a layer.
+     * @param graph The graph.
+     */
+    @Override
+    public void createLayers(final ReorderedGraph graph) {
+        this.graph = graph;
+        this.vertices = new Vertex[graph.getVertices().size()];
+
+        for (int i = 0; i < graph.getVertices().size(); i++) {
+            String v = graph.getVertices().get(i);
             this.vertices[i] = new Vertex(v);
             this.vertexHeight.put(v, -1);
         }
-    }
 
-    public ArrayList<Layer> execute() {
-
-        for (Vertex vertex :
-                this.vertices) {
+        for (Vertex vertex : this.vertices) {
             visit(vertex);
         }
-
-        return this.layers;
     }
 
     private int visit(final Vertex vertex) {
-        int height = this.vertexHeight.get(vertex.getId());
+        final int height = this.vertexHeight.getOrDefault(vertex.getId(), 0);
         if (height >= 0) {
             return height;
         }
 
         int maxHeight = 1;
 
-        String[] verticesFromHere = graph.getVerticesFrom(vertex.getId());
-        for (String nextVertex :
-                verticesFromHere) {
-            if(!nextVertex.equals(vertex.getId())){
+        final String[] verticesFromHere = graph.getVerticesFrom(vertex.getId());
+        for (String nextVertex : verticesFromHere) {
+            if (!nextVertex.equals(vertex.getId())) {
                 Optional<Vertex> next = Arrays.stream(this.vertices)
                         .filter(f -> f.getId().equals(nextVertex))
                         .findFirst();
                 int targetHeight = visit(next.get());
-                maxHeight = Math.max(maxHeight, targetHeight+1);
+                maxHeight = Math.max(maxHeight, targetHeight + 1);
             }
         }
 
@@ -85,13 +83,14 @@ public final class LongestPathVertexLayerer {
         return maxHeight;
     }
 
-    private void addToLayer(final Vertex vertex, final int height) {
-        for(int i = this.layers.size(); i <height; i++){
-            layers.add(0, new Layer());
+    private void addToLayer(final Vertex vertex,
+                            final int height) {
+        for (int i = this.graph.getLayers().size(); i < height; i++) {
+            this.graph.getLayers().add(0, new Layer());
         }
 
-        int level = layers.size() - height;
-        Layer layer = layers.get(level);
+        final int level = this.graph.getLayers().size() - height;
+        Layer layer = this.graph.getLayers().get(level);
         layer.setLevel(height);
         layer.addVertex(vertex);
         vertexHeight.put(vertex.getId(), height);

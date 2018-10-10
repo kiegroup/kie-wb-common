@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.Graphs;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
@@ -35,14 +34,6 @@ import static org.junit.Assert.assertTrue;
 public class LongestPathVertexLayererTest {
 
     @Test
-    public void realCase1() {
-
-        ReorderedGraph graph = new ReorderedGraph((Graphs.RealCase1));
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer(graph);
-        ArrayList<Layer> result = layerer.execute();
-    }
-
-    @Test
     public void simple2LayersTest() {
 
         ReorderedGraph graph = new ReorderedGraph();
@@ -53,8 +44,9 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("C", "H");
         graph.addEdge("D", "H");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer(graph);
-        ArrayList<Layer> result = layerer.execute();
+        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        layerer.createLayers(graph);
+        ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(2, result.size());
 
@@ -77,8 +69,9 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("C", "H");
         graph.addEdge("D", "F");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer(graph);
-        ArrayList<Layer> result = layerer.execute();
+        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        layerer.createLayers(graph);
+        ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(3, result.size());
 
@@ -106,8 +99,9 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("H", "I");
         graph.addEdge("G", "I");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer(graph);
-        ArrayList<Layer> result = layerer.execute();
+        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        layerer.createLayers(graph);
+        ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(4, result.size());
 
@@ -134,10 +128,10 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("B", "C");
         graph.addEdge("C", "D");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer(graph);
-        ArrayList<Layer> result = layerer.execute();
+        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        layerer.createLayers(graph);
+        ArrayList<Layer> result = graph.getLayers();
 
-        // TODO: should we decide if by design a single line should be vertical or horizontal
         assertEquals(4, result.size()); // 4 = layered = vertical line
     }
 

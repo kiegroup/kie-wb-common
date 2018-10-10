@@ -24,13 +24,14 @@ public class Edge {
     private String to;
     private boolean isReversed;
 
-    public Edge(String from, String to) {
+    public Edge(final String from,
+                final String to) {
         this(from, to, false);
     }
 
     public Edge(final String from,
                 final String to,
-                final boolean isReversed){
+                final boolean isReversed) {
         this.from = from;
         this.to = to;
         this.isReversed = isReversed;
@@ -44,7 +45,7 @@ public class Edge {
         return this.to;
     }
 
-    public boolean isLinkedWith(String vertexId){
+    public boolean isLinkedWith(String vertexId) {
         return this.getFrom().equals(vertexId) || this.getTo().equals(vertexId);
     }
 
@@ -56,7 +57,7 @@ public class Edge {
         final String oldTo = this.to;
         this.to = this.from;
         this.from = oldTo;
-        this. isReversed = false;
+        this.isReversed = false;
     }
 
     @Override

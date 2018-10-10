@@ -44,8 +44,7 @@ public class DMNGraphLayout {
             }
         }
 
-        for (AutomaticLayoutService.NodePosition position :
-                layout.getNodePositions()) {
+        for (AutomaticLayoutService.NodePosition position : layout.getNodePositions()) {
 
             Node indexed = indexByUuid.get(position.getNodeId());
             if (indexed.getContent() instanceof HasBounds) {

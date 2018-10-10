@@ -16,9 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout.step03;
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
+import java.util.ArrayList;
 
-public interface VertexOrdering {
+import org.kie.workbench.common.stunner.core.graph.processing.layout.Edge;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.Layer;
 
-    void orderVertices(ReorderedGraph reorderedGraph);
+public interface VertexLayerPositioning {
+
+    void positionVertices(final ArrayList<Layer> layers,
+                          final ArrayList<Edge> edges,
+                          final int currentIteration);
 }

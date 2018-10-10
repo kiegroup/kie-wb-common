@@ -115,7 +115,7 @@ public final class Graphs {
             {"K", "H"},
     };
 
-    public static final String[][] RealCase1 ={
+    public static final String[][] RealCase1 = {
             {"L", "D"},
             {"D", "A"},
             {"D", "B"},

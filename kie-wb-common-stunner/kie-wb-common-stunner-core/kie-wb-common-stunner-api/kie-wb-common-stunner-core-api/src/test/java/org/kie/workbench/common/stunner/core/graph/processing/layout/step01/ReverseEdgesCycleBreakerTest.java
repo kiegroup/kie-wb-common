@@ -24,16 +24,16 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGr
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CycleBreakerTest {
+public class ReverseEdgesCycleBreakerTest {
 
     @Test
     public void testAcyclicGraphs() {
         ReorderedGraph graph = new ReorderedGraph(Graphs.SimpleAcyclic);
 
-        CycleBreaker breaker = new CycleBreaker(graph);
-        ReorderedGraph result = breaker.breakCycle();
+        ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
+        breaker.breakCycle(graph);
 
-        Assert.assertTrue(result.isAcyclic());
+        Assert.assertTrue(graph.isAcyclic());
     }
 
     @Test
@@ -46,19 +46,19 @@ public class CycleBreakerTest {
 
         Assert.assertFalse(graph.isAcyclic());
 
-        CycleBreaker breaker = new CycleBreaker(graph);
-        ReorderedGraph result = breaker.breakCycle();
+        ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
+        breaker.breakCycle(graph);
 
-        Assert.assertTrue(result.isAcyclic());
+        Assert.assertTrue(graph.isAcyclic());
     }
 
     @Test
     public void testCyclicGraph1() {
         ReorderedGraph graph = new ReorderedGraph(Graphs.CyclicGraph1);
 
-        CycleBreaker breaker = new CycleBreaker(graph);
-        ReorderedGraph result = breaker.breakCycle();
+        ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
+        breaker.breakCycle(graph);
 
-        Assert.assertTrue(result.isAcyclic());
+        Assert.assertTrue(graph.isAcyclic());
     }
 }

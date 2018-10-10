@@ -34,10 +34,10 @@ public class VertexPositioningTest {
 
     @Test
     public void testRemoveToVirtualVertex() {
-        //             Input: 01----VIRTUAL----02
-        //    Input Vertices: [01,V,02]
-        //          Expected: 01----02
-        // Expected Vertices: [01,02]
+        //             Input: Vertex_01----VIRTUALVERTEX----Vertex_02
+        //    Input Vertices: [Vertex_01,VIRTUALVERTEX,Vertex_02]
+        //          Expected: Vertex_01----Vertex_02
+        // Expected Vertices: [Vertex_01,Vertex_02]
         Vertex virtual = new Vertex("V", true);
         Vertex real_01 = new Vertex("01");
         Vertex real_02 = new Vertex("02");
@@ -54,7 +54,7 @@ public class VertexPositioningTest {
         vertices.add(real_01);
         vertices.add(real_02);
 
-        VertexPositioning drawing = new VertexPositioning();
+        DefaultVertexPositioning drawing = new DefaultVertexPositioning();
         drawing.removeVirtualVertex(edge1, edges, vertices);
 
         assertTrue(vertices.contains(real_01));
@@ -87,7 +87,7 @@ public class VertexPositioningTest {
         vertices.add(real_01);
         vertices.add(real_02);
 
-        VertexPositioning drawing = new VertexPositioning();
+        DefaultVertexPositioning drawing = new DefaultVertexPositioning();
         drawing.removeVirtualVertex(edge2, edges, vertices);
 
         assertTrue(vertices.contains(real_01));
@@ -130,7 +130,7 @@ public class VertexPositioningTest {
 
         edges.add(new Edge("V3", "C2"));
 
-        VertexPositioning drawing = new VertexPositioning();
+        DefaultVertexPositioning drawing = new DefaultVertexPositioning();
         drawing.removeVirtualVertex(betweenVirtualVertices, edges, inputVertex);
 
         assertTrue(inputVertex.contains(c1));
@@ -172,7 +172,7 @@ public class VertexPositioningTest {
         ArrayList<Edge> edges = connect(vertices);
 
         // Expected: A--->B--->C--->D--->E
-        VertexPositioning drawing = new VertexPositioning();
+        DefaultVertexPositioning drawing = new DefaultVertexPositioning();
         HashSet<Vertex> array = new HashSet<>(Arrays.asList(vertices));
         drawing.removeVirtualVertices(edges, array);
 

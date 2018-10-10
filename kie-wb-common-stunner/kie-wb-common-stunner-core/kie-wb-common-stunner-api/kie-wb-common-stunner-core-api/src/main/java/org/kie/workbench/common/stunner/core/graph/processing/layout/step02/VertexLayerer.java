@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.step03;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.step02;
 
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 
-public interface VertexOrdering {
+public interface VertexLayerer {
 
-    void orderVertices(ReorderedGraph reorderedGraph);
+    void createLayers(ReorderedGraph graph);
 }
+

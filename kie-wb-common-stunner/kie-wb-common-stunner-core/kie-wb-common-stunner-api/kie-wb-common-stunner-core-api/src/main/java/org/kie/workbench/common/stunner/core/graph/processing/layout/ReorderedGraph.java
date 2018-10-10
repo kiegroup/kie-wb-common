@@ -19,14 +19,16 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class ReorderedGraph {
+public final class ReorderedGraph {
 
     private final ArrayList<String> vertices;
-    private final HashSet<Edge> edges;
+    private final ArrayList<Edge> edges;
+    private final ArrayList<Layer> layers;
 
     public ReorderedGraph() {
         this.vertices = new ArrayList<>();
-        this.edges = new HashSet<>();
+        this.edges = new ArrayList<>();
+        this.layers = new ArrayList<>();
     }
 
     public ReorderedGraph(final String[][] edgesMatrix) {
@@ -42,7 +44,10 @@ public class ReorderedGraph {
     }
 
     public void addEdge(final Edge edge) {
-        this.edges.add(edge);
+        if (!this.edges.contains(edge)) {
+            this.edges.add(edge);
+        }
+
         if (!this.vertices.contains(edge.getFrom())) {
             this.vertices.add(edge.getFrom());
         }
@@ -52,18 +57,21 @@ public class ReorderedGraph {
         }
     }
 
-    public String[] getVertices() {
-        return this.vertices.toArray(new String[0]);
+    public ArrayList<Layer> getLayers() {
+        return this.layers;
     }
 
-    public Edge[] getEdges() {
-        return this.edges.toArray(new Edge[0]);
+    public ArrayList<String> getVertices() {
+        return this.vertices;
+    }
+
+    public ArrayList<Edge> getEdges() {
+        return this.edges;
     }
 
     public boolean isAcyclic() {
         final HashSet<String> visited = new HashSet<>();
-        for (String vertex :
-                this.vertices) {
+        for (String vertex : this.vertices) {
             if (leadsToACycle(vertex, visited)) {
                 return false;
             }
@@ -80,8 +88,7 @@ public class ReorderedGraph {
         visited.add(vertex);
 
         final String[] verticesFromThis = getVerticesFrom(vertex);
-        for (String nextVertex :
-                verticesFromThis) {
+        for (String nextVertex : verticesFromThis) {
             if (leadsToACycle(nextVertex, visited)) {
                 return true;
             }
@@ -91,10 +98,9 @@ public class ReorderedGraph {
         return false;
     }
 
-    public String[] getVerticesFrom(String vertex) {
+    public String[] getVerticesFrom(final String vertex) {
         final HashSet<String> verticesFrom = new HashSet<>();
-        for (Edge edge :
-                this.edges) {
+        for (Edge edge : this.edges) {
             if (edge.getFrom().equals(vertex)) {
                 verticesFrom.add(edge.getTo());
             }

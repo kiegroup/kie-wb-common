@@ -15,48 +15,43 @@
  */
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
-import java.util.ArrayList;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.step01.CycleBreaker;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step01.ReverseEdgesCycleBreaker;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.step02.LongestPathVertexLayerer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.step03.VertexOrdering;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.step04.VertexPositioning;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step03.DefaultVertexOrdering;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step03.LayerCrossingCount;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step03.MedianVertexLayerPositioning;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step03.VerticesTransposer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.step04.DefaultVertexPositioning;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IntegrationTests {
 
     @Test
-    public void testRealCase1(){
-        ReorderedGraph g1 = new ReorderedGraph(Graphs.RealCase1);
+    public void testRealCase1() {
+        ReorderedGraph graph = new ReorderedGraph(Graphs.RealCase1);
 
-        CycleBreaker s01 = new CycleBreaker(g1);
-        ReorderedGraph acyclic = s01.breakCycle();
-        LongestPathVertexLayerer s02 = new LongestPathVertexLayerer(acyclic);
-        ArrayList<Layer> layers = s02.execute();
-        VertexOrdering s03 = new VertexOrdering(acyclic, layers);
-        VertexOrdering.Ordered ordered = s03.process();
+        ReverseEdgesCycleBreaker s01 = new ReverseEdgesCycleBreaker();
+        s01.breakCycle(graph);
+        LongestPathVertexLayerer s02 = new LongestPathVertexLayerer();
+        s02.createLayers(graph);
 
-        Assert.assertEquals(6, ordered.getLayers().size());
+        final MedianVertexLayerPositioning vertexPositioning = new MedianVertexLayerPositioning();
+        final LayerCrossingCount crossingCount = new LayerCrossingCount();
+        final VerticesTransposer verticesTransposer = new VerticesTransposer(crossingCount);
 
-        VertexPositioning drawing = new VertexPositioning();
-        drawing.execute(ordered.getLayers(), ordered.getEdges(), VertexPositioning.LayerArrangement.TopDown);
+        DefaultVertexOrdering s03 = new DefaultVertexOrdering(vertexPositioning,
+                                                              crossingCount,
+                                                              verticesTransposer);
+        s03.orderVertices(graph);
+
+        Assert.assertEquals(6, graph.getLayers().size());
+
+        DefaultVertexPositioning defaultVertexPositioning = new DefaultVertexPositioning();
+        defaultVertexPositioning.calculateVerticesPositions(graph,
+                                                            DefaultVertexPositioning.LayerArrangement.TopDown);
     }
-
-/*    @Test
-    public void testRealCase0004(){
-        Graph g1 = new Graph(Graphs.RealCase0004_Lending);
-
-        CycleBreaker s01 = new CycleBreaker(g1);
-        Graph acyclic = s01.breakCycle();
-        LongestPathVertexLayerer s02 = new LongestPathVertexLayerer(acyclic);
-        ArrayList<Layer> layers = s02.execute();
-        VertexOrdering s03 = new VertexOrdering(acyclic, layers);
-        VertexOrdering.Ordered ordered = s03.process();
-        SimpleGraphDrawing drawing = new SimpleGraphDrawing();
-        drawing.createDraw(ordered.getLayers(), ordered.getEdges());
-    }*/
 }
