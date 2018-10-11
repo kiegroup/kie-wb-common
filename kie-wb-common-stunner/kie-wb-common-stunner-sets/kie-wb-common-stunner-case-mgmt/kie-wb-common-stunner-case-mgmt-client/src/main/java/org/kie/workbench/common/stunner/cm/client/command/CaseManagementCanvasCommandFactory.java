@@ -49,6 +49,22 @@ public class CaseManagementCanvasCommandFactory extends DefaultCanvasCommandFact
               viewTraverseProcessors);
     }
 
+    @SuppressWarnings("unchecked")
+    public static int getChildIndex(final Node parent,
+                                    final Node child) {
+        if (parent != null && child != null) {
+            List<Edge> outEdges = parent.getOutEdges();
+            if (null != outEdges && !outEdges.isEmpty()) {
+                for (int i = 0, n = outEdges.size(); i < n; i++) {
+                    if (child.equals(outEdges.get(i).getTargetNode())) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
     @Override
     public CanvasCommand<AbstractCanvasHandler> addNode(final Node candidate,
                                                         final String shapeSetId) {
@@ -120,19 +136,8 @@ public class CaseManagementCanvasCommandFactory extends DefaultCanvasCommandFact
         return new CaseManagementDeleteNodeCommand(candidate);
     }
 
-    @SuppressWarnings("unchecked")
-    public static int getChildIndex(final Node parent,
-                                    final Node child) {
-        if (parent != null && child != null) {
-            List<Edge> outEdges = parent.getOutEdges();
-            if (null != outEdges && !outEdges.isEmpty()) {
-                for (int i = 0, n = outEdges.size(); i < n; i++) {
-                    if (child.equals(outEdges.get(i).getTargetNode())) {
-                        return i;
-                    }
-                }
-            }
-        }
-        return -1;
+    @Override
+    public CanvasCommand<AbstractCanvasHandler> clearCanvas() {
+        return new CaseManagementClearCommand();
     }
 }

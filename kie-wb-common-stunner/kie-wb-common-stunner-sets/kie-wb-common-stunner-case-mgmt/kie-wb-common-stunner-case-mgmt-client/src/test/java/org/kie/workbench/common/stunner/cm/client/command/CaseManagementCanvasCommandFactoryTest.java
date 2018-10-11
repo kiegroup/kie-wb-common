@@ -153,6 +153,14 @@ public class CaseManagementCanvasCommandFactoryTest {
     }
 
     @Test
+    public void checkClearCanvas() {
+        final CanvasCommand<AbstractCanvasHandler> command = factory.clearCanvas();
+
+        assertNotNull(command);
+        assertTrue(command instanceof CaseManagementClearCommand);
+    }
+
+    @Test
     public void checkGetChildIndex() {
         final Edge edge = mock(Edge.class);
         when(edge.getTargetNode()).thenReturn(child);
