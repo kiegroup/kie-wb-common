@@ -1058,7 +1058,7 @@ public class DMNMarshallerTest {
         org.kie.dmn.model.api.Context d0c = (org.kie.dmn.model.api.Context) d0.getDecision().getExpression();
         org.kie.dmn.model.api.Expression contextEntryValue = d0c.getContextEntry().get(0).getExpression();
         assertTrue(contextEntryValue instanceof org.kie.dmn.model.api.LiteralExpression);
-        assertEquals(null, ((org.kie.dmn.model.api.LiteralExpression) contextEntryValue).getText());
+        assertNull(((org.kie.dmn.model.api.LiteralExpression) contextEntryValue).getText());
 
         // -- Stunner side.
         DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager);
@@ -1096,7 +1096,7 @@ public class DMNMarshallerTest {
         // the identified DMN Decision is composed a literal expression missing text (text is null).
         org.kie.dmn.model.api.Expression d0le = d0.getDecision().getExpression();
         assertTrue(d0le instanceof org.kie.dmn.model.api.LiteralExpression);
-        assertEquals(null, ((org.kie.dmn.model.api.LiteralExpression) d0le).getText());
+        assertNull(((org.kie.dmn.model.api.LiteralExpression) d0le).getText());
 
         // -- Stunner side.
         DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager);
