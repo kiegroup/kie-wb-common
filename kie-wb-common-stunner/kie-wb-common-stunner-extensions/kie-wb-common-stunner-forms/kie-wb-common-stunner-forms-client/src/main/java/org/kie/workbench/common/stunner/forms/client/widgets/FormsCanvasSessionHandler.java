@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +49,7 @@ import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.mvp.Command;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
@@ -203,7 +204,7 @@ public class FormsCanvasSessionHandler {
         return definitionManager.adapters().forProperty().getId(property);
     }
 
-    void onRefreshFormPropertiesEvent(@Observes RefreshFormProperties event) {
+    void onRefreshFormPropertiesEvent(@Observes RefreshFormPropertiesEvent event) {
         checkNotNull("event", event);
 
         if (null != getCanvasHandler()) {
@@ -261,7 +262,15 @@ public class FormsCanvasSessionHandler {
     private void render(final String uuid,
                         final Command callback) {
         if (null != renderer) {
-            renderer.render(getDiagram().getGraph().getUUID(), getElement(uuid), callback);
+            final Diagram diagram = getDiagram();
+            if (Objects.isNull(diagram)) {
+                return;
+            }
+            final Graph graph = diagram.getGraph();
+            if (Objects.isNull(graph)) {
+                return;
+            }
+            renderer.render(graph.getUUID(), getElement(uuid), callback);
         }
     }
 

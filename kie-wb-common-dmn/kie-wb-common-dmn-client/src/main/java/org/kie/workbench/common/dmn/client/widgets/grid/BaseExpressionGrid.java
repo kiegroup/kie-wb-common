@@ -76,7 +76,7 @@ import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
@@ -118,7 +118,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
 
     protected final TranslationService translationService;
     protected final Event<ExpressionEditorChanged> editorSelectedEvent;
-    protected final Event<RefreshFormProperties> refreshFormPropertiesEvent;
+    protected final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     protected final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     protected final int nesting;
@@ -138,7 +138,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                               final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                               final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                               final Event<ExpressionEditorChanged> editorSelectedEvent,
-                              final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                              final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                               final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                               final CellEditorControlsView.Presenter cellEditorControls,
                               final ListSelectorView.Presenter listSelector,
@@ -216,7 +216,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                                                                                      typeRef,
                                                                                      () -> {
                                                                                          gridLayer.batch();
-                                                                                         getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), uuid)));
+                                                                                         getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession(), uuid)));
                                                                                      }));
     }
 
@@ -225,7 +225,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
         commandBuilder.addCommand(new DeleteHasNameCommand(hasName,
                                                            () -> {
                                                                gridLayer.batch();
-                                                               getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), uuid)));
+                                                               getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession(), uuid)));
                                                            }));
         return commandBuilder;
     }
@@ -237,7 +237,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                                                         name,
                                                         () -> {
                                                             gridLayer.batch();
-                                                            getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), uuid)));
+                                                            getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession(), uuid)));
                                                         }));
         return commandBuilder;
     }

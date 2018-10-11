@@ -56,7 +56,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -147,7 +147,7 @@ public class ExpressionContainerGridTest {
     private ParameterizedCommand<Optional<HasName>> onHasNameChanged;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     private CellSelectionManager cellSelectionManager;
@@ -159,7 +159,7 @@ public class ExpressionContainerGridTest {
     private ArgumentCaptor<ClearExpressionTypeCommand> clearExpressionTypeCommandCaptor;
 
     @Captor
-    private ArgumentCaptor<RefreshFormProperties> refreshFormPropertiesCaptor;
+    private ArgumentCaptor<RefreshFormPropertiesEvent> refreshFormPropertiesEventCaptor;
 
     private HasName hasName = new HasName() {
 
@@ -597,11 +597,11 @@ public class ExpressionContainerGridTest {
         grid.selectCell(point, false, true);
 
         verify(gridLayer).select(eq(grid));
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(NODE_UUID);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(NODE_UUID);
 
         verify(cellSelectionManager).selectCell(eq(point), eq(false), eq(true));
     }
@@ -618,11 +618,11 @@ public class ExpressionContainerGridTest {
         grid.selectCell(uiRowIndex, uiColumnIndex, false, true);
 
         verify(gridLayer).select(eq(grid));
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(NODE_UUID);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(NODE_UUID);
 
         verify(cellSelectionManager).selectCell(eq(uiRowIndex), eq(uiColumnIndex), eq(false), eq(true));
     }

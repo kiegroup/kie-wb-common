@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultB
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -74,7 +74,7 @@ public abstract class BaseNavigationCommandTest {
     protected SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    protected EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    protected EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     protected EditorSession session;
@@ -98,7 +98,7 @@ public abstract class BaseNavigationCommandTest {
     protected Layer layer;
 
     @Captor
-    protected ArgumentCaptor<RefreshFormProperties> refreshFormPropertiesEventCaptor;
+    protected ArgumentCaptor<RefreshFormPropertiesEvent> refreshFormPropertiesEventCaptor;
 
     protected BaseNavigateCommand command;
 

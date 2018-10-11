@@ -52,7 +52,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
@@ -81,7 +81,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
 
     private final ParameterizedCommand<Optional<Expression>> onHasExpressionChanged;
     private final ParameterizedCommand<Optional<HasName>> onHasNameChanged;
-    private final Event<RefreshFormProperties> refreshFormPropertiesEvent;
+    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     private ExpressionContainerUIModelMapper uiModelMapper;
 
@@ -95,7 +95,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                                    final Supplier<ExpressionGridCache> expressionGridCache,
                                    final ParameterizedCommand<Optional<Expression>> onHasExpressionChanged,
                                    final ParameterizedCommand<Optional<HasName>> onHasNameChanged,
-                                   final Event<RefreshFormProperties> refreshFormPropertiesEvent) {
+                                   final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent) {
         super(new DMNGridData(),
               gridLayer,
               gridLayer,
@@ -315,7 +315,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
         if (session != null) {
             final CanvasHandler canvasHandler = session.getCanvasHandler();
             if (canvasHandler != null) {
-                refreshFormPropertiesEvent.fire(new RefreshFormProperties(session, nodeUUID));
+                refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(session, nodeUUID));
             }
         }
     }

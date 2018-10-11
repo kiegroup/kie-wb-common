@@ -37,7 +37,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 
 public class NavigateToExpressionEditorCommand extends BaseNavigateCommand implements VetoExecutionCommand {
 
@@ -45,7 +45,7 @@ public class NavigateToExpressionEditorCommand extends BaseNavigateCommand imple
                                              final SessionPresenter<? extends ClientSession, ?, Diagram> presenter,
                                              final SessionManager sessionManager,
                                              final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                             final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                              final String nodeUUID,
                                              final HasExpression hasExpression,
                                              final Optional<HasName> hasName) {

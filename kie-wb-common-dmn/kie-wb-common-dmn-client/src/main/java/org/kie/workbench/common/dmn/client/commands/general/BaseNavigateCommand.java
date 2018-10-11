@@ -42,7 +42,7 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AbstractGraphCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
 public abstract class BaseNavigateCommand extends AbstractCanvasGraphCommand {
@@ -53,7 +53,7 @@ public abstract class BaseNavigateCommand extends AbstractCanvasGraphCommand {
     protected final SessionPresenter<? extends ClientSession, ?, Diagram> presenter;
     protected final SessionManager sessionManager;
     protected final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    protected final Event<RefreshFormProperties> refreshFormPropertiesEvent;
+    protected final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     protected final String nodeUUID;
     protected final HasExpression hasExpression;
@@ -63,7 +63,7 @@ public abstract class BaseNavigateCommand extends AbstractCanvasGraphCommand {
                                final SessionPresenter<? extends ClientSession, ?, Diagram> presenter,
                                final SessionManager sessionManager,
                                final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                               final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                               final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                final String nodeUUID,
                                final HasExpression hasExpression,
                                final Optional<HasName> hasName) {

@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
 public abstract class BaseEditorDefinition<E extends Expression, D extends GridData> implements ExpressionEditorDefinition<E> {
@@ -44,7 +44,7 @@ public abstract class BaseEditorDefinition<E extends Expression, D extends GridD
     protected SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     protected CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
     protected Event<ExpressionEditorChanged> editorSelectedEvent;
-    protected Event<RefreshFormProperties> refreshFormPropertiesEvent;
+    protected Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     protected Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
     protected ListSelectorView.Presenter listSelector;
     protected TranslationService translationService;
@@ -58,7 +58,7 @@ public abstract class BaseEditorDefinition<E extends Expression, D extends GridD
                                 final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                 final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                 final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                 final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                 final ListSelectorView.Presenter listSelector,
                                 final TranslationService translationService) {

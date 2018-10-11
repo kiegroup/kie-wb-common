@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
@@ -81,7 +81,7 @@ public class FormsCanvasSessionHandlerTest {
     @Mock
     private DomainObject domainObject;
 
-    private RefreshFormProperties refreshFormPropertiesEvent;
+    private RefreshFormPropertiesEvent refreshFormPropertiesEvent;
 
     private CanvasSelectionEvent canvasSelectionEvent;
 
@@ -91,7 +91,7 @@ public class FormsCanvasSessionHandlerTest {
 
     @Before
     public void setup() {
-        this.refreshFormPropertiesEvent = new RefreshFormProperties(session, UUID);
+        this.refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(session, UUID);
         this.handler = spy(new FormsCanvasSessionHandler(definitionManager, commandFactory));
         this.handler.setRenderer(formRenderer);
 

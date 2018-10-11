@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +34,7 @@ import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -154,8 +156,19 @@ public class FormPropertiesWidget implements IsElement,
                       final Command callback) {
         final String uuid = element.getUUID();
         final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
-        final Object definition = element.getContent().getDefinition();
-        final Path diagramPath = diagram.getMetadata().getPath();
+        if (Objects.isNull(diagram)) {
+            return;
+        }
+        final Metadata metadata = diagram.getMetadata();
+        if (Objects.isNull(metadata)) {
+            return;
+        }
+        final Path diagramPath = metadata.getPath();
+        final Definition content = element.getContent();
+        if (Objects.isNull(content)) {
+            return;
+        }
+        final Object definition = content.getDefinition();
         final RenderMode renderMode = formSessionHandler.getSession() instanceof EditorSession ? RenderMode.EDIT_MODE : RenderMode.READ_ONLY_MODE;
 
         formsContainer.render(graphUuid,
@@ -184,7 +197,14 @@ public class FormPropertiesWidget implements IsElement,
         final String domainObjectUUID = domainObject.getDomainObjectUUID();
         final String domainObjectName = translationService.getTranslation(domainObject.getDomainObjectNameTranslationKey());
         final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
-        final Path diagramPath = diagram.getMetadata().getPath();
+        if (Objects.isNull(diagram)) {
+            return;
+        }
+        final Metadata metadata = diagram.getMetadata();
+        if (Objects.isNull(metadata)) {
+            return;
+        }
+        final Path diagramPath = metadata.getPath();
         final RenderMode renderMode = formSessionHandler.getSession() instanceof EditorSession ? RenderMode.EDIT_MODE : RenderMode.READ_ONLY_MODE;
 
         formsContainer.render(graphUuid,

@@ -53,7 +53,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
@@ -80,7 +80,7 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
                                    final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                    final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                    final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                   final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                   final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                    final CellEditorControlsView.Presenter cellEditorControls,
                                    final ListSelectorView.Presenter listSelector,
@@ -255,7 +255,7 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
         final ClientSession session = sessionManager.getCurrentSession();
         if (session != null) {
             if (nodeUUID.isPresent()) {
-                refreshFormPropertiesEvent.fire(new RefreshFormProperties(session, nodeUUID.get()));
+                refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(session, nodeUUID.get()));
             } else {
                 super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             }

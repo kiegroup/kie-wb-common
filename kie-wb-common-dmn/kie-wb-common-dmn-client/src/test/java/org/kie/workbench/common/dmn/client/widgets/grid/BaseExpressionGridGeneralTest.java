@@ -61,7 +61,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -126,7 +126,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     private ArgumentCaptor<Command> commandCaptor;
 
     @Captor
-    private ArgumentCaptor<RefreshFormProperties> refreshFormPropertiesCaptor;
+    private ArgumentCaptor<RefreshFormPropertiesEvent> refreshFormPropertiesEventCaptor;
 
     @Captor
     private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
@@ -491,11 +491,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
                                        DeleteHasNameCommand.class);
 
         verify(gridLayer).batch();
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(uuid);
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
     }
 
     @Test
@@ -519,11 +519,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         verify(gridLayer).batch();
         verify(updateElementPropertyCommand).execute(eq(canvasHandler));
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(uuid);
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
     }
 
     @SuppressWarnings("unchecked")
@@ -558,11 +558,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
                                      SetHasNameCommand.class);
 
         verify(gridLayer).batch();
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(uuid);
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
     }
 
     @Test
@@ -586,11 +586,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         verify(gridLayer).batch();
         verify(updateElementPropertyCommand).execute(eq(canvasHandler));
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(uuid);
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
     }
 
     @SuppressWarnings("unchecked")
@@ -623,11 +623,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         doTestSetTypeRefConsumer();
 
         verify(gridLayer).batch();
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(uuid);
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
     }
 
     @SuppressWarnings("unchecked")

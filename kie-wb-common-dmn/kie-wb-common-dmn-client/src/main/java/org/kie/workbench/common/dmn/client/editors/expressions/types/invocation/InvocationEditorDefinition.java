@@ -48,7 +48,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 
 @ApplicationScoped
 public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation, InvocationGridData> {
@@ -66,7 +66,7 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
                                       final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                       final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                       final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                      final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                      final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                       final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                       final ListSelectorView.Presenter listSelector,
                                       final TranslationService translationService,

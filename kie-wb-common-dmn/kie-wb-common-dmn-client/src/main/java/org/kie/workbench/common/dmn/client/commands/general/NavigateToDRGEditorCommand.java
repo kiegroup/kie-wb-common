@@ -37,7 +37,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 
 public class NavigateToDRGEditorCommand extends BaseNavigateCommand implements VetoUndoCommand {
 
@@ -45,7 +45,7 @@ public class NavigateToDRGEditorCommand extends BaseNavigateCommand implements V
                                       final SessionPresenter<? extends ClientSession, ?, Diagram> presenter,
                                       final SessionManager sessionManager,
                                       final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                      final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                      final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                       final String nodeUUID,
                                       final HasExpression hasExpression,
                                       final Optional<HasName> hasName) {
@@ -74,7 +74,7 @@ public class NavigateToDRGEditorCommand extends BaseNavigateCommand implements V
                 addDRGEditorToCanvasWidget();
 
                 //Ensure Form Properties are updated to reflect the Graph node selection
-                refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), nodeUUID));
+                refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession(), nodeUUID));
 
                 return CanvasCommandResultBuilder.SUCCESS;
             }

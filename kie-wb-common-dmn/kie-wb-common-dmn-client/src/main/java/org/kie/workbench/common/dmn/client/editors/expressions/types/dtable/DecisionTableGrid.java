@@ -70,7 +70,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
 import org.uberfire.mvp.Command;
@@ -114,7 +114,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                              final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                              final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                              final Event<ExpressionEditorChanged> editorSelectedEvent,
-                             final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                              final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                              final CellEditorControlsView.Presenter cellEditorControls,
                              final ListSelectorView.Presenter listSelector,

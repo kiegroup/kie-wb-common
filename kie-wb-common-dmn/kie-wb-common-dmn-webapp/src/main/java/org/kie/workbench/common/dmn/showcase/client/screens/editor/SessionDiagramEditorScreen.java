@@ -66,7 +66,7 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -99,7 +99,7 @@ public class SessionDiagramEditorScreen {
     private final SessionEditorPresenter<EditorSession> presenter;
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final Event<SessionFocusedEvent> sessionFocusedEvent;
-    private final Event<RefreshFormProperties> refreshFormPropertiesEvent;
+    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final MenuDevCommandsBuilder menuDevCommandsBuilder;
     private final ScreenPanelView screenPanelView;
     private final ScreenErrorView screenErrorView;
@@ -117,7 +117,7 @@ public class SessionDiagramEditorScreen {
                                       final SessionEditorPresenter<EditorSession> presenter,
                                       final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
                                       final Event<SessionFocusedEvent> sessionFocusedEvent,
-                                      final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                      final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                       final MenuDevCommandsBuilder menuDevCommandsBuilder,
                                       final ScreenPanelView screenPanelView,
                                       final ScreenErrorView screenErrorView,

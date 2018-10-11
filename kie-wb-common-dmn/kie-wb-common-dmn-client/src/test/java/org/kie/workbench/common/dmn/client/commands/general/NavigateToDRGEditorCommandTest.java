@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -63,7 +63,7 @@ public class NavigateToDRGEditorCommandTest extends BaseNavigationCommandTest {
 
         verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
         assertEquals(NODE_UUID, refreshFormPropertiesEvent.getUuid());
     }
 
