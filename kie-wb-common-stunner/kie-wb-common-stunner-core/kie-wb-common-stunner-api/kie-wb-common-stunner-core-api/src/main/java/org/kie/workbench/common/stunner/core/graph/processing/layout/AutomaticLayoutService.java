@@ -60,11 +60,7 @@ public final class AutomaticLayoutService {
     }
 
     @SuppressWarnings("unused")
-    public Layout getLayout(final Graph<?, ?> graph) {
-
-        if (hasLayoutInformation(graph)) {
-            return new Layout();
-        }
+    public Layout createLayout(final Graph<?, ?> graph) {
 
         final HashMap<String, Node> indexByUuid = new HashMap<>();
         final ReorderedGraph reorderedGraph = new ReorderedGraph();
@@ -146,7 +142,7 @@ public final class AutomaticLayoutService {
         return layout;
     }
 
-    private static boolean hasLayoutInformation(final Graph<?, ?> graph) {
+    public boolean hasLayoutInformation(final Graph<?, ?> graph) {
 
         boolean hasLayoutInformation = false;
 

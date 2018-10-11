@@ -145,8 +145,10 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     @Override
     public void open(final ProjectDiagram diagram) {
         final Graph graph = diagram.getGraph();
-        final AutomaticLayoutService.Layout layout = layoutService.getLayout(graph);
-        this.graphLayout.applyLayout(layout, graph);
+        if (!layoutService.hasLayoutInformation(graph)) {
+            final AutomaticLayoutService.Layout layout = layoutService.createLayout(graph);
+            this.graphLayout.applyLayout(layout, graph);
+        }
         super.open(diagram);
     }
 

@@ -300,8 +300,10 @@ public class SessionDiagramEditorScreen {
         screenPanelView.setWidget(presenter.getView());
 
         final Graph graph = diagram.getGraph();
-        final AutomaticLayoutService.Layout layout = automaticLayoutService.getLayout(graph);
-        this.graphLayout.applyLayout(layout, graph);
+        if (!automaticLayoutService.hasLayoutInformation(graph)) {
+            final AutomaticLayoutService.Layout layout = automaticLayoutService.createLayout(graph);
+            this.graphLayout.applyLayout(layout, graph);
+        }
 
         presenter
                 .withToolbar(true)
@@ -316,8 +318,6 @@ public class SessionDiagramEditorScreen {
                           callback.execute();
                       }));
     }
-
-
 
     @OnFocus
     public void onFocus() {

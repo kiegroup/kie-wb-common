@@ -35,18 +35,17 @@ public class DMNGraphLayout {
         }
 
         final HashMap<String, Node> indexByUuid = new HashMap<>();
-        for (Object n :
-                graph.nodes()) {
+        for (final Object n : graph.nodes()) {
 
             if (n instanceof Node) {
-                Node node = (Node) n;
+                final Node node = (Node) n;
                 indexByUuid.put(node.getUUID(), node);
             }
         }
 
-        for (AutomaticLayoutService.NodePosition position : layout.getNodePositions()) {
+        for (final AutomaticLayoutService.NodePosition position : layout.getNodePositions()) {
 
-            Node indexed = indexByUuid.get(position.getNodeId());
+            final Node indexed = indexByUuid.get(position.getNodeId());
             if (indexed.getContent() instanceof HasBounds) {
                 ((HasBounds) indexed.getContent()).setBounds(BoundsImpl.build(
                         position.getUpperLeft().getX(),
