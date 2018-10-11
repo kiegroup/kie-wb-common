@@ -44,10 +44,10 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     private static final boolean IS_INDEPENDENT = true;
     private static final boolean IS_ASYNC = true;
-    private static final boolean WAIT_FOR_COMPLETITION = true;
+    private static final boolean WAIT_FOR_COMPLETION = true;
     private static final boolean IS_NOT_INDEPENDENT = false;
     private static final boolean IS_NOT_ASYNC = false;
-    private static final boolean DONT_WAIT_FOR_COMPLETITION = false;
+    private static final boolean DO_NOT_WAIT_FOR_COMPLETION = false;
 
     @Test
     @Override
@@ -65,7 +65,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
                                              IS_NOT_ASYNC,
-                                             DONT_WAIT_FOR_COMPLETITION);
+                                             DO_NOT_WAIT_FOR_COMPLETION);
         assertDataIOSet(topLevelSubProcess.getDataIOSet(), DEFAULT_SUB_PROCESS_DATA_INPUT_OUTPUT);
     }
 
@@ -90,7 +90,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
                                              IS_ASYNC,
-                                             WAIT_FOR_COMPLETITION);
+                                             WAIT_FOR_COMPLETION);
         assertDataIOSet(topLevelSubProcess.getDataIOSet(), SUB_PROCESS_DATA_INPUT_OUTPUT);
     }
 
@@ -112,7 +112,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
                                              IS_NOT_ASYNC,
-                                             WAIT_FOR_COMPLETITION);
+                                             WAIT_FOR_COMPLETION);
         assertDataIOSet(topLevelSubProcess.getDataIOSet(), DEFAULT_SUB_PROCESS_DATA_INPUT_OUTPUT);
     }
 
@@ -132,7 +132,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
                                              IS_NOT_ASYNC,
-                                             DONT_WAIT_FOR_COMPLETITION);
+                                             DO_NOT_WAIT_FOR_COMPLETION);
         assertDataIOSet(subProcessLevelSubProcess.getDataIOSet(), DEFAULT_SUB_PROCESS_DATA_INPUT_OUTPUT);
     }
 
@@ -157,7 +157,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
                                              IS_ASYNC,
-                                             WAIT_FOR_COMPLETITION);
+                                             WAIT_FOR_COMPLETION);
         assertDataIOSet(subProcessLevelSubProcess.getDataIOSet(), SUB_PROCESS_DATA_INPUT_OUTPUT);
     }
 
@@ -179,7 +179,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
                                              IS_NOT_ASYNC,
-                                             WAIT_FOR_COMPLETITION);
+                                             WAIT_FOR_COMPLETION);
         assertDataIOSet(subProcessLevelSubProcess.getDataIOSet(), DEFAULT_SUB_PROCESS_DATA_INPUT_OUTPUT);
     }
 
