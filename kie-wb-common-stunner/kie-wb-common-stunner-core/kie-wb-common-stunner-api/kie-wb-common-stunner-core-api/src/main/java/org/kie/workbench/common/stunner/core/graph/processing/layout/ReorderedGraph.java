@@ -33,8 +33,8 @@ public final class ReorderedGraph {
 
     public ReorderedGraph(final String[][] edgesMatrix) {
         this();
-        for (int i = 0; i < edgesMatrix.length; i++) {
-            addEdge(edgesMatrix[i][0], edgesMatrix[i][1]);
+        for (final String[] edge : edgesMatrix) {
+            addEdge(edge[0], edge[1]);
         }
     }
 
@@ -71,7 +71,7 @@ public final class ReorderedGraph {
 
     public boolean isAcyclic() {
         final HashSet<String> visited = new HashSet<>();
-        for (String vertex : this.vertices) {
+        for (final String vertex : this.vertices) {
             if (leadsToACycle(vertex, visited)) {
                 return false;
             }
@@ -88,7 +88,7 @@ public final class ReorderedGraph {
         visited.add(vertex);
 
         final String[] verticesFromThis = getVerticesFrom(vertex);
-        for (String nextVertex : verticesFromThis) {
+        for (final String nextVertex : verticesFromThis) {
             if (leadsToACycle(nextVertex, visited)) {
                 return true;
             }
@@ -100,7 +100,7 @@ public final class ReorderedGraph {
 
     public String[] getVerticesFrom(final String vertex) {
         final HashSet<String> verticesFrom = new HashSet<>();
-        for (Edge edge : this.edges) {
+        for (final Edge edge : this.edges) {
             if (edge.getFrom().equals(vertex)) {
                 verticesFrom.add(edge.getTo());
             }

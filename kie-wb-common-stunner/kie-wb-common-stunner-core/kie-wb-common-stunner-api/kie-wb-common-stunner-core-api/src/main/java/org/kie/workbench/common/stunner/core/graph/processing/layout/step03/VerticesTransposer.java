@@ -42,28 +42,28 @@ public class VerticesTransposer {
      * @param layers The layers with vertices.
      * @param edges The edges connecting vertices.
      */
-    public void transpose(final ArrayList<Layer> layers,
-                          final ArrayList<Edge> edges,
-                          final int currentIteration) {
+    void transpose(final ArrayList<Layer> layers,
+                   final ArrayList<Edge> edges,
+                   final int currentIteration) {
 
         boolean improved = true;
-        boolean bottomUp = (currentIteration % 2) == 0;
+        final boolean bottomUp = (currentIteration % 2) == 0;
 
         while (improved) {
             improved = false;
 
             if (bottomUp) {
                 for (int index = layers.size() - 1; index > 0; index--) {
-                    Layer current;
-                    Layer previous;
+                    final Layer current;
+                    final Layer previous;
                     current = layers.get(index - 1);
                     previous = layers.get(index);
                     improved = doTranspose(current, previous, edges);
                 }
             } else {
                 for (int index = 1; index < layers.size(); index++) {
-                    Layer current;
-                    Layer previous;
+                    final Layer current;
+                    final Layer previous;
                     current = layers.get(index);
                     previous = layers.get(index - 1);
                     improved = doTranspose(current, previous, edges);
@@ -80,11 +80,11 @@ public class VerticesTransposer {
         boolean improved = false;
         for (int i = 1; i < vertices.size(); i++) {
 
-            int currentCrossing = this.crossingCount.crossing(edges, previous, current);
+            final int currentCrossing = this.crossingCount.crossing(edges, previous, current);
 
             Collections.swap(vertices, i, i - 1);
 
-            int newCrossing = this.crossingCount.crossing(edges, previous, current);
+            final int newCrossing = this.crossingCount.crossing(edges, previous, current);
             if (newCrossing >= currentCrossing) {
                 Collections.swap(vertices, i - 1, i);
             } else {

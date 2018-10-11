@@ -28,9 +28,9 @@ public class ReverseEdgesCycleBreakerTest {
 
     @Test
     public void testAcyclicGraphs() {
-        ReorderedGraph graph = new ReorderedGraph(Graphs.SimpleAcyclic);
+        final ReorderedGraph graph = new ReorderedGraph(Graphs.SimpleAcyclic);
 
-        ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
+        final ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
         breaker.breakCycle(graph);
 
         Assert.assertTrue(graph.isAcyclic());
@@ -38,7 +38,7 @@ public class ReverseEdgesCycleBreakerTest {
 
     @Test
     public void testSimpleCyclicGraph() {
-        ReorderedGraph graph = new ReorderedGraph(Graphs.SimpleCyclic);
+        final ReorderedGraph graph = new ReorderedGraph(Graphs.SimpleCyclic);
         graph.addEdge("A", "B");
         graph.addEdge("B", "C");
         graph.addEdge("C", "D");
@@ -46,7 +46,7 @@ public class ReverseEdgesCycleBreakerTest {
 
         Assert.assertFalse(graph.isAcyclic());
 
-        ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
+        final ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
         breaker.breakCycle(graph);
 
         Assert.assertTrue(graph.isAcyclic());
@@ -54,9 +54,9 @@ public class ReverseEdgesCycleBreakerTest {
 
     @Test
     public void testCyclicGraph1() {
-        ReorderedGraph graph = new ReorderedGraph(Graphs.CyclicGraph1);
+        final ReorderedGraph graph = new ReorderedGraph(Graphs.CyclicGraph1);
 
-        ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
+        final ReverseEdgesCycleBreaker breaker = new ReverseEdgesCycleBreaker();
         breaker.breakCycle(graph);
 
         Assert.assertTrue(graph.isAcyclic());

@@ -34,26 +34,26 @@ public class VertexOrderingTest {
 
     @Test
     public void testSimpleReorder() {
-        ReorderedGraph graph = new ReorderedGraph();
+        final ReorderedGraph graph = new ReorderedGraph();
         graph.addEdge("A", "D");
         graph.addEdge("B", "C");
 
-        Layer layer01 = new Layer(1);
+        final Layer layer01 = new Layer(1);
         layer01.addNewVertex("A");
         layer01.addNewVertex("B");
         graph.getLayers().add(layer01);
 
-        Layer layer02 = new Layer(2);
+        final Layer layer02 = new Layer(2);
         layer02.addNewVertex("C");
         layer02.addNewVertex("D");
         graph.getLayers().add(layer02);
 
-        MedianVertexLayerPositioning median = new MedianVertexLayerPositioning();
-        LayerCrossingCount layersCount = new LayerCrossingCount();
-        VerticesTransposer verticesTransposer = new VerticesTransposer(layersCount);
-        DefaultVertexOrdering ordering = new DefaultVertexOrdering(median,
-                                                                   layersCount,
-                                                                   verticesTransposer);
+        final MedianVertexLayerPositioning median = new MedianVertexLayerPositioning();
+        final LayerCrossingCount layersCount = new LayerCrossingCount();
+        final VerticesTransposer verticesTransposer = new VerticesTransposer(layersCount);
+        final DefaultVertexOrdering ordering = new DefaultVertexOrdering(median,
+                                                                         layersCount,
+                                                                         verticesTransposer);
         ordering.orderVertices(graph);
 
         assertArrayEquals(new Object[]{"A", "B"}, graph.getLayers().get(0).getVertices().stream().map(Vertex::getId).toArray());
@@ -62,7 +62,7 @@ public class VertexOrderingTest {
 
     @Test
     public void testReorder() {
-        ReorderedGraph graph = new ReorderedGraph();
+        final ReorderedGraph graph = new ReorderedGraph();
         graph.addEdge("A", "B");
         graph.addEdge("A", "C");
         graph.addEdge("F", "B");
@@ -71,31 +71,31 @@ public class VertexOrderingTest {
         graph.addEdge("C", "H");
         graph.addEdge("D", "F");
 
-        Layer layer01 = new Layer(1);
+        final Layer layer01 = new Layer(1);
         layer01.addNewVertex("A");
         graph.getLayers().add(layer01);
 
-        Layer layer02 = new Layer(2);
+        final Layer layer02 = new Layer(2);
         layer02.addNewVertex("B");
         layer02.addNewVertex("C");
         layer02.addNewVertex("D");
         graph.getLayers().add(layer02);
 
-        Layer layer03 = new Layer(3);
+        final Layer layer03 = new Layer(3);
         layer03.addNewVertex("E");
         layer03.addNewVertex("F");
         layer03.addNewVertex("G");
         layer03.addNewVertex("H");
         graph.getLayers().add(layer03);
 
-        MedianVertexLayerPositioning median = new MedianVertexLayerPositioning();
-        LayerCrossingCount layersCount = new LayerCrossingCount();
-        VerticesTransposer verticesTransposer = new VerticesTransposer(layersCount);
-        DefaultVertexOrdering ordering = new DefaultVertexOrdering(median,
-                                                                   layersCount,
-                                                                   verticesTransposer);
+        final MedianVertexLayerPositioning median = new MedianVertexLayerPositioning();
+        final LayerCrossingCount layersCount = new LayerCrossingCount();
+        final VerticesTransposer verticesTransposer = new VerticesTransposer(layersCount);
+        final DefaultVertexOrdering ordering = new DefaultVertexOrdering(median,
+                                                                         layersCount,
+                                                                         verticesTransposer);
         ordering.orderVertices(graph);
-        ArrayList<Layer> orderedLayers = graph.getLayers();
+        final ArrayList<Layer> orderedLayers = graph.getLayers();
 
         assertArrayEquals(new Object[]{"A"}, orderedLayers.get(0).getVertices().stream().map(Vertex::getId).toArray());
         assertArrayEquals(new Object[]{"D", "B", "C"}, orderedLayers.get(1).getVertices().stream().map(Vertex::getId).toArray());
@@ -105,47 +105,46 @@ public class VertexOrderingTest {
     @Test
     public void calculateMedianTest() {
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("G", "A"));
         edges.add(new Edge("G", "D"));
         edges.add(new Edge("G", "E"));
 
-        Layer layer00 = new Layer(0);
+        final Layer layer00 = new Layer(0);
         layer00.addNewVertex("A");
         layer00.addNewVertex("B");
         layer00.addNewVertex("C");
         layer00.addNewVertex("D");
         layer00.addNewVertex("E");
-        Layer layer01 = new Layer(1);
+        final Layer layer01 = new Layer(1);
         layer01.addNewVertex("F");
         layer01.addNewVertex("G");
         layer01.addNewVertex("H");
         layer01.addNewVertex("I");
         layer01.addNewVertex("J");
 
-
-        MedianVertexLayerPositioning vertexMedian = new MedianVertexLayerPositioning();
-        double median = vertexMedian.calculateMedianOfVerticesConnectedTo("G", layer00, edges);
+        final MedianVertexLayerPositioning vertexMedian = new MedianVertexLayerPositioning();
+        final double median = vertexMedian.calculateMedianOfVerticesConnectedTo("G", layer00, edges);
         assertEquals(3.0, median, 0.0001);
     }
 
     @Test
     public void testSimpleCrossing() {
 
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("C");
         bottom.addNewVertex("D");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "D"));
         edges.add(new Edge("B", "C"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(1, result);
     }
@@ -153,20 +152,20 @@ public class VertexOrderingTest {
     @Test
     public void testSimpleNoCrossing() {
 
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("C");
         bottom.addNewVertex("D");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "C"));
         edges.add(new Edge("B", "D"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(0, result);
     }
@@ -182,22 +181,22 @@ public class VertexOrderingTest {
          *   /   \
          * D   E   F
          */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
         top.addNewVertex("C");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("D");
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "F"));
         edges.add(new Edge("D", "C"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(1, result);
     }
@@ -214,23 +213,23 @@ public class VertexOrderingTest {
          *   / /     \          \
          *  D         E          F
          * */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("D");
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "D"));
         edges.add(new Edge("E", "A"));
         edges.add(new Edge("A", "F"));
         edges.add(new Edge("D", "B"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(2, result);
     }
@@ -246,23 +245,23 @@ public class VertexOrderingTest {
          *  / \|
          * D   E   F
          * */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
         top.addNewVertex("C");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("D");
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "E"));
         edges.add(new Edge("B", "E"));
         edges.add(new Edge("C", "D"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(2, result);
     }
@@ -279,19 +278,19 @@ public class VertexOrderingTest {
          *  |       |      \  \---\ \|
          *  E       F       G        H
          */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
         top.addNewVertex("C");
         top.addNewVertex("D");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
         bottom.addNewVertex("G");
         bottom.addNewVertex("H");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "E"));
         edges.add(new Edge("A", "G"));
         edges.add(new Edge("A", "H"));
@@ -299,8 +298,8 @@ public class VertexOrderingTest {
         edges.add(new Edge("C", "H"));
         edges.add(new Edge("D", "H"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(2, result);
     }
@@ -316,23 +315,23 @@ public class VertexOrderingTest {
          *   / | \
          * D   E   F
          */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
         top.addNewVertex("C");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("D");
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "F"));
         edges.add(new Edge("B", "E"));
         edges.add(new Edge("C", "D"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(3, result);
     }
@@ -343,17 +342,17 @@ public class VertexOrderingTest {
         /*
          * k33 - every vertex from layer 1 connected to every vertex in layer 2
          */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
         top.addNewVertex("C");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("D");
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "D"));
         edges.add(new Edge("A", "E"));
         edges.add(new Edge("A", "F"));
@@ -366,8 +365,8 @@ public class VertexOrderingTest {
         edges.add(new Edge("C", "E"));
         edges.add(new Edge("C", "F"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(9, result);
     }
@@ -383,23 +382,23 @@ public class VertexOrderingTest {
          * | /  |  \
          * D    E   F
          */
-        Layer top = new Layer(0);
+        final Layer top = new Layer(0);
         top.addNewVertex("A");
         top.addNewVertex("B");
 
-        Layer bottom = new Layer(1);
+        final Layer bottom = new Layer(1);
         bottom.addNewVertex("D");
         bottom.addNewVertex("E");
         bottom.addNewVertex("F");
 
-        ArrayList<Edge> edges = new ArrayList<>();
+        final ArrayList<Edge> edges = new ArrayList<>();
         edges.add(new Edge("A", "D"));
         edges.add(new Edge("B", "D"));
         edges.add(new Edge("E", "B"));
         edges.add(new Edge("F", "B"));
 
-        LayerCrossingCount cc = new LayerCrossingCount();
-        int result = cc.crossing(edges, top, bottom);
+        final LayerCrossingCount cc = new LayerCrossingCount();
+        final int result = cc.crossing(edges, top, bottom);
 
         assertEquals(0, result);
     }

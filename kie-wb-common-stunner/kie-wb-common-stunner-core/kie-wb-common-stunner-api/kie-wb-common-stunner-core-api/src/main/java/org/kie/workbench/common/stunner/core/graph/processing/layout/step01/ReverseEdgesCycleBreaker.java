@@ -31,10 +31,8 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
 
     private ReorderedGraph graph;
     private final HashSet<String> visitedVertices;
-    private final HashSet<Edge> reversed;
 
     public ReverseEdgesCycleBreaker() {
-        this.reversed = new HashSet<>();
         this.visitedVertices = new HashSet<>();
     }
 
@@ -46,7 +44,7 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
     public void breakCycle(final ReorderedGraph graph) {
         this.graph = graph;
 
-        for (String vertex : this.graph.getVertices()) {
+        for (final String vertex : this.graph.getVertices()) {
             visit(vertex);
         }
     }
@@ -54,7 +52,7 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
     /**
      * Visit a vertex searching for acyclic paths.
      * @param vertex The vertex to visit.
-     * @return true if the path is acylic, false if is cyclic.
+     * @return true if the path is acyclic, false if is cyclic.
      */
     private boolean visit(final String vertex) {
         if (visitedVertices.contains(vertex)) {
@@ -63,18 +61,17 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
         }
         visitedVertices.add(vertex);
 
-        String[] verticesFromThis = getVerticesFrom(vertex);
-        for (String nextVertex : verticesFromThis) {
+        final String[] verticesFromThis = getVerticesFrom(vertex);
+        for (final String nextVertex : verticesFromThis) {
             if (!visit(nextVertex)) {
-                Edge toReverse = this.graph.getEdges().stream().filter(edge -> edge.getFrom().equals(vertex)
+                final Edge toReverse = this.graph.getEdges().stream().filter(edge -> edge.getFrom().equals(vertex)
                         && edge.getTo().equals(nextVertex))
                         .findFirst()
                         .orElse(null);
 
                 if (toReverse != null) {
-                    reversed.add(toReverse);
                     this.graph.getEdges().remove(toReverse);
-                    Edge reversed = new Edge(toReverse.getTo(), toReverse.getFrom());
+                    final Edge reversed = new Edge(toReverse.getTo(), toReverse.getFrom());
                     this.graph.getEdges().add(reversed);
                 }
             }
@@ -86,7 +83,7 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
 
     private String[] getVerticesFrom(final String vertex) {
         final HashSet<String> verticesFrom = new HashSet<>();
-        for (Edge edge : this.graph.getEdges()) {
+        for (final Edge edge : this.graph.getEdges()) {
             if (edge.getFrom().equals(vertex)) {
                 verticesFrom.add(edge.getTo());
             }

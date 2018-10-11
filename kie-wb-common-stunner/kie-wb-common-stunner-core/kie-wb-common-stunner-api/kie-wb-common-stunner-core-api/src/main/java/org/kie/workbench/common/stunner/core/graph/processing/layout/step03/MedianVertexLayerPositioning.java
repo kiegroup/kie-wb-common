@@ -44,10 +44,10 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
 
         if ((currentIteration % 2 == 0)) {
             for (int j = layers.size() - 1; j >= 1; j--) {
-                Layer currentLayer = layers.get(j);
-                for (Vertex vertex : currentLayer.getVertices()) {
+                final Layer currentLayer = layers.get(j);
+                for (final Vertex vertex : currentLayer.getVertices()) {
                     //positionVertices value of vertices in rank r-1 connected to v
-                    double median = calculateMedianOfVerticesConnectedTo(vertex.getId(), layers.get(j - 1), edges);
+                    final double median = calculateMedianOfVerticesConnectedTo(vertex.getId(), layers.get(j - 1), edges);
                     vertex.setMedian(median);
                 }
 
@@ -56,10 +56,10 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
             }
         } else {
             for (int j = 0; j < layers.size() - 1; j++) {
-                Layer currentLayer = layers.get(j);
+                final Layer currentLayer = layers.get(j);
 
-                for (Vertex vertex : layers.get(j).getVertices()) {
-                    double median = calculateMedianOfVerticesConnectedTo(vertex.getId(), layers.get(j + 1), edges);
+                for (final Vertex vertex : layers.get(j).getVertices()) {
+                    final double median = calculateMedianOfVerticesConnectedTo(vertex.getId(), layers.get(j + 1), edges);
                     vertex.setMedian(median);
                 }
 
@@ -75,15 +75,15 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
      * @param edges The existing edges.
      * @return The median position. -1 (out of bounds) if there is no connection.
      */
-    protected double calculateMedianOfVerticesConnectedTo(final String vertex,
-                                                          final Layer layer,
-                                                          final ArrayList<Edge> edges) {
+    double calculateMedianOfVerticesConnectedTo(final String vertex,
+                                                final Layer layer,
+                                                final ArrayList<Edge> edges) {
         final ArrayList<Integer> connectedVerticesIndex = new ArrayList<>();
         final ArrayList<Vertex> vertices = layer.getVertices();
         for (int i = 0; i < vertices.size(); i++) {
-            Vertex vertexInLayer = vertices.get(i);
+            final Vertex vertexInLayer = vertices.get(i);
 
-            boolean hasConnection = edges.stream()
+            final boolean hasConnection = edges.stream()
                     .anyMatch(e -> e.isLinkedWith(vertexInLayer.getId()) && e.isLinkedWith(vertex));
 
             if (hasConnection) {
@@ -91,7 +91,6 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
             }
         }
 
-        double median;
         final int size = connectedVerticesIndex.size();
 
         if (size == 0) {
@@ -105,6 +104,8 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
         if (size == 1) {
             return connectedVerticesIndex.get(0);
         }
+
+        final double median;
 
         if (size % 2 == 0) {
             median = ((double) connectedVerticesIndex.get(size / 2) + (double) connectedVerticesIndex.get(size / 2 - 1)) / 2;

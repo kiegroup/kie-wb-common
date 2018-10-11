@@ -38,12 +38,12 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 @Default
 public final class DefaultVertexPositioning implements VertexPositioning {
 
-    public static final int DefaultVertexWidth = 100;
-    public static final int DefaultVertexHeight = 50;
-    public static final int DefaultVertexSpace = 75;
-    public static final int DefaultLayerSpace = 125;
-    private static final int DefaultLayerHorizontalPadding = 50;
-    private static final int DefaultLayerVerticalPadding = 50;
+    public static final int DEFAULT_VERTEX_WIDTH = 100;
+    public static final int DEFAULT_VERTEX_HEIGHT = 50;
+    private static final int DEFAULT_VERTEX_SPACE = 75;
+    private static final int DEFAULT_LAYER_SPACE = 125;
+    private static final int DEFAULT_LAYER_HORIZONTAL_PADDING = 50;
+    private static final int DEFAULT_LAYER_VERTICAL_PADDING = 50;
 
     /*
      * Pre:
@@ -52,8 +52,8 @@ public final class DefaultVertexPositioning implements VertexPositioning {
      */
     @Override
     public void calculateVerticesPositions(final ReorderedGraph graph,
-                                                     final LayerArrangement arrangement) {
-        for (Edge edge : graph.getEdges()) {
+                                           final LayerArrangement arrangement) {
+        for (final Edge edge : graph.getEdges()) {
             if (edge.isReversed()) {
                 edge.reverse();
             }
@@ -74,9 +74,9 @@ public final class DefaultVertexPositioning implements VertexPositioning {
 
         int largestWidth = 0;
         for (int i = 0; i < layers.size(); i++) {
-            Layer layer = layers.get(i);
-            int currentWidth = layer.getVertices().size() * DefaultVertexWidth;
-            currentWidth += (layer.getVertices().size() - 1) * DefaultVertexSpace;
+            final Layer layer = layers.get(i);
+            int currentWidth = layer.getVertices().size() * DEFAULT_VERTEX_WIDTH;
+            currentWidth += (layer.getVertices().size() - 1) * DEFAULT_VERTEX_SPACE;
             layersWidth.put(i, currentWidth);
             largestWidth = Math.max(largestWidth, currentWidth);
         }
@@ -84,15 +84,15 @@ public final class DefaultVertexPositioning implements VertexPositioning {
         // center everything based on largest width
         final HashMap<Integer, Integer> layersStartX = new HashMap<>();
         for (int i = 0; i < layers.size(); i++) {
-            int middle = largestWidth / 2;
-            int layerWidth = layersWidth.get(i);
-            int firstHalf = layerWidth / 2;
+            final int middle = largestWidth / 2;
+            final int layerWidth = layersWidth.get(i);
+            final int firstHalf = layerWidth / 2;
             int startPoint = middle - firstHalf;
-            startPoint += DefaultLayerHorizontalPadding;
+            startPoint += DEFAULT_LAYER_HORIZONTAL_PADDING;
             layersStartX.put(i, startPoint);
         }
 
-        int y = DefaultLayerVerticalPadding;
+        int y = DEFAULT_LAYER_VERTICAL_PADDING;
         switch (arrangement) {
             case TopDown:
                 for (int i = 0; i < layers.size(); i++) {
@@ -116,24 +116,24 @@ public final class DefaultVertexPositioning implements VertexPositioning {
         final Layer layer = layers.get(i);
         int x = layersStartX.get(i);
 
-        for (Vertex v : layer.getVertices()) {
+        for (final Vertex v : layer.getVertices()) {
 
             v.setX(x);
             v.setY(y);
 
-            x += DefaultVertexSpace;
-            x += DefaultVertexWidth;
+            x += DEFAULT_VERTEX_SPACE;
+            x += DEFAULT_VERTEX_WIDTH;
         }
 
-        return y + DefaultLayerSpace;
+        return y + DEFAULT_LAYER_SPACE;
     }
 
     private void removeVirtualVerticesFromLayers(final ArrayList<Layer> layers,
                                                  final Set<Vertex> vertices) {
         final Set<String> ids = vertices.stream().map(Vertex::getId).collect(Collectors.toSet());
-        for (Layer layer : layers) {
+        for (final Layer layer : layers) {
             for (int i = 0; i < layer.getVertices().size(); i++) {
-                Vertex existingVertex = layer.getVertices().get(i);
+                final Vertex existingVertex = layer.getVertices().get(i);
                 if (!ids.contains(existingVertex.getId())) {
                     layer.getVertices().remove(existingVertex);
                     i--;
@@ -142,9 +142,9 @@ public final class DefaultVertexPositioning implements VertexPositioning {
         }
     }
 
-    public boolean removeVirtualVertex(final Edge edge,
-                                       final ArrayList<Edge> edges,
-                                       final Set<Vertex> vertices) {
+    boolean removeVirtualVertex(final Edge edge,
+                                final ArrayList<Edge> edges,
+                                final Set<Vertex> vertices) {
 
         final Optional<Vertex> toVirtual = vertices.stream()
                 .filter(v -> v.isVirtual() && edge.getTo().equals(v.getId())).findFirst();
@@ -154,7 +154,8 @@ public final class DefaultVertexPositioning implements VertexPositioning {
             final String virtualVertex = edge.getTo();
             // gets other side
             final Optional<Edge> otherSide = edges.stream()
-                    .filter(e -> e.getFrom().equals(virtualVertex)).findFirst();
+                    .filter(e -> e.getFrom().equals(virtualVertex))
+                    .findFirst();
 
             if (otherSide.isPresent()) {
                 // this_vertex->virtual
@@ -167,7 +168,7 @@ public final class DefaultVertexPositioning implements VertexPositioning {
                         .filter(e -> e.getFrom().equals(toVirtual.get().getId()) && e.getTo().equals(realToVertex))
                         .findFirst();
 
-                edges.remove(oldEdge.get());
+                oldEdge.ifPresent(edges::remove);
             }
         }
 
@@ -197,7 +198,7 @@ public final class DefaultVertexPositioning implements VertexPositioning {
                         .filter(e -> e.getTo().equals(fromVirtual.get().getId()))
                         .findFirst();
 
-                edges.remove(oldEdge.get());
+                oldEdge.ifPresent(edges::remove);
             }
         }
 
@@ -209,9 +210,8 @@ public final class DefaultVertexPositioning implements VertexPositioning {
         return false;
     }
 
-    public void removeVirtualVertices(final ArrayList<Edge> edges,
-                                      final Set<Vertex> vertices) {
-        // TODO: performance optimization point
+    void removeVirtualVertices(final ArrayList<Edge> edges,
+                               final Set<Vertex> vertices) {
         while (vertices.stream().anyMatch(Vertex::isVirtual)) {
             for (int i = 0; i < edges.size(); i++) {
                 if (removeVirtualVertex(edges.get(i), edges, vertices)) {

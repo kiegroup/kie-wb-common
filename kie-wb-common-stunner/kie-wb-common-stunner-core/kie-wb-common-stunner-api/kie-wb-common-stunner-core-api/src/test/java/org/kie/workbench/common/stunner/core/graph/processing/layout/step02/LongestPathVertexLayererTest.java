@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout.step02;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +35,7 @@ public class LongestPathVertexLayererTest {
     @Test
     public void simple2LayersTest() {
 
-        ReorderedGraph graph = new ReorderedGraph();
+        final ReorderedGraph graph = new ReorderedGraph();
         graph.addEdge("A", "E");
         graph.addEdge("A", "G");
         graph.addEdge("A", "H");
@@ -44,23 +43,23 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("C", "H");
         graph.addEdge("D", "H");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        final LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
         layerer.createLayers(graph);
-        ArrayList<Layer> result = graph.getLayers();
+        final ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(2, result.size());
 
-        Layer layer01 = result.get(0);
+        final Layer layer01 = result.get(0);
         match(new String[]{"A", "B", "C", "D"}, layer01);
 
-        Layer layer02 = result.get(1);
+        final Layer layer02 = result.get(1);
         match(new String[]{"E", "F", "G", "H"}, layer02);
     }
 
     @Test
     public void simple3Layers() {
 
-        ReorderedGraph graph = new ReorderedGraph();
+        final ReorderedGraph graph = new ReorderedGraph();
         graph.addEdge("A", "B");
         graph.addEdge("A", "C");
         graph.addEdge("B", "F");
@@ -69,26 +68,26 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("C", "H");
         graph.addEdge("D", "F");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        final LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
         layerer.createLayers(graph);
-        ArrayList<Layer> result = graph.getLayers();
+        final ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(3, result.size());
 
-        Layer layer01 = result.get(0);
+        final Layer layer01 = result.get(0);
         match(new String[]{"A"}, layer01);
 
-        Layer layer02 = result.get(1);
+        final Layer layer02 = result.get(1);
         match(new String[]{"D", "B", "C"}, layer02);
 
-        Layer layer03 = result.get(2);
+        final Layer layer03 = result.get(2);
         match(new String[]{"E", "F", "G", "H"}, layer03);
     }
 
     @Test
     public void simple4Layers() {
 
-        ReorderedGraph graph = new ReorderedGraph();
+        final ReorderedGraph graph = new ReorderedGraph();
         graph.addEdge("A", "B");
         graph.addEdge("A", "C");
         graph.addEdge("B", "F");
@@ -99,52 +98,55 @@ public class LongestPathVertexLayererTest {
         graph.addEdge("H", "I");
         graph.addEdge("G", "I");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        final LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
         layerer.createLayers(graph);
-        ArrayList<Layer> result = graph.getLayers();
+        final ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(4, result.size());
 
         /* We're ensuring that the default algorithm behaviour is "good enough" and is not break by some change,
          * but If we changed it to a better one we'll have to modify this test to the new better expected result.
          */
-        Layer layer01 = result.get(0);
+        final Layer layer01 = result.get(0);
         match(new String[]{"A"}, layer01);
 
-        Layer layer02 = result.get(1);
+        final Layer layer02 = result.get(1);
         match(new String[]{"C"}, layer02);
 
-        Layer layer03 = result.get(2);
+        final Layer layer03 = result.get(2);
         match(new String[]{"B", "G", "H"}, layer03);
 
-        Layer layer04 = result.get(3);
+        final Layer layer04 = result.get(3);
         match(new String[]{"F", "I", "E"}, layer04);
     }
 
     @Test
     public void singleLineLayered() {
-        ReorderedGraph graph = new ReorderedGraph();
+        final ReorderedGraph graph = new ReorderedGraph();
         graph.addEdge("A", "B");
         graph.addEdge("B", "C");
         graph.addEdge("C", "D");
 
-        LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
+        final LongestPathVertexLayerer layerer = new LongestPathVertexLayerer();
         layerer.createLayers(graph);
-        ArrayList<Layer> result = graph.getLayers();
+        final ArrayList<Layer> result = graph.getLayers();
 
         assertEquals(4, result.size()); // 4 = layered = vertical line
     }
 
-    private static void match(String[] expected, Layer layer) {
+    private static void match(final String[] expected,
+                              final Layer layer) {
         assertEquals("kie.wb.common.graph.layout.Layer " + layer.getLevel() + " contains " + expected.length + " vertices",
                      expected.length,
                      layer.getVertices().size());
 
-        String[] fromLayer = layer.getVertices().stream().map(Vertex::getId)
-                .collect(Collectors.toSet())
-                .toArray(new String[0]);
+        final String[] fromLayer = layer.getVertices().stream()
+                .map(Vertex::getId)
+                .distinct()
+                .toArray(String[]::new);
 
-        boolean containsAllElements = Arrays.asList(expected).containsAll(Arrays.asList(fromLayer));
+        final boolean containsAllElements = Arrays.asList(expected)
+                .containsAll(Arrays.asList(fromLayer));
 
         assertTrue("kie.wb.common.graph.layout.Layer " + layer.getLevel() + " contains all expected vertices",
                    containsAllElements);

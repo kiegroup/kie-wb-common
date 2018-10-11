@@ -45,7 +45,7 @@ public class Edge {
         return this.to;
     }
 
-    public boolean isLinkedWith(String vertexId) {
+    public boolean isLinkedWith(final String vertexId) {
         return this.getFrom().equals(vertexId) || this.getTo().equals(vertexId);
     }
 
@@ -61,7 +61,7 @@ public class Edge {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof Edge) {
             Edge that = (Edge) obj;
             return getTo().equals(that.getTo())

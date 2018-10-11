@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout.step02;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 import javax.enterprise.inject.Default;
 
@@ -50,12 +50,12 @@ public final class LongestPathVertexLayerer implements VertexLayerer {
         this.vertices = new Vertex[graph.getVertices().size()];
 
         for (int i = 0; i < graph.getVertices().size(); i++) {
-            String v = graph.getVertices().get(i);
+            final String v = graph.getVertices().get(i);
             this.vertices[i] = new Vertex(v);
             this.vertexHeight.put(v, -1);
         }
 
-        for (Vertex vertex : this.vertices) {
+        for (final Vertex vertex : this.vertices) {
             visit(vertex);
         }
     }
@@ -69,12 +69,16 @@ public final class LongestPathVertexLayerer implements VertexLayerer {
         int maxHeight = 1;
 
         final String[] verticesFromHere = graph.getVerticesFrom(vertex.getId());
-        for (String nextVertex : verticesFromHere) {
+        for (final String nextVertex : verticesFromHere) {
             if (!nextVertex.equals(vertex.getId())) {
-                Optional<Vertex> next = Arrays.stream(this.vertices)
+                final Vertex next = Arrays.stream(this.vertices)
                         .filter(f -> f.getId().equals(nextVertex))
-                        .findFirst();
-                int targetHeight = visit(next.get());
+                        .findFirst()
+                        .orElseThrow(() -> new NoSuchElementException(
+                                "Can not found the vertex pointed in other side of the Edge."
+                        ));
+
+                final int targetHeight = visit(next);
                 maxHeight = Math.max(maxHeight, targetHeight + 1);
             }
         }
@@ -90,7 +94,7 @@ public final class LongestPathVertexLayerer implements VertexLayerer {
         }
 
         final int level = this.graph.getLayers().size() - height;
-        Layer layer = this.graph.getLayers().get(level);
+        final Layer layer = this.graph.getLayers().get(level);
         layer.setLevel(height);
         layer.addVertex(vertex);
         vertexHeight.put(vertex.getId(), height);

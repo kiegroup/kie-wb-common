@@ -59,6 +59,7 @@ public final class AutomaticLayoutService {
         this.vertexPositioning = vertexPositioning;
     }
 
+    @SuppressWarnings("unused")
     public Layout getLayout(final Graph<?, ?> graph) {
 
         if (hasLayoutInformation(graph)) {
@@ -68,7 +69,7 @@ public final class AutomaticLayoutService {
         final HashMap<String, Node> indexByUuid = new HashMap<>();
         final ReorderedGraph reorderedGraph = new ReorderedGraph();
 
-        for (Node n : graph.nodes()) {
+        for (final Node n : graph.nodes()) {
 
             if (!(n.getContent() instanceof HasBounds)) {
                 continue;
@@ -76,21 +77,21 @@ public final class AutomaticLayoutService {
 
             indexByUuid.put(n.getUUID(), n);
 
-            for (Object e : n.getInEdges()) {
+            for (final Object e : n.getInEdges()) {
 
-                Edge edge = (Edge) e;
+                final Edge edge = (Edge) e;
 
-                String from = edge.getSourceNode().getUUID();
-                String to = n.getUUID();
+                final String from = edge.getSourceNode().getUUID();
+                final String to = n.getUUID();
                 reorderedGraph.addEdge(from, to);
             }
 
-            for (Object e : n.getOutEdges()) {
+            for (final Object e : n.getOutEdges()) {
 
-                Edge edge = (Edge) e;
+                final Edge edge = (Edge) e;
 
-                String to = edge.getTargetNode().getUUID();
-                String from = n.getUUID();
+                final String to = edge.getTargetNode().getUUID();
+                final String from = n.getUUID();
                 reorderedGraph.addEdge(from, to);
             }
         }
@@ -101,7 +102,7 @@ public final class AutomaticLayoutService {
         this.vertexPositioning.calculateVerticesPositions(reorderedGraph,
                                                           DefaultVertexPositioning.LayerArrangement.BottomUp);
 
-        ArrayList<Layer> orderedLayers = reorderedGraph.getLayers();
+        final ArrayList<Layer> orderedLayers = reorderedGraph.getLayers();
         return buildLayout(indexByUuid, orderedLayers);
     }
 
@@ -111,32 +112,32 @@ public final class AutomaticLayoutService {
         final Layout layout = new Layout();
 
         for (int i = layers.size() - 1; i >= 0; i--) {
-            Layer layer = layers.get(i);
-            for (Vertex v : layer.getVertices()) {
-                Node n = indexByUuid.get(v.getId());
+            final Layer layer = layers.get(i);
+            for (final Vertex v : layer.getVertices()) {
+                final Node n = indexByUuid.get(v.getId());
 
-                int x = v.getX();
-                int y = v.getY();
+                final int x = v.getX();
+                final int y = v.getY();
 
-                Bounds currentBounds = ((HasBounds) n.getContent()).getBounds();
-                Bounds.Bound lowerRight = currentBounds.getLowerRight();
-                int x2;
+                final Bounds currentBounds = ((HasBounds) n.getContent()).getBounds();
+                final Bounds.Bound lowerRight = currentBounds.getLowerRight();
+                final int x2;
                 if (isCloseToZero(lowerRight.getX())) {
-                    x2 = x + DefaultVertexPositioning.DefaultVertexWidth;
+                    x2 = x + DefaultVertexPositioning.DEFAULT_VERTEX_WIDTH;
                 } else {
                     x2 = (int) (x + lowerRight.getX());
                 }
 
-                int y2;
+                final int y2;
                 if (isCloseToZero(lowerRight.getY())) {
-                    y2 = y + DefaultVertexPositioning.DefaultVertexHeight;
+                    y2 = y + DefaultVertexPositioning.DEFAULT_VERTEX_HEIGHT;
                 } else {
                     y2 = (int) (y + lowerRight.getY());
                 }
 
-                NodePosition position = new NodePosition(v.getId(),
-                                                         new NodePosition.Point(x, y),
-                                                         new NodePosition.Point(x2, y2));
+                final NodePosition position = new NodePosition(v.getId(),
+                                                               new NodePosition.Point(x, y),
+                                                               new NodePosition.Point(x2, y2));
 
                 layout.getNodePositions().add(position);
             }
@@ -149,7 +150,7 @@ public final class AutomaticLayoutService {
 
         boolean hasLayoutInformation = false;
 
-        for (Node n : graph.nodes()) {
+        for (final Node n : graph.nodes()) {
 
             final Object content = n.getContent();
             if (content instanceof HasBounds) {
@@ -203,9 +204,9 @@ public final class AutomaticLayoutService {
         private final Point upperLeft;
         private final Point bottomRight;
 
-        public NodePosition(final String nodeId,
-                            final Point upperLeft,
-                            final Point bottomRight) {
+        NodePosition(final String nodeId,
+                     final Point upperLeft,
+                     final Point bottomRight) {
             this.nodeId = nodeId;
             this.upperLeft = upperLeft;
             this.bottomRight = bottomRight;
@@ -228,8 +229,8 @@ public final class AutomaticLayoutService {
             private final int x;
             private final int y;
 
-            public Point(final int x,
-                         final int y) {
+            private Point(final int x,
+                          final int y) {
                 this.x = x;
                 this.y = y;
             }

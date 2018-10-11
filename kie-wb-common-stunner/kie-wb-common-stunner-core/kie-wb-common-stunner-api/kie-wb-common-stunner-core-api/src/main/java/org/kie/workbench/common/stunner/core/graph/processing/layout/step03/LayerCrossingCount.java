@@ -40,9 +40,9 @@ public class LayerCrossingCount {
      * @param south The south layer.
      * @return The total of edges crossing.
      */
-    public int crossing(final ArrayList<Edge> edges,
-                        final Layer north,
-                        final Layer south) {
+    int crossing(final ArrayList<Edge> edges,
+                 final Layer north,
+                 final Layer south) {
 
         final Object[] entries = flat(edges, north, south);
 
@@ -52,11 +52,11 @@ public class LayerCrossingCount {
         }
         final int treeSize = 2 * firstIndex - 1;
         firstIndex -= 1;
-        int[] tree = new int[treeSize];
+        final int[] tree = new int[treeSize];
 
         int crossings = 0;
 
-        for (Object entry : entries) {
+        for (final Object entry : entries) {
             int index = ((Integer) entry) + firstIndex;
             if (index < 0) {
                 continue;
@@ -82,8 +82,8 @@ public class LayerCrossingCount {
      * @param edges Existing edges.
      * @return The sum of edges crossing between all layers.
      */
-    public int crossing(final ArrayList<Layer> layers,
-                        final ArrayList<Edge> edges) {
+    int crossing(final ArrayList<Layer> layers,
+                 final ArrayList<Edge> edges) {
         int crossingCount = 0;
         for (int i = 1; i < layers.size(); i++) {
             crossingCount += crossing(edges, layers.get(i - 1), layers.get(i));
@@ -95,12 +95,12 @@ public class LayerCrossingCount {
                           final Layer north,
                           final Layer south) {
 
-        ArrayList<String> southPos = new ArrayList<>(south.getVertices().size());
+        final ArrayList<String> southPos = new ArrayList<>(south.getVertices().size());
         for (int i = 0; i < south.getVertices().size(); i++) {
             southPos.add(south.getVertices().get(i).getId());
         }
 
-        Object[] southEntries = north.getVertices().stream().flatMap(v -> {
+        return north.getVertices().stream().flatMap(v -> {
             List<Edge> connectedEdges = edges.stream()
                     .filter(e -> (e.getTo().equals(v.getId()) || e.getFrom().equals(v.getId())))
                     .collect(Collectors.toList());
@@ -112,7 +112,5 @@ public class LayerCrossingCount {
                 return southPos.indexOf(e.getFrom());
             }).sorted();
         }).toArray();
-
-        return southEntries;
     }
 }

@@ -55,67 +55,7 @@ public final class Graphs {
             {"A", "I"}
     };
 
-    public static final String[][] AcyclicGraph1 = {
-            {"A", "B"},
-            {"A", "C"},
-            {"C", "D"},
-            {"D", "B"},
-            {"G", "B"},
-            {"G", "A"},
-            {"G", "H"},
-            {"H", "I"},
-            {"G", "I"},
-            {"G", "J"},
-            {"G", "F"},
-            {"F", "E"},
-            {"E", "A"},
-            {"A", "I"}
-    };
-
-
-    /*{"M", "S"},
-    {"R", "S"},
-    {"W", "S"},
-    {"X", "S"},*/
-
-    public static final String[][] RealCase0004_Lending = {
-            {"D", "B"},
-            {"B", "A"},
-            {"C", "A"},
-            {"E", "C"},
-            {"J", "C"},
-            {"J", "B"},
-            {"F", "C"},
-            {"X", "C"},
-            {"J", "F"},
-            {"O", "J"},
-            {"W", "P"},
-            {"X", "P"},
-            {"X", "J"},
-            {"X", "F"},
-            {"Q", "K"},
-            {"R", "K"},
-            {"K", "F"},
-            {"L", "F"},
-            {"L", "H"},
-            {"X", "H"},
-            {"S", "L"},
-            {"G", "I"},
-            {"H", "I"},
-            {"M", "I"},
-            {"M", "H"},
-            {"P", "M"},
-            {"X", "M"},
-            {"X", "N"},
-            {"T", "M"},
-            {"U", "N"},
-            {"V", "I"},
-            {"V", "N"},
-            {"V", "M"},
-            {"K", "H"},
-    };
-
-    public static final String[][] RealCase1 = {
+    static final String[][] RealCase1 = {
             {"L", "D"},
             {"D", "A"},
             {"D", "B"},

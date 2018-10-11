@@ -18,8 +18,7 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout.step03;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.NoSuchElementException;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -28,6 +27,8 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.Edge;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Order vertices inside layers trying to reduce crossing between edges.
@@ -73,7 +74,7 @@ public final class DefaultVertexOrdering implements VertexOrdering {
         final Object[][] nestedBestRanks = new Object[virtualized.size()][];
         // Starts with the current order
         for (int i = 0; i < nestedBestRanks.length; i++) {
-            Layer layer = best.get(i);
+            final Layer layer = best.get(i);
             nestedBestRanks[i] = new Object[layer.getVertices().size()];
             for (int j = 0; j < layer.getVertices().size(); j++) {
                 nestedBestRanks[i][j] = layer.getVertices().get(j);
@@ -96,7 +97,7 @@ public final class DefaultVertexOrdering implements VertexOrdering {
 
     private ArrayList<Layer> clone(final ArrayList<Layer> input) {
         final ArrayList<Layer> clone = new ArrayList<>(input.size());
-        for (Layer value : input) {
+        for (final Layer value : input) {
             clone.add(value.clone());
         }
         return clone;
@@ -114,36 +115,36 @@ public final class DefaultVertexOrdering implements VertexOrdering {
         final ArrayList<Layer> virtualized = clone(graph.getLayers());
 
         for (int i = 0; i < virtualized.size() - 1; i++) {
-            Layer currentLayer = virtualized.get(i);
-            Layer nextLayer = virtualized.get(i + 1);
-            for (Vertex vertex : currentLayer.getVertices()) {
+            final Layer currentLayer = virtualized.get(i);
+            final Layer nextLayer = virtualized.get(i + 1);
+            for (final Vertex vertex : currentLayer.getVertices()) {
 
-                List<Edge> outgoing = edges.stream()
+                final List<Edge> outgoing = edges.stream()
                         .filter(e -> e.getFrom().equals(vertex.getId()))
                         .filter(e -> Math.abs(getLayerNumber(e.getTo(), virtualized) - getLayerNumber(vertex.getId(), virtualized)) > 1)
-                        .collect(Collectors.toList());
+                        .collect(toList());
 
-                List<Edge> incoming = edges.stream()
+                final List<Edge> incoming = edges.stream()
                         .filter(e -> e.getTo().equals(vertex.getId()))
                         .filter(e -> Math.abs(getLayerNumber(e.getFrom(), virtualized) - getLayerNumber(vertex.getId(), virtualized)) > 1)
-                        .collect(Collectors.toList());
+                        .collect(toList());
 
-                for (Edge edge : outgoing) {
-                    Vertex virtualVertex = new Vertex("V" + virtualIndex++, true);
+                for (final Edge edge : outgoing) {
+                    final Vertex virtualVertex = new Vertex("V" + virtualIndex++, true);
                     nextLayer.getVertices().add(virtualVertex);
                     edges.remove(edge);
-                    Edge v1 = new Edge(edge.getFrom(), virtualVertex.getId());
-                    Edge v2 = new Edge(virtualVertex.getId(), edge.getTo());
+                    final Edge v1 = new Edge(edge.getFrom(), virtualVertex.getId());
+                    final Edge v2 = new Edge(virtualVertex.getId(), edge.getTo());
                     edges.add(v1);
                     edges.add(v2);
                 }
 
-                for (Edge edge : incoming) {
-                    Vertex virtualVertex = new Vertex("V" + virtualIndex++, true);
+                for (final Edge edge : incoming) {
+                    final Vertex virtualVertex = new Vertex("V" + virtualIndex++, true);
                     nextLayer.getVertices().add(virtualVertex);
                     edges.remove(edge);
-                    Edge v1 = new Edge(virtualVertex.getId(), edge.getTo());
-                    Edge v2 = new Edge(edge.getFrom(), virtualVertex.getId());
+                    final Edge v1 = new Edge(virtualVertex.getId(), edge.getTo());
+                    final Edge v2 = new Edge(edge.getFrom(), virtualVertex.getId());
                     edges.add(v1);
                     edges.add(v2);
                 }
@@ -155,11 +156,12 @@ public final class DefaultVertexOrdering implements VertexOrdering {
 
     private int getLayerNumber(final String vertex,
                                final ArrayList<Layer> layers) {
-        final Optional<Layer> layer = layers
+        final Layer layer = layers
                 .stream()
                 .filter(l -> l.getVertices().stream().anyMatch(v -> v.getId().equals(vertex)))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Can not found the layer of the vertex."));
 
-        return layer.get().getLevel();
+        return layer.getLevel();
     }
 }

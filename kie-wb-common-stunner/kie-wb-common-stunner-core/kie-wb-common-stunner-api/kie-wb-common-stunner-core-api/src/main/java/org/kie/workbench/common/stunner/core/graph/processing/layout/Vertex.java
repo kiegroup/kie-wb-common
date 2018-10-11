@@ -40,11 +40,11 @@ public final class Vertex implements Comparable<Vertex> {
         return this.isVirtual;
     }
 
-    public void setVirtual(final boolean virtual) {
+    private void setVirtual(final boolean virtual) {
         this.isVirtual = virtual;
     }
 
-    public double getMedian() {
+    private double getMedian() {
         return median;
     }
 
@@ -56,7 +56,7 @@ public final class Vertex implements Comparable<Vertex> {
         return this.x;
     }
 
-    public void setX(int x) {
+    public void setX(final int x) {
         this.x = x;
     }
 
@@ -64,7 +64,7 @@ public final class Vertex implements Comparable<Vertex> {
         return this.y;
     }
 
-    public void setY(int y) {
+    public void setY(final int y) {
         this.y = y;
     }
 
@@ -90,14 +90,14 @@ public final class Vertex implements Comparable<Vertex> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Vertex vertex = (Vertex) o;
+        final Vertex vertex = (Vertex) o;
         return median == vertex.median &&
                 Objects.equals(id, vertex.id);
     }

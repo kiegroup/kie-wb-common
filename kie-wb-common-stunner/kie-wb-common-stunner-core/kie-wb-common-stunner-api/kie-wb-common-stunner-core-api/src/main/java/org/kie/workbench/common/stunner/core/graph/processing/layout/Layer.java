@@ -56,7 +56,7 @@ public final class Layer {
     public Layer clone() {
         final Layer clone = new Layer(this.level);
         final ArrayList<Vertex> cloneVertices = clone.getVertices();
-        for (Vertex v : this.vertices) {
+        for (final Vertex v : this.vertices) {
             cloneVertices.add(v.clone());
         }
         return clone;
@@ -65,7 +65,7 @@ public final class Layer {
     @Override
     public String toString() {
         return vertices.stream()
-                .map(vertex -> vertex.getId())
+                .map(Vertex::getId)
                 .collect(Collectors.joining(", ", "LAYER " + this.level + " [", "]"));
     }
 }
