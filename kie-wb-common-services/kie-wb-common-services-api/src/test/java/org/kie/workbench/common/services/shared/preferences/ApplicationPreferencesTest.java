@@ -30,7 +30,6 @@ public class ApplicationPreferencesTest {
         assertNull( ApplicationPreferences.getStringPref( "any" ) );
         assertNull( ApplicationPreferences.getCurrentDroolsVersion() );
         assertNull( ApplicationPreferences.getDroolsDateFormat() );
-        assertNull( ApplicationPreferences.getDroolsDateTimeFormat() );
         assertFalse( ApplicationPreferences.getBooleanPref( "any" ) );
     }
 
@@ -40,7 +39,6 @@ public class ApplicationPreferencesTest {
         assertNull( ApplicationPreferences.getStringPref( "any" ) );
         assertNull( ApplicationPreferences.getCurrentDroolsVersion() );
         assertNull( ApplicationPreferences.getDroolsDateFormat() );
-        assertNull( ApplicationPreferences.getDroolsDateTimeFormat() );
         assertFalse( ApplicationPreferences.getBooleanPref( "any" ) );
 
         ApplicationPreferences.setUp( new HashMap<String, String>() {{
@@ -52,8 +50,6 @@ public class ApplicationPreferencesTest {
                  "version" );
             put( ApplicationPreferences.DATE_FORMAT,
                  "dd-MM-yyyy" );
-            put( ApplicationPreferences.DATE_TIME_FORMAT,
-                 "dd-MM-yyyy hh:mm:ss" );
         }} );
 
         assertEquals( "string",
@@ -62,8 +58,6 @@ public class ApplicationPreferencesTest {
                       ApplicationPreferences.getCurrentDroolsVersion() );
         assertEquals( "dd-MM-yyyy",
                       ApplicationPreferences.getDroolsDateFormat() );
-        assertEquals( "dd-MM-yyyy hh:mm:ss",
-                      ApplicationPreferences.getDroolsDateTimeFormat() );
         assertTrue( ApplicationPreferences.getBooleanPref( "boolean" ) );
     }
 
