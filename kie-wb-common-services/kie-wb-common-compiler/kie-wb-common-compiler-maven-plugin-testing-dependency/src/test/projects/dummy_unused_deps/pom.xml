@@ -24,43 +24,5 @@
         <directory>src/main/filtered-resources</directory>
       </resource>
     </resources>
-    <!--<plugins>
-      <plugin>
-        <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-lifecycle-plugin</artifactId>
-        <version>${version.io.takari.maven.plugins.compiler}</version>
-        <configuration>
-          <compilerId>jdt</compilerId>
-          <source>1.8</source>
-          <target>1.8</target>
-          <failOnError>true</failOnError>
-        </configuration>
-        <executions>
-          <execution>
-            <id>compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <compilerId>jdt</compilerId>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-compile</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <skipMain>true</skipMain>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>-->
   </build>
 </project>
