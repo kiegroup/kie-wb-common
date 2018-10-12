@@ -34,7 +34,7 @@ import org.kie.workbench.common.screens.home.client.widgets.shortcut.ShortcutPre
 import org.kie.workbench.common.screens.home.model.HomeModel;
 import org.kie.workbench.common.screens.home.model.HomeModelProvider;
 import org.kie.workbench.common.screens.home.model.ModelUtils;
-import org.kie.workbench.common.profile.api.preferences.ProfilesPreferences;
+import org.kie.workbench.common.profile.api.preferences.ProfilePreferences;
 import org.kie.workbench.common.profile.api.preferences.Profile;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -60,17 +60,17 @@ public class HomePresenterTest {
     private HomePresenter presenter;
     
     @Mock
-    ProfilesPreferences profilesPreferences;
+    ProfilePreferences profilePreferences;
 
     @Before
     public void setup() {
         doReturn(mock(ShortcutPresenter.class)).when(shortcutPresenters).get();
 
-        executeParametrizedCommandWith(0, new ProfilesPreferences(Profile.FULL))
-                .when(profilesPreferences).load(any(ParameterizedCommand.class), 
+        executeParametrizedCommandWith(0, new ProfilePreferences(Profile.FULL))
+                .when(profilePreferences).load(any(ParameterizedCommand.class), 
                                                 any(ParameterizedCommand.class)); 
         
-        modelProvider = profilesPreferences -> {
+        modelProvider = ProfilePreferences -> {
             final HomeModel homeModel = new HomeModel("welcome",
                                                       "description",
                                                       "backgroundImageUrl");
@@ -98,7 +98,7 @@ public class HomePresenterTest {
                                       translationService,
                                       modelProvider,
                                       shortcutPresenters,
-                                      profilesPreferences);
+                                      profilePreferences);
     }
 
     @Test

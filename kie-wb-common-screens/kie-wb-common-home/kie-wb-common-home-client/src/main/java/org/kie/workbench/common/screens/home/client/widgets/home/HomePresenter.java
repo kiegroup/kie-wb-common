@@ -26,7 +26,7 @@ import org.kie.workbench.common.screens.home.client.resources.i18n.HomeConstants
 import org.kie.workbench.common.screens.home.client.widgets.shortcut.ShortcutPresenter;
 import org.kie.workbench.common.screens.home.model.HomeModel;
 import org.kie.workbench.common.screens.home.model.HomeModelProvider;
-import org.kie.workbench.common.profile.api.preferences.ProfilesPreferences;
+import org.kie.workbench.common.profile.api.preferences.ProfilePreferences;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -55,24 +55,24 @@ public class HomePresenter {
 
     private ManagedInstance<ShortcutPresenter> shortcutPresenters;
     
-    ProfilesPreferences profilesPreferences;
+    ProfilePreferences profilePreferences;
 
     @Inject
     public HomePresenter(final View view,
                          final TranslationService translationService,
                          final HomeModelProvider modelProvider,
                          final ManagedInstance<ShortcutPresenter> shortcutPresenters,
-                         final ProfilesPreferences profilesPreferences) {
+                         final ProfilePreferences profilePreferences) {
         this.view = view;
         this.translationService = translationService;
         this.modelProvider = modelProvider;
         this.shortcutPresenters = shortcutPresenters;
-        this.profilesPreferences = profilesPreferences;
+        this.profilePreferences = profilePreferences;
     }
 
     public void setup() {
-        profilesPreferences.load(loadedProfilesPreferences -> {
-            final HomeModel model = modelProvider.get(loadedProfilesPreferences);
+        profilePreferences.load(loadedProfilePreferences -> {
+            final HomeModel model = modelProvider.get(loadedProfilePreferences);
             
             view.setWelcome(model.getWelcome());
             view.setDescription(model.getDescription());

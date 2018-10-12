@@ -44,7 +44,7 @@ import org.kie.workbench.common.screens.library.client.util.CategoryUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ResourceHandlerManager;
 import org.kie.workbench.common.screens.library.client.widgets.project.NewAssetHandlerCardWidget;
-import org.kie.workbench.common.profile.api.preferences.ProfilesPreferences;
+import org.kie.workbench.common.profile.api.preferences.ProfilePreferences;
 import org.kie.workbench.common.profile.api.preferences.Profile;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
 import org.mockito.Answers;
@@ -87,7 +87,7 @@ public class AddAssetScreenTest {
     private CategoriesManagerCache categoriesManagerCache;
     
     @Mock
-    private ProfilesPreferences profilesPreferences;
+    private ProfilePreferences profilePreferences;
 
     private AddAssetScreen addAssetScreen;
 
@@ -101,10 +101,10 @@ public class AddAssetScreenTest {
                                                      this.libraryConstants,
                                                      this.categoryUtils,
                                                      this.libraryPlaces,
-                                                     this.profilesPreferences));
+                                                     this.profilePreferences));
         doNothing().when(addAssetScreen).update();
-        executeParametrizedCommandWith(0, new ProfilesPreferences(Profile.FULL))
-                .when(profilesPreferences).load(any(ParameterizedCommand.class), 
+        executeParametrizedCommandWith(0, new ProfilePreferences(Profile.FULL))
+                .when(profilePreferences).load(any(ParameterizedCommand.class), 
                                                 any(ParameterizedCommand.class));       
     }
 

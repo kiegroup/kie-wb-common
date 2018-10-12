@@ -35,7 +35,7 @@ import org.kie.workbench.common.screens.library.client.util.CategoryUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ResourceHandlerManager;
 import org.kie.workbench.common.screens.library.client.widgets.project.NewAssetHandlerCardWidget;
-import org.kie.workbench.common.profile.api.preferences.ProfilesPreferences;
+import org.kie.workbench.common.profile.api.preferences.ProfilePreferences;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -64,7 +64,7 @@ public class AddAssetScreen {
     private String filterType;
     List<NewResourceHandler> newResourceHandlers;
     
-    ProfilesPreferences profilesPreferences;
+    ProfilePreferences profilesPreferences;
 
     public AddAssetScreen() {
     }
@@ -78,7 +78,7 @@ public class AddAssetScreen {
                           final LibraryConstants libraryConstants,
                           final CategoryUtils categoryUtils,
                           final LibraryPlaces libraryPlaces,
-                          final ProfilesPreferences profilesPreferences) {
+                          final ProfilePreferences profilesPreferences) {
         this.view = view;
         this.ts = ts;
         this.resourceHandlerManager = resourceHandlerManager;
@@ -116,11 +116,11 @@ public class AddAssetScreen {
         };
     }
     
-    private void filterResourceHandlersAndUpdate(ProfilesPreferences loadedProfilePreferences) {
+    private void filterResourceHandlersAndUpdate(ProfilePreferences loadedProfilePreferences) {
         Function<NewResourceHandler, Boolean> newResourceHandlerFilter= 
                 asset -> asset.isProjectAsset() &&
                     asset.getProfiles().stream()
-                               .filter(p ->  p == loadedProfilePreferences.getProfiles())
+                               .filter(p ->  p == loadedProfilePreferences.getProfile())
                                .findFirst().isPresent();
        this.newResourceHandlers = this.resourceHandlerManager.getNewResourceHandlers(newResourceHandlerFilter);
        this.update();

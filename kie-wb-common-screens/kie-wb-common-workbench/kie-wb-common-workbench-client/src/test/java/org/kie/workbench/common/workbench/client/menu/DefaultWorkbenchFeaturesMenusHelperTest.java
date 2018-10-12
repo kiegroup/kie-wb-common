@@ -59,7 +59,7 @@ import org.jboss.errai.security.shared.api.identity.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.profile.api.preferences.ProfilesPreferences;
+import org.kie.workbench.common.profile.api.preferences.ProfilePreferences;
 import org.kie.workbench.common.profile.api.preferences.Profile;
 import org.kie.workbench.common.widgets.client.menu.AboutCommand;
 import org.kie.workbench.common.workbench.client.admin.DefaultAdminPageHelper;
@@ -123,7 +123,7 @@ public class DefaultWorkbenchFeaturesMenusHelperTest {
     private DefaultWorkbenchFeaturesMenusHelper menusHelper;
     
     @Mock
-    protected ProfilesPreferences profilesPreferences;
+    protected ProfilePreferences profilePreferences;
 
     @Before
     public void setup() {
@@ -132,8 +132,8 @@ public class DefaultWorkbenchFeaturesMenusHelperTest {
         mockRoles();
         mockGroups();
         mockIocManager();
-        executeParametrizedCommandWith(0, new ProfilesPreferences(Profile.FULL))
-                .when(profilesPreferences).load(any(ParameterizedCommand.class), 
+        executeParametrizedCommandWith(0, new ProfilePreferences(Profile.FULL))
+                .when(profilePreferences).load(any(ParameterizedCommand.class), 
                                                 any(ParameterizedCommand.class)); 
     }
 

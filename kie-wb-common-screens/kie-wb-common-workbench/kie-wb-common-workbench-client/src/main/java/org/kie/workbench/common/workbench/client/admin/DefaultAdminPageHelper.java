@@ -111,13 +111,13 @@ public class DefaultAdminPageHelper {
                              artifactRepositoryPreferencesEnabled);
         addGeneralPreferences();
         addStunnerPreferences(stunnerEnabled);
-        addProfilesPreferences(); 
+        addProfilePreferences(); 
     }
     
-    private void addProfilesPreferences() {
+    private void addProfilePreferences() {
         adminPage.addPreference("root",
-                "ProfilesPreferences",
-                translationService.format(PreferencesConstants.ProfilesPreferences_Title),
+                "ProfilePreferences",
+                translationService.format(PreferencesConstants.ProfilePreferences_Title),
                 "fa-list",
                 "general",
                 scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),

@@ -27,5 +27,5 @@ public class PreferencesConstants {
     public static final String ArtifactRepositoryPreferences_Title = "ArtifactRepositoryPreferences.Title";
     
     @TranslationKey(defaultValue = "")
-    public static final String ProfilesPreferences_Title = "ProfilesPreferences.Title";
+    public static final String ProfilePreferences_Title = "ProfilePreferences.Title";
 }
