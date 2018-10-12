@@ -97,7 +97,7 @@ public class AddAssetScreen {
         this.view.setTitle(this.getTitle());
         this.view.setCategories(this.categoryUtils.createCategories());
        
-        profilesPreferences.load(this::filterResourceHandlersAndUpdate, RuntimeException::new); 
+        profilesPreferences.load(this::filterNewResourcesHandlersAndUpdate, RuntimeException::new); 
     }
 
     private Callback<Boolean, Void> acceptContextCallback(NewResourceHandler resourceHandler) {
@@ -116,14 +116,18 @@ public class AddAssetScreen {
         };
     }
     
-    private void filterResourceHandlersAndUpdate(ProfilePreferences loadedProfilePreferences) {
+    protected void filterNewResourcesHandlersAndUpdate(ProfilePreferences loadedProfilePreferences) {
+        this.newResourceHandlers = filterNewResourceHandlers(loadedProfilePreferences);
+       this.update();
+    }
+
+    protected List<NewResourceHandler> filterNewResourceHandlers(ProfilePreferences loadedProfilePreferences) {
         Function<NewResourceHandler, Boolean> newResourceHandlerFilter= 
                 asset -> asset.isProjectAsset() &&
                     asset.getProfiles().stream()
                                .filter(p ->  p == loadedProfilePreferences.getProfile())
                                .findFirst().isPresent();
-       this.newResourceHandlers = this.resourceHandlerManager.getNewResourceHandlers(newResourceHandlerFilter);
-       this.update();
+       return this.resourceHandlerManager.getNewResourceHandlers(newResourceHandlerFilter);
     }
 
     void update() {

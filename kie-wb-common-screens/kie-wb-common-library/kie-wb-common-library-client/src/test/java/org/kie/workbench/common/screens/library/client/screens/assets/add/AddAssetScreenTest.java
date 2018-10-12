@@ -172,4 +172,45 @@ public class AddAssetScreenTest {
         assertEquals(rh2,
                      addAssetScreen.newResourceHandlers.get(0));
     }
+    
+    @Test
+    public void testProfileFilter() {
+
+        NewResourceHandler rhFull =  mock(NewResourceHandler.class);
+        NewResourceHandler rhDroolsPlanner = mock(NewResourceHandler.class);
+        NewResourceHandler rhAll = mock(NewResourceHandler.class);
+        
+        when(rhFull.isProjectAsset()).thenReturn(true);
+        when(rhDroolsPlanner.isProjectAsset()).thenReturn(true);
+        when(rhAll.isProjectAsset()).thenReturn(true);
+        when(rhFull.getProfiles()).thenReturn(Arrays.asList(Profile.FULL));
+        when(rhDroolsPlanner.getProfiles()).thenReturn(Arrays.asList(Profile.PLANNER_AND_RULES));
+        when(rhAll.getProfiles()).thenReturn(Arrays.asList(Profile.values()));
+        
+        doReturn(Arrays.asList(rhFull,rhDroolsPlanner, rhAll))
+                 .when(resourceHandlerManager).getNewResourceHandlers();
+        addAssetScreen.initialize();
+        List<NewResourceHandler> filteredResourceHandlers = this.addAssetScreen.filterNewResourceHandlers(
+                                                                        new ProfilePreferences(Profile.FULL));
+        assertEquals(2, filteredResourceHandlers.size());
+        
+        filteredResourceHandlers = this.addAssetScreen.filterNewResourceHandlers(
+                                                                        new ProfilePreferences(Profile.PLANNER_AND_RULES));
+        assertEquals(2, filteredResourceHandlers.size());
+        
+        doReturn(Arrays.asList(rhFull, rhDroolsPlanner))
+                 .when(resourceHandlerManager).getNewResourceHandlers();
+        
+        filteredResourceHandlers = this.addAssetScreen.filterNewResourceHandlers(
+                                                                        new ProfilePreferences(Profile.PLANNER_AND_RULES));
+        assertEquals(1, filteredResourceHandlers.size());
+        assertEquals(Profile.PLANNER_AND_RULES, filteredResourceHandlers.get(0).getProfiles().get(0));
+        
+        filteredResourceHandlers = this.addAssetScreen.filterNewResourceHandlers(
+                                                                        new ProfilePreferences(Profile.FULL));
+        assertEquals(1, filteredResourceHandlers.size());
+        assertEquals(Profile.FULL, filteredResourceHandlers.get(0).getProfiles().get(0));
+        
+         
+    }    
 }
