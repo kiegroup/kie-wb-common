@@ -33,11 +33,11 @@ public class BPMNTextPreferencesTest {
     @Test
     public void testAttributes() {
         //values from CSS -> BPMNSVGViewFactory#PATH_CSS
-        assertEquals(tested.getTextAlpha(), 1, 0);
-        assertEquals(tested.getTextFillColor(), "#000000");
-        assertEquals(tested.getTextFontFamily(), "Open Sans");
-        assertEquals(tested.getTextStrokeColor(), "#393f44");
-        assertEquals(tested.getTextStrokeWidth(), 1, 0);
-        assertEquals(tested.getTextFontSize(), 12, 0);
+        assertEquals(tested.getTextAlpha(), BPMNTextPreferences.TEXT_ALPHA, 0);
+        assertEquals(tested.getTextFillColor(), BPMNTextPreferences.TEXT_FILL_COLOR);
+        assertEquals(tested.getTextFontFamily(), BPMNTextPreferences.TEXT_FONT_FAMILY);
+        assertEquals(tested.getTextStrokeColor(), BPMNTextPreferences.TEXT_STROKE_COLOR);
+        assertEquals(tested.getTextStrokeWidth(), BPMNTextPreferences.TEXT_STROKE_WIDTH, 0);
+        assertEquals(tested.getTextFontSize(), BPMNTextPreferences.TEXT_FONT_SIZE, 0);
     }
 }

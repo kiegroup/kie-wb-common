@@ -16,21 +16,76 @@
 
 package org.kie.workbench.common.stunner.core.client.preferences;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Default;
+
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
+
 /**
- * Centralize the default Text properties used by Stunner.
- * Now this is not exposed to be configured by the user through the UI.
+ * Default class that represents the Text preferences to be used on Diagrams, this can be extended or instantiated with the values for the
+ * {@link DefinitionSet} modules.
  */
-public interface StunnerTextPreferences {
+@Dependent
+@Default
+public class StunnerTextPreferences {
 
-    double getTextAlpha();
+    private double textAlpha;
 
-    String getTextFontFamily();
+    private String textFontFamily;
 
-    double getTextFontSize();
+    private double textFontSize;
 
-    String getTextFillColor();
+    private String textFillColor;
 
-    String getTextStrokeColor();
+    private String textStrokeColor;
 
-    double getTextStrokeWidth();
+    private double textStrokeWidth;
+
+    public double getTextAlpha() {
+        return textAlpha;
+    }
+
+    public void setTextAlpha(double textAlpha) {
+        this.textAlpha = textAlpha;
+    }
+
+    public String getTextFontFamily() {
+        return textFontFamily;
+    }
+
+    public void setTextFontFamily(String textFontFamily) {
+        this.textFontFamily = textFontFamily;
+    }
+
+    public double getTextFontSize() {
+        return textFontSize;
+    }
+
+    public void setTextFontSize(double textFontSize) {
+        this.textFontSize = textFontSize;
+    }
+
+    public String getTextFillColor() {
+        return textFillColor;
+    }
+
+    public void setTextFillColor(String textFillColor) {
+        this.textFillColor = textFillColor;
+    }
+
+    public String getTextStrokeColor() {
+        return textStrokeColor;
+    }
+
+    public void setTextStrokeColor(String textStrokeColor) {
+        this.textStrokeColor = textStrokeColor;
+    }
+
+    public double getTextStrokeWidth() {
+        return textStrokeWidth;
+    }
+
+    public void setTextStrokeWidth(double textStrokeWidth) {
+        this.textStrokeWidth = textStrokeWidth;
+    }
 }

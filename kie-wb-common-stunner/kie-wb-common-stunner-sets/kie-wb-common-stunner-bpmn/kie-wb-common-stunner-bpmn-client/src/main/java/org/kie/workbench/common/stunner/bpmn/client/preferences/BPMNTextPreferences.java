@@ -21,25 +21,25 @@ import javax.enterprise.inject.Specializes;
 
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
 import org.kie.workbench.common.stunner.bpmn.client.shape.factory.BPMNShapeFactory;
-import org.kie.workbench.common.stunner.core.client.preferences.DefaultStunnerTextPreferences;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerTextPreferences;
 
 /**
  * Centralize the Text properties used on BPMN Diagram.
- * Now the SVG shapes are getting these properties from CSS {@link BPMNSVGViewFactory#PATH_CSS}.
+ * SVG shapes are getting these properties from CSS {@link BPMNSVGViewFactory#PATH_CSS}.
  * <p>
  * {@link BPMNShapeFactory} injects these properties when creating the shapes.
  */
 @Dependent
 @Specializes
-public class BPMNTextPreferences extends DefaultStunnerTextPreferences {
+public class BPMNTextPreferences extends StunnerTextPreferences {
 
     //Constant values from BPMNSVGViewFactory.PATH_CSS
     public static final int TEXT_ALPHA = 1;
     public static final String TEXT_FONT_FAMILY = "Open Sans";
-    public static final int TEXT_FONT_SIZE = 12;
+    public static final int TEXT_FONT_SIZE = 10;
     public static final String TEXT_FILL_COLOR = "#000000";
     public static final String TEXT_STROKE_COLOR = "#393f44";
-    public static final int TEXT_STROKE_WIDTH = 1;
+    public static final int TEXT_STROKE_WIDTH = 0;
 
     public BPMNTextPreferences() {
         setTextAlpha(TEXT_ALPHA);
