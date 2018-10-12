@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
@@ -40,6 +41,7 @@ public class DefaultCompilationResponse implements CompilationResponse,
     private Path workingDir;
     private String requestUUID;
 
+    private Set<String> unusedDependencies = Collections.emptySet();
     private List<String> projectDependencies = Collections.emptyList();
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
     private List<URL> projectDependenciesAsURL = Collections.emptyList();
@@ -53,7 +55,7 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final String requestUUID) {
 
-        this(successful,mavenOutput,workingDir, Collections.emptyList(), Collections.emptyList(), requestUUID);
+        this(successful,mavenOutput,workingDir, Collections.emptyList(), Collections.emptyList(), requestUUID, Collections.emptySet());
     }
 
     public DefaultCompilationResponse(final Boolean successful,
@@ -61,7 +63,16 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final List<String> projectDependencies,
                                       final String requestUUID) {
-        this(successful,mavenOutput,workingDir, Collections.emptyList(), projectDependencies, requestUUID);
+        this(successful,mavenOutput,workingDir, Collections.emptyList(), projectDependencies, requestUUID, Collections.emptySet());
+    }
+
+    public DefaultCompilationResponse(final Boolean successful,
+                                      final List<String> mavenOutput,
+                                      final Path workingDir,
+                                      final List<String> projectDependencies,
+                                      final String requestUUID,
+                                      final Set<String> unusedDeps) {
+        this(successful,mavenOutput,workingDir, Collections.emptyList(), projectDependencies, requestUUID, unusedDeps);
     }
 
     public DefaultCompilationResponse(final Boolean successful,
@@ -69,7 +80,8 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final List<String> targetContent,
                                       final List<String> projectDependencies,
-                                      final String requestUUID) {
+                                      final String requestUUID,
+                                      final Set<String> unusedDependencies) {
         this.successful = successful;
         this.mavenOutput = nullToEmpty(mavenOutput);
 
@@ -77,6 +89,7 @@ public class DefaultCompilationResponse implements CompilationResponse,
         this.targetContent = nullToEmpty(targetContent);
         this.projectDependencies = nullToEmpty(projectDependencies);
         this.requestUUID = requestUUID;
+        this.unusedDependencies = unusedDependencies;
     }
 
     private <T> List<T> nullToEmpty(List<T> list) {
@@ -122,6 +135,11 @@ public class DefaultCompilationResponse implements CompilationResponse,
     @Override
     public List<String> getDependencies() {
         return projectDependencies;
+    }
+
+    @Override
+    public Set<String> getUnusedDependencies() {
+        return unusedDependencies;
     }
 
     @Override
@@ -175,16 +193,17 @@ public class DefaultCompilationResponse implements CompilationResponse,
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("DefaultCompilationResponse{");
-        sb.append("successful=").append(successful);
-        sb.append(", mavenOutput=").append(mavenOutput);
-        sb.append(", workingDir=").append(workingDir);
+        sb.append("successful=").append(successful).append('\'');
+        sb.append(", mavenOutput=").append(mavenOutput).append('\'');
+        sb.append(", workingDir=").append(workingDir).append('\'');
         sb.append(", requestUUID='").append(requestUUID).append('\'');
-        sb.append(", projectDependencies=").append(projectDependencies);
-        sb.append(", projectDependenciesAsURI=").append(projectDependenciesAsURI);
-        sb.append(", projectDependenciesAsURL=").append(projectDependenciesAsURL);
-        sb.append(", targetContent=").append(targetContent);
-        sb.append(", targetContentAsURI=").append(targetContentAsURI);
-        sb.append(", targetContentAsURL=").append(targetContentAsURL);
+        sb.append(", unusedDependencies=").append(unusedDependencies).append('\'');
+        sb.append(", projectDependencies=").append(projectDependencies).append('\'');
+        sb.append(", projectDependenciesAsURI=").append(projectDependenciesAsURI).append('\'');
+        sb.append(", projectDependenciesAsURL=").append(projectDependenciesAsURL).append('\'');
+        sb.append(", targetContent=").append(targetContent).append('\'');
+        sb.append(", targetContentAsURI=").append(targetContentAsURI).append('\'');
+        sb.append(", targetContentAsURL=").append(targetContentAsURL).append('\'');
         sb.append('}');
         return sb.toString();
     }

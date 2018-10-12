@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.configuration;
 
-public enum KieDecorator {
+package dummy;
 
-    STORE_BUILD_CLASSPATH,
-    ENABLE_INCREMENTAL_BUILD,
-    UPDATE_JGIT_BEFORE_BUILD,
-    STORE_KIE_OBJECTS,
-    ENABLE_LOGGING,
-    STORE_UNUSED_DEPS
+import java.io.Serializable;
+
+public class DummyA implements Serializable {
+
+    private String name;
+
+    public DummyA(String name) {
+        this.name = name;
+    }
 }

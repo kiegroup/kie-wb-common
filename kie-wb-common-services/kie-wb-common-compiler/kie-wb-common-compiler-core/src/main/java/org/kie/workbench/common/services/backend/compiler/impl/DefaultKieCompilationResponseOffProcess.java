@@ -43,6 +43,7 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     private String workingDir;
     private String requestUUID;
 
+    private Set<String> unusedDependencies = Collections.emptySet();
     private List<String> projectDependencies = Collections.emptyList();
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
     private List<URL> projectDependenciesAsURL = Collections.emptyList();
@@ -72,6 +73,7 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
         this.projectDependencies = Optional.ofNullable(res.getDependencies()).orElse(Collections.emptyList());
         this.targetContent = Optional.ofNullable(res.getTargetContent()).orElse(Collections.emptyList());
         this.workingDir = res.getWorkingDir().map(Object::toString).orElse("");
+        this.unusedDependencies = res.getUnusedDependencies();
     }
 
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {
@@ -105,6 +107,8 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     public List<String> getDependencies() {
         return new ArrayList<>(projectDependencies);
     }
+
+    public Set<String> getUnusedDependencies(){ return new HashSet<>(unusedDependencies); }
 
     public String getRequestUUID() {
         return requestUUID;
@@ -182,6 +186,7 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
         sb.append(", mavenOutput=").append(mavenOutput);
         sb.append(", workingDir='").append(workingDir).append('\'');
         sb.append(", projectDependencies=").append(projectDependencies);
+        sb.append(", unusedDependencies=").append(unusedDependencies);
         sb.append(", projectDependenciesAsURI=").append(projectDependenciesAsURI);
         sb.append(", projectDependenciesAsURL=").append(projectDependenciesAsURL);
         sb.append(", targetContent=").append(targetContent);

@@ -25,6 +25,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.decorators.Classp
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.JGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.impl.decorators.UnusedDeclaredDepsDecorator;
 
 /***
  * Factory to create compilers with correct order of decorators to build Kie Projects
@@ -61,6 +62,9 @@ public class KieMavenCompilerFactory {
         }
         if (decorators.contains(KieDecorator.UPDATE_JGIT_BEFORE_BUILD)) {
             compiler = new JGITCompilerBeforeDecorator(compiler);
+        }
+        if (decorators.contains(KieDecorator.STORE_UNUSED_DEPS)) {
+            compiler = new UnusedDeclaredDepsDecorator(compiler);
         }
         return compiler;
     }

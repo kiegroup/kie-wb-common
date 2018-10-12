@@ -56,7 +56,8 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               null,
                                                               Collections.emptyList(),
                                                               Collections.emptyList(),
-                                                              requestUUID);
+                                                              requestUUID,
+                                                              Collections.EMPTY_SET);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -68,7 +69,8 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               workingDir,
                                                               Collections.emptyList(),
                                                               Collections.emptyList(),
-                                                              requestUUID);
+                                                              requestUUID,
+                                                              Collections.EMPTY_SET);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -82,7 +84,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               workingDir,
                                                               targetContent,
                                                               projectDependencies,
-                                                              requestUUID);
+                                                              requestUUID, Collections.EMPTY_SET);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -101,7 +103,8 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               workingDir,
                                                               targetContent,
                                                               projectDependencies,
-                                                              requestUUID);
+                                                              requestUUID,
+                                                              Collections.EMPTY_SET);
         this.kieModuleMetaInfo = kieModuleMetaInfo;
         this.kieModule = kieModule;
         this.projectClassLoaderStore = projectClassLoaderStore;
@@ -114,7 +117,8 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               getWorkingDir(res.getWorkingDir()),
                                                               res.getTargetContent(),
                                                               res.getDependencies(),
-                                                              res.getRequestUUID());
+                                                              res.getRequestUUID(),
+                                                              res.getUnusedDependencies());
 
         this.kieModuleMetaInfo = res.getKieModuleMetaInfo().orElse(null);
         this.kieModule = res.getKieModule().orElse(null);
@@ -158,6 +162,9 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     public List<String> getDependencies() {
         return defaultResponse.getDependencies();
     }
+
+    @Override
+    public Set<String> getUnusedDependencies() { return defaultResponse.getUnusedDependencies(); }
 
     @Override
     public List<URI> getDependenciesAsURI() {
@@ -211,6 +218,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                 ", mavenOutput=" + getMavenOutput() +
                 ", workingDir=" + getWorkingDir() +
                 ", dependencies=" + getDependencies() +
+                ", unusedDependencies=" + getUnusedDependencies() +
                 ", dependenciesAsURI=" + getDependenciesAsURI() +
                 ", dependenciesAsURL=" + getDependenciesAsURL() +
                 ", targetContent=" + getTargetContent() +

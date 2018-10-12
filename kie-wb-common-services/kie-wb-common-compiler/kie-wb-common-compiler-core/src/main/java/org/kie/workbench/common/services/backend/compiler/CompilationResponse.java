@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.uberfire.java.nio.file.Path;
 
@@ -71,4 +72,10 @@ public interface CompilationResponse {
      * Provides the list of all dependencies used by the project, included transitive
      */
     List<URL> getTargetContentAsURL();
+
+    /**
+     * Provides the List of unused dependencies in a project as Set of String
+     * @return
+     */
+    Set<String> getUnusedDependencies();
 }

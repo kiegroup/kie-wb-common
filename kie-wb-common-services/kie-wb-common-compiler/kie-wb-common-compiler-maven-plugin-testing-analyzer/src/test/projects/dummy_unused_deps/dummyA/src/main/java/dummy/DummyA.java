@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.configuration;
 
-public enum KieDecorator {
+package dummy;
 
-    STORE_BUILD_CLASSPATH,
-    ENABLE_INCREMENTAL_BUILD,
-    UPDATE_JGIT_BEFORE_BUILD,
-    STORE_KIE_OBJECTS,
-    ENABLE_LOGGING,
-    STORE_UNUSED_DEPS
+import java.io.Serializable;
+
+public class DummyA implements Serializable {
+
+    private String name;
+
+    public DummyA(String name) {
+        this.name = name;
+    }
 }
