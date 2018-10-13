@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasUndoCommandExecutedEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CommandRegisteredEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -107,6 +108,12 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     void onCommandUndoExecuted(final @Observes CanvasUndoCommandExecutedEvent commandUndoExecutedEvent) {
         checkNotNull("commandUndoExecutedEvent",
                      commandUndoExecutedEvent);
+        checkState();
+    }
+
+    void onCommandAdded(final @Observes CommandRegisteredEvent commandRegisteredEvent) {
+        checkNotNull("commandRegisteredEvent",
+                     commandRegisteredEvent);
         checkState();
     }
 

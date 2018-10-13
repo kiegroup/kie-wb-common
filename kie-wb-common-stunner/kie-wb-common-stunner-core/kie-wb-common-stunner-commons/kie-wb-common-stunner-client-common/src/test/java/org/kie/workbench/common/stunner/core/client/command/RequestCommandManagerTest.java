@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.command;
 
+import javax.enterprise.event.Event;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +26,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.mouse.CanvasMouseDownEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.mouse.CanvasMouseUpEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CommandRegisteredEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
@@ -69,6 +72,8 @@ public class RequestCommandManagerTest {
     CanvasMouseDownEvent mouseDownEvent;
     @Mock
     CanvasMouseUpEvent mouseUpEvent;
+    @Mock
+    Event<CommandRegisteredEvent> commandRegisteredEvent;
 
     private RequestCommandManager tested;
 
@@ -80,7 +85,7 @@ public class RequestCommandManagerTest {
         when(editorSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(editorSession.getCommandRegistry()).thenReturn(commandRegistry);
         when(editorSession.getCommandManager()).thenReturn(commandManager);
-        this.tested = new RequestCommandManager(clientSessionManager);
+        this.tested = new RequestCommandManager(clientSessionManager, commandRegisteredEvent);
     }
 
     @Test
