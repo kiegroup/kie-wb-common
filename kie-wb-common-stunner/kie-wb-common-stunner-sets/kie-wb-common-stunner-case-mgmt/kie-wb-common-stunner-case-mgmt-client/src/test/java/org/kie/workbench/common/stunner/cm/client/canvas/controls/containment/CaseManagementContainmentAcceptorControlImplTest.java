@@ -292,7 +292,6 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
     @Test
     public void testAcceptContainmentIndex_verticalSameParent() {
-        assertTrue(control.containmentAcceptor instanceof CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor);
 
         control.init(canvasHandler);
 
@@ -310,7 +309,6 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
     @Test
     public void testAcceptContainmentIndex_verticalDifferentParent() {
-        assertTrue(control.containmentAcceptor instanceof CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor);
 
         control.init(canvasHandler);
 
@@ -328,7 +326,6 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
     @Test
     public void testAcceptContainmentIndex_horizontal() {
-        assertTrue(control.containmentAcceptor instanceof CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor);
 
         control.init(canvasHandler);
 
@@ -354,7 +351,6 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
     @Test
     public void testAcceptContainmentIndex_horizontalDifferentParent() {
-        assertTrue(control.containmentAcceptor instanceof CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor);
 
         control.init(canvasHandler);
 
@@ -374,7 +370,6 @@ public class CaseManagementContainmentAcceptorControlImplTest {
 
     @Test
     public void testAcceptContainmentIndex_horizontalSameParent() {
-        assertTrue(control.containmentAcceptor instanceof CaseManagementContainmentAcceptorControlImpl.CanvasManagementContainmentAcceptor);
 
         control.init(canvasHandler);
 

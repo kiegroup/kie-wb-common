@@ -16,18 +16,29 @@
 
 package org.kie.workbench.common.stunner.cm.client.shape.view;
 
+import java.util.UUID;
+
 import com.ait.lienzo.client.core.shape.Rectangle;
+import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.cm.client.wires.VerticalStackLayoutManager;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -40,11 +51,17 @@ public class CaseManagementShapeViewTest {
     private CaseManagementShapeView shape;
 
     private CaseManagementShapeView createShapeView(String name) {
-        return new CaseManagementShapeView(name,
-                                           new SVGPrimitiveShape(new Rectangle(0d, 0d)),
+        final Shape primitiveShapes = new MockShape();
+        primitiveShapes.setID(UUID.randomUUID().toString());
+
+        final CaseManagementShapeView view = new CaseManagementShapeView(name,
+                                           new SVGPrimitiveShape(primitiveShapes),
                                            0d,
                                            0d,
                                            false);
+        view.setUUID(UUID.randomUUID().toString());
+
+        return spy(view);
     }
 
     @Before
@@ -167,5 +184,123 @@ public class CaseManagementShapeViewTest {
 
         assertEquals(0,
                      shape.getChildShapes().size());
+    }
+
+    @Test
+    public void testGetIndex() throws Exception {
+        final CaseManagementShapeView child1 = createShapeView("child1");
+        final CaseManagementShapeView child2 = createShapeView("child2");
+
+        shape.add(child1);
+        shape.add(child2);
+
+        assertEquals(shape.getIndex(child1),
+                     0);
+        assertEquals(shape.getIndex(child2),
+                     1);
+    }
+
+    @Test
+    public void testGetGhost() throws Exception {
+        final CaseManagementShapeView child = createShapeView("child");
+        shape.add(child);
+
+        final CaseManagementShapeView ghost = shape.getGhost();
+
+        assertTrue(ghost.getLayoutHandler() instanceof VerticalStackLayoutManager);
+        assertEquals(ghost.getUUID(),
+                     shape.getUUID());
+
+        assertTrue(ghost.getChildShapes().size() == 1);
+        CaseManagementShapeView ghostChild = (CaseManagementShapeView) ghost.getChildShapes().toList().get(0);
+        assertEquals(ghostChild.getUUID(),
+                     child.getUUID());
+
+    }
+
+    @Test
+    public void testAddShape() throws Exception {
+        final CaseManagementShapeView child1 = createShapeView("child1");
+        final CaseManagementShapeView child2 = createShapeView("child2");
+        final CaseManagementShapeView child3 = createShapeView("child2");
+
+        {
+            shape.addShape(child1,
+                           0);
+
+            verify(shape,
+                   times(1)).add(child1);
+
+            verify(layoutHandler,
+                   times(1)).requestLayout(shape);
+
+            assertEquals(1,
+                         shape.getChildShapes().size());
+        }
+
+        {
+            reset(shape);
+            reset(layoutHandler);
+
+            shape.addShape(child2,
+                           0);
+
+            final ArgumentCaptor<WiresShape> childShapes = ArgumentCaptor.forClass(WiresShape.class);
+
+            verify(shape,
+                   times(2)).add(childShapes.capture());
+
+            assertTrue(childShapes.getAllValues().containsAll(Lists.newArrayList(child1,
+                                                                                 child2)));
+
+            verify(layoutHandler,
+                   atLeast(2)).requestLayout(shape);
+
+            assertEquals(2,
+                         shape.getChildShapes().size());
+        }
+
+        {
+            reset(shape);
+            reset(layoutHandler);
+
+            shape.addShape(child3,
+                           1);
+
+            final ArgumentCaptor<WiresShape> childShapes = ArgumentCaptor.forClass(WiresShape.class);
+
+            verify(shape,
+                   times(3)).add(childShapes.capture());
+
+            assertTrue(childShapes.getAllValues().containsAll(Lists.newArrayList(child1,
+                                                                                 child2,
+                                                                                 child3)));
+
+            verify(layoutHandler,
+                   atLeast(3)).requestLayout(shape);
+
+            assertEquals(3,
+                         shape.getChildShapes().size());
+        }
+
+        assertEquals(shape.getIndex(child1),
+                     2);
+        assertEquals(shape.getIndex(child2),
+                     0);
+        assertEquals(shape.getIndex(child3),
+                     1);
+
+    }
+
+    private static class MockShape extends Rectangle {
+
+        public MockShape() {
+            super(0d, 0d);
+        }
+
+        @Override
+        public Rectangle copy() {
+            return this;
+        }
     }
 }

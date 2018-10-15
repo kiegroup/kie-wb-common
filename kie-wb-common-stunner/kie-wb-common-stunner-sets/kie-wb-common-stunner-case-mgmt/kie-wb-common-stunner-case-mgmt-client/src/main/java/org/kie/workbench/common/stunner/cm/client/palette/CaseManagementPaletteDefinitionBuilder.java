@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.cm.client.palette;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -26,6 +25,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
@@ -63,47 +63,62 @@ public class CaseManagementPaletteDefinitionBuilder
     public static final String SUBPROCESSES = "Subprocesses";
     public static final String SUBCASES = "Subcases";
 
-    private static final Map<String, String> CAT_TITLES = new HashMap<String, String>(4) {{
-        put(STAGES, STAGES);
-        put(TASKS, TASKS);
-        put(SUBPROCESSES, SUBPROCESSES);
-        put(SUBCASES, SUBCASES);
-    }};
+    private static final Map<String, String> CAT_TITLES = new Maps.Builder<String, String>()
+        .put(STAGES,
+             STAGES)
+        .put(TASKS,
+             TASKS)
+        .put(SUBPROCESSES,
+             SUBPROCESSES)
+        .put(SUBCASES,
+             SUBCASES)
+            .build();
 
-    private static final Map<String, Class<?>> CAT_DEFAULTS = new HashMap<String, Class<?>>(4) {{
-        put(STAGES, AdHocSubprocess.class);
-        put(TASKS, UserTask.class);
-        put(SUBPROCESSES, EmbeddedSubprocess.class);
-        put(SUBCASES, ReusableSubprocess.class);
-    }};
+    private static final Map<String, Class<?>> CAT_DEFAULTS = new Maps.Builder<String, Class<?>>()
+        .put(STAGES,
+             AdHocSubprocess.class)
+        .put(TASKS,
+             UserTask.class)
+        .put(SUBPROCESSES,
+             EmbeddedSubprocess.class)
+        .put(SUBCASES,
+             ReusableSubprocess.class)
+            .build();
 
     @SuppressWarnings("unchecked")
-    private final static Map<String, Glyph> CATEGORY_GLYPHS = new HashMap<String, Glyph>(4) {{
-
-        put(STAGES, CaseManagementImageResources.INSTANCE != null ?
+    private final static Map<String, Glyph> CATEGORY_GLYPHS = new Maps.Builder<String, Glyph>()
+        .put(STAGES,
+             CaseManagementImageResources.INSTANCE != null ?
                 SvgDataUriGlyph.Builder.build(
                         CaseManagementImageResources.INSTANCE.categoryStages().getSafeUri())
-                : BS3IconTypeGlyph.create(IconType.STAR));
-        put(TASKS, CaseManagementImageResources.INSTANCE != null ?
+                : BS3IconTypeGlyph.create(IconType.STAR))
+        .put(TASKS,
+             CaseManagementImageResources.INSTANCE != null ?
                 SvgDataUriGlyph.Builder.build(
                         CaseManagementImageResources.INSTANCE.categoryTasks().getSafeUri())
-                : BS3IconTypeGlyph.create(IconType.TASKS));
-        put(SUBPROCESSES, CaseManagementImageResources.INSTANCE != null ?
+                : BS3IconTypeGlyph.create(IconType.TASKS))
+        .put(SUBPROCESSES,
+             CaseManagementImageResources.INSTANCE != null ?
                 SvgDataUriGlyph.Builder.build(
                         CaseManagementImageResources.INSTANCE.categorySubprocesses().getSafeUri())
-                : BS3IconTypeGlyph.create(IconType.TASKS));
-        put(SUBCASES, CaseManagementImageResources.INSTANCE != null ?
+                : BS3IconTypeGlyph.create(IconType.TASKS))
+        .put(SUBCASES,
+             CaseManagementImageResources.INSTANCE != null ?
                 SvgDataUriGlyph.Builder.build(
                         CaseManagementImageResources.INSTANCE.categorySubcases().getSafeUri())
-                : BS3IconTypeGlyph.create(IconType.TASKS));
-    }};
+                : BS3IconTypeGlyph.create(IconType.TASKS))
+            .build();
 
-    private static final Map<String, String> DEFINITION_CATEGORY_MAPPINGS = new HashMap<String, String>(4) {{
-        put(AdHocSubprocess.class.getName(), STAGES);
-        put(UserTask.class.getName(), TASKS);
-        put(EmbeddedSubprocess.class.getName(), SUBPROCESSES);
-        put(ReusableSubprocess.class.getName(), SUBCASES);
-    }};
+    private static final Map<String, String> DEFINITION_CATEGORY_MAPPINGS = new Maps.Builder<String, String>()
+        .put(AdHocSubprocess.class.getName(),
+             STAGES)
+        .put(UserTask.class.getName(),
+             TASKS)
+        .put(EmbeddedSubprocess.class.getName(),
+             SUBPROCESSES)
+        .put(ReusableSubprocess.class.getName(),
+             SUBCASES)
+            .build();
 
     private final ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder;
     private final DefinitionManager definitionManager;

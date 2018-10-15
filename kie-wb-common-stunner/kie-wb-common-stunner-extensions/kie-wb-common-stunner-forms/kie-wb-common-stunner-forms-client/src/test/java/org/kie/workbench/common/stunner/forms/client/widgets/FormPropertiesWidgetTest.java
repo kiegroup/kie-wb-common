@@ -250,4 +250,18 @@ public class FormPropertiesWidgetTest {
         assertThat(formPropertiesOpened.getName()).isEqualTo(DOMAIN_OBJECT_TRANSLATION_KEY);
         assertThat(formPropertiesOpened.getSession()).isEqualTo(session);
     }
+
+    @Test
+    public void testShowNullElement() {
+        tested.init();
+
+        verify(formsCanvasSessionHandler).setRenderer(formRendererArgumentCaptor.capture());
+        final FormsCanvasSessionHandler.FormRenderer formRenderer = formRendererArgumentCaptor.getValue();
+
+        final Command command = mock(Command.class);
+        formRenderer.render(GRAPH_UUID, null, command);
+
+        verify(formsContainer, never()).render(any(), any(), any(), any(), any(), any());
+        verify(command, never()).execute();
+    }
 }

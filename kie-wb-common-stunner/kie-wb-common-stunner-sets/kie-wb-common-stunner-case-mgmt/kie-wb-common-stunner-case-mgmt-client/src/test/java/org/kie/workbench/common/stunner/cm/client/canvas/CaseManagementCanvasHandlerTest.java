@@ -323,6 +323,9 @@ public class CaseManagementCanvasHandlerTest {
                                                                    shape);
         final MutationContext mutationContext = mock(MutationContext.class);
 
+        final String name = "mockName";
+        when(textPropertyProvider.getText(eq(node))).thenReturn(name);
+
         handler.applyElementMutation(shape,
                                      node,
                                      true,
@@ -331,6 +334,15 @@ public class CaseManagementCanvasHandlerTest {
 
         verify(shape.getShapeView(),
                times(1)).refresh();
+
+        verify((CaseManagementShapeView) shape.getShapeView(),
+               times(1)).setLabel(eq(name));
+
+        verify(shape,
+               times(1)).beforeDraw();
+
+        verify(shape,
+               times(1)).afterDraw();
 
         verify(canvasElementUpdatedEvent,
                times(1)).fire(any());
@@ -344,6 +356,9 @@ public class CaseManagementCanvasHandlerTest {
                                                                    shape);
         final MutationContext mutationContext = mock(MutationContext.class);
 
+        final String name = "mockName";
+        when(textPropertyProvider.getText(eq(node))).thenReturn(name);
+
         handler.register(shape,
                          node,
                          true);
@@ -354,6 +369,15 @@ public class CaseManagementCanvasHandlerTest {
 
         verify(shape.getShapeView(),
                times(1)).refresh();
+
+        verify((CaseManagementShapeView) shape.getShapeView(),
+               times(1)).setLabel(eq(name));
+
+        verify(shape,
+               times(1)).beforeDraw();
+
+        verify(shape,
+               times(1)).afterDraw();
 
         verify(canvasElementUpdatedEvent,
                times(1)).fire(any());

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.cm.backend;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.enterprise.context.Dependent;
@@ -92,7 +91,7 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
     }
 
     @Override
-    public Graph unmarshall(Metadata metadata, InputStream inputStream) throws IOException {
+    public Graph unmarshall(Metadata metadata, InputStream inputStream) {
         Graph result = super.unmarshall(metadata, inputStream);
         this.updateTitle(metadata, result);
 
@@ -100,7 +99,7 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
     }
 
     @Override
-    public String marshall(Diagram diagram) throws IOException {
+    public String marshall(Diagram diagram) {
         if (validateDiagram(diagram)) {
             return super.marshall(diagram);
         } else {

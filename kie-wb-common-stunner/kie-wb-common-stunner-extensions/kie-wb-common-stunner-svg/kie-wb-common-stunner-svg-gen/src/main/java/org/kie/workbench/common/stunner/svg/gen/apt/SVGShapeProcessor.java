@@ -94,7 +94,8 @@ public class SVGShapeProcessor extends AbstractErrorAbsorbingProcessor {
                                                        "/");
             note("Discovered @SVGViewFactory for type [" + fqcn + "]");
             final SVGViewFactory svgViewFactoryAnn = classElement.getAnnotation(SVGViewFactory.class);
-            final String viewBuilderTypeName = parseAnnotationFieldTypeName(svgViewFactoryAnn::builder);
+            final String viewBuilderTypeName = parseAnnotationFieldTypeName(svgViewFactoryAnn::builder,
+                                                                            "No builder class specified for the @SVGViewFactory.");
             final SVGGeneratorRequest request = new SVGGeneratorRequest(name + GENERATED_TYPE_SUFFIX,
                                                                         packageName,
                                                                         fqcn,
@@ -161,13 +162,19 @@ public class SVGShapeProcessor extends AbstractErrorAbsorbingProcessor {
                               message);
     }
 
-    private static String parseAnnotationFieldTypeName(final Supplier<Class<?>> theTypeSupplier) {
+    private static String parseAnnotationFieldTypeName(final Supplier<Class<?>> theTypeSupplier,
+                                                       final String errorMessage) {
         TypeMirror mirror = null;
         try {
             Class<?> theType = theTypeSupplier.get();
         } catch (MirroredTypeException mte) {
             mirror = mte.getTypeMirror();
         }
-        return mirror.toString();
+
+        if (null == mirror) {
+            throw new RuntimeException(errorMessage);
+        } else {
+            return mirror.toString();
+        }
     }
 }

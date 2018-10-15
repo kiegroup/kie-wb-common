@@ -44,6 +44,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -269,5 +270,19 @@ public class CaseManagementContainmentControlTest {
         verify(state, times(1)).setGhost(Optional.empty());
         verify(state, times(1)).setOriginalParent(Optional.empty());
         verify(state, times(1)).setOriginalIndex(Optional.empty());
+    }
+
+    @Test
+    public void testReparentDraggedShape() {
+        when(state.getOriginalParent()).thenReturn(Optional.of(mock(WiresContainer.class)));
+        final CaseManagementShapeView ghostParent = mock(CaseManagementShapeView.class);
+        when(ghost.getParent()).thenReturn(ghostParent);
+        when(ghostParent.getIndex(eq(ghost))).thenReturn(1);
+
+        control.execute();
+
+        verify(containmentControl, times(1)).execute();
+        verify(ghost, atLeast(1)).removeFromParent();
+        verify(ghostParent, times(1)).addShape(eq(shape), eq(1));
     }
 }
