@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.stunner.forms.client.event;
 
-package org.kie.workbench.common.dmn.client.editors.types.listview.common;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.uberfire.workbench.events.UberFireEvent;
 
-import elemental2.dom.Element;
+public final class RefreshFormPropertiesEvent implements UberFireEvent {
 
-public class HiddenHelper {
+    private final ClientSession session;
+    private final String uuid;
 
-    public static final String HIDDEN_CSS_CLASS = "hidden";
-
-    public static void hide(final Element element) {
-        element.classList.add(HIDDEN_CSS_CLASS);
+    public RefreshFormPropertiesEvent(final ClientSession session,
+                                      final String uuid) {
+        this.session = session;
+        this.uuid = uuid;
     }
 
-    public static void show(final Element element) {
-        element.classList.remove(HIDDEN_CSS_CLASS);
+    public String getUuid() {
+        return uuid;
     }
 
-    public static boolean isHidden(final Element element) {
-        return element.classList.contains(HIDDEN_CSS_CLASS);
+    public ClientSession getSession() {
+        return session;
     }
 }

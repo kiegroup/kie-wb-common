@@ -24,17 +24,22 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.common.RecordEngine;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.DataTypeCreateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.DataTypeDestroyHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.DataTypeUpdateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.ItemDefinitionCreateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.ItemDefinitionDestroyHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.ItemDefinitionUpdateHandler;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.DataTypeNameValidator;
+
+import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
 
 /**
  * Implements the {@link RecordEngine} to record a {@link DataType} as a {@link ItemDefinition}.
  */
 @ApplicationScoped
-public class ItemDefinitionRecordEngine implements RecordEngine<DataType> {
+public class ItemDefinitionRecordEngine implements DataTypeRecordEngine {
 
     private final ItemDefinitionStore itemDefinitionStore;
 
@@ -48,29 +53,42 @@ public class ItemDefinitionRecordEngine implements RecordEngine<DataType> {
 
     private final DataTypeUpdateHandler dataTypeUpdateHandler;
 
+    private final DataTypeCreateHandler dataTypeCreateHandler;
+
+    private final DataTypeNameValidator dataTypeNameValidator;
+
     @Inject
     public ItemDefinitionRecordEngine(final ItemDefinitionStore itemDefinitionStore,
                                       final ItemDefinitionDestroyHandler itemDefinitionDestroyHandler,
                                       final ItemDefinitionUpdateHandler itemDefinitionUpdateHandler,
                                       final ItemDefinitionCreateHandler itemDefinitionCreateHandler,
                                       final DataTypeDestroyHandler dataTypeDestroyHandler,
-                                      final DataTypeUpdateHandler dataTypeUpdateHandler) {
+                                      final DataTypeUpdateHandler dataTypeUpdateHandler,
+                                      final DataTypeCreateHandler dataTypeCreateHandler,
+                                      final DataTypeNameValidator dataTypeNameValidator) {
         this.itemDefinitionStore = itemDefinitionStore;
         this.itemDefinitionDestroyHandler = itemDefinitionDestroyHandler;
         this.itemDefinitionUpdateHandler = itemDefinitionUpdateHandler;
         this.itemDefinitionCreateHandler = itemDefinitionCreateHandler;
         this.dataTypeDestroyHandler = dataTypeDestroyHandler;
         this.dataTypeUpdateHandler = dataTypeUpdateHandler;
+        this.dataTypeCreateHandler = dataTypeCreateHandler;
+        this.dataTypeNameValidator = dataTypeNameValidator;
     }
 
     @PostConstruct
     public void init() {
+        dataTypeCreateHandler.init(this);
         dataTypeDestroyHandler.init(this);
         dataTypeUpdateHandler.init(this);
     }
 
     @Override
     public List<DataType> update(final DataType dataType) {
+
+        if (!dataType.isValid()) {
+            throw new UnsupportedOperationException("An invalid Data Type cannot be updated.");
+        }
 
         final ItemDefinition itemDefinition = itemDefinitionStore.get(dataType.getUUID());
         final String itemDefinitionBeforeUpdate = itemDefinition.getName().getValue();
@@ -82,21 +100,39 @@ public class ItemDefinitionRecordEngine implements RecordEngine<DataType> {
 
     @Override
     public List<DataType> destroy(final DataType dataType) {
-
         doDestroy(dataType);
 
         return refreshDependentDataTypesFromDestroyOperation(dataType);
     }
 
     @Override
-    public DataType create(final DataType dataType) {
-        return itemDefinitionCreateHandler.create(dataType);
+    public List<DataType> create(final DataType dataType) {
+        return dataTypeCreateHandler.append(dataType, itemDefinitionCreateHandler.appendItemDefinition());
+    }
+
+    @Override
+    public List<DataType> create(final DataType record,
+                                 final DataType reference,
+                                 final CreationType creationType) {
+
+        if (creationType == NESTED) {
+            final ItemDefinition nestedItemDefinition = itemDefinitionCreateHandler.insertNestedItemDefinition(reference);
+            return dataTypeCreateHandler.insertNested(record, reference, nestedItemDefinition);
+        } else {
+            final ItemDefinition itemDefinition = itemDefinitionCreateHandler.insertItemDefinition(reference, creationType);
+            return dataTypeCreateHandler.insert(record, reference, creationType, itemDefinition);
+        }
+    }
+
+    @Override
+    public boolean isValid(final DataType dataType) {
+        return dataTypeNameValidator.isValid(dataType);
     }
 
     public void doUpdate(final DataType dataType,
                          final ItemDefinition itemDefinition) {
 
-        dataTypeUpdateHandler.update(dataType, itemDefinition);
+        dataTypeUpdateHandler.update(dataType);
         itemDefinitionUpdateHandler.update(dataType, itemDefinition);
     }
 

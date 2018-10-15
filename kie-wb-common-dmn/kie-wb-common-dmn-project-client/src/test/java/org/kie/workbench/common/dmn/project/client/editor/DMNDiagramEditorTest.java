@@ -30,12 +30,14 @@ import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.AutomaticLayoutService;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.mockito.Mock;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 
@@ -68,6 +70,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
+    @Mock
     private ExpressionEditorView.Presenter expressionEditor;
 
     @Mock
@@ -92,7 +97,6 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         super.setUp();
         when(sessionEditorPresenter.getInstance()).thenReturn(dmnEditorSession);
         when(dmnEditorSession.getExpressionEditor()).thenReturn(expressionEditor);
-        when(resourceType.getSuffix()).thenReturn("dmn");
     }
 
     @Override
@@ -118,6 +122,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  (DMNProjectEditorMenuSessionItems) getMenuSessionItems(),
                                                  onDiagramFocusEvent,
                                                  onDiagramLostFocusEvent,
+                                                 refreshFormPropertiesEvent,
                                                  projectMessagesListener,
                                                  diagramClientErrorHandler,
                                                  translationService,
@@ -214,13 +219,5 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               any(NavigateToExpressionEditorCommand.class));
-    }
-
-    @Override
-    public void testOpen() {
-    }
-
-    @Override
-    public void testFormatTitle() {
     }
 }

@@ -39,9 +39,9 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.HIDDEN_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.PARENT_UUID_ATTR;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.UUID_ATTR;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.common.HiddenHelper.HIDDEN_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.DOWN_ARROW_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.FOCUSED_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.RIGHT_ARROW_CSS_CLASS;
@@ -98,13 +98,22 @@ public class DataTypeListItemViewTest {
     private HTMLAnchorElement removeButton;
 
     @Mock
+    private HTMLAnchorElement insertFieldAbove;
+
+    @Mock
+    private HTMLAnchorElement insertFieldBelow;
+
+    @Mock
+    private HTMLAnchorElement insertNestedField;
+
+    @Mock
     private HTMLDivElement kebabMenu;
 
     private DataTypeListItemView view;
 
     @Before
     public void setup() {
-        view = spy(new DataTypeListItemView(row, level, arrow, nameText, nameInput, type, editButton, saveButton, closeButton, removeButton, kebabMenu));
+        view = spy(new DataTypeListItemView(row, level, arrow, nameText, nameInput, type, editButton, saveButton, closeButton, removeButton, insertFieldAbove, insertFieldBelow, insertNestedField, kebabMenu));
         view.init(presenter);
 
         doReturn(dataTypeListElement).when(view).dataTypeListElement();
@@ -237,6 +246,27 @@ public class DataTypeListItemViewTest {
         view.onArrowClickEvent(mock(ClickEvent.class));
 
         verify(presenter).expandOrCollapseSubTypes();
+    }
+
+    @Test
+    public void testOnInsertFieldAbove() {
+        view.onInsertFieldAbove(mock(ClickEvent.class));
+
+        verify(presenter).insertFieldAbove();
+    }
+
+    @Test
+    public void testOnInsertFieldBelow() {
+        view.onInsertFieldBelow(mock(ClickEvent.class));
+
+        verify(presenter).insertFieldBelow();
+    }
+
+    @Test
+    public void testOnInsertNestedField() {
+        view.onInsertNestedField(mock(ClickEvent.class));
+
+        verify(presenter).insertNestedField();
     }
 
     @Test
@@ -472,6 +502,7 @@ public class DataTypeListItemViewTest {
         verify(parentElement.classList).add(FOCUSED_CSS_CLASS);
         verify(child1.classList).add(FOCUSED_CSS_CLASS);
         verify(child2.classList).add(FOCUSED_CSS_CLASS);
+        verify(nameInput).select();
     }
 
     @Test

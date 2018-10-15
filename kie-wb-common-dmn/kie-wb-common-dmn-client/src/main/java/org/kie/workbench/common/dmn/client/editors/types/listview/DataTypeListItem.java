@@ -28,6 +28,10 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.uberfire.client.mvp.UberElemental;
 
+import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
+import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
+import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
+
 public class DataTypeListItem {
 
     private final View view;
@@ -41,6 +45,10 @@ public class DataTypeListItem {
     private int level;
 
     private DataTypeList dataTypeList;
+
+    private String oldName;
+
+    private String oldType;
 
     @Inject
     public DataTypeListItem(final View view,
@@ -124,6 +132,9 @@ public class DataTypeListItem {
 
     void enableEditMode() {
 
+        oldName = getDataType().getName();
+        oldType = getDataType().getType();
+
         view.showSaveButton();
         view.showDataTypeNameInput();
         view.enableFocusMode();
@@ -137,13 +148,33 @@ public class DataTypeListItem {
     }
 
     void saveAndCloseEditMode() {
-        saveNewDataType();
-        closeEditMode();
+
+        final DataType updatedDataType = update(getDataType());
+
+        if (updatedDataType.isValid()) {
+
+            final List<DataType> updatedDataTypes = persist(updatedDataType);
+
+            dataTypeList.refreshItemsByUpdatedDataTypes(updatedDataTypes);
+            closeEditMode();
+        }
+    }
+
+    List<DataType> persist(final DataType dataType) {
+        return dataTypeManager
+                .from(dataType)
+                .withSubDataTypes(dataTypeSelectComponent.getSubDataTypes())
+                .get()
+                .update();
     }
 
     void discardNewDataType() {
 
-        view.setDataType(getDataType());
+        view.setDataType(dataTypeManager
+                                 .withDataType(getDataType())
+                                 .withName(getOldName())
+                                 .withType(getOldType())
+                                 .get());
 
         setupSelectComponent();
         refreshSubItems(getDataType().getSubDataTypes());
@@ -156,13 +187,6 @@ public class DataTypeListItem {
         view.disableFocusMode();
 
         dataTypeSelectComponent.disableEditMode();
-    }
-
-    void saveNewDataType() {
-
-        final List<DataType> updatedDataTypes = update(getDataType());
-
-        dataTypeList.refreshItemsByUpdatedDataTypes(updatedDataTypes);
     }
 
     public void remove() {
@@ -185,18 +209,66 @@ public class DataTypeListItem {
                 .collect(Collectors.toList());
     }
 
-    List<DataType> update(final DataType dataType) {
+    DataType update(final DataType dataType) {
         return dataTypeManager
                 .from(dataType)
                 .withName(view.getName())
                 .withType(dataTypeSelectComponent.getValue())
-                .withSubDataTypes(dataTypeSelectComponent.getSubDataTypes())
-                .get()
-                .update();
+                .get();
     }
 
-    public DataTypeList getDataTypeList() {
+    String getOldName() {
+        return oldName;
+    }
+
+    String getOldType() {
+        return oldType;
+    }
+
+    DataTypeList getDataTypeList() {
         return dataTypeList;
+    }
+
+    void insertFieldAbove() {
+
+        closeEditMode();
+
+        final DataType newDataType = newDataType();
+        final List<DataType> updatedDataTypes = newDataType.create(getDataType(), ABOVE);
+
+        if (newDataType.isTopLevel()) {
+            dataTypeList.insertAbove(newDataType, getDataType());
+        } else {
+            dataTypeList.refreshItemsByUpdatedDataTypes(updatedDataTypes);
+        }
+    }
+
+    void insertFieldBelow() {
+
+        closeEditMode();
+
+        final DataType newDataType = newDataType();
+        final List<DataType> updatedDataTypes = newDataType.create(getDataType(), BELOW);
+
+        if (newDataType.isTopLevel()) {
+            dataTypeList.insertBelow(newDataType, getDataType());
+        } else {
+            dataTypeList.refreshItemsByUpdatedDataTypes(updatedDataTypes);
+        }
+    }
+
+    void insertNestedField() {
+
+        closeEditMode();
+        expand();
+
+        final List<DataType> updatedDataTypes = newDataType().create(getDataType(), NESTED);
+
+        dataTypeList.refreshItemsByUpdatedDataTypes(updatedDataTypes);
+    }
+
+    private DataType newDataType() {
+        return dataTypeManager.fromNew().get();
     }
 
     public interface View extends UberElemental<DataTypeListItem> {

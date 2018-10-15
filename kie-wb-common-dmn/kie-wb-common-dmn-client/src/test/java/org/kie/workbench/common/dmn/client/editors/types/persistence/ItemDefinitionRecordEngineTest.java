@@ -25,15 +25,23 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.DataTypeCreateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.DataTypeDestroyHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.DataTypeUpdateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.ItemDefinitionCreateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.ItemDefinitionDestroyHandler;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.ItemDefinitionUpdateHandler;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.DataTypeNameValidator;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
+import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -60,11 +68,17 @@ public class ItemDefinitionRecordEngineTest {
     @Mock
     private DataTypeUpdateHandler dataTypeUpdateHandler;
 
+    @Mock
+    private DataTypeCreateHandler dataTypeCreateHandler;
+
+    @Mock
+    private DataTypeNameValidator dataTypeNameValidator;
+
     private ItemDefinitionRecordEngine recordEngine;
 
     @Before
     public void setup() {
-        recordEngine = spy(new ItemDefinitionRecordEngine(itemDefinitionStore, itemDefinitionDestroyHandler, itemDefinitionUpdateHandler, itemDefinitionCreateHandler, dataTypeDestroyHandler, dataTypeUpdateHandler));
+        recordEngine = spy(new ItemDefinitionRecordEngine(itemDefinitionStore, itemDefinitionDestroyHandler, itemDefinitionUpdateHandler, itemDefinitionCreateHandler, dataTypeDestroyHandler, dataTypeUpdateHandler, dataTypeCreateHandler, dataTypeNameValidator));
     }
 
     @Test
@@ -85,6 +99,7 @@ public class ItemDefinitionRecordEngineTest {
         final Name name = mock(Name.class);
         final List<DataType> expectedDependentDataTypes = asList(mock(DataType.class), mock(DataType.class));
 
+        when(dataType.isValid()).thenReturn(true);
         when(dataType.getUUID()).thenReturn(uuid);
         when(itemDefinitionStore.get(uuid)).thenReturn(itemDefinition);
         when(itemDefinition.getName()).thenReturn(name);
@@ -98,6 +113,18 @@ public class ItemDefinitionRecordEngineTest {
     }
 
     @Test
+    public void testUpdateWhenDataTypeIsNotValid() {
+
+        final DataType dataType = mock(DataType.class);
+
+        when(dataType.isValid()).thenReturn(false);
+
+        assertThatThrownBy(() -> recordEngine.update(dataType))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessageContaining("An invalid Data Type cannot be updated.");
+    }
+
+    @Test
     public void testDoUpdate() {
 
         final DataType dataType = mock(DataType.class);
@@ -105,7 +132,7 @@ public class ItemDefinitionRecordEngineTest {
 
         recordEngine.doUpdate(dataType, itemDefinition);
 
-        verify(dataTypeUpdateHandler).update(dataType, itemDefinition);
+        verify(dataTypeUpdateHandler).update(dataType);
         verify(itemDefinitionUpdateHandler).update(dataType, itemDefinition);
     }
 
@@ -127,13 +154,68 @@ public class ItemDefinitionRecordEngineTest {
     public void testCreate() {
 
         final DataType dataType = mock(DataType.class);
-        final DataType expectedDataType = mock(DataType.class);
+        final List<DataType> expectedAffectedDataTypes = asList(mock(DataType.class), mock(DataType.class));
+        final ItemDefinition itemDefinition = mock(ItemDefinition.class);
 
-        when(itemDefinitionCreateHandler.create(dataType)).thenReturn(expectedDataType);
+        when(itemDefinitionCreateHandler.appendItemDefinition()).thenReturn(itemDefinition);
+        when(dataTypeCreateHandler.append(dataType, itemDefinition)).thenReturn(expectedAffectedDataTypes);
 
-        final DataType actualDataType = recordEngine.create(dataType);
+        final List<DataType> actualAffectedDataTypes = recordEngine.create(dataType);
 
-        assertEquals(expectedDataType, actualDataType);
+        assertEquals(expectedAffectedDataTypes, actualAffectedDataTypes);
+    }
+
+    @Test
+    public void testCreateWithCreationTypeNotNested() {
+
+        final DataType dataType = mock(DataType.class);
+        final DataType reference = mock(DataType.class);
+        final List<DataType> expectedAffectedDataTypes = asList(mock(DataType.class), mock(DataType.class));
+        final ItemDefinition itemDefinition = mock(ItemDefinition.class);
+        final CreationType creationType = ABOVE;
+
+        when(itemDefinitionCreateHandler.insertItemDefinition(reference, creationType)).thenReturn(itemDefinition);
+        when(dataTypeCreateHandler.insert(dataType, reference, creationType, itemDefinition)).thenReturn(expectedAffectedDataTypes);
+
+        final List<DataType> actualAffectedDataTypes = recordEngine.create(dataType, reference, creationType);
+
+        assertEquals(expectedAffectedDataTypes, actualAffectedDataTypes);
+    }
+
+    @Test
+    public void testCreateWithCreationTypeNested() {
+
+        final DataType dataType = mock(DataType.class);
+        final DataType reference = mock(DataType.class);
+        final List<DataType> expectedAffectedDataTypes = asList(mock(DataType.class), mock(DataType.class));
+        final ItemDefinition itemDefinition = mock(ItemDefinition.class);
+
+        when(itemDefinitionCreateHandler.insertNestedItemDefinition(reference)).thenReturn(itemDefinition);
+        when(dataTypeCreateHandler.insertNested(dataType, reference, itemDefinition)).thenReturn(expectedAffectedDataTypes);
+
+        final List<DataType> actualAffectedDataTypes = recordEngine.create(dataType, reference, NESTED);
+
+        assertEquals(expectedAffectedDataTypes, actualAffectedDataTypes);
+    }
+
+    @Test
+    public void testIsValidWhenItIsTrue() {
+
+        final DataType dataType = mock(DataType.class);
+
+        doReturn(true).when(dataTypeNameValidator).isValid(dataType);
+
+        assertTrue(recordEngine.isValid(dataType));
+    }
+
+    @Test
+    public void testIsValidWhenItIsFalse() {
+
+        final DataType dataType = mock(DataType.class);
+
+        doReturn(false).when(dataTypeNameValidator).isValid(dataType);
+
+        assertFalse(recordEngine.isValid(dataType));
     }
 
     @Test

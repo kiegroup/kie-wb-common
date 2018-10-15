@@ -20,8 +20,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
-import org.kie.workbench.common.stunner.project.client.session.EditorSessionCommands;
 
 @Dependent
 @Typed(CaseManagementProjectEditorMenuSessionItems.class)
@@ -29,7 +29,7 @@ public class CaseManagementProjectEditorMenuSessionItems extends AbstractProject
 
     @Inject
     public CaseManagementProjectEditorMenuSessionItems(final CaseManagementProjectDiagramEditorMenuItemsBuilder itemsBuilder,
-                                                       final EditorSessionCommands sessionCommands) {
+                                                       final @CaseManagementEditor CaseManagementEditorSessionCommands sessionCommands) {
         super(itemsBuilder,
               sessionCommands);
     }

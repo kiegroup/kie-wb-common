@@ -37,12 +37,12 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
-import org.kie.workbench.common.dmn.client.editors.types.listview.common.HiddenHelper;
+import org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.KebabMenuInitializer;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper;
 
-import static org.kie.workbench.common.dmn.client.editors.types.listview.common.HiddenHelper.hide;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.common.HiddenHelper.show;
+import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
+import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.show;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.asDownArrow;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.asFocusedDataType;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.asNonFocusedDataType;
@@ -53,7 +53,9 @@ import static org.kie.workbench.common.dmn.client.editors.types.listview.common.
 @Templated
 public class DataTypeListItemView implements DataTypeListItem.View {
 
-    static final String UUID_ATTR = "data-row-uuid";
+    public static final String UUID_ATTR = "data-row-uuid";
+
+    public static final String NAME_DATA_FIELD = "name-input";
 
     static final String PARENT_UUID_ATTR = "data-parent-row-uuid";
 
@@ -73,7 +75,7 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     @DataField("name-text")
     private final HTMLElement nameText;
 
-    @DataField("name-input")
+    @DataField(NAME_DATA_FIELD)
     private final HTMLInputElement nameInput;
 
     @DataField("type")
@@ -91,6 +93,15 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     @DataField("remove-button")
     private final HTMLAnchorElement removeButton;
 
+    @DataField("insert-field-above")
+    private final HTMLAnchorElement insertFieldAbove;
+
+    @DataField("insert-field-below")
+    private final HTMLAnchorElement insertFieldBelow;
+
+    @DataField("insert-nested-field")
+    private final HTMLAnchorElement insertNestedField;
+
     @DataField("kebab-menu")
     private HTMLDivElement kebabMenu;
 
@@ -107,6 +118,9 @@ public class DataTypeListItemView implements DataTypeListItem.View {
                                 final HTMLButtonElement saveButton,
                                 final HTMLButtonElement closeButton,
                                 final HTMLAnchorElement removeButton,
+                                final HTMLAnchorElement insertFieldAbove,
+                                final HTMLAnchorElement insertFieldBelow,
+                                final HTMLAnchorElement insertNestedField,
                                 final HTMLDivElement kebabMenu) {
         this.view = view;
         this.level = level;
@@ -118,6 +132,9 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         this.saveButton = saveButton;
         this.closeButton = closeButton;
         this.removeButton = removeButton;
+        this.insertFieldAbove = insertFieldAbove;
+        this.insertFieldBelow = insertFieldBelow;
+        this.insertNestedField = insertNestedField;
         this.kebabMenu = kebabMenu;
     }
 
@@ -226,6 +243,21 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         presenter.expandOrCollapseSubTypes();
     }
 
+    @EventHandler("insert-field-above")
+    public void onInsertFieldAbove(final ClickEvent e) {
+        presenter.insertFieldAbove();
+    }
+
+    @EventHandler("insert-field-below")
+    public void onInsertFieldBelow(final ClickEvent e) {
+        presenter.insertFieldBelow();
+    }
+
+    @EventHandler("insert-nested-field")
+    public void onInsertNestedField(final ClickEvent e) {
+        presenter.insertNestedField();
+    }
+
     @EventHandler("remove-button")
     public void onRemoveButton(final ClickEvent e) {
         presenter.remove();
@@ -233,9 +265,13 @@ public class DataTypeListItemView implements DataTypeListItem.View {
 
     @Override
     public void enableFocusMode() {
+
         final Element rowElement = getRowElement(getDataType());
+
         asFocusedDataType(rowElement);
         forEachChildElement(rowElement, ListItemViewCssHelper::asFocusedDataType);
+
+        nameInput.select();
     }
 
     @Override

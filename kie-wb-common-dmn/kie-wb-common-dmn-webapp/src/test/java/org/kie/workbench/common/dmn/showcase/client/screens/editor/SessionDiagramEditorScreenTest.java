@@ -35,12 +35,14 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.AutomaticLayoutService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
 import static org.mockito.Matchers.any;
@@ -74,6 +76,9 @@ public class SessionDiagramEditorScreenTest {
     @Mock
     private DMNEditorSession session;
 
+    @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
     @Captor
     private ArgumentCaptor<Consumer<EditorSession>> clientFullSessionConsumer;
 
@@ -86,6 +91,7 @@ public class SessionDiagramEditorScreenTest {
     private SessionDiagramEditorScreen editor;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setup() {
         doReturn(presenter).when(presenter).withToolbar(anyBoolean());
         doReturn(presenter).when(presenter).withPalette(anyBoolean());
@@ -115,6 +121,7 @@ public class SessionDiagramEditorScreenTest {
                                                     presenter,
                                                     null,
                                                     null,
+                                                    refreshFormPropertiesEvent,
                                                     null,
                                                     screenPanelView,
                                                     null,

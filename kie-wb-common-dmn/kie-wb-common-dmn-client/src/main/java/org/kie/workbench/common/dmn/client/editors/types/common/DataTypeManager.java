@@ -34,6 +34,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionRecordEngine;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.DataTypeNameValidator;
 import org.uberfire.commons.uuid.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -64,6 +65,8 @@ public class DataTypeManager {
 
     private final ManagedInstance<DataTypeManager> dataTypeManagers;
 
+    private final DataTypeNameValidator dataTypeNameValidator;
+
     private final DataTypeManagerStackStore typeStack;
 
     private DataType dataType;
@@ -77,6 +80,7 @@ public class DataTypeManager {
                            final DataTypeStore dataTypeStore,
                            final ItemDefinitionUtils itemDefinitionUtils,
                            final ManagedInstance<DataTypeManager> dataTypeManagers,
+                           final DataTypeNameValidator dataTypeNameValidator,
                            final DataTypeManagerStackStore typeStack) {
         this.translationService = translationService;
         this.recordEngine = recordEngine;
@@ -84,6 +88,7 @@ public class DataTypeManager {
         this.dataTypeStore = dataTypeStore;
         this.itemDefinitionUtils = itemDefinitionUtils;
         this.dataTypeManagers = dataTypeManagers;
+        this.dataTypeNameValidator = dataTypeNameValidator;
         this.typeStack = typeStack;
     }
 
@@ -112,7 +117,7 @@ public class DataTypeManager {
         return this
                 .newDataType()
                 .withUUID()
-                .withNoName()
+                .withName(none())
                 .withBuiltInType(builtInType);
     }
 
@@ -178,9 +183,24 @@ public class DataTypeManager {
         return this;
     }
 
-    private DataTypeManager withNoName() {
-        dataType.setName(none());
-        return this;
+    public DataTypeManager withNoName() {
+        return withUniqueName(none());
+    }
+
+    DataTypeManager withUniqueName(final String name) {
+        return withUniqueName(name, 1);
+    }
+
+    private DataTypeManager withUniqueName(final String name,
+                                           final int nameSuffix) {
+
+        withName(nameSuffix == 1 ? name : name + " (" + nameSuffix + ")");
+
+        if (dataTypeNameValidator.isNotUnique(get())) {
+            return withUniqueName(name, nameSuffix + 1);
+        } else {
+            return this;
+        }
     }
 
     DataTypeManager withItemDefinitionName() {
@@ -191,7 +211,7 @@ public class DataTypeManager {
         return withType(itemDefinitionType(itemDefinition));
     }
 
-    DataTypeManager withItemDefinitionSubDataTypes() {
+    public DataTypeManager withItemDefinitionSubDataTypes() {
         return withSubDataTypes(createSubDataTypesFromItemDefinition());
     }
 
@@ -290,6 +310,10 @@ public class DataTypeManager {
 
     private String none() {
         return translationService.format(DataTypeManager_None);
+    }
+
+    public DataTypeManager asStructure() {
+        return withType(structure());
     }
 
     DataTypeManager anotherManager() {
