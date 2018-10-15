@@ -1088,7 +1088,6 @@ public class DMNMarshallerTest {
 
         // identify the error message for the Decision with a Literal Expression decision logic missing the text.
         DMNMessage m0 = dmnModel.getMessages(DMNMessage.Severity.ERROR).get(0);
-        System.out.println(m0);
         assertTrue("expected a message identifying the problem on a decision named 'my decision'",
                    m0.getMessage().startsWith("No expression defined for name 'my decision'"));
 
