@@ -19,7 +19,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
 @Portable
-public class AssigneeType implements PropertyType {
+public class AssigneeTypePortable implements PropertyType {
 
     public static final String name = "stunner.bpmn.assignee";
 
@@ -33,10 +33,10 @@ public class AssigneeType implements PropertyType {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AssigneeType)) {
+        if (!(o instanceof AssigneeTypePortable)) {
             return false;
         }
-        AssigneeType that = (AssigneeType) o;
+        AssigneeTypePortable that = (AssigneeTypePortable) o;
         if (!name.equals(that.name)) {
             return false;
         }
