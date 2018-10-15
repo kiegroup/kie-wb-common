@@ -69,7 +69,7 @@ public class ValidateSessionCommand extends AbstractClientSessionCommand<EditorS
     private <V> void fireCallback(final Collection<DiagramElementViolation<RuleViolation>> violations,
                                   final Callback<V> callback) {
         final boolean areViolations = violations.stream()
-                .filter(v -> Violation.Type.ERROR.equals(v.getViolationType()))
+                .filter(v -> Violation.ViolationType.ERROR.equals(v.getViolationType()))
                 .findAny()
                 .isPresent();
         if (!areViolations) {

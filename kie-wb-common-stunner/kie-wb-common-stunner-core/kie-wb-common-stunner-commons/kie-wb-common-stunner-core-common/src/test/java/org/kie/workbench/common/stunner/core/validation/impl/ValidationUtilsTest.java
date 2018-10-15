@@ -55,16 +55,16 @@ public class ValidationUtilsTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testGetMaxSeverity() {
-        when(violation1.getViolationType()).thenReturn(Violation.Type.INFO);
-        when(violation2.getViolationType()).thenReturn(Violation.Type.WARNING);
-        when(violation3.getViolationType()).thenReturn(Violation.Type.ERROR);
-        assertEquals(Violation.Type.ERROR,
+        when(violation1.getViolationType()).thenReturn(Violation.ViolationType.INFO);
+        when(violation2.getViolationType()).thenReturn(Violation.ViolationType.WARNING);
+        when(violation3.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
+        assertEquals(Violation.ViolationType.ERROR,
                      ValidationUtils.getMaxSeverity(violations));
-        when(violation3.getViolationType()).thenReturn(Violation.Type.INFO);
-        assertEquals(Violation.Type.WARNING,
+        when(violation3.getViolationType()).thenReturn(Violation.ViolationType.INFO);
+        assertEquals(Violation.ViolationType.WARNING,
                      ValidationUtils.getMaxSeverity(violations));
-        when(violation1.getViolationType()).thenReturn(Violation.Type.ERROR);
-        assertEquals(Violation.Type.ERROR,
+        when(violation1.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
+        assertEquals(Violation.ViolationType.ERROR,
                      ValidationUtils.getMaxSeverity(violations));
     }
 }

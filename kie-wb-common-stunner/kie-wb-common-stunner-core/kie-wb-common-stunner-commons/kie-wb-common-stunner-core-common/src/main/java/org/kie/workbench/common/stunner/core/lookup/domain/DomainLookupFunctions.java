@@ -29,12 +29,12 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
 import org.kie.workbench.common.stunner.core.rule.context.CardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.context.EdgeCardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.context.impl.RuleContextBuilder;
 import org.kie.workbench.common.stunner.core.rule.impl.CanConnect;
+import org.kie.workbench.common.stunner.core.validation.Violation;
 
 import static org.kie.workbench.common.stunner.core.rule.context.impl.RuleContextBuilder.DomainContexts.cardinality;
 import static org.kie.workbench.common.stunner.core.rule.context.impl.RuleContextBuilder.DomainContexts.edgeCardinality;
@@ -247,6 +247,6 @@ public class DomainLookupFunctions {
     }
 
     private static boolean isValid(final RuleViolations violations) {
-        return null == violations || !violations.violations(RuleViolation.Type.ERROR).iterator().hasNext();
+        return null == violations || !violations.violations(Violation.ViolationType.ERROR).iterator().hasNext();
     }
 }

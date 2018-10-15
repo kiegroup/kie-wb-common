@@ -24,14 +24,14 @@ public interface Violation {
     /**
      * Built-in rule violation types.
      */
-    enum Type {
+    enum ViolationType {
         ERROR(3),
         WARNING(2),
         INFO(1);
 
         private final int severity;
 
-        Type(final int severity) {
+        ViolationType(final int severity) {
             this.severity = severity;
         }
 
@@ -44,5 +44,5 @@ public interface Violation {
     /**
      * The type of violation.
      */
-    Type getViolationType();
+    ViolationType getViolationType();
 }

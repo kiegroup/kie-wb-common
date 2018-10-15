@@ -56,9 +56,9 @@ public class CardinalityEvaluationHandler implements RuleEvaluationHandler<Occur
         final int maxOccurrences = rule.getMaxOccurrences();
         final int candidatesCount = context.getCandidateCount();
         final Optional<CardinalityContext.Operation> operation = context.getOperation();
-        final Violation.Type type = operation
+        final Violation.ViolationType type = operation
                 .filter(CardinalityContext.Operation.ADD::equals)
-                .isPresent() ? Violation.Type.ERROR : Violation.Type.WARNING;
+                .isPresent() ? Violation.ViolationType.ERROR : Violation.ViolationType.WARNING;
         final int count = !operation.isPresent() ? candidatesCount :
                 (operation.get().equals(CardinalityContext.Operation.ADD) ? candidatesCount + 1 : candidatesCount - 1);
         if (count < minOccurrences) {

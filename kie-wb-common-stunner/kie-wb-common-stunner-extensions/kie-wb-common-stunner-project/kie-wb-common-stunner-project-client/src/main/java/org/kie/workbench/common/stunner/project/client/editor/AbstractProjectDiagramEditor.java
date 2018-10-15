@@ -241,8 +241,8 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
                         @Override
                         public void onError(final Collection<DiagramElementViolation<RuleViolation>> violations) {
-                            final Violation.Type maxSeverity = ValidationUtils.getMaxSeverity(violations);
-                            if (maxSeverity.equals(Violation.Type.ERROR)) {
+                            final Violation.ViolationType maxSeverity = ValidationUtils.getMaxSeverity(violations);
+                            if (maxSeverity.equals(Violation.ViolationType.ERROR)) {
                                 onValidationFailed(violations);
                             } else {
                                 // Allow saving when only warnings founds.

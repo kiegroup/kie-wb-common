@@ -16,9 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.rule;
 
+import org.kie.workbench.common.stunner.core.validation.Violation;
+
 public interface RuleViolations {
 
     Iterable<RuleViolation> violations();
 
-    Iterable<RuleViolation> violations(final RuleViolation.Type violationType);
+    Iterable<RuleViolation> violations(final Violation.ViolationType violationType);
 }

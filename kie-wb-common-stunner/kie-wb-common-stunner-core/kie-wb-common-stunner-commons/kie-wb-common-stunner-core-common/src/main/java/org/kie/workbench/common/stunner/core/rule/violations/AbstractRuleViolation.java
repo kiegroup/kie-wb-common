@@ -18,20 +18,20 @@ package org.kie.workbench.common.stunner.core.rule.violations;
 
 public abstract class AbstractRuleViolation extends AbstractGraphViolation {
 
-    private final Type type;
+    private final ViolationType type;
 
     public AbstractRuleViolation() {
-        this(Type.ERROR);
+        this(ViolationType.ERROR);
     }
 
-    protected AbstractRuleViolation(final Type type) {
+    protected AbstractRuleViolation(final ViolationType type) {
         this.type = type;
     }
 
     protected abstract String getMessage();
 
     @Override
-    public Type getViolationType() {
+    public ViolationType getViolationType() {
         return type;
     }
 }

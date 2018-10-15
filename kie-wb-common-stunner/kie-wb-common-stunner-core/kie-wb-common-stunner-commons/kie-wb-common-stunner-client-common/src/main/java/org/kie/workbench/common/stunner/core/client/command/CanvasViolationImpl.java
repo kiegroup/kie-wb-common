@@ -40,7 +40,7 @@ public final class CanvasViolationImpl
     }
 
     @Override
-    public Type getViolationType() {
+    public ViolationType getViolationType() {
         return ruleViolation.getViolationType();
     }
 

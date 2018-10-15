@@ -26,12 +26,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
-import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
 import org.kie.workbench.common.stunner.core.rule.context.CardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.context.ConnectorCardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.context.EdgeCardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.impl.EdgeOccurrences;
+import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -129,7 +129,7 @@ public class ConnectorCardinalityEvaluationHandlerTest extends AbstractGraphRule
         RuleViolations violations = tested.evaluate(RULE_IN_NO_LIMIT,
                                                     context);
         assertNotNull(violations);
-        assertFalse(violations.violations(RuleViolation.Type.ERROR).iterator().hasNext());
+        assertFalse(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ConnectorCardinalityEvaluationHandlerTest extends AbstractGraphRule
         RuleViolations violations = tested.evaluate(RULE_IN_MAX_1,
                                                     context);
         assertNotNull(violations);
-        assertFalse(violations.violations(RuleViolation.Type.ERROR).iterator().hasNext());
+        assertFalse(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ConnectorCardinalityEvaluationHandlerTest extends AbstractGraphRule
         RuleViolations violations = tested.evaluate(RULE_IN_MAX_1,
                                                     context);
         assertNotNull(violations);
-        assertTrue(violations.violations(RuleViolation.Type.ERROR).iterator().hasNext());
+        assertTrue(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
     }
 
     @Test
@@ -168,7 +168,7 @@ public class ConnectorCardinalityEvaluationHandlerTest extends AbstractGraphRule
         RuleViolations violations = tested.evaluate(RULE_IN_MIN_1,
                                                     context);
         assertNotNull(violations);
-        assertFalse(violations.violations(RuleViolation.Type.ERROR).iterator().hasNext());
+        assertFalse(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
     }
 
     @Test
@@ -181,6 +181,6 @@ public class ConnectorCardinalityEvaluationHandlerTest extends AbstractGraphRule
         RuleViolations violations = tested.evaluate(RULE_IN_MIN_1,
                                                     context);
         assertNotNull(violations);
-        assertTrue(violations.violations(RuleViolation.Type.WARNING).iterator().hasNext());
+        assertTrue(violations.violations(Violation.ViolationType.WARNING).iterator().hasNext());
     }
 }

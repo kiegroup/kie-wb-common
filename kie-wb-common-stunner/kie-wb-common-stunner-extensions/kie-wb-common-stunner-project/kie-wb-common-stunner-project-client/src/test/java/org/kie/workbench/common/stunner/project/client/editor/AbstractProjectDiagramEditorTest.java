@@ -582,7 +582,7 @@ public class AbstractProjectDiagramEditorTest {
                 callback.onSuccess();
             } else {
                 DiagramElementViolation<RuleViolation> violation = mock(DiagramElementViolation.class);
-                when(violation.getViolationType()).thenReturn(Violation.Type.ERROR);
+                when(violation.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
                 callback.onError(Collections.singletonList(violation));
             }
             return null;

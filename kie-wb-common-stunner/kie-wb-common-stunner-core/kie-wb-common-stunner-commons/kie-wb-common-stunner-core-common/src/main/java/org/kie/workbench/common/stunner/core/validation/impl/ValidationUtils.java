@@ -22,8 +22,8 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 
 public class ValidationUtils {
 
-    public static Violation.Type getMaxSeverity(final Collection<? extends Violation> violations) {
-        final Violation.Type[] type = {Violation.Type.INFO};
+    public static Violation.ViolationType getMaxSeverity(final Collection<? extends Violation> violations) {
+        final Violation.ViolationType[] type = {Violation.ViolationType.INFO};
         violations.forEach(v -> {
             if (v.getViolationType().getSeverity() > type[0].getSeverity()) {
                 type[0] = v.getViolationType();

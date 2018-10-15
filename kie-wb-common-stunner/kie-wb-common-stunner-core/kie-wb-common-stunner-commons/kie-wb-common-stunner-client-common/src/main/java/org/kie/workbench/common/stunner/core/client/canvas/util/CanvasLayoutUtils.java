@@ -334,7 +334,7 @@ public class CanvasLayoutUtils {
         RuleViolations violations = ruleManager.evaluate(ruleSet,
                                                          containmentContext);
 
-        if (violations.violations(Violation.Type.ERROR).iterator().hasNext()) {
+        if (violations.violations(Violation.ViolationType.ERROR).iterator().hasNext()) {
             canContain = false;
         }
 

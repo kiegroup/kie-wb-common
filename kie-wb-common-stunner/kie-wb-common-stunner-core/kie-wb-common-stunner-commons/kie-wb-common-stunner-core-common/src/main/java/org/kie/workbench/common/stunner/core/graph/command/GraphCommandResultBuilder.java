@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.core.command.impl.CommandResultBuilder;
 import org.kie.workbench.common.stunner.core.command.impl.CommandResultImpl;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.validation.Violation;
 
 @NonPortable
 public class GraphCommandResultBuilder extends CommandResultBuilder<RuleViolation> {
@@ -50,6 +51,6 @@ public class GraphCommandResultBuilder extends CommandResultBuilder<RuleViolatio
     }
 
     public boolean isError(final RuleViolation violation) {
-        return RuleViolation.Type.ERROR.equals(violation.getViolationType());
+        return Violation.ViolationType.ERROR.equals(violation.getViolationType());
     }
 }

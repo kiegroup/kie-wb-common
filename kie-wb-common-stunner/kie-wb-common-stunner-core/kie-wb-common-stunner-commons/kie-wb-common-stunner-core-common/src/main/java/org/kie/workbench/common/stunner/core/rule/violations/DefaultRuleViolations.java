@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
+import org.kie.workbench.common.stunner.core.validation.Violation;
 
 @Portable
 public class DefaultRuleViolations implements RuleViolations {
@@ -56,7 +57,7 @@ public class DefaultRuleViolations implements RuleViolations {
     }
 
     @Override
-    public Iterable<RuleViolation> violations(final RuleViolation.Type violationType) {
+    public Iterable<RuleViolation> violations(final Violation.ViolationType violationType) {
         return violations.stream()
                 .filter(v -> v.getViolationType().equals(violationType))
                 .collect(Collectors.toList());

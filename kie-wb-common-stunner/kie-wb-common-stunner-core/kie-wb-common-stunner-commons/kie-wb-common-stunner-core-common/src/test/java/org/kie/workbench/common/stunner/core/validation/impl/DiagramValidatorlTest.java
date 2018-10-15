@@ -114,7 +114,7 @@ public class DiagramValidatorlTest {
         final TestingGraphInstanceBuilder.TestGraph1 graph1 = TestingGraphInstanceBuilder.newGraph1(graphTestHandler);
         when(diagram.getGraph()).thenReturn(graphTestHandler.graph);
         final ModelBeanViolation beanViolation = mock(ModelBeanViolation.class);
-        when(beanViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
+        when(beanViolation.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
         doAnswer(invocationOnMock -> {
             final Consumer<Collection<ModelBeanViolation>> validationsConsumer =
                     (Consumer<Collection<ModelBeanViolation>>) invocationOnMock.getArguments()[1];
@@ -149,7 +149,7 @@ public class DiagramValidatorlTest {
                                 Collection<DiagramElementViolation<RuleViolation>> violations) {
         assertNotNull(violations);
         assertFalse(violations.stream()
-                            .filter(v -> Violation.Type.ERROR.equals(v.getViolationType()))
+                            .filter(v -> Violation.ViolationType.ERROR.equals(v.getViolationType()))
                             .findAny()
                             .isPresent());
     }
@@ -159,7 +159,7 @@ public class DiagramValidatorlTest {
                                     final String uuid) {
         assertNotNull(violations);
         assertTrue(violations.stream()
-                           .filter(v -> Violation.Type.ERROR.equals(v.getViolationType()) &&
+                           .filter(v -> Violation.ViolationType.ERROR.equals(v.getViolationType()) &&
                                    v.getUUID().equals(uuid))
                            .findAny()
                            .isPresent());

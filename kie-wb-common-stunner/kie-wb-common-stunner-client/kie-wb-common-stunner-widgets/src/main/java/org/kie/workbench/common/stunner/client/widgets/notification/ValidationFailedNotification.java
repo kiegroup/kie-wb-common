@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.client.widgets.notification;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
@@ -52,7 +51,7 @@ public final class ValidationFailedNotification extends AbstractNotification<Col
         public static ValidationFailedNotification build(final ClientTranslationService translationService,
                                                          final NotificationContext context,
                                                          final Collection<DiagramElementViolation<RuleViolation>> errors) {
-            final Violation.Type type = ValidationUtils.getMaxSeverity(errors);
+            final Violation.ViolationType type = ValidationUtils.getMaxSeverity(errors);
             return new ValidationFailedNotification(errors,
                                                     context,
                                                     CoreTranslationMessages.getDiagramValidationsErrorMessage(
@@ -63,7 +62,7 @@ public final class ValidationFailedNotification extends AbstractNotification<Col
                                                     getNotificationType(type));
         }
 
-        public static Notification.Type getNotificationType(final CanvasViolation.Type type) {
+        public static Notification.Type getNotificationType(final Violation.ViolationType type) {
             switch (type) {
                 case ERROR:
                     return Type.ERROR;

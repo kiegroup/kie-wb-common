@@ -31,7 +31,7 @@ public class BPMNViolation extends AbstractRuleViolation implements DomainViolat
     BPMNViolation() {
     }
 
-    public BPMNViolation(@MapsTo("message") String message, @MapsTo("type") Type type) {
+    public BPMNViolation(@MapsTo("message") String message, @MapsTo("type") ViolationType type) {
         super(type);
         this.message = message;
     }

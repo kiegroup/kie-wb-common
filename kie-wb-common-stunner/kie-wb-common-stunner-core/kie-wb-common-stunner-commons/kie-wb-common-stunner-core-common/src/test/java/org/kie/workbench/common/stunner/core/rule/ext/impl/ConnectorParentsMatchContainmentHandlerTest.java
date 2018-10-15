@@ -124,7 +124,7 @@ public class ConnectorParentsMatchContainmentHandlerTest extends AbstractGraphDe
         final RuleViolations violations = tested.evaluate(ruleExtension,
                                                           containmentContext);
         assertNotNull(violations);
-        assertFalse(violations.violations(Violation.Type.ERROR).iterator().hasNext());
+        assertFalse(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
     }
 
     @Test
@@ -139,6 +139,6 @@ public class ConnectorParentsMatchContainmentHandlerTest extends AbstractGraphDe
         final RuleViolations violations = tested.evaluate(ruleExtension,
                                                           containmentContext);
         assertNotNull(violations);
-        assertTrue(violations.violations(Violation.Type.ERROR).iterator().hasNext());
+        assertTrue(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
     }
 }

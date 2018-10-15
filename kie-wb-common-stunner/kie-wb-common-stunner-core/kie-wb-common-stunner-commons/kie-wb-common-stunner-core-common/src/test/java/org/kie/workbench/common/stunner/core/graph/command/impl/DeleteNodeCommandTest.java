@@ -102,7 +102,7 @@ public class DeleteNodeCommandTest extends AbstractGraphCommandTest {
                 .addViolation(new CardinalityMaxRuleViolation("candidate",
                                                               1,
                                                               2,
-                                                              Violation.Type.ERROR));
+                                                              Violation.ViolationType.ERROR));
         when(ruleManager.evaluate(any(RuleSet.class),
                                   any(RuleEvaluationContext.class))).thenReturn(FAILED_VIOLATIONS);
         CommandResult<RuleViolation> result = tested.allow(graphCommandExecutionContext);
@@ -154,7 +154,7 @@ public class DeleteNodeCommandTest extends AbstractGraphCommandTest {
                 .addViolation(new CardinalityMaxRuleViolation("candidate",
                                                               1,
                                                               2,
-                                                              Violation.Type.ERROR));
+                                                              Violation.ViolationType.ERROR));
         when(ruleManager.evaluate(any(RuleSet.class),
                                   any(RuleEvaluationContext.class))).thenReturn(FAILED_VIOLATIONS);
 
