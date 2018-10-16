@@ -78,9 +78,7 @@ public class EditableHeaderGridWidgetMouseDoubleClickHandler extends BaseGridWid
         }
 
         //Get row index
-        final Integer uiHeaderRowIndex = EditableHeaderUtilities.getUiHeaderRowIndex(gridWidget,
-                                                                                     column,
-                                                                                     cy);
+        final Integer uiHeaderRowIndex = CoordinateUtilities.getUiHeaderRowIndex(gridWidget, rp);
         if (uiHeaderRowIndex == null) {
             return false;
         }
