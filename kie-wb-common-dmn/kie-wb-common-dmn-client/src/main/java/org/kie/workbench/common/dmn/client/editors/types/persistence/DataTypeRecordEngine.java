@@ -18,34 +18,15 @@ package org.kie.workbench.common.dmn.client.editors.types.persistence;
 
 import java.util.List;
 
+import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.persistence.common.RecordEngine;
+
 /**
- * A Record Engine persists a given record.
+ * A Data Type Record Engine persists a given data type.
  */
-public interface RecordEngine<T> {
+public interface DataTypeRecordEngine extends RecordEngine<DataType> {
 
-    /**
-     * Updates a record
-     * @param record
-     * @return returning an array of all affected records by the update operation.
-     */
-    List<T> update(final T record);
-
-    /**
-     * Destroys a record
-     * @param record
-     * @return returning an array of all affected records by the destroy operation.
-     */
-    List<T> destroy(final T record);
-
-    /**
-     * Create a record.
-     * @param record
-     */
-    T create(final T record);
-
-    /**
-     * Check if a record is valid.
-     * @param record
-     */
-    boolean isValid(final T record);
+    List<DataType> create(final DataType record,
+                          final DataType reference,
+                          final CreationType nested);
 }

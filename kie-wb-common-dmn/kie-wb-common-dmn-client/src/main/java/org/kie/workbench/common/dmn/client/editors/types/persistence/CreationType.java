@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.forms.client.event;
 
-import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.uberfire.workbench.events.UberFireEvent;
+package org.kie.workbench.common.dmn.client.editors.types.persistence;
 
-public final class RefreshFormProperties implements UberFireEvent {
+public enum CreationType {
 
-    private final ClientSession session;
-    private final String uuid;
+    ABOVE(0),
+    BELOW(1),
+    NESTED(Constants.NONE);
 
-    public RefreshFormProperties(final ClientSession session,
-                                 final String uuid) {
-        this.session = session;
-        this.uuid = uuid;
+    private final int indexIncrement;
+
+    CreationType(final int indexIncrement) {
+        this.indexIncrement = indexIncrement;
     }
 
-    public String getUuid() {
-        return uuid;
+    public int getIndexIncrement() {
+        return indexIncrement;
     }
 
-    public ClientSession getSession() {
-        return session;
+    private static class Constants {
+
+        static final int NONE = Integer.MAX_VALUE;
     }
 }

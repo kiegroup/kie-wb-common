@@ -15,37 +15,25 @@
  */
 package org.kie.workbench.common.stunner.forms.client.event;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.workbench.events.UberFireEvent;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+public final class RefreshFormPropertiesEvent implements UberFireEvent {
 
-@RunWith(MockitoJUnitRunner.class)
-public class RefreshFormPropertiesTest {
+    private final ClientSession session;
+    private final String uuid;
 
-    private static final String UUID = "uuid";
-
-    @Mock
-    private ClientSession session;
-
-    private RefreshFormProperties event;
-
-    @Before
-    public void setup() {
-        this.event = new RefreshFormProperties(session, UUID);
+    public RefreshFormPropertiesEvent(final ClientSession session,
+                                      final String uuid) {
+        this.session = session;
+        this.uuid = uuid;
     }
 
-    @Test
-    public void testGetSession() {
-        assertThat(event.getSession()).isEqualTo(session);
+    public String getUuid() {
+        return uuid;
     }
 
-    @Test
-    public void testGetUUID() {
-        assertThat(event.getUuid()).isEqualTo(UUID);
+    public ClientSession getSession() {
+        return session;
     }
 }
