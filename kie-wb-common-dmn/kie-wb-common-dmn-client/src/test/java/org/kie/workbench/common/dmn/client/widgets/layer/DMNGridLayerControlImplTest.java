@@ -140,7 +140,8 @@ public class DMNGridLayerControlImplTest {
         final DMNGridLayer gridLayer = control.getGridLayer();
 
         //Check same instance is re-used
-        assertEquals(gridLayer,
+        assertEquals("GridLayer instances should be identical.",
+                     gridLayer,
                      control.getGridLayer());
     }
 }

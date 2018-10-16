@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.widgets.layer;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.enterprise.context.Dependent;
 
@@ -65,28 +66,33 @@ public class DMNGridLayerControlImpl extends AbstractCanvasControl<AbstractCanva
 
     @Override
     protected void doInit() {
-        session.ifPresent(s -> {
-            final CanvasHandler canvasHandler = s.getCanvasHandler();
-            if (canvasHandler instanceof AbstractCanvasHandler) {
-                final AbstractCanvasHandler abstractCanvasHandler = (AbstractCanvasHandler) canvasHandler;
-                abstractCanvasHandler.addRegistrationListener(redrawElementListener);
-                abstractCanvasHandler.addDomainObjectListener(redrawDomainObjectListener);
-            }
+        withCanvasHandler(abstractCanvasHandler -> {
+            abstractCanvasHandler.addRegistrationListener(redrawElementListener);
+            abstractCanvasHandler.addDomainObjectListener(redrawDomainObjectListener);
         });
     }
 
     @Override
     protected void doDestroy() {
-        session.ifPresent(s -> {
-            final CanvasHandler canvasHandler = s.getCanvasHandler();
-            if (canvasHandler instanceof AbstractCanvasHandler) {
-                final AbstractCanvasHandler abstractCanvasHandler = (AbstractCanvasHandler) canvasHandler;
-                abstractCanvasHandler.removeRegistrationListener(redrawElementListener);
-                abstractCanvasHandler.removeDomainObjectListener(redrawDomainObjectListener);
-            }
+        withCanvasHandler(abstractCanvasHandler -> {
+            abstractCanvasHandler.removeRegistrationListener(redrawElementListener);
+            abstractCanvasHandler.removeDomainObjectListener(redrawDomainObjectListener);
         });
+
         session = Optional.empty();
         gridLayer = null;
+    }
+
+    private void withCanvasHandler(final Consumer<AbstractCanvasHandler> consumer) {
+        session.ifPresent(s -> {
+
+            final CanvasHandler canvasHandler = s.getCanvasHandler();
+
+            if (canvasHandler instanceof AbstractCanvasHandler) {
+                final AbstractCanvasHandler abstractCanvasHandler = (AbstractCanvasHandler) canvasHandler;
+                consumer.accept(abstractCanvasHandler);
+            }
+        });
     }
 
     @Override

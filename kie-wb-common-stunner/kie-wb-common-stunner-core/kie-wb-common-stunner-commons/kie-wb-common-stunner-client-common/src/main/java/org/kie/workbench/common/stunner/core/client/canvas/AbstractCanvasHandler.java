@@ -402,7 +402,7 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
     }
 
     /**
-     * Notifies a DomainObject added to the listeners.
+     * Notifies {@link CanvasDomainObjectListener}s that a {@link DomainObject} has been added.
      */
     public void notifyCanvasDomainObjectAdded(final DomainObject domainObject) {
         for (final CanvasDomainObjectListener instance : domainObjectListeners) {
@@ -411,7 +411,7 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
     }
 
     /**
-     * Notifies a DomainObject removed to the listeners.
+     * Notifies {@link CanvasDomainObjectListener}s that a {@link DomainObject} has been removed.
      */
     public void notifyCanvasDomainObjectRemoved(final DomainObject domainObject) {
         for (final CanvasDomainObjectListener instance : domainObjectListeners) {
@@ -420,7 +420,7 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
     }
 
     /**
-     * Notifies a DomainObject updated to the listeners.
+     * Notifies {@link CanvasDomainObjectListener}s that a {@link DomainObject} has been updated.
      */
     public void notifyCanvasDomainObjectUpdated(final DomainObject domainObject) {
         for (final CanvasDomainObjectListener instance : domainObjectListeners) {
@@ -429,7 +429,7 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
     }
 
     /**
-     * Notifies a clean canvas to the listeners.
+     * Notifies {@link CanvasDomainObjectListener}s that the {@link Canvas} has been cleared.
      */
     public void notifyCanvasDomainObjectClear() {
         for (final CanvasDomainObjectListener instance : domainObjectListeners) {
