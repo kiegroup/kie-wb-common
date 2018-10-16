@@ -16,11 +16,22 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
-import java.util.List;
+public final class Point {
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
+    private final int x;
+    private final int y;
 
-public interface ReorderedGraph {
+    public Point(final int x,
+                 final int y) {
+        this.x = x;
+        this.y = y;
+    }
 
-    List<OrientedEdge> getEdges();
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }

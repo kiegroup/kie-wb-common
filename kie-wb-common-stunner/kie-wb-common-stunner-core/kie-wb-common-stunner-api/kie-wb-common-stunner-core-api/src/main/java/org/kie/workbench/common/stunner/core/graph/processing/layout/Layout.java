@@ -18,9 +18,18 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
 import java.util.List;
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 
-public interface ReorderedGraph {
+/**
+ * A layout for the vertices in a graph.
+ */
+public interface Layout {
 
-    List<OrientedEdge> getEdges();
+    List<VertexPosition> getNodePositions();
+
+    /**
+     * Apply the layout to a graph.
+     * @param graph The graph.
+     */
+    void applyTo(Graph graph);
 }

@@ -16,11 +16,29 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
-import java.util.List;
+public final class VertexPositionImpl implements VertexPosition {
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
+    private final String id;
+    private final Point upperLeft;
+    private final Point bottomRight;
 
-public interface ReorderedGraph {
+    public VertexPositionImpl(final String id,
+                              final Point upperLeft,
+                              final Point bottomRight) {
+        this.id = id;
+        this.upperLeft = upperLeft;
+        this.bottomRight = bottomRight;
+    }
 
-    List<OrientedEdge> getEdges();
+    public String getId() {
+        return this.id;
+    }
+
+    public Point getUpperLeft() {
+        return this.upperLeft;
+    }
+
+    public Point getBottomRight() {
+        return this.bottomRight;
+    }
 }

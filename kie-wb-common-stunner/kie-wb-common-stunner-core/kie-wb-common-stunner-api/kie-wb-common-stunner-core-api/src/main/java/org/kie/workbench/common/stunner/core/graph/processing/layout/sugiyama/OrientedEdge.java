@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama;
 
-import java.util.List;
+public interface OrientedEdge {
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
+    boolean isReversed();
 
-public interface ReorderedGraph {
+    void reverse();
 
-    List<OrientedEdge> getEdges();
+    String getTo();
+
+    String getFrom();
+
+    boolean isLinkedWith(String id);
 }

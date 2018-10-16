@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04;
 
-import java.util.List;
-
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
-
-public interface ReorderedGraph {
-
-    List<OrientedEdge> getEdges();
+/**
+ * How the layers should be draw.
+ */
+public enum LayerArrangement {
+    TopDown,
+    BottomUp
 }

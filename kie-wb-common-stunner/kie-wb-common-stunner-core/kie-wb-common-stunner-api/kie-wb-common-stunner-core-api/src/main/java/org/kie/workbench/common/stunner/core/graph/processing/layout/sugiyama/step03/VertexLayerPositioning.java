@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03;
 
 import java.util.List;
 
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
 
-public interface ReorderedGraph {
+public interface VertexLayerPositioning {
 
-    List<OrientedEdge> getEdges();
+    void positionVertices(final List<GraphLayer> layers,
+                          final List<OrientedEdge> edges,
+                          final int currentIteration);
 }

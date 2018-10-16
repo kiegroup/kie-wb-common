@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
-import java.util.List;
+public interface VertexPosition {
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
+    String getId();
 
-public interface ReorderedGraph {
+    Point getUpperLeft();
 
-    List<OrientedEdge> getEdges();
+    Point getBottomRight();
 }

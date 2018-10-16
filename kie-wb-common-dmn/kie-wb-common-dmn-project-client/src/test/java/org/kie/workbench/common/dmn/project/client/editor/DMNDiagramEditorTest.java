@@ -24,14 +24,13 @@ import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpression
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphLayout;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.AutomaticLayoutService;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
@@ -85,10 +84,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private DMNProjectEditorMenuSessionItems dmnProjectMenuSessionItems;
 
     @Mock
-    private DMNGraphLayout dmnGraphLayout;
-
-    @Mock
-    private AutomaticLayoutService layoutService;
+    private LayoutService layoutService;
 
     private DMNDiagramEditor diagramEditor;
 
@@ -131,8 +127,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  sessionManager,
                                                  sessionCommandManager,
                                                  decisionNavigatorDock,
-                                                 layoutService,
-                                                 dmnGraphLayout) {
+                                                 layoutService) {
             {
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = DMNDiagramEditorTest.this.workbenchContext;

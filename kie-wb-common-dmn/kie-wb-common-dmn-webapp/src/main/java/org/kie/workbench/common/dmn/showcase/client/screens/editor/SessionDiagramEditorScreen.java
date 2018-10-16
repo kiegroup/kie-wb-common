@@ -33,7 +33,6 @@ import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphLayout;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNEditorToolbar;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
@@ -62,7 +61,8 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.AutomaticLayoutService;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
@@ -106,8 +106,7 @@ public class SessionDiagramEditorScreen {
     private final ScreenPanelView screenPanelView;
     private final ScreenErrorView screenErrorView;
     private final DecisionNavigatorDock decisionNavigatorDock;
-    private final AutomaticLayoutService automaticLayoutService;
-    private final DMNGraphLayout graphLayout;
+    private final LayoutService automaticLayoutService;
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
     private Menus menu = null;
@@ -126,8 +125,7 @@ public class SessionDiagramEditorScreen {
                                       final ScreenPanelView screenPanelView,
                                       final ScreenErrorView screenErrorView,
                                       final DecisionNavigatorDock decisionNavigatorDock,
-                                      final AutomaticLayoutService automaticLayoutService,
-                                      final DMNGraphLayout graphLayout) {
+                                      final LayoutService automaticLayoutService) {
         this.definitionManager = definitionManager;
         this.clientFactoryServices = clientFactoryServices;
         this.diagramService = diagramService;
@@ -142,7 +140,6 @@ public class SessionDiagramEditorScreen {
         this.screenErrorView = screenErrorView;
         this.decisionNavigatorDock = decisionNavigatorDock;
         this.automaticLayoutService = automaticLayoutService;
-        this.graphLayout = graphLayout;
     }
 
     @PostConstruct
@@ -304,9 +301,9 @@ public class SessionDiagramEditorScreen {
         screenPanelView.setWidget(presenter.getView());
 
         final Graph graph = diagram.getGraph();
-        if (!automaticLayoutService.hasLayoutInformation(graph)) {
-            final AutomaticLayoutService.Layout layout = automaticLayoutService.createLayout(graph);
-            this.graphLayout.applyLayout(layout, graph);
+        if (graph != null && !automaticLayoutService.hasLayoutInformation(graph)) {
+            final Layout layout = automaticLayoutService.createLayout(graph);
+            layout.applyTo(graph);
         }
 
         presenter
