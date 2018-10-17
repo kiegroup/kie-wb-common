@@ -151,26 +151,26 @@ public final class DefaultVertexPositioning implements VertexPositioning {
                                        final Set<Vertex> vertices) {
 
         final Optional<Vertex> toVirtual = vertices.stream()
-                .filter(v -> v.isVirtual() && Objects.equals(edge.getTo(), v.getId())).findFirst();
+                .filter(v -> v.isVirtual() && Objects.equals(edge.getToVertexId(), v.getId())).findFirst();
 
         OrientedEdge newEdge = null;
         if (toVirtual.isPresent()) {
-            final String virtualVertex = edge.getTo();
+            final String virtualVertex = edge.getToVertexId();
             // gets other side
             final Optional<OrientedEdge> otherSide = edges.stream()
-                    .filter(e -> Objects.equals(e.getFrom(), virtualVertex))
+                    .filter(e -> Objects.equals(e.getFromVertexId(), virtualVertex))
                     .findFirst();
 
             if (otherSide.isPresent()) {
                 // this_vertex->virtual
-                final String realToVertex = otherSide.get().getTo();
-                newEdge = new OrientedEdgeImpl(edge.getFrom(), realToVertex);
+                final String realToVertex = otherSide.get().getToVertexId();
+                newEdge = new OrientedEdgeImpl(edge.getFromVertexId(), realToVertex);
                 edges.remove(edge);
                 vertices.remove(toVirtual.get());
 
                 final Optional<OrientedEdge> oldEdge = edges.stream()
-                        .filter(e -> Objects.equals(e.getFrom(), toVirtual.get().getId())
-                                && Objects.equals(e.getTo(), realToVertex))
+                        .filter(e -> Objects.equals(e.getFromVertexId(), toVirtual.get().getId())
+                                && Objects.equals(e.getToVertexId(), realToVertex))
                         .findFirst();
 
                 oldEdge.ifPresent(edges::remove);
@@ -178,29 +178,29 @@ public final class DefaultVertexPositioning implements VertexPositioning {
         }
 
         final Optional<Vertex> fromVirtual = vertices.stream()
-                .filter(v -> v.isVirtual() && Objects.equals(edge.getFrom(), v.getId())).findFirst();
+                .filter(v -> v.isVirtual() && Objects.equals(edge.getFromVertexId(), v.getId())).findFirst();
 
         if (fromVirtual.isPresent()) {
             // virtual->this_vertex
-            final String virtualVertex = edge.getFrom();
+            final String virtualVertex = edge.getFromVertexId();
 
             final Optional<OrientedEdge> otherSide = edges.stream()
-                    .filter(e -> (Objects.equals(e.getTo(), virtualVertex)))
+                    .filter(e -> (Objects.equals(e.getToVertexId(), virtualVertex)))
                     .findFirst();
 
             if (otherSide.isPresent()) {
-                final String realFromVertex = otherSide.get().getFrom();
+                final String realFromVertex = otherSide.get().getFromVertexId();
                 if (newEdge == null) {
-                    newEdge = new OrientedEdgeImpl(realFromVertex, edge.getTo());
+                    newEdge = new OrientedEdgeImpl(realFromVertex, edge.getToVertexId());
                 } else {
-                    newEdge = new OrientedEdgeImpl(realFromVertex, newEdge.getTo());
+                    newEdge = new OrientedEdgeImpl(realFromVertex, newEdge.getToVertexId());
                 }
 
                 edges.remove(edge);
                 vertices.remove(fromVirtual.get());
 
                 final Optional<OrientedEdge> oldEdge = edges.stream()
-                        .filter(e -> Objects.equals(e.getTo(), fromVirtual.get().getId()))
+                        .filter(e -> Objects.equals(e.getToVertexId(), fromVirtual.get().getId()))
                         .findFirst();
 
                 oldEdge.ifPresent(edges::remove);

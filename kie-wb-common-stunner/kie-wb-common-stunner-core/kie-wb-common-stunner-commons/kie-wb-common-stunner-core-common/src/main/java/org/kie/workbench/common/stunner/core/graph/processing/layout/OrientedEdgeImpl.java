@@ -39,11 +39,13 @@ public class OrientedEdgeImpl implements OrientedEdge {
         this.isReversed = isReversed;
     }
 
-    public String getFrom() {
+    @Override
+    public String getFromVertexId() {
         return this.from;
     }
 
-    public String getTo() {
+    @Override
+    public String getToVertexId() {
         return this.to;
     }
 
@@ -52,14 +54,17 @@ public class OrientedEdgeImpl implements OrientedEdge {
      * @param vertexId The id of the vertex.
      * @return True if it is connect, false if it is not.
      */
-    public boolean isLinkedWith(final String vertexId) {
-        return this.getFrom().equals(vertexId) || this.getTo().equals(vertexId);
+    @Override
+    public boolean isLinkedWithVertexId(final String vertexId) {
+        return this.getFromVertexId().equals(vertexId) || this.getToVertexId().equals(vertexId);
     }
 
+    @Override
     public boolean isReversed() {
         return isReversed;
     }
 
+    @Override
     public void reverse() {
         final String oldTo = this.to;
         this.to = this.from;
@@ -71,8 +76,8 @@ public class OrientedEdgeImpl implements OrientedEdge {
     public boolean equals(final Object obj) {
         if (obj instanceof OrientedEdgeImpl) {
             final OrientedEdgeImpl that = (OrientedEdgeImpl) obj;
-            return Objects.equals(getTo(), that.getTo())
-                    && Objects.equals(getFrom(), that.getFrom());
+            return Objects.equals(getToVertexId(), that.getToVertexId())
+                    && Objects.equals(getFromVertexId(), that.getFromVertexId());
         }
         return false;
     }

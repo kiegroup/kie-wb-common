@@ -62,6 +62,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
@@ -107,6 +108,7 @@ public class SessionDiagramEditorScreen {
     private final ScreenErrorView screenErrorView;
     private final DecisionNavigatorDock decisionNavigatorDock;
     private final LayoutService automaticLayoutService;
+    private final LayoutExecutor layoutExecutor;
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
     private Menus menu = null;
@@ -125,7 +127,8 @@ public class SessionDiagramEditorScreen {
                                       final ScreenPanelView screenPanelView,
                                       final ScreenErrorView screenErrorView,
                                       final DecisionNavigatorDock decisionNavigatorDock,
-                                      final LayoutService automaticLayoutService) {
+                                      final LayoutService automaticLayoutService,
+                                      final LayoutExecutor layoutExecutor) {
         this.definitionManager = definitionManager;
         this.clientFactoryServices = clientFactoryServices;
         this.diagramService = diagramService;
@@ -140,6 +143,7 @@ public class SessionDiagramEditorScreen {
         this.screenErrorView = screenErrorView;
         this.decisionNavigatorDock = decisionNavigatorDock;
         this.automaticLayoutService = automaticLayoutService;
+        this.layoutExecutor = layoutExecutor;
     }
 
     @PostConstruct
@@ -303,7 +307,7 @@ public class SessionDiagramEditorScreen {
         final Graph graph = diagram.getGraph();
         if (graph != null && !automaticLayoutService.hasLayoutInformation(graph)) {
             final Layout layout = automaticLayoutService.createLayout(graph);
-            layout.applyTo(graph);
+            layoutExecutor.applyLayout(layout, graph);
         }
 
         presenter

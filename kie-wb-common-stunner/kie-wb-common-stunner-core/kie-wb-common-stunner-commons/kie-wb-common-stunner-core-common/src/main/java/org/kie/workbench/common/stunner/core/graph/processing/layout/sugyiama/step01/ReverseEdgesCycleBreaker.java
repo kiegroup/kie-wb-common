@@ -70,14 +70,14 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
             if (!visit(nextVertex)) {
                 final OrientedEdge toReverse = this.graph.getEdges()
                         .stream()
-                        .filter(edge -> Objects.equals(edge.getFrom(), vertex)
-                                && Objects.equals(edge.getTo(), nextVertex))
+                        .filter(edge -> Objects.equals(edge.getFromVertexId(), vertex)
+                                && Objects.equals(edge.getToVertexId(), nextVertex))
                         .findFirst()
                         .orElse(null);
 
                 if (toReverse != null) {
                     this.graph.getEdges().remove(toReverse);
-                    final OrientedEdge reversed = new OrientedEdgeImpl(toReverse.getTo(), toReverse.getFrom());
+                    final OrientedEdge reversed = new OrientedEdgeImpl(toReverse.getToVertexId(), toReverse.getFromVertexId());
                     this.graph.getEdges().add(reversed);
                 }
             }
@@ -90,8 +90,8 @@ public final class ReverseEdgesCycleBreaker implements CycleBreaker {
     private String[] getVerticesFrom(final String vertex) {
         final HashSet<String> verticesFrom = new HashSet<>();
         for (final OrientedEdge edge : this.graph.getEdges()) {
-            if (Objects.equals(edge.getFrom(), vertex)) {
-                verticesFrom.add(edge.getTo());
+            if (Objects.equals(edge.getFromVertexId(), vertex)) {
+                verticesFrom.add(edge.getToVertexId());
             }
         }
         return verticesFrom.toArray(new String[0]);

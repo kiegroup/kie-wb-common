@@ -27,10 +27,9 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.AbstractLayoutService;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutImpl;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.Point;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.VertexPosition;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.VertexPositionImpl;
@@ -54,7 +53,7 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.st
  * with a better node disposition and less edges crossing.
  */
 @Default
-public final class SugiyamaLayoutService extends LayoutService {
+public final class SugiyamaLayoutService extends AbstractLayoutService {
 
     private final CycleBreaker cycleBreaker;
     private final VertexLayerer vertexLayerer;
@@ -131,7 +130,7 @@ public final class SugiyamaLayoutService extends LayoutService {
     private Layout buildLayout(final HashMap<String, Node> indexByUuid,
                                final List<GraphLayer> layers) {
 
-        final Layout layout = new LayoutImpl();
+        final Layout layout = new Layout();
 
         for (int i = layers.size() - 1; i >= 0; i--) {
             final GraphLayer layer = layers.get(i);
@@ -158,8 +157,8 @@ public final class SugiyamaLayoutService extends LayoutService {
                 }
 
                 final VertexPosition position = new VertexPositionImpl(v.getId(),
-                                                                       new Point(x, y),
-                                                                       new Point(x2, y2));
+                                                                       new Point2D(x, y),
+                                                                       new Point2D(x2, y2));
 
                 layout.getNodePositions().add(position);
             }

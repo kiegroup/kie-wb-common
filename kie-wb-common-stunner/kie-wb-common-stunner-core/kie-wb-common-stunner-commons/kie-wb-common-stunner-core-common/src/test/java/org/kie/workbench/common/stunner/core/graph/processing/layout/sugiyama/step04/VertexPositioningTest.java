@@ -67,8 +67,8 @@ public class VertexPositioningTest {
         assertEquals(1, edges.size());
 
         final OrientedEdge newEdge = edges.get(0);
-        assertTrue(newEdge.isLinkedWith("01"));
-        assertTrue(newEdge.isLinkedWith("02"));
+        assertTrue(newEdge.isLinkedWithVertexId("01"));
+        assertTrue(newEdge.isLinkedWithVertexId("02"));
     }
 
     @Test
@@ -100,8 +100,8 @@ public class VertexPositioningTest {
         assertEquals(1, edges.size());
 
         final OrientedEdge newEdge = edges.get(0);
-        assertTrue(newEdge.isLinkedWith("01"));
-        assertTrue(newEdge.isLinkedWith("02"));
+        assertTrue(newEdge.isLinkedWithVertexId("01"));
+        assertTrue(newEdge.isLinkedWithVertexId("02"));
     }
 
     @Test
@@ -142,10 +142,10 @@ public class VertexPositioningTest {
         assertFalse(inputVertex.contains(v3));
         assertFalse(edges.contains(betweenVirtualVertices));
         assertEquals(2, edges.size());
-        assertEquals(edges.get(0).getFrom(), "C1");
-        assertEquals(edges.get(0).getTo(), "V1");
-        assertEquals(edges.get(1).getFrom(), "V1");
-        assertEquals(edges.get(1).getTo(), "C2");
+        assertEquals(edges.get(0).getFromVertexId(), "C1");
+        assertEquals(edges.get(0).getToVertexId(), "V1");
+        assertEquals(edges.get(1).getFromVertexId(), "V1");
+        assertEquals(edges.get(1).getToVertexId(), "C2");
 
         // Input: C1---->V1---->V2---->V3---->C2
         // Expected: C1---->V1---->C2

@@ -16,29 +16,34 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
+
 public final class VertexPositionImpl implements VertexPosition {
 
     private final String id;
-    private final Point upperLeft;
-    private final Point bottomRight;
+    private final Point2D upperLeft;
+    private final Point2D bottomRight;
 
     public VertexPositionImpl(final String id,
-                              final Point upperLeft,
-                              final Point bottomRight) {
+                              final Point2D upperLeft,
+                              final Point2D bottomRight) {
         this.id = id;
         this.upperLeft = upperLeft;
         this.bottomRight = bottomRight;
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
 
-    public Point getUpperLeft() {
+    @Override
+    public Point2D getUpperLeft() {
         return this.upperLeft;
     }
 
-    public Point getBottomRight() {
+    @Override
+    public Point2D getBottomRight() {
         return this.bottomRight;
     }
 }

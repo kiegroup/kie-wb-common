@@ -40,18 +40,22 @@ public final class GraphLayerImpl implements GraphLayer {
         this.vertices = new ArrayList<>();
     }
 
+    @Override
     public void addVertex(final Vertex vertex) {
         this.vertices.add(vertex);
     }
 
+    @Override
     public List<Vertex> getVertices() {
         return this.vertices;
     }
 
+    @Override
     public void setLevel(final int level) {
         this.level = level;
     }
 
+    @Override
     public int getLevel() {
         return level;
     }
@@ -60,6 +64,7 @@ public final class GraphLayerImpl implements GraphLayer {
         this.vertices.add(new Vertex(vertexId));
     }
 
+    @Override
     public GraphLayer clone() {
         final GraphLayerImpl clone = new GraphLayerImpl(this.level);
         final List<Vertex> cloneVertices = clone.getVertices();

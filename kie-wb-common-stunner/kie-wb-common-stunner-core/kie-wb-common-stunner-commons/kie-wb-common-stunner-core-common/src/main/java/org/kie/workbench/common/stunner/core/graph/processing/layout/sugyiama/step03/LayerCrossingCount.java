@@ -102,14 +102,14 @@ public class LayerCrossingCount {
 
         return north.getVertices().stream().flatMap(v -> {
             List<OrientedEdge> connectedEdges = edges.stream()
-                    .filter(e -> (e.getTo().equals(v.getId()) || e.getFrom().equals(v.getId())))
+                    .filter(e -> (e.getToVertexId().equals(v.getId()) || e.getFromVertexId().equals(v.getId())))
                     .collect(Collectors.toList());
 
             return connectedEdges.stream().map(e -> {
-                if (southPos.contains(e.getTo())) {
-                    return southPos.indexOf(e.getTo());
+                if (southPos.contains(e.getToVertexId())) {
+                    return southPos.indexOf(e.getToVertexId());
                 }
-                return southPos.indexOf(e.getFrom());
+                return southPos.indexOf(e.getFromVertexId());
             }).sorted();
         }).toArray();
     }

@@ -16,20 +16,21 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import org.kie.workbench.common.stunner.core.graph.Graph;
 
 /**
  * A layout for the vertices in a graph.
  */
-public interface Layout {
+public class Layout {
 
-    List<VertexPosition> getNodePositions();
+    private final ArrayList<VertexPosition> nodePositions;
 
-    /**
-     * Apply the layout to a graph.
-     * @param graph The graph.
-     */
-    void applyTo(Graph graph);
+    public Layout() {
+        this.nodePositions = new ArrayList<>();
+    }
+
+    public List<VertexPosition> getNodePositions() {
+        return nodePositions;
+    }
 }

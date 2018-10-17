@@ -34,6 +34,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
@@ -84,6 +85,9 @@ public class SessionDiagramEditorScreenTest {
     @Mock
     private LayoutService layoutService;
 
+    @Mock
+    private LayoutExecutor layoutExecutor;
+
     private SessionDiagramEditorScreen editor;
 
     @Before
@@ -122,7 +126,8 @@ public class SessionDiagramEditorScreenTest {
                                                     screenPanelView,
                                                     null,
                                                     decisionNavigatorDock,
-                                                    layoutService));
+                                                    layoutService,
+                                                    layoutExecutor));
     }
 
     @Test

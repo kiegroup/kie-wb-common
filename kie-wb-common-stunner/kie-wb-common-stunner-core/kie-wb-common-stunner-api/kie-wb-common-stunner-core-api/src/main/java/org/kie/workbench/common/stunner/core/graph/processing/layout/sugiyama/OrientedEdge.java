@@ -22,9 +22,9 @@ public interface OrientedEdge {
 
     void reverse();
 
-    String getTo();
+    String getToVertexId();
 
-    String getFrom();
+    String getFromVertexId();
 
-    boolean isLinkedWith(String id);
+    boolean isLinkedWithVertexId(String vertexId);
 }

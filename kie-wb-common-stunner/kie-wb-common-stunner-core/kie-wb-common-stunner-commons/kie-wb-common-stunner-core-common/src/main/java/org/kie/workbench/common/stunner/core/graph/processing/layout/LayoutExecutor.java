@@ -16,30 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 
-public final class LayoutImpl implements Layout {
+public class LayoutExecutor {
 
-    private final ArrayList<VertexPosition> nodePositions;
-
-    public LayoutImpl() {
-        this.nodePositions = new ArrayList<>();
-    }
-
-    public List<VertexPosition> getNodePositions() {
-        return nodePositions;
-    }
-
-    @Override
-    public void applyTo(final Graph graph) {
-        if (getNodePositions().size() == 0) {
+    public void applyLayout(final Layout layout,
+                            final Graph graph) {
+        if (layout.getNodePositions().size() == 0) {
             return;
         }
 
@@ -52,7 +40,7 @@ public final class LayoutImpl implements Layout {
             }
         }
 
-        for (final VertexPosition position : getNodePositions()) {
+        for (final VertexPosition position : layout.getNodePositions()) {
 
             final Node indexed = indexByUuid.get(position.getId());
             if (indexed.getContent() instanceof HasBounds) {

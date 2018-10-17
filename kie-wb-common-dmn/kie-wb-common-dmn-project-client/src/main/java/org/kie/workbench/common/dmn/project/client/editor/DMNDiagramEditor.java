@@ -46,6 +46,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
@@ -88,6 +89,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final DecisionNavigatorDock decisionNavigatorDock;
     private final LayoutService layoutService;
+    private final LayoutExecutor layoutExecutor;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -111,7 +113,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final DecisionNavigatorDock decisionNavigatorDock,
-                            final LayoutService layoutService) {
+                            final LayoutService layoutService,
+                            final LayoutExecutor layoutExecutor) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -134,6 +137,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.decisionNavigatorDock = decisionNavigatorDock;
         this.layoutService = layoutService;
+        this.layoutExecutor = layoutExecutor;
     }
 
     @OnStartup
@@ -148,7 +152,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         final Graph graph = diagram.getGraph();
         if (!layoutService.hasLayoutInformation(graph)) {
             final Layout layout = layoutService.createLayout(graph);
-            layout.applyTo(graph);
+            layoutExecutor.applyLayout(layout, graph);
         }
         super.open(diagram);
     }

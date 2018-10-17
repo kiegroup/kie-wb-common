@@ -67,12 +67,12 @@ public final class LayeredGraph implements ReorderedGraph {
             this.edges.add(edge);
         }
 
-        if (!this.vertices.contains(edge.getFrom())) {
-            this.vertices.add(edge.getFrom());
+        if (!this.vertices.contains(edge.getFromVertexId())) {
+            this.vertices.add(edge.getFromVertexId());
         }
 
-        if (!this.vertices.contains(edge.getTo())) {
-            this.vertices.add(edge.getTo());
+        if (!this.vertices.contains(edge.getToVertexId())) {
+            this.vertices.add(edge.getToVertexId());
         }
     }
 
@@ -84,6 +84,7 @@ public final class LayeredGraph implements ReorderedGraph {
         return this.vertices;
     }
 
+    @Override
     public List<OrientedEdge> getEdges() {
         return this.edges;
     }
@@ -120,8 +121,8 @@ public final class LayeredGraph implements ReorderedGraph {
     public String[] getVerticesFrom(final String vertex) {
         final HashSet<String> verticesFrom = new HashSet<>();
         for (final OrientedEdge edge : this.edges) {
-            if (Objects.equals(edge.getFrom(), vertex)) {
-                verticesFrom.add(edge.getTo());
+            if (Objects.equals(edge.getFromVertexId(), vertex)) {
+                verticesFrom.add(edge.getToVertexId());
             }
         }
         return verticesFrom.toArray(new String[0]);

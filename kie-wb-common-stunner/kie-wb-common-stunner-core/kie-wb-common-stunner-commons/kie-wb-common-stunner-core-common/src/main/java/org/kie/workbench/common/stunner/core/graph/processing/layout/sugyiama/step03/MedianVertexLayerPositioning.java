@@ -41,6 +41,7 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
      * @param edges The existing edges.
      * @param currentIteration The current iteration of the execution. If is even goes up-down in layers, otherwise down-up.
      */
+    @Override
     public void positionVertices(final List<GraphLayer> layers,
                                  final List<OrientedEdge> edges,
                                  final int currentIteration) {
@@ -87,7 +88,7 @@ public class MedianVertexLayerPositioning implements VertexLayerPositioning {
             final Vertex vertexInLayer = vertices.get(i);
 
             final boolean hasConnection = edges.stream()
-                    .anyMatch(e -> e.isLinkedWith(vertexInLayer.getId()) && e.isLinkedWith(vertex));
+                    .anyMatch(e -> e.isLinkedWithVertexId(vertexInLayer.getId()) && e.isLinkedWithVertexId(vertex));
 
             if (hasConnection) {
                 connectedVerticesIndex.add(i);

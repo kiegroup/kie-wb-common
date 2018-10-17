@@ -126,21 +126,21 @@ public final class DefaultVertexOrdering implements VertexOrdering {
             for (final Vertex vertex : currentLayer.getVertices()) {
 
                 final List<OrientedEdge> outgoing = edges.stream()
-                        .filter(e -> Objects.equals(e.getFrom(), vertex.getId()))
-                        .filter(e -> Math.abs(getLayerNumber(e.getTo(), virtualized) - getLayerNumber(vertex.getId(), virtualized)) > 1)
+                        .filter(e -> Objects.equals(e.getFromVertexId(), vertex.getId()))
+                        .filter(e -> Math.abs(getLayerNumber(e.getToVertexId(), virtualized) - getLayerNumber(vertex.getId(), virtualized)) > 1)
                         .collect(toList());
 
                 final List<OrientedEdge> incoming = edges.stream()
-                        .filter(e -> Objects.equals(e.getTo(), vertex.getId()))
-                        .filter(e -> Math.abs(getLayerNumber(e.getFrom(), virtualized) - getLayerNumber(vertex.getId(), virtualized)) > 1)
+                        .filter(e -> Objects.equals(e.getToVertexId(), vertex.getId()))
+                        .filter(e -> Math.abs(getLayerNumber(e.getFromVertexId(), virtualized) - getLayerNumber(vertex.getId(), virtualized)) > 1)
                         .collect(toList());
 
                 for (final OrientedEdge edge : outgoing) {
                     final Vertex virtualVertex = new Vertex("V" + virtualIndex++, true);
                     nextLayer.getVertices().add(virtualVertex);
                     edges.remove(edge);
-                    final OrientedEdge v1 = new OrientedEdgeImpl(edge.getFrom(), virtualVertex.getId());
-                    final OrientedEdge v2 = new OrientedEdgeImpl(virtualVertex.getId(), edge.getTo());
+                    final OrientedEdge v1 = new OrientedEdgeImpl(edge.getFromVertexId(), virtualVertex.getId());
+                    final OrientedEdge v2 = new OrientedEdgeImpl(virtualVertex.getId(), edge.getToVertexId());
                     edges.add(v1);
                     edges.add(v2);
                 }
@@ -149,8 +149,8 @@ public final class DefaultVertexOrdering implements VertexOrdering {
                     final Vertex virtualVertex = new Vertex("V" + virtualIndex++, true);
                     nextLayer.getVertices().add(virtualVertex);
                     edges.remove(edge);
-                    final OrientedEdge v1 = new OrientedEdgeImpl(virtualVertex.getId(), edge.getTo());
-                    final OrientedEdge v2 = new OrientedEdgeImpl(edge.getFrom(), virtualVertex.getId());
+                    final OrientedEdge v1 = new OrientedEdgeImpl(virtualVertex.getId(), edge.getToVertexId());
+                    final OrientedEdge v2 = new OrientedEdgeImpl(edge.getFromVertexId(), virtualVertex.getId());
                     edges.add(v1);
                     edges.add(v2);
                 }

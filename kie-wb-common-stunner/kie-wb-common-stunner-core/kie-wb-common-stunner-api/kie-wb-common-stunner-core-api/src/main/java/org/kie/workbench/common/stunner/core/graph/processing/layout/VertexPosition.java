@@ -16,11 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
+
 public interface VertexPosition {
 
     String getId();
 
-    Point getUpperLeft();
+    Point2D getUpperLeft();
 
-    Point getBottomRight();
+    Point2D getBottomRight();
 }
