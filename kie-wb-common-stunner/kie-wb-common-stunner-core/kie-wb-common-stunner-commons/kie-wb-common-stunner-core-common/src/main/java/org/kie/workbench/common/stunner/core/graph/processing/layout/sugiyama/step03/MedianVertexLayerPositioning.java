@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,6 @@ import javax.enterprise.inject.Default;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03.VertexLayerPositioning;
 
 /**
  * Positions a vertex inside a layer using the median calc.

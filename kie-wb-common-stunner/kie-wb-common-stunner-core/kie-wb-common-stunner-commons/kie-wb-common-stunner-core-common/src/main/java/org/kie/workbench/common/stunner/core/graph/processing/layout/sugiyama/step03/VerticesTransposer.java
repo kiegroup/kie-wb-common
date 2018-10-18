@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03;
 
 import java.util.Collections;
 import java.util.List;

@@ -18,15 +18,15 @@ package org.kie.workbench.common.stunner.core.graph.processing.layout;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step01.ReverseEdgesCycleBreaker;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step02.LongestPathVertexLayerer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03.DefaultVertexOrdering;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03.LayerCrossingCount;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03.MedianVertexLayerPositioning;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03.VerticesTransposer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.DefaultVertexPositioning;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.LayerArrangement;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.LayeredGraph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step01.ReverseEdgesCycleBreaker;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step02.LongestPathVertexLayerer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.DefaultVertexOrdering;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.LayerCrossingCount;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.MedianVertexLayerPositioning;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.VerticesTransposer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step04.DefaultVertexPositioning;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.OrientedEdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step04.DefaultVertexPositioning;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

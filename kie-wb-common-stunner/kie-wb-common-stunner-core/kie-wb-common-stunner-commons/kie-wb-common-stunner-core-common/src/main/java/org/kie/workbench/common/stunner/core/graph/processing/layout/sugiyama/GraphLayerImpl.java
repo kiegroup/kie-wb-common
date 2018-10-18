@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
 
 /**
  * A layer in a layered graph.

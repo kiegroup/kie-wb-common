@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step01;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step01;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -23,9 +23,8 @@ import javax.enterprise.inject.Default;
 
 import org.kie.workbench.common.stunner.core.graph.processing.layout.OrientedEdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step01.CycleBreaker;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.LayeredGraph;
 
 /**
  * Break cycles in a graph reversing some edges.

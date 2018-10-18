@@ -23,8 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.LayeredGraph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step02.LongestPathVertexLayerer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;

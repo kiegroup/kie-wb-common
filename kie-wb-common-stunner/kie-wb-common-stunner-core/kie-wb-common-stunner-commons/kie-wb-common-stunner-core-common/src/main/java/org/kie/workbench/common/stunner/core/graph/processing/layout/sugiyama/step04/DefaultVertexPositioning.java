@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step04;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +29,8 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.OrientedEdg
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.LayerArrangement;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.VertexPositioning;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.LayeredGraph;
 
 /**
  * Calculate position for each vertex in a graph using the simplest approach.

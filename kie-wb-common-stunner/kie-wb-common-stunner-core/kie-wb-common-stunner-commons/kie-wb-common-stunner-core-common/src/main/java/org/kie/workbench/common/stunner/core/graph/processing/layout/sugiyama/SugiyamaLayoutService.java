@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.VertexPosition;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.VertexPositionImpl;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step01.CycleBreaker;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step02.VertexLayerer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step03.VertexOrdering;

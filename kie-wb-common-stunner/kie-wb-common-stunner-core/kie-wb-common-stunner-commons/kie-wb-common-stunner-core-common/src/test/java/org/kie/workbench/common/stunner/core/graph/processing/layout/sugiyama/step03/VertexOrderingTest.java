@@ -21,18 +21,12 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.kie.workbench.common.stunner.core.graph.processing.layout.OrientedEdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
-
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayerImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.GraphLayerImpl;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.LayeredGraph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.DefaultVertexOrdering;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.LayerCrossingCount;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.MedianVertexLayerPositioning;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step03.VerticesTransposer;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertArrayEquals;

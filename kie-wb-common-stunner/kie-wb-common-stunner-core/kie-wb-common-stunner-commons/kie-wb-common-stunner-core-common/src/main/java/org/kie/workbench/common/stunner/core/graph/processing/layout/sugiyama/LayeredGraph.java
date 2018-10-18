@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,8 +24,6 @@ import java.util.Objects;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.OrientedEdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
 
 /**
  * A graph that can be reordered in order to reduce edge crossing.

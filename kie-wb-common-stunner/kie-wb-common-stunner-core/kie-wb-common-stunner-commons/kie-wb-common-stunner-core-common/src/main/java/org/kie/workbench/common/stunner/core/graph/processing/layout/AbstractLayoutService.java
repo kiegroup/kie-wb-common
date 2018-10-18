@@ -55,7 +55,7 @@ public abstract class AbstractLayoutService implements LayoutService {
         return false;
     }
 
-    protected int getLayoutInformationThreshold(final Graph<?, ?> graph){
+    protected int getLayoutInformationThreshold(final Graph<?, ?> graph) {
         final List<Node> list = new ArrayList<>();
         graph.nodes().iterator().forEachRemaining(list::add);
         return list.size() / 4;

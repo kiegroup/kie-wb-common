@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.step02;
+package org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step02;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,9 +26,8 @@ import javax.enterprise.inject.Default;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step02.VertexLayerer;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.GraphLayerImpl;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugyiama.LayeredGraph;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayerImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
 
 /**
  * Assign each vertex in a graph to a layer, using the longest path algorithm.
