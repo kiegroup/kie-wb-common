@@ -29,8 +29,7 @@ import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
+import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
@@ -85,10 +84,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private DMNProjectEditorMenuSessionItems dmnProjectMenuSessionItems;
 
     @Mock
-    private LayoutService layoutService;
-
-    @Mock
-    private LayoutExecutor layoutExecutor;
+    private LayoutHelper layoutHelper;
 
     private DMNDiagramEditor diagramEditor;
 
@@ -131,8 +127,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  sessionManager,
                                                  sessionCommandManager,
                                                  decisionNavigatorDock,
-                                                 layoutService,
-                                                 layoutExecutor) {
+                                                 layoutHelper) {
             {
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = DMNDiagramEditorTest.this.workbenchContext;

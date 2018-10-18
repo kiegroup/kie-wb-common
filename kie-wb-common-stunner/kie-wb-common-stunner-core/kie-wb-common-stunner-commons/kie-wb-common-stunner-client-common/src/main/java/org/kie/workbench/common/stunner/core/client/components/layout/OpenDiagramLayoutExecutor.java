@@ -14,17 +14,38 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.graph.processing.layout;
+package org.kie.workbench.common.stunner.core.client.components.layout;
 
 import java.util.HashMap;
 
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
+
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.VertexPosition;
+import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
+import org.uberfire.workbench.events.NotificationEvent;
 
-public class LayoutExecutor {
+/**
+ * Copies the layout information to a recently opened diagram without layout information.
+ */
+@Default
+public final class OpenDiagramLayoutExecutor implements LayoutExecutor {
 
+    @Inject
+    private Event<NotificationEvent> event;
+
+    @Inject
+    private ClientTranslationService translationService;
+
+    @Override
     public void applyLayout(final Layout layout,
                             final Graph graph) {
         if (layout.getNodePositions().size() == 0) {
@@ -52,5 +73,13 @@ public class LayoutExecutor {
                 ));
             }
         }
+
+        notifyUser();
+    }
+
+    private void notifyUser() {
+        String message = this.translationService.getValue(CoreTranslationMessages.DIAGRAM_AUTOMATIC_LAYOUT_PERFORMED);
+        this.event.fire(new NotificationEvent(message,
+                                              NotificationEvent.NotificationType.INFO));
     }
 }

@@ -49,6 +49,7 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
@@ -61,9 +62,6 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
@@ -107,8 +105,7 @@ public class SessionDiagramEditorScreen {
     private final ScreenPanelView screenPanelView;
     private final ScreenErrorView screenErrorView;
     private final DecisionNavigatorDock decisionNavigatorDock;
-    private final LayoutService automaticLayoutService;
-    private final LayoutExecutor layoutExecutor;
+    private final LayoutHelper layoutHelper;
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
     private Menus menu = null;
@@ -127,8 +124,7 @@ public class SessionDiagramEditorScreen {
                                       final ScreenPanelView screenPanelView,
                                       final ScreenErrorView screenErrorView,
                                       final DecisionNavigatorDock decisionNavigatorDock,
-                                      final LayoutService automaticLayoutService,
-                                      final LayoutExecutor layoutExecutor) {
+                                      final LayoutHelper layoutHelper) {
         this.definitionManager = definitionManager;
         this.clientFactoryServices = clientFactoryServices;
         this.diagramService = diagramService;
@@ -142,8 +138,7 @@ public class SessionDiagramEditorScreen {
         this.screenPanelView = screenPanelView;
         this.screenErrorView = screenErrorView;
         this.decisionNavigatorDock = decisionNavigatorDock;
-        this.automaticLayoutService = automaticLayoutService;
-        this.layoutExecutor = layoutExecutor;
+        this.layoutHelper = layoutHelper;
     }
 
     @PostConstruct
@@ -303,13 +298,7 @@ public class SessionDiagramEditorScreen {
     void open(final Diagram diagram,
               final Command callback) {
         screenPanelView.setWidget(presenter.getView());
-
-        final Graph graph = diagram.getGraph();
-        if (graph != null && !automaticLayoutService.hasLayoutInformation(graph)) {
-            final Layout layout = automaticLayoutService.createLayout(graph);
-            layoutExecutor.applyLayout(layout, graph);
-        }
-
+        layoutHelper.applyLayout(diagram.getGraph());
         presenter
                 .withToolbar(true)
                 .withPalette(true)

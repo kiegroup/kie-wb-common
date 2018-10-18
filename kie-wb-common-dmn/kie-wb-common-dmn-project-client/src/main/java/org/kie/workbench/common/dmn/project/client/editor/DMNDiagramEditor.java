@@ -39,15 +39,12 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutExecutor;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
@@ -88,8 +85,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final DecisionNavigatorDock decisionNavigatorDock;
-    private final LayoutService layoutService;
-    private final LayoutExecutor layoutExecutor;
+    private final LayoutHelper layoutHelper;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -113,8 +109,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final DecisionNavigatorDock decisionNavigatorDock,
-                            final LayoutService layoutService,
-                            final LayoutExecutor layoutExecutor) {
+                            final LayoutHelper layoutHelper) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -136,8 +131,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.sessionCommandManager = sessionCommandManager;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.decisionNavigatorDock = decisionNavigatorDock;
-        this.layoutService = layoutService;
-        this.layoutExecutor = layoutExecutor;
+        this.layoutHelper = layoutHelper;
     }
 
     @OnStartup
@@ -149,11 +143,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     @Override
     public void open(final ProjectDiagram diagram) {
-        final Graph graph = diagram.getGraph();
-        if (!layoutService.hasLayoutInformation(graph)) {
-            final Layout layout = layoutService.createLayout(graph);
-            layoutExecutor.applyLayout(layout, graph);
-        }
+        this.layoutHelper.applyLayout(diagram.getGraph());
         super.open(diagram);
     }
 
