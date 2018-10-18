@@ -22,7 +22,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
 public class DefinitionsConverter {
@@ -81,17 +80,6 @@ public class DefinitionsConverter {
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             org.kie.dmn.model.api.ItemDefinition itemDefConvered = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
             result.getItemDefinition().add(itemDefConvered);
-        }
-
-        // Need manually setup custom namespace URI if the diagram was created from the UI.
-        if (!result.getPrefixForNamespaceURI(DMNDiagram.DMNV11_DD).isPresent()) {
-            result.getNsContext().put("dmndi", DMNDiagram.DMNV11_DD);
-        }
-        if (!result.getPrefixForNamespaceURI(DMNDiagram.DMNV11_DC).isPresent()) {
-            result.getNsContext().put("dc", DMNDiagram.DMNV11_DC);
-        }
-        if (!result.getPrefixForNamespaceURI(DMNDiagram.DMNV11_DI).isPresent()) {
-            result.getNsContext().put("di", DMNDiagram.DMNV11_DI);
         }
 
         for (Import i : wb.getImport()) {

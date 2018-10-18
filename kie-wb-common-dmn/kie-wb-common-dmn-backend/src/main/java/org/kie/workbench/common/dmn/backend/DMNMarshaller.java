@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +31,14 @@ import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.xml.namespace.QName;
 
 import org.jboss.errai.marshalling.server.ServerMarshalling;
-import org.kie.dmn.backend.marshalling.v1_1.xstream.XStreamMarshaller;
+import org.kie.dmn.backend.marshalling.v1x.DMNMarshallerFactory;
+import org.kie.dmn.model.api.dmndi.Bounds;
+import org.kie.dmn.model.api.dmndi.DMNShape;
+import org.kie.dmn.model.api.dmndi.DMNStyle;
+import org.kie.dmn.model.v1_1.TDefinitions;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
@@ -50,7 +54,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.background.BgColour;
 import org.kie.workbench.common.dmn.api.property.background.BorderColour;
-import org.kie.workbench.common.dmn.api.property.background.BorderSize;
 import org.kie.workbench.common.dmn.api.property.dimensions.Height;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.Width;
@@ -61,14 +64,11 @@ import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter
 import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DefinitionsConverter;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ColorUtils;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DDExtensionsRegister;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNShape;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Bounds;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -98,7 +98,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     private BusinessKnowledgeModelConverter bkmConverter;
     private KnowledgeSourceConverter knowledgeSourceConverter;
     private TextAnnotationConverter textAnnotationConverter;
-    private org.kie.dmn.api.marshalling.v1_1.DMNMarshaller marshaller;
+    private org.kie.dmn.api.marshalling.DMNMarshaller marshaller;
 
     protected DMNMarshaller() {
         this(null,
@@ -115,7 +115,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.bkmConverter = new BusinessKnowledgeModelConverter(factoryManager);
         this.knowledgeSourceConverter = new KnowledgeSourceConverter(factoryManager);
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
-        this.marshaller = new XStreamMarshaller(Arrays.asList(new DDExtensionsRegister())); // generic marshaller will be eventually: DMNMarshallerFactory.newMarshallerWithExtensions(Arrays.asList(new DDExtensionsRegister()));
+        this.marshaller = DMNMarshallerFactory.newDefaultMarshaller();
     }
 
     @Deprecated
@@ -131,16 +131,11 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         return result;
     }
 
-    private static Optional<org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram> findDMNDiagram(org.kie.dmn.model.api.Definitions dmnXml) {
-        if (dmnXml.getExtensionElements() == null) {
+    private static Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> findDMNDiagram(org.kie.dmn.model.api.Definitions dmnXml) {
+        if (dmnXml instanceof TDefinitions) {
             return Optional.empty();
         }
-
-        List<org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram> elems = dmnXml.getExtensionElements().getAny().stream()
-                .filter(org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram.class::isInstance)
-                .map(org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram.class::cast)
-                .collect(Collectors.toList());
-
+        List<org.kie.dmn.model.api.dmndi.DMNDiagram> elems = dmnXml.getDMNDI().getDMNDiagram();
         if (elems.size() != 1) {
             return Optional.empty();
         } else {
@@ -158,7 +153,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                                                                                                                     dmn -> new SimpleEntry<>(dmn,
                                                                                                                                                              dmnToStunner(dmn))));
 
-        Optional<org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
+        Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
 
         for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {
             org.kie.dmn.model.api.DRGElement elem = kv.getKey();
@@ -400,8 +395,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 definitions.setExtensionElements(new org.kie.dmn.model.v1_2.TDMNElement.TExtensionElements());
             }
         }
-        org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram dmnDDDMNDiagram = new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram();
-        definitions.getExtensionElements().getAny().add(dmnDDDMNDiagram);
+
+        //        if (definitions.getDMNDI() == null) {
+        //            definitions.setDMNDI(new DMNDI());
+        //        }
+        org.kie.dmn.model.api.dmndi.DMNDiagram dmnDDDMNDiagram = new org.kie.dmn.model.v1_2.dmndi.DMNDiagram();
+        //        definitions.getDMNDI().getDMNDiagram().add(dmnDDDMNDiagram);
 
         for (Node<?, ?> node : g.nodes()) {
             if (node.getContent() instanceof View<?>) {
@@ -410,12 +409,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     DRGElement n = (org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement) view.getDefinition();
                     nodes.put(n.getId().getValue(),
                               stunnerToDMN(node));
-                    dmnDDDMNDiagram.getAny().add(stunnerToDDExt((View<? extends DMNElement>) view));
+                    dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((View<? extends DMNElement>) view));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(),
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node));
-                    dmnDDDMNDiagram.getAny().add(stunnerToDDExt((View<? extends DMNElement>) view));
+                    dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((View<? extends DMNElement>) view));
 
                     List<org.kie.dmn.model.api.Association> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     definitions.getArtifact().addAll(associations);
@@ -429,12 +428,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         return marshaller.marshal(definitions);
     }
 
-    private void ddExtAugmentStunner(Optional<org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram> dmnDDDiagram, Node currentNode) {
+    private void ddExtAugmentStunner(Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram, Node currentNode) {
         if (!dmnDDDiagram.isPresent()) {
             return;
         }
 
-        Stream<DMNShape> drgShapeStream = dmnDDDiagram.get().getAny().stream().filter(DMNShape.class::isInstance).map(DMNShape.class::cast);
+        Stream<DMNShape> drgShapeStream = dmnDDDiagram.get().getDMNDiagramElement().stream().filter(DMNShape.class::isInstance).map(DMNShape.class::cast);
 
         View content = (View) currentNode.getContent();
         if (content.getDefinition() instanceof Decision) {
@@ -473,54 +472,55 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             ((BoundImpl) lr).setY(yOfShape(drgShape) + heightOfShape(drgShape));
         }
 
-        if (null != drgShape.getBgColor()) {
-            bgset.setBgColour(new BgColour(ColorUtils.wbFromDMN(drgShape.getBgColor())));
-        }
-        if (null != drgShape.getBorderColor()) {
-            bgset.setBorderColour(new BorderColour(ColorUtils.wbFromDMN(drgShape.getBorderColor())));
-        }
-        if (null != drgShape.getBorderSize()) {
-            bgset.setBorderSize(new BorderSize(drgShape.getBorderSize().getValue()));
+        DMNStyle dmnStyleOfDrgShape = drgShape.getStyle() instanceof DMNStyle ? (DMNStyle) drgShape.getStyle() : null;
+        if (dmnStyleOfDrgShape != null) {
+            if (null != dmnStyleOfDrgShape.getFillColor()) {
+                bgset.setBgColour(new BgColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getFillColor())));
+            }
+            if (null != dmnStyleOfDrgShape.getStrokeColor()) {
+                bgset.setBorderColour(new BorderColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getStrokeColor())));
+            }
         }
 
-        if (null != drgShape.getFontStyle()) {
-            fontSetSetter.accept(FontSetPropertyConverter.wbFromDMN(drgShape.getFontStyle()));
+        if (drgShape.getDMNLabel() != null && drgShape.getDMNLabel().getStyle() instanceof DMNStyle) {
+            fontSetSetter.accept(FontSetPropertyConverter.wbFromDMN((DMNStyle) drgShape.getDMNLabel().getStyle()));
         }
     }
 
     private static DMNShape stunnerToDDExt(View<? extends DMNElement> v) {
-        DMNShape result = new DMNShape();
+        DMNShape result = new org.kie.dmn.model.v1_2.dmndi.DMNShape();
         result.setId("dmnshape-" + v.getDefinition().getId().getValue());
-        result.setDmnElementRef(v.getDefinition().getId().getValue());
-        Bounds bounds = new Bounds();
+        result.setDmnElementRef(new QName(v.getDefinition().getId().getValue()));
+        Bounds bounds = new org.kie.dmn.model.v1_2.dmndi.Bounds();
         result.setBounds(bounds);
         bounds.setX(xOfBound(upperLeftBound(v)));
         bounds.setY(yOfBound(upperLeftBound(v)));
+        result.setStyle(new org.kie.dmn.model.v1_2.dmndi.DMNStyle());
         if (v.getDefinition() instanceof Decision) {
             Decision d = (Decision) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setFontStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
         } else if (v.getDefinition() instanceof InputData) {
             InputData d = (InputData) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setFontStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
         } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
             BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setFontStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
         } else if (v.getDefinition() instanceof KnowledgeSource) {
             KnowledgeSource d = (KnowledgeSource) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setFontStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
         } else if (v.getDefinition() instanceof TextAnnotation) {
             TextAnnotation d = (TextAnnotation) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setFontStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
         }
 
         return result;
@@ -537,14 +537,15 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
     private static void applyBackgroundStyles(final BackgroundSet bgset,
                                               final DMNShape result) {
+        if (!(result.getStyle() instanceof DMNStyle)) {
+            return;
+        }
+        DMNStyle style = (DMNStyle) result.getStyle();
         if (null != bgset.getBgColour().getValue()) {
-            result.setBgColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+            style.setFillColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
         }
         if (null != bgset.getBorderColour().getValue()) {
-            result.setBorderColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
-        }
-        if (null != bgset.getBorderSize().getValue()) {
-            result.setBorderSize(new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.BorderSize(bgset.getBorderSize().getValue()));
+            style.setStrokeColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
         }
     }
 
