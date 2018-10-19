@@ -7,7 +7,7 @@ import {WorkspaceProjectContextChangeEvent} from "@kiegroup-ts-generated/uberfir
 import {NewSpacePopup} from "./NewSpacePopup";
 
 interface Props {
-    exposing: (self: () => SpacesScreenReactComponent) => void;
+    exposing: (self: () => SpacesScreen) => void;
     organizationalUnitService: OrganizationalUnitService,
     libraryService: LibraryService
 }
@@ -17,7 +17,7 @@ interface State {
     newSpacePopupOpen: boolean;
 }
 
-export class SpacesScreenReactComponent extends React.Component<Props, State> {
+export class SpacesScreen extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -26,7 +26,7 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
     }
 
     private goToSpace(space: OrganizationalUnitImpl) {
-        (window as any).appformerGwtBridge.sendEvent(AppFormer.marshall(new WorkspaceProjectContextChangeEvent({ou: space})));
+        AppFormer.fireEvent(new WorkspaceProjectContextChangeEvent({ou: space}));
         (window as any).goToLibrary();
     }
 
@@ -54,22 +54,17 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
     }
 
     render() {
-        if (this.state.spaces.length <= 0) {
-            return <>
-            {this.state.newSpacePopupOpen &&
-            <NewSpacePopup organizationalUnitService={this.props.organizationalUnitService}
-                           onClose={() => this.closeNewSpacePopup()}/>
-            }
-            <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()}/>
-            </>
-        }
-
         return <>
+
         {this.state.newSpacePopupOpen &&
         <NewSpacePopup organizationalUnitService={this.props.organizationalUnitService}
                        onClose={() => this.closeNewSpacePopup()}/>
         }
 
+        {this.state.spaces.length <= 0 &&
+        <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()}/>}
+
+        {this.state.spaces.length > 0 &&
         <div className={"library container-fluid"}>
             <div className={"row page-content-kie"}>
                 <div className={"toolbar-pf"}>
@@ -97,7 +92,8 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>}
+
         </>;
     }
 }
@@ -109,7 +105,7 @@ function EmptySpacesScreen(props: { onAddSpace: () => void }) {
                 <span className={"pficon pficon pficon-add-circle-o"}/>
             </div>
             <h1>
-                Nothing here
+                <AppFormer.__i18n tkey={"NothingHere"} args={[]}/>
             </h1>
             <p>
                 There are currently no Spaces available for you to view or edit. To get started, create a new Space
@@ -130,7 +126,9 @@ function Tile(props: { space: OrganizationalUnitImpl, onSelect: () => void }) {
             <div className={"card-pf-body"}>
                 <div>
                     <h2 className={"card-pf-title"}> {props.space.name} </h2>
-                    <h5> {props.space.contributors!.length} contributor(s) </h5>
+                    <h5>
+                        <AppFormer.__i18n tkey={"NumberOfContributors"} args={[props.space.contributors!.length.toString()]}/>
+                    </h5>
                 </div>
                 <div className={"right"}>
                     <span className={"card-pf-icon-circle"}>

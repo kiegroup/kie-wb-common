@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as AppFormer from "appformer-js";
 import {Popup} from "./Popup";
 import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structure-api-rpc";
 
@@ -9,15 +10,15 @@ interface Props {
 
 interface State {
     name: string;
-    errors: string[];
-    displayErrors: string[];
+    errorMessages: string[];
+    displayedErrorMessages: string[];
 }
 
 export class NewSpacePopup extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {name: "", errors: [], displayErrors: []};
+        this.state = {name: "", errorMessages: [], displayedErrorMessages: []};
     }
 
     private add() {
@@ -31,7 +32,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
         const emptyName = Promise.resolve()
             .then(() => {
                 if (!newSpace.name || newSpace.name.trim() === "") {
-                    this.setState(prevState => ({errors: [...prevState.errors, `The field "Name" should not be empty.`]}));
+                    this.setState(prevState => ({errorMessages: [...prevState.errorMessages, AppFormer.translate("EmptyFieldValidation", ["Name"])]}));
                     return Promise.reject();
                 } else {
                     return Promise.resolve();
@@ -42,7 +43,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
             .then(() => this.props.organizationalUnitService.getOrganizationalUnit({name: newSpace.name}))
             .then(space => {
                 if (space) {
-                    this.setState(prevState => ({errors: [...prevState.errors, "A Space with the same name already exists"]}));
+                    this.setState(prevState => ({errorMessages: [...prevState.errorMessages, AppFormer.translate("DuplicatedOrganizationalUnitValidation", ["Space"])]}));
                     return Promise.reject();
                 } else {
                     return Promise.resolve();
@@ -53,18 +54,18 @@ export class NewSpacePopup extends React.Component<Props, State> {
             .then(() => this.props.organizationalUnitService.isValidGroupId({proposedGroupId: newSpace.defaultGroupId}))
             .then(valid => {
                 if (!valid) {
-                    this.setState(prevState => ({errors: [...prevState.errors, "A space's name can only contain letters (A to Z), digits (0 to 9), underscores (_), dots (.) or dashes (-)"]}));
+                    this.setState(prevState => ({errorMessages: [...prevState.errorMessages, AppFormer.translate("InvalidSpaceName", [])]}));
                     return Promise.reject();
                 } else {
                     return Promise.resolve();
                 }
             });
 
-        this.setState({errors: []}, () => Promise.resolve()
+        this.setState({errorMessages: []}, () => Promise.resolve()
             .then(() => Promise.all([emptyName, duplicatedName, validGroupId]))
             .then(() => this.props.organizationalUnitService.createOrganizationalUnit0(newSpace))
             .then(i => this.props.onClose())
-            .catch(() => this.setState(prevState => ({displayErrors: prevState.errors}))));
+            .catch(() => this.setState(prevState => ({displayedErrorMessages: prevState.errorMessages}))));
     }
 
     render() {
@@ -77,10 +78,10 @@ export class NewSpacePopup extends React.Component<Props, State> {
                     <h4 className={"modal-title"}>Add Space</h4>
                 </div>
                 <div className={"modal-body"}>
-                    {this.state.displayErrors.map(err =>
+                    {this.state.displayedErrorMessages.map(errorMessage =>
                         <div className={"alert alert-danger alert-dismissable"}>
                             <span className={"pficon pficon-error-circle-o"}/>
-                            <span>{err}</span>
+                            <span>{errorMessage}</span>
                         </div>
                     )}
                     <label className={"form-control-label required"}>Name</label>

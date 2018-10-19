@@ -1,10 +1,10 @@
 import * as AppFormer from "appformer-js";
 import * as React from "react";
-import {SpacesScreenReactComponent} from "./SpacesScreen";
+import {SpacesScreen} from "./SpacesScreen";
 import {LibraryService} from "@kiegroup-ts-generated/kie-wb-common-library-api-rpc"
 import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structure-api-rpc"
 
-export class SpacesScreen extends AppFormer.Screen {
+export class SpacesScreenAppFormerComponent extends AppFormer.Screen {
 
     constructor() {
         super();
@@ -19,18 +19,19 @@ export class SpacesScreen extends AppFormer.Screen {
         this.af_componentService = {};
     }
 
-    private self: SpacesScreenReactComponent;
+    private self: SpacesScreen;
 
     af_onOpen(): void {
         this.self.refreshSpaces();
     }
 
     af_componentRoot(root?: { ss: AppFormer.Screen[]; ps: AppFormer.Perspective[] }): AppFormer.Element {
-        return <SpacesScreenReactComponent exposing={c => this.self = c()}
-                                           organizationalUnitService={new OrganizationalUnitService()}
-                                           libraryService={new LibraryService()}/>;
+        return <SpacesScreen exposing={ref => this.self = ref()}
+                             libraryService={new LibraryService()}
+                             organizationalUnitService={new OrganizationalUnitService()}/>;
+
     }
 
 }
 
-AppFormer.register({SpacesScreen});
+AppFormer.register({SpacesScreenAppFormerComponent});

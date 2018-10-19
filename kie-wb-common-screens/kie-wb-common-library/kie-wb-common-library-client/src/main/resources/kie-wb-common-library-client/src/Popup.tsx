@@ -17,6 +17,7 @@ export class Popup extends React.Component<Props, State> {
     }
 
     render() {
+        //FIXME: Place this css somewhere else. This will speed up the component creation.
         return (
             <div onClick={e => this.closeWhenClickingOverlay(e)}
                  style={{
