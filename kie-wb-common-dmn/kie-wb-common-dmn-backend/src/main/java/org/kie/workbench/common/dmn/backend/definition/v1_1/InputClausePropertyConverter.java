@@ -43,7 +43,7 @@ public class InputClausePropertyConverter {
     }
 
     public static org.kie.dmn.model.api.InputClause dmnFromWB(final InputClause wb) {
-        org.kie.dmn.model.api.InputClause result = new org.kie.dmn.model.v1_1.TInputClause();
+        org.kie.dmn.model.api.InputClause result = new org.kie.dmn.model.v1_2.TInputClause();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.setInputExpression(LiteralExpressionPropertyConverter.dmnFromWB(wb.getInputExpression()));

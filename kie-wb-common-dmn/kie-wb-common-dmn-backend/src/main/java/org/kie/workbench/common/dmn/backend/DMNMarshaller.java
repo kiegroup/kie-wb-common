@@ -38,7 +38,7 @@ import org.kie.dmn.backend.marshalling.v1x.DMNMarshallerFactory;
 import org.kie.dmn.model.api.dmndi.Bounds;
 import org.kie.dmn.model.api.dmndi.DMNShape;
 import org.kie.dmn.model.api.dmndi.DMNStyle;
-import org.kie.dmn.model.v1_1.TDefinitions;
+import org.kie.dmn.model.v1_2.dmndi.DMNDI;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
@@ -132,7 +132,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     }
 
     private static Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> findDMNDiagram(org.kie.dmn.model.api.Definitions dmnXml) {
-        if (dmnXml instanceof TDefinitions) {
+        if (!(dmnXml instanceof org.kie.dmn.model.v1_2.TDefinitions)) {
+            return Optional.empty();
+        }
+        if (dmnXml.getDMNDI() == null) {
             return Optional.empty();
         }
         List<org.kie.dmn.model.api.dmndi.DMNDiagram> elems = dmnXml.getDMNDI().getDMNDiagram();
@@ -396,11 +399,11 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             }
         }
 
-        //        if (definitions.getDMNDI() == null) {
-        //            definitions.setDMNDI(new DMNDI());
-        //        }
+        if (definitions.getDMNDI() == null) {
+            definitions.setDMNDI(new DMNDI());
+        }
         org.kie.dmn.model.api.dmndi.DMNDiagram dmnDDDMNDiagram = new org.kie.dmn.model.v1_2.dmndi.DMNDiagram();
-        //        definitions.getDMNDI().getDMNDiagram().add(dmnDDDMNDiagram);
+        definitions.getDMNDI().getDMNDiagram().add(dmnDDDMNDiagram);
 
         for (Node<?, ?> node : g.nodes()) {
             if (node.getContent() instanceof View<?>) {
@@ -455,7 +458,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     }
 
     private void internalAugment(Stream<DMNShape> drgShapeStream, Id id, Bound ul, RectangleDimensionsSet dimensionsSet, Bound lr, BackgroundSet bgset, Consumer<FontSet> fontSetSetter) {
-        Optional<DMNShape> drgShapeOpt = drgShapeStream.filter(shape -> shape.getDmnElementRef().equals(id.getValue())).findFirst();
+        Optional<DMNShape> drgShapeOpt = drgShapeStream.filter(shape -> shape.getDmnElementRef().getLocalPart().equals(id.getValue())).findFirst();
         if (!drgShapeOpt.isPresent()) {
             return;
         }

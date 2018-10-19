@@ -76,7 +76,7 @@ public class DecisionTablePropertyConverter {
     }
 
     public static org.kie.dmn.model.api.DecisionTable dmnFromWB(final DecisionTable wb) {
-        org.kie.dmn.model.api.DecisionTable result = new org.kie.dmn.model.v1_1.TDecisionTable();
+        org.kie.dmn.model.api.DecisionTable result = new org.kie.dmn.model.v1_2.TDecisionTable();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
