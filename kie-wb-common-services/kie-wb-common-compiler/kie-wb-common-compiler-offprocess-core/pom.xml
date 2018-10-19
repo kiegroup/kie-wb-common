@@ -30,6 +30,11 @@
         <artifactId>kie-wb-common-compiler-testutil</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+      <dependency>
+        <groupId>net.openhft</groupId>
+        <artifactId>chronicle-map</artifactId>
+        <version>3.16.4</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -41,21 +46,10 @@
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-compiler-offprocess-classpath</artifactId>
     </dependency>
+
     <dependency>
       <groupId>net.openhft</groupId>
-      <artifactId>chronicle-queue</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.openhft</groupId>
-      <artifactId>chronicle-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.openhft</groupId>
-      <artifactId>chronicle-bytes</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.openhft</groupId>
-      <artifactId>chronicle-wire</artifactId>
+      <artifactId>chronicle-map</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

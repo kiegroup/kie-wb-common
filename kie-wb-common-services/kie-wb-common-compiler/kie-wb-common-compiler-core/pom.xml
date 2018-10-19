@@ -80,6 +80,11 @@
         <artifactId>kie-wb-common-compiler-testutil</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+      <dependency>
+        <groupId>net.openhft</groupId>
+        <artifactId>chronicle-map</artifactId>
+        <version>${version.net.openhft.chronicle-map}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -543,6 +548,11 @@
           <artifactId>sisu-inject-plexus</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>net.openhft</groupId>
+      <artifactId>chronicle-map</artifactId>
     </dependency>
 
     <!-- Test-->

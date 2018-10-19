@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess.service.impl;
 
+import java.io.File;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,30 +24,36 @@ import java.util.concurrent.Executors;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.offprocess.CompilerIPCCoordinator;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.CompilerIPCCoordinatorImpl;
-import org.kie.workbench.common.services.backend.compiler.offprocess.impl.QueueProvider;
+import org.kie.workbench.common.services.backend.compiler.offprocess.impl.MapProvider;
 import org.kie.workbench.common.services.backend.compiler.offprocess.service.CompilerOffprocessService;
 
 public class CompilerOffprocessServiceImpl implements CompilerOffprocessService {
 
+    private static final String defaultMapName = "offprocess-map";
     private ExecutorService executor;
     private CompilerIPCCoordinator compilerCoordinator;
-    private static final String defaultQueueName = "offprocess-queue";
 
-    public CompilerOffprocessServiceImpl(){
-        this(Executors.newCachedThreadPool(), defaultQueueName);
+    /*public CompilerOffprocessServiceImpl(){
+        this(Executors.newCachedThreadPool(), defaultMapName);
+    }*/
+
+    public CompilerOffprocessServiceImpl(ExecutorService executor,
+                                         File mapFile,
+                                         long entries) {
+        this(executor,
+             new MapProvider(mapFile,
+                             entries));
     }
 
-    public CompilerOffprocessServiceImpl(ExecutorService executor, String queueName){
-        this(executor, new QueueProvider(queueName));
-    }
-
-    public CompilerOffprocessServiceImpl(ExecutorService executor, QueueProvider queueProvider){
+    public CompilerOffprocessServiceImpl(ExecutorService executor,
+                                         MapProvider mapProvider) {
         this.executor = executor;
-        compilerCoordinator = new CompilerIPCCoordinatorImpl(queueProvider);
+        compilerCoordinator = new CompilerIPCCoordinatorImpl(mapProvider);
     }
 
     @Override
     public CompletableFuture compile(CompilationRequest req) {
-        return CompletableFuture.supplyAsync(() -> (compilerCoordinator.compile(req)), executor);
+        return CompletableFuture.supplyAsync(() -> (compilerCoordinator.compile(req)),
+                                             executor);
     }
 }
