@@ -4,22 +4,24 @@ import {LibraryService} from "@kiegroup-ts-generated/kie-wb-common-library-api-r
 import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structure-api-rpc"
 import {OrganizationalUnit, OrganizationalUnitImpl} from "@kiegroup-ts-generated/uberfire-structure-api"
 import {WorkspaceProjectContextChangeEvent} from "@kiegroup-ts-generated/uberfire-project-api";
+import {NewSpacePopup} from "./NewSpacePopup";
 
 interface Props {
     exposing: (self: () => SpacesScreenReactComponent) => void;
     organizationalUnitService: OrganizationalUnitService,
-    libraryService: LibraryService,
+    libraryService: LibraryService
 }
 
 interface State {
     spaces: Array<OrganizationalUnit>;
+    newSpacePopupOpen: boolean;
 }
 
 export class SpacesScreenReactComponent extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {spaces: []};
+        this.state = {spaces: [], newSpacePopupOpen: false};
         this.props.exposing(() => this);
     }
 
@@ -33,13 +35,12 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
         return true;
     }
 
-    private newSpace() {
-        //FIXME: Create popup with form and validations etc
-        this.props.organizationalUnitService.createOrganizationalUnit0({
-            name: `Tiago ${new Date().getTime()}`,
-            owner: "admin",
-            defaultGroupId: "org.uberfire.tiago"
-        }).then(i => this.refreshSpaces());
+    private openNewSpacePopup() {
+        this.setState({newSpacePopupOpen: true});
+    }
+
+    private closeNewSpacePopup() {
+        this.setState({newSpacePopupOpen: false});
     }
 
     public refreshSpaces() {
@@ -54,27 +55,21 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
 
     render() {
         if (this.state.spaces.length <= 0) {
-            return <div className={"library"}>
-                <div className={"col-sm-12 blank-slate-pf"}>
-                    <div className={"blank-slate-pf-icon"}>
-                        <span className={"pficon pficon pficon-add-circle-o"}/>
-                    </div>
-                    <h1>
-                        Nothing here
-                    </h1>
-                    <p>
-                        There are currently no Spaces available for you to view or edit. To get started, create a new Space
-                    </p>
-                    <div className={"blank-slate-pf-main-action"}>
-                        <button className={"btn btn-primary btn-lg"} onClick={() => this.newSpace()}>
-                            Add Space
-                        </button>
-                    </div>
-                </div>
-            </div>
+            return <>
+            {this.state.newSpacePopupOpen &&
+            <NewSpacePopup organizationalUnitService={this.props.organizationalUnitService}
+                           onClose={() => this.closeNewSpacePopup()}/>
+            }
+            <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()}/>
+            </>
         }
 
         return <>
+        {this.state.newSpacePopupOpen &&
+        <NewSpacePopup organizationalUnitService={this.props.organizationalUnitService}
+                       onClose={() => this.closeNewSpacePopup()}/>
+        }
+
         <div className={"library container-fluid"}>
             <div className={"row page-content-kie"}>
                 <div className={"toolbar-pf"}>
@@ -84,7 +79,7 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
                         </div>
                         <div className={"btn-group toolbar-btn-group-kie"}>
                             {this.canCreateSpace() &&
-                            <button className={"btn btn-primary"} onClick={() => this.newSpace()}>
+                            <button className={"btn btn-primary"} onClick={() => this.openNewSpacePopup()}>
                                 Add Space
                             </button>
                             }
@@ -93,10 +88,11 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
                 </div>
                 <div className={"container-fluid container-cards-pf"}>
                     <div className={"row row-cards-pf"}>
-                        {this.state.spaces.map(s =>
-                            <Tile key={(s as OrganizationalUnitImpl).name}
-                                  space={s as OrganizationalUnitImpl}
-                                  onSelect={() => this.goToSpace(s as OrganizationalUnitImpl)}/>
+                        {this.state.spaces.map(s => <Tile
+                                key={(s as OrganizationalUnitImpl).name}
+                                space={s as OrganizationalUnitImpl}
+                                onSelect={() => this.goToSpace(s as OrganizationalUnitImpl)}
+                            />
                         )}
                     </div>
                 </div>
@@ -104,6 +100,27 @@ export class SpacesScreenReactComponent extends React.Component<Props, State> {
         </div>
         </>;
     }
+}
+
+function EmptySpacesScreen(props: { onAddSpace: () => void }) {
+    return <div className={"library"}>
+        <div className={"col-sm-12 blank-slate-pf"}>
+            <div className={"blank-slate-pf-icon"}>
+                <span className={"pficon pficon pficon-add-circle-o"}/>
+            </div>
+            <h1>
+                Nothing here
+            </h1>
+            <p>
+                There are currently no Spaces available for you to view or edit. To get started, create a new Space
+            </p>
+            <div className={"blank-slate-pf-main-action"}>
+                <button className={"btn btn-primary btn-lg"} onClick={() => props.onAddSpace()}>
+                    Add Space
+                </button>
+            </div>
+        </div>
+    </div>;
 }
 
 function Tile(props: { space: OrganizationalUnitImpl, onSelect: () => void }) {
