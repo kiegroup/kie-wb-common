@@ -27,9 +27,6 @@
   <inherits name="org.dashbuilder.JSON"/>
   <inherits name="org.dashbuilder.NavigationAPI"/>
   <inherits name="org.dashbuilder.DatasetAPI"/>
-  <inherits name="org.dashbuilder.DisplayerAPI"/>
-  <inherits name="org.dashbuilder.DisplayerClient"/>
-  <inherits name="org.dashbuilder.DisplayerClient"/>
 
   <source path="client"/>
   <source path="shared"/>

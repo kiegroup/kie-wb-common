@@ -26,23 +26,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
-import org.dashbuilder.displayer.DisplayerSettings;
-import org.dashbuilder.displayer.DisplayerSettingsFactory;
-import org.dashbuilder.displayer.DisplayerSubType;
-import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
-import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.workbench.client.resources.i18n.WorkbenchConstants;
-
-import static org.dashbuilder.dataset.group.AggregateFunctionType.COUNT;
-import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
 
 @Templated
 public class TestRunnerReportingViewImpl
@@ -130,11 +122,6 @@ public class TestRunnerReportingViewImpl
     }
 
     @Inject
-    Elemental2DomUtil elemental2DomUtil;
-    @DataField
-    private HTMLDivElement donutDiv;
-
-    @Inject
     public TestRunnerReportingViewImpl(HTMLDivElement resultPanel,
                                        HTMLDivElement testResultIcon,
                                        HTMLDivElement testResultText,
@@ -151,53 +138,6 @@ public class TestRunnerReportingViewImpl
         this.duration = duration;
         this.viewAlerts = viewAlerts;
         this.translationService = translationService;
-        gg();
-    }
-
-    public void gg() {
-
-        DisplayerSettings displayerSettings =
-                DisplayerSettingsFactory.newSelectorSettings()
-                        .dataset("GIT_CONTRIB")
-                .filter(createFilter(null))
-                        .group("COLUMN_PROJECT")
-                        .column("COLUMN_PROJECT",
-                                "translationService.getTranslation(LibraryConstants.Project)")
-                        .column(COUNT,
-                                "#commits").format("translationService.getTranslation(LibraryConstants.NumberOfCommits)",
-                                                   "#,##0")
-                        .sort("#commits",
-                              DESCENDING)
-                        .subtype(DisplayerSubType.DONUT).multiple(true)
-                        .titleVisible(false)
-                        .margins(0,
-                                 0,
-                                 10,
-                                 0)
-                        .width(200)
-                        .filterOn(false,
-                                  true,
-                                  true)
-                        .buildSettings();
-        Displayer displayer = displayerLocator.lookupDisplayer(displayerSettings);
-
-        elemental2DomUtil.appendWidgetToElement(donutDiv,
-                                                displayer.asWidget());
-
-//        HTMLElement htmlElement = new Elemental2DomUtil().asHTMLElement(donutDiv);
-
-//        donutDiv.appendChild(displayer);
-//
-//        Js.cast(TemplateWidgetMapper.get(displayer).getElement());
-
-//        ElementWrapperWidget.getWidget(htmlElement);
-//        DOMUtil.removeAllChildren(htmlElement);
-//        DOMUtil.appendWidgetToElement(htmlElement,
-//                                      displayer);
-    }
-
-    private String createFilter(Object o) {
-        return null;
     }
 
     @Override
