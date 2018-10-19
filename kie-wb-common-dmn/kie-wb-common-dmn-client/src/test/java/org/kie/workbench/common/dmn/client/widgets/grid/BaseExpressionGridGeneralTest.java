@@ -78,6 +78,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandle
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.DefaultGridWidgetCellSelectorMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.selections.SelectionExtension;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -498,6 +499,54 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
         assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(NODE_UUID);
         assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_DataCells() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectHeaderCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.DOWN, false);
+
+        verify(grid).doAfterSelectionChange(0, 0);
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_HeaderCells() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.UP, false);
+
+        verify(grid).doAfterHeaderSelectionChange(0, 0);
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_MoveUpWhenOnTopAlready() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectHeaderCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.UP, false);
+
+        verify(grid, never()).doAfterHeaderSelectionChange(anyInt(), anyInt());
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_MoveDownWhenAtBottomAlready() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.DOWN, false);
+
+        verify(grid, never()).doAfterSelectionChange(anyInt(), anyInt());
     }
 
     private void assertHeaderSelection() {
