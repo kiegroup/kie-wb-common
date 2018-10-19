@@ -18,11 +18,13 @@ package org.kie.workbench.common.workbench.client.test;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.shared.test.Failure;
 import org.guvnor.common.services.shared.test.TestResultMessage;
 import org.guvnor.messageconsole.events.SystemMessage;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(GwtMockitoTestRunner.class)
 public class TestRunnerReportingScreenTest {
 
     private TestRunnerReportingView view;

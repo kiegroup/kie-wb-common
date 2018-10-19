@@ -15,10 +15,13 @@
  */
 package org.kie.workbench.common.workbench.client.test;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(GwtMockitoTestRunner.class)
 public class TestReportingDocksHandlerTest {
 
     @Test
