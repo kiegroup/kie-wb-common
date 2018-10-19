@@ -225,6 +225,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public void setup() {
         libraryBreadcrumbs.init(this);
 
+        self = this;
+        expose();
+
         projectContext.addChangeHandler(this);
 
         placeManager.registerPerspectiveCloseChain(LIBRARY_PERSPECTIVE,
@@ -237,6 +240,16 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                                                        }
                                                    });
     }
+
+    private static LibraryPlaces self;
+
+    public static void nativeGoToLibrary() {
+        self.goToLibrary();
+    }
+
+    public native void expose() /*-{
+        $wnd.goToLibrary = @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToLibrary();
+    }-*/;
 
     public void onSelectPlaceEvent(@Observes final PlaceGainFocusEvent placeGainFocusEvent) {
         if (isLibraryPerspectiveOpen() && !closingLibraryPlaces) {

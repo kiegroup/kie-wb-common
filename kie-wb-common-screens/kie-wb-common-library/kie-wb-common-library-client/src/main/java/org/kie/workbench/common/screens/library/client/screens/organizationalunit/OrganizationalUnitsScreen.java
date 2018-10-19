@@ -46,7 +46,7 @@ import org.uberfire.client.mvp.UberElement;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.lifecycle.OnStartup;
 
-@WorkbenchScreen(identifier = LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN,
+@WorkbenchScreen(identifier = LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN + "_old",
         owningPerspective = LibraryPerspective.class)
 public class OrganizationalUnitsScreen {
 

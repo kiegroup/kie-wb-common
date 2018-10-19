@@ -1,0 +1,7 @@
+{
+  "name":"kie-wb-common-library-client",
+  "type": "lib",
+  "main":"./dist/index.js",
+  "decorators": {},
+  "components": ["LibraryOrganizationalUnitsScreen"]
+}
