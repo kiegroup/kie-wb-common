@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.forms.client.event.FormFieldChanged;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -64,7 +64,7 @@ public class BPMNDiagramFilterProviderTest {
     private FieldChangeHandlerManager fieldChangeHandlerManager;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     private BPMNDiagramImpl diagramDef;
@@ -129,7 +129,7 @@ public class BPMNDiagramFilterProviderTest {
     }
 
     private FormElementFilter testAndGetFormElementFilter() {
-        final FormElementFilter filter = tested.provideFilters(UUID, element, diagramDef).stream().findFirst().get();
+        final FormElementFilter filter = tested.provideFilters(UUID, diagramDef).stream().findFirst().get();
         assertEquals(filter.getElementName(), BPMNDiagramImpl.CASE_MANAGEMENT_SET);
         return filter;
     }
@@ -137,9 +137,9 @@ public class BPMNDiagramFilterProviderTest {
     @Test
     public void onFormFieldChanged() {
         tested.onFormFieldChanged(formFieldChanged);
-        final ArgumentCaptor<RefreshFormProperties> refreshFormPropertiesArgumentCaptor = ArgumentCaptor.forClass(RefreshFormProperties.class);
+        final ArgumentCaptor<RefreshFormPropertiesEvent> refreshFormPropertiesArgumentCaptor = ArgumentCaptor.forClass(RefreshFormPropertiesEvent.class);
         verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesArgumentCaptor.capture());
-        RefreshFormProperties refreshEvent = refreshFormPropertiesArgumentCaptor.getValue();
+        RefreshFormPropertiesEvent refreshEvent = refreshFormPropertiesArgumentCaptor.getValue();
         assertEquals(refreshEvent.getUuid(), UUID);
         assertEquals(refreshEvent.getSession(), session);
     }

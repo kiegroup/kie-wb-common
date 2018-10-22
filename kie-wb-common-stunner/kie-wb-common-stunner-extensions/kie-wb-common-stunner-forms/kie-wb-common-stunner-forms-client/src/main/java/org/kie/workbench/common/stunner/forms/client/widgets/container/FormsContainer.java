@@ -33,8 +33,6 @@ import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
-import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.forms.client.event.FormFieldChanged;
 import org.kie.workbench.common.stunner.forms.client.widgets.container.displayer.FormDisplayer;
 import org.uberfire.backend.vfs.Path;
@@ -80,7 +78,7 @@ public class FormsContainer implements IsElement {
         currentDisplayer = displayer;
 
         currentDisplayer.getRenderer().addFieldChangeHandler((name, value)-> {
-            formFieldChangedEvent.fire(new FormFieldChanged(name, value, element.getUUID()));
+            formFieldChangedEvent.fire(new FormFieldChanged(name, value, domainObjectUUID));
         });
     }
 

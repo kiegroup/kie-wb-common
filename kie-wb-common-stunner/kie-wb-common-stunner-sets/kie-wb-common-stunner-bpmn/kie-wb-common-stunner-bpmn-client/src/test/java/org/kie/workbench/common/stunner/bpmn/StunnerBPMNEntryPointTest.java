@@ -65,8 +65,8 @@ public class StunnerBPMNEntryPointTest {
     @Test
     public void init() {
         tested.init();
-        FormFiltersProviderFactory.getFilterForDefinition(UUID, element, diagramDef);
-        verify(bpmnDiagramFilterProvider).provideFilters(UUID, element, diagramDef);
+        FormFiltersProviderFactory.getFilterForDefinition(UUID, diagramDef);
+        verify(bpmnDiagramFilterProvider).provideFilters(UUID, diagramDef);
     }
 }
 

@@ -34,10 +34,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Diagram
 import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.forms.client.event.FormFieldChanged;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.forms.client.formFilters.StunnerFormElementFilterProvider;
 
 @Dependent
@@ -46,7 +44,7 @@ public class BPMNDiagramFilterProvider implements StunnerFormElementFilterProvid
     private final SessionManager sessionManager;
     private final DiagramTypeService diagramTypeService;
     private final FieldChangeHandlerManager fieldChangeHandlerManager;
-    private final Event<RefreshFormProperties> refreshFormPropertiesEvent;
+    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     BPMNDiagramFilterProvider() {
         this(null, null, null, null);
@@ -56,7 +54,7 @@ public class BPMNDiagramFilterProvider implements StunnerFormElementFilterProvid
     public BPMNDiagramFilterProvider(final SessionManager sessionManager,
                                      final DiagramTypeService diagramTypeService,
                                      final FieldChangeHandlerManager fieldChangeHandlerManager,
-                                     final Event<RefreshFormProperties> refreshFormPropertiesEvent) {
+                                     final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent) {
         this.sessionManager = sessionManager;
         this.diagramTypeService = diagramTypeService;
         this.fieldChangeHandlerManager = fieldChangeHandlerManager;
@@ -69,7 +67,7 @@ public class BPMNDiagramFilterProvider implements StunnerFormElementFilterProvid
     }
 
     @Override
-    public Collection<FormElementFilter> provideFilters(String elementUUID, Element<? extends Definition<?>> element, Object definition) {
+    public Collection<FormElementFilter> provideFilters(String elementUUID, Object definition) {
         final BPMNDiagram diagram = (BPMNDiagram) definition;
         final Boolean isAdHoc = diagram.getDiagramSet().getAdHoc().getValue();
 
@@ -88,6 +86,6 @@ public class BPMNDiagramFilterProvider implements StunnerFormElementFilterProvid
             return;
         }
 
-        refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), formFieldChanged.getUuid()));
+        refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession(), formFieldChanged.getUuid()));
     }
 }
