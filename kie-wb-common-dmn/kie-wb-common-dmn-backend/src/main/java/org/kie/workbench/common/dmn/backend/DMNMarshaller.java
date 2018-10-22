@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 import org.jboss.errai.marshalling.server.ServerMarshalling;
 import org.kie.dmn.backend.marshalling.v1x.DMNMarshallerFactory;
 import org.kie.dmn.model.api.dmndi.Bounds;
+import org.kie.dmn.model.api.dmndi.Color;
 import org.kie.dmn.model.api.dmndi.DMNShape;
 import org.kie.dmn.model.api.dmndi.DMNStyle;
 import org.kie.dmn.model.v1_2.dmndi.DMNDI;
@@ -488,8 +489,28 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             }
         }
 
+        FontSet fontSet = new FontSet();
+        if (dmnStyleOfDrgShape.getFontFamily() != null) {
+            mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN(dmnStyleOfDrgShape));
+        }
+        if (drgShape.getDMNLabel() != null && drgShape.getDMNLabel().getSharedStyle() instanceof DMNStyle) {
+            mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN((DMNStyle) drgShape.getDMNLabel().getSharedStyle()));
+        }
         if (drgShape.getDMNLabel() != null && drgShape.getDMNLabel().getStyle() instanceof DMNStyle) {
-            fontSetSetter.accept(FontSetPropertyConverter.wbFromDMN((DMNStyle) drgShape.getDMNLabel().getStyle()));
+            mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN((DMNStyle) drgShape.getDMNLabel().getStyle()));
+        }
+        fontSetSetter.accept(fontSet);
+    }
+
+    private static void mergeFontSet(FontSet fontSet, FontSet additional) {
+        if (additional.getFontFamily() != null) {
+            fontSet.setFontFamily(additional.getFontFamily());
+        }
+        if (additional.getFontSize() != null) {
+            fontSet.setFontSize(additional.getFontSize());
+        }
+        if (additional.getFontColour() != null) {
+            fontSet.setFontColour(additional.getFontColour());
         }
     }
 
@@ -502,34 +523,49 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         bounds.setX(xOfBound(upperLeftBound(v)));
         bounds.setY(yOfBound(upperLeftBound(v)));
         result.setStyle(new org.kie.dmn.model.v1_2.dmndi.DMNStyle());
+        result.setDMNLabel(new org.kie.dmn.model.v1_2.dmndi.DMNLabel());
         if (v.getDefinition() instanceof Decision) {
             Decision d = (Decision) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            applyFontStyle(d.getFontSet(), result);
         } else if (v.getDefinition() instanceof InputData) {
             InputData d = (InputData) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            applyFontStyle(d.getFontSet(), result);
         } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
             BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            applyFontStyle(d.getFontSet(), result);
         } else if (v.getDefinition() instanceof KnowledgeSource) {
             KnowledgeSource d = (KnowledgeSource) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            applyFontStyle(d.getFontSet(), result);
         } else if (v.getDefinition() instanceof TextAnnotation) {
             TextAnnotation d = (TextAnnotation) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
-            result.setStyle(FontSetPropertyConverter.dmnFromWB(d.getFontSet()));
+            applyFontStyle(d.getFontSet(), result);
         }
-
         return result;
+    }
+
+    private static void applyFontStyle(FontSet fontSet, DMNShape result) {
+        if (!(result.getStyle() instanceof DMNStyle)) {
+            return;
+        }
+        DMNStyle shapeStyle = (DMNStyle) result.getStyle();
+        Color fontColor = ColorUtils.dmnFromWB(fontSet.getFontColour().getValue());
+        shapeStyle.setFontColor(fontColor);
+        if (null != fontSet.getFontFamily().getValue()) {
+            shapeStyle.setFontFamily(fontSet.getFontFamily().getValue());
+        }
+        if (null != fontSet.getFontSize().getValue()) {
+            shapeStyle.setFontSize(fontSet.getFontSize().getValue());
+        }
     }
 
     private static void applyBounds(final RectangleDimensionsSet dimensionsSet,

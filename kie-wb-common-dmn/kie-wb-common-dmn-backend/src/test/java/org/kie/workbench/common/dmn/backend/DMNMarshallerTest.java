@@ -353,34 +353,34 @@ public class DMNMarshallerTest {
 
         DMNShape myname = findShapeByDMNI(ddRoot, "_4cd17e52-6253-41d6-820d-5824bf5197f3");
         assertBounds(500, 500, 100, 50, myname.getBounds());
-        //        assertColor(255, 255, 255, myname.getStyle());
-        //        assertColor(0, 0, 0, myname.getBorderColor());
+        assertColor(255, 255, 255, ((DMNStyle) myname.getStyle()).getFillColor());
+        assertColor(0, 0, 0,       ((DMNStyle) myname.getStyle()).getStrokeColor());
         //        assertEquals(0.5, myname.getBorderSize().getValue(), 0);
-        //        assertDMNStyle("Open Sans", 24, 1, 255, 0, 0, myname.getFontStyle());
+        assertDMNStyle("Open Sans", 24, 255, 0, 0, (DMNStyle) myname.getStyle());
 
         DMNShape prefix = findShapeByDMNI(ddRoot, "_e920f38a-293c-41b8-adb3-69d0dc184fab");
         assertBounds(300, 400, 100, 50, prefix.getBounds());
-        //        assertColor(0, 253, 25, prefix.getBgColor());
-        //        assertColor(253, 0, 0, prefix.getBorderColor());
+        assertColor(0, 253, 25, ((DMNStyle) prefix.getStyle()).getFillColor());
+        assertColor(253, 0, 0, ((DMNStyle) prefix.getStyle()).getStrokeColor());
         //        assertEquals(1, prefix.getBorderSize().getValue(), 0);
-        //        assertDMNStyle("Times New Roman", 8, 2.5, 70, 60, 50, prefix.getFontStyle());
+        assertDMNStyle("Times New Roman", 8, 70, 60, 50, (DMNStyle) prefix.getStyle());
 
         DMNShape postfix = findShapeByDMNI(ddRoot, "_f49f9c34-29d5-4e72-91d2-f4f92117c8da");
         assertBounds(700, 400, 100, 50, postfix.getBounds());
-        //        assertColor(247, 255, 0, postfix.getBgColor());
-        //        assertColor(0, 51, 255, postfix.getBorderColor());
+        assertColor(247, 255, 0, ((DMNStyle) postfix.getStyle()).getFillColor());
+        assertColor(0, 51, 255, ((DMNStyle) postfix.getStyle()).getStrokeColor());
         //        assertEquals(2, postfix.getBorderSize().getValue(), 0);
-        //        assertDMNStyle("Arial", 10, 1.5, 50, 60, 70, postfix.getFontStyle());
+        assertDMNStyle("Arial", 10, 50, 60, 70, (DMNStyle) postfix.getStyle());
 
         DMNShape mydecision = findShapeByDMNI(ddRoot, "_9b061fc3-8109-42e2-9fe4-fc39c90b654e");
         assertBounds(487.5, 275, 125, 75, mydecision.getBounds());
-        //        assertColor(255, 255, 255, mydecision.getBgColor());
-        //        assertColor(0, 0, 0, mydecision.getBorderColor());
+        assertColor(255, 255, 255, ((DMNStyle) mydecision.getStyle()).getFillColor());
+        assertColor(0, 0, 0, ((DMNStyle) mydecision.getStyle()).getStrokeColor());
         //        assertEquals(0.5, mydecision.getBorderSize().getValue(), 0);
-        //        assertDMNStyle("Monospaced", 32, 3.5, 55, 66, 77, mydecision.getFontStyle());
+        assertDMNStyle("Monospaced", 32, 55, 66, 77, (DMNStyle) mydecision.getStyle());
     }
 
-    private void assertDMNStyle(String fontName, double fontSize, double fontBorderSize, int r, int g, int b, DMNStyle style) {
+    private void assertDMNStyle(String fontName, double fontSize, int r, int g, int b, DMNStyle style) {
         assertEquals(fontName, style.getFontFamily());
         assertEquals(fontSize, style.getFontSize(), 0);
         //        assertEquals(fontBorderSize, style.getFontBorderSize(), 0);

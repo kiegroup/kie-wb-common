@@ -40,21 +40,41 @@
     <dmndi:DMNDI>
         <dmndi:DMNDiagram id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_D1" name="Page 1">
             <dmndi:Size height="600" width="1068"/>
-            <dmndi:DMNShape id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_s1" dmnElementRef="_4cd17e52-6253-41d6-820d-5824bf5197f3">
-                <dc:Bounds x="500" y="500" width="100" height="50"/>
-                <dmndi:DMNLabel sharedStyle="LS_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_0"/>
-            </dmndi:DMNShape>
             <dmndi:DMNShape id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_s2" dmnElementRef="_e920f38a-293c-41b8-adb3-69d0dc184fab">
+                <dmndi:DMNStyle fontFamily="Times New Roman" fontSize="8.0">
+                    <dmndi:FillColor red="0" green="253" blue="25"/>
+                    <dmndi:StrokeColor red="253" green="0" blue="0"/>
+                    <dmndi:FontColor red="70" green="60" blue="50"/>
+                </dmndi:DMNStyle>            
                 <dc:Bounds x="300" y="400" width="100" height="50"/>
-                <dmndi:DMNLabel sharedStyle="LS_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_0"/>
+                <dmndi:DMNLabel/>
             </dmndi:DMNShape>
-            <dmndi:DMNShape id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_s3" dmnElementRef="_f49f9c34-29d5-4e72-91d2-f4f92117c8da">
-                <dc:Bounds x="700" y="400" width="100" height="50"/>
-                <dmndi:DMNLabel sharedStyle="LS_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_0"/>
+            <dmndi:DMNShape id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_s1" dmnElementRef="_4cd17e52-6253-41d6-820d-5824bf5197f3">
+                <dmndi:DMNStyle fontFamily="Open Sans" fontSize="24.0">
+                    <dmndi:FillColor red="255" green="255" blue="255"/>
+                    <dmndi:StrokeColor red="0" green="0" blue="0"/>
+                    <dmndi:FontColor red="255" green="0" blue="0"/>
+                </dmndi:DMNStyle>
+                <dc:Bounds x="500" y="500" width="100" height="50"/>
+                <dmndi:DMNLabel/>
             </dmndi:DMNShape>
             <dmndi:DMNShape id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_s4" dmnElementRef="_9b061fc3-8109-42e2-9fe4-fc39c90b654e">
+                <dmndi:DMNStyle fontFamily="Monospaced" fontSize="32.0" >
+                    <dmndi:FillColor red="255" green="255" blue="255"/>
+                    <dmndi:StrokeColor red="0" green="0" blue="0"/>
+                    <dmndi:FontColor red="55" green="66" blue="77"/>
+                </dmndi:DMNStyle>            
                 <dc:Bounds x="487.5" y="275" width="125" height="75"/>
-                <dmndi:DMNLabel sharedStyle="LS_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_0"/>
+                <dmndi:DMNLabel/>
+            </dmndi:DMNShape>
+            <dmndi:DMNShape id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_s3" dmnElementRef="_f49f9c34-29d5-4e72-91d2-f4f92117c8da">
+                <dmndi:DMNStyle fontFamily="Arial" fontSize="10.0">
+                    <dmndi:FillColor red="247" green="255" blue="0"/>
+                    <dmndi:StrokeColor red="0" green="51" blue="255"/>
+                    <dmndi:FontColor red="50" green="60" blue="70"/>
+                </dmndi:DMNStyle>            
+                <dc:Bounds x="700" y="400" width="100" height="50"/>
+                <dmndi:DMNLabel/>
             </dmndi:DMNShape>
             <dmndi:DMNEdge id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2_e1" dmnElementRef="f83471f6-02d8-4027-a31d-4a1d9cb9019b">
                 <di:waypoint x="500.2379722595215" y="524.999996821086"/>
