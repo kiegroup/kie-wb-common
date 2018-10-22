@@ -38,7 +38,6 @@ import java.util.stream.StreamSupport;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -46,7 +45,6 @@ import org.apache.tools.ant.filters.StringInputStream;
 import org.jboss.errai.marshalling.server.MappingContextSingleton;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.api.KieServices;
@@ -1117,7 +1115,6 @@ public class DMNMarshallerTest {
         assertEquals("", le.getText()); // DROOLS-3152
     }
 
-    @Ignore("This test does not support original XPath on a NSx and rounttripped XPath on a NSy")
     @Test
     public void testOtherElements() throws IOException, XPathExpressionException {
         String original = new Scanner(this.getClass().getResourceAsStream("/dummy.dmn")).useDelimiter("\\A").next();
@@ -1125,18 +1122,22 @@ public class DMNMarshallerTest {
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(marshaller.unmarshall(null, getClass().getResourceAsStream("/dummy.dmn")));
         String roundtripped = marshaller.marshall(diagram);
-        XPath xpath = namespaceAwareXPath(
+        System.out.println(roundtripped);
+        XPath xpathOriginal = namespaceAwareXPath(
+                new AbstractMap.SimpleEntry<>("semantic", "http://www.omg.org/spec/DMN/20151101/dmn.xsd"),
+                new AbstractMap.SimpleEntry<>("drools", "http://www.drools.org/kie/dmn/1.1"));
+        XPath xpathRountripped = namespaceAwareXPath(
                 new AbstractMap.SimpleEntry<>("semantic", "http://www.omg.org/spec/DMN/20180521/MODEL/"),
-                new AbstractMap.SimpleEntry<>("drools", "http://www.drools.org/kie/dmn/1.1")
+                new AbstractMap.SimpleEntry<>("drools", "http://www.drools.org/kie/dmn/1.2")
         );
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:extensionElements)"), original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:extensionElements)", original, roundtripped);
 
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:import)"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:import/@namespace"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:import/@importType"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:import/@locationURI"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:import/@drools:name"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:import/@drools:modelName"), original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:import)", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:import/@namespace", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:import/@importType", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:import/@locationURI", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:import/@drools:name", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:import/@drools:modelName", original, roundtripped);
 
         //assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:elementCollection)"), original, roundtripped);
         //assertXPathEquals(xpath.compile("/semantic:definitions/semantic:elementCollection/@name"), original, roundtripped);
@@ -1161,20 +1162,25 @@ public class DMNMarshallerTest {
         //assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:organizationUnit/semantic:decisionOwned)"), original, roundtripped);
         //assertXPathEquals(xpath.compile("/semantic:definitions/semantic:organizationUnit/semantic:decisionOwned/@href"), original, roundtripped);
 
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:knowledgeSource)"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:knowledgeSource/@name"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:knowledgeSource/@id"), original, roundtripped);
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:knowledgeSource/semantic:authorityRequirement)"), original, roundtripped);
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:knowledgeSource/semantic:requiredInput)"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:knowledgeSource/semantic:requiredInput/@href"), original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:knowledgeSource)", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:knowledgeSource/@name", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:knowledgeSource/@id", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:knowledgeSource/semantic:authorityRequirement)", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:knowledgeSource/semantic:requiredInput)", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:knowledgeSource/semantic:requiredInput/@href", original, roundtripped);
 
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:inputData)"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/@id"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/@name"), original, roundtripped);
-        assertXPathEquals(xpath.compile("boolean(/semantic:definitions/semantic:inputData/semantic:variable)"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/semantic:variable/@id"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/semantic:variable/@name"), original, roundtripped);
-        assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/semantic:variable/@typeRef"), original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:inputData)", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:inputData/@id", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:inputData/@name", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "boolean(/semantic:definitions/semantic:inputData/semantic:variable)", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:inputData/semantic:variable/@id", original, roundtripped);
+        assertXPathEquals(xpathOriginal, xpathRountripped, "/semantic:definitions/semantic:inputData/semantic:variable/@name", original, roundtripped);
+
+        // DMN v1.2
+        String inputDataVariableTypeRefOriginal = xpathOriginal.compile("/semantic:definitions/semantic:inputData/semantic:variable/@typeRef").evaluate(new InputSource(new StringReader(original)));
+        String inputDataVariableTypeRefRoundtripped = xpathRountripped.compile("/semantic:definitions/semantic:inputData/semantic:variable/@typeRef").evaluate(new InputSource(new StringReader(roundtripped)));
+        assertEquals("feel:number", inputDataVariableTypeRefOriginal);
+        assertEquals("number", inputDataVariableTypeRefRoundtripped);
     }
 
     @Test
@@ -1287,9 +1293,9 @@ public class DMNMarshallerTest {
         return result;
     }
 
-    private void assertXPathEquals(XPathExpression expression, String expectedXml, String actualXml) throws XPathExpressionException {
+    private void assertXPathEquals(XPath xpathOriginal, XPath xpathRoundtrip, String xpathExpression, String expectedXml, String actualXml) throws XPathExpressionException {
         InputSource expected = new InputSource(new StringReader(expectedXml));
         InputSource actual = new InputSource(new StringReader(actualXml));
-        assertEquals(expression.evaluate(expected), expression.evaluate(actual));
+        assertEquals(xpathOriginal.compile(xpathExpression).evaluate(expected), xpathRoundtrip.compile(xpathExpression).evaluate(actual));
     }
 }

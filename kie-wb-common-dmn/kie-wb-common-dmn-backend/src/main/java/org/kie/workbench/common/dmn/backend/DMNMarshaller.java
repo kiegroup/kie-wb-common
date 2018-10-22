@@ -425,7 +425,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             }
         }
 
-        nodes.values().forEach(definitions.getDrgElement()::add);
+        nodes.values().forEach(n -> {
+            n.setParent(definitions);
+            definitions.getDrgElement().add(n);
+        });
         textAnnotations.values().forEach(definitions.getArtifact()::add);
 
         return marshaller.marshal(definitions);

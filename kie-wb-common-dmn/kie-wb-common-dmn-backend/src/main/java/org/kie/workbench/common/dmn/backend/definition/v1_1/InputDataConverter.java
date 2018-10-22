@@ -69,7 +69,9 @@ public class InputDataConverter implements NodeConverter<org.kie.dmn.model.api.I
         result.setId(source.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         result.setName(source.getName().getValue());
-        result.setVariable(InformationItemPropertyConverter.dmnFromWB(source.getVariable()));
+        org.kie.dmn.model.api.InformationItem variable = InformationItemPropertyConverter.dmnFromWB(source.getVariable());
+        variable.setParent(result);
+        result.setVariable(variable);
         return result;
     }
 }

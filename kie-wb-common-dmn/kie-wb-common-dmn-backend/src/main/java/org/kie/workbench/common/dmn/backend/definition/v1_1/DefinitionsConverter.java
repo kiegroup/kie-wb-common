@@ -95,6 +95,7 @@ public class DefinitionsConverter {
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             org.kie.dmn.model.api.ItemDefinition itemDefConvered = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
+            itemDefConvered.setParent(result);
             result.getItemDefinition().add(itemDefConvered);
         }
 

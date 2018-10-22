@@ -86,8 +86,16 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
         d.setId(source.getId().getValue());
         d.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         d.setName(source.getName().getValue());
-        d.setVariable(InformationItemPropertyConverter.dmnFromWB(source.getVariable()));
-        d.setExpression(ExpressionPropertyConverter.dmnFromWB(source.getExpression()));
+        org.kie.dmn.model.api.InformationItem variable = InformationItemPropertyConverter.dmnFromWB(source.getVariable());
+        if (variable != null) {
+            variable.setParent(d);
+        }
+        d.setVariable(variable);
+        org.kie.dmn.model.api.Expression expression = ExpressionPropertyConverter.dmnFromWB(source.getExpression());
+        if (expression != null) {
+            expression.setParent(d);
+        }
+        d.setExpression(expression);
         // DMN spec table 2: Requirements connection rules
         List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for (Edge<?, ?> e : inEdges) {

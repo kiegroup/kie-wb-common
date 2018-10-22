@@ -78,6 +78,7 @@ public class ItemDefinitionPropertyConverter {
 
         for (ItemDefinition child : wb.getItemComponent()) {
             org.kie.dmn.model.api.ItemDefinition convertedChild = ItemDefinitionPropertyConverter.dmnFromWB(child);
+            convertedChild.setParent(result);
             result.getItemComponent().add(convertedChild);
         }
 
