@@ -26,7 +26,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
-import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
@@ -69,9 +68,6 @@ public class TestRunnerReportingViewImpl
     List<SystemMessage> systemMessages = new ArrayList<>();
 
     private TranslationService translationService;
-
-    @Inject
-    DisplayerLocator displayerLocator;
 
     @EventHandler("viewAlerts")
     public void onClickEvent(ClickEvent event) {
