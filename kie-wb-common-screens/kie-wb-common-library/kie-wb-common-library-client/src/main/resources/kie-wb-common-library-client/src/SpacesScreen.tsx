@@ -4,11 +4,13 @@ import {LibraryService} from "@kiegroup-ts-generated/kie-wb-common-library-api-r
 import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structure-api-rpc"
 import {OrganizationalUnit, OrganizationalUnitImpl} from "@kiegroup-ts-generated/uberfire-structure-api"
 import {WorkspaceProjectContextChangeEvent} from "@kiegroup-ts-generated/uberfire-project-api";
+import {AuthenticationService} from "@kiegroup-ts-generated/errai-security-server-rpc";
 import {NewSpacePopup} from "./NewSpacePopup";
 
 interface Props {
     exposing: (self: () => SpacesScreen) => void;
     organizationalUnitService: OrganizationalUnitService,
+    authenticationService: AuthenticationService,
     libraryService: LibraryService
 }
 
@@ -27,7 +29,7 @@ export class SpacesScreen extends React.Component<Props, State> {
 
     private goToSpace(space: OrganizationalUnitImpl) {
         AppFormer.fireEvent(new WorkspaceProjectContextChangeEvent({ou: space}));
-        (window as any).goToLibrary();
+        (AppFormer as any).LibraryPlaces.goToLibrary();
     }
 
     private canCreateSpace() {
@@ -58,6 +60,7 @@ export class SpacesScreen extends React.Component<Props, State> {
 
         {this.state.newSpacePopupOpen &&
         <NewSpacePopup organizationalUnitService={this.props.organizationalUnitService}
+                       authenticationService={this.props.authenticationService}
                        onClose={() => this.closeNewSpacePopup()}/>
         }
 

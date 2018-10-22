@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -248,7 +249,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     public native void expose() /*-{
-        $wnd.goToLibrary = @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToLibrary();
+        $wnd.AppFormer.LibraryPlaces = {
+            goToLibrary: @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToLibrary()
+        }
     }-*/;
 
     public void onSelectPlaceEvent(@Observes final PlaceGainFocusEvent placeGainFocusEvent) {
@@ -524,14 +527,14 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                 .map(activeProject -> !activeProject.equals(project))
                 .orElse(true)) {
             libraryInternalPreferences.load(loadedLibraryInternalPreferences -> {
-                closeAllPlacesOrNothing(() -> {
-                    projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project,
-                                                                                          project.getMainModule()));
-                    goToProject(project, loadedLibraryInternalPreferences.getLastBranchOpened(project).orElse(project.getBranch()));
-                });
-            },
-            error -> {
-            });
+                                                closeAllPlacesOrNothing(() -> {
+                                                    projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project,
+                                                                                                                          project.getMainModule()));
+                                                    goToProject(project, loadedLibraryInternalPreferences.getLastBranchOpened(project).orElse(project.getBranch()));
+                                                });
+                                            },
+                                            error -> {
+                                            });
         } else {
             goToProject();
         }
@@ -715,7 +718,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             closeUnsavedProjectAssetsPopUpPresenter.show(getActiveWorkspace(),
                                                          uncloseablePlaces,
                                                          newSuccessCallback,
-                                                         () -> {});
+                                                         () -> {
+                                                         });
         }
     }
 

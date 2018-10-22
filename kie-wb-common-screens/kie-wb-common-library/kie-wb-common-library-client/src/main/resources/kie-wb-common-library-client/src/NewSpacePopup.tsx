@@ -2,10 +2,13 @@ import * as React from "react";
 import * as AppFormer from "appformer-js";
 import {Popup} from "./Popup";
 import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structure-api-rpc";
+import {AuthenticationService} from "@kiegroup-ts-generated/errai-security-server-rpc";
+import {UserImpl} from "@kiegroup-ts-generated/errai-security-server";
 
 interface Props {
     onClose: () => void
     organizationalUnitService: OrganizationalUnitService,
+    authenticationService: AuthenticationService,
 }
 
 interface State {
@@ -21,11 +24,13 @@ export class NewSpacePopup extends React.Component<Props, State> {
         this.state = {name: "", errorMessages: [], displayedErrorMessages: []};
     }
 
-    private add() {
+    private async add() {
+
+        const user = await this.props.authenticationService.getUser({});
 
         const newSpace = {
             name: this.state.name,
-            owner: "admin", //FIXME: get logged user
+            owner: (user as UserImpl).name!,
             defaultGroupId: `com.${this.state.name.toLowerCase()}`
         };
 
