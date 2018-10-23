@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.widgets.grid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.ait.lienzo.client.core.Context2D;
@@ -124,6 +125,7 @@ public class BaseExpressionGridRenderingTest extends BaseExpressionGridTest {
                                                                                 any(GridBodyRenderContext.class),
                                                                                 any(BaseGridRendererHelper.class),
                                                                                 any(List.class),
+                                                                                any(BiFunction.class),
                                                                                 any(Function.class));
 
         final List<RendererCommand> renderHeaderCommands = new ArrayList<>();

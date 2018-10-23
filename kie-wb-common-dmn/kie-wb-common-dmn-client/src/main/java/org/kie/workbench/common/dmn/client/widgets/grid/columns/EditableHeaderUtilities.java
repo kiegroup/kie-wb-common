@@ -60,7 +60,7 @@ public class EditableHeaderUtilities {
         final Group header = gridWidget.getHeader();
         final double headerRowsYOffset = ri.getHeaderRowsYOffset();
         final double headerMinY = (header == null ? headerRowsYOffset : header.getY() + headerRowsYOffset);
-        final double headerRowHeight = renderer.getHeaderRowHeight() / column.getHeaderMetaData().size();
+        final double headerRowHeight = ri.getHeaderRowsHeight() / column.getHeaderMetaData().size();
 
         final double cellX = gridWidget.getAbsoluteX() + ci.getOffsetX();
         final double cellY = gridWidget.getAbsoluteY() + headerMinY + (headerRowHeight * uiHeaderRowIndex);
