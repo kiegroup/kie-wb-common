@@ -322,8 +322,8 @@ public class DMNMarshallerTest {
         DiagramImpl diagram = new DiagramImpl("",
                                               null);
         diagram.setGraph(g);
-        String mString = m.marshall(diagram);
 
+        String mString = m.marshall(diagram);
         final KieServices ks = KieServices.Factory.get();
         final KieContainer kieContainer = KieHelper.getKieContainer(ks.newReleaseId("org.kie",
                                                                                     "dmn-test_diamond",

@@ -106,24 +106,28 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
                     DRGElement drgElement = (DRGElement) view.getDefinition();
                     if (drgElement instanceof Decision) {
                         org.kie.dmn.model.api.InformationRequirement iReq = new org.kie.dmn.model.v1_2.TInformationRequirement();
+                        iReq.setId(e.getUUID());
                         org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
                         iReq.setRequiredDecision(ri);
                         d.getInformationRequirement().add(iReq);
                     } else if (drgElement instanceof BusinessKnowledgeModel) {
                         org.kie.dmn.model.api.KnowledgeRequirement iReq = new org.kie.dmn.model.v1_2.TKnowledgeRequirement();
+                        iReq.setId(e.getUUID());
                         org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
                         iReq.setRequiredKnowledge(ri);
                         d.getKnowledgeRequirement().add(iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         org.kie.dmn.model.api.AuthorityRequirement iReq = new org.kie.dmn.model.v1_2.TAuthorityRequirement();
+                        iReq.setId(e.getUUID());
                         org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
                         iReq.setRequiredAuthority(ri);
                         d.getAuthorityRequirement().add(iReq);
                     } else if (drgElement instanceof InputData) {
                         org.kie.dmn.model.api.InformationRequirement iReq = new org.kie.dmn.model.v1_2.TInformationRequirement();
+                        iReq.setId(e.getUUID());
                         org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
                         iReq.setRequiredInput(ri);

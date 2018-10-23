@@ -94,12 +94,14 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
                     DRGElement drgElement = (DRGElement) view.getDefinition();
                     if (drgElement instanceof BusinessKnowledgeModel) {
                         org.kie.dmn.model.api.KnowledgeRequirement iReq = new org.kie.dmn.model.v1_2.TKnowledgeRequirement();
+                        iReq.setId(e.getUUID());
                         org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
                         iReq.setRequiredKnowledge(ri);
                         result.getKnowledgeRequirement().add(iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         org.kie.dmn.model.api.AuthorityRequirement iReq = new org.kie.dmn.model.v1_2.TAuthorityRequirement();
+                        iReq.setId(e.getUUID());
                         org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
                         iReq.setRequiredAuthority(ri);
