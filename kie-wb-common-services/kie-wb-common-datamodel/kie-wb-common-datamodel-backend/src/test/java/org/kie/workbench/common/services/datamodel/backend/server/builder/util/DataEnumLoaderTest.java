@@ -187,10 +187,10 @@ public class DataEnumLoaderTest {
         final DataEnumLoader loader = new DataEnumLoader(e, new RawMVELEvaluator());
         assertThat(loader.hasErrors()).isTrue();
         assertThat(loader.getErrors()).contains("Unable to load enumeration data.",
-                "[Error: unterminated string literal]\n" +
-                        "[Near : {... [ asd<>\"; ] ....}]\n" +
-                        "                        ^\n" +
-                        "[Line: 1, Column: 12]",
-                "Error type: org.mvel2.CompileException");
+                                                "[Error: unterminated string literal]\n" +
+                                                        "[Near : {... [ asd<>\"; ] ....}]\n" +
+                                                        "                        ^\n" +
+                                                        "[Line: 1, Column: 12]",
+                                                "Error type: org.mvel2.CompileException");
     }
 }
