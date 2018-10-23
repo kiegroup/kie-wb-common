@@ -44,11 +44,6 @@ public class QNameTest {
         assertEquals(QNAME1, QNAME2);
         assertEquals(QNAME1, QNAME3);
         assertEquals(QNAME2, QNAME3);
-
-        // TODO what to do??
-        //        assertNotEquals(QNAME1, FunctionDefinition.KIND_QNAME);
-        //        assertNotEquals(QNAME2, FunctionDefinition.KIND_QNAME);
-        //        assertNotEquals(QNAME3, FunctionDefinition.KIND_QNAME);
     }
 
     @Test
