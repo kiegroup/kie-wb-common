@@ -80,7 +80,11 @@ public class ShapeStateDefaultHandler
 
     public ShapeStateDefaultHandler setRenderType(final RenderType renderType) {
         handler.getAttributesHandler().useAttributes(renderType.stateAttributesProvider);
-        //TODO: need to fix when resolution of JBPM-7681 is available
+
+        /**
+         * TODO: need to fix when resolution of JBPM-7681 is available
+         * @see <a href="https://issues.jboss.org/browse/JBPM-7681">JBPM-7681</a>
+         */
 //        shapeViewDataEncoder.applyShapeViewRenderType(borderShapeSupplier, renderType);
         return this;
     }
@@ -88,14 +92,22 @@ public class ShapeStateDefaultHandler
     public ShapeStateDefaultHandler setBorderShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         handler.getAttributesHandler().setView(shapeSupplier);
         borderShapeSupplier = shapeSupplier;
-        //TODO: need to fix when resolution of JBPM-7681 is available
+
+        /**
+         * TODO: need to fix when resolution of JBPM-7681 is available
+         * @see <a href="https://issues.jboss.org/browse/JBPM-7681">JBPM-7681</a>
+         */
 //        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BORDER);
         return this;
     }
 
     public ShapeStateDefaultHandler setBackgroundShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         backgroundShapeSupplier = shapeSupplier;
-        //TODO: need to fix when resolution of JBPM-7681 is available
+
+        /**
+         * TODO: need to fix when resolution of JBPM-7681 is available
+         * @see <a href="https://issues.jboss.org/browse/JBPM-7681">JBPM-7681</a>
+         */
 //        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BACKGROUND);
         return this;
     }

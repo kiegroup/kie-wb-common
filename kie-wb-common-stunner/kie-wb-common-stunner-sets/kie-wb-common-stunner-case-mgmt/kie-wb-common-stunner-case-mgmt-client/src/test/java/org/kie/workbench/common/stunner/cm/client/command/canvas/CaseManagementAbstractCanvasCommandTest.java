@@ -22,7 +22,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public abstract class AbstractCanvasCommandTest extends AbstractCommandTest {
+public abstract class CaseManagementAbstractCanvasCommandTest extends AbstractCommandTest {
 
     protected Node<View<?>, Edge> parent;
 

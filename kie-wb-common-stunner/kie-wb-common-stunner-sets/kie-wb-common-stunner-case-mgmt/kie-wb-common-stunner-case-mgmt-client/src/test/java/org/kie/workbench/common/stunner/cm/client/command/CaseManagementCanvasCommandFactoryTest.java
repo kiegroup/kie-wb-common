@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.cm.client.command;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -119,5 +120,21 @@ public class CaseManagementCanvasCommandFactoryTest {
                                                                                     new Point2D(0.0, 0.0));
         assertNotNull(command);
         assertTrue(command instanceof CaseManagementUpdatePositionCommand);
+    }
+
+    @Test
+    public void checkDelete() {
+        final CanvasCommand<AbstractCanvasHandler> command = factory.delete(Collections.singletonList(child));
+
+        assertNotNull(command);
+        assertTrue(command instanceof CaseManagementDeleteElementsCommand);
+    }
+
+    @Test
+    public void checkDeleteNode() {
+        final CanvasCommand<AbstractCanvasHandler> command = factory.deleteNode(child);
+
+        assertNotNull(command);
+        assertTrue(command instanceof CaseManagementDeleteNodeCommand);
     }
 }

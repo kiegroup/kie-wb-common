@@ -25,7 +25,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CaseManagementAddChildNodeCanvasCommandTest extends AbstractCanvasCommandTest {
+public class CaseManagementAddChildNodeCanvasCommandTest extends CaseManagementAbstractCanvasCommandTest {
 
     private int index = 2;
 
