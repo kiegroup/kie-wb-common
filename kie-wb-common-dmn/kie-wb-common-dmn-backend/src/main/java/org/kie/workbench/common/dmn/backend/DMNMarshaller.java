@@ -178,7 +178,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     if (ir.getRequiredInput() != null) {
                         String reqInputID = getId(ir.getRequiredInput());
                         Node requiredNode = elems.get(reqInputID).getValue();
-                        Edge myEdge = factoryManager.newElement(ir.getId() != null ? ir.getId() : UUID.uuid(),
+                        Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
                                                                 org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement.class).asEdge();
                         connectEdge(myEdge,
                                     requiredNode,
@@ -188,7 +188,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     if (ir.getRequiredDecision() != null) {
                         String reqInputID = getId(ir.getRequiredDecision());
                         Node requiredNode = elems.get(reqInputID).getValue();
-                        Edge myEdge = factoryManager.newElement(ir.getId() != null ? ir.getId() : UUID.uuid(),
+                        Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
                                                                 org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement.class).asEdge();
                         connectEdge(myEdge,
                                     requiredNode,
@@ -199,7 +199,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 for (org.kie.dmn.model.api.KnowledgeRequirement kr : decision.getKnowledgeRequirement()) {
                     String reqInputID = getId(kr.getRequiredKnowledge());
                     Node requiredNode = elems.get(reqInputID).getValue();
-                    Edge myEdge = factoryManager.newElement(kr.getId() != null ? kr.getId() : UUID.uuid(),
+                    Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(kr),
                                                             org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement.class).asEdge();
                     connectEdge(myEdge,
                                 requiredNode,
@@ -209,7 +209,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 for (org.kie.dmn.model.api.AuthorityRequirement kr : decision.getAuthorityRequirement()) {
                     String reqInputID = getId(kr.getRequiredAuthority());
                     Node requiredNode = elems.get(reqInputID).getValue();
-                    Edge myEdge = factoryManager.newElement(kr.getId() != null ? kr.getId() : UUID.uuid(),
+                    Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(kr),
                                                             org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
                     connectEdge(myEdge,
                                 requiredNode,
@@ -221,7 +221,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 for (org.kie.dmn.model.api.KnowledgeRequirement kr : bkm.getKnowledgeRequirement()) {
                     String reqInputID = getId(kr.getRequiredKnowledge());
                     Node requiredNode = elems.get(reqInputID).getValue();
-                    Edge myEdge = factoryManager.newElement(kr.getId() != null ? kr.getId() : UUID.uuid(),
+                    Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(kr),
                                                             org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement.class).asEdge();
                     connectEdge(myEdge,
                                 requiredNode,
@@ -231,7 +231,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 for (org.kie.dmn.model.api.AuthorityRequirement kr : bkm.getAuthorityRequirement()) {
                     String reqInputID = getId(kr.getRequiredAuthority());
                     Node requiredNode = elems.get(reqInputID).getValue();
-                    Edge myEdge = factoryManager.newElement(kr.getId() != null ? kr.getId() : UUID.uuid(),
+                    Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(kr),
                                                             org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
                     connectEdge(myEdge,
                                 requiredNode,
@@ -244,7 +244,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     if (ir.getRequiredInput() != null) {
                         String reqInputID = getId(ir.getRequiredInput());
                         Node requiredNode = elems.get(reqInputID).getValue();
-                        Edge myEdge = factoryManager.newElement(ir.getId() != null ? ir.getId() : UUID.uuid(),
+                        Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
                                                                 org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
                         connectEdge(myEdge,
                                     requiredNode,
@@ -254,7 +254,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     if (ir.getRequiredDecision() != null) {
                         String reqInputID = getId(ir.getRequiredDecision());
                         Node requiredNode = elems.get(reqInputID).getValue();
-                        Edge myEdge = factoryManager.newElement(ir.getId() != null ? ir.getId() : UUID.uuid(),
+                        Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
                                                                 org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
                         connectEdge(myEdge,
                                     requiredNode,
@@ -264,7 +264,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     if (ir.getRequiredAuthority() != null) {
                         String reqInputID = getId(ir.getRequiredAuthority());
                         Node requiredNode = elems.get(reqInputID).getValue();
-                        Edge myEdge = factoryManager.newElement(ir.getId() != null ? ir.getId() : UUID.uuid(),
+                        Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
                                                                 org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
                         connectEdge(myEdge,
                                     requiredNode,
@@ -290,7 +290,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             Node targetNode = Optional.ofNullable(elems.get(targetId)).map(Entry::getValue).orElse(textAnnotations.get(targetId));
 
             @SuppressWarnings("unchecked")
-            Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(a.getId() != null ? a.getId() : UUID.uuid(),
+            Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(a),
                                                                                                        Association.class).asEdge();
 
             Id id = new Id(a.getId());
@@ -320,6 +320,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                                                                node));
 
         return graph;
+    }
+
+    private static String idOfDMNorWBUUID(org.kie.dmn.model.api.DMNElement dmn) {
+        return dmn.getId() != null ? dmn.getId() : UUID.uuid();
     }
 
     public static Node<?, ?> findDMNDiagramRoot(final Graph<?, Node<View, ?>> graph) {
@@ -390,7 +394,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             Point target = e.getWaypoint().get(e.getWaypoint().size() - 1);
             connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX(), target.getY()));
             if (e.getWaypoint().size() > 2) {
-                List<Point> sublist = e.getWaypoint().subList(1, e.getWaypoint().size() - 2);
+                List<Point> sublist = e.getWaypoint().subList(1, e.getWaypoint().size() - 1);
                 for (Point p : sublist) {
                     connectionContent.getControlPoints().add(ControlPoint.build(PointUtils.dmndiPointToPoint2D(p)));
                 }
@@ -544,7 +548,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         }
 
         FontSet fontSet = new FontSet();
-        if (dmnStyleOfDrgShape.getFontFamily() != null) {
+        if (dmnStyleOfDrgShape != null && dmnStyleOfDrgShape.getFontFamily() != null) {
             mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN(dmnStyleOfDrgShape));
         }
         if (drgShape.getDMNLabel() != null && drgShape.getDMNLabel().getSharedStyle() instanceof DMNStyle) {

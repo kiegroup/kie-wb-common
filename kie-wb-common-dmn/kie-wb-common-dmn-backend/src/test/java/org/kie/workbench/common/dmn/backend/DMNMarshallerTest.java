@@ -112,6 +112,7 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerIm
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
@@ -303,12 +304,6 @@ public class DMNMarshallerTest {
     }
 
     @Test
-    public void temp() {
-        String format = String.valueOf("x");
-        System.out.println(format);
-    }
-
-    @Test
     public void test_diamond() throws IOException {
         // round trip test
         roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/diamondDMN12.dmn"),
@@ -355,35 +350,30 @@ public class DMNMarshallerTest {
         assertBounds(500, 500, 100, 50, myname.getBounds());
         assertColor(255, 255, 255, ((DMNStyle) myname.getStyle()).getFillColor());
         assertColor(0, 0, 0,       ((DMNStyle) myname.getStyle()).getStrokeColor());
-        //        assertEquals(0.5, myname.getBorderSize().getValue(), 0);
         assertDMNStyle("Open Sans", 24, 255, 0, 0, (DMNStyle) myname.getStyle());
 
         DMNShape prefix = findShapeByDMNI(ddRoot, "_e920f38a-293c-41b8-adb3-69d0dc184fab");
         assertBounds(300, 400, 100, 50, prefix.getBounds());
         assertColor(0, 253, 25, ((DMNStyle) prefix.getStyle()).getFillColor());
         assertColor(253, 0, 0, ((DMNStyle) prefix.getStyle()).getStrokeColor());
-        //        assertEquals(1, prefix.getBorderSize().getValue(), 0);
         assertDMNStyle("Times New Roman", 8, 70, 60, 50, (DMNStyle) prefix.getStyle());
 
         DMNShape postfix = findShapeByDMNI(ddRoot, "_f49f9c34-29d5-4e72-91d2-f4f92117c8da");
         assertBounds(700, 400, 100, 50, postfix.getBounds());
         assertColor(247, 255, 0, ((DMNStyle) postfix.getStyle()).getFillColor());
         assertColor(0, 51, 255, ((DMNStyle) postfix.getStyle()).getStrokeColor());
-        //        assertEquals(2, postfix.getBorderSize().getValue(), 0);
         assertDMNStyle("Arial", 10, 50, 60, 70, (DMNStyle) postfix.getStyle());
 
         DMNShape mydecision = findShapeByDMNI(ddRoot, "_9b061fc3-8109-42e2-9fe4-fc39c90b654e");
         assertBounds(487.5, 275, 125, 75, mydecision.getBounds());
         assertColor(255, 255, 255, ((DMNStyle) mydecision.getStyle()).getFillColor());
         assertColor(0, 0, 0, ((DMNStyle) mydecision.getStyle()).getStrokeColor());
-        //        assertEquals(0.5, mydecision.getBorderSize().getValue(), 0);
         assertDMNStyle("Monospaced", 32, 55, 66, 77, (DMNStyle) mydecision.getStyle());
     }
 
     private void assertDMNStyle(String fontName, double fontSize, int r, int g, int b, DMNStyle style) {
         assertEquals(fontName, style.getFontFamily());
         assertEquals(fontSize, style.getFontSize(), 0);
-        //        assertEquals(fontBorderSize, style.getFontBorderSize(), 0);
         assertColor(r, g, b, style.getFontColor());
     }
 
@@ -400,12 +390,13 @@ public class DMNMarshallerTest {
         assertEquals(b, color.getBlue());
     }
 
-    private DMNShape findShapeByDMNI(org.kie.dmn.model.api.dmndi.DMNDiagram root, String id) {
+    private static DMNShape findShapeByDMNI(org.kie.dmn.model.api.dmndi.DMNDiagram root, String id) {
         return root.getDMNDiagramElement().stream()
                    .filter(DMNShape.class::isInstance)
                    .map(DMNShape.class::cast)
                    .filter(shape -> shape.getDmnElementRef().getLocalPart().equals(id))
-                   .findFirst().get();
+                   .findFirst()
+                   .orElseThrow(() -> new UnsupportedOperationException("There is no DMNShape with id '" + id + "' in DMNDiagram " + root));
     }
 
     @Test
@@ -436,6 +427,42 @@ public class DMNMarshallerTest {
     public void testDecisionWithContext() throws Exception {
         roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/DecisionWithContext.dmn"),
                                                this::checkDecisionWithContext);
+    }
+
+    @Test
+    public void testEdgewaypoint() throws Exception {
+        roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/edgewaypoint.dmn"),
+                                               this::checkEdgewaypoint);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkEdgewaypoint(Graph<?, Node<?, ?>> graph) {
+        Node<?, ?> decision = graph.getNode("_7647e26b-6c7c-46db-aa34-1a1a2b4d8d79");
+        assertNodeContentDefinitionIs(decision,
+                                      Decision.class);
+        Decision decisionDefinition = ((View<Decision>) decision.getContent()).getDefinition();
+        assertEquals("my decision",
+                     decisionDefinition.getName().getValue());
+
+        Node<?, ?> inputdata = graph.getNode("_fd528e66-e2a4-4b7f-aae1-c3ca6723d0cb");
+        assertNodeEdgesTo(inputdata,
+                          decision,
+                          InformationRequirement.class);
+
+        // asserted the two Stunner graph nodes are properly connected, assert location of edge.
+        List<Edge<?, ?>> outEdges = (List<Edge<?, ?>>) inputdata.getOutEdges();
+        Edge<?, ?> edge = outEdges.stream().filter(e -> e.getTargetNode().equals(decision)).findFirst().get();
+        ViewConnector<?> connectionContent = (ViewConnector<?>) edge.getContent();
+        Point2D sourceLocation = connectionContent.getSourceConnection().get().getLocation();
+        assertEquals(266.9968013763428d, sourceLocation.getX(), 0.1d);
+        assertEquals(225.99999618530273d, sourceLocation.getY(), 0.1d);
+        Point2D targetLocation = connectionContent.getTargetConnection().get().getLocation();
+        assertEquals(552.2411708831787d, targetLocation.getX(), 0.1d);
+        assertEquals(226d, targetLocation.getY(), 0.1d);
+        assertEquals(1, connectionContent.getControlPoints().size());
+        Point2D controlPointLocation = connectionContent.getControlPoints().get(0).getLocation();
+        assertEquals(398.61898612976074d, controlPointLocation.getX(), 0.1d);
+        assertEquals(116.99999809265137d, controlPointLocation.getY(), 0.1d);
     }
 
     @SuppressWarnings("unchecked")
