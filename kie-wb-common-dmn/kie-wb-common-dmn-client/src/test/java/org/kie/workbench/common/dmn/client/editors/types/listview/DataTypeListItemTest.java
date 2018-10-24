@@ -43,7 +43,6 @@ import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeListItemView_Constraints;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doNothing;
