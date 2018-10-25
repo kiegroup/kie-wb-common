@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.xml.XMLConstants;
+
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
@@ -38,7 +40,8 @@ public abstract class DMNModelInstrumentedBase implements DMNDefinition {
 
         FEEL("feel", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_FEEL),
         DMN("dmn", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_DMN),
-        KIE("kie", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_KIE);
+        KIE("kie", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_KIE),
+        DEFAULT(XMLConstants.DEFAULT_NS_PREFIX, "https://github.com/kiegroup/drools/kie-dmn");
 
         private String prefix;
         private String uri;
