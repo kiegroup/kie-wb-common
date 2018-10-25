@@ -53,7 +53,8 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
     public String getDocumentation() {
         String documentation = super.getDocumentation();
         if (StringUtils.isEmpty(documentation)) {
-            return "";
+            String defaultDocumentation = workItemDefinition.getDocumentation();
+            return defaultDocumentation == null ? "" : defaultDocumentation;
         } else {
             return documentation;
         }
