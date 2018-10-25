@@ -81,7 +81,9 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         result.setName(source.getName().getValue());
         org.kie.dmn.model.api.InformationItem variable = InformationItemPropertyConverter.dmnFromWB(source.getVariable());
-        variable.setParent(result);
+        if (variable != null) {
+            variable.setParent(result);
+        }
         result.setVariable(variable);
         result.setEncapsulatedLogic(FunctionDefinitionPropertyConverter.dmnFromWB(source.getEncapsulatedLogic()));
         // DMN spec table 2: Requirements connection rules
