@@ -63,17 +63,6 @@ public class FontSet implements DMNPropertySet {
     @Valid
     private FontSize fontSize;
 
-    @Property
-    @FormField(
-            type = SliderFieldType.class,
-            afterElement = "fontSize",
-            settings = {
-                    @FieldParam(name = "min", value = "0.0"),
-                    @FieldParam(name = "max", value = "5.0"),
-                    @FieldParam(name = "step", value = "1.0")
-            }
-    )
-    @Valid
     private FontBorderSize fontBorderSize;
 
     public FontSet() {
