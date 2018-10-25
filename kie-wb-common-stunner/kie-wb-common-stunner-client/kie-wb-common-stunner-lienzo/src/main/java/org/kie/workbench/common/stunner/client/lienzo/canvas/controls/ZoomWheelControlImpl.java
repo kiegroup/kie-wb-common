@@ -22,25 +22,19 @@ import javax.enterprise.inject.Default;
 import com.ait.lienzo.client.core.mediator.EventFilter;
 import com.ait.lienzo.client.core.mediator.IEventFilter;
 import com.ait.lienzo.client.core.mediator.MouseWheelZoomMediator;
-import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoLayer;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.zoom.ZoomControl;
 
 @Dependent
 @Default
-public class ZoomWheelControlImpl<C extends AbstractCanvas> extends AbstractMediatorControl<MouseWheelZoomMediator, C> implements ZoomControl<C> {
-
-    private static final double MIN_SCALE = 1;
-    private static final double MAX_SCALE = 2;
+public class ZoomWheelControlImpl<C extends AbstractCanvas>
+        extends AbstractMediatorControl<MouseWheelZoomMediator, C> implements ZoomControl<C> {
 
     private final IEventFilter[] filters = new IEventFilter[]{EventFilter.CONTROL};
 
     @Override
     protected MouseWheelZoomMediator buildMediator() {
-        return new MouseWheelZoomMediator(filters) {{
-            setMinScale(MIN_SCALE);
-            setMaxScale(MAX_SCALE);
-        }};
+        return new MouseWheelZoomMediator(filters);
     }
 
     @Override
@@ -63,19 +57,15 @@ public class ZoomWheelControlImpl<C extends AbstractCanvas> extends AbstractMedi
 
     @Override
     public ZoomControl<C> scale(final double factor) {
-        getLienzoLayer().scale(factor);
+        getLayer().scale(factor);
         return this;
     }
 
     @Override
     public ZoomControl<C> scale(double sx,
                                 double sy) {
-        getLienzoLayer().scale(sx,
-                               sy);
+        getLayer().scale(sx,
+                         sy);
         return this;
-    }
-
-    private LienzoLayer getLienzoLayer() {
-        return (LienzoLayer) canvas.getLayer();
     }
 }
