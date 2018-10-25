@@ -8,10 +8,9 @@ import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structu
 export class SpacesScreenAppFormerComponent extends AppFormer.Screen {
 
     constructor() {
-        super();
-        this.isReact = true;
+        super("LibraryOrganizationalUnitsScreen");
+        this.af_isReact = true;
         this.af_componentTitle = "Spaces screen";
-        this.af_componentId = "LibraryOrganizationalUnitsScreen";
         this.af_subscriptions = {
             "org.guvnor.structure.organizationalunit.NewOrganizationalUnitEvent": e => this.self.refreshSpaces(),
             "org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent": e => this.self.refreshSpaces(),
@@ -26,7 +25,7 @@ export class SpacesScreenAppFormerComponent extends AppFormer.Screen {
         this.self.refreshSpaces();
     }
 
-    af_componentRoot(): AppFormer.Element {
+    af_componentRoot(): AppFormer.RootElement {
         return <SpacesScreen exposing={ref => this.self = ref()}
                              libraryService={new LibraryService()}
                              authenticationService={new AuthenticationService()}
