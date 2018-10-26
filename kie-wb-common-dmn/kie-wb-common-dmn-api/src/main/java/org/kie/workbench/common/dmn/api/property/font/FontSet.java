@@ -23,6 +23,7 @@ import org.kie.workbench.common.dmn.api.property.DMNPropertySet;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
+import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.slider.type.SliderFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
@@ -33,6 +34,7 @@ import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldType;
 @Bindable
 @PropertySet
 @FormDefinition(
+        policy = FieldPolicy.ONLY_MARKED,
         startElement = "fontFamily"
 )
 public class FontSet implements DMNPropertySet {
