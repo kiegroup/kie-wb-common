@@ -6,12 +6,18 @@ import {OrganizationalUnit, OrganizationalUnitImpl} from "@kiegroup-ts-generated
 import {WorkspaceProjectContextChangeEvent} from "@kiegroup-ts-generated/uberfire-project-api";
 import {AuthenticationService} from "@kiegroup-ts-generated/errai-security-server-rpc";
 import {NewSpacePopup} from "./NewSpacePopup";
+import {PreferenceBeanServerStore} from "@kiegroup-ts-generated/uberfire-preferences-api-rpc";
+import {
+    LibraryInternalPreferences as LibraryPreference,
+    LibraryInternalPreferencesPortableGeneratedImpl as LibraryPreferencePortable
+} from "@kiegroup-ts-generated/kie-wb-common-library-api";
 
 interface Props {
     exposing: (self: () => SpacesScreen) => void;
     organizationalUnitService: OrganizationalUnitService,
     authenticationService: AuthenticationService,
-    libraryService: LibraryService
+    libraryService: LibraryService,
+    preferenceBeanServerStore: PreferenceBeanServerStore;
 }
 
 interface State {
@@ -28,8 +34,18 @@ export class SpacesScreen extends React.Component<Props, State> {
     }
 
     private goToSpace(space: OrganizationalUnitImpl) {
-        AppFormer.fireEvent(new WorkspaceProjectContextChangeEvent({ou: space}));
-        (AppFormer as any).LibraryPlaces.goToLibrary();
+        const newPreference = {
+            portablePreference: new LibraryPreferencePortable({
+                projectExplorerExpanded: false,
+                lastOpenedOrganizationalUnit: space.name
+            })
+        };
+
+        this.props.preferenceBeanServerStore.save6<LibraryPreference, LibraryPreferencePortable>(newPreference)
+            .then(i => {
+                AppFormer.fireEvent(AppFormer.marshall(new WorkspaceProjectContextChangeEvent({ou: space})));
+                (AppFormer as any).LibraryPlaces.goToLibrary();
+            });
     }
 
     private canCreateSpace() {
@@ -108,7 +124,7 @@ function EmptySpacesScreen(props: { onAddSpace: () => void }) {
                 <span className={"pficon pficon pficon-add-circle-o"}/>
             </div>
             <h1>
-                <AppFormer.__i18n tkey={"NothingHere"} args={[]}/>
+                {AppFormer.translate("NothingHere", [])}
             </h1>
             <p>
                 There are currently no Spaces available for you to view or edit. To get started, create a new Space
@@ -130,7 +146,7 @@ function Tile(props: { space: OrganizationalUnitImpl, onSelect: () => void }) {
                 <div>
                     <h2 className={"card-pf-title"}> {props.space.name} </h2>
                     <h5>
-                        <AppFormer.__i18n tkey={"NumberOfContributors"} args={[props.space.contributors!.length.toString()]}/>
+                        {AppFormer.translate("NumberOfContributors", [props.space.contributors!.length.toString()])}
                     </h5>
                 </div>
                 <div className={"right"}>

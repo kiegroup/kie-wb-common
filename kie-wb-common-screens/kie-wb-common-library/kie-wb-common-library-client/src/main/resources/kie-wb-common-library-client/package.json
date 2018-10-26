@@ -24,6 +24,7 @@
   "dependencies": {
     "@kiegroup-ts-generated/errai-security-server-rpc": "^1.0.0",
     "@kiegroup-ts-generated/kie-wb-common-library-api-rpc": "^1.0.0",
+    "@kiegroup-ts-generated/uberfire-preferences-api-rpc": "^1.0.0",
     "@kiegroup-ts-generated/uberfire-project-api": "^1.0.0",
     "@kiegroup-ts-generated/uberfire-structure-api-rpc": "^1.0.0",
     "@types/react": "^16.4.16",

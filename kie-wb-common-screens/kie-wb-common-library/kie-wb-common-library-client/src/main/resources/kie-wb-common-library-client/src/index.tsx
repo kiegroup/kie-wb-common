@@ -4,6 +4,7 @@ import {SpacesScreen} from "./SpacesScreen";
 import {LibraryService} from "@kiegroup-ts-generated/kie-wb-common-library-api-rpc"
 import {AuthenticationService} from "@kiegroup-ts-generated/errai-security-server-rpc"
 import {OrganizationalUnitService} from "@kiegroup-ts-generated/uberfire-structure-api-rpc"
+import {PreferenceBeanServerStore} from "@kiegroup-ts-generated/uberfire-preferences-api-rpc";
 
 export class SpacesScreenAppFormerComponent extends AppFormer.Screen {
 
@@ -25,14 +26,15 @@ export class SpacesScreenAppFormerComponent extends AppFormer.Screen {
         this.self.refreshSpaces();
     }
 
-    af_componentRoot(): AppFormer.RootElement {
+    af_componentRoot(): AppFormer.Element {
         return <SpacesScreen exposing={ref => this.self = ref()}
                              libraryService={new LibraryService()}
                              authenticationService={new AuthenticationService()}
-                             organizationalUnitService={new OrganizationalUnitService()}/>;
+                             organizationalUnitService={new OrganizationalUnitService()}
+                             preferenceBeanServerStore={new PreferenceBeanServerStore()}/>;
 
     }
 
 }
 
-AppFormer.register({SpacesScreenAppFormerComponent});
+AppFormer.register(new SpacesScreenAppFormerComponent());

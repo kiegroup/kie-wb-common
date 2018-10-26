@@ -37,7 +37,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
         const emptyName = Promise.resolve()
             .then(() => {
                 if (!newSpace.name || newSpace.name.trim() === "") {
-                    this.setState(prevState => ({errorMessages: [...prevState.errorMessages, AppFormer.translate("EmptyFieldValidation", ["Name"])]}));
+                    this.addErrorMessage(AppFormer.translate("EmptyFieldValidation", ["Name"]));
                     return Promise.reject();
                 } else {
                     return Promise.resolve();
@@ -48,7 +48,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
             .then(() => this.props.organizationalUnitService.getOrganizationalUnit({name: newSpace.name}))
             .then(space => {
                 if (space) {
-                    this.setState(prevState => ({errorMessages: [...prevState.errorMessages, AppFormer.translate("DuplicatedOrganizationalUnitValidation", ["Space"])]}));
+                    this.addErrorMessage(AppFormer.translate("DuplicatedOrganizationalUnitValidation", ["Space"]));
                     return Promise.reject();
                 } else {
                     return Promise.resolve();
@@ -59,7 +59,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
             .then(() => this.props.organizationalUnitService.isValidGroupId({proposedGroupId: newSpace.defaultGroupId}))
             .then(valid => {
                 if (!valid) {
-                    this.setState(prevState => ({errorMessages: [...prevState.errorMessages, AppFormer.translate("InvalidSpaceName", [])]}));
+                    this.addErrorMessage(AppFormer.translate("InvalidSpaceName", []));
                     return Promise.reject();
                 } else {
                     return Promise.resolve();
@@ -71,6 +71,10 @@ export class NewSpacePopup extends React.Component<Props, State> {
             .then(() => this.props.organizationalUnitService.createOrganizationalUnit0(newSpace))
             .then(i => this.props.onClose())
             .catch(() => this.setState(prevState => ({displayedErrorMessages: prevState.errorMessages}))));
+    }
+
+    private addErrorMessage(msg: string) {
+        this.setState(prevState => ({errorMessages: [...prevState.errorMessages, msg]}));
     }
 
     render() {
