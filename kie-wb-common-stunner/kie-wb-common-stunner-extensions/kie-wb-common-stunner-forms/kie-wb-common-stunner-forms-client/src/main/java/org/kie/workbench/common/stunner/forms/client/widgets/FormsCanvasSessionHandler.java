@@ -16,10 +16,8 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PreDestroy;
@@ -129,29 +127,15 @@ public class FormsCanvasSessionHandler {
     @SuppressWarnings("unchecked")
     public void show(final Command callback) {
         if (null != session) {
-            // Obtain first element selected on session, if any.
-            String selectedItemUUID = null;
             final SelectionControl selectionControl = featuresSessionProvider.getSelectionControl(session);
-            if (null != selectionControl) {
-                final Collection<String> selectedItems = selectionControl.getSelectedItems();
-                if (null != selectedItems && !selectedItems.isEmpty()) {
-                    selectedItemUUID = selectedItems.iterator().next();
-                }
-            } else {
-                LOGGER.log(Level.WARNING, "Cannot show properties as session type does not provides " + "selection control's support.");
-            }
-            if (null == selectedItemUUID) {
-                final Diagram<?, ?> diagram = getDiagram();
-                if (null != diagram) {
-                    final String cRoot = diagram.getMetadata().getCanvasRootUUID();
-                    // Check if there exist any canvas root element.
-                    if (!isEmpty(cRoot)) {
-                        selectedItemUUID = cRoot;
+            if (!Objects.isNull(selectionControl)) {
+                selectionControl.getSelectedItemDefinition().ifPresent(selectedItemDefinition -> {
+                    if (selectedItemDefinition instanceof Element) {
+                        render((Element) selectedItemDefinition, callback);
+                    } else if (selectedItemDefinition instanceof DomainObject) {
+                        render((DomainObject) selectedItemDefinition, callback);
                     }
-                }
-            }
-            if (null != selectedItemUUID) {
-                render(selectedItemUUID, callback);
+                });
             }
         }
     }
@@ -218,7 +202,8 @@ public class FormsCanvasSessionHandler {
 
         if (null != getCanvasHandler()) {
             final String uuid = event.getUuid();
-            render(uuid);
+            final Element<? extends Definition<?>> element = getElement(uuid);
+            render(element);
         }
     }
 
@@ -228,7 +213,8 @@ public class FormsCanvasSessionHandler {
         if (null != getCanvasHandler()) {
             if (event.getIdentifiers().size() == 1) {
                 final String uuid = event.getIdentifiers().iterator().next();
-                render(uuid);
+                final Element<? extends Definition<?>> element = getElement(uuid);
+                render(element);
             }
         }
     }
@@ -262,31 +248,47 @@ public class FormsCanvasSessionHandler {
         return session instanceof EditorSession ? RenderMode.EDIT_MODE : RenderMode.PRETTY_MODE;
     }
 
-    private void render(final String uuid) {
-        render(uuid,
-               () -> {
-               });
+    private void render(final Element<? extends Definition<?>> element) {
+        render(element,
+               () -> {/*Nothing*/});
     }
 
-    private void render(final String uuid,
+    private void render(final Element<? extends Definition<?>> element,
                         final Command callback) {
         if (null != renderer) {
-            final Diagram diagram = getDiagram();
-            if (Objects.isNull(diagram)) {
-                return;
-            }
-            final Graph graph = diagram.getGraph();
-            if (Objects.isNull(graph)) {
-                return;
-            }
-            renderer.render(graph.getUUID(), getElement(uuid), callback);
+            getGraphUUID().ifPresent(graphUUID -> renderer.render(graphUUID,
+                                                                  element,
+                                                                  callback));
         }
     }
 
     private void render(final DomainObject domainObject) {
         if (null != renderer) {
-            renderer.render(getDiagram().getGraph().getUUID(), domainObject);
+            getGraphUUID().ifPresent(graphUUID -> renderer.render(graphUUID,
+                                                                  domainObject,
+                                                                  () -> {/*Nothing*/}));
         }
+    }
+
+    private void render(final DomainObject domainObject,
+                        final Command callback) {
+        if (null != renderer) {
+            getGraphUUID().ifPresent(graphUUID -> renderer.render(graphUUID,
+                                                                  domainObject,
+                                                                  callback));
+        }
+    }
+
+    private Optional<String> getGraphUUID() {
+        final Diagram diagram = getDiagram();
+        if (Objects.isNull(diagram)) {
+            return Optional.empty();
+        }
+        final Graph graph = diagram.getGraph();
+        if (Objects.isNull(graph)) {
+            return Optional.empty();
+        }
+        return Optional.of(graph.getUUID());
     }
 
     /**
@@ -328,7 +330,7 @@ public class FormsCanvasSessionHandler {
         @Override
         public void update(final Element item) {
             if (!areFormsProcessing) {
-                render(item.getUUID());
+                render(item);
             }
         }
 
@@ -425,8 +427,9 @@ public class FormsCanvasSessionHandler {
          * Renders the form properties panel for the given {@link Object}
          * @param graphUuid the current {@link Graph} UUID
          * @param domainObject the {@link DomainObject} to render properties form
+         * @param callback a {@link Command} to execute after a property value change
          */
-        void render(String graphUuid, DomainObject domainObject);
+        void render(String graphUuid, DomainObject domainObject, Command callback);
 
         /**
          * Clears the properties form for the given {@link Element}

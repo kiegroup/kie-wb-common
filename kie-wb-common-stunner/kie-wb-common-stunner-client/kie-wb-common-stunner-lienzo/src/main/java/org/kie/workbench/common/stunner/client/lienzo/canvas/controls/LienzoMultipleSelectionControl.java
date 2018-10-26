@@ -56,7 +56,7 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull
 @Dependent
 @MultipleSelection
 @Default
-public final class LienzoMultipleSelectionControl<H extends AbstractCanvasHandler>
+public class LienzoMultipleSelectionControl<H extends AbstractCanvasHandler>
         extends AbstractSelectionControl<H> {
 
     private final CursoredSelectionShapeProvider selectionShapeProvider;
