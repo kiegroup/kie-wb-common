@@ -44,6 +44,7 @@ import org.kie.dmn.model.api.dmndi.DMNStyle;
 import org.kie.dmn.model.api.dmndi.Point;
 import org.kie.dmn.model.v1_2.dmndi.DMNDI;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
+import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
@@ -90,6 +91,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
@@ -390,9 +392,25 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         if (dmnEdge.isPresent()) {
             DMNEdge e = dmnEdge.get();
             Point source = e.getWaypoint().get(0);
-            connectionContent.setSourceConnection(MagnetConnection.Builder.at(source.getX(), source.getY()));
+            final Node sourceNode = edge.getSourceNode();
+            if (null != sourceNode) {
+                View<?> sourceView = (View<?>) sourceNode.getContent();
+                double xSource = xOfBound(upperLeftBound(sourceView));
+                double ySource = yOfBound(upperLeftBound(sourceView));
+                connectionContent.setSourceConnection(MagnetConnection.Builder.at(source.getX() - xSource, source.getY() - ySource)); // Stunner connection x,y is relative to shape
+            } else { // fallback:
+                connectionContent.setSourceConnection(MagnetConnection.Builder.at(source.getX(), source.getY()));
+            }
             Point target = e.getWaypoint().get(e.getWaypoint().size() - 1);
-            connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX(), target.getY()));
+            final Node targetNode = edge.getTargetNode();
+            if (null != targetNode) {
+                View<?> targetView = (View<?>) targetNode.getContent();
+                double xTarget = xOfBound(upperLeftBound(targetView));
+                double yTarget = yOfBound(upperLeftBound(targetView));
+                connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX() - xTarget, source.getY() - yTarget)); // Stunner connection x,y is relative to shape
+            } else { // fallback:
+                connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX(), target.getY()));
+            }
             if (e.getWaypoint().size() > 2) {
                 List<Point> sublist = e.getWaypoint().subList(1, e.getWaypoint().size() - 1);
                 for (Point p : sublist) {
@@ -464,16 +482,48 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     if (e.getContent() instanceof ViewConnector) {
                         final ViewConnector connectionContent = (ViewConnector) e.getContent();
                         if (connectionContent.getSourceConnection().isPresent() && connectionContent.getTargetConnection().isPresent()) {
-                            Connection sourceConn = (Connection) connectionContent.getSourceConnection().get();
-                            Connection targetConn = (Connection) connectionContent.getTargetConnection().get();
+                            Point2D sourcePoint = ((Connection) connectionContent.getSourceConnection().get()).getLocation();
+                            Point2D targetPoint = ((Connection) connectionContent.getTargetConnection().get()).getLocation();
+                            if (sourcePoint == null) { // If the "connection source/target location is null" assume it's the centre of the shape.
+                                View<?> sourceView = (View<?>) e.getSourceNode().getContent();
+                                double xSource = xOfBound(upperLeftBound(sourceView));
+                                double ySource = yOfBound(upperLeftBound(sourceView));
+                                if (sourceView.getDefinition() instanceof DMNViewDefinition) {
+                                    DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) sourceView.getDefinition();
+                                    xSource += dmnViewDefinition.getDimensionsSet().getWidth().getValue() / 2;
+                                    ySource += dmnViewDefinition.getDimensionsSet().getHeight().getValue() / 2;
+                                }
+                                sourcePoint = Point2D.create(xSource, ySource);
+                            } else { // If it is non-null it is relative to the source/target shape location.
+                                View<?> sourceView = (View<?>) e.getSourceNode().getContent();
+                                double xSource = xOfBound(upperLeftBound(sourceView));
+                                double ySource = yOfBound(upperLeftBound(sourceView));
+                                sourcePoint = Point2D.create(xSource + sourcePoint.getX(), ySource + sourcePoint.getY());
+                            }
+                            if (targetPoint == null) { // If the "connection source/target location is null" assume it's the centre of the shape.
+                                double xTarget = xOfBound(upperLeftBound(view));
+                                double yTarget = yOfBound(upperLeftBound(view));
+                                if (view.getDefinition() instanceof DMNViewDefinition) {
+                                    DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) view.getDefinition();
+                                    xTarget += dmnViewDefinition.getDimensionsSet().getWidth().getValue() / 2;
+                                    yTarget += dmnViewDefinition.getDimensionsSet().getHeight().getValue() / 2;
+                                }
+                                targetPoint = Point2D.create(xTarget, yTarget);
+                            } else { // If it is non-null it is relative to the source/target shape location.
+                                double xTarget = xOfBound(upperLeftBound(view));
+                                double yTarget = yOfBound(upperLeftBound(view));
+                                targetPoint = Point2D.create(xTarget + targetPoint.getX(), yTarget + targetPoint.getY());
+                            }
+
                             DMNEdge dmnEdge = new org.kie.dmn.model.v1_2.dmndi.DMNEdge();
                             dmnEdge.setId("dmnedge-" + e.getUUID());
                             dmnEdge.setDmnElementRef(new QName(e.getUUID()));
-                            dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(sourceConn.getLocation()));
+
+                            dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(sourcePoint));
                             for (ControlPoint cp : connectionContent.getControlPoints()) {
                                 dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(cp.getLocation()));
                             }
-                            dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(targetConn.getLocation()));
+                            dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(targetPoint));
                             dmnEdges.add(dmnEdge);
                         }
                     }

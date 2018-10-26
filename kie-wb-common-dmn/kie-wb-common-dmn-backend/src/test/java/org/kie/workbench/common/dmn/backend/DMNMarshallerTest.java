@@ -454,11 +454,13 @@ public class DMNMarshallerTest {
         Edge<?, ?> edge = outEdges.stream().filter(e -> e.getTargetNode().equals(decision)).findFirst().get();
         ViewConnector<?> connectionContent = (ViewConnector<?>) edge.getContent();
         Point2D sourceLocation = connectionContent.getSourceConnection().get().getLocation();
-        assertEquals(266.9968013763428d, sourceLocation.getX(), 0.1d);
-        assertEquals(225.99999618530273d, sourceLocation.getY(), 0.1d);
+        assertEquals(266.9968013763428d, ((View) inputdata.getContent()).getBounds().getUpperLeft().getX() + sourceLocation.getX(), 0.1d);
+        assertEquals(225.99999618530273d, ((View) inputdata.getContent()).getBounds().getUpperLeft().getY() + sourceLocation.getY(), 0.1d);
+
         Point2D targetLocation = connectionContent.getTargetConnection().get().getLocation();
-        assertEquals(552.2411708831787d, targetLocation.getX(), 0.1d);
-        assertEquals(226d, targetLocation.getY(), 0.1d);
+        assertEquals(552.2411708831787d, ((View) decision.getContent()).getBounds().getUpperLeft().getX() + targetLocation.getX(), 0.1d);
+        assertEquals(226d, ((View) decision.getContent()).getBounds().getUpperLeft().getY() + targetLocation.getY(), 0.1d);
+
         assertEquals(1, connectionContent.getControlPoints().size());
         Point2D controlPointLocation = connectionContent.getControlPoints().get(0).getLocation();
         assertEquals(398.61898612976074d, controlPointLocation.getX(), 0.1d);
