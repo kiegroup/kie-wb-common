@@ -15,12 +15,11 @@
  */
 package org.kie.workbench.common.stunner.cm.client.command.canvas;
 
-import java.util.List;
-
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteCanvasNodeCommand;
-import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+
+import static org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory.getChildIndex;
 
 public class CaseManagementDeleteCanvasNodeCommand extends DeleteCanvasNodeCommand {
 
@@ -42,23 +41,5 @@ public class CaseManagementDeleteCanvasNodeCommand extends DeleteCanvasNodeComma
     @Override
     protected AbstractCanvasCommand createUndoCommand(Node parent, Node candidate, String ssid) {
         return new CaseManagementAddChildNodeCanvasCommand(parent, candidate, ssid, index);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static int getChildIndex(final Node parent,
-                                    final Node child) {
-        if (parent != null && child!= null) {
-            List<Edge> outEdges = parent.getOutEdges();
-            if (null != outEdges && !outEdges.isEmpty()) {
-                int i = 0;
-                for (final Edge edge : outEdges) {
-                    if (child.equals(edge.getTargetNode())) {
-                        return i;
-                    }
-                    i++;
-                }
-            }
-        }
-        return -1;
     }
 }

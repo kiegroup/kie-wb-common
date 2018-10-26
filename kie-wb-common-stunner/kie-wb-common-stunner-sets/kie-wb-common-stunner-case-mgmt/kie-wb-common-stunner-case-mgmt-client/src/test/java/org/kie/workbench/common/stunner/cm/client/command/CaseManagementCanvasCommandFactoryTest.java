@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.cm.client.CaseManagementShapeSet;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
@@ -36,8 +37,10 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.Tree
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -114,6 +117,7 @@ public class CaseManagementCanvasCommandFactoryTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void checkUpdatePositionCommandType() {
         //Checks the command is a specific sub-class for Case Management
         final CanvasCommand<AbstractCanvasHandler> command = factory.updatePosition(child,
@@ -136,5 +140,23 @@ public class CaseManagementCanvasCommandFactoryTest {
 
         assertNotNull(command);
         assertTrue(command instanceof CaseManagementDeleteNodeCommand);
+    }
+
+    @Test
+    public void checkAddNode() {
+        final CanvasCommand<AbstractCanvasHandler> command = factory.addNode(child,
+                                                                             CaseManagementShapeSet.class.getName());
+
+        assertNotNull(command);
+        assertTrue(command instanceof CaseManagementAddNodeCommand);
+    }
+
+    @Test
+    public void checkGetChildIndex() {
+        final Edge edge = mock(Edge.class);
+        when(edge.getTargetNode()).thenReturn(child);
+        when(parent.getOutEdges()).thenReturn(Collections.singletonList(edge));
+
+        assertEquals(0, CaseManagementCanvasCommandFactory.getChildIndex(parent, child));
     }
 }

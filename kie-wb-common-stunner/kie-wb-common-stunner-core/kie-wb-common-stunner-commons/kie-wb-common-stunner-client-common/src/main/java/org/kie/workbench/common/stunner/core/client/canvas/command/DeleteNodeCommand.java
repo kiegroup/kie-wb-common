@@ -31,9 +31,9 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
 
-    private final Node candidate;
-    private final SafeDeleteNodeCommand.Options options;
-    private transient CanvasDeleteProcessor deleteProcessor;
+    protected final Node candidate;
+    protected final SafeDeleteNodeCommand.Options options;
+    protected transient CanvasDeleteProcessor deleteProcessor;
 
     public DeleteNodeCommand(final Node candidate) {
         this(candidate,

@@ -16,33 +16,54 @@
 
 package org.kie.workbench.common.stunner.cm.client.command;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.cm.client.command.canvas.CaseManagementDeleteCanvasNodeCommand;
-import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteCanvasNodeCommand;
-import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.cm.client.command.graph.CaseManagementSafeDeleteNodeCommand;
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CaseManagementDeleteNodeCommandTest {
+public class CaseManagementDeleteNodeCommandTest extends CaseManagementAbstractCommandTest {
+
+    private CaseManagementDeleteNodeCommand tested;
+
+    @Before
+    public void setUp() {
+        super.setup();
+
+        tested = new CaseManagementDeleteNodeCommand(candidate);
+    }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testCaseManagementCanvasDeleteProcessor() {
-        final Node node = mock(Node.class);
-
         final CaseManagementDeleteNodeCommand.CaseManagementCanvasDeleteProcessor processor =
                 new CaseManagementDeleteNodeCommand.CaseManagementCanvasDeleteProcessor(
                         SafeDeleteNodeCommand.Options.defaults());
 
-        final DeleteCanvasNodeCommand command = processor.createDeleteCanvasNodeCommand(node);
+        final CaseManagementDeleteCanvasNodeCommand command = processor.createDeleteCanvasNodeCommand(candidate);
 
         assertNotNull(command);
-        assertTrue(command instanceof CaseManagementDeleteCanvasNodeCommand);
+        assertEquals(candidate,
+                     command.getCandidate());
+    }
+
+    @Test
+    public void testNewGraphCommand() {
+        final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = tested.newGraphCommand(canvasHandler);
+
+        assertNotNull(graphCommand);
+        assertTrue(graphCommand instanceof CaseManagementSafeDeleteNodeCommand);
+        assertEquals(candidate,
+                     ((CaseManagementSafeDeleteNodeCommand) graphCommand).getNode());
     }
 }

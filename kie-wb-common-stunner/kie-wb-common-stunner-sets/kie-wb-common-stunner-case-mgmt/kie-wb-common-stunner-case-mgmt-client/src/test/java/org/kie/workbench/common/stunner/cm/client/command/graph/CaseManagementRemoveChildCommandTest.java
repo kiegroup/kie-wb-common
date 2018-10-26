@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,56 +25,43 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CaseManagementAddChildNodeGraphCommandTest extends CaseManagementAbstractGraphCommandTest {
+public class CaseManagementRemoveChildCommandTest extends CaseManagementAbstractGraphCommandTest {
 
-    private int index;
+    private CaseManagementRemoveChildCommand tested;
 
     @Before
-    public void setup() {
+    public void setUp() {
         super.setup();
-        index = parent.getOutEdges().size();
+
+        final Edge edge = mock(Edge.class);
+        when(edge.getTargetNode()).thenReturn(candidate);
+        parent.getOutEdges().add(edge);
+
+        tested = new CaseManagementRemoveChildCommand(parent, candidate);
     }
 
     @Test
-    public void checkExecute() {
-        addChildNode();
+    public void testUndo() {
+        parent.getOutEdges().clear();
+
+        tested.undo(context);
 
         assertEquals(1,
                      parent.getOutEdges().size());
         assertEquals(1,
                      candidate.getInEdges().size());
-        assertEquals(parent.getOutEdges().get(index),
+        assertEquals(parent.getOutEdges().get(0),
                      candidate.getInEdges().get(0));
 
-        final Edge edge = parent.getOutEdges().get(index);
+        final Edge edge = parent.getOutEdges().get(0);
         assertEquals(parent,
                      edge.getSourceNode());
         assertEquals(candidate,
                      edge.getTargetNode());
         assertTrue(edge.getContent() instanceof Child);
-    }
-
-    private CaseManagementAddChildNodeGraphCommand addChildNode() {
-        final CaseManagementAddChildNodeGraphCommand command = new CaseManagementAddChildNodeGraphCommand(parent,
-                                                                                                          candidate,
-                                                                                                          index);
-        command.execute(context);
-        return command;
-    }
-
-    @Test
-    public void checkUndo() {
-        //Setup the relationship to undo
-        final CaseManagementAddChildNodeGraphCommand command = addChildNode();
-
-        //Perform test
-        command.undo(context);
-
-        assertEquals(0,
-                     parent.getOutEdges().size());
-        assertEquals(0,
-                     candidate.getInEdges().size());
     }
 }

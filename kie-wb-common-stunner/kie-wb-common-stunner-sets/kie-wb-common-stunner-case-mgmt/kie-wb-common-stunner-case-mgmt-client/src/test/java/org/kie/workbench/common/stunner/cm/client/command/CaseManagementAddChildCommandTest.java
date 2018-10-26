@@ -30,7 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CaseManagementAddChildCommandTest extends AbstractCommandTest {
+public class CaseManagementAddChildCommandTest extends CaseManagementAbstractCommandTest {
 
     private Node<View<?>, Edge> parent;
 

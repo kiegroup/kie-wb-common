@@ -38,6 +38,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
+import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -221,6 +222,7 @@ public class FormPropertiesWidgetTest {
 
         final String fieldName = "fieldName";
         final String fieldValue = "fieldValue";
+        final Command callback = mock(Command.class);
 
         when(formsCanvasSessionHandler.getDiagram()).thenReturn(diagram);
         when(domainObject.getDomainObjectUUID()).thenReturn(DOMAIN_OBJECT_UUID);
@@ -230,7 +232,7 @@ public class FormPropertiesWidgetTest {
         verify(formsCanvasSessionHandler).setRenderer(formRendererArgumentCaptor.capture());
 
         final FormsCanvasSessionHandler.FormRenderer formRenderer = formRendererArgumentCaptor.getValue();
-        formRenderer.render(GRAPH_UUID, domainObject);
+        formRenderer.render(GRAPH_UUID, domainObject, callback);
 
         verify(formsContainer).render(eq(GRAPH_UUID),
                                       eq(DOMAIN_OBJECT_UUID),
@@ -249,6 +251,8 @@ public class FormPropertiesWidgetTest {
         assertThat(formPropertiesOpened.getUuid()).isEqualTo(DOMAIN_OBJECT_UUID);
         assertThat(formPropertiesOpened.getName()).isEqualTo(DOMAIN_OBJECT_TRANSLATION_KEY);
         assertThat(formPropertiesOpened.getSession()).isEqualTo(session);
+
+        verify(callback).execute();
     }
 
     @Test
@@ -259,7 +263,7 @@ public class FormPropertiesWidgetTest {
         final FormsCanvasSessionHandler.FormRenderer formRenderer = formRendererArgumentCaptor.getValue();
 
         final Command command = mock(Command.class);
-        formRenderer.render(GRAPH_UUID, null, command);
+        formRenderer.render(GRAPH_UUID, (Element) null, command);
 
         verify(formsContainer, never()).render(any(), any(), any(), any(), any(), any());
         verify(command, never()).execute();

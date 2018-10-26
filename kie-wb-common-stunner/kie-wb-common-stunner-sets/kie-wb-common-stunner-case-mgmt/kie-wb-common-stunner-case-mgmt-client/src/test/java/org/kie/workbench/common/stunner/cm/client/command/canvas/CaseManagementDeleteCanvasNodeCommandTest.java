@@ -16,14 +16,11 @@
 
 package org.kie.workbench.common.stunner.cm.client.command.canvas;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommandTest;
-import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -31,12 +28,10 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -90,14 +85,5 @@ public class CaseManagementDeleteCanvasNodeCommandTest extends AbstractCanvasCom
 
         verify(canvasHandler).applyElementMutation(eq(candidate), anyObject());
         verify(canvasHandler, never()).applyElementMutation(eq(parent), anyObject());
-    }
-
-    @Test
-    public void testGetChildIndex() throws Exception {
-        final Edge edge = mock(Edge.class);
-        when(edge.getTargetNode()).thenReturn(candidate);
-        when(parent.getOutEdges()).thenReturn(Collections.singletonList(edge));
-
-        assertEquals(0, CaseManagementDeleteCanvasNodeCommand.getChildIndex(parent, candidate));
     }
 }

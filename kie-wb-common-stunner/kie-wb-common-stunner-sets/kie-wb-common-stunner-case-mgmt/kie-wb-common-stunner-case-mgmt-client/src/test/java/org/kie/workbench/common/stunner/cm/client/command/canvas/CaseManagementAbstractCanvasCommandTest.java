@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.cm.client.command.canvas;
 
-import org.kie.workbench.common.stunner.cm.client.command.AbstractCommandTest;
+import org.kie.workbench.common.stunner.cm.client.command.CaseManagementAbstractCommandTest;
 import org.kie.workbench.common.stunner.cm.client.command.CommandTestUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public abstract class CaseManagementAbstractCanvasCommandTest extends AbstractCommandTest {
+public abstract class CaseManagementAbstractCanvasCommandTest extends CaseManagementAbstractCommandTest {
 
     protected Node<View<?>, Edge> parent;
 

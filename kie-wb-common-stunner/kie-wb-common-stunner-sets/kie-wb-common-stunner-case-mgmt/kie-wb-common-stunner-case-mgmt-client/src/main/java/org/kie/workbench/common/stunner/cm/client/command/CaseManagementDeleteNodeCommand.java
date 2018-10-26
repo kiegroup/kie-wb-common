@@ -16,19 +16,32 @@
 package org.kie.workbench.common.stunner.cm.client.command;
 
 import org.kie.workbench.common.stunner.cm.client.command.canvas.CaseManagementDeleteCanvasNodeCommand;
+import org.kie.workbench.common.stunner.cm.client.command.graph.CaseManagementSafeDeleteNodeCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteNodeCommand;
+import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class CaseManagementDeleteNodeCommand extends DeleteNodeCommand {
 
     public CaseManagementDeleteNodeCommand(Node candidate) {
-        this(candidate, SafeDeleteNodeCommand.Options.defaults());
+        super(candidate);
     }
 
     public CaseManagementDeleteNodeCommand(Node candidate, SafeDeleteNodeCommand.Options options) {
         super(candidate, options, new CaseManagementCanvasDeleteProcessor(options));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(AbstractCanvasHandler context) {
+        return new CaseManagementSafeDeleteNodeCommand(candidate,
+                                                       deleteProcessor,
+                                                       options);
     }
 
     public static class CaseManagementCanvasDeleteProcessor extends CanvasDeleteProcessor {

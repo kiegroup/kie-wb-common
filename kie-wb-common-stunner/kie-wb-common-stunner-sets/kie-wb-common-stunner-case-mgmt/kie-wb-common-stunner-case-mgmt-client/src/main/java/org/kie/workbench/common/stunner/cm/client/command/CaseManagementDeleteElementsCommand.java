@@ -33,8 +33,8 @@ public class CaseManagementDeleteElementsCommand extends DeleteElementsCommand {
 
     @Override
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(AbstractCanvasHandler context) {
-        return new org.kie.workbench.common.stunner.core.graph.command.impl.DeleteElementsCommand(this::getElements,
-                                                                                                  new CaseManagementCanvasMultipleDeleteProcessor());
+        return new org.kie.workbench.common.stunner.cm.client.command.graph.CaseManagementDeleteElementsCommand(this::getElements,
+                                                                                                                new CaseManagementCanvasMultipleDeleteProcessor());
     }
 
     private class CaseManagementCanvasMultipleDeleteProcessor extends CanvasMultipleDeleteProcessor {
