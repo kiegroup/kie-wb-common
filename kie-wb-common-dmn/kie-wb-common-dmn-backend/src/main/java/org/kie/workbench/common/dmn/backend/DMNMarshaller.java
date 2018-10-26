@@ -171,7 +171,13 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             org.kie.dmn.model.api.DRGElement elem = kv.getKey();
             Node currentNode = kv.getValue();
 
+            // Stunner rely on relative positioning for Edge connections, so need to cycle on DMNShape first.
             ddExtAugmentStunner(dmnDDDiagram, currentNode);
+        }
+
+        for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {
+            org.kie.dmn.model.api.DRGElement elem = kv.getKey();
+            Node currentNode = kv.getValue();
 
             // DMN spec table 2: Requirements connection rules
             if (elem instanceof org.kie.dmn.model.api.Decision) {
