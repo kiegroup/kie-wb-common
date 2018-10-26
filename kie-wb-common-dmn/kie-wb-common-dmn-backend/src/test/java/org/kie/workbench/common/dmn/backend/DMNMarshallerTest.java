@@ -63,8 +63,12 @@ import org.kie.dmn.model.api.Definitions;
 import org.kie.dmn.model.api.FunctionKind;
 import org.kie.dmn.model.api.dmndi.Bounds;
 import org.kie.dmn.model.api.dmndi.Color;
+import org.kie.dmn.model.api.dmndi.DMNEdge;
 import org.kie.dmn.model.api.dmndi.DMNShape;
 import org.kie.dmn.model.api.dmndi.DMNStyle;
+import org.kie.dmn.model.api.dmndi.Point;
+import org.kie.dmn.model.v1_2.TDecision;
+import org.kie.dmn.model.v1_2.TInputData;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
@@ -83,6 +87,8 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
@@ -112,6 +118,8 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerIm
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
@@ -397,6 +405,15 @@ public class DMNMarshallerTest {
                    .filter(shape -> shape.getDmnElementRef().getLocalPart().equals(id))
                    .findFirst()
                    .orElseThrow(() -> new UnsupportedOperationException("There is no DMNShape with id '" + id + "' in DMNDiagram " + root));
+    }
+
+    private static DMNEdge findEdgeByDMNI(org.kie.dmn.model.api.dmndi.DMNDiagram root, String id) {
+        return root.getDMNDiagramElement().stream()
+                   .filter(DMNEdge.class::isInstance)
+                   .map(DMNEdge.class::cast)
+                   .filter(shape -> shape.getDmnElementRef().getLocalPart().equals(id))
+                   .findFirst()
+                   .orElseThrow(() -> new UnsupportedOperationException("There is no DMNEdge with id '" + id + "' in DMNDiagram " + root));
     }
 
     @Test
@@ -1250,6 +1267,64 @@ public class DMNMarshallerTest {
         final DMNContext context = dmnRuntime.newContext();
         final DMNResult result = dmnRuntime.evaluateAll(dmnModel, context);
         assertThat(result.getDecisionResultByName("A Vowel").getResult()).isEqualTo("a");
+    }
+
+    /**
+     * DROOLS-3184: If the "connection source/target location is null" assume it's the centre of the shape.
+     * [source/target location is null] If the connection was created from the Toolbox (i.e. add a InputData and then the Decision from it using the Decision toolbox icon).
+     * 
+     * This test re-create by hard-code the behavior of the Stunner framework "Toolbox" by instrumenting API calls to achieve the same behavior.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testStunnerConstellationButtonCausingPoint2DbeingNull() throws IOException {
+        Diagram diagram = applicationFactoryManager.newDiagram("testDiagram",
+                                                               BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class),
+                                                               null);
+        Graph g = diagram.getGraph();
+
+        org.kie.dmn.model.api.InputData dmnInputData = (org.kie.dmn.model.api.InputData) new TInputData();
+        dmnInputData.setId("inputDataID");
+        dmnInputData.setName(dmnInputData.getId());
+        Node inputDataNode = new InputDataConverter(applicationFactoryManager).nodeFromDMN(dmnInputData);
+        org.kie.dmn.model.api.Decision dmnDecision = (org.kie.dmn.model.api.Decision) new TDecision();
+        dmnDecision.setId("decisionID");
+        dmnDecision.setName(dmnDecision.getId());
+        Node decisionNode = new DecisionConverter(applicationFactoryManager).nodeFromDMN(dmnDecision);
+        g.addNode(inputDataNode);
+        g.addNode(decisionNode);
+        View content = (View) decisionNode.getContent();
+        content.setBounds(BoundsImpl.build(200, 200, 300, 250));
+        final String irID = "irID";
+        Edge myEdge = applicationFactoryManager.newElement(irID, org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement.class).asEdge();
+        myEdge.setSourceNode(inputDataNode);
+        myEdge.setTargetNode(decisionNode);
+        inputDataNode.getOutEdges().add(myEdge);
+        decisionNode.getInEdges().add(myEdge);
+        ViewConnector connectionContent = (ViewConnector) myEdge.getContent();
+        // DROOLS-3184: If the "connection source/target location is null" assume it's the centre of the shape.
+        // keep Stunner behavior of constellation button
+        connectionContent.setSourceConnection(MagnetConnection.Builder.forElement(inputDataNode).setLocation(null).setAuto(true));
+        connectionContent.setTargetConnection(MagnetConnection.Builder.forElement(decisionNode).setLocation(null).setAuto(true));
+
+        Node diagramRoot = DMNMarshaller.findDMNDiagramRoot(g);
+        DMNMarshaller.connectRootWithChild(diagramRoot, inputDataNode);
+        DMNMarshaller.connectRootWithChild(diagramRoot, decisionNode);
+
+        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                                            applicationFactoryManager);
+        String output = m.marshall(diagram);
+        System.out.println(output);
+        
+        Definitions dmnDefinitions = DMNMarshallerFactory.newDefaultMarshaller().unmarshal(output);
+        DMNEdge dmndiEdge = findEdgeByDMNI(dmnDefinitions.getDMNDI().getDMNDiagram().get(0), irID);
+        assertThat(dmndiEdge.getWaypoint()).hasSize(2);
+        Point wpSource = dmndiEdge.getWaypoint().get(0);
+        assertThat(wpSource.getX()).isEqualByComparingTo(50d);
+        assertThat(wpSource.getY()).isEqualByComparingTo(25d);
+        Point wpTarget = dmndiEdge.getWaypoint().get(1);
+        assertThat(wpTarget.getX()).isEqualByComparingTo(250d);
+        assertThat(wpTarget.getY()).isEqualByComparingTo(225d);
     }
 
     @SuppressWarnings("unchecked")

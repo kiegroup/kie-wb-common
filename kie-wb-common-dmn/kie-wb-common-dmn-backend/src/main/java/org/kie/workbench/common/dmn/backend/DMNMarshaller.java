@@ -359,8 +359,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void connectRootWithChild(final Node dmnDiagramRoot,
-                                      final Node child) {
+    public static void connectRootWithChild(final Node dmnDiagramRoot,
+                                            final Node child) {
         final String uuid = org.kie.workbench.common.stunner.core.util.UUID.uuid();
         final Edge<Child, Node> edge = new EdgeImpl<>(uuid);
         edge.setContent(new Child());
@@ -373,9 +373,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void connectEdge(final Edge edge,
-                             final Node source,
-                             final Node target) {
+    public static void connectEdge(final Edge edge,
+                                   final Node source,
+                                   final Node target) {
         edge.setSourceNode(source);
         edge.setTargetNode(target);
         source.getOutEdges().add(edge);
@@ -404,8 +404,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 double xSource = xOfBound(upperLeftBound(sourceView));
                 double ySource = yOfBound(upperLeftBound(sourceView));
                 connectionContent.setSourceConnection(MagnetConnection.Builder.at(source.getX() - xSource, source.getY() - ySource)); // Stunner connection x,y is relative to shape
-            } else { // fallback:
-                connectionContent.setSourceConnection(MagnetConnection.Builder.at(source.getX(), source.getY()));
             }
             Point target = e.getWaypoint().get(e.getWaypoint().size() - 1);
             final Node targetNode = edge.getTargetNode();
@@ -414,8 +412,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 double xTarget = xOfBound(upperLeftBound(targetView));
                 double yTarget = yOfBound(upperLeftBound(targetView));
                 connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX() - xTarget, target.getY() - yTarget)); // Stunner connection x,y is relative to shape
-            } else { // fallback:
-                connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX(), target.getY()));
             }
             if (e.getWaypoint().size() > 2) {
                 List<Point> sublist = e.getWaypoint().subList(1, e.getWaypoint().size() - 1);
