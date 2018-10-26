@@ -407,7 +407,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 View<?> targetView = (View<?>) targetNode.getContent();
                 double xTarget = xOfBound(upperLeftBound(targetView));
                 double yTarget = yOfBound(upperLeftBound(targetView));
-                connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX() - xTarget, source.getY() - yTarget)); // Stunner connection x,y is relative to shape
+                connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX() - xTarget, target.getY() - yTarget)); // Stunner connection x,y is relative to shape
             } else { // fallback:
                 connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX(), target.getY()));
             }
