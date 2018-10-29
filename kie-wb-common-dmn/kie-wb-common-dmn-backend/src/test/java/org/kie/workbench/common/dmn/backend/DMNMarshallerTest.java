@@ -130,6 +130,8 @@ import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.commons.uuid.UUID;
 import org.xml.sax.InputSource;
 
@@ -147,6 +149,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DMNMarshallerTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DMNMarshallerTest.class);
 
     private static final String DMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class);
 
@@ -520,7 +524,7 @@ public class DMNMarshallerTest {
         diagram.setGraph(g);
 
         String mString = m.marshall(diagram);
-        System.out.println(mString);
+        LOG.debug(mString);
 
         // now unmarshal once more, from the marshalled just done above, back again to Stunner DMN Graph to complete check for round-trip
         @SuppressWarnings("unchecked")
@@ -931,7 +935,7 @@ public class DMNMarshallerTest {
         diagram.setGraph(g);
 
         String mString = m.marshall(diagram);
-        System.out.println(mString);
+        LOG.debug(mString);
 
         // now unmarshal once more, from the marshalled just done above, into a DMNRuntime
         final KieServices ks = KieServices.Factory.get();
@@ -1168,7 +1172,7 @@ public class DMNMarshallerTest {
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(marshaller.unmarshall(null, getClass().getResourceAsStream("/dummy.dmn")));
         String roundtripped = marshaller.marshall(diagram);
-        System.out.println(roundtripped);
+        LOG.debug(roundtripped);
         XPath xpathOriginal = namespaceAwareXPath(
                 new AbstractMap.SimpleEntry<>("semantic", "http://www.omg.org/spec/DMN/20151101/dmn.xsd"),
                 new AbstractMap.SimpleEntry<>("drools", "http://www.drools.org/kie/dmn/1.1"));
@@ -1314,7 +1318,7 @@ public class DMNMarshallerTest {
         DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                             applicationFactoryManager);
         String output = m.marshall(diagram);
-        System.out.println(output);
+        LOG.debug(output);
         
         Definitions dmnDefinitions = DMNMarshallerFactory.newDefaultMarshaller().unmarshal(output);
         DMNEdge dmndiEdge = findEdgeByDMNI(dmnDefinitions.getDMNDI().getDMNDiagram().get(0), irID);
