@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
@@ -41,6 +42,11 @@ public class DefinitionsConverter {
         result.setNamespace(namespace);
         result.setDescription(description);
         result.getNsContext().putAll(dmn.getNsContext());
+
+        if (!result.getNsContext().containsKey(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
+            result.getNsContext().put(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                      DMNModelInstrumentedBase.Namespace.DEFAULT.getUri());
+        }
 
         for (org.kie.dmn.model.api.ItemDefinition itemDef : dmn.getItemDefinition()) {
             ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(itemDef);
@@ -81,6 +87,11 @@ public class DefinitionsConverter {
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             org.kie.dmn.model.api.ItemDefinition itemDefConvered = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
             result.getItemDefinition().add(itemDefConvered);
+        }
+
+        if (!result.getNsContext().containsKey(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
+            result.getNsContext().put(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                      DMNModelInstrumentedBase.Namespace.DEFAULT.getUri());
         }
 
         // Need manually setup custom namespace URI if the diagram was created from the UI.
