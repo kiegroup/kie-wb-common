@@ -27,6 +27,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.ItemDefinitionUtils;
@@ -60,6 +61,7 @@ public class ItemDefinitionUpdateHandler {
             itemDefinition.getItemComponent().clear();
         }
 
+        itemDefinition.setIsCollection(dataType.isCollection());
         itemDefinition.setName(makeName(dataType));
         itemDefinition.setAllowedValues(makeAllowedValues(dataType, itemDefinition));
     }
@@ -76,7 +78,7 @@ public class ItemDefinitionUpdateHandler {
         if (!Objects.equals(constraint, getText(itemDefinition))) {
             return new UnaryTests(new Id(),
                                   new Description(),
-                                  constraint,
+                                  new Text(constraint),
                                   null);
         }
 

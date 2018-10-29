@@ -23,6 +23,7 @@ import org.kie.soup.commons.util.Sets;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.api.resource.i18n.DMNAPIConstants;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
@@ -42,8 +43,11 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
-public class UnaryTests extends DMNElement implements DomainObject {
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
+public class UnaryTests extends DMNElement implements IsUnaryTests,
+                                                      DomainObject {
 
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
@@ -51,7 +55,7 @@ public class UnaryTests extends DMNElement implements DomainObject {
     @Labels
     private static final Set<String> stunnerLabels = new Sets.Builder<String>().build();
 
-    private String text;
+    private Text text;
 
     @Property
     @FormField(afterElement = "description")
@@ -60,13 +64,13 @@ public class UnaryTests extends DMNElement implements DomainObject {
     public UnaryTests() {
         this(new Id(),
              new Description(),
-             null,
+             new Text(),
              new ExpressionLanguage());
     }
 
     public UnaryTests(final Id id,
                       final Description description,
-                      final String text,
+                      final Text text,
                       final ExpressionLanguage expressionLanguage) {
         super(id,
               description);
@@ -90,11 +94,11 @@ public class UnaryTests extends DMNElement implements DomainObject {
     // DMN properties
     // -----------------------
 
-    public String getText() {
+    public Text getText() {
         return text;
     }
 
-    public void setText(final String value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 

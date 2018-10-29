@@ -36,9 +36,9 @@ public abstract class DMNModelInstrumentedBase implements DMNDefinition {
     @Portable
     public enum Namespace {
 
-        FEEL("feel", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_FEEL),
-        DMN("dmn", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_DMN),
-        KIE("kie", org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_KIE),
+        FEEL("feel", org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase.URI_FEEL),
+        DMN("dmn", org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase.URI_DMN),
+        KIE("kie", org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase.URI_KIE),
         DEFAULT(QName.DEFAULT_NS_PREFIX, "https://github.com/kiegroup/drools/kie-dmn");
 
         private String prefix;
