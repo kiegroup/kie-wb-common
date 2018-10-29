@@ -24,12 +24,22 @@ import static org.junit.Assert.assertTrue;
 public class BuiltInTypeUtilsTest {
 
     @Test
-    public void testIsDefaultWhenItIsDefault() {
+    public void testIsDefaultWhenTypeIsDefault() {
         assertTrue(BuiltInTypeUtils.isDefault("string"));
     }
 
     @Test
-    public void testIsDefaultWhenItIsNotDefault() {
+    public void testIsDefaultWhenTypeIsDefaultWithAnUpperCaseCharacter() {
+        assertTrue(BuiltInTypeUtils.isDefault("String"));
+    }
+
+    @Test
+    public void testIsDefaultWhenTypeIsNull() {
+        assertFalse(BuiltInTypeUtils.isDefault(null));
+    }
+
+    @Test
+    public void testIsDefaultWhenTypeIsNotDefault() {
         assertFalse(BuiltInTypeUtils.isDefault("tAddress"));
     }
 }

@@ -26,6 +26,10 @@ public class BuiltInTypeUtils {
     public static boolean isDefault(final String type) {
         return Stream
                 .of(BuiltInType.values())
-                .anyMatch(dataType -> Objects.equals(dataType.getName(), type));
+                .anyMatch(dataType -> Objects.equals(upperCase(dataType.getName()), upperCase(type)));
+    }
+
+    private static String upperCase(final String value) {
+        return value == null ? null : value.toUpperCase();
     }
 }
