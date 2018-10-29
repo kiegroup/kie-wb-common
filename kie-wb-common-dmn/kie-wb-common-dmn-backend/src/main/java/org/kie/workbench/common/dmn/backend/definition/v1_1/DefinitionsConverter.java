@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
 import java.util.Map.Entry;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
@@ -57,6 +58,11 @@ public class DefinitionsConverter {
             result.getNsContext().put(kv.getKey(), mappedURI);
         }
 
+        if (!result.getNsContext().containsKey(DMNModelInstrumentedBase.Namespace.DEFAULT)) {
+            result.getNsContext().put(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                      DMNModelInstrumentedBase.Namespace.DEFAULT.getUri());
+        }
+
         for (org.kie.dmn.model.api.ItemDefinition itemDef : dmn.getItemDefinition()) {
             ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(itemDef);
             if (itemDefConverted != null) {
@@ -92,6 +98,11 @@ public class DefinitionsConverter {
         result.setNamespace(defaultNamespace);
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.getNsContext().putAll(wb.getNsContext());
+
+        if (!result.getNsContext().containsKey(DMNModelInstrumentedBase.Namespace.DEFAULT)) {
+            result.getNsContext().put(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                      DMNModelInstrumentedBase.Namespace.DEFAULT.getUri());
+        }
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             org.kie.dmn.model.api.ItemDefinition itemDefConvered = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
