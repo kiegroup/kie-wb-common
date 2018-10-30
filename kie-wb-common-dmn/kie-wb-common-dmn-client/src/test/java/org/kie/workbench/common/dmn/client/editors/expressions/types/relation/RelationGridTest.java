@@ -572,7 +572,7 @@ public class RelationGridTest {
     public void testGetItemsWithCellSelectionsCoveringMultipleColumns() {
         setupGrid(0);
 
-        addColumn(0);
+        addColumn(1);
         grid.getModel().selectCell(0, 0);
         grid.getModel().selectCell(0, 1);
 
@@ -594,17 +594,17 @@ public class RelationGridTest {
     public void testAddColumn() throws Exception {
         setupGrid(0);
 
-        addColumn(0);
+        addColumn(1);
 
         verifyCommandExecuteOperation(BaseExpressionGrid.RESIZE_EXISTING);
         verify(grid).selectHeaderCell(eq(0),
-                                      eq(0),
+                                      eq(1),
                                       eq(false),
                                       eq(false));
 
         verify(headerEditor).bind(any(RelationColumnHeaderMetaData.class),
                                   eq(0),
-                                  eq(0));
+                                  eq(1));
         verify(cellEditorControls).show(eq(headerEditor),
                                         eq(Optional.of(DMNEditorConstants.RelationEditor_EditRelation)),
                                         anyInt(),
@@ -830,6 +830,34 @@ public class RelationGridTest {
 
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
         assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectMultipleCells() {
+        setupGrid(0);
+        addRow(0);
+        addColumn(1);
+
+        //DomainObject selected when row added, so reset for this test
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, 1, false, false);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent event1 = domainObjectSelectionEventCaptor.getValue();
+        assertThat(event1.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0));
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, 2, false, true);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent event2 = domainObjectSelectionEventCaptor.getValue();
+        assertThat(event2.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test

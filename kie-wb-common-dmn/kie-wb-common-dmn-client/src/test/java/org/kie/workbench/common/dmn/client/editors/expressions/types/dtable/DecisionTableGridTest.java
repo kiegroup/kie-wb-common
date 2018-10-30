@@ -1221,6 +1221,23 @@ public class DecisionTableGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectMultipleCells() {
+        setupGrid(makeHasNameForDecision(), 0);
+
+        grid.selectCell(0, DEFAULT_INPUT_CLAUSE_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getRule().get(0).getInputEntry().get(0));
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, DEFAULT_OUTPUT_CLAUSE_COLUMN_INDEX, false, true);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
     public void testSelectInputClauseColumn() {
         setupGrid(makeHasNameForDecision(), 0);
 
