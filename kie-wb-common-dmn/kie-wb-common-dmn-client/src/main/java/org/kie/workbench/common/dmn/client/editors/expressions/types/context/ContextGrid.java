@@ -326,6 +326,10 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
             super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             return;
         }
+        if (getModel().getSelectedHeaderCells().size() > 0) {
+            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+            return;
+        }
 
         if (uiRowIndex < model.getRowCount() - 1) {
             if (expression.isPresent()) {

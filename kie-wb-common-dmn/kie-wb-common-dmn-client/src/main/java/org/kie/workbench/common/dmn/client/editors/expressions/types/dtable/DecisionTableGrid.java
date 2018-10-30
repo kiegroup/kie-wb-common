@@ -548,6 +548,10 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             return;
         }
+        if (getModel().getSelectedHeaderCells().size() > 0) {
+            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+            return;
+        }
 
         if (expression.isPresent()) {
             final DecisionTable dtable = expression.get();

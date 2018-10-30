@@ -876,6 +876,23 @@ public class ContextGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectSingleRowWithHeaderSelected() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(hasExpression);
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, true);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
     public void testSelectInformationItem() {
         setupGrid(0);
 

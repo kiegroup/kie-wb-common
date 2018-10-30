@@ -861,6 +861,29 @@ public class RelationGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectSingleCellWithHeaderSelected() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT, false, false);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent event1 = domainObjectSelectionEventCaptor.getValue();
+        assertThat(event1.getDomainObject()).isEqualTo(expression.get().getColumn().get(0));
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT, false, true);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent event2 = domainObjectSelectionEventCaptor.getValue();
+        assertThat(event2.getDomainObject()).isInstanceOf(NOPDomainObject.class);
+    }
+
+    @Test
     public void testSelectExpression() {
         setupGrid(0);
 

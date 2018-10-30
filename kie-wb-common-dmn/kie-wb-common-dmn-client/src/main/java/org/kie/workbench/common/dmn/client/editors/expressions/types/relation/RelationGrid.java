@@ -290,6 +290,10 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
             super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             return;
         }
+        if (getModel().getSelectedHeaderCells().size() > 0) {
+            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+            return;
+        }
 
         if (expression.isPresent()) {
             final Relation relation = expression.get();
