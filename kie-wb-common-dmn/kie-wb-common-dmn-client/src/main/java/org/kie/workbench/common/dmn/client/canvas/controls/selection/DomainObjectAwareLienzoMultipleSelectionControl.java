@@ -38,6 +38,12 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
+/**
+ * Specializes {@link LienzoMultipleSelectionControl} to also support selection of a single {@link DomainObject}.
+ * Selection of an {@link Element}, clearance of the canvas or destruction of the underlying session also deselects
+ * any {@link DomainObject}.
+ * @param <H> {@link AbstractCanvasHandler}
+ */
 @Dependent
 @MultipleSelection
 @DMNEditor

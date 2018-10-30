@@ -34,6 +34,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasRegist
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeRemovedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickHandler;
@@ -174,16 +175,12 @@ public final class MapSelectionControl<H extends AbstractCanvasHandler>
             }
         }
         if (!Objects.isNull(selectedItemUUID)) {
-            final Element<? extends Definition<?>> element = getElement(selectedItemUUID);
+            final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(),
+                                                                                          selectedItemUUID);
             return Optional.ofNullable(element);
         } else {
             return Optional.empty();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Element<? extends Definition<?>> getElement(final String uuid) {
-        return (null != uuid && null != getCanvasHandler()) ? getCanvasHandler().getGraphIndex().get(uuid) : null;
     }
 
     public boolean isReadonly() {
