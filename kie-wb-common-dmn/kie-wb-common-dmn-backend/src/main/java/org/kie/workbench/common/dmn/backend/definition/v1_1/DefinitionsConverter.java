@@ -89,7 +89,7 @@ public class DefinitionsConverter {
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
         String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
         String defaulName = (wb.getName() != null) ? wb.getName().getValue() : UUID.uuid(8);
-        String defaultNamespace = (!StringUtils.isEmpty(wb.getNamespace()))
+        String defaultNamespace = !StringUtils.isEmpty(wb.getNamespace())
                 ? wb.getNamespace()
                 : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
 
