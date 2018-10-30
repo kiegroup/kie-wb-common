@@ -29,6 +29,11 @@ public class BuiltInTypeUtilsTest {
     }
 
     @Test
+    public void testIsDefaultWhenTypeIsDefaultWithAlternativeAlias() {
+        assertTrue(BuiltInTypeUtils.isDefault("dayTimeDuration"));
+    }
+
+    @Test
     public void testIsDefaultWhenTypeIsDefaultWithAnUpperCaseCharacter() {
         assertTrue(BuiltInTypeUtils.isDefault("String"));
     }
