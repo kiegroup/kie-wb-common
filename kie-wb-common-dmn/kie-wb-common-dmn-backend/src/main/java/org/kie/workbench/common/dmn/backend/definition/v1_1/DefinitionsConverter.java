@@ -25,6 +25,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
 public class DefinitionsConverter {
@@ -88,7 +89,9 @@ public class DefinitionsConverter {
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
         String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
         String defaulName = (wb.getName() != null) ? wb.getName().getValue() : UUID.uuid(8);
-        String defaultNamespace = (wb.getNamespace() != null) ? wb.getNamespace() : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
+        String defaultNamespace = (!StringUtils.isEmpty(wb.getNamespace()))
+                ? wb.getNamespace()
+                : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
 
         result.setId(defaultId);
         result.setName(defaulName);
