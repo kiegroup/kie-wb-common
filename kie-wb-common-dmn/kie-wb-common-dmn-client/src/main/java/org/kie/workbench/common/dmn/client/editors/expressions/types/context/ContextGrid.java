@@ -322,11 +322,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
     @Override
     protected void doAfterSelectionChange(final int uiRowIndex,
                                           final int uiColumnIndex) {
-        if (getModel().getSelectedCells().stream().map(GridData.SelectedCell::getRowIndex).distinct().count() > 1) {
-            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
-            return;
-        }
-        if (getModel().getSelectedHeaderCells().size() > 0) {
+        if (hasAnyHeaderCellSelected() || hasMultipleRowsSelected()) {
             super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             return;
         }
@@ -339,6 +335,10 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
             }
         }
         super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+    }
+
+    private boolean hasMultipleRowsSelected() {
+        return getModel().getSelectedCells().stream().map(GridData.SelectedCell::getRowIndex).distinct().count() > 1;
     }
 
     @Override

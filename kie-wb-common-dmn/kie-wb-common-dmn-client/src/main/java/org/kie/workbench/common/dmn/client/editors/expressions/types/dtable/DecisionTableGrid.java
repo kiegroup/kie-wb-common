@@ -544,11 +544,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     @Override
     protected void doAfterSelectionChange(final int uiRowIndex,
                                           final int uiColumnIndex) {
-        if (getModel().getSelectedCells().size() > 1) {
-            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
-            return;
-        }
-        if (getModel().getSelectedHeaderCells().size() > 0) {
+        if (hasAnyHeaderCellSelected() || hasMultipleCellsSelected()) {
             super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             return;
         }
