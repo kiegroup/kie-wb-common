@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.forms.client.widgets;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
@@ -35,6 +34,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasDomainObjectListener;
 import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasElementListener;
+import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
@@ -54,8 +54,6 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull
 
 @Dependent
 public class FormsCanvasSessionHandler {
-
-    private static Logger LOGGER = Logger.getLogger(FormsCanvasSessionHandler.class.getName());
 
     private final DefinitionManager definitionManager;
     private final CanvasCommandFactory<AbstractCanvasHandler> commandFactory;
@@ -93,7 +91,7 @@ public class FormsCanvasSessionHandler {
         canvasListener.attach();
         domainObjectCanvasListener.attach();
         featuresSessionProvider = getFeaturesSessionProvider(session);
-        if (null == featuresSessionProvider) {
+        if (Objects.isNull(featuresSessionProvider)) {
             throw new UnsupportedOperationException("No client session type supported.");
         }
         return this;
@@ -114,11 +112,8 @@ public class FormsCanvasSessionHandler {
     }
 
     /**
-     * Shows properties of elements in current session as: 1.- If any element
-     * selected on session control, show properties for it. 2.- If no element
-     * selected on session control: 2.1- If no canvas root fot the diagram, show the
-     * diagram's graph properties. 2.2- If diagram has a canvas root, show the
-     * properties for that element.
+     * Shows properties of elements in current session.
+     * See {@link SelectionControl#getSelectedItemDefinition()}
      */
     public void show() {
         this.show(null);
@@ -177,11 +172,6 @@ public class FormsCanvasSessionHandler {
         return !CommandUtils.isError(result);
     }
 
-    @SuppressWarnings("unchecked")
-    private Element<? extends Definition<?>> getElement(final String uuid) {
-        return (null != uuid && null != getCanvasHandler()) ? getCanvasHandler().getGraphIndex().get(uuid) : null;
-    }
-
     private String getModifiedPropertyId(HasProperties model, String fieldName) {
         int separatorIndex = fieldName.indexOf(".");
         // Check if it is a nested property, if it is we must obtain the nested property
@@ -200,9 +190,9 @@ public class FormsCanvasSessionHandler {
     void onRefreshFormPropertiesEvent(@Observes RefreshFormPropertiesEvent event) {
         checkNotNull("event", event);
 
-        if (null != getCanvasHandler()) {
+        if (!Objects.isNull(getCanvasHandler())) {
             final String uuid = event.getUuid();
-            final Element<? extends Definition<?>> element = getElement(uuid);
+            final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
             render(element);
         }
     }
@@ -210,10 +200,10 @@ public class FormsCanvasSessionHandler {
     void onCanvasSelectionEvent(@Observes CanvasSelectionEvent event) {
         checkNotNull("event",
                      event);
-        if (null != getCanvasHandler()) {
+        if (!Objects.isNull(getCanvasHandler())) {
             if (event.getIdentifiers().size() == 1) {
                 final String uuid = event.getIdentifiers().iterator().next();
-                final Element<? extends Definition<?>> element = getElement(uuid);
+                final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
                 render(element);
             }
         }
@@ -222,7 +212,7 @@ public class FormsCanvasSessionHandler {
     void onDomainObjectSelectionEvent(@Observes DomainObjectSelectionEvent event) {
         checkNotNull("event",
                      event);
-        if (null != getCanvasHandler()) {
+        if (!Objects.isNull(getCanvasHandler())) {
             final DomainObject domainObject = event.getDomainObject();
             render(domainObject);
         }
@@ -233,11 +223,22 @@ public class FormsCanvasSessionHandler {
     }
 
     public AbstractCanvasHandler getCanvasHandler() {
-        return session != null ? (AbstractCanvasHandler) session.getCanvasHandler() : null;
+        return !Objects.isNull(session) ? (AbstractCanvasHandler) session.getCanvasHandler() : null;
     }
 
     public Diagram<?, ?> getDiagram() {
-        return null != getCanvasHandler() ? getCanvasHandler().getDiagram() : null;
+        return !Objects.isNull(getCanvasHandler()) ? getCanvasHandler().getDiagram() : null;
+    }
+
+    private Graph<?, ?> getGraph() {
+        return !Objects.isNull(getDiagram()) ? getDiagram().getGraph() : null;
+    }
+
+    private Optional<String> getGraphUUID() {
+        if (Objects.isNull(getGraph())) {
+            return Optional.empty();
+        }
+        return Optional.of(getGraph().getUUID());
     }
 
     public RenderMode getSessionRenderMode() {
@@ -255,7 +256,7 @@ public class FormsCanvasSessionHandler {
 
     private void render(final Element<? extends Definition<?>> element,
                         final Command callback) {
-        if (null != renderer) {
+        if (!Objects.isNull(renderer)) {
             getGraphUUID().ifPresent(graphUUID -> renderer.render(graphUUID,
                                                                   element,
                                                                   callback));
@@ -263,7 +264,7 @@ public class FormsCanvasSessionHandler {
     }
 
     private void render(final DomainObject domainObject) {
-        if (null != renderer) {
+        if (!Objects.isNull(renderer)) {
             getGraphUUID().ifPresent(graphUUID -> renderer.render(graphUUID,
                                                                   domainObject,
                                                                   () -> {/*Nothing*/}));
@@ -272,23 +273,11 @@ public class FormsCanvasSessionHandler {
 
     private void render(final DomainObject domainObject,
                         final Command callback) {
-        if (null != renderer) {
+        if (!Objects.isNull(renderer)) {
             getGraphUUID().ifPresent(graphUUID -> renderer.render(graphUUID,
                                                                   domainObject,
                                                                   callback));
         }
-    }
-
-    private Optional<String> getGraphUUID() {
-        final Diagram diagram = getDiagram();
-        if (Objects.isNull(diagram)) {
-            return Optional.empty();
-        }
-        final Graph graph = diagram.getGraph();
-        if (Objects.isNull(graph)) {
-            return Optional.empty();
-        }
-        return Optional.of(graph.getUUID());
     }
 
     /**
@@ -516,9 +505,5 @@ public class FormsCanvasSessionHandler {
         private EditorSession cast(final ClientSession session) {
             return (EditorSession) session;
         }
-    }
-
-    private static boolean isEmpty(final String s) {
-        return s == null || s.trim().length() == 0;
     }
 }

@@ -118,7 +118,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
     void handleDomainObjectSelectedEvent(final @Observes DomainObjectSelectionEvent event) {
         checkNotNull("event", event);
         if (Objects.equals(getCanvasHandler(), event.getCanvasHandler())) {
-            selectedDomainObject = Optional.of(event.getDomainObject());
+            selectedDomainObject = Optional.ofNullable(event.getDomainObject());
         }
     }
 

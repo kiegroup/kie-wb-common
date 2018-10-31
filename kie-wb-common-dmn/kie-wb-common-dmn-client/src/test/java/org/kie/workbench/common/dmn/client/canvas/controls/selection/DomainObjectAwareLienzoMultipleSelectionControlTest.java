@@ -148,6 +148,16 @@ public class DomainObjectAwareLienzoMultipleSelectionControlTest {
         assertDomainObjectSelected();
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectNullDomainObjectWithEvent() {
+        final DomainObjectSelectionEvent event = new DomainObjectSelectionEvent(canvasHandler, null);
+        control.handleDomainObjectSelectedEvent(event);
+
+        final Optional<Object> selectedItemDefinition = control.getSelectedItemDefinition();
+        assertThat(selectedItemDefinition).isNotPresent();
+    }
+
     @SuppressWarnings("unchecked")
     private void assertElementSelected() {
         final Optional<Object> selectedItemDefinition = control.getSelectedItemDefinition();
