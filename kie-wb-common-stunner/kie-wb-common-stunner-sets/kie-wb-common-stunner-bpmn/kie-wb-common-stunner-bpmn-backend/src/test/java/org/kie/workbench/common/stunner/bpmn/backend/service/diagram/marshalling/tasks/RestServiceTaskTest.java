@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.tasks;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
