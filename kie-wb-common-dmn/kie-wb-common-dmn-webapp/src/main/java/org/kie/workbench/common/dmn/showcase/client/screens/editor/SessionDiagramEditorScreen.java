@@ -16,8 +16,10 @@
 package org.kie.workbench.common.dmn.showcase.client.screens.editor;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -28,6 +30,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -62,6 +65,9 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
@@ -298,7 +304,15 @@ public class SessionDiagramEditorScreen {
     void open(final Diagram diagram,
               final Command callback) {
         screenPanelView.setWidget(presenter.getView());
-        layoutHelper.applyLayout(diagram.getGraph());
+        final Graph<?, Node<View, ?>> graph = diagram.getGraph();
+        layoutHelper.applyLayout(graph);
+        final Optional<Node<View, ?>> dd = StreamSupport.stream(graph.nodes().spliterator(),
+                                                                false)
+                .filter(n -> n.getContent().getDefinition() instanceof DMNDiagram)
+                .findFirst();
+        if (dd.isPresent()) {
+            dd.get().getContent().setBounds(BoundsImpl.build(0, 0, 0, 0));
+        }
         presenter
                 .withToolbar(true)
                 .withPalette(true)
