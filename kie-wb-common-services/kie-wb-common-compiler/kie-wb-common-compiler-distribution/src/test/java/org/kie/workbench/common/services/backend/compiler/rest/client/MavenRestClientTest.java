@@ -131,10 +131,8 @@ public class MavenRestClientTest {
             war.addAsManifestResource(file);
         }
 
-        String settings = runIntoMavenCLI ? "src/test/settings.xml" : "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/src/test/settings.xml";
-
         final File[] files = Maven.configureResolver().
-                fromFile(settings).
+                fromFile(mavenSettingsPath).
                 loadPomFromFile(pom)
                 .resolve(
                         "org.assertj:assertj-core:?",
