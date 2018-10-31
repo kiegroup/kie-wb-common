@@ -20,11 +20,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
+import org.kie.workbench.common.stunner.core.util.UUID;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
@@ -38,21 +43,59 @@ public class AbstractLayoutServiceTest {
     private Graph graph;
 
     @Mock
-    Node n1;
+    private Node n1;
 
     @Mock
-    Node n2;
+    private Node n2;
+
+    @Mock
+    private HasBounds hasBounds1;
+
+    @Mock
+    private HasBounds hasBounds2;
 
     @Test
     public void getLayoutInformationThreshold() {
+        when(n1.getUUID()).thenReturn(UUID.uuid());
+        when(n2.getUUID()).thenReturn(UUID.uuid());
         final GraphNodeStoreImpl store = new GraphNodeStoreImpl();
         store.add(n1);
-        store.add(n2);
 
         doCallRealMethod().when(layoutService).getLayoutInformationThreshold(graph);
         when(graph.nodes()).thenReturn(store);
 
-        final double threshold = layoutService.getLayoutInformationThreshold(graph);
+        double threshold = layoutService.getLayoutInformationThreshold(graph);
         assertEquals(0.25, threshold, 0.01);
+
+        store.add(n2);
+
+        threshold = layoutService.getLayoutInformationThreshold(graph);
+        assertEquals(0.50, threshold, 0.01);
+    }
+
+    @Test
+    public void hasLayoutInformation() {
+        when(n1.getUUID()).thenReturn(UUID.uuid());
+        when(n2.getUUID()).thenReturn(UUID.uuid());
+        final GraphNodeStoreImpl store = new GraphNodeStoreImpl();
+        store.add(n2);
+        store.add(n1);
+
+        doCallRealMethod().when(layoutService).hasLayoutInformation(graph);
+        doCallRealMethod().when(layoutService).getLayoutInformationThreshold(graph);
+
+        when(graph.nodes()).thenReturn(store);
+        assertFalse(layoutService.hasLayoutInformation(graph));
+
+        final BoundsImpl bounds = BoundsImpl.build(10, 10, 10, 10);
+        final BoundsImpl noBounds = BoundsImpl.build(0, 0, 0, 0);
+
+        when(n1.getContent()).thenReturn(hasBounds1);
+        when(hasBounds1.getBounds()).thenReturn(noBounds);
+
+        when(n2.getContent()).thenReturn(hasBounds2);
+        when(hasBounds2.getBounds()).thenReturn(bounds);
+
+        assertTrue(layoutService.hasLayoutInformation(graph));
     }
 }
