@@ -16,7 +16,6 @@
 package org.kie.workbench.common.dmn.project.client.editor;
 
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -26,7 +25,6 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
@@ -47,9 +45,6 @@ import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationServic
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
@@ -148,15 +143,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     @Override
     public void open(final ProjectDiagram diagram) {
-        final Graph<?, Node<org.kie.workbench.common.stunner.core.graph.content.view.View, ?>> graph = diagram.getGraph();
-        this.layoutHelper.applyLayout(diagram.getGraph());
-        final Optional<Node<org.kie.workbench.common.stunner.core.graph.content.view.View, ?>> dd = StreamSupport.stream(graph.nodes().spliterator(),
-                                                                                                                         false)
-                .filter(n -> n.getContent().getDefinition() instanceof DMNDiagram)
-                .findFirst();
-        if (dd.isPresent()) {
-            dd.get().getContent().setBounds(BoundsImpl.build(0, 0, 0, 0));
-        }
+        this.layoutHelper.applyLayout(diagram);
         super.open(diagram);
     }
 
