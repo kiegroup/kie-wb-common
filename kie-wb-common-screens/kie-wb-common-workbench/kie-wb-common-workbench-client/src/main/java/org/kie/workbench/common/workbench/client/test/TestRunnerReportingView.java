@@ -38,6 +38,8 @@ public interface TestRunnerReportingView
 
     void showFailure();
 
+    void showSuccessFailureDiagram(final int passed, final int failed);
+
     void setRunStatus(String completedAt,
                       String ScenariosRun,
                       String duration);
