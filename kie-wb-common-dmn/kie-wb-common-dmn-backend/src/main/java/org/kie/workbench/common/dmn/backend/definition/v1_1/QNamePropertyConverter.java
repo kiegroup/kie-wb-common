@@ -16,9 +16,11 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 
 public class QNamePropertyConverter {
@@ -27,9 +29,16 @@ public class QNamePropertyConverter {
      * @return maybe null
      */
     public static QName wbFromDMN(final javax.xml.namespace.QName qName) {
-        return (qName != null) ? new QName(qName.getNamespaceURI(),
-                                           qName.getLocalPart(),
-                                           qName.getPrefix()) : null;
+        if (Objects.isNull(qName)) {
+            return null;
+        }
+        //Convert DMN1.1 QName typeRefs to DMN1.2 (the editor only supports DMN1.2)
+        if (Objects.equals(qName.getPrefix(), Namespace.FEEL.getPrefix())) {
+            return new QName(QName.NULL_NS_URI, qName.getLocalPart());
+        }
+        return new QName(qName.getNamespaceURI(),
+                         qName.getLocalPart(),
+                         qName.getPrefix());
     }
 
     /*
