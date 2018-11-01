@@ -34,4 +34,6 @@ public @interface Definition {
 
     @Deprecated
     Class<? extends Builder<?>> builder() default VoidBuilder.class;
+
+    String nameField() default "";
 }

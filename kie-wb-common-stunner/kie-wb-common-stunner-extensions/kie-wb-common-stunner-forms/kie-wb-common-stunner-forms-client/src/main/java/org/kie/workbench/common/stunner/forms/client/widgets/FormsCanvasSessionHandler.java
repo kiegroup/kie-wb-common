@@ -143,16 +143,11 @@ public class FormsCanvasSessionHandler {
     public boolean executeUpdateProperty(final Element<? extends Definition<?>> element,
                                          final String fieldName,
                                          final Object value) {
-        final Object definition = element.getContent().getDefinition();
-        final HasProperties hasProperties = (HasProperties) DataBinder.forModel(definition).getModel();
-        final String propertyId = getModifiedPropertyId(hasProperties, fieldName);
         canvasListener.startProcessing();
         final CommandResult result =
                sessionCommandManager
                         .execute(getCanvasHandler(),
-                                 commandFactory.updatePropertyValue(element,
-                                                                    propertyId,
-                                                                    value));
+                                 commandFactory.updatePropertyValue(element, fieldName, value));
         canvasListener.endProcessing();
         return !CommandUtils.isError(result);
     }
