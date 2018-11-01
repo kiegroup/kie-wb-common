@@ -109,13 +109,16 @@ public class MavenRestClientTest {
         setRunIntoMavenCLI();
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
         final File[] metaInfFilesFiles;
+        File pom;
         if (runIntoMavenCLI) {
             war.setWebXML(new File("target/test-classes/web.xml"));
             metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
+            pom = new File("pom.xml");
         } else {
             war.addAsResource(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/IncrementalCompiler.properties"));
             war.setWebXML(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/web.xml"));
             metaInfFilesFiles = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/META-INF").listFiles();
+            pom = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/pom.xml");
         }
 
         war.addClasses(MavenRestHandler.class);
@@ -125,12 +128,10 @@ public class MavenRestClientTest {
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
         }
-
-        String settings = runIntoMavenCLI ? "src/test/settings.xml" : "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/src/test/settings.xml";
-
+        
         final File[] files = Maven.configureResolver().
-                fromFile(settings).
-                loadPomFromFile("./pom.xml")
+                fromFile(mavenSettingsPath).
+                loadPomFromFile(pom)
                 .resolve(
                         "org.assertj:assertj-core:?",
                         "org.kie.workbench.services:kie-wb-common-compiler-core:?",
@@ -151,6 +152,8 @@ public class MavenRestClientTest {
                         "org.uberfire:uberfire-metadata-backend-elasticsearch:?",
                         "org.uberfire:uberfire-metadata-backend-lucene:?",
                         "org.uberfire:uberfire-io:?",
+                        "org.uberfire:uberfire-ssh-api:?",
+                        "org.uberfire:uberfire-ssh-backend:?",
 
                         "org.eclipse.jgit:org.eclipse.jgit:?",
 
