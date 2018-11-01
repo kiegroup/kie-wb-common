@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
@@ -50,6 +51,8 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.Del
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltinAggregatorCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetHitPolicyCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetOrientationCommand;
+import org.kie.workbench.common.dmn.client.commands.general.DeleteHasNameCommand;
+import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HasHitPolicyControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HitPolicyPopoverView;
@@ -229,27 +232,15 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             final List<GridColumn.HeaderMetaData> metaData = new ArrayList<>();
             expression.ifPresent(dtable -> {
                 if (hasName.isPresent()) {
-                    if (dtable.getOutput().size() == 1) {
-                        metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(hasExpression,
-                                                                                        expression,
-                                                                                        hasName,
-                                                                                        clearDisplayNameConsumer(true),
-                                                                                        setDisplayNameConsumer(true),
-                                                                                        setTypeRefOnHasExpressionAndOutputClauseConsumer(oc),
-                                                                                        cellEditorControls,
-                                                                                        headerEditor,
-                                                                                        Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EditOutputClause))));
-                    } else {
-                        metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(hasExpression,
-                                                                                        expression,
-                                                                                        hasName,
-                                                                                        clearDisplayNameConsumer(true),
-                                                                                        setDisplayNameConsumer(true),
-                                                                                        setTypeRefConsumer(),
-                                                                                        cellEditorControls,
-                                                                                        headerEditor,
-                                                                                        Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EditOutputClause))));
-                    }
+                    metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(hasExpression,
+                                                                                    expression,
+                                                                                    hasName,
+                                                                                    clearDisplayNameConsumer(true, oc, dtable),
+                                                                                    setDisplayNameConsumer(true, oc, dtable),
+                                                                                    setTypeRefConsumer(oc, dtable),
+                                                                                    cellEditorControls,
+                                                                                    headerEditor,
+                                                                                    Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EditOutputClause))));
                 } else {
                     metaData.add(new BaseHeaderMetaData(translationService.format(DMNEditorConstants.DecisionTableEditor_OutputClauseHeader)));
                 }
@@ -266,6 +257,63 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             });
             return metaData;
         };
+    }
+
+    private Consumer<HasName> clearDisplayNameConsumer(final boolean updateStunnerTitle,
+                                                       final OutputClause oc,
+                                                       final DecisionTable dtable) {
+        if (dtable.getOutput().size() == 1) {
+            return clearDisplayNameOnHasExpressionAndOutputClauseConsumer(updateStunnerTitle, oc);
+        }
+        return clearDisplayNameConsumer(updateStunnerTitle);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Consumer<HasName> clearDisplayNameOnHasExpressionAndOutputClauseConsumer(final boolean updateStunnerTitle,
+                                                                                     final OutputClause oc) {
+        return (hn) -> {
+            final CompositeCommand.Builder commandBuilder = newHasNameHasNoValueCommand(hn);
+            commandBuilder.addCommand(new DeleteHasNameCommand(wrapOutputClauseIntoHasName(oc),
+                                                               () -> {/*Nothing*/}));
+            if (updateStunnerTitle) {
+                getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
+            }
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+        };
+    }
+
+    private BiConsumer<HasName, Name> setDisplayNameConsumer(final boolean updateStunnerTitle,
+                                                             final OutputClause oc,
+                                                             final DecisionTable dtable) {
+        if (dtable.getOutput().size() == 1) {
+            return setDisplayNameOnHasExpressionAndOutputClauseConsumer(updateStunnerTitle, oc);
+        }
+        return setDisplayNameConsumer(updateStunnerTitle);
+    }
+
+    @SuppressWarnings("unchecked")
+    private BiConsumer<HasName, Name> setDisplayNameOnHasExpressionAndOutputClauseConsumer(final boolean updateStunnerTitle,
+                                                                                           final OutputClause oc) {
+        return (hn, name) -> {
+            final CompositeCommand.Builder commandBuilder = newHasNameHasValueCommand(hn, name);
+            commandBuilder.addCommand(new SetHasNameCommand(wrapOutputClauseIntoHasName(oc),
+                                                            name,
+                                                            () -> {/*Nothing*/}));
+            if (updateStunnerTitle) {
+                getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
+            }
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+        };
+    }
+
+    private BiConsumer<HasTypeRef, QName> setTypeRefConsumer(final OutputClause oc,
+                                                             final DecisionTable dtable) {
+        if (dtable.getOutput().size() == 1) {
+            return setTypeRefOnHasExpressionAndOutputClauseConsumer(oc);
+        }
+        return setTypeRefConsumer();
     }
 
     private BiConsumer<HasTypeRef, QName> setTypeRefOnHasExpressionAndOutputClauseConsumer(final OutputClause oc) {
