@@ -99,7 +99,7 @@ public class DMNEditBusinessKnowledgeModelToolboxAction implements ToolboxAction
 
                                                              @Override
                                                              public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
-                                                                 return bkm.getEncapsulatedLogic();
+                                                                 return bkm;
                                                              }
 
                                                              @Override
