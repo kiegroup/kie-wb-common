@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.datasource.management.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import org.appformer.maven.integration.Aether;
@@ -96,6 +97,57 @@ public class MavenArtifactResolverTest {
                                                                 artifactRequest);
         assertThat(result.isMissing()).isFalse();
         assertThat(result.isResolved()).isTrue();
+    }
+
+    @Test
+    public void resolveArtifactNotOffline() throws Exception {
+        final boolean[] executedNotOffline = {false};
+        RepositorySystemSession session = Aether.getAether().getSession();
+        assertThat(checksIfArtifactIsPresent(session)).isFalse();
+
+        File file = new File("target/test-classes/uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
+        assertThat(file).exists();
+
+        Artifact artifact = getArtifact();
+        artifact = artifact.setFile(file);
+        ArtifactRequest artifactRequest = new ArtifactRequest();
+        artifactRequest.setArtifact(artifact);
+
+        ArtifactResult result;
+        try {
+            Aether.getAether().getSystem().resolveArtifact(session,
+                                                           artifactRequest);
+        } catch (ArtifactResolutionException ex) {
+            assertThat(ex).isNotNull();
+        }
+
+        deployTestJar(artifact,
+                      session);
+
+        MavenArtifactResolver resolver = new MavenArtifactResolver() {
+            public URI resolve(final String groupId,
+                               final String artifactId,
+                               final String version) throws Exception {
+                return internalResolver(false, groupId, artifactId, version);
+            }
+
+            URI resolveEmbedded(final String groupId,
+                                final String artifactId,
+                                final String version) throws IOException {
+                executedNotOffline[0] = true;
+                return super.resolveEmbedded(groupId, artifactId, version);
+            }
+        };
+        URI uri = resolver.resolve(artifact.getGroupId(),
+                                   artifact.getArtifactId(),
+                                   artifact.getVersion());
+        assertThat(uri).isNotNull();
+        assertThat(uri.getPath()).endsWith(File.separator + "uberfire-m2repo-editor-backend" + File.separator + "100-SNAPSHOT" + File.separator + "uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
+        result = Aether.getAether().getSystem().resolveArtifact(session,
+                                                                artifactRequest);
+        assertThat(result.isMissing()).isFalse();
+        assertThat(result.isResolved()).isTrue();
+        assertThat(executedNotOffline[0]).isTrue();
     }
 
     private boolean checksIfArtifactIsPresent(RepositorySystemSession session) {
