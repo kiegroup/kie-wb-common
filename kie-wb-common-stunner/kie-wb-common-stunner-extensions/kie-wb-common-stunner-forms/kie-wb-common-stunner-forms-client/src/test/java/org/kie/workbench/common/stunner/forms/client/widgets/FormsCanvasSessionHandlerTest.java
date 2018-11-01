@@ -139,7 +139,6 @@ public class FormsCanvasSessionHandlerTest {
         this.handler.setRenderer(formRenderer);
 
         when(session.getCanvasHandler()).thenReturn(abstractCanvasHandler);
-        when(session.getCommandManager()).thenReturn(canvasCommandManager);
         when(session.getSelectionControl()).thenReturn(selectionControl);
         when(abstractCanvasHandler.getGraphIndex()).thenReturn(index);
         when(abstractCanvasHandler.getDiagram()).thenReturn(diagram);
