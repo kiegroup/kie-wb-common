@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1;
 import javax.xml.XMLConstants;
 
 import org.junit.Test;
+import org.kie.dmn.model.api.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
@@ -27,9 +28,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class QNamePropertyConverterTest {
 
+    static final Decision parent11 = new org.kie.dmn.model.v1_1.TDecision();
+    static {
+        parent11.getNsContext().put(Namespace.FEEL.getPrefix(), parent11.getURIFEEL());
+    }
+    static final Decision parent12 = new org.kie.dmn.model.v1_2.TDecision();
+    static {
+        parent12.getNsContext().put(Namespace.FEEL.getPrefix(), parent12.getURIFEEL());
+    }
+
     @Test
     public void testWBfromDMNnull() {
-        final QName wb = QNamePropertyConverter.wbFromDMN(null);
+        final QName wb = QNamePropertyConverter.wbFromDMN(null, parent11);
 
         assertThat(wb).isNull();
     }
@@ -39,7 +49,24 @@ public class QNamePropertyConverterTest {
         final javax.xml.namespace.QName dmn = new javax.xml.namespace.QName(XMLConstants.NULL_NS_URI,
                                                                             BuiltInType.STRING.getName(),
                                                                             Namespace.FEEL.getPrefix());
-        final QName wb = QNamePropertyConverter.wbFromDMN(dmn);
+        final QName wb = QNamePropertyConverter.wbFromDMN(dmn, parent11);
+
+        assertThat(wb).isNotNull();
+        assertThat(wb.getNamespaceURI()).isEqualTo(QName.NULL_NS_URI);
+        assertThat(wb.getLocalPart()).isEqualTo(BuiltInType.STRING.getName());
+        assertThat(wb.getPrefix()).isEqualTo(QName.DEFAULT_NS_PREFIX);
+    }
+
+    @Test
+    public void testWBfromDMNForBuiltInDataType11variant() {
+        final Decision parent11_variant = new org.kie.dmn.model.v1_1.TDecision();
+        final String nonTrivialFEELPrefix = "friendlyenough";
+        parent11_variant.getNsContext().put(nonTrivialFEELPrefix, parent11_variant.getURIFEEL());
+
+        final javax.xml.namespace.QName dmn = new javax.xml.namespace.QName(XMLConstants.NULL_NS_URI,
+                                                                            BuiltInType.STRING.getName(),
+                                                                            nonTrivialFEELPrefix);
+        final QName wb = QNamePropertyConverter.wbFromDMN(dmn, parent11_variant);
 
         assertThat(wb).isNotNull();
         assertThat(wb.getNamespaceURI()).isEqualTo(QName.NULL_NS_URI);
@@ -51,7 +78,7 @@ public class QNamePropertyConverterTest {
     public void testWBfromDMNForBuiltInDataType12() {
         final javax.xml.namespace.QName dmn = new javax.xml.namespace.QName(XMLConstants.NULL_NS_URI,
                                                                             BuiltInType.STRING.getName());
-        final QName wb = QNamePropertyConverter.wbFromDMN(dmn);
+        final QName wb = QNamePropertyConverter.wbFromDMN(dmn, parent12);
 
         assertThat(wb).isNotNull();
         assertThat(wb.getNamespaceURI()).isEqualTo(QName.NULL_NS_URI);
@@ -64,7 +91,7 @@ public class QNamePropertyConverterTest {
         final javax.xml.namespace.QName dmn = new javax.xml.namespace.QName(Namespace.KIE.getUri(),
                                                                             "tCustom",
                                                                             Namespace.KIE.getPrefix());
-        final QName wb = QNamePropertyConverter.wbFromDMN(dmn);
+        final QName wb = QNamePropertyConverter.wbFromDMN(dmn, parent11);
 
         assertThat(wb).isNotNull();
         assertThat(wb.getNamespaceURI()).isEqualTo(Namespace.KIE.getUri());
