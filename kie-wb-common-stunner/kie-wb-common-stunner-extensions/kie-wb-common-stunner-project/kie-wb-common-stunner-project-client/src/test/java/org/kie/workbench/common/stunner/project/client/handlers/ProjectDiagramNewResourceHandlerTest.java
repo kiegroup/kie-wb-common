@@ -117,9 +117,8 @@ public class ProjectDiagramNewResourceHandlerTest {
                                 eq(DEFSET_ID),
                                 eq(MODULE_NAME),
                                 any(Package.class),
-                                any(),
+                                eq(Optional.empty()),
                                 any(ServiceCallback.class));
-        //todo: project type
     }
 
     private class ProjectDiagramNewResourceHandlerStub extends AbstractProjectDiagramNewResourceHandler<ClientResourceType> {

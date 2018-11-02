@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.project.client.editor.BPMNDiagramEditor;
@@ -96,7 +97,7 @@ public class CaseDefinitionNewResourceHandler extends AbstractProjectDiagramNewR
     @Override
     public void acceptContext(Callback<Boolean, Void> callback) {
         projectContext.getActiveWorkspaceProject()
-                .map(pkg -> pkg.getRootPath())
+                .map(WorkspaceProject::getRootPath)
                 .ifPresent(path -> bpmnDiagramService.call(projectType -> {
                     Optional.ofNullable(projectType)
                             .filter(ProjectType.CASE::equals)

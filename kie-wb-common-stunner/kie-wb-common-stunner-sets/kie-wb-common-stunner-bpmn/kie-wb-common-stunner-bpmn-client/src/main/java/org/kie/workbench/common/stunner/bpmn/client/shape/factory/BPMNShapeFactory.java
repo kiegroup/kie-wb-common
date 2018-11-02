@@ -126,7 +126,7 @@ public class BPMNShapeFactory
         this.basicShapesFactory = basicShapesFactory;
         this.svgShapeFactory = svgShapeFactory;
         this.delegateShapeFactory = delegateShapeFactory;
-        this.workItemDefinitionRegistry = () -> workItemDefinitionRegistry.get();
+        this.workItemDefinitionRegistry =  workItemDefinitionRegistry::get;
         this.definitionUtils = definitionUtils;
         this.preferencesRegistries = preferencesRegistries;
     }
