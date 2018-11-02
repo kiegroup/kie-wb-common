@@ -61,10 +61,11 @@ import org.uberfire.workbench.model.menu.Menus;
 
 import static org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeDescription;
 import static org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeShortName;
+import static org.uberfire.experimental.definition.annotations.ExperimentalFeature.Scope.GLOBAL;
 
 @Dependent
 @DiagramEditor
-@ExperimentalFeature(scope = ExperimentalFeature.Scope.GLOBAL,
+@ExperimentalFeature(scope = GLOBAL,
         nameI18nKey = CaseManagementDiagramResourceTypeShortName,
         descriptionI18nKey = CaseManagementDiagramResourceTypeDescription)
 @WorkbenchEditor(identifier = CaseManagementDiagramEditor.EDITOR_ID, supportedTypes = {CaseManagementDiagramResourceType.class})
