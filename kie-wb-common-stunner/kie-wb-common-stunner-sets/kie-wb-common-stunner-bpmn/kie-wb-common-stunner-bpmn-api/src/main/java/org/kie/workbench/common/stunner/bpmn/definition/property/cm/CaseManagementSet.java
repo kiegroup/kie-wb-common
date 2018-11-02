@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.bpmn.forms.model.VariablesEditorFieldTyp
 import org.kie.workbench.common.stunner.bpmn.forms.model.cm.RolesEditorFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable

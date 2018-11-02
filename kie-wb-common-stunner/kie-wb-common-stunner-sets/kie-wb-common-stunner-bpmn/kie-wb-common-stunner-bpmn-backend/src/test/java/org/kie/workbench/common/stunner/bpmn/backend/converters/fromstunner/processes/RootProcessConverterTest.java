@@ -32,8 +32,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.lane
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;

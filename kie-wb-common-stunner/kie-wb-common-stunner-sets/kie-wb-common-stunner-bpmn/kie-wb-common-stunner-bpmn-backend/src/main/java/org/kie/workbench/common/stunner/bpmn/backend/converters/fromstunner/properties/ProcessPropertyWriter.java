@@ -44,8 +44,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
-import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 

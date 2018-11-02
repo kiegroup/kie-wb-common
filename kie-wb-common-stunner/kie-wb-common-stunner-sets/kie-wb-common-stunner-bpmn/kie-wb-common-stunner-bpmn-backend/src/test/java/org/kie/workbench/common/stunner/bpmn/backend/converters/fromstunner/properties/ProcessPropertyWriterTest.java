@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
-import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.mockito.runners.MockitoJUnitRunner;
 

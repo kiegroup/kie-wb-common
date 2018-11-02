@@ -28,8 +28,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.Defini
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
