@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
-import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -82,15 +81,6 @@ public class GraphUtils {
                 : property;
     }
 
-    public static Object getProperty(final DefinitionManager definitionManager,
-                                     final DomainObject domainObject,
-                                     final String id) {
-        return Optional.ofNullable(domainObject)
-                .map(o -> getProperty(definitionManager,
-                                      definitionManager.adapters().forDefinition().getProperties(domainObject),
-                                      id))
-                .orElse(null);
-    }
 
     public static Object getProperty(final DefinitionManager definitionManager,
                                      final Set properties,

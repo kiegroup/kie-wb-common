@@ -119,7 +119,7 @@ public class ReflectionAdapterUtils {
     }
 
     public static <T> Field getField(final T object,
-                                     final String fieldName) throws IllegalAccessException {
+                                     final String fieldName) throws SecurityException {
         Class<?> c = object.getClass();
         while (!c.getName().equals(Object.class.getName())) {
             Field result = getField(c,
@@ -133,7 +133,7 @@ public class ReflectionAdapterUtils {
     }
 
     public static Field getField(final Class<?> sourceType,
-                                 final String fieldName) throws IllegalAccessException {
+                                 final String fieldName) throws SecurityException {
         Field[] fields = sourceType.getDeclaredFields();
         if (null != fields) {
             for (Field field : fields) {
@@ -145,7 +145,7 @@ public class ReflectionAdapterUtils {
         return null;
     }
 
-    public static List<Field> getFields(final Class<?> sourceType) throws IllegalAccessException {
+    public static List<Field> getFields(final Class<?> sourceType) throws SecurityException {
         return Stream.of(sourceType.getDeclaredFields()).collect(Collectors.toList());
     }
 

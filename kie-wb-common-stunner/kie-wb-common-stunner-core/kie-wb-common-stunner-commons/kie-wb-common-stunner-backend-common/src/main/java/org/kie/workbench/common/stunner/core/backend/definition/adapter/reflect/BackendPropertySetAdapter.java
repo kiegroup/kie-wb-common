@@ -87,7 +87,7 @@ public class BackendPropertySetAdapter<T> extends AbstractReflectAdapter<T> impl
                     .findFirst()
                     .map(property -> (P) property)
                     .orElse(null);
-        } catch (IllegalAccessException e) {
+        } catch (SecurityException e) {
             LOG.error("Error obtaining annotated properties for T with id " + getId(pojo));
             return null;
         }

@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasDomainObjectListener;
 import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasElementListener;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
@@ -143,29 +144,21 @@ public class FormsCanvasSessionHandler {
     public boolean executeUpdateProperty(final Element<? extends Definition<?>> element,
                                          final String fieldName,
                                          final Object value) {
-        canvasListener.startProcessing();
-        final CommandResult result =
-               sessionCommandManager
-                        .execute(getCanvasHandler(),
-                                 commandFactory.updatePropertyValue(element, fieldName, value));
-        canvasListener.endProcessing();
-        return !CommandUtils.isError(result);
+        return execute(commandFactory.updatePropertyValue(element, fieldName, value), canvasListener);
     }
 
     @SuppressWarnings("unchecked")
     public boolean executeUpdateDomainObjectProperty(final DomainObject domainObject,
                                                      final String fieldName,
                                                      final Object value) {
-        final HasProperties hasProperties = (HasProperties) DataBinder.forModel(domainObject).getModel();
-        final String propertyId = getModifiedPropertyId(hasProperties, fieldName);
-        domainObjectCanvasListener.startProcessing();
-        final CommandResult result =
-                sessionCommandManager
-                        .execute(getCanvasHandler(),
-                                 commandFactory.updateDomainObjectPropertyValue(domainObject,
-                                                                                propertyId,
-                                                                                value));
-        domainObjectCanvasListener.endProcessing();
+        return execute(commandFactory.updateDomainObjectPropertyValue(domainObject, fieldName, value),
+                       domainObjectCanvasListener);
+    }
+
+    private boolean execute(CanvasCommand<AbstractCanvasHandler> command, FormsListener listener) {
+        listener.startProcessing();
+        final CommandResult result = sessionCommandManager.execute(getCanvasHandler(), command);
+        listener.endProcessing();
         return !CommandUtils.isError(result);
     }
 
@@ -281,7 +274,8 @@ public class FormsCanvasSessionHandler {
      * A listener that refresh the forms once an element has been updated,
      * but it skips the refreshing when updates come from this forms widget instance.
      */
-    class FormsCanvasListener implements CanvasElementListener {
+    class FormsCanvasListener implements CanvasElementListener,
+                                         FormsListener {
 
         private boolean areFormsProcessing;
 
@@ -343,7 +337,8 @@ public class FormsCanvasSessionHandler {
      * A listener that refresh the forms once a DomainObject has been updated,
      * but it skips the refreshing when updates come from this forms widget instance.
      */
-    class FormsDomainObjectCanvasListener implements CanvasDomainObjectListener {
+    class FormsDomainObjectCanvasListener implements CanvasDomainObjectListener,
+                                                     FormsListener {
 
         private boolean areFormsProcessing;
 
@@ -385,6 +380,13 @@ public class FormsCanvasSessionHandler {
                 render(domainObject);
             }
         }
+    }
+
+    private interface FormsListener {
+
+        void startProcessing();
+
+        void endProcessing();
     }
 
     private FormFeaturesSessionProvider getFeaturesSessionProvider(final ClientSession session) {
@@ -452,7 +454,6 @@ public class FormsCanvasSessionHandler {
          * returns <code>null</code>.
          */
         SelectionControl getSelectionControl(S session);
-
     }
 
     private static class FormFeaturesReadOnlySessionProvider implements FormFeaturesSessionProvider<ViewerSession> {

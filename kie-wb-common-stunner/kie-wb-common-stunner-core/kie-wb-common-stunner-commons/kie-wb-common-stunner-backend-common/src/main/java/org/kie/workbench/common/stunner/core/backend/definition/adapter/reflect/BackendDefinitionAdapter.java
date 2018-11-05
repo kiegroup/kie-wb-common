@@ -218,7 +218,7 @@ public class BackendDefinitionAdapter<T> extends AbstractReflectAdapter<T>
             return ReflectionAdapterUtils.getFields(pojo.getClass()).stream()
                     .filter(f -> Objects.equals(propertyName, f.getName()))
                     .findFirst();
-        } catch (IllegalAccessException e) {
+        } catch (SecurityException e) {
             LOG.error("Error obtaining fields from definition " + getId(pojo));
             return Optional.empty();
         }
