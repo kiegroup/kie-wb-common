@@ -24,8 +24,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.databinding.client.HasProperties;
-import org.jboss.errai.databinding.client.api.DataBinder;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -160,21 +158,6 @@ public class FormsCanvasSessionHandler {
         final CommandResult result = sessionCommandManager.execute(getCanvasHandler(), command);
         listener.endProcessing();
         return !CommandUtils.isError(result);
-    }
-
-    private String getModifiedPropertyId(HasProperties model, String fieldName) {
-        int separatorIndex = fieldName.indexOf(".");
-        // Check if it is a nested property, if it is we must obtain the nested property
-        // instead of the root one.
-        if (separatorIndex != -1) {
-            String rootProperty = fieldName.substring(0, separatorIndex);
-            fieldName = fieldName.substring(separatorIndex + 1);
-            Object property = model.get(rootProperty);
-            model = (HasProperties) DataBinder.forModel(property).getModel();
-            return getModifiedPropertyId(model, fieldName);
-        }
-        Object property = model.get(fieldName);
-        return definitionManager.adapters().forProperty().getId(property);
     }
 
     void onRefreshFormPropertiesEvent(@Observes RefreshFormPropertiesEvent event) {
