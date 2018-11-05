@@ -118,7 +118,7 @@ public class DefaultAdminPageHelper {
         adminPage.addPreference("root",
                 "ProfilePreferences",
                 translationService.format(PreferencesConstants.ProfilePreferences_Title),
-                "fa-list",
+                new Sets.Builder().add("fa").add("fa-list").build(),
                 "general",
                 scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
                 AdminPageOptions.WITH_BREADCRUMBS);

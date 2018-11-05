@@ -100,6 +100,14 @@ public class AddAssetScreen {
         profilesPreferences.load(this::filterNewResourcesHandlersAndUpdate, RuntimeException::new); 
     }
 
+    @OnOpen
+    public void onOpen() {
+        this.filter = "";
+        this.newResourceHandlers = this.resourceHandlerManager.getNewResourceHandlers(NewResourceHandler::isProjectAsset);
+        this.view.setCategories(this.categoryUtils.createCategories());
+        this.update();
+    }
+
     private Callback<Boolean, Void> acceptContextCallback(NewResourceHandler resourceHandler) {
         return new Callback<Boolean, Void>() {
             @Override
