@@ -54,7 +54,7 @@ public class GraphUtils {
         return Optional.ofNullable(element)
                 .map(Element::getContent)
                 .map(Definition::getDefinition)
-                .map(def -> Exceptions.swallow(() -> definitionManager.adapters().forDefinition().getProperties(def),
+                .map(def -> Exceptions.<Set>swallow(() -> definitionManager.adapters().forDefinition().getProperties(def),
                                                Collections.emptySet()))
                 .map(properties -> Exceptions.swallow(() -> getProperty(definitionManager, properties, id), null))
                 .orElseGet(
