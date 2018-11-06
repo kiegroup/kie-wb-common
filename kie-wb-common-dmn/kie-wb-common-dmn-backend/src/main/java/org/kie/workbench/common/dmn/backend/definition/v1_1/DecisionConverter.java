@@ -67,6 +67,8 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
                                          new BackgroundSet(),
                                          new FontSet(),
                                          new RectangleDimensionsSet());
+        decision.setQuestion(new Question(dmn.getQuestion()));
+        decision.setAllowedAnswers(new AllowedAnswers(dmn.getAllowedAnswers()));
         node.getContent().setDefinition(decision);
 
         if (informationItem != null) {
@@ -96,6 +98,8 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
             expression.setParent(d);
         }
         d.setExpression(expression);
+        d.setQuestion(source.getQuestion().getValue());
+        d.setAllowedAnswers(source.getAllowedAnswers().getValue());
         // DMN spec table 2: Requirements connection rules
         List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for (Edge<?, ?> e : inEdges) {
