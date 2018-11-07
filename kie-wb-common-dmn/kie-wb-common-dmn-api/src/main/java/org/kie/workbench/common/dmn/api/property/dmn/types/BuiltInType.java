@@ -32,7 +32,8 @@ public enum BuiltInType {
     //Requested by Edson Tirelli
     ANY("any"),
     DATE("date"),
-    CONTEXT("context");
+    CONTEXT("context"),
+    NONE("<None>");
 
     private final String[] names;
 
