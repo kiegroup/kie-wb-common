@@ -1378,12 +1378,12 @@ public class DMNMarshallerTest {
         Node diagramRoot = DMNMarshaller.findDMNDiagramRoot(g);
         testAugmentWithNSPrefixes(((DMNDiagram) ((View<?>) diagramRoot.getContent()).getDefinition()).getDefinitions());
 
-        org.kie.dmn.model.api.InputData dmnInputData = (org.kie.dmn.model.api.InputData) new TInputData();
+        org.kie.dmn.model.api.InputData dmnInputData = new TInputData();
         dmnInputData.setId("inputDataID");
         dmnInputData.setName(dmnInputData.getId());
         Node inputDataNode = new InputDataConverter(applicationFactoryManager).nodeFromDMN(dmnInputData);
-        org.kie.dmn.model.api.TextAnnotation dmnTextAnnotation = (org.kie.dmn.model.api.TextAnnotation) new TTextAnnotation();
-        dmnTextAnnotation.setId("decisionID");
+        org.kie.dmn.model.api.TextAnnotation dmnTextAnnotation = new TTextAnnotation();
+        dmnTextAnnotation.setId("textAnnotationID");
         Node textAnnotationNode = new TextAnnotationConverter(applicationFactoryManager).nodeFromDMN(dmnTextAnnotation);
         g.addNode(inputDataNode);
         g.addNode(textAnnotationNode);
