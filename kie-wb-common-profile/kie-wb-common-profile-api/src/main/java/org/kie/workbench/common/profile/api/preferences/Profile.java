@@ -40,14 +40,19 @@ public enum Profile {
         return this.profileName;
     }
     
+    /**
+     * A human readable profile
+     * @return
+     *  A String containing a human readable name for this profile.
+     */
     public String getName() {
         return this.profileName;
     }
     
     public static Profile withName(String name) {
         return Arrays.stream(Profile.values())
-              .filter(p -> p.getName().equals(name))
-              .findFirst().orElse(Profile.FULL);
+                     .filter(p -> p.getName().equals(name))
+                     .findFirst().orElse(Profile.FULL);
     }
 
 }
