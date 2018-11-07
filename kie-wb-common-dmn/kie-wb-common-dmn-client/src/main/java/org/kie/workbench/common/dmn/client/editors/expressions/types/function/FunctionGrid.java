@@ -28,15 +28,18 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.AddParameterCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.ClearExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.RemoveParameterCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.SetKindCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.UpdateParameterNameCommand;
+import org.kie.workbench.common.dmn.client.commands.expressions.types.function.UpdateParameterTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
@@ -62,6 +65,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
@@ -283,6 +287,17 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
         });
     }
 
+    @Override
+    public void updateParameterTypeRef(final InformationItem parameter,
+                                       final QName typeRef) {
+        expression.ifPresent(e -> {
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          new UpdateParameterTypeRefCommand(parameter,
+                                                                            typeRef,
+                                                                            gridLayer::batch));
+        });
+    }
+
     void setKind(final FunctionDefinition.Kind kind) {
         expression.ifPresent(function -> {
             switch (kind) {
@@ -312,7 +327,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                                      0,
                                                                      this);
             final Optional<Expression> expression = definition.getModelClass();
-            definition.enrich(nodeUUID, expression);
+            definition.enrich(nodeUUID, hasExpression, expression);
 
             final Optional<BaseExpressionGrid> gridWidget = definition.getEditor(expressionParent,
                                                                                  Optional.empty(),
@@ -374,5 +389,18 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
     protected void doAfterSelectionChange(final int uiRowIndex,
                                           final int uiColumnIndex) {
         selectExpressionEditorFirstCell(0, 0);
+    }
+
+    @Override
+    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                                final int uiHeaderColumnIndex) {
+        if (uiHeaderRowIndex == 0) {
+            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+            if (base instanceof DomainObject) {
+                fireDomainObjectSelectionEvent((DomainObject) base);
+                return;
+            }
+        }
+        super.doAfterHeaderSelectionChange(uiHeaderRowIndex, uiHeaderColumnIndex);
     }
 }

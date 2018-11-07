@@ -16,13 +16,17 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import java.util.Map.Entry;
+
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
 public class DefinitionsConverter {
@@ -38,9 +42,25 @@ public class DefinitionsConverter {
         Definitions result = new Definitions();
         result.setId(id);
         result.setName(name);
-        result.setNamespace(namespace);
+        result.setNamespace(new Text(namespace));
+        result.getNsContext().put(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                  namespace);
         result.setDescription(description);
-        result.getNsContext().putAll(dmn.getNsContext());
+        for (Entry<String, String> kv : dmn.getNsContext().entrySet()) {
+            String mappedURI = kv.getValue();
+            switch (mappedURI) {
+                case org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_DMN:
+                    mappedURI = org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase.URI_DMN;
+                    break;
+                case org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_FEEL:
+                    mappedURI = org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase.URI_FEEL;
+                    break;
+                case org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_KIE:
+                    mappedURI = org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase.URI_KIE;
+                    break;
+            }
+            result.getNsContext().put(kv.getKey(), mappedURI);
+        }
 
         for (org.kie.dmn.model.api.ItemDefinition itemDef : dmn.getItemDefinition()) {
             ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(itemDef);
@@ -51,7 +71,7 @@ public class DefinitionsConverter {
         }
 
         for (org.kie.dmn.model.api.Import i : dmn.getImport()) {
-            Import importConverted = ImportConverter.nodeFromDMN(i);
+            Import importConverted = ImportConverter.wbFromDMN(i);
             if (importConverted != null) {
                 importConverted.setParent(result);
             }
@@ -65,37 +85,37 @@ public class DefinitionsConverter {
         if (wb == null) {
             return null;
         }
-        org.kie.dmn.model.api.Definitions result = new org.kie.dmn.model.v1_1.TDefinitions();
+        org.kie.dmn.model.api.Definitions result = new org.kie.dmn.model.v1_2.TDefinitions();
 
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
         String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
-        String defaulName = (wb.getName() != null) ? wb.getName().getValue() : UUID.uuid(8);
-        String defaultNamespace = (wb.getNamespace() != null) ? wb.getNamespace() : "https://github.com/kiegroup/drools/kie-dmn";
+        String defaultName = (wb.getName() != null) ? wb.getName().getValue() : UUID.uuid(8);
+        String defaultNamespace = !StringUtils.isEmpty(wb.getNamespace().getValue())
+                ? wb.getNamespace().getValue()
+                : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
 
         result.setId(defaultId);
-        result.setName(defaulName);
+        result.setName(defaultName);
         result.setNamespace(defaultNamespace);
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.getNsContext().putAll(wb.getNsContext());
+        result.getNsContext().put(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                  defaultNamespace);
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
-            org.kie.dmn.model.api.ItemDefinition itemDefConvered = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
-            result.getItemDefinition().add(itemDefConvered);
-        }
-
-        // Need manually setup custom namespace URI if the diagram was created from the UI.
-        if (!result.getPrefixForNamespaceURI(DMNDiagram.DMNV11_DD).isPresent()) {
-            result.getNsContext().put("dmndi", DMNDiagram.DMNV11_DD);
-        }
-        if (!result.getPrefixForNamespaceURI(DMNDiagram.DMNV11_DC).isPresent()) {
-            result.getNsContext().put("dc", DMNDiagram.DMNV11_DC);
-        }
-        if (!result.getPrefixForNamespaceURI(DMNDiagram.DMNV11_DI).isPresent()) {
-            result.getNsContext().put("di", DMNDiagram.DMNV11_DI);
+            org.kie.dmn.model.api.ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
+            if (itemDefConverted != null) {
+                itemDefConverted.setParent(result);
+            }
+            result.getItemDefinition().add(itemDefConverted);
         }
 
         for (Import i : wb.getImport()) {
-            result.getImport().add(ImportConverter.dmnFromNode(i));
+            org.kie.dmn.model.api.Import importConverted = ImportConverter.dmnFromWb(i);
+            if (importConverted != null) {
+                importConverted.setParent(result);
+            }
+            result.getImport().add(importConverted);
         }
 
         return result;

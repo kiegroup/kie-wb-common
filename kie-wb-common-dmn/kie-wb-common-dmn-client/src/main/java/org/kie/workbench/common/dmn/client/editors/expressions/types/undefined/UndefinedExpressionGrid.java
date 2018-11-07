@@ -52,7 +52,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
-import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
@@ -217,7 +216,7 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
                 editor = expressionGridCache.getExpressionGrid(uuid);
             }
             if (!editor.isPresent()) {
-                ed.enrich(nodeUUID, expression);
+                ed.enrich(nodeUUID, hasExpression, expression);
                 editor = ed.getEditor(parent,
                                       nodeUUID,
                                       hasExpression,
@@ -251,14 +250,11 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
     @SuppressWarnings("unused")
     protected void doAfterSelectionChange(final int uiRowIndex,
                                           final int uiColumnIndex) {
-        final ClientSession session = sessionManager.getCurrentSession();
-        if (session != null) {
-            if (nodeUUID.isPresent()) {
-                final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-                if (base instanceof DomainObject) {
-                    fireDomainObjectSelectionEvent((DomainObject) base);
-                    return;
-                }
+        if (nodeUUID.isPresent()) {
+            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+            if (base instanceof DomainObject) {
+                fireDomainObjectSelectionEvent((DomainObject) base);
+                return;
             }
         }
         super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);

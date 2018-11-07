@@ -29,7 +29,7 @@ public class ListPropertyConverter {
     public static List wbFromDMN(final org.kie.dmn.model.api.List dmn) {
         Id id = new Id(dmn.getId());
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
+        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
 
         java.util.List<Expression> expression = new ArrayList<>();
         for (org.kie.dmn.model.api.Expression e : dmn.getExpression()) {
@@ -47,7 +47,7 @@ public class ListPropertyConverter {
     }
 
     public static org.kie.dmn.model.api.List dmnFromWB(final List wb) {
-        org.kie.dmn.model.api.List result = new org.kie.dmn.model.v1_1.TList();
+        org.kie.dmn.model.api.List result = new org.kie.dmn.model.v1_2.TList();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
@@ -55,6 +55,9 @@ public class ListPropertyConverter {
 
         for (Expression e : wb.getExpression()) {
             org.kie.dmn.model.api.Expression eConverted = ExpressionPropertyConverter.dmnFromWB(e);
+            if (eConverted != null) {
+                eConverted.setParent(result);
+            }
             result.getExpression().add(eConverted);
         }
 

@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
@@ -42,6 +42,7 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.function.C
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.RemoveParameterCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.SetKindCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.UpdateParameterNameCommand;
+import org.kie.workbench.common.dmn.client.commands.expressions.types.function.UpdateParameterTypeRefCommand;
 import org.kie.workbench.common.dmn.client.commands.general.DeleteHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
@@ -215,6 +216,9 @@ public class FunctionGridTest {
     private ArgumentCaptor<UpdateParameterNameCommand> updateParameterNameCommandCaptor;
 
     @Captor
+    private ArgumentCaptor<UpdateParameterTypeRefCommand> updateParameterTypeRefCommandCaptor;
+
+    @Captor
     private ArgumentCaptor<SetKindCommand> setKindCommandCaptor;
 
     @Captor
@@ -240,6 +244,9 @@ public class FunctionGridTest {
 
     @Captor
     private ArgumentCaptor<CompositeCommand> compositeCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
 
     private LiteralExpressionEditorDefinition literalExpressionEditorDefinition;
 
@@ -288,7 +295,7 @@ public class FunctionGridTest {
                                                                                       headerEditor));
 
         expression = definition.getModelClass();
-        definition.enrich(Optional.empty(), expression);
+        definition.enrich(Optional.empty(), hasExpression, expression);
         expression.get().getFormalParameter().add(parameter);
         parameter.getName().setValue(PARAMETER_NAME);
 
@@ -575,6 +582,23 @@ public class FunctionGridTest {
     }
 
     @Test
+    public void testUpdateParameterTypeRef() {
+        setupGrid(0);
+
+        grid.updateParameterTypeRef(parameter,
+                                    new QName(QName.NULL_NS_URI,
+                                              BuiltInType.DATE.getName()));
+
+        verify(sessionCommandManager).execute(eq(canvasHandler),
+                                              updateParameterTypeRefCommandCaptor.capture());
+
+        final UpdateParameterTypeRefCommand updateParameterTypeRefCommand = updateParameterTypeRefCommandCaptor.getValue();
+        updateParameterTypeRefCommand.execute(canvasHandler);
+
+        verify(gridLayer).batch();
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testSetKindFEEL() {
         setupGrid(0);
@@ -677,7 +701,7 @@ public class FunctionGridTest {
                                eq(expression.get()),
                                expressionCaptor.capture(),
                                gridWidgetCaptor.capture());
-        verify(definition).enrich(any(Optional.class), any(Optional.class));
+        verify(definition).enrich(any(Optional.class), eq(hasExpression), any(Optional.class));
         final Expression expression = expressionCaptor.getValue().get();
         final BaseExpressionGrid gridWidget = gridWidgetCaptor.getValue().get();
         assertThat(expectedExpressionType).isAssignableFrom(expression.getClass());
@@ -861,7 +885,7 @@ public class FunctionGridTest {
     public void testSetTypeRef() {
         setupGrid(0);
 
-        extractHeaderMetaData().setTypeRef(new QName(DMNModelInstrumentedBase.Namespace.FEEL.getUri(),
+        extractHeaderMetaData().setTypeRef(new QName(QName.NULL_NS_URI,
                                                      BuiltInType.DATE.getName()));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
@@ -894,6 +918,30 @@ public class FunctionGridTest {
 
         verify(gridLayer).select(literalExpressionEditor);
         verify(literalExpressionEditor).selectFirstCell();
+    }
+
+    @Test
+    public void testSelectHeaderNameRow() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, 0, false, false);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(hasExpression);
+    }
+
+    @Test
+    public void testSelectHeaderParametersRow() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(1, 0, false, false);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test

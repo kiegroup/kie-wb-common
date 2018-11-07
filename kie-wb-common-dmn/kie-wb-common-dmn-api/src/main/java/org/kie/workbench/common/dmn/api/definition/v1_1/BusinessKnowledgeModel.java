@@ -23,6 +23,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.soup.commons.util.Sets;
 import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
+import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
@@ -47,8 +48,10 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
+@Definition(graphFactory = NodeFactory.class, nameField = "name")
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
 public class BusinessKnowledgeModel extends DRGElement implements HasVariable,
                                                                   DMNViewDefinition,
                                                                   DomainObject {
@@ -176,6 +179,30 @@ public class BusinessKnowledgeModel extends DRGElement implements HasVariable,
 
     public void setEncapsulatedLogic(final FunctionDefinition value) {
         this.encapsulatedLogic = value;
+    }
+
+    public HasExpression asHasExpression() {
+        return new HasExpression() {
+            @Override
+            public Expression getExpression() {
+                return BusinessKnowledgeModel.this.getEncapsulatedLogic();
+            }
+
+            @Override
+            public void setExpression(final Expression expression) {
+                throw new UnsupportedOperationException("It is not possible to set the EncapsulatedLogic of a BusinessKnowledgeModel.");
+            }
+
+            @Override
+            public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
+                return BusinessKnowledgeModel.this;
+            }
+
+            @Override
+            public boolean isClearSupported() {
+                return false;
+            }
+        };
     }
 
     // ------------------------------------------------------

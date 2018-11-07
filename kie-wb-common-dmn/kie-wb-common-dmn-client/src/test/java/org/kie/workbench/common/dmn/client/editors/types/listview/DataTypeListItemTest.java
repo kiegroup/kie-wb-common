@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.listview.common.SmallSwitchComponent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.confirmation.DataTypeConfirmation;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
 import org.mockito.ArgumentCaptor;
@@ -64,6 +65,12 @@ public class DataTypeListItemTest {
     private DataTypeSelect dataTypeSelectComponent;
 
     @Mock
+    private DataTypeConstraint dataTypeConstraintComponent;
+
+    @Mock
+    private SmallSwitchComponent dataTypeCollectionComponent;
+
+    @Mock
     private DataType dataType;
 
     @Mock
@@ -85,7 +92,7 @@ public class DataTypeListItemTest {
     @Before
     public void setup() {
         dataTypeManager = spy(new DataTypeManager(null, null, itemDefinitionStore, null, null, null, null, null));
-        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeManager, confirmation));
+        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeCollectionComponent, dataTypeManager, confirmation));
         listItem.init(dataTypeList);
     }
 
@@ -118,6 +125,8 @@ public class DataTypeListItemTest {
 
         final InOrder inOrder = inOrder(listItem);
         inOrder.verify(listItem).setupSelectComponent();
+        inOrder.verify(listItem).setupConstraintComponent();
+        inOrder.verify(listItem).setupCollectionComponent();
         inOrder.verify(listItem).setupView();
 
         assertEquals(expectedDataType, listItem.getDataType());
@@ -125,10 +134,51 @@ public class DataTypeListItemTest {
     }
 
     @Test
+    public void testSetupConstraintComponent() {
+
+        final DataType dataType = mock(DataType.class);
+        doReturn(dataType).when(listItem).getDataType();
+
+        listItem.setupConstraintComponent();
+
+        verify(dataTypeConstraintComponent).init(dataType);
+    }
+
+    @Test
+    public void testSetupCollectionComponentWhenDataTypeIsCollection() {
+
+        final DataType dataType = mock(DataType.class);
+        final boolean isCollection = true;
+
+        when(dataType.isCollection()).thenReturn(isCollection);
+        doReturn(dataType).when(listItem).getDataType();
+
+        listItem.setupCollectionComponent();
+
+        verify(dataTypeCollectionComponent).setValue(isCollection);
+        verify(listItem).refreshCollectionYesLabel();
+    }
+
+    @Test
+    public void testSetupCollectionComponentWhenDataTypeIsNotCollection() {
+
+        final DataType dataType = mock(DataType.class);
+        final boolean isCollection = false;
+
+        when(dataType.isCollection()).thenReturn(isCollection);
+        doReturn(dataType).when(listItem).getDataType();
+
+        listItem.setupCollectionComponent();
+
+        verify(dataTypeCollectionComponent).setValue(isCollection);
+        verify(listItem).refreshCollectionYesLabel();
+    }
+
+    @Test
     public void testSetupSelectComponent() {
 
         final DataType dataType = mock(DataType.class);
-        when(listItem.getDataType()).thenReturn(dataType);
+        doReturn(dataType).when(listItem).getDataType();
 
         listItem.setupSelectComponent();
 
@@ -144,6 +194,8 @@ public class DataTypeListItemTest {
         listItem.setupView();
 
         verify(view).setupSelectComponent(dataTypeSelectComponent);
+        verify(view).setupConstraintComponent(dataTypeConstraintComponent);
+        verify(view).setupCollectionComponent(dataTypeCollectionComponent);
         verify(view).setDataType(dataType);
     }
 
@@ -202,20 +254,31 @@ public class DataTypeListItemTest {
         final DataType dataType = mock(DataType.class);
         final String expectedName = "name";
         final String expectedType = "type";
+        final String expectedConstraint = "constraint";
+        final boolean expectedIsCollection = true;
 
         doReturn(dataType).when(listItem).getDataType();
         when(dataType.getName()).thenReturn(expectedName);
         when(dataType.getType()).thenReturn(expectedType);
+        when(dataType.getConstraint()).thenReturn(expectedConstraint);
+        when(dataType.isCollection()).thenReturn(expectedIsCollection);
 
         listItem.enableEditMode();
 
         assertEquals(expectedName, listItem.getOldName());
         assertEquals(expectedType, listItem.getOldType());
+        assertEquals(expectedConstraint, listItem.getOldConstraint());
+        assertEquals(expectedIsCollection, listItem.getOldIsCollection());
 
         verify(view).showSaveButton();
         verify(view).showDataTypeNameInput();
         verify(view).enableFocusMode();
+        verify(view).showConstraintContainer();
+        verify(view).hideConstraintText();
+        verify(view).hideCollectionYesLabel();
+        verify(view).showCollectionContainer();
         verify(dataTypeSelectComponent).enableEditMode();
+        verify(dataTypeConstraintComponent).refreshView();
     }
 
     @Test
@@ -239,7 +302,7 @@ public class DataTypeListItemTest {
         final Command doDisableEditMode = mock(Command.class);
 
         doReturn(dataType).when(listItem).getDataType();
-        doReturn(updatedDataType).when(listItem).update(dataType);
+        doReturn(updatedDataType).when(listItem).updateProperties(dataType);
         doReturn(true).when(updatedDataType).isValid();
         doReturn(doSaveAndCloseCommand).when(listItem).doSaveAndCloseEditMode(updatedDataType);
         doReturn(doDisableEditMode).when(listItem).doDisableEditMode();
@@ -265,7 +328,7 @@ public class DataTypeListItemTest {
         final DataType updatedDataType = spy(makeDataType());
 
         doReturn(dataType).when(listItem).getDataType();
-        doReturn(updatedDataType).when(listItem).update(dataType);
+        doReturn(updatedDataType).when(listItem).updateProperties(dataType);
         doReturn(false).when(updatedDataType).isValid();
 
         listItem.saveAndCloseEditMode();
@@ -280,6 +343,7 @@ public class DataTypeListItemTest {
         final List<DataType> updatedDataTypes = singletonList(makeDataType());
 
         doReturn(updatedDataTypes).when(listItem).persist(dataType);
+        doReturn(dataType).when(listItem).getDataType();
 
         listItem.doSaveAndCloseEditMode(dataType).execute();
 
@@ -318,62 +382,105 @@ public class DataTypeListItemTest {
         final List<DataType> subDataTypes = Collections.emptyList();
         final String expectedName = "name";
         final String expectedType = "type";
+        final String expectedConstraint = "constraint";
+        final boolean expectedIsCollection = true;
 
         doReturn(subDataTypes).when(dataType).getSubDataTypes();
         doReturn(dataType).when(listItem).getDataType();
         doReturn(expectedName).when(listItem).getOldName();
         doReturn(expectedType).when(listItem).getOldType();
+        doReturn(expectedConstraint).when(listItem).getOldConstraint();
+        doReturn(expectedIsCollection).when(listItem).getOldIsCollection();
 
         listItem.discardNewDataType();
 
         verify(view).setDataType(dataTypeCaptor.capture());
         verify(listItem).setupSelectComponent();
+        verify(listItem).setupCollectionComponent();
         verify(listItem).refreshSubItems(subDataTypes);
 
         final DataType dataTypeCaptorValue = dataTypeCaptor.getValue();
 
         assertEquals(expectedName, dataTypeCaptorValue.getName());
         assertEquals(expectedType, dataTypeCaptorValue.getType());
+        assertEquals(expectedConstraint, dataTypeCaptorValue.getConstraint());
+        assertEquals(expectedIsCollection, dataTypeCaptorValue.isCollection());
     }
 
     @Test
     public void testCloseEditMode() {
+
+        doReturn(dataType).when(listItem).getDataType();
 
         listItem.closeEditMode();
 
         verify(view).showEditButton();
         verify(view).hideDataTypeNameInput();
         verify(view).disableFocusMode();
+        verify(view).hideConstraintContainer();
+        verify(view).showConstraintText();
+        verify(view).hideCollectionContainer();
+        verify(listItem).refreshCollectionYesLabel();
         verify(dataTypeSelectComponent).disableEditMode();
     }
 
     @Test
-    public void testUpdate() {
+    public void testRefreshCollectionYesLabelWhenDataTypeIsCollection() {
+
+        doReturn(dataType).when(listItem).getDataType();
+        when(dataType.isCollection()).thenReturn(true);
+
+        listItem.refreshCollectionYesLabel();
+
+        verify(view).showCollectionYesLabel();
+    }
+
+    @Test
+    public void testRefreshCollectionYesLabelWhenDataTypeIsNotCollection() {
+
+        doReturn(dataType).when(listItem).getDataType();
+        when(dataType.isCollection()).thenReturn(false);
+
+        listItem.refreshCollectionYesLabel();
+
+        verify(view).hideCollectionYesLabel();
+    }
+
+    @Test
+    public void testUpdateProperties() {
 
         final DataType dataType = spy(makeDataType());
         final String uuid = "uuid";
         final String expectedName = "name";
         final String expectedType = "type";
+        final String expectedConstraint = "constraint";
+        final boolean expectedCollection = true;
         final ItemDefinition itemDefinition = mock(ItemDefinition.class);
 
         when(dataType.getUUID()).thenReturn(uuid);
         when(itemDefinitionStore.get(uuid)).thenReturn(itemDefinition);
         when(view.getName()).thenReturn(expectedName);
         when(dataTypeSelectComponent.getValue()).thenReturn(expectedType);
+        when(dataTypeConstraintComponent.getValue()).thenReturn(expectedConstraint);
+        when(dataTypeCollectionComponent.getValue()).thenReturn(expectedCollection);
         when(dataTypeManager.get()).thenReturn(dataType);
 
-        final DataType updatedDataType = listItem.update(dataType);
+        final DataType updatedDataType = listItem.updateProperties(dataType);
 
         assertEquals(expectedName, updatedDataType.getName());
         assertEquals(expectedType, updatedDataType.getType());
+        assertEquals(expectedConstraint, updatedDataType.getConstraint());
+        assertEquals(expectedCollection, updatedDataType.isCollection());
     }
 
     @Test
     public void testRefresh() {
 
         final DataType dataType = spy(makeDataType());
-        final String expectedName = "expectedName";
+        final String expectedConstraint = "constraint";
+        final String expectedName = "name";
 
+        doReturn(expectedConstraint).when(dataType).getConstraint();
         doReturn(expectedName).when(dataType).getName();
         doReturn(dataType).when(listItem).getDataType();
 
@@ -382,6 +489,9 @@ public class DataTypeListItemTest {
         verify(dataTypeSelectComponent).refresh();
         verify(dataTypeSelectComponent).init(listItem, dataType);
         verify(view).setName(expectedName);
+        verify(view).setConstraint(expectedConstraint);
+        verify(listItem).setupCollectionComponent();
+        verify(listItem).setupConstraintComponent();
     }
 
     @Test

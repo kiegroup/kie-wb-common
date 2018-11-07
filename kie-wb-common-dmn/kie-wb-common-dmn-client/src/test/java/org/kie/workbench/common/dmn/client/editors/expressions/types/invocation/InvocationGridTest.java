@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Invocation;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
@@ -76,6 +76,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -240,6 +241,9 @@ public class InvocationGridTest {
     @Captor
     private ArgumentCaptor<CompositeCommand> compositeCommandCaptor;
 
+    @Captor
+    private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
+
     private Decision hasExpression = new Decision();
 
     private LiteralExpression literalExpression = new LiteralExpression();
@@ -275,8 +279,8 @@ public class InvocationGridTest {
                                                     headerEditor);
 
         expression = definition.getModelClass();
-        definition.enrich(Optional.empty(), expression);
-        expression.ifPresent(invocation -> ((LiteralExpression) invocation.getExpression()).setText("invocation-expression"));
+        definition.enrich(Optional.empty(), hasExpression, expression);
+        expression.ifPresent(invocation -> ((LiteralExpression) invocation.getExpression()).getText().setValue("invocation-expression"));
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
         expressionEditorDefinitions.add(literalExpressionEditorDefinition);
@@ -440,7 +444,7 @@ public class InvocationGridTest {
         md2.setTitle(EXPRESSION_TEXT_NEW);
 
         assertEquals(EXPRESSION_TEXT_NEW,
-                     ((LiteralExpression) expression.get().getExpression()).getText());
+                     ((LiteralExpression) expression.get().getExpression()).getText().getValue());
     }
 
     @Test
@@ -811,7 +815,7 @@ public class InvocationGridTest {
     public void testSetTypeRef() {
         setupGrid(0);
 
-        extractHeaderMetaData().setTypeRef(new QName(DMNModelInstrumentedBase.Namespace.FEEL.getUri(),
+        extractHeaderMetaData().setTypeRef(new QName(QName.NULL_NS_URI,
                                                      BuiltInType.DATE.getName()));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
@@ -826,6 +830,116 @@ public class InvocationGridTest {
 
         verify(sessionCommandManager, never()).execute(any(AbstractCanvasHandler.class),
                                                        any(SetTypeRefCommand.class));
+    }
+
+    @Test
+    public void testSelectRow() {
+        setupGrid(0);
+
+        grid.selectCell(0, InvocationUIModelMapper.ROW_NUMBER_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectParameterBinding() {
+        setupGrid(0);
+
+        grid.selectCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getBinding().get(0).getVariable());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectMultipleParameterBindings() {
+        setupGrid(0);
+
+        addParameterBinding(0);
+
+        //Reset DomainObjectSelectionEvent fired when the new row is added.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getBinding().get(0).getVariable());
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(1, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, true);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectSingleParameterBindingWithHeaderSelected() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(hasExpression);
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, true);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderRowColumn() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.ROW_NUMBER_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderNameColumnNameRow() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(hasExpression);
+    }
+
+    @Test
+    public void testSelectHeaderNameColumnParametersRow() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(1, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderExpressionColumn() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    private void assertDomainObjectSelection(final DomainObject domainObject) {
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(domainObject);
+    }
+
+    private void assertNOPDomainObjectSelection() {
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test

@@ -17,6 +17,8 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes;
 
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -26,6 +28,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.Defini
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
@@ -76,7 +80,8 @@ public class RootProcessConverter {
 
         delegate.convertEdges(
                 processRoot,
-                process.getFlowElements(),
+                Stream.concat(process.getFlowElements().stream(),
+                              process.getArtifacts().stream()).collect(Collectors.toList()),
                 nodes);
 
         return processRoot;
@@ -101,7 +106,9 @@ public class RootProcessConverter {
         );
 
         definition.setCaseManagementSet(new CaseManagementSet(
-                new CaseRoles(e.getCaseRoles())
+                new CaseIdPrefix(e.getCaseIdPrefix()),
+                new CaseRoles(e.getCaseRoles()),
+                new CaseFileVariables(e.getCaseFileVariables())
         ));
 
         definition.setProcessData(new ProcessData(

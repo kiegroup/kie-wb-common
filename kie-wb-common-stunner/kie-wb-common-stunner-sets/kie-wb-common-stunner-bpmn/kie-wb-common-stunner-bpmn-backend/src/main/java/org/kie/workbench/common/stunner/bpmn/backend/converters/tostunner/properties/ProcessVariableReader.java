@@ -28,6 +28,7 @@ class ProcessVariableReader {
     static String getProcessVariables(List<Property> properties) {
         return properties
                 .stream()
+                .filter(ProcessVariableReader::isProcessVariable)
                 .map(ProcessVariableReader::toProcessVariableString)
                 .collect(Collectors.joining(","));
     }
@@ -44,5 +45,9 @@ class ProcessVariableReader {
         String name = p.getName();
         // legacy uses ID instead of name
         return name == null? p.getId() : name;
+    }
+
+    public static boolean isProcessVariable(Property p) {
+        return !CaseFileVariableReader.isCaseFileVariable(p);
     }
 }

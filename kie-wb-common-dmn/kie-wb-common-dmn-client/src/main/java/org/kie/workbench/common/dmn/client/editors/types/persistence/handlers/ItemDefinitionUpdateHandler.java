@@ -22,15 +22,18 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
+import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
+import org.kie.workbench.common.dmn.api.property.dmn.Description;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.ItemDefinitionUtils;
 
-import static org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace.FEEL;
 import static org.kie.workbench.common.dmn.api.property.dmn.QName.NULL_NS_URI;
-import static org.kie.workbench.common.dmn.client.editors.types.common.BuiltInTypeUtils.isDefault;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
 public class ItemDefinitionUpdateHandler {
@@ -56,7 +59,32 @@ public class ItemDefinitionUpdateHandler {
             itemDefinition.getItemComponent().clear();
         }
 
+        itemDefinition.setIsCollection(dataType.isCollection());
         itemDefinition.setName(makeName(dataType));
+        itemDefinition.setAllowedValues(makeAllowedValues(dataType, itemDefinition));
+    }
+
+    UnaryTests makeAllowedValues(final DataType dataType,
+                                 final ItemDefinition itemDefinition) {
+
+        final String constraint = dataType.getConstraint();
+
+        if (isEmpty(constraint)) {
+            return null;
+        }
+
+        if (!Objects.equals(constraint, getText(itemDefinition))) {
+            return new UnaryTests(new Id(),
+                                  new Description(),
+                                  new Text(constraint),
+                                  null);
+        }
+
+        return itemDefinition.getAllowedValues();
+    }
+
+    String getText(final ItemDefinition itemDefinition) {
+        return itemDefinitionUtils.getConstraintText(itemDefinition);
     }
 
     Name makeName(final DataType dataType) {
@@ -64,11 +92,7 @@ public class ItemDefinitionUpdateHandler {
     }
 
     QName makeQName(final DataType dataType) {
-        if (isDefault(dataType.getType())) {
-            return normaliseTypeRef(new QName(FEEL.getUri(), dataType.getType()));
-        } else {
-            return normaliseTypeRef(new QName(NULL_NS_URI, dataType.getType()));
-        }
+        return normaliseTypeRef(new QName(NULL_NS_URI, dataType.getType()));
     }
 
     QName normaliseTypeRef(final QName typeRef) {

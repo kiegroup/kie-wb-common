@@ -23,6 +23,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.AssociationConnectorDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BPMNDiagramShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.CatchingIntermediateEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.EndEventShapeDef;
@@ -34,11 +36,15 @@ import org.kie.workbench.common.stunner.bpmn.client.shape.def.StartEventShapeDef
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SubprocessShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.ThrowingIntermediateEventShapeDef;
+import org.kie.workbench.common.stunner.bpmn.client.shape.view.handler.BPMNShapeViewHandlers;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
@@ -48,6 +54,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
@@ -64,6 +72,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
+import org.kie.workbench.common.stunner.bpmn.definition.StartCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartEscalationEvent;
@@ -74,10 +83,15 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistries;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerTextPreferences;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.DelegateShapeFactory;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
+import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
+import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.shapes.client.factory.BasicShapesFactory;
 import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeFactory;
 
@@ -89,6 +103,8 @@ public class BPMNShapeFactory
     private final SVGShapeFactory svgShapeFactory;
     private final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory;
     private final Supplier<WorkItemDefinitionRegistry> workItemDefinitionRegistry;
+    private final StunnerPreferencesRegistries preferencesRegistries;
+    private final DefinitionUtils definitionUtils;
 
     // CDI proxy.
     protected BPMNShapeFactory() {
@@ -96,27 +112,37 @@ public class BPMNShapeFactory
         this.svgShapeFactory = null;
         this.delegateShapeFactory = null;
         this.workItemDefinitionRegistry = null;
+        this.preferencesRegistries = null;
+        this.definitionUtils = null;
     }
 
     @Inject
     public BPMNShapeFactory(final BasicShapesFactory basicShapesFactory,
                             final SVGShapeFactory svgShapeFactory,
                             final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory,
-                            final ManagedInstance<WorkItemDefinitionRegistry> workItemDefinitionRegistry) {
+                            final ManagedInstance<WorkItemDefinitionRegistry> workItemDefinitionRegistry,
+                            final DefinitionUtils definitionUtils,
+                            final StunnerPreferencesRegistries preferencesRegistries) {
         this.basicShapesFactory = basicShapesFactory;
         this.svgShapeFactory = svgShapeFactory;
         this.delegateShapeFactory = delegateShapeFactory;
-        this.workItemDefinitionRegistry = workItemDefinitionRegistry::get;
+        this.workItemDefinitionRegistry =  workItemDefinitionRegistry::get;
+        this.definitionUtils = definitionUtils;
+        this.preferencesRegistries = preferencesRegistries;
     }
 
     BPMNShapeFactory(final BasicShapesFactory basicShapesFactory,
                      final SVGShapeFactory svgShapeFactory,
                      final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory,
-                     final Supplier<WorkItemDefinitionRegistry> workItemDefinitionRegistry) {
+                     final Supplier<WorkItemDefinitionRegistry> workItemDefinitionRegistry,
+                     final DefinitionUtils definitionUtils,
+                     final StunnerPreferencesRegistries preferencesRegistries) {
         this.basicShapesFactory = basicShapesFactory;
         this.svgShapeFactory = svgShapeFactory;
         this.delegateShapeFactory = delegateShapeFactory;
         this.workItemDefinitionRegistry = workItemDefinitionRegistry;
+        this.definitionUtils = definitionUtils;
+        this.preferencesRegistries = preferencesRegistries;
     }
 
     @PostConstruct
@@ -139,7 +165,7 @@ public class BPMNShapeFactory
                           new TaskShapeDef(),
                           () -> svgShapeFactory)
                 .delegate(ServiceTask.class,
-                          new ServiceTaskShapeDef(workItemDefinitionRegistry::get),
+                          new ServiceTaskShapeDef(workItemDefinitionRegistry),
                           () -> svgShapeFactory)
                 .delegate(StartNoneEvent.class,
                           new StartEventShapeDef(),
@@ -160,6 +186,9 @@ public class BPMNShapeFactory
                           new StartEventShapeDef(),
                           () -> svgShapeFactory)
                 .delegate(StartEscalationEvent.class,
+                          new StartEventShapeDef(),
+                          () -> svgShapeFactory)
+                .delegate(StartCompensationEvent.class,
                           new StartEventShapeDef(),
                           () -> svgShapeFactory)
                 .delegate(ParallelGateway.class,
@@ -207,6 +236,9 @@ public class BPMNShapeFactory
                 .delegate(EndEscalationEvent.class,
                           new EndEventShapeDef(),
                           () -> svgShapeFactory)
+                .delegate(EndCompensationEvent.class,
+                          new EndEventShapeDef(),
+                          () -> svgShapeFactory)
                 .delegate(IntermediateTimerEvent.class,
                           new CatchingIntermediateEventShapeDef(),
                           () -> svgShapeFactory)
@@ -225,6 +257,9 @@ public class BPMNShapeFactory
                 .delegate(IntermediateEscalationEvent.class,
                           new CatchingIntermediateEventShapeDef(),
                           () -> svgShapeFactory)
+                .delegate(IntermediateCompensationEvent.class,
+                          new CatchingIntermediateEventShapeDef(),
+                          () -> svgShapeFactory)
                 .delegate(IntermediateSignalEventThrowing.class,
                           new ThrowingIntermediateEventShapeDef(),
                           () -> svgShapeFactory)
@@ -234,9 +269,27 @@ public class BPMNShapeFactory
                 .delegate(IntermediateEscalationEventThrowing.class,
                           new ThrowingIntermediateEventShapeDef(),
                           () -> svgShapeFactory)
+                .delegate(IntermediateCompensationEventThrowing.class,
+                          new ThrowingIntermediateEventShapeDef(),
+                          () -> svgShapeFactory)
                 .delegate(SequenceFlow.class,
-                          new SequenceFlowConnectorDef(),
+                          new SequenceFlowConnectorDef(() -> getFontHandler()),
+                          () -> basicShapesFactory)
+                .delegate(Association.class,
+                          new AssociationConnectorDef(),
                           () -> basicShapesFactory);
+    }
+
+    private <W extends BPMNViewDefinition, V extends ShapeView> FontHandler.Builder<W, V> getFontHandler() {
+        final String definitionSetId = definitionUtils.getDefinitionSetId(BPMNDefinitionSet.class);
+        final StunnerTextPreferences preferences = preferencesRegistries.get(definitionSetId, StunnerTextPreferences.class);
+        return new BPMNShapeViewHandlers.FontHandlerBuilder<W, V>()
+                .alpha(c -> preferences.getTextAlpha())
+                .fontFamily(c -> preferences.getTextFontFamily())
+                .fontSize(c -> preferences.getTextFontSize())
+                .fontColor(c -> preferences.getTextFillColor())
+                .strokeColor(c -> preferences.getTextStrokeColor())
+                .strokeSize(c -> preferences.getTextStrokeWidth());
     }
 
     @Override

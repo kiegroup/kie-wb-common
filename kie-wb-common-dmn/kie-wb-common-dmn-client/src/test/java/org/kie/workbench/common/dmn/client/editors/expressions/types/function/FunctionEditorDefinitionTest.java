@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
@@ -172,13 +171,11 @@ public class FunctionEditorDefinitionTest {
     @Test
     public void testModelEnrichment() {
         final Optional<FunctionDefinition> oModel = definition.getModelClass();
-        definition.enrich(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), hasExpression, oModel);
 
         final FunctionDefinition model = oModel.get();
-        assertEquals(Namespace.KIE.getUri(),
-                     model.getNsContext().get(FunctionDefinition.DROOLS_PREFIX));
         assertEquals(FunctionDefinition.Kind.FEEL.code(),
-                     model.getAdditionalAttributes().get(FunctionDefinition.KIND_QNAME));
+                     model.getKind().code());
         assertTrue(model.getExpression() instanceof LiteralExpression);
     }
 

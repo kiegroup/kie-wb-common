@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLElement;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.listview.common.SmallSwitchComponent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.confirmation.DataTypeConfirmation;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
@@ -39,6 +40,10 @@ public class DataTypeListItem {
     private final View view;
 
     private final DataTypeSelect dataTypeSelectComponent;
+
+    private final DataTypeConstraint dataTypeConstraintComponent;
+
+    private final SmallSwitchComponent dataTypeCollectionComponent;
 
     private final DataTypeManager dataTypeManager;
 
@@ -54,13 +59,21 @@ public class DataTypeListItem {
 
     private String oldType;
 
+    private String oldConstraint;
+
+    private boolean oldIsCollection;
+
     @Inject
     public DataTypeListItem(final View view,
                             final DataTypeSelect dataTypeSelectComponent,
+                            final DataTypeConstraint dataTypeConstraintComponent,
+                            final SmallSwitchComponent dataTypeCollectionComponent,
                             final DataTypeManager dataTypeManager,
                             final DataTypeConfirmation confirmation) {
         this.view = view;
         this.dataTypeSelectComponent = dataTypeSelectComponent;
+        this.dataTypeConstraintComponent = dataTypeConstraintComponent;
+        this.dataTypeCollectionComponent = dataTypeCollectionComponent;
         this.dataTypeManager = dataTypeManager;
         this.confirmation = confirmation;
     }
@@ -78,15 +91,25 @@ public class DataTypeListItem {
         return view.getElement();
     }
 
-    DataTypeListItem setupDataType(final DataType dataType,
-                                   final int level) {
+    void setupDataType(final DataType dataType,
+                       final int level) {
+
         this.dataType = dataType;
         this.level = level;
 
         setupSelectComponent();
+        setupConstraintComponent();
+        setupCollectionComponent();
         setupView();
+    }
 
-        return this;
+    void setupCollectionComponent() {
+        dataTypeCollectionComponent.setValue(getDataType().isCollection());
+        refreshCollectionYesLabel();
+    }
+
+    void setupConstraintComponent() {
+        dataTypeConstraintComponent.init(getDataType());
     }
 
     void setupSelectComponent() {
@@ -95,6 +118,8 @@ public class DataTypeListItem {
 
     void setupView() {
         view.setupSelectComponent(dataTypeSelectComponent);
+        view.setupConstraintComponent(dataTypeConstraintComponent);
+        view.setupCollectionComponent(dataTypeCollectionComponent);
         view.setDataType(getDataType());
     }
 
@@ -102,6 +127,9 @@ public class DataTypeListItem {
         dataTypeSelectComponent.refresh();
         dataTypeSelectComponent.init(this, getDataType());
         view.setName(getDataType().getName());
+        view.setConstraint(getDataType().getConstraint());
+        setupCollectionComponent();
+        setupConstraintComponent();
     }
 
     DataType getDataType() {
@@ -128,7 +156,7 @@ public class DataTypeListItem {
         view.collapse();
     }
 
-    public void refreshSubItems(final List<DataType> dataTypes) {
+    void refreshSubItems(final List<DataType> dataTypes) {
 
         dataTypeList.refreshSubItemsFromListItem(this, dataTypes);
 
@@ -140,12 +168,19 @@ public class DataTypeListItem {
 
         oldName = getDataType().getName();
         oldType = getDataType().getType();
+        oldConstraint = getDataType().getConstraint();
+        oldIsCollection = getDataType().isCollection();
 
         view.showSaveButton();
         view.showDataTypeNameInput();
+        view.showConstraintContainer();
+        view.hideConstraintText();
         view.enableFocusMode();
+        view.hideCollectionYesLabel();
+        view.showCollectionContainer();
 
         dataTypeSelectComponent.enableEditMode();
+        dataTypeConstraintComponent.refreshView();
     }
 
     void disableEditMode() {
@@ -155,7 +190,7 @@ public class DataTypeListItem {
 
     void saveAndCloseEditMode() {
 
-        final DataType updatedDataType = update(getDataType());
+        final DataType updatedDataType = updateProperties(getDataType());
 
         if (updatedDataType.isValid()) {
             confirmation.ifDataTypeDoesNotHaveLostSubDataTypes(updatedDataType, doSaveAndCloseEditMode(updatedDataType), doDisableEditMode());
@@ -188,8 +223,11 @@ public class DataTypeListItem {
                                  .withDataType(getDataType())
                                  .withName(getOldName())
                                  .withType(getOldType())
+                                 .withConstraint(getOldConstraint())
+                                 .asCollection(getOldIsCollection())
                                  .get());
 
+        setupCollectionComponent();
         setupSelectComponent();
         refreshSubItems(getDataType().getSubDataTypes());
     }
@@ -199,8 +237,20 @@ public class DataTypeListItem {
         view.showEditButton();
         view.hideDataTypeNameInput();
         view.disableFocusMode();
+        view.hideConstraintContainer();
+        view.showConstraintText();
+        view.hideCollectionContainer();
+        refreshCollectionYesLabel();
 
         dataTypeSelectComponent.disableEditMode();
+    }
+
+    void refreshCollectionYesLabel() {
+        if (getDataType().isCollection()) {
+            view.showCollectionYesLabel();
+        } else {
+            view.hideCollectionYesLabel();
+        }
     }
 
     public void remove() {
@@ -230,11 +280,13 @@ public class DataTypeListItem {
                 .collect(Collectors.toList());
     }
 
-    DataType update(final DataType dataType) {
+    DataType updateProperties(final DataType dataType) {
         return dataTypeManager
                 .from(dataType)
                 .withName(view.getName())
                 .withType(dataTypeSelectComponent.getValue())
+                .withConstraint(dataTypeConstraintComponent.getValue())
+                .asCollection(dataTypeCollectionComponent.getValue())
                 .get();
     }
 
@@ -244,6 +296,14 @@ public class DataTypeListItem {
 
     String getOldType() {
         return oldType;
+    }
+
+    String getOldConstraint() {
+        return oldConstraint;
+    }
+
+    boolean getOldIsCollection() {
+        return oldIsCollection;
     }
 
     DataTypeList getDataTypeList() {
@@ -308,9 +368,27 @@ public class DataTypeListItem {
 
         void setupSelectComponent(final DataTypeSelect typeSelect);
 
+        void setupConstraintComponent(final DataTypeConstraint dataTypeConstraintComponent);
+
+        void setupCollectionComponent(final SmallSwitchComponent dataTypeCollectionComponent);
+
+        void showCollectionContainer();
+
+        void hideCollectionContainer();
+
+        void showCollectionYesLabel();
+
+        void hideCollectionYesLabel();
+
+        void showConstraintText();
+
+        void hideConstraintText();
+
         boolean isCollapsed();
 
         void hideDataTypeNameInput();
+
+        void setConstraint(final String constraint);
 
         void showDataTypeNameInput();
 
@@ -321,5 +399,9 @@ public class DataTypeListItem {
         String getName();
 
         void setName(final String name);
+
+        void showConstraintContainer();
+
+        void hideConstraintContainer();
     }
 }

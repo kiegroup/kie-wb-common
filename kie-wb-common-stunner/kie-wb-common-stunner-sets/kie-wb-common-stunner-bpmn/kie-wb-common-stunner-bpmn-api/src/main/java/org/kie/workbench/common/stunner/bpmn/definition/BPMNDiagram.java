@@ -20,5 +20,5 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Diagram
 
 public interface BPMNDiagram extends BPMNViewDefinition {
 
-    public DiagramSet getDiagramSet();
+    DiagramSet getDiagramSet();
 }

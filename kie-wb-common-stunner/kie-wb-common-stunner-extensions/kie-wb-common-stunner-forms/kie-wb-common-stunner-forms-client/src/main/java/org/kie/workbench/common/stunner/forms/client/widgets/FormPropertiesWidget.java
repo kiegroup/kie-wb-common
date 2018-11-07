@@ -87,8 +87,8 @@ public class FormPropertiesWidget implements IsElement,
             }
 
             @Override
-            public void render(String graphUuid, DomainObject domainObject) {
-                show(graphUuid, domainObject);
+            public void render(String graphUuid, DomainObject domainObject, Command callback) {
+                show(graphUuid, domainObject, callback);
             }
 
             @Override
@@ -154,46 +154,49 @@ public class FormPropertiesWidget implements IsElement,
     private void show(final String graphUuid,
                       final Element<? extends Definition<?>> element,
                       final Command callback) {
-        final String uuid = element.getUUID();
-        final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
-        if (Objects.isNull(diagram)) {
-            return;
-        }
-        final Metadata metadata = diagram.getMetadata();
-        if (Objects.isNull(metadata)) {
-            return;
-        }
-        final Path diagramPath = metadata.getPath();
-        final Definition content = element.getContent();
-        if (Objects.isNull(content)) {
-            return;
-        }
-        final Object definition = content.getDefinition();
-        final RenderMode renderMode = formSessionHandler.getSession() instanceof EditorSession ? RenderMode.EDIT_MODE : RenderMode.READ_ONLY_MODE;
+        if (element != null) {
+            final String uuid = element.getUUID();
+            final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
+            if (Objects.isNull(diagram)) {
+                return;
+            }
+            final Metadata metadata = diagram.getMetadata();
+            if (Objects.isNull(metadata)) {
+                return;
+            }
+            final Path diagramPath = metadata.getPath();
+            final Definition content = element.getContent();
+            if (Objects.isNull(content)) {
+                return;
+            }
+            final Object definition = content.getDefinition();
+            final RenderMode renderMode = formSessionHandler.getSession() instanceof EditorSession ? RenderMode.EDIT_MODE : RenderMode.READ_ONLY_MODE;
 
-        formsContainer.render(graphUuid,
-                              uuid,
-                              definition,
-                              diagramPath,
-                              (fieldName, newValue) -> {
-                                  try {
-                                      formSessionHandler.executeUpdateProperty(element, fieldName, newValue);
-                                  } catch (final Exception ex) {
-                                      log(Level.SEVERE,
-                                          "Something wrong happened refreshing the canvas for " +
-                                                  "field '" + fieldName + "': " + ex.getCause());
-                                  } finally {
-                                      if (null != callback) {
-                                          callback.execute();
+            formsContainer.render(graphUuid,
+                                  uuid,
+                                  definition,
+                                  diagramPath,
+                                  (fieldName, newValue) -> {
+                                      try {
+                                          formSessionHandler.executeUpdateProperty(element, fieldName, newValue);
+                                      } catch (final Exception ex) {
+                                          log(Level.SEVERE,
+                                              "Something wrong happened refreshing the canvas for " +
+                                                      "field '" + fieldName + "': " + ex.getCause());
+                                      } finally {
+                                          if (null != callback) {
+                                              callback.execute();
+                                          }
                                       }
-                                  }
-                              }, renderMode);
-        final String name = definitionUtils.getName(definition);
-        propertiesOpenedEvent.fire(new FormPropertiesOpened(formSessionHandler.getSession(), uuid, name));
+                                  }, renderMode);
+            final String name = definitionUtils.getName(definition);
+            propertiesOpenedEvent.fire(new FormPropertiesOpened(formSessionHandler.getSession(), uuid, name));
+        }
     }
 
     private void show(final String graphUuid,
-                      final DomainObject domainObject) {
+                      final DomainObject domainObject,
+                      final Command callback) {
         final String domainObjectUUID = domainObject.getDomainObjectUUID();
         final String domainObjectName = translationService.getTranslation(domainObject.getDomainObjectNameTranslationKey());
         final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
@@ -221,6 +224,10 @@ public class FormPropertiesWidget implements IsElement,
                                           "Something wrong happened refreshing the DomainObject '"
                                                   + domainObject + "' for field '"
                                                   + fieldName + "': " + ex.getCause());
+                                  } finally {
+                                      if (null != callback) {
+                                          callback.execute();
+                                      }
                                   }
                               }, renderMode);
         propertiesOpenedEvent.fire(new FormPropertiesOpened(formSessionHandler.getSession(), domainObjectUUID, domainObjectName));

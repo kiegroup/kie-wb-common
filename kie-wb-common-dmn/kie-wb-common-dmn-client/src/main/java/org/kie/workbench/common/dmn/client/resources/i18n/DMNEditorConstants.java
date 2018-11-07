@@ -231,4 +231,25 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String ReferencedDataTypeWarningMessage_RegularMessage = "ReferencedDataTypeWarningMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String NameIsDefaultTypeMessage_StrongMessage = "NameIsDefaultTypeMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String NameIsDefaultTypeMessage_RegularMessage = "NameIsDefaultTypeMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeConstraintView_ConstraintsTooltip = "DataTypeConstraintView.ConstraintsTooltip";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeListItemView_Constraints = "DataTypeListItemView.Constraints";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeListItemView_Collection = "DataTypeListItemView.Collection";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SmallSwitchComponentView_Yes = "SmallSwitchComponentView.Yes";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SmallSwitchComponentView_No = "SmallSwitchComponentView.No";
 }

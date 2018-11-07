@@ -19,6 +19,8 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
@@ -27,14 +29,19 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BuiltinAggregator;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTableOrientation;
 import org.kie.workbench.common.dmn.api.definition.v1_1.HitPolicy;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputClause;
+import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
+import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.AddDecisionRuleCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.AddInputClauseCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.AddOutputClauseCommand;
@@ -44,6 +51,9 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.Del
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltinAggregatorCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetHitPolicyCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetOrientationCommand;
+import org.kie.workbench.common.dmn.client.commands.general.DeleteHasNameCommand;
+import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
+import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HasHitPolicyControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HitPolicyPopoverView;
 import org.kie.workbench.common.dmn.client.editors.expressions.util.SelectionUtils;
@@ -69,6 +79,7 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
@@ -199,12 +210,12 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
 
             @Override
             public Name getName() {
-                return new Name(inputClause.getInputExpression().getText());
+                return new Name(inputClause.getInputExpression().getText().getValue());
             }
 
             @Override
             public void setName(final Name name) {
-                inputClause.getInputExpression().setText(name.getValue());
+                inputClause.getInputExpression().getText().setValue(name.getValue());
             }
         };
     }
@@ -224,9 +235,9 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                     metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(hasExpression,
                                                                                     expression,
                                                                                     hasName,
-                                                                                    clearDisplayNameConsumer(true),
-                                                                                    setDisplayNameConsumer(true),
-                                                                                    setTypeRefConsumer(),
+                                                                                    clearDisplayNameConsumer(true, oc, dtable),
+                                                                                    setDisplayNameConsumer(true, oc, dtable),
+                                                                                    setTypeRefConsumer(oc, dtable),
                                                                                     cellEditorControls,
                                                                                     headerEditor,
                                                                                     Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EditOutputClause))));
@@ -245,6 +256,81 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                 }
             });
             return metaData;
+        };
+    }
+
+    private Consumer<HasName> clearDisplayNameConsumer(final boolean updateStunnerTitle,
+                                                       final OutputClause oc,
+                                                       final DecisionTable dtable) {
+        if (dtable.getOutput().size() == 1) {
+            return clearDisplayNameOnHasExpressionAndOutputClauseConsumer(updateStunnerTitle, oc);
+        }
+        return clearDisplayNameConsumer(updateStunnerTitle);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Consumer<HasName> clearDisplayNameOnHasExpressionAndOutputClauseConsumer(final boolean updateStunnerTitle,
+                                                                                     final OutputClause oc) {
+        return (hn) -> {
+            final CompositeCommand.Builder commandBuilder = newHasNameHasNoValueCommand(hn);
+            commandBuilder.addCommand(new DeleteHasNameCommand(wrapOutputClauseIntoHasName(oc),
+                                                               () -> {/*Nothing*/}));
+            if (updateStunnerTitle) {
+                getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
+            }
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+        };
+    }
+
+    private BiConsumer<HasName, Name> setDisplayNameConsumer(final boolean updateStunnerTitle,
+                                                             final OutputClause oc,
+                                                             final DecisionTable dtable) {
+        if (dtable.getOutput().size() == 1) {
+            return setDisplayNameOnHasExpressionAndOutputClauseConsumer(updateStunnerTitle, oc);
+        }
+        return setDisplayNameConsumer(updateStunnerTitle);
+    }
+
+    @SuppressWarnings("unchecked")
+    private BiConsumer<HasName, Name> setDisplayNameOnHasExpressionAndOutputClauseConsumer(final boolean updateStunnerTitle,
+                                                                                           final OutputClause oc) {
+        return (hn, name) -> {
+            final CompositeCommand.Builder commandBuilder = newHasNameHasValueCommand(hn, name);
+            commandBuilder.addCommand(new SetHasNameCommand(wrapOutputClauseIntoHasName(oc),
+                                                            name,
+                                                            () -> {/*Nothing*/}));
+            if (updateStunnerTitle) {
+                getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
+            }
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+        };
+    }
+
+    private BiConsumer<HasTypeRef, QName> setTypeRefConsumer(final OutputClause oc,
+                                                             final DecisionTable dtable) {
+        if (dtable.getOutput().size() == 1) {
+            return setTypeRefOnHasExpressionAndOutputClauseConsumer(oc);
+        }
+        return setTypeRefConsumer();
+    }
+
+    private BiConsumer<HasTypeRef, QName> setTypeRefOnHasExpressionAndOutputClauseConsumer(final OutputClause oc) {
+        return (htr, typeRef) -> {
+            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
+            commandBuilder.addCommand(new SetTypeRefCommand(htr,
+                                                            typeRef,
+                                                            () -> {/*Nothing*/}));
+            commandBuilder.addCommand(new SetTypeRefCommand(oc,
+                                                            typeRef,
+                                                            () -> {
+                                                                gridLayer.batch();
+                                                                selectedDomainObject.ifPresent(this::fireDomainObjectSelectionEvent);
+                                                            }));
+
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
         };
     }
 
@@ -407,6 +493,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                                                                                   () -> resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM)));
 
             if (!CommandUtils.isError(result)) {
+                selectHeaderCell(0, index, false, false);
                 inputClauseColumn.startEditingHeaderCell(0);
             }
         });
@@ -440,6 +527,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                                                                                    () -> resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM)));
 
             if (!CommandUtils.isError(result)) {
+                selectHeaderCell(1, index, false, false);
                 outputClauseColumn.startEditingHeaderCell(1);
             }
         });
@@ -533,5 +621,64 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                                     orientation,
                                                                     gridLayer::batch));
         });
+    }
+
+    @Override
+    protected void doAfterSelectionChange(final int uiRowIndex,
+                                          final int uiColumnIndex) {
+        if (hasAnyHeaderCellSelected() || hasMultipleCellsSelected()) {
+            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+            return;
+        }
+
+        if (expression.isPresent()) {
+            final DecisionTable dtable = expression.get();
+            final DecisionTableUIModelMapperHelper.DecisionTableSection section = DecisionTableUIModelMapperHelper.getSection(dtable, uiColumnIndex);
+            switch (section) {
+                case INPUT_CLAUSES:
+                    final int icIndex = DecisionTableUIModelMapperHelper.getInputEntryIndex(dtable, uiColumnIndex);
+                    final UnaryTests unaryTests = dtable.getRule().get(uiRowIndex).getInputEntry().get(icIndex);
+                    fireDomainObjectSelectionEvent(unaryTests);
+                    return;
+                case OUTPUT_CLAUSES:
+                    final int ocIndex = DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable, uiColumnIndex);
+                    final LiteralExpression literalExpression = dtable.getRule().get(uiRowIndex).getOutputEntry().get(ocIndex);
+                    fireDomainObjectSelectionEvent(literalExpression);
+                    return;
+            }
+        }
+        super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+    }
+
+    @Override
+    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                                final int uiHeaderColumnIndex) {
+        if (expression.isPresent()) {
+            final DecisionTable dtable = expression.get();
+            final DecisionTableUIModelMapperHelper.DecisionTableSection section = DecisionTableUIModelMapperHelper.getSection(dtable, uiHeaderColumnIndex);
+            switch (section) {
+                case INPUT_CLAUSES:
+                    final int icIndex = DecisionTableUIModelMapperHelper.getInputEntryIndex(dtable, uiHeaderColumnIndex);
+                    final InputClause inputClause = dtable.getInput().get(icIndex);
+                    fireDomainObjectSelectionEvent(inputClause);
+                    return;
+                case OUTPUT_CLAUSES:
+                    final List<GridColumn.HeaderMetaData> headerMetaData = model.getColumns().get(uiHeaderColumnIndex).getHeaderMetaData();
+                    if (headerMetaData.size() > 1) {
+                        if (uiHeaderRowIndex == 0) {
+                            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+                            if (base instanceof DomainObject) {
+                                fireDomainObjectSelectionEvent((DomainObject) base);
+                                return;
+                            }
+                        }
+                    }
+                    final int ocIndex = DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable, uiHeaderColumnIndex);
+                    final OutputClause outputClause = dtable.getOutput().get(ocIndex);
+                    fireDomainObjectSelectionEvent(outputClause);
+                    return;
+            }
+        }
+        super.doAfterHeaderSelectionChange(uiHeaderRowIndex, uiHeaderColumnIndex);
     }
 }

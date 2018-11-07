@@ -40,7 +40,7 @@ import org.kie.workbench.common.screens.server.management.backend.service.SpecMa
 import org.kie.workbench.common.screens.server.management.backend.storage.ServerTemplateVFSStorage;
 import org.kie.workbench.common.screens.server.management.backend.storage.migration.ServerTemplateMigration;
 import org.kie.workbench.common.screens.server.management.backend.utils.ControllerExtension;
-import org.kie.workbench.common.screens.server.management.backend.utils.ControllerUtils;
+import org.kie.workbench.common.screens.server.management.utils.ControllerUtils;
 import org.kie.workbench.common.screens.server.management.backend.utils.EmbeddedController;
 import org.kie.workbench.common.screens.server.management.backend.utils.MVELEvaluatorProducer;
 import org.kie.workbench.common.screens.server.management.backend.utils.MockTestService;
@@ -82,6 +82,8 @@ public abstract class AbstractControllerIT {
                         "org.uberfire:uberfire-servlet-security",
                         "org.uberfire:uberfire-rest-backend",
                         "org.uberfire:uberfire-metadata-backend-lucene",
+                        "org.uberfire:uberfire-ssh-api",
+                        "org.uberfire:uberfire-ssh-backend",
                         "org.jboss.errai:errai-jboss-as-support",
                         "org.jboss.errai:errai-security-server",
                         "org.jboss.errai:errai-cdi-server",

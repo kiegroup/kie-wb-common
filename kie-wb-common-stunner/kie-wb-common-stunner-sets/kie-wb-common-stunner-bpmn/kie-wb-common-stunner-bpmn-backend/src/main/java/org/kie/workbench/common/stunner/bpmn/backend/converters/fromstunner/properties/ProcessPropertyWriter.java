@@ -27,13 +27,11 @@ import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
 import bpsim.ScenarioParameters;
-import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.Relationship;
-import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
@@ -46,13 +44,14 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpsim;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 
 public class ProcessPropertyWriter extends BasePropertyWriter implements ElementContainer {
 
@@ -111,7 +110,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         return bpmnDiagram;
     }
 
-    public void addChildElement(PropertyWriter p) {
+    public void addChildElement(BasePropertyWriter p) {
         Processes.addChildElement(
                 p,
                 childElements,
@@ -152,12 +151,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         process.setIsExecutable(value);
     }
 
-    public void setDocumentation(String documentation) {
-        Documentation d = bpmn2.createDocumentation();
-        d.setText(asCData(documentation));
-        process.getDocumentation().add(d);
-    }
-
     public void setPackage(String value) {
         CustomAttribute.packageName.of(process).set(value);
     }
@@ -185,6 +178,25 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
             properties.add(variable.getTypedIdentifier());
             this.itemDefinitions.add(variable.getTypeDeclaration());
         });
+    }
+
+    public void setCaseFileVariables(CaseFileVariables caseFileVariables) {
+        String value = caseFileVariables.getValue();
+        DeclarationList declarationList = DeclarationList.fromString(value);
+
+        List<Property> properties = process.getProperties();
+        declarationList.getDeclarations().forEach(decl -> {
+            VariableScope.Variable variable =
+                    variableScope.declare(this.process.getId(),
+                                          CaseFileVariables.CASE_FILE_PREFIX + decl.getIdentifier(),
+                                          decl.getType());
+            properties.add(variable.getTypedIdentifier());
+            this.itemDefinitions.add(variable.getTypeDeclaration());
+        });
+    }
+
+    public void setCaseIdPrefix(CaseIdPrefix caseIdPrefix) {
+        CustomElement.caseIdPrefix.of(process).set(caseIdPrefix.getValue());
     }
 
     public void setCaseRoles(CaseRoles roles) {
@@ -229,9 +241,5 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         defaultScenario.getElementParameters().addAll(simulationParameters);
 
         return relationship;
-    }
-
-    public Collection<RootElement> getRootElements() {
-        return rootElements;
     }
 }
