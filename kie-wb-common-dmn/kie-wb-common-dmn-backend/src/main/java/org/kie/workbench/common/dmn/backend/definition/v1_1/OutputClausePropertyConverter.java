@@ -57,16 +57,19 @@ public class OutputClausePropertyConverter {
         result.setId(wb.getId().getValue());
         result.setName(wb.getName());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+
         UnaryTests outputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getOutputValues());
-        if (outputValues != null) {
+        if (outputValues != null && !outputValues.getText().isEmpty()) {
             outputValues.setParent(result);
+            result.setOutputValues(outputValues);
         }
-        result.setOutputValues(outputValues);
+
         LiteralExpression defaultOutputEntry = LiteralExpressionPropertyConverter.dmnFromWB(wb.getDefaultOutputEntry());
-        if (defaultOutputEntry != null) {
+        if (defaultOutputEntry != null && !defaultOutputEntry.getText().isEmpty()) {
             defaultOutputEntry.setParent(result);
+            result.setDefaultOutputEntry(defaultOutputEntry);
         }
-        result.setDefaultOutputEntry(defaultOutputEntry);
+
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         return result;

@@ -57,10 +57,11 @@ public class InputClausePropertyConverter {
             expression.setParent(result);
         }
         result.setInputExpression(expression);
-        if (inputValues != null) {
+
+        if (inputValues != null && !inputValues.getText().isEmpty()) {
             inputValues.setParent(result);
+            result.setInputValues(inputValues);
         }
-        result.setInputValues(inputValues);
 
         return result;
     }
