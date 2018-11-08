@@ -65,7 +65,11 @@ public class MapProvider {
 
     public CompilationResponse getResponse(CharSequence sequence) {
         DefaultKieCompilationResponseOffProcess res = compilationResponseMap.get(sequence);
-        return new DefaultKieCompilationResponse(res);
+        if(res != null){
+            return new DefaultKieCompilationResponse(res);
+        }else{
+            return new DefaultKieCompilationResponse(new DefaultKieCompilationResponseOffProcess(false, sequence.toString()));
+        }
     }
 
     public void removeResponse(CharSequence sequence) {
