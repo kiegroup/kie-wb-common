@@ -31,9 +31,7 @@ public class QNamePropertyConverter {
      */
     public static QName wbFromDMN(final javax.xml.namespace.QName qName, final DMNModelInstrumentedBase parent) {
         if (Objects.isNull(qName)) {
-            return new QName(QName.NULL_NS_URI,
-                             BuiltInType.NONE.getName(),
-                             QName.DEFAULT_NS_PREFIX);
+            return BuiltInType.UNDEFINED.asQName();
         }
         //Convert DMN1.1 QName typeRefs to DMN1.2 (the editor only supports DMN1.2)
         if (parent instanceof org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase && parent.getURIFEEL().equals(parent.getNamespaceURI(qName.getPrefix()))) {
@@ -56,7 +54,7 @@ public class QNamePropertyConverter {
 
     public static Optional<javax.xml.namespace.QName> dmnFromWB(final QName wb) {
         if (wb != null) {
-            if (wb.getLocalPart().equals(BuiltInType.NONE.getName())) {
+            if (Objects.equals(wb, BuiltInType.UNDEFINED.asQName())) {
                 return Optional.empty();
             }
             return Optional.of(new javax.xml.namespace.QName(wb.getNamespaceURI(),

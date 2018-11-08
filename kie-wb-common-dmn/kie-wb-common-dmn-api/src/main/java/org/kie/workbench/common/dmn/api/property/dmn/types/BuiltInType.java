@@ -33,7 +33,7 @@ public enum BuiltInType {
     ANY("any"),
     DATE("date"),
     CONTEXT("context"),
-    NONE("<None>");
+    UNDEFINED("<Undefined>");
 
     private final String[] names;
 

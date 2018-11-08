@@ -200,7 +200,7 @@ public class DataTypeSelectViewTest {
 
         final int visibleItems = BuiltInType.values().length - 1;
 
-        //Check all items were added to the group minus the NONE item
+        //Check all items were added to the group minus the UNDEFINED item
         verify(view, times(visibleItems + customDataTypes.size())).makeOption(dataTypeCaptor.capture(), any(Function.class));
         final List<DataType> dataTypes = dataTypeCaptor.getAllValues();
 
