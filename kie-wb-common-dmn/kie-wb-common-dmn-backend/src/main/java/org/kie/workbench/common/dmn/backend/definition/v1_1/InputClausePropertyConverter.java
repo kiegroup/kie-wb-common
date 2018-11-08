@@ -22,6 +22,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.InputClauseUnaryTests;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class InputClausePropertyConverter {
 
@@ -58,7 +59,7 @@ public class InputClausePropertyConverter {
         }
         result.setInputExpression(expression);
 
-        if (inputValues != null && !inputValues.getText().isEmpty()) {
+        if (StringUtils.nonEmpty(inputValues.getText())) {
             inputValues.setParent(result);
             result.setInputValues(inputValues);
         }
