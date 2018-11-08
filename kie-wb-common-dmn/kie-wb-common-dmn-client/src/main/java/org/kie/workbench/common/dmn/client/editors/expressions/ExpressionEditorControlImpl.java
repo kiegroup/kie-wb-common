@@ -63,7 +63,7 @@ public class ExpressionEditorControlImpl extends AbstractCanvasControl<AbstractC
             final Diagram diagram = canvasHandler.getDiagram();
             final Graph<?, Node> graph = diagram.getGraph();
 
-            for (Node node : graph.nodes()) {
+            for (final Node node : graph.nodes()) {
                 if (node.getContent() instanceof Definition) {
                     final Definition definition = (Definition) node.getContent();
                     if (definition.getDefinition() instanceof DomainObject) {
