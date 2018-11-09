@@ -70,7 +70,7 @@ public class DataTypePickerWidgetTest {
 
     private static final QName VALUE = new QName();
 
-    private static final String WIDGET_VALUE = "[][Any][]";
+    private static final String WIDGET_VALUE = "[][<Undefined>][]";
 
     @Mock
     private Anchor typeButton;
