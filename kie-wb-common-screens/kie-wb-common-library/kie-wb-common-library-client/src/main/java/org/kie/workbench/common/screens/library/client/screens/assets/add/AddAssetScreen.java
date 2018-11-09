@@ -126,7 +126,7 @@ public class AddAssetScreen {
     
     protected void filterNewResourcesHandlersAndUpdate(ProfilePreferences loadedProfilePreferences) {
         this.newResourceHandlers = filterNewResourceHandlers(loadedProfilePreferences);
-       this.update();
+        this.update();
     }
 
     protected List<NewResourceHandler> filterNewResourceHandlers(ProfilePreferences loadedProfilePreferences) {

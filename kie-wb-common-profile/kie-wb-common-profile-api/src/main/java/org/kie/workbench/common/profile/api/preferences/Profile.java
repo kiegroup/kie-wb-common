@@ -1,6 +1,7 @@
 package org.kie.workbench.common.profile.api.preferences;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public enum Profile {
@@ -21,7 +22,7 @@ public enum Profile {
                 "wb_group_track"
             )), 
     FULL("Full",
-            Arrays.asList(""));
+            Collections.emptyList());
 
     private String profileName;
     private List<String> menuBlackList;
