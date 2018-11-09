@@ -22,7 +22,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
-import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
@@ -55,7 +55,7 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
         Id id = new Id(dmn.getId());
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         Name name = new Name(dmn.getName());
-        InformationItem informationItem = InformationItemPropertyConverter.wbFromDMN(dmn.getVariable());
+        InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable());
         Expression expression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression());
         Decision decision = new Decision(id,
                                          description,
@@ -67,6 +67,8 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
                                          new BackgroundSet(),
                                          new FontSet(),
                                          new RectangleDimensionsSet());
+        decision.setQuestion(QuestionPropertyConverter.wbFromDMN(dmn.getQuestion()));
+        decision.setAllowedAnswers(AllowedAnswersPropertyConverter.wbFromDMN(dmn.getAllowedAnswers()));
         node.getContent().setDefinition(decision);
 
         if (informationItem != null) {
@@ -86,7 +88,7 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
         d.setId(source.getId().getValue());
         d.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         d.setName(source.getName().getValue());
-        org.kie.dmn.model.api.InformationItem variable = InformationItemPropertyConverter.dmnFromWB(source.getVariable());
+        org.kie.dmn.model.api.InformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable());
         if (variable != null) {
             variable.setParent(d);
         }
@@ -96,6 +98,8 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
             expression.setParent(d);
         }
         d.setExpression(expression);
+        d.setQuestion(QuestionPropertyConverter.dmnFromWB(source.getQuestion()));
+        d.setAllowedAnswers(AllowedAnswersPropertyConverter.dmnFromWB(source.getAllowedAnswers()));
         // DMN spec table 2: Requirements connection rules
         List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for (Edge<?, ?> e : inEdges) {

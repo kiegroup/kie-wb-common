@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,26 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClauseUnaryTests;
-import org.kie.workbench.common.dmn.api.property.dmn.Id;
-import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.api.property.dmn.AllowedAnswers;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
-public class OutputClauseUnaryTestsPropertyConverter {
+public class AllowedAnswersPropertyConverter {
 
-    public static OutputClauseUnaryTests wbFromDMN(final org.kie.dmn.model.api.UnaryTests dmn) {
+    public static AllowedAnswers wbFromDMN(final String dmn) {
         if (dmn == null) {
-            return null;
+            return new AllowedAnswers("");
+        } else {
+            return new AllowedAnswers(dmn);
         }
-        Id id = new Id(dmn.getId());
-        OutputClauseUnaryTests result = new OutputClauseUnaryTests(id, new Text(dmn.getText()));
-        return result;
+    }
+
+    public static String dmnFromWB(final AllowedAnswers wb) {
+        if (wb == null) {
+            return null;
+        } else if (StringUtils.isEmpty(wb.getValue())) {
+            return null;
+        } else {
+            return wb.getValue();
+        }
     }
 }
