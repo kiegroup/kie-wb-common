@@ -130,7 +130,7 @@ public class AddAssetScreen {
     }
 
     protected List<NewResourceHandler> filterNewResourceHandlers(ProfilePreferences loadedProfilePreferences) {
-        Function<NewResourceHandler, Boolean> newResourceHandlerFilter= 
+        Function<NewResourceHandler, Boolean> newResourceHandlerFilter = 
                 asset -> asset.isProjectAsset() &&
                     asset.getProfiles().stream()
                                .filter(p ->  p == loadedProfilePreferences.getProfile())
