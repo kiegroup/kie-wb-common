@@ -35,7 +35,6 @@ public class BackendBindableDefinitionAdapterTest extends AbstractBackendBindabl
 
     @Before
     public void setUp() {
-        //todo:tiago
         super.setUp();
 
         tested = new BackendBindableDefinitionAdapter(utils);
