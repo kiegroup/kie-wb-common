@@ -57,6 +57,7 @@ import static org.mockito.Mockito.when;
 public class DefaultAdminPageHelperTest {
 
     private static String LIBRARY_PREFERENCES = "LibraryPreferences";
+    private static String PROFILE_PREFERENCES = "ProfilePreferences";
     private static String ARTIFACT_REPOSITORY_PREFERENCES = "ArtifactRepositoryPreference";
     private static String STUNNER_PREFERENCES = "StunnerPreferences";
     private static String EXPERIMENTAL_SETTINGS = "ExperimentalSettings";
@@ -310,6 +311,19 @@ public class DefaultAdminPageHelperTest {
                                   eq("general"),
                                   any(Command.class));
     }
+    
+    @Test
+    public void profilePreferencesAdded() {
+        defaultAdminPageHelper.setup();
+
+        verify(adminPage, times(1)).addPreference(eq("root"),
+                                        eq(PROFILE_PREFERENCES),
+                                        any(),
+                                        any(),
+                                        eq("advanced"),
+                                        eq(globalScope),
+                                        eq(AdminPageOptions.WITH_BREADCRUMBS));
+    }
 
     @Test
     public void stunnerPreferencesWasAddedTest() {
@@ -370,7 +384,7 @@ public class DefaultAdminPageHelperTest {
         verify(adminPage, shouldAppear ? times(1) : never()).addTool(eq("root"),
                                                                         eq(EXPERIMENTAL_SETTINGS),
                                                                         any(),
-                                                                        eq("general"),
+                                                                        eq("advanced"),
                                                                         any(Command.class));
     }
 

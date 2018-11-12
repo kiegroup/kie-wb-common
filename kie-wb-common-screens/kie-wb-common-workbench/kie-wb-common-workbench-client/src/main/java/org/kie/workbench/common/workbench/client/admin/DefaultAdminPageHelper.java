@@ -111,17 +111,19 @@ public class DefaultAdminPageHelper {
                              artifactRepositoryPreferencesEnabled);
         addGeneralPreferences();
         addStunnerPreferences(stunnerEnabled);
+        addExperimentalPreferences();
+        addSSHKeys();
         addProfilePreferences(); 
     }
     
     private void addProfilePreferences() {
         adminPage.addPreference("root",
-                "ProfilePreferences",
-                translationService.format(PreferencesConstants.ProfilePreferences_Title),
-                new Sets.Builder().add("fa").add("fa-list").build(),
-                "general",
-                scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
-                AdminPageOptions.WITH_BREADCRUMBS);
+                                "ProfilePreferences",
+                                translationService.format(PreferencesConstants.ProfilePreferences_Title),
+                                new Sets.Builder().add("fa").add("fa-list").build(),
+                                "advanced",
+                                scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
+                                AdminPageOptions.WITH_BREADCRUMBS);
     }
 
     private void addGeneralPreferences() {
@@ -149,7 +151,7 @@ public class DefaultAdminPageHelper {
             adminPage.addTool("root",
                               constants.ExperimentalSettings(),
                               new Sets.Builder().add("fa").add("fa-flask").build(),
-                              "general",
+                              "advanced",
                               () -> {
                                   final Command accessExperimentals = () -> placeManager.goTo(PerspectiveIds.EXPERIMENTAL_FEATURES);
                                   accessExperimentals.execute();
