@@ -39,6 +39,8 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
+import org.guvnor.structure.pom.AddPomDependencyEvent;
+import org.guvnor.structure.pom.DependencyType;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.forge.roaster.Roaster;
@@ -126,6 +128,8 @@ public class DataModelerServiceImpl
 
     @Inject
     private Event<DataObjectCreatedEvent> dataObjectCreatedEvent;
+    @Inject
+    private Event<AddPomDependencyEvent> addPomDependencyEvent;
     @Inject
     private Event<DataObjectDeletedEvent> dataObjectDeletedEvent;
     @Inject
@@ -224,6 +228,7 @@ public class DataModelerServiceImpl
                                            options);
             }
 
+
             String source = createJavaSource(dataObject);
 
             ioService.write(nioPath,
@@ -232,6 +237,12 @@ public class DataModelerServiceImpl
 
             dataObjectCreatedEvent.fire(new DataObjectCreatedEvent(currentModule,
                                                                    dataObject));
+
+            Object currentValue = options.get( "persistable" );
+            boolean isPersistable = Boolean.valueOf( currentValue != null ? currentValue.toString() : null );
+            if(isPersistable){
+                addPomDependencyEvent.fire(new AddPomDependencyEvent(DependencyType.JPA, currentModule.getPomXMLPath()));
+            }
 
             return newPath;
         } catch (Exception e) {
