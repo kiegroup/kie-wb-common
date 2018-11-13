@@ -316,12 +316,12 @@ public class DefaultAdminPageHelperTest {
     public void profilePreferencesAdded() {
         defaultAdminPageHelper.setup();
 
-        verify(adminPage, times(1)).addPreference(eq("root"),
+        verify(adminPage).addPreference(eq("root"),
                                         eq(PROFILE_PREFERENCES),
                                         any(),
                                         any(),
                                         eq("advanced"),
-                                        eq(globalScope),
+                                        any(PreferenceScope.class),
                                         eq(AdminPageOptions.WITH_BREADCRUMBS));
     }
 
