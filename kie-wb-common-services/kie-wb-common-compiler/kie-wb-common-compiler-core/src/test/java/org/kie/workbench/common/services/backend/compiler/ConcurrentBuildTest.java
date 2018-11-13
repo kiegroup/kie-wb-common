@@ -222,8 +222,7 @@ public class ConcurrentBuildTest {
                                                                          },
                                                                          Boolean.FALSE);
             res = (KieCompilationResponse) compiler.compile(req);
-
-            logger.info("\nFinished " + res.isSuccessful() + " all Metadata tmp:{} UUID:{} res.getMavenOutput().isEmpty():{}", tmp , req.getRequestUUID(), res.getMavenOutput().isEmpty());
+            logger.info("\nFinished, successful:{} , all Metadata tmp:{} UUID:{} res.getMavenOutput().isEmpty():{}", res.isSuccessful(), tmp , req.getRequestUUID(), res.getMavenOutput().isEmpty());
             if (!res.isSuccessful()) {
                 try {
                     logger.error("writing output on target folder:{}", tmp);
