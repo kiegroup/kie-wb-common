@@ -17,22 +17,16 @@
 package org.kie.workbench.common.stunner.bpmn.backend;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import bpsim.impl.BpsimFactoryImpl;
-import org.eclipse.bpmn2.Definitions;
-import org.eclipse.bpmn2.util.ImportHelper;
 import org.eclipse.bpmn2.util.OnlyContainmentTypeInfo;
 import org.eclipse.bpmn2.util.XmlExtendedMetadata;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.ElementHandlerImpl;
 import org.jboss.drools.impl.DroolsFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
-import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 
 public class Bpmn2ResourceFactory extends JBPMBpmn2ResourceFactoryImpl {
 
