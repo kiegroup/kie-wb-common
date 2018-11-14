@@ -107,7 +107,7 @@ public abstract class AbstractReflectAdapter<T> implements PriorityAdapter {
 
     public Optional<?> getProperty(T pojo, String propertyName) {
         return ReflectionAdapterUtils.getFields(pojo.getClass()).stream()
-                .filter(f -> Objects.equals(propertyName, f.getName()))
+                .filter(field -> Objects.equals(propertyName, field.getName()))
                 .map(field -> Exceptions.swallow(() -> field.get(pojo), null))
                 .findFirst();
     }
