@@ -46,6 +46,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedM
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -178,6 +179,25 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandlerTest {
 
         uiModel.selectHeaderCell(0, 0);
 
+        assertHeaderCellEdited();
+    }
+
+    @Test
+    public void testHandleHeaderCell_EditableMergedColumns_EditableRow_ClickEvent() {
+        final GridColumn gridColumn2 = mock(GridColumn.class);
+        uiModel.appendColumn(gridColumn2);
+        when(gridColumn.getHeaderMetaData()).thenReturn(Collections.singletonList(editableHeaderMetaData));
+        when(gridColumn2.getHeaderMetaData()).thenReturn(Collections.singletonList(editableHeaderMetaData));
+        when(gridColumn.getIndex()).thenReturn(0);
+        when(gridColumn2.getIndex()).thenReturn(1);
+
+        uiModel.selectHeaderCell(0, 0);
+        uiModel.selectHeaderCell(0, 1);
+
+        assertHeaderCellEdited();
+    }
+
+    private void assertHeaderCellEdited() {
         assertThat(handler.handleHeaderCell(gridWidget,
                                             relativeLocation,
                                             0,

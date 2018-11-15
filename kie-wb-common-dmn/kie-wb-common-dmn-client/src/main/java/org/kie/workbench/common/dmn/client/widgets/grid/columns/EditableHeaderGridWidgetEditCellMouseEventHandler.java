@@ -16,13 +16,16 @@
 
 package org.kie.workbench.common.dmn.client.widgets.grid.columns;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.ait.lienzo.client.core.event.AbstractNodeMouseEvent;
 import com.ait.lienzo.client.core.types.Point2D;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellEditAction;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
+import org.uberfire.ext.wires.core.grids.client.util.ColumnIndexUtilities;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellEditContext;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.DefaultGridWidgetEditCellMouseEventHandler;
@@ -63,8 +66,7 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGr
                                                                                           relativeLocation.add(gridWidgetComputedLocation),
                                                                                           uiHeaderRowIndex);
 
-        final GridData gridData = gridWidget.getModel();
-        if (gridData.getSelectedHeaderCells().size() == 1) {
+        if (isHeaderSelectionValid(gridWidget)) {
             if (Objects.equals(headerMetaData.getSupportedEditAction(), GridCellEditAction.getSupportedEditAction(event))) {
                 headerMetaData.edit(context);
                 return true;
@@ -72,5 +74,39 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGr
         }
 
         return false;
+    }
+
+    private boolean isHeaderSelectionValid(final GridWidget gridWidget) {
+        final GridData gridData = gridWidget.getModel();
+        final List<GridData.SelectedCell> selectedHeaderCells = gridData.getSelectedHeaderCells();
+
+        //No selections (should not happen) then cannot edit the header cell
+        if (selectedHeaderCells.isEmpty()) {
+            return false;
+        }
+
+        //Single selection, then can edit header cell
+        if (selectedHeaderCells.size() == 1) {
+            return true;
+        }
+
+        //Check if all selected cell MetaData are equal
+        final GridColumn.HeaderMetaData firstSelectedCellMetaData = getSelectedCellMetaData(gridData,
+                                                                                            selectedHeaderCells.get(0));
+        return selectedHeaderCells
+                .stream()
+                .map(selectedCell -> getSelectedCellMetaData(gridData, selectedCell))
+                .collect(Collectors.toList())
+                .stream()
+                .allMatch(selectedCell -> Objects.equals(selectedCell, firstSelectedCellMetaData));
+    }
+
+    private GridColumn.HeaderMetaData getSelectedCellMetaData(final GridData gridData,
+                                                              final GridData.SelectedCell selectedCell) {
+        final int _headerColumnIndex = ColumnIndexUtilities.findUiColumnIndex(gridData.getColumns(),
+                                                                              selectedCell.getColumnIndex());
+        final GridColumn<?> gridColumn = gridData.getColumns().get(_headerColumnIndex);
+        final List<GridColumn.HeaderMetaData> gridColumnMetaData = gridColumn.getHeaderMetaData();
+        return gridColumnMetaData.get(selectedCell.getRowIndex());
     }
 }
