@@ -378,12 +378,11 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     public void setupSelectComponent(final DataTypeSelect typeSelect) {
         type.innerHTML = "";
 
-        HTMLElement element = typeSelect.getElement();
-        if (element instanceof HTMLDivElement) {
-            new MenuInitializer((HTMLDivElement) element, ".btn-group").init();
-        }
+        final HTMLElement element = typeSelect.getElement();
 
-        type.appendChild(typeSelect.getElement());
+        new MenuInitializer(element, ".btn-group").init();
+
+        type.appendChild(element);
     }
 
     @Override

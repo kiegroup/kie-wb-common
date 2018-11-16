@@ -22,7 +22,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
-import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.kie.workbench.common.dmn.client.editors.types.common.JQuery;
 import org.kie.workbench.common.dmn.client.editors.types.common.JQueryEvent;
 
@@ -37,10 +37,10 @@ import static org.kie.workbench.common.dmn.client.editors.types.common.JQuery.$;
  */
 public class MenuInitializer {
 
-    private final HTMLDivElement menu;
+    private final HTMLElement menu;
     private final String dropDownClass;
 
-    public MenuInitializer(final HTMLDivElement menu,
+    public MenuInitializer(final HTMLElement menu,
                            final String dropDownClass) {
         this.menu = menu;
         this.dropDownClass = dropDownClass;
