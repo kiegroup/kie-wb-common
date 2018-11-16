@@ -85,13 +85,16 @@ public class DataTypeListViewTest {
     private HTMLButtonElement addButton;
 
     @Mock
+    private HTMLDivElement listItemsNo;
+
+    @Mock
     private DataTypeList presenter;
 
     private DataTypeListView view;
 
     @Before
     public void setup() {
-        view = spy(new DataTypeListView(listItems, collapsedDescription, expandedDescription, viewMore, viewLess, addButton));
+        view = spy(new DataTypeListView(listItems, collapsedDescription, expandedDescription, viewMore, viewLess, addButton, listItemsNo));
         view.init(presenter);
         doReturn(element).when(view).getElement();
     }

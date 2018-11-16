@@ -56,6 +56,9 @@ public class DataTypeListView implements DataTypeList.View {
     @DataField("list-items")
     private final HTMLDivElement listItems;
 
+    @DataField("list-items-no")
+    private final HTMLDivElement listItemsNo;
+
     @DataField("collapsed-description")
     private final HTMLDivElement collapsedDescription;
 
@@ -79,13 +82,15 @@ public class DataTypeListView implements DataTypeList.View {
                             final HTMLDivElement expandedDescription,
                             final HTMLAnchorElement viewMore,
                             final HTMLAnchorElement viewLess,
-                            final HTMLButtonElement addButton) {
+                            final HTMLButtonElement addButton,
+                            final HTMLDivElement listItemsNo) {
         this.listItems = listItems;
         this.collapsedDescription = collapsedDescription;
         this.expandedDescription = expandedDescription;
         this.viewMore = viewMore;
         this.viewLess = viewLess;
         this.addButton = addButton;
+        this.listItemsNo = listItemsNo;
     }
 
     @Override
@@ -102,6 +107,17 @@ public class DataTypeListView implements DataTypeList.View {
     public void setupListItems(final List<DataTypeListItem> listItems) {
         this.listItems.innerHTML = "";
         listItems.forEach(this::appendItem);
+        toggleNoListItems();
+    }
+
+    private void toggleNoListItems() {
+        if (this.listItems.childNodes.length == 0) {
+            show(this.listItemsNo);
+            hide(this.listItems);
+        } else {
+            hide(this.listItemsNo);
+            show(this.listItems);
+        }
     }
 
     @Override
@@ -123,11 +139,13 @@ public class DataTypeListView implements DataTypeList.View {
         }
 
         showArrowIconIfDataTypeHasChildren(dataType);
+        toggleNoListItems();
     }
 
     @Override
     public void addSubItem(final DataTypeListItem listItem) {
         listItems.appendChild(listItem.getElement());
+        toggleNoListItems();
     }
 
     @EventHandler("add-button")
@@ -173,6 +191,8 @@ public class DataTypeListView implements DataTypeList.View {
         final Optional<Element> dataTypeRow = Optional.ofNullable(getDataTypeRow(dataType));
 
         dataTypeRow.ifPresent(ElementHelper::remove);
+
+        toggleNoListItems();
     }
 
     void cleanSubTypes(final String uuid) {
