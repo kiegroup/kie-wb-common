@@ -117,13 +117,17 @@ public class DefaultAdminPageHelper {
     }
     
     private void addProfilePreferences() {
-        adminPage.addPreference("root",
-                                "ProfilePreferences",
-                                translationService.format(PreferencesConstants.ProfilePreferences_Title),
-                                new Sets.Builder().add("fa").add("fa-list").build(),
-                                "advanced",
-                                scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
-                                AdminPageOptions.WITH_BREADCRUMBS);
+        final boolean canEditProfilePreferences = authorizationManager.authorize(WorkbenchFeatures.EDIT_PROFILE_PREFERENCES,
+                                                                                sessionInfo.getIdentity());
+        if(canEditProfilePreferences) {
+            adminPage.addPreference("root",
+                                    "ProfilePreferences",
+                                    translationService.format(PreferencesConstants.ProfilePreferences_Title),
+                                    new Sets.Builder().add("fa").add("fa-list").build(),
+                                    "advanced",
+                                    scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
+                                    AdminPageOptions.WITH_BREADCRUMBS);
+        }
     }
 
     private void addGeneralPreferences() {

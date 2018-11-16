@@ -313,17 +313,21 @@ public class DefaultAdminPageHelperTest {
     }
     
     @Test
-    public void profilePreferencesAdded() {
+    public void profilePreferencesWasAddedTest() {
+        doReturn(true).when(authorizationManager).authorize(eq(WorkbenchFeatures.EDIT_PROFILE_PREFERENCES),
+                any());
         defaultAdminPageHelper.setup();
-
-        verify(adminPage).addPreference(eq("root"),
-                                        eq(PROFILE_PREFERENCES),
-                                        any(),
-                                        any(),
-                                        eq("advanced"),
-                                        any(PreferenceScope.class),
-                                        eq(AdminPageOptions.WITH_BREADCRUMBS));
+        verifyProfilePreferenceAdded(true);
     }
+    
+    @Test
+    public void profilePreferencesWasNotAddedTest() {
+        doReturn(false).when(authorizationManager).authorize(eq(WorkbenchFeatures.EDIT_PROFILE_PREFERENCES),
+                any());
+        
+        defaultAdminPageHelper.setup();
+        verifyProfilePreferenceAdded(false);
+    }    
 
     @Test
     public void stunnerPreferencesWasAddedTest() {
@@ -386,6 +390,16 @@ public class DefaultAdminPageHelperTest {
                                                                         any(),
                                                                         eq("advanced"),
                                                                         any(Command.class));
+    }
+    
+    private void verifyProfilePreferenceAdded(boolean authorized) {
+        verify(adminPage, authorized ? times(1) : never()).addPreference(eq("root"),
+                                        eq(PROFILE_PREFERENCES),
+                                        any(),
+                                        any(),
+                                        eq("advanced"),
+                                        any(PreferenceScope.class),
+                                        eq(AdminPageOptions.WITH_BREADCRUMBS));
     }
 
     private void verifyLibraryPreferencesWasAddedInGlobalScope() {
