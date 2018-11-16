@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -111,7 +112,7 @@ public class DataTypeListView implements DataTypeList.View {
     }
 
     private void toggleNoListItems() {
-        if (this.listItems.childNodes.length == 0) {
+        if (!Objects.isNull(this.listItems.childNodes) && this.listItems.childNodes.length == 0) {
             show(this.listItemsNo);
             hide(this.listItems);
         } else {

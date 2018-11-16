@@ -94,6 +94,8 @@ public class DataTypeListViewTest {
 
     @Before
     public void setup() {
+        listItemsNo.classList = mock(DOMTokenList.class);
+        listItems.classList = mock(DOMTokenList.class);
         view = spy(new DataTypeListView(listItems, collapsedDescription, expandedDescription, viewMore, viewLess, addButton, listItemsNo));
         view.init(presenter);
         doReturn(element).when(view).getElement();
