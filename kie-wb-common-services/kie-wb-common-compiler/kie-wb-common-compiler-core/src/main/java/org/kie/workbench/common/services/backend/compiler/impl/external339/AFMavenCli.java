@@ -312,7 +312,7 @@ public class AFMavenCli {
                                   MULTIMODULE_PROJECT_DIRECTORY);
                 throw new ExitException(1);
             }
-            Path basedir = Paths.get(basedirProperty);
+            Path basedir = basedirProperty != null ? Paths.get(basedirProperty) : Paths.get("");
             cliRequest.setMultiModuleProjectDirectory(basedir.toAbsolutePath().toString());
         }
     }
@@ -641,35 +641,34 @@ public class AFMavenCli {
                                              List<CoreExtensionEntry> extensions)
             throws Exception {
         if (!extClassPath.isEmpty() || !extensions.isEmpty()) {
-            try (ClassRealm extRealm = classWorld.newRealm("maven.ext",
-                                                      null)) {
+            ClassRealm extRealm = classWorld.newRealm("maven.ext",
+                                                      null);
 
-                extRealm.setParentRealm(coreRealm);
+            extRealm.setParentRealm(coreRealm);
 
-                slf4jLogger.debug("Populating class realm " + extRealm.getId());
+            slf4jLogger.debug("Populating class realm " + extRealm.getId());
 
-                for (File file : extClassPath) {
-                    slf4jLogger.debug("  Included " + file);
+            for (File file : extClassPath) {
+                slf4jLogger.debug("  Included " + file);
 
-                    extRealm.addURL(file.toURI().toURL());
-                }
-
-                for (CoreExtensionEntry entry : reverse(extensions)) {
-                    Set<String> exportedPackages = entry.getExportedPackages();
-                    ClassRealm realm = entry.getClassRealm();
-                    for (String exportedPackage : exportedPackages) {
-                        extRealm.importFrom(realm,
-                                            exportedPackage);
-                    }
-                    if (exportedPackages.isEmpty()) {
-                        // sisu uses realm imports to establish component visibility
-                        extRealm.importFrom(realm,
-                                            realm.getId());
-                    }
-                }
-
-                return extRealm;
+                extRealm.addURL(file.toURI().toURL());
             }
+
+            for (CoreExtensionEntry entry : reverse(extensions)) {
+                Set<String> exportedPackages = entry.getExportedPackages();
+                ClassRealm realm = entry.getClassRealm();
+                for (String exportedPackage : exportedPackages) {
+                    extRealm.importFrom(realm,
+                                        exportedPackage);
+                }
+                if (exportedPackages.isEmpty()) {
+                    // sisu uses realm imports to establish component visibility
+                    extRealm.importFrom(realm,
+                                        realm.getId());
+                }
+            }
+
+            return extRealm;
         }
 
         return coreRealm;
@@ -1238,7 +1237,7 @@ public class AFMavenCli {
 
     static class ExitException extends Exception {
 
-        final int exitCode;
+        public int exitCode;
 
         public ExitException(int exitCode) {
             this.exitCode = exitCode;
