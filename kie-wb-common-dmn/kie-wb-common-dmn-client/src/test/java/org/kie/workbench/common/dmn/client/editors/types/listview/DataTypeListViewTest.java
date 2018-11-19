@@ -210,6 +210,23 @@ public class DataTypeListViewTest {
     }
 
     @Test
+    public void testHideNoCustomItemsMessageWhenThereIsCustomItem() {
+
+        final DataTypeListItem gridItem1 = mock(DataTypeListItem.class);
+        final DataTypeListItem gridItem2 = mock(DataTypeListItem.class);
+        final HTMLElement element1 = mock(HTMLElement.class);
+        final HTMLElement element2 = mock(HTMLElement.class);
+
+        when(gridItem1.getElement()).thenReturn(element1);
+        when(gridItem2.getElement()).thenReturn(element2);
+
+        view.setupListItems(Arrays.asList(gridItem1, gridItem2));
+
+        verify(listItems.classList).remove(HIDDEN_CSS_CLASS);
+        verify(listItemsNo.classList).add(HIDDEN_CSS_CLASS);
+    }
+
+    @Test
     public void testHideItemElementIfParentIsCollapsedWhenParentIsCollapsed() {
 
         final HTMLElement itemElement = mock(HTMLElement.class);

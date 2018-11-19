@@ -108,10 +108,10 @@ public class DataTypeListView implements DataTypeList.View {
     public void setupListItems(final List<DataTypeListItem> listItems) {
         this.listItems.innerHTML = "";
         listItems.forEach(this::appendItem);
-        toggleNoListItems();
+        showOrHideNoCustomItemsMessage();
     }
 
-    private void toggleNoListItems() {
+    private void showOrHideNoCustomItemsMessage() {
         if (!Objects.isNull(this.listItems.childNodes) && this.listItems.childNodes.length == 0) {
             show(this.listItemsNo);
             hide(this.listItems);
@@ -140,13 +140,13 @@ public class DataTypeListView implements DataTypeList.View {
         }
 
         showArrowIconIfDataTypeHasChildren(dataType);
-        toggleNoListItems();
+        showOrHideNoCustomItemsMessage();
     }
 
     @Override
     public void addSubItem(final DataTypeListItem listItem) {
         listItems.appendChild(listItem.getElement());
-        toggleNoListItems();
+        showOrHideNoCustomItemsMessage();
     }
 
     @EventHandler("add-button")
@@ -193,7 +193,7 @@ public class DataTypeListView implements DataTypeList.View {
 
         dataTypeRow.ifPresent(ElementHelper::remove);
 
-        toggleNoListItems();
+        showOrHideNoCustomItemsMessage();
     }
 
     void cleanSubTypes(final String uuid) {
