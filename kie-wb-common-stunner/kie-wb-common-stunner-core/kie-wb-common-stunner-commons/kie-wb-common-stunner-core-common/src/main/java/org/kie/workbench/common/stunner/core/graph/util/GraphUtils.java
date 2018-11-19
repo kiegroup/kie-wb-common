@@ -410,10 +410,11 @@ public class GraphUtils {
                             final Element<?> parent) {
             if (null != candidate) {
                 Element<?> p = getParent(candidate);
-                while (p instanceof Node && !p.equals(parent)) {
-                    p = getParent((Node<?, ? extends Edge>) p);
-                }
-                return null != p;
+//                while (p instanceof Node && !p.equals(parent)) {
+//                    p = getParent((Node<?, ? extends Edge>) p);
+//                }
+//                return null != p;
+                return p.getUUID().equals(parent.getUUID());
             }
             return false;
         }

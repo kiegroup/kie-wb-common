@@ -16,11 +16,15 @@
 
 package org.kie.workbench.common.stunner.core.rule.ext.impl;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
 import org.kie.workbench.common.stunner.core.rule.ext.RuleExtension;
 import org.kie.workbench.common.stunner.core.rule.ext.RuleExtensionHandler;
@@ -30,9 +34,25 @@ import org.kie.workbench.common.stunner.core.rule.violations.RuleViolationImpl;
 public abstract class AbstractParentsMatchHandler<T extends AbstractParentsMatchHandler, C extends RuleEvaluationContext>
         extends RuleExtensionHandler<T, C> {
 
-    public static Class<?> getParentType(final RuleExtension rule) {
+    public static Class<?> getParentType(final RuleExtension rule, Element<? extends Definition> parent) {
+        return getParentType(rule, parent, null);
+    }
+
+    public static Class<?> getParentType(final RuleExtension rule, Element<? extends Definition> parent,
+                                         Class<?> defaultParentType) {
         final Class<?>[] typeArguments = rule.getTypeArguments();
-        return null != typeArguments ? typeArguments[0] : null;
+        final Class parentDefinitionClass = Objects.nonNull(parent)
+                && Objects.nonNull(parent.getContent())
+                && Objects.nonNull(parent.getContent().getDefinition()) ? parent.getContent().getDefinition().getClass() :
+                null;
+        return Stream.of(typeArguments)
+                .filter(clazz -> Objects.equals(clazz, parentDefinitionClass))
+                .findFirst()
+                .orElse(defaultParentType);
+    }
+
+    public static boolean hasParentType(final RuleExtension rule) {
+        return Objects.nonNull(rule.getTypeArguments()) && rule.getTypeArguments().length > 0;
     }
 
     protected String getViolationMessage(final RuleExtension rule) {

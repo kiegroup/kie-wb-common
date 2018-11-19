@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.graph.util;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -107,7 +108,7 @@ public class FilteredParentsTypeMatcher
 
         @SuppressWarnings("unchecked")
         private Optional<Element<?>> getCandidateParentInstance(final Class<?> parentType) {
-            return candidateParent.isPresent() ?
+            return candidateParent.isPresent() && Objects.nonNull(parentType) ?
                     (ParentsTypeMatcher.ParentByDefinitionIdProvider.getDefinitionIdByTpe(parentType)
                             .equals(getCandidateParentId().get()) ?
                             Optional.of(candidateParent.get()) :
