@@ -27,16 +27,10 @@ import org.kie.workbench.common.stunner.project.client.handlers.AbstractProjectD
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.rpc.SessionInfo;
-import org.uberfire.security.ResourceAction;
-import org.uberfire.security.ResourceRef;
 import org.uberfire.security.authz.AuthorizationManager;
-import org.uberfire.workbench.model.ActivityResourceType;
 
 @ApplicationScoped
 public class DMNDiagramNewResourceHandler extends AbstractProjectDiagramNewResourceHandler<DMNDiagramResourceType> {
-
-    private final AuthorizationManager authorizationManager;
-    private final SessionInfo sessionInfo;
 
     protected DMNDiagramNewResourceHandler() {
         this(null,
@@ -58,16 +52,6 @@ public class DMNDiagramNewResourceHandler extends AbstractProjectDiagramNewResou
               projectDiagramServices,
               busyIndicatorView,
               projectDiagramResourceType);
-        this.authorizationManager = authorizationManager;
-        this.sessionInfo = sessionInfo;
-    }
-
-    @Override
-    public boolean canCreate() {
-        return authorizationManager.authorize(new ResourceRef(DMNDiagramEditor.EDITOR_ID,
-                                                              ActivityResourceType.EDITOR),
-                                              ResourceAction.READ,
-                                              sessionInfo.getIdentity());
     }
 
     @Override
