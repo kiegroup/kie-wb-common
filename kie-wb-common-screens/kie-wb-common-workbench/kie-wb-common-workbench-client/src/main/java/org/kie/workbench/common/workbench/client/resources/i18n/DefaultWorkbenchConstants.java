@@ -174,4 +174,8 @@ public interface DefaultWorkbenchConstants
 
     String TestReport();
 
+    String EditProfilePreferences();
+
+    String EditProfilePreferencesHelp();
+
 }
