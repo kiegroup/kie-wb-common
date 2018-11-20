@@ -212,6 +212,22 @@ public class GraphUtils {
                            y);
     }
 
+    public static Point2D getComputedPosition(final Node<?, ? extends Edge> element) {
+        double x = 0;
+        double y = 0;
+        Element<?> parent = element;
+        while (null != parent
+                && null != parent.asNode()
+                && parent.getContent() instanceof View) {
+            final Point2D position = getPosition((View) parent.getContent());
+            x += position.getX();
+            y += position.getY();
+            parent = getParent((Node<?, ? extends Edge>) parent);
+        }
+        return new Point2D(x,
+                           y);
+    }
+
     public static double[] getGraphSize(final DefinitionSet element) {
         return getSize(element.getBounds());
     }
