@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -96,6 +97,7 @@ public class DataTypeListViewTest {
     public void setup() {
         listItemsNo.classList = mock(DOMTokenList.class);
         listItems.classList = mock(DOMTokenList.class);
+        listItems.childNodes = new NodeList<>();
         view = spy(new DataTypeListView(listItems, collapsedDescription, expandedDescription, viewMore, viewLess, addButton, listItemsNo));
         view.init(presenter);
         doReturn(element).when(view).getElement();
@@ -116,6 +118,7 @@ public class DataTypeListViewTest {
 
         verify(listItems).appendChild(eq(element1));
         verify(listItems).appendChild(eq(element2));
+        verify(view).showOrHideNoCustomItemsMessage();
     }
 
     @Test
@@ -179,6 +182,7 @@ public class DataTypeListViewTest {
         verifyStatic();
         ElementHelper.insertAfter(listItemElement1, dataTypeRow);
         ElementHelper.insertAfter(listItemElement2, listItemElement1);
+        verify(view).showOrHideNoCustomItemsMessage();
     }
 
     @Test
@@ -192,6 +196,7 @@ public class DataTypeListViewTest {
         view.addSubItem(listItem);
 
         verify(listItems).appendChild(element);
+        verify(view).showOrHideNoCustomItemsMessage();
     }
 
     @Test
@@ -220,10 +225,19 @@ public class DataTypeListViewTest {
         when(gridItem1.getElement()).thenReturn(element1);
         when(gridItem2.getElement()).thenReturn(element2);
 
+        when(view.hasCustomDataType()).thenReturn(true);
         view.setupListItems(Arrays.asList(gridItem1, gridItem2));
 
         verify(listItems.classList).remove(HIDDEN_CSS_CLASS);
         verify(listItemsNo.classList).add(HIDDEN_CSS_CLASS);
+    }
+
+    @Test
+    public void testShowNoCustomItemsMessageWhenThereIsNoCustomItem() {
+
+        view.setupListItems(new ArrayList<>());
+
+        verify(listItemsNo.classList).remove(HIDDEN_CSS_CLASS);
     }
 
     @Test
@@ -399,6 +413,7 @@ public class DataTypeListViewTest {
 
         verify(view).cleanSubTypes(uuid);
         verify(parentNode).removeChild(dataTypeElement);
+        verify(view).showOrHideNoCustomItemsMessage();
     }
 
     @Test

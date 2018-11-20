@@ -111,14 +111,18 @@ public class DataTypeListView implements DataTypeList.View {
         showOrHideNoCustomItemsMessage();
     }
 
-    private void showOrHideNoCustomItemsMessage() {
-        if (!Objects.isNull(this.listItems.childNodes) && this.listItems.childNodes.length == 0) {
+    void showOrHideNoCustomItemsMessage() {
+        if (!hasCustomDataType()) {
             show(this.listItemsNo);
             hide(this.listItems);
         } else {
             hide(this.listItemsNo);
             show(this.listItems);
         }
+    }
+
+    boolean hasCustomDataType() {
+        return !Objects.isNull(this.listItems.childNodes) && this.listItems.childNodes.length > 0;
     }
 
     @Override
