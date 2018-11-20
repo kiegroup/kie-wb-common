@@ -17,11 +17,11 @@
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
@@ -241,7 +241,7 @@ public class DataModelerServiceImpl
             Object currentValue = options.get( "persistable" );
             boolean isPersistable = Boolean.valueOf( currentValue != null ? currentValue.toString() : null );
             if(isPersistable){
-                addPomDependencyEvent.fire(new AddPomDependencyEvent(DependencyType.JPA, currentModule.getPomXMLPath()));
+                addPomDependencyEvent.fire(new AddPomDependencyEvent(EnumSet.of(DependencyType.JPA), currentModule.getPomXMLPath()));
             }
 
             return newPath;

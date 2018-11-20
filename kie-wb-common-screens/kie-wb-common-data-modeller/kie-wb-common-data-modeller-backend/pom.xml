@@ -221,6 +221,11 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-structure-api</artifactId>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
