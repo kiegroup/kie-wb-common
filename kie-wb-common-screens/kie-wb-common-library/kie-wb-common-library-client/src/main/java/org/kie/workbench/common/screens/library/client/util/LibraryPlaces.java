@@ -662,7 +662,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     PathPlaceRequest createPathPlaceRequest(final Path path) {
-        return new PathPlaceRequest(path, Collections.emptyMap());
+        return new PathPlaceRequest(path, path.getFileName());
     }
 
     void closeLibraryPlaces() {
