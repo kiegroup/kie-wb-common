@@ -44,10 +44,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.apache.tools.ant.util.ReaderInputStream;
 import org.jboss.errai.marshalling.server.MappingContextSingleton;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -168,6 +170,12 @@ public class DMNMarshallerTest {
     private static final Logger LOG = LoggerFactory.getLogger(DMNMarshallerTest.class);
 
     private static final String DMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class);
+
+    // Used in the start of some tests do not run them because of
+    // https://support.oracle.com/knowledge/Middleware/1459269_1.html
+    // https://www-01.ibm.com/support/docview.wss?uid=swg1PK99682
+    private static final String IBM_VENDOR_NAME = "IBM";
+    public static final String JAVA_VENDOR = "java.vendor";
 
     @Mock
     DefinitionManager definitionManager;
@@ -468,18 +476,24 @@ public class DMNMarshallerTest {
 
     @Test
     public void testAssociations() throws IOException {
+        Assume.assumeFalse(StringUtils.containsIgnoreCase(System.getProperty(JAVA_VENDOR), IBM_VENDOR_NAME));
+
         roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/associations.dmn"),
                                                this::checkAssociationsGraph);
     }
 
     @Test
     public void testTextAnnotation() throws Exception {
+        Assume.assumeFalse(StringUtils.containsIgnoreCase(System.getProperty(JAVA_VENDOR), IBM_VENDOR_NAME));
+
         roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/textAnnotation.dmn"),
                                                this::checkTextAnnotationGraph);
     }
 
     @Test
     public void testTextAnnotationWithCDATA() throws Exception {
+        Assume.assumeFalse(StringUtils.containsIgnoreCase(System.getProperty(JAVA_VENDOR), IBM_VENDOR_NAME));
+
         roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/textAnnotationCDATA.dmn"),
                                                this::checkTextAnnotationGraph);
     }
@@ -1131,6 +1145,8 @@ public class DMNMarshallerTest {
 
     @Test
     public void test_function_java_WB_model() throws IOException {
+        Assume.assumeFalse(StringUtils.containsIgnoreCase(System.getProperty(JAVA_VENDOR), IBM_VENDOR_NAME));
+
         final DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                                   applicationFactoryManager);
 
@@ -1362,6 +1378,8 @@ public class DMNMarshallerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testContextEntryDataType() throws Exception {
+        Assume.assumeFalse(StringUtils.containsIgnoreCase(System.getProperty(JAVA_VENDOR), IBM_VENDOR_NAME));
+
         final DMNMarshaller marshaller = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                                            applicationFactoryManager);
 
@@ -1408,6 +1426,8 @@ public class DMNMarshallerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testStunnerConstellationButtonCausingPoint2DbeingNull() throws IOException {
+        Assume.assumeFalse(StringUtils.containsIgnoreCase(System.getProperty(JAVA_VENDOR), IBM_VENDOR_NAME));
+
         Diagram diagram = applicationFactoryManager.newDiagram("testDiagram",
                                                                BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class),
                                                                null);
