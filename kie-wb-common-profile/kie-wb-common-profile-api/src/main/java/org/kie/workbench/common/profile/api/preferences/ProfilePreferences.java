@@ -26,8 +26,6 @@ import org.uberfire.preferences.shared.bean.BasePreference;
 @WorkbenchPreference(identifier = "ProfilePreferences", bundleKey = "ProfilePreferences.Label")
 public class ProfilePreferences implements BasePreference<ProfilePreferences> {
     
-    private static final String INITIAL_PROFILE_PROPERTY = "org.kie.workbench.profile";
-
     private static Logger logger = Logger.getLogger(ProfilePreferences.class.getName());
 
     @Property(bundleKey = "ProfilePreferences.Profiles", 
