@@ -174,6 +174,8 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                     final BaseExpressionGrid beg = editor.get();
                     existingWidth = Math.max(existingWidth,
                                              beg.getWidth() + beg.getPadding() * 2);
+                    existingWidth = Math.max(existingWidth,
+                                             beg.getMinimumWidth() + beg.getPadding() * 2);
                 }
             }
         }
