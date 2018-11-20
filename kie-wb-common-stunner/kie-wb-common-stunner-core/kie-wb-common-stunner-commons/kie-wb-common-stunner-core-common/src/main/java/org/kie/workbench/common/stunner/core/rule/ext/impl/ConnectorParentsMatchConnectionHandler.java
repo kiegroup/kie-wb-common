@@ -119,17 +119,31 @@ public class ConnectorParentsMatchConnectionHandler
         if (sourceNode.isPresent() && targetNode.isPresent()) {
             final Node<? extends View<?>, ? extends Edge> source = sourceNode.get();
             final Node<? extends View<?>, ? extends Edge> target = targetNode.get();
-            final Element<? extends Definition> sourceParent = (Element<? extends Definition>) GraphUtils.getParent(source);
-            final Class<?> parentTypeForSource = getParentType(rule, sourceParent,
-                                                               sourceParent.getContent().getDefinition().getClass());
-            final Element<? extends Definition> targetParent = (Element<? extends Definition>) GraphUtils.getParent(target);
-            final Class<?> parentTypeForTarget = getParentType(rule, targetParent,
-                                                               targetParent.getContent().getDefinition().getClass());
+
+            //source parent
+            final Optional<? extends Element<? extends Definition>> sourceParent =
+                    Optional.ofNullable((Element<? extends Definition>) GraphUtils.getParent(source));
+            final Optional<? extends Class<?>> sourceParentType =
+                    sourceParent
+                            .map(Element::getContent)
+                            .map(Definition::getDefinition)
+                            .map(Object::getClass);
+            final Class<?> parentTypeForSource = getParentType(rule, sourceParent.orElse(null),
+                                                               sourceParentType.orElse(null));
+            //target parent
+            final Optional<? extends Element<? extends Definition>> targetParent =
+                    Optional.ofNullable((Element<? extends Definition>) GraphUtils.getParent(target));
+            final Optional<? extends Class<?>> targetParentType =
+                    targetParent
+                            .map(Element::getContent)
+                            .map(Definition::getDefinition)
+                            .map(Object::getClass);
+            final Class<?> parentTypeForTarget = getParentType(rule, targetParent.orElse(null),
+                                                               targetParentType.orElse(null));
 
             isValid = new ParentsTypeMatcher(definitionManager)
                     .forParentType(Objects.nonNull(parentTypeForSource) ? parentTypeForSource : parentTypeForTarget)
-                    .test(source,
-                          target);
+                    .test(source, target);
         }
         if (!isValid) {
             addViolation(context.getConnector().getUUID(),

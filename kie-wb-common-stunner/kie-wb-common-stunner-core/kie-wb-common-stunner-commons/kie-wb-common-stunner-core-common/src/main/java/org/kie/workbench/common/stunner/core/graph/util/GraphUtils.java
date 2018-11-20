@@ -55,7 +55,7 @@ public class GraphUtils {
                 .map(Element::getContent)
                 .map(Definition::getDefinition)
                 .map(def -> Exceptions.<Set>swallow(() -> definitionManager.adapters().forDefinition().getProperties(def),
-                                               Collections.emptySet()))
+                                                    Collections.emptySet()))
                 .map(properties -> Exceptions.swallow(() -> getProperty(definitionManager, properties, id), null))
                 .orElseGet(
                         //getting by field if not found by the id (class name)
@@ -80,7 +80,6 @@ public class GraphUtils {
                 ? getPropertyByField(definitionManager, property, field.substring(index + 1))
                 : property;
     }
-
 
     public static Object getProperty(final DefinitionManager definitionManager,
                                      final Set properties,
@@ -426,11 +425,7 @@ public class GraphUtils {
                             final Element<?> parent) {
             if (null != candidate) {
                 Element<?> p = getParent(candidate);
-//                while (p instanceof Node && !p.equals(parent)) {
-//                    p = getParent((Node<?, ? extends Edge>) p);
-//                }
-//                return null != p;
-                return p.getUUID().equals(parent.getUUID());
+                return Objects.equals(p, parent);
             }
             return false;
         }

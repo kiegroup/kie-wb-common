@@ -60,8 +60,19 @@ public class FilteredParentsTypeMatcher
     @Override
     public boolean test(final Node<? extends View<?>, ? extends Edge> node,
                         final Node<? extends View<?>, ? extends Edge> node2) {
-        return parentsTypeMatchPredicate.test(node,
-                                              node2);
+
+        //in case the nodes are not candidate
+        if (!isCandidate.test(node) && !isCandidate.test(node2)) {
+            return true;
+        }
+
+        //check if the parent of the target node connection is the same as the candidate parent
+        boolean matchParent = isCandidate.test(node)
+                ? Objects.equals(GraphUtils.getParent(node2), candidateParent.orElse(null))
+                : Objects.equals(GraphUtils.getParent(node), candidateParent.orElse(null));
+
+        //finally check the parent type
+        return matchParent && parentsTypeMatchPredicate.test(node, node2);
     }
 
     private class FilteredHasParentPredicate implements BiPredicate<Node<?, ? extends Edge>, Element<?>> {
@@ -96,7 +107,7 @@ public class FilteredParentsTypeMatcher
         @Override
         public Optional<Element<?>> apply(final Node<? extends View<?>, ? extends Edge> node,
                                           final Class<?> parentType) {
-                return getParent(node, parentType);
+            return getParent(node, parentType);
         }
 
         private Optional<Element<?>> getParent(final Node<? extends View<?>, ? extends Edge> node,
