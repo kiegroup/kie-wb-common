@@ -25,8 +25,6 @@ import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.project.client.handlers.AbstractProjectDiagramNewResourceHandler;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
-import org.uberfire.rpc.SessionInfo;
-import org.uberfire.security.authz.AuthorizationManager;
 
 @ApplicationScoped
 public class DMNDiagramNewResourceHandler extends AbstractProjectDiagramNewResourceHandler<DMNDiagramResourceType> {
@@ -35,18 +33,15 @@ public class DMNDiagramNewResourceHandler extends AbstractProjectDiagramNewResou
         this(null,
              null,
              null,
-             null,
-             null,
-             null);
+             null
+        );
     }
 
     @Inject
     public DMNDiagramNewResourceHandler(final DefinitionManager definitionManager,
                                         final ClientProjectDiagramService projectDiagramServices,
                                         final BusyIndicatorView busyIndicatorView,
-                                        final DMNDiagramResourceType projectDiagramResourceType,
-                                        final AuthorizationManager authorizationManager,
-                                        final SessionInfo sessionInfo) {
+                                        final DMNDiagramResourceType projectDiagramResourceType) {
         super(definitionManager,
               projectDiagramServices,
               busyIndicatorView,

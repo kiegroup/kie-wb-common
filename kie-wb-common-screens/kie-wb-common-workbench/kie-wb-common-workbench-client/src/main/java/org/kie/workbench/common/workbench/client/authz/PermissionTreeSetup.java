@@ -131,8 +131,6 @@ public class PermissionTreeSetup {
                                           i18n.XLSScoreCard());
         editorTreeProvider.registerEditor(STUNNER_DESIGNER,
                                           i18n.StunnerDesigner());
-        editorTreeProvider.registerEditor(DMN_DESIGNER,
-                                          i18n.DMNDesigner());
         editorTreeProvider.registerEditor(CASE_MODELLER,
                                           i18n.CaseModeller());
         editorTreeProvider.registerEditor(SCENARIO_SIMULATION_DESIGNER,
