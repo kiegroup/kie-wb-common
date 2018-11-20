@@ -238,6 +238,7 @@ public class DataTypeListViewTest {
         view.setupListItems(new ArrayList<>());
 
         verify(listItemsNo.classList).remove(HIDDEN_CSS_CLASS);
+        verify(listItems.classList).add(HIDDEN_CSS_CLASS);
     }
 
     @Test
