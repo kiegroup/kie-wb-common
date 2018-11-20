@@ -17,6 +17,7 @@ package org.kie.workbench.common.screens.library.client.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -661,7 +662,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     PathPlaceRequest createPathPlaceRequest(final Path path) {
-        return new PathPlaceRequest(path);
+        return new PathPlaceRequest(path, Collections.emptyMap());
     }
 
     void closeLibraryPlaces() {
