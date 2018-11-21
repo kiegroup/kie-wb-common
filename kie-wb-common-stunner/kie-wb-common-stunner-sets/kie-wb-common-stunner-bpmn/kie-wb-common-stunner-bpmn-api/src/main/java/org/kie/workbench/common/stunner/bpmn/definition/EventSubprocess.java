@@ -100,8 +100,11 @@ public class EventSubprocess extends BaseSubprocess {
     protected void initLabels() {
         super.initLabels();
         labels.add("canContainArtifacts");
+        labels.add("event_subprocess");
         labels.remove("sequence_start");
         labels.remove("sequence_end");
+        labels.remove("all");
+        labels.remove("cm_stage");
     }
 
     public ProcessData getProcessData() {
