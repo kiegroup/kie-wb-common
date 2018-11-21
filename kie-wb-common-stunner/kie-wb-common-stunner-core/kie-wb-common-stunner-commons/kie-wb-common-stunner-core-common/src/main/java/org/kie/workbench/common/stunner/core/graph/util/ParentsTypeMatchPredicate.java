@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.graph.util;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -60,20 +61,21 @@ class ParentsTypeMatchPredicate implements BiPredicate<Node<? extends View<?>, ?
     @Override
     public boolean test(final Node<? extends View<?>, ? extends Edge> nodeA,
                         final Node<? extends View<?>, ? extends Edge> nodeB) {
-        checkNotNull("parentType",
-                     parentType);
+
         checkNotNull("nodeA",
                      nodeA);
         checkNotNull("nodeB",
                      nodeB);
         final Optional<Element<?>> parentInstance = getParentInstance(nodeA,
                                                                       parentType);
-        return parentInstance.isPresent() ?
-                hasParent(nodeB,
-                          parentInstance.get()) :
-                !getParentInstance(nodeB,
-                                   parentType)
-                        .isPresent();
+        Optional<Element<?>> parentInstanceB = getParentInstance(nodeB,
+                                                                 parentType);
+
+        boolean b = (parentInstance.isPresent() && parentInstanceB.isPresent())
+                && (Objects.equals(parentInstance.get(), parentInstanceB.get()))
+                && (hasParent(nodeA, parentInstance.get()) && hasParent(nodeB, parentInstance.get()));
+
+        return b;
     }
 
     private Optional<Element<?>> getParentInstance(final Node<? extends View<?>, ? extends Edge> node,

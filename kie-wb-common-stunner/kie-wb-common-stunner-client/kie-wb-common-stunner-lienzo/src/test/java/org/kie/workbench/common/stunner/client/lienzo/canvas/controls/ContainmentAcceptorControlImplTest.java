@@ -139,4 +139,9 @@ public class ContainmentAcceptorControlImplTest {
         assertEquals(candidate,
                      updateChildNodeCommand.getCandidate());
     }
+
+    @Test
+    public void testEvaluate(){
+        //todo:tiago
+    }
 }
