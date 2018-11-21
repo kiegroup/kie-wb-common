@@ -259,4 +259,29 @@ public class DelegatingGridData implements GridData {
     public GridRow getRow(final int rowIndex) {
         return delegate.getRow(rowIndex);
     }
+
+    @Override
+    public boolean refreshWidth() {
+        return delegate.refreshWidth();
+    }
+
+    @Override
+    public boolean refreshWidth(double currentWidth) {
+        return delegate.refreshWidth(currentWidth);
+    }
+
+    @Override
+    public boolean setVisibleSizeAndRefresh(int width, int height) {
+        return delegate.setVisibleSizeAndRefresh(width, height);
+    }
+
+    @Override
+    public int getVisibleWidth() {
+        return delegate.getVisibleWidth();
+    }
+
+    @Override
+    public int getVisibleHeight() {
+        return delegate.getVisibleHeight();
+    }
 }
