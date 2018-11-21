@@ -15,19 +15,11 @@
  */
 package org.kie.workbench.common.stunner.cm.resource;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-
 import org.guvnor.common.services.project.categories.Process;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.core.definition.AbstractDefinitionSetResourceType;
-import org.uberfire.workbench.annotations.VisibleAsset;
 import org.uberfire.workbench.category.Category;
 
-@Default
-@VisibleAsset
-@ApplicationScoped
 public class CaseManagementDefinitionSetResourceType extends AbstractDefinitionSetResourceType {
 
     private static final String CM_EXTENSION = "bpmn-cm";
@@ -40,7 +32,6 @@ public class CaseManagementDefinitionSetResourceType extends AbstractDefinitionS
 
     }
 
-    @Inject
     public CaseManagementDefinitionSetResourceType(final Process category) {
         this.category = category;
     }

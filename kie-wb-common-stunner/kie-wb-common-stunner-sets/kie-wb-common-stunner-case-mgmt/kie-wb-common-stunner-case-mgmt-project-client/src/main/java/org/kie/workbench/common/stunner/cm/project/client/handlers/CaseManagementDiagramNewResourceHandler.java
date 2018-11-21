@@ -16,9 +16,6 @@
 
 package org.kie.workbench.common.stunner.cm.project.client.handlers;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.project.client.editor.CaseManagementDiagramEditor;
@@ -33,7 +30,6 @@ import org.uberfire.security.ResourceRef;
 import org.uberfire.security.authz.AuthorizationManager;
 import org.uberfire.workbench.model.ActivityResourceType;
 
-@ApplicationScoped
 public class CaseManagementDiagramNewResourceHandler extends AbstractProjectDiagramNewResourceHandler<CaseManagementDiagramResourceType> {
 
     private final AuthorizationManager authorizationManager;
@@ -48,7 +44,6 @@ public class CaseManagementDiagramNewResourceHandler extends AbstractProjectDiag
              null);
     }
 
-    @Inject
     public CaseManagementDiagramNewResourceHandler(final DefinitionManager definitionManager,
                                                    final ClientProjectDiagramService projectDiagramServices,
                                                    final BusyIndicatorView indicatorView,

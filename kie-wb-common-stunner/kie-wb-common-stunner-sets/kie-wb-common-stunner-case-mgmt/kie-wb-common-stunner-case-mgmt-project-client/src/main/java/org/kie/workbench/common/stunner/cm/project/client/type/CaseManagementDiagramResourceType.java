@@ -16,9 +16,6 @@
 
 package org.kie.workbench.common.stunner.cm.project.client.type;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.categories.Process;
@@ -27,16 +24,7 @@ import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementImageR
 import org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants;
 import org.kie.workbench.common.stunner.cm.resource.CaseManagementDefinitionSetResourceType;
 import org.kie.workbench.common.stunner.project.client.type.AbstractStunnerClientResourceType;
-import org.uberfire.experimental.definition.annotations.ExperimentalFeature;
 
-import static org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeDescription;
-import static org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeShortName;
-import static org.uberfire.experimental.definition.annotations.ExperimentalFeature.Scope.GLOBAL;
-
-@ApplicationScoped
-@ExperimentalFeature(scope = GLOBAL,
-        nameI18nKey = CaseManagementDiagramResourceTypeShortName,
-        descriptionI18nKey = CaseManagementDiagramResourceTypeDescription)
 public class CaseManagementDiagramResourceType extends AbstractStunnerClientResourceType<CaseManagementDefinitionSetResourceType> {
 
     private static final Image ICON = new Image(CaseManagementImageResources.INSTANCE.cmicon());
@@ -47,7 +35,6 @@ public class CaseManagementDiagramResourceType extends AbstractStunnerClientReso
         this(null, null, null);
     }
 
-    @Inject
     public CaseManagementDiagramResourceType(final CaseManagementDefinitionSetResourceType definitionSetResourceType,
                                              final Process category,
                                              final TranslationService translationService) {
