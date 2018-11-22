@@ -16,9 +16,7 @@
 
 package org.kie.workbench.common.stunner.cm.project.client.editor;
 
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
@@ -27,7 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.factory.BPMNGraphFactory;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.cm.project.client.type.CaseManagementDiagramResourceType;
-import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
@@ -39,7 +36,6 @@ import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesLi
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
 import org.uberfire.backend.vfs.ObservablePath;
-import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
@@ -47,7 +43,6 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
-import org.uberfire.experimental.definition.annotations.ExperimentalFeature;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.lifecycle.OnClose;
@@ -59,21 +54,10 @@ import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.Menus;
 
-import static org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeDescription;
-import static org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeShortName;
-import static org.uberfire.experimental.definition.annotations.ExperimentalFeature.Scope.GLOBAL;
-
-@Dependent
-@DiagramEditor
-@ExperimentalFeature(scope = GLOBAL,
-        nameI18nKey = CaseManagementDiagramResourceTypeShortName,
-        descriptionI18nKey = CaseManagementDiagramResourceTypeDescription)
-@WorkbenchEditor(identifier = CaseManagementDiagramEditor.EDITOR_ID, supportedTypes = {CaseManagementDiagramResourceType.class})
 public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<CaseManagementDiagramResourceType> {
 
     public static final String EDITOR_ID = "CaseManagementDiagramEditor";
 
-    @Inject
     public CaseManagementDiagramEditor(final AbstractProjectDiagramEditor.View view,
                                        final PlaceManager placeManager,
                                        final ErrorPopupPresenter errorPopupPresenter,
