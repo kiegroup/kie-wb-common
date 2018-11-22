@@ -346,7 +346,7 @@ public abstract class AbstractElementBuilderControl extends AbstractCanvasHandle
                                        final double _x,
                                        final double _y) {
         if (null != parent) {
-            final Point2D parentCoords = GraphUtils.getPosition(parent.getContent());
+            final Point2D parentCoords = GraphUtils.getComputedPosition(parent);
             final double x = _x - parentCoords.getX();
             final double y = _y - parentCoords.getY();
             return new Point2D(x,
