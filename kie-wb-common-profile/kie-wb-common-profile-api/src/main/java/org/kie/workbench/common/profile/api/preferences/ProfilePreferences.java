@@ -23,6 +23,8 @@ import org.uberfire.preferences.shared.annotations.Property;
 import org.uberfire.preferences.shared.annotations.WorkbenchPreference;
 import org.uberfire.preferences.shared.bean.BasePreference;
 
+import static org.kie.workbench.common.profile.api.preferences.ProfileDefinitions.FORCE_PREFIX;
+
 @WorkbenchPreference(identifier = "ProfilePreferences", bundleKey = "ProfilePreferences.Label")
 public class ProfilePreferences implements BasePreference<ProfilePreferences> {
     
@@ -32,7 +34,6 @@ public class ProfilePreferences implements BasePreference<ProfilePreferences> {
             helpBundleKey= "ProfilePreferences.Profiles.Help", 
             formType = PropertyFormType.COMBO)
     private Profile profile;
-
 
     public ProfilePreferences() {
     }
@@ -46,11 +47,14 @@ public class ProfilePreferences implements BasePreference<ProfilePreferences> {
         String profileStr = System.getProperty("org.kie.workbench.profile", Profile.FULL.name());
         Profile defaultProfile = Profile.FULL;
         try {
+            if(profileStr.startsWith(FORCE_PREFIX)) {
+                profileStr = profileStr.substring(FORCE_PREFIX.length(), 
+                                                  profileStr.length());
+            }
             defaultProfile = Profile.valueOf(profileStr);
         } catch(IllegalArgumentException e) {
-            logger.warning(() -> "Not able to load profile " + profileStr + ". Loading FULL profile.");
+            logger.warning("Not able to load profile " + profileStr + ". Loading FULL profile.");
         }
-        logger.info("Loaded Profile " + defaultProfile.getName());
         defaultValue.setProfile(defaultProfile);
         return defaultValue;
     }
