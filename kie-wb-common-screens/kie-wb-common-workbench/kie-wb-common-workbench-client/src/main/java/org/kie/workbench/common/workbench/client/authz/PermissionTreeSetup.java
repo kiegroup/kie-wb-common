@@ -26,7 +26,6 @@ import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbench
 import org.uberfire.client.authz.EditorTreeProvider;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
 
-import static org.kie.workbench.common.workbench.client.EditorIds.DMN_DESIGNER;
 import static org.kie.workbench.common.workbench.client.EditorIds.CASE_MODELLER;
 import static org.kie.workbench.common.workbench.client.EditorIds.GUIDED_DECISION_TREE;
 import static org.kie.workbench.common.workbench.client.EditorIds.GUIDED_SCORE_CARD;
