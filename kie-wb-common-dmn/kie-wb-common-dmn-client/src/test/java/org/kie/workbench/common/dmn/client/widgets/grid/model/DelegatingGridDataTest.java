@@ -361,9 +361,9 @@ public class DelegatingGridDataTest {
 
     @Test
     public void testRefreshWidth1() {
-        uiModel.refreshWidth(0);
+        uiModel.refreshWidth(0.0);
 
-        verify(delegate).refreshWidth(eq(0));
+        verify(delegate).refreshWidth(eq(0.0));
     }
 
     @Test
