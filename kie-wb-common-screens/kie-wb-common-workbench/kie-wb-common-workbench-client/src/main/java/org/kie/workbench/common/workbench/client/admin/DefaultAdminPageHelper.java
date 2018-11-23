@@ -134,8 +134,6 @@ public class DefaultAdminPageHelper {
                         scopeFactory.createScope(GuvnorPreferenceScopes.GLOBAL),
                         AdminPageOptions.WITH_BREADCRUMBS);
             }
-        }, (Object message, Throwable t) ->  { 
-            throw new RuntimeException(t);
         }).isForce();
     }
 
