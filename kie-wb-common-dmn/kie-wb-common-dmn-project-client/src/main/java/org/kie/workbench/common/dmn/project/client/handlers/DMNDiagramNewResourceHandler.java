@@ -33,8 +33,7 @@ public class DMNDiagramNewResourceHandler extends AbstractProjectDiagramNewResou
         this(null,
              null,
              null,
-             null
-        );
+             null);
     }
 
     @Inject
