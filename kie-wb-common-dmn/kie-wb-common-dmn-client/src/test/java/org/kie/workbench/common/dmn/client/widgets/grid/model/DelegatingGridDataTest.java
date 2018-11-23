@@ -368,9 +368,9 @@ public class DelegatingGridDataTest {
 
     @Test
     public void testSetVisibleSizeAndRefresh() {
-        uiModel.setVisibleSizeAndRefresh(0, 0);
+        uiModel.setVisibleSizeAndRefresh(0, 1);
 
-        verify(delegate).setVisibleSizeAndRefresh(eq(0), eq(0));
+        verify(delegate).setVisibleSizeAndRefresh(eq(0), eq(1));
     }
 
     @Test
