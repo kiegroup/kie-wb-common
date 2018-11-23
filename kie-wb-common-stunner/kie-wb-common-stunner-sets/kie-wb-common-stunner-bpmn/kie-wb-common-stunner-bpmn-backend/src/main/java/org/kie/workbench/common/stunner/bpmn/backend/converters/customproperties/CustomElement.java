@@ -25,6 +25,7 @@ public class CustomElement<T> {
     public static final ElementDefinition<Boolean> autoStart = new BooleanElement("customAutoStart", false);
     public static final ElementDefinition<Boolean> autoConnectionSource = new BooleanElement("isAutoConnection.source", false);
     public static final ElementDefinition<Boolean> autoConnectionTarget = new BooleanElement("isAutoConnection.target", false);
+    public static final ElementDefinition<Boolean> multipleInstance = new BooleanElement("customMultipleInstance", false);
     public static final ElementDefinition<String> description = new StringElement("customDescription", "");
     public static final ElementDefinition<String> scope = new StringElement("customScope", "");
     public static final ElementDefinition<String> name = new StringElement("elementname", "") {
@@ -40,6 +41,8 @@ public class CustomElement<T> {
     };
     public static final ElementDefinition<String> caseIdPrefix = new StringElement("customCaseIdPrefix", "");
     public static final ElementDefinition<String> caseRole = new StringElement("customCaseRoles", "");
+    public static final ElementDefinition<String> content = new StringElement("customContent", "");
+    public static final ElementDefinition<String> slaDueDate = new StringElement("customSLADueDate", "");
 
     private final ElementDefinition<T> elementDefinition;
     private final BaseElement element;

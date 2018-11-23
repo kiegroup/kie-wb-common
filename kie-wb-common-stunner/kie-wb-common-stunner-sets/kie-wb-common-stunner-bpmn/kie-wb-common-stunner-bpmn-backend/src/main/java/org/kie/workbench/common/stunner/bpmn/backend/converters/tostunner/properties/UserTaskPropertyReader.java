@@ -122,4 +122,16 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
     public boolean isAdHocAutostart() {
         return CustomElement.autoStart.of(element).get();
     }
+
+    public String getContent() {
+        return CustomElement.content.of(element).get();
+    }
+
+    public boolean isMultipleInstance() {
+        return CustomElement.multipleInstance.of(element).get();
+    }
+
+    public String getSLADueDate() {
+        return CustomElement.slaDueDate.of(element).get();
+    }
 }

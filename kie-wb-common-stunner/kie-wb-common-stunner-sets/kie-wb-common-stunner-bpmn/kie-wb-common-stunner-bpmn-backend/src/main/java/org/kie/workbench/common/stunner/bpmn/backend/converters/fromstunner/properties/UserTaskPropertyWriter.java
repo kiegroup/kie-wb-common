@@ -141,4 +141,16 @@ public class UserTaskPropertyWriter extends ActivityPropertyWriter {
     public void setOnExitAction(OnExitAction onExitAction) {
         Scripts.setOnExitAction(task, onExitAction);
     }
+
+    public void setContent(String content) {
+        CustomElement.content.of(task).set(content);
+    }
+
+    public void setMultipleInstance(boolean multipleInstance) {
+        CustomElement.multipleInstance.of(task).set(multipleInstance);
+    }
+
+    public void setSLADueDate(String slaDueDate) {
+        CustomElement.slaDueDate.of(task).set(slaDueDate);
+    }
 }
