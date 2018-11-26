@@ -16,18 +16,42 @@
 
 package org.kie.workbench.common.stunner.cm.client.canvas;
 
-import org.junit.Ignore;
+import com.ait.lienzo.client.core.shape.Layer;
+import com.ait.lienzo.client.core.shape.Rectangle;
+import com.ait.lienzo.client.core.shape.wires.WiresManager;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresLayer;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
+import org.kie.workbench.common.stunner.shapes.client.view.AbstractConnectorView;
+import org.kie.workbench.common.stunner.shapes.client.view.PolylineConnectorView;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
+import org.mockito.Mock;
 
-// TODO @RunWith(LienzoMockitoTestRunner.class)
-@Ignore
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
+
+@RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementCanvasViewTest {
 
-    private CaseManagementCanvasView view;
+    @Mock
+    private WiresLayer wiresLayer;
 
-    /*@Before
+    private CaseManagementCanvasView view;
+    private Layer layer;
+    private WiresManager wiresManager;
+
+    @Before
     public void setup() {
-        this.view = new CaseManagementCanvasView(new WiresManagerFactoryImpl(new StunnerWiresControlFactory(),
-                                                                             new StunnerWiresHandlerFactory()));
+        this.layer = new Layer();
+        this.wiresManager = WiresManager.get(layer);
+        when(wiresLayer.getWiresManager()).thenReturn(wiresManager);
+        this.view = new CaseManagementCanvasView(wiresLayer);
         this.view.init();
     }
 
@@ -41,9 +65,9 @@ public class CaseManagementCanvasViewTest {
         final String uuid = shape.uuid();
         shape.setUUID(uuid);
 
-        view.addShape(shape);
+        view.add(shape);
 
-        final WiresShape registeredShape = view.getWiresManager().getShape(uuid);
+        final WiresShape registeredShape = wiresManager.getShape(uuid);
         assertNotNull(registeredShape);
         assertEquals(shape,
                      registeredShape);
@@ -56,9 +80,9 @@ public class CaseManagementCanvasViewTest {
         final String uuid = connector.uuid();
         connector.setUUID(uuid);
 
-        view.addShape(connector);
+        view.add(connector);
 
-        final WiresShape registeredConnector = view.getWiresManager().getShape(uuid);
+        final WiresShape registeredConnector = wiresManager.getShape(uuid);
         assertNull(registeredConnector);
     }
 
@@ -83,5 +107,5 @@ public class CaseManagementCanvasViewTest {
                      parent.getChildShapes().size());
         assertEquals(child,
                      parent.getChildShapes().get(0));
-    }*/
+    }
 }

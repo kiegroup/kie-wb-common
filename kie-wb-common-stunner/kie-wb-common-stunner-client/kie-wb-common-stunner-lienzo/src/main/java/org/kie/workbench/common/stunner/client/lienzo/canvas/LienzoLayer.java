@@ -32,7 +32,11 @@ public class LienzoLayer {
     private final Layer layer;
 
     public LienzoLayer() {
-        this.layer = new Layer();
+        this(new Layer());
+    }
+
+    LienzoLayer(final Layer layer) {
+        this.layer = layer;
     }
 
     public LienzoLayer add(final IPrimitive<?> shape) {

@@ -30,7 +30,7 @@ import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoLayer;
 @Dependent
 public class WiresLayer extends LienzoLayer {
 
-    private final Direction[] MAGNET_CARDINALS = MagnetManager.FOUR_CARDINALS;
+    static final Direction[] MAGNET_CARDINALS = MagnetManager.FOUR_CARDINALS;
 
     private WiresManager wiresManager;
 

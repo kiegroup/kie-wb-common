@@ -25,8 +25,22 @@ import com.ait.lienzo.client.core.shape.Rectangle;
 
 public class LienzoCanvasDecoratorFactory {
 
-    public static BiFunction<Integer, Integer, IPrimitive<?>> AUTHORING = (width, height) -> axis(width, height, 0.8, 1, "#d3d3d3");
-    public static BiFunction<Integer, Integer, IPrimitive<?>> PREVIEW = (width, height) -> axis(width, height, 0.8, 2, "#404040");
+    static final double DECORATOR_ALPHA = 0.8;
+    static final double DECORATOR_AUTHORING_WIDTH = 1;
+    static final double DECORATOR_PREVIEW_WIDTH = 2;
+    static final String DECORATOR_AUTHORING_COLOR = "#d3d3d3";
+    static final String DECORATOR_PREVIEW_COLOR = "#404040";
+
+    public static BiFunction<Integer, Integer, IPrimitive<?>> AUTHORING = (width, height) -> axis(width,
+                                                                                                  height,
+                                                                                                  DECORATOR_ALPHA,
+                                                                                                  DECORATOR_AUTHORING_WIDTH,
+                                                                                                  DECORATOR_AUTHORING_COLOR);
+    public static BiFunction<Integer, Integer, IPrimitive<?>> PREVIEW = (width, height) -> axis(width,
+                                                                                                height,
+                                                                                                DECORATOR_ALPHA,
+                                                                                                DECORATOR_PREVIEW_WIDTH,
+                                                                                                DECORATOR_PREVIEW_COLOR);
 
     public static IPrimitive<?> axis(final int width,
                                      final int height,

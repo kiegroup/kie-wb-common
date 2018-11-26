@@ -56,23 +56,29 @@ public abstract class LienzoCanvas<V extends LienzoCanvasView>
 
     public AbstractCanvas<V> initialize(final CanvasPanel panel,
                                         final CanvasSettings settings) {
-        LienzoCore.get().setHidpiEnabled(settings.isHiDPIEnabled());
         eventHandlerManager = new ViewEventHandlerManager(getView().getLayer().getLienzoLayer(),
                                                           SUPPORTED_EVENT_TYPES);
+        return initialize(panel,
+                          settings,
+                          eventHandlerManager);
+    }
+
+    AbstractCanvas<V> initialize(final CanvasPanel panel,
+                                 final CanvasSettings settings,
+                                 final ViewEventHandlerManager viewEventHandlerManager) {
+        LienzoCore.get().setHidpiEnabled(settings.isHiDPIEnabled());
+        this.eventHandlerManager = viewEventHandlerManager;
         return super.initialize(panel, settings);
     }
 
     @Override
     public Optional<Shape> getShapeAt(final double x,
                                       final double y) {
-        if (x > -1 && y > -1) {
-            final LienzoLayer lienzoLayer = getView().getLayer();
-            final String uuid = LienzoLayerUtils.getUUID_At(lienzoLayer,
-                                                            x,
-                                                            y);
-            return Optional.ofNullable(getShape(uuid));
-        }
-        return Optional.empty();
+        final LienzoLayer lienzoLayer = getView().getLayer();
+        final String uuid = LienzoLayerUtils.getUUID_At(lienzoLayer,
+                                                        x,
+                                                        y);
+        return Optional.ofNullable(getShape(uuid));
     }
 
     @Override
@@ -83,15 +89,6 @@ public abstract class LienzoCanvas<V extends LienzoCanvasView>
     @Override
     public void focus() {
         getView().getLienzoPanel().focus();
-    }
-
-    @Override
-    public void destroy() {
-        if (null != eventHandlerManager) {
-            eventHandlerManager.destroy();
-            eventHandlerManager = null;
-        }
-        super.destroy();
     }
 
     @Override
@@ -128,5 +125,18 @@ public abstract class LienzoCanvas<V extends LienzoCanvasView>
     @Override
     public Shape<?> getAttachableShape() {
         return null;
+    }
+
+    @Override
+    public void destroy() {
+        if (null != eventHandlerManager) {
+            eventHandlerManager.destroy();
+            eventHandlerManager = null;
+        }
+        super.destroy();
+    }
+
+    ViewEventHandlerManager getEventHandlerManager() {
+        return eventHandlerManager;
     }
 }

@@ -64,7 +64,6 @@ public class PreviewLienzoPanelTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testRefresh() {
         PreviewPanel view = mock(PreviewPanel.class);
         when(panel.getView()).thenReturn(view);

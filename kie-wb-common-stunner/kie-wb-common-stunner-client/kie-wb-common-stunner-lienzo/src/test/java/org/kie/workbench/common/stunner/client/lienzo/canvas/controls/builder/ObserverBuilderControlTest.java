@@ -277,15 +277,6 @@ public class ObserverBuilderControlTest {
         verify(buildCallback, times(1)).onSuccess(anyString());
     }
 
-    // TODO: @Test
-    public void testAddElementOutsideCanvas() {
-        executeOutOfBoundsTest(-5.0, -5.0);
-        executeOutOfBoundsTest(5.0, -5.0);
-        executeOutOfBoundsTest(-5.0, 5.0);
-        executeOutOfBoundsTest(100.0, 0.0);
-        executeOutOfBoundsTest(0.0, 100.0);
-    }
-
     public void executeOutOfBoundsTest(double x, double y) {
         ElementBuildRequest<AbstractCanvasHandler> request = mock(ElementBuildRequest.class);
         BuilderControl.BuildCallback buildCallback = mock(BuilderControl.BuildCallback.class);

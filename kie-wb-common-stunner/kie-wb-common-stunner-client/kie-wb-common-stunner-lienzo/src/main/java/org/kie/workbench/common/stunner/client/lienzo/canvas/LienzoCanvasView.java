@@ -30,7 +30,7 @@ import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 public abstract class LienzoCanvasView<L extends LienzoLayer>
         extends AbstractCanvasView<LienzoCanvasView> {
 
-    private static final String BG_COLOR = "#FFFFFF";
+    static final String BG_COLOR = "#FFFFFF";
 
     private BiFunction<Integer, Integer, IPrimitive<?>> decoratorFactory;
 
