@@ -91,7 +91,7 @@ public class DataTypePickerWidgetTest {
     private DMNGraphUtils dmnGraphUtils;
 
     @Mock
-    private DataTypeModal dataTypeModal;
+    private DataTypePageNavTab dataTypePageNavTab;
 
     @GwtMock
     @SuppressWarnings("unused")
@@ -152,7 +152,7 @@ public class DataTypePickerWidgetTest {
                                                    translationService,
                                                    qNameConverter,
                                                    dmnGraphUtils,
-                                                   dataTypeModal,
+                                                   dataTypePageNavTab,
                                                    itemDefinitionUtils));
     }
 
@@ -347,7 +347,7 @@ public class DataTypePickerWidgetTest {
 
         picker.onClickTypeButton(clickEvent);
 
-        verify(dataTypeModal).show();
+        verify(dataTypePageNavTab).active();
     }
 
     @Test

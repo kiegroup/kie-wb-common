@@ -89,7 +89,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
 
     private DMNGraphUtils dmnGraphUtils;
 
-    private DataTypeModal dataTypeModal;
+    private DataTypePageNavTab dataTypePageNavTab;
 
     private ItemDefinitionUtils itemDefinitionUtils;
 
@@ -108,7 +108,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
                                 final TranslationService translationService,
                                 final QNameConverter qNameConverter,
                                 final DMNGraphUtils dmnGraphUtils,
-                                final DataTypeModal dataTypeModal,
+                                final DataTypePageNavTab dataTypePageNavTab,
                                 final ItemDefinitionUtils itemDefinitionUtils) {
         this.typeButton = typeButton;
         this.manageContainer = manageContainer;
@@ -117,7 +117,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
         this.typeSelector = GWT.create(Select.class);
         this.qNameConverter = qNameConverter;
         this.dmnGraphUtils = dmnGraphUtils;
-        this.dataTypeModal = dataTypeModal;
+        this.dataTypePageNavTab = dataTypePageNavTab;
         this.itemDefinitionUtils = itemDefinitionUtils;
 
         this.typeSelector.setShowTick(true);
@@ -198,7 +198,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     @EventHandler("typeButton")
     @SuppressWarnings("unused")
     public void onClickTypeButton(final ClickEvent clickEvent) {
-        dataTypeModal.show();
+        dataTypePageNavTab.active();
     }
 
     public void showManageLabel() {

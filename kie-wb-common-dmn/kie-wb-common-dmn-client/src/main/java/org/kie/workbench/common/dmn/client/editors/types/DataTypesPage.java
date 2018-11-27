@@ -16,31 +16,35 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.Node;
+import elemental2.dom.HTMLDivElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManagerStackStore;
 import org.kie.workbench.common.dmn.client.editors.types.common.ItemDefinitionUtils;
-import org.kie.workbench.common.dmn.client.editors.types.common.JQueryEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeList;
 import org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessages;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
-import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
+import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
+import org.uberfire.client.views.pfly.multipage.PageImpl;
 
-import static org.kie.workbench.common.dmn.client.editors.types.common.JQuery.$;
+import static java.util.Optional.ofNullable;
+import static org.jboss.errai.common.client.ui.ElementWrapperWidget.getWidget;
 
-@ApplicationScoped
-public class DataTypeModal extends Elemental2Modal<DataTypeModal.View> {
+@Dependent
+public class DataTypesPage extends PageImpl {
 
     private final DataTypeList treeList;
 
@@ -56,16 +60,27 @@ public class DataTypeModal extends Elemental2Modal<DataTypeModal.View> {
 
     private final DataTypeFlashMessages flashMessages;
 
+    private final DMNGraphUtils dmnGraphUtils;
+
+    private final TranslationService translationService;
+
+    private final HTMLDivElement pageView;
+
+    private String loadedGraph;
+
     @Inject
-    public DataTypeModal(final View view,
-                         final DataTypeList treeList,
+    public DataTypesPage(final DataTypeList treeList,
                          final ItemDefinitionUtils itemDefinitionUtils,
                          final ItemDefinitionStore definitionStore,
                          final DataTypeStore dataTypeStore,
                          final DataTypeManager dataTypeManager,
                          final DataTypeManagerStackStore stackIndex,
-                         final DataTypeFlashMessages flashMessages) {
-        super(view);
+                         final DataTypeFlashMessages flashMessages,
+                         final DMNGraphUtils dmnGraphUtils,
+                         final TranslationService translationService,
+                         final HTMLDivElement pageView) {
+
+        super(getWidget(pageView), getFormat(translationService));
 
         this.treeList = treeList;
         this.itemDefinitionUtils = itemDefinitionUtils;
@@ -74,20 +89,50 @@ public class DataTypeModal extends Elemental2Modal<DataTypeModal.View> {
         this.dataTypeManager = dataTypeManager;
         this.stackIndex = stackIndex;
         this.flashMessages = flashMessages;
+        this.dmnGraphUtils = dmnGraphUtils;
+        this.translationService = translationService;
+        this.pageView = pageView;
     }
 
-    @PostConstruct
-    public void setup() {
-        super.setup();
-        setDataTypeModalCSSClasses();
-        getView().setup(flashMessages, treeList);
+    private static String getFormat(final TranslationService translationService) {
+        String format = translationService.format(DMNEditorConstants.DataTypesPage_Label);
+        return format;
     }
 
-    public void show() {
-        setupOnCloseCallback();
+    @Override
+    public void onFocus() {
+        if (!isLoaded()) {
+            reload();
+        }
+
+        refreshPageView();
+    }
+
+    @Override
+    public void onLostFocus() {
+        flashMessages.hideMessages();
+    }
+
+    public void reload() {
+
+        loadedGraph = currentGraph();
+
         cleanDataTypeStore();
         loadDataTypes();
-        superShow();
+    }
+
+    void refreshPageView() {
+        pageView.innerHTML = "";
+        pageView.appendChild(flashMessages.getElement());
+        pageView.appendChild(treeList.getElement());
+    }
+
+    boolean isLoaded() {
+        return Objects.equals(getLoadedGraph(), currentGraph());
+    }
+
+    String currentGraph() {
+        return getNamespace().map(Text::getValue).orElse("");
     }
 
     void cleanDataTypeStore() {
@@ -108,35 +153,15 @@ public class DataTypeModal extends Elemental2Modal<DataTypeModal.View> {
         return dataTypeManager.from(itemDefinition).get();
     }
 
-    void superShow() {
-        super.show();
+    public String getLoadedGraph() {
+        return loadedGraph;
     }
 
-    void setDataTypeModalCSSClasses() {
-        final Element modalDialogElement = getModalDialogElement();
-        modalDialogElement.classList.add("kie-data-types-modal");
+    private Optional<Text> getNamespace() {
+        return getDefinitions().map(Definitions::getNamespace);
     }
 
-    void onCloseEvent(final JQueryEvent event) {
-        flashMessages.hideMessages();
-    }
-
-    Element getModalDialogElement() {
-        final HTMLElement body = getView().getBody();
-        final Node modalBodyNode = body.parentNode;
-        final Node modalContentNode = modalBodyNode.parentNode;
-        final Node modalDialogNode = modalContentNode.parentNode;
-        final Node modalParentNode = modalDialogNode.parentNode;
-        return modalParentNode.querySelector(".modal-dialog");
-    }
-
-    void setupOnCloseCallback() {
-        $(getModalDialogElement().parentNode).on("hidden.bs.modal", this::onCloseEvent);
-    }
-
-    public interface View extends Elemental2Modal.View<DataTypeModal> {
-
-        void setup(final DataTypeFlashMessages flashMessages,
-                   final DataTypeList treeGrid);
+    private Optional<Definitions> getDefinitions() {
+        return ofNullable(dmnGraphUtils.getDefinitions());
     }
 }
