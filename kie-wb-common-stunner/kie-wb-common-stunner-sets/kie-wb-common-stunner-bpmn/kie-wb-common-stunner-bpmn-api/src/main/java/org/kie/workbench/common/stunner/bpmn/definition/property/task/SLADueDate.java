@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
@@ -60,7 +62,8 @@ public class SLADueDate implements BPMNProperty {
     public boolean equals(Object o) {
         if (o instanceof SLADueDate) {
             SLADueDate other = (SLADueDate) o;
-            return (null != value) ? value.equals(other.value) : null == other.value;
+            return Objects.equals(value,
+                                  other.value);
         }
         return false;
     }
