@@ -125,7 +125,7 @@ public class DefaultAdminPageHelper {
         final boolean canEditProfilePreferences = authorizationManager.authorize(WorkbenchFeatures.EDIT_PROFILE_PREFERENCES,
                 sessionInfo.getIdentity());
         profileService.call((Boolean force) -> {
-            if(canEditProfilePreferences && !force) {
+            if (canEditProfilePreferences && !force) {
                 adminPage.addPreference("root",
                         "ProfilePreferences",
                         translationService.format(PreferencesConstants.ProfilePreferences_Title),
