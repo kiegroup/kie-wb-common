@@ -56,8 +56,8 @@ public class StunnerBoundsProviderFactoryTest {
         Bounds bounds = provider.build(provider.getAll(wiresLayer));
         assertEquals(15d, bounds.getX(), 0d);
         assertEquals(33d, bounds.getY(), 0d);
-        assertEquals(1144d, bounds.getWidth(), 0d);
-        assertEquals(572d, bounds.getHeight(), 0d);
+        assertEquals(1194d, bounds.getWidth(), 0d);
+        assertEquals(547d + StunnerBoundsProviderFactory.PADDING, bounds.getHeight(), 0d);
     }
 
     @Test

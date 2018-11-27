@@ -27,14 +27,15 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.zoom.ZoomCon
 
 @Dependent
 @Default
-public class ZoomWheelControlImpl<C extends AbstractCanvas>
+public class ZoomWheelControl<C extends AbstractCanvas>
         extends AbstractMediatorControl<MouseWheelZoomMediator, C> implements ZoomControl<C> {
 
     private final IEventFilter[] filters = new IEventFilter[]{EventFilter.CONTROL};
 
     @Override
     protected MouseWheelZoomMediator buildMediator() {
-        return new MouseWheelZoomMediator(filters);
+        return new MouseWheelZoomMediator(filters)
+                .setScaleAboutPoint(false);
     }
 
     @Override

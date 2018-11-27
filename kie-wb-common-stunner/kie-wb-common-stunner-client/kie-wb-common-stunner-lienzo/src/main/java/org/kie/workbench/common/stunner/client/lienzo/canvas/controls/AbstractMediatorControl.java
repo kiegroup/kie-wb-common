@@ -64,4 +64,8 @@ public abstract class AbstractMediatorControl<M extends IMediator, C extends Abs
     public M getMediator() {
         return mediator;
     }
+
+    void setMediator(final M mediator) {
+        this.mediator = mediator;
+    }
 }
