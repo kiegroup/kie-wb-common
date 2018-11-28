@@ -16,15 +16,18 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.export;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.MultiPath;
+import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
+import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.core.util.ScratchPad;
 import com.ait.lienzo.shared.core.types.DataURLType;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
@@ -43,6 +46,7 @@ import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAda
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.registry.definition.TypeDefinitionSetRegistry;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.ext.editor.commons.client.file.exports.svg.IContext2D;
 
@@ -73,6 +77,9 @@ public class LienzoCanvasExportTest {
 
     @Mock
     private Layer layer;
+
+    @Mock
+    private Viewport viewport;
 
     @Mock
     private ScratchPad scratchPad;
@@ -114,11 +121,12 @@ public class LienzoCanvasExportTest {
         when(canvas.getView()).thenReturn(canvasView);
         when(canvasView.getLayer()).thenReturn(lienzoLayer);
         when(lienzoLayer.getLienzoLayer()).thenReturn(layer);
+        when(layer.getViewport()).thenReturn(viewport);
         when(layer.uuid()).thenReturn("someLayer");
         when(layer.getScratchPad()).thenReturn(scratchPad);
         when(layer.getWidth()).thenReturn(100);
         when(layer.getHeight()).thenReturn(200);
-        when(boundsProvider.compute(eq(lienzoLayer), any(CanvasExportSettings.class))).thenReturn(new int[]{100, 200});
+        when(boundsProvider.compute(eq(lienzoLayer), any(CanvasExportSettings.class))).thenReturn(new int[]{0, 0, 100, 200});
         when(scratchPad.getContext()).thenReturn(context2D);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getMetadata()).thenReturn(metadata);
@@ -184,8 +192,10 @@ public class LienzoCanvasExportTest {
         WiresManager.get(layer);
         LienzoCanvasExport.WiresLayerBoundsProvider provider = new LienzoCanvasExport.WiresLayerBoundsProvider();
         int[] size0 = provider.compute(lienzoLayer, CanvasExportSettings.build());
-        assertEquals(25, size0[0]);
-        assertEquals(25, size0[1]);
+        assertEquals(0, size0[0]);
+        assertEquals(0, size0[1]);
+        assertEquals(25, size0[2]);
+        assertEquals(25, size0[3]);
     }
 
     @Test
@@ -195,26 +205,44 @@ public class LienzoCanvasExportTest {
         WiresManager wiresManager = WiresManager.get(layer);
         com.ait.lienzo.client.core.shape.wires.WiresLayer wiresLayer = wiresManager.getLayer();
         wiresLayer.add(new WiresShape(new MultiPath().rect(0, 0, 50, 50)).setLocation(new Point2D(12, 44)));
-        wiresLayer.add(new WiresShape(new MultiPath().rect(0, 0, 100, 150)).setLocation(new Point2D(1, 3.4)));
+        wiresLayer.add(new WiresShape(new MultiPath().rect(0, 0, 100, 150)).setLocation(new Point2D(1, 3)));
         LienzoCanvasExport.WiresLayerBoundsProvider provider = new LienzoCanvasExport.WiresLayerBoundsProvider();
         int[] size0 = provider.compute(lienzoLayer, CanvasExportSettings.build());
-        assertEquals(151, size0[0]);
-        assertEquals(203, size0[1]);
+        assertEquals(1, size0[0]);
+        assertEquals(3, size0[1]);
+        assertEquals(151, size0[2]);
+        assertEquals(203, size0[3]);
     }
 
     @Test
     public void testWiresLayerBoundsProviderWithSize() {
         LienzoCanvasExport.WiresLayerBoundsProvider provider = new LienzoCanvasExport.WiresLayerBoundsProvider();
         int[] size0 = provider.compute(lienzoLayer, CanvasExportSettings.build(11, 33));
-        assertEquals(36, size0[0]);
-        assertEquals(58, size0[1]);
+        assertEquals(0, size0[0]);
+        assertEquals(0, size0[1]);
+        assertEquals(36, size0[2]);
+        assertEquals(58, size0[3]);
     }
 
     @Test
     public void testToContext2D() {
+        Transform transform = new Transform().translate(11, 33).scale(0.1, 0.3);
+        when(viewport.getTransform()).thenReturn(transform);
         IContext2D iContext2D = tested.toContext2D(canvasHandler, CanvasExportSettings.build());
         assertNotNull(iContext2D);
         verify(layer, times(1)).draw(any(Context2D.class));
-        verify(layer, times(2)).draw();
+        ArgumentCaptor<Transform> transformArgumentCaptor = ArgumentCaptor.forClass(Transform.class);
+        verify(viewport, times(2)).setTransform(transformArgumentCaptor.capture());
+        List<Transform> transforms = transformArgumentCaptor.getAllValues();
+        Transform t0 = transforms.get(0);
+        Transform t1 = transforms.get(1);
+        assertEquals(0d, t0.getTranslateX(), 0d);
+        assertEquals(0d, t0.getTranslateY(), 0d);
+        assertEquals(1d, t0.getScaleX(), 0d);
+        assertEquals(1d, t0.getScaleY(), 0d);
+        assertEquals(11d, t1.getTranslateX(), 0d);
+        assertEquals(33d, t1.getTranslateY(), 0d);
+        assertEquals(0.1d, t1.getScaleX(), 0d);
+        assertEquals(0.3d, t1.getScaleY(), 0d);
     }
 }

@@ -19,6 +19,8 @@ package org.kie.workbench.common.stunner.client.lienzo.canvas.export;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.ait.lienzo.client.core.Context2D;
+import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.client.widget.panel.Bounds;
 import com.ait.lienzo.shared.core.types.DataURLType;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoLayer;
@@ -52,14 +54,19 @@ public class LienzoCanvasExport implements CanvasExport<AbstractCanvasHandler> {
                                   final CanvasExportSettings settings) {
         final LienzoLayer layer = getLayer(canvasHandler);
         final com.ait.lienzo.client.core.shape.Layer lienzoLayer = layer.getLienzoLayer();
+        final Viewport viewport = lienzoLayer.getViewport();
         final int[] bounds = boundsProvider.compute(layer, settings);
-        final IContext2D svgContext2D = Context2DFactory.create(new SvgExportSettings(bounds[0],
-                                                                                      bounds[1],
+        final IContext2D svgContext2D = Context2DFactory.create(new SvgExportSettings(bounds[2],
+                                                                                      bounds[3],
                                                                                       lienzoLayer.getContext()));
-        lienzoLayer.draw();
+        // Reset the transform before drawing to the target context.
+        final Transform transform = viewport.getTransform();
+        viewport.setTransform(new Transform());
+        // Draw into the target context.
         lienzoLayer.draw(new Context2D(new DelegateNativeContext2D(svgContext2D,
                                                                    canvasHandler)));
-        lienzoLayer.draw();
+        // Set again the previous transform.
+        viewport.setTransform(transform);
         return svgContext2D;
     }
 
@@ -72,6 +79,8 @@ public class LienzoCanvasExport implements CanvasExport<AbstractCanvasHandler> {
                                                getDataType(settings.getUrlDataType()),
                                                bounds[0],
                                                bounds[1],
+                                               bounds[2],
+                                               bounds[3],
                                                BG_COLOR);
     }
 
@@ -86,16 +95,18 @@ public class LienzoCanvasExport implements CanvasExport<AbstractCanvasHandler> {
         @Override
         public int[] compute(final LienzoLayer layer,
                              final CanvasExportSettings settings) {
-            final int[] result = new int[2];
+            final int[] result = new int[4];
+            final Bounds bounds = LienzoLayerUtils.computeBounds(layer);
+            result[0] = (int) bounds.getX();
+            result[1] = (int) bounds.getY();
             if (settings.hasSize()) {
-                result[0] = settings.getWide();
-                result[1] = settings.getHigh();
+                result[2] = settings.getWide();
+                result[3] = settings.getHigh();
             } else {
-                final Bounds bounds = LienzoLayerUtils.computeBounds(layer);
-                result[0] = (int) (bounds.getX() + bounds.getWidth());
-                result[1] = (int) (bounds.getY() + bounds.getHeight());
+                result[2] = Math.round((float) (bounds.getX() + bounds.getWidth()));
+                result[3] = Math.round((float) (bounds.getY() + bounds.getHeight()));
             }
-            return new int[]{result[0] + PADDING, result[1] + PADDING};
+            return new int[]{result[0], result[1], result[2] + PADDING, result[3] + PADDING};
         }
     }
 

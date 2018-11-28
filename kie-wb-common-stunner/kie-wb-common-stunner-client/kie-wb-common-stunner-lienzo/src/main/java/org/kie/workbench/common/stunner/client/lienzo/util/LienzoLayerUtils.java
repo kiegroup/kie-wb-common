@@ -29,18 +29,18 @@ public class LienzoLayerUtils {
 
     public static String layerToDataURL(final LienzoLayer lienzoLayer,
                                         final DataURLType dataURLType,
+                                        final int x,
+                                        final int y,
                                         final int width,
                                         final int height,
                                         final String bgColor) {
         final com.ait.lienzo.client.core.shape.Layer layer = lienzoLayer.getLienzoLayer();
-        final int x = 0;
-        final int y = 0;
         final ScratchPad scratchPad = layer.getScratchPad();
         scratchPad.setPixelSize(width, height);
         if (null != bgColor) {
             scratchPad.getContext().setFillColor(bgColor);
-            scratchPad.getContext().fillRect(x,
-                                             y,
+            scratchPad.getContext().fillRect(0,
+                                             0,
                                              width,
                                              height);
         }
