@@ -185,11 +185,6 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
     }
 
     @Override
-    protected boolean isHeaderHidden() {
-        return false;
-    }
-
-    @Override
     @SuppressWarnings("unused")
     public List<ListSelectorItem> getItems(final int uiRowIndex,
                                            final int uiColumnIndex) {
