@@ -18,10 +18,12 @@ package org.kie.workbench.common.dmn.client.widgets.grid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 import javax.enterprise.event.Event;
 
@@ -70,8 +72,11 @@ import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -114,6 +119,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
 
     protected final TranslationService translationService;
     protected final Event<ExpressionEditorChanged> editorSelectedEvent;
+    protected final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     protected final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     protected Optional<DomainObject> selectedDomainObject = Optional.empty();
@@ -135,6 +141,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                               final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                               final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                               final Event<ExpressionEditorChanged> editorSelectedEvent,
+                              final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                               final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                               final CellEditorControlsView.Presenter cellEditorControls,
                               final ListSelectorView.Presenter listSelector,
@@ -153,6 +160,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
         this.sessionCommandManager = sessionCommandManager;
         this.canvasCommandFactory = canvasCommandFactory;
         this.editorSelectedEvent = editorSelectedEvent;
+        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.domainObjectSelectionEvent = domainObjectSelectionEvent;
         this.cellEditorControls = cellEditorControls;
         this.listSelector = listSelector;
@@ -581,13 +589,25 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
         return Optional.empty();
     }
 
+    @SuppressWarnings("unchecked")
     protected void fireDomainObjectSelectionEvent(final DomainObject domainObject) {
         final ClientSession session = sessionManager.getCurrentSession();
         if (session != null) {
             final CanvasHandler canvasHandler = session.getCanvasHandler();
             if (canvasHandler != null) {
-                domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, domainObject));
-                selectedDomainObject = Optional.of(domainObject);
+
+                final Graph<?, Node> graph = canvasHandler.getDiagram().getGraph();
+                final Optional<Node> domainObjectNode = StreamSupport.stream(graph.nodes().spliterator(), false)
+                        .filter(node -> node.getContent() instanceof Definition)
+                        .filter(node -> Objects.equals(domainObject, ((Definition) node.getContent()).getDefinition()))
+                        .findFirst();
+                if (domainObjectNode.isPresent()) {
+                    refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(session, domainObjectNode.get().getUUID()));
+                    selectedDomainObject = Optional.empty();
+                } else {
+                    domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, domainObject));
+                    selectedDomainObject = Optional.of(domainObject);
+                }
             }
         }
     }

@@ -19,8 +19,10 @@ package org.kie.workbench.common.dmn.client.editors.expressions;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
 import javax.enterprise.event.Event;
 
@@ -57,6 +59,10 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
@@ -85,6 +91,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
 
     private final ParameterizedCommand<Optional<Expression>> onHasExpressionChanged;
     private final ParameterizedCommand<Optional<HasName>> onHasNameChanged;
+    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     private ExpressionContainerUIModelMapper uiModelMapper;
@@ -99,6 +106,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                                    final Supplier<ExpressionGridCache> expressionGridCache,
                                    final ParameterizedCommand<Optional<Expression>> onHasExpressionChanged,
                                    final ParameterizedCommand<Optional<HasName>> onHasNameChanged,
+                                   final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent) {
         super(new DMNGridData(),
               gridLayer,
@@ -113,6 +121,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
 
         this.onHasExpressionChanged = onHasExpressionChanged;
         this.onHasNameChanged = onHasNameChanged;
+        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.domainObjectSelectionEvent = domainObjectSelectionEvent;
 
         this.uiModelMapper = new ExpressionContainerUIModelMapper(parent,
@@ -315,6 +324,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                                 isControlKeyDown);
     }
 
+    @SuppressWarnings("unchecked")
     protected void fireRefreshFormPropertiesEvent() {
         final ClientSession session = sessionManager.getCurrentSession();
         if (session != null) {
@@ -322,7 +332,17 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
             if (canvasHandler != null) {
                 final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
                 if (base instanceof DomainObject) {
-                    domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, (DomainObject) base));
+                    final DomainObject domainObject = (DomainObject) base;
+                    final Graph<?, Node> graph = canvasHandler.getDiagram().getGraph();
+                    final Optional<Node> domainObjectNode = StreamSupport.stream(graph.nodes().spliterator(), false)
+                            .filter(node -> node.getContent() instanceof Definition)
+                            .filter(node -> Objects.equals(domainObject, ((Definition) node.getContent()).getDefinition()))
+                            .findFirst();
+                    if (domainObjectNode.isPresent()) {
+                        refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(session, domainObjectNode.get().getUUID()));
+                    } else {
+                        domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, domainObject));
+                    }
                     return;
                 }
                 domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, new NOPDomainObject()));
