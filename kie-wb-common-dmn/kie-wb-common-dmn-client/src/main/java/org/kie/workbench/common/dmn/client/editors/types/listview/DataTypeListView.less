@@ -89,4 +89,10 @@
       height: ~"calc(100% - 30px)";
     }
   }
+
+  & > div > div {
+    /* "overflow: auto" is set inline by UberFire/AppFormer since since most of editors have scroll bars.
+     * However the DMN Data Types has a fixed header with internal scrollbars. */
+    overflow: hidden !important;
+  }
 }

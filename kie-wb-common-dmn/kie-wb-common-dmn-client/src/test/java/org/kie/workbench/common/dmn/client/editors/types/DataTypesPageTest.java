@@ -141,13 +141,13 @@ public class DataTypesPageTest {
     @Test
     public void testReload() {
 
-        final String expected = "currentGraph";
+        final String expected = "dmnModelNamespace";
 
-        doReturn(expected).when(page).currentGraph();
+        doReturn(expected).when(page).currentDMNModelNamespace();
 
         page.reload();
 
-        final String actual = page.getLoadedGraph();
+        final String actual = page.getLoadedDMNModelNamespace();
 
         verify(page).cleanDataTypeStore();
         verify(page).loadDataTypes();
@@ -178,8 +178,8 @@ public class DataTypesPageTest {
     @Test
     public void testIsLoadedWhenItIsNotLoaded() {
 
-        doReturn("graph1").when(page).currentGraph();
-        doReturn("graph2").when(page).getLoadedGraph();
+        doReturn("dmnModelNamespace1").when(page).currentDMNModelNamespace();
+        doReturn("dmnModelNamespace2").when(page).getLoadedDMNModelNamespace();
 
         assertFalse(page.isLoaded());
     }
@@ -187,49 +187,49 @@ public class DataTypesPageTest {
     @Test
     public void testIsLoadedWhenItIsLoaded() {
 
-        doReturn("graph1").when(page).currentGraph();
-        doReturn("graph1").when(page).getLoadedGraph();
+        doReturn("dmnModelNamespace1").when(page).currentDMNModelNamespace();
+        doReturn("dmnModelNamespace1").when(page).getLoadedDMNModelNamespace();
 
         assertTrue(page.isLoaded());
     }
 
     @Test
-    public void testCurrentGraphWhenDefinitionsIsNull() {
+    public void testCurrentDMNModelNamespaceWhenDefinitionsIsNull() {
 
         when(dmnGraphUtils.getDefinitions()).thenReturn(null);
 
-        final String actual = page.currentGraph();
+        final String actual = page.currentDMNModelNamespace();
         final String expected = "";
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testCurrentGraphWhenNamespaceIsNull() {
+    public void testCurrentDMNModelNamespaceWhenNamespaceIsNull() {
 
         final Definitions definitions = mock(Definitions.class);
 
         when(definitions.getNamespace()).thenReturn(null);
         when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
 
-        final String actual = page.currentGraph();
+        final String actual = page.currentDMNModelNamespace();
         final String expected = "";
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testCurrentGraph() {
+    public void testCurrentDMNModelNamespace() {
 
         final Definitions definitions = mock(Definitions.class);
         final Text text = mock(Text.class);
-        final String expected = "currentGraph";
+        final String expected = "currentDMNModelNamespace";
 
         when(text.getValue()).thenReturn(expected);
         when(definitions.getNamespace()).thenReturn(text);
         when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
 
-        final String actual = page.currentGraph();
+        final String actual = page.currentDMNModelNamespace();
 
         assertEquals(expected, actual);
     }
@@ -281,6 +281,14 @@ public class DataTypesPageTest {
         final DataType actualDataType = page.makeDataType(itemDefinition);
 
         assertEquals(expectedDataType, actualDataType);
+    }
+
+    @Test
+    public void testOnDataTypePageNavTabActiveEvent() {
+
+        page.onDataTypePageNavTabActiveEvent(mock(DataTypePageNavTabActiveEvent.class));
+
+        verify(page).onFocus();
     }
 
     private ItemDefinition makeItem(final String itemName) {

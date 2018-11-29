@@ -239,8 +239,6 @@ public class DataTypeListItemView implements DataTypeListItem.View {
 
         final HTMLElement element = typeSelect.getElement();
 
-        new MenuInitializer(element, ".btn-group").init();
-
         getType().innerHTML = "";
         getType().appendChild(element);
     }

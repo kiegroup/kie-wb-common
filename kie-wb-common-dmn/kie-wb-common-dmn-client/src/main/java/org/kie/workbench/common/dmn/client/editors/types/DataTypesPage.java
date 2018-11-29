@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLDivElement;
@@ -62,11 +63,9 @@ public class DataTypesPage extends PageImpl {
 
     private final DMNGraphUtils dmnGraphUtils;
 
-    private final TranslationService translationService;
-
     private final HTMLDivElement pageView;
 
-    private String loadedGraph;
+    private String loadedDMNModelNamespace;
 
     @Inject
     public DataTypesPage(final DataTypeList treeList,
@@ -80,7 +79,7 @@ public class DataTypesPage extends PageImpl {
                          final TranslationService translationService,
                          final HTMLDivElement pageView) {
 
-        super(getWidget(pageView), getFormat(translationService));
+        super(getWidget(pageView), getPageTitle(translationService));
 
         this.treeList = treeList;
         this.itemDefinitionUtils = itemDefinitionUtils;
@@ -90,13 +89,11 @@ public class DataTypesPage extends PageImpl {
         this.stackIndex = stackIndex;
         this.flashMessages = flashMessages;
         this.dmnGraphUtils = dmnGraphUtils;
-        this.translationService = translationService;
         this.pageView = pageView;
     }
 
-    private static String getFormat(final TranslationService translationService) {
-        String format = translationService.format(DMNEditorConstants.DataTypesPage_Label);
-        return format;
+    private static String getPageTitle(final TranslationService translationService) {
+        return translationService.format(DMNEditorConstants.DataTypesPage_Label);
     }
 
     @Override
@@ -104,7 +101,6 @@ public class DataTypesPage extends PageImpl {
         if (!isLoaded()) {
             reload();
         }
-
         refreshPageView();
     }
 
@@ -115,7 +111,7 @@ public class DataTypesPage extends PageImpl {
 
     public void reload() {
 
-        loadedGraph = currentGraph();
+        loadedDMNModelNamespace = currentDMNModelNamespace();
 
         cleanDataTypeStore();
         loadDataTypes();
@@ -128,10 +124,10 @@ public class DataTypesPage extends PageImpl {
     }
 
     boolean isLoaded() {
-        return Objects.equals(getLoadedGraph(), currentGraph());
+        return Objects.equals(getLoadedDMNModelNamespace(), currentDMNModelNamespace());
     }
 
-    String currentGraph() {
+    String currentDMNModelNamespace() {
         return getNamespace().map(Text::getValue).orElse("");
     }
 
@@ -153,8 +149,12 @@ public class DataTypesPage extends PageImpl {
         return dataTypeManager.from(itemDefinition).get();
     }
 
-    public String getLoadedGraph() {
-        return loadedGraph;
+    String getLoadedDMNModelNamespace() {
+        return loadedDMNModelNamespace;
+    }
+
+    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageNavTabActiveEvent event) {
+        onFocus();
     }
 
     private Optional<Text> getNamespace() {

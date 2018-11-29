@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypePageNavTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
@@ -203,5 +204,17 @@ public class SessionDiagramEditorScreenTest {
 
         verify(decisionNavigatorDock).close();
         verify(decisionNavigatorDock).resetContent();
+    }
+
+    @Test
+    public void testOnDataTypePageNavTabActiveEvent() {
+
+        final MultiPageEditor multiPageEditor = mock(MultiPageEditor.class);
+
+        when(kieView.getMultiPage()).thenReturn(multiPageEditor);
+
+        editor.onDataTypePageNavTabActiveEvent(mock(DataTypePageNavTabActiveEvent.class));
+
+        verify(multiPageEditor).selectPage(1);
     }
 }

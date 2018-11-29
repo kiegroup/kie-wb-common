@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpression
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypePageNavTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -155,6 +156,10 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
         kieView.clear();
         kieView.addMainEditorPage(screenPanelView.asWidget());
         kieView.getMultiPage().addPage(dataTypesPage);
+    }
+
+    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageNavTabActiveEvent event) {
+        kieView.getMultiPage().selectPage(1);
     }
 
     @OnStartup

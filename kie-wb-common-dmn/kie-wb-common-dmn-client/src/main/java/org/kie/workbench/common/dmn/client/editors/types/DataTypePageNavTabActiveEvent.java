@@ -16,21 +16,11 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import org.uberfire.workbench.events.UberFireEvent;
 
-@Dependent
-public class DataTypePageNavTab {
+/**
+ * This event is raised by {@link DataTypePageNavTab} to active the Data Types tab.
+ */
+public class DataTypePageNavTabActiveEvent implements UberFireEvent {
 
-    private final Event<DataTypePageNavTabActiveEvent> dataTypePageActiveEvent;
-
-    @Inject
-    public DataTypePageNavTab(final Event<DataTypePageNavTabActiveEvent> dataTypePageActiveEvent) {
-        this.dataTypePageActiveEvent = dataTypePageActiveEvent;
-    }
-
-    public void active() {
-        dataTypePageActiveEvent.fire(new DataTypePageNavTabActiveEvent());
-    }
 }
