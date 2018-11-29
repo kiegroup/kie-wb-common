@@ -1069,7 +1069,7 @@ public class DMNMarshallerTest {
         diagram.setGraph(g);
 
         String mString = m.marshall(diagram);
-        LOG.debug("MARSHALLED ROUNTRIP RESULTING xml:\n{}\n", mString);
+        LOG.debug("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
 
         // now unmarshal once more, from the marshalled just done above, into a DMNRuntime
         final DMNRuntime runtime = dmnRuntimeFromDMNXML(mString);
@@ -1096,7 +1096,6 @@ public class DMNMarshallerTest {
         final Definitions definitions;
 
         public ErrorsAndDMNModelAsSerialized(List<Message> messages, Definitions definitions) {
-            super();
             this.messages = Collections.unmodifiableList(messages);
             this.definitions = definitions;
         }
@@ -1111,11 +1110,11 @@ public class DMNMarshallerTest {
         try (BufferedReader buffer = new BufferedReader(new InputStreamReader(dmnXmlInputStream))) {
             xml = buffer.lines().collect(Collectors.joining("\n"));
         } catch (Exception e) {
-            throw new RuntimeException("test utily method roundTripUnmarshalMarshalThenUnmarshalDMN failed to read XML content.", e);
+            throw new RuntimeException("test utility method roundTripUnmarshalMarshalThenUnmarshalDMN failed to read XML content.", e);
         }
         LOG.debug("ORIGINAL xml:\n{}\n", xml);
         final List<Message> messages0 = kieBuilderMessagesUsingDMNXML(xml);
-        assertTrue("The DMN XML file did NOT resulted in compilation errors and this test method expected errors to be detected. If this was intentional use test method roundTripUnmarshalMarshalThenUnmarshalDMN",
+        assertTrue("The DMN XML content did NOT result in compilation errors and this test method expected errors to be detected. If this was intentional use test method roundTripUnmarshalMarshalThenUnmarshalDMN",
                    messages0.stream().filter(m -> m.getLevel().equals(Message.Level.ERROR)).count() > 0);
 
         DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
@@ -1132,11 +1131,11 @@ public class DMNMarshallerTest {
         diagram.setGraph(g);
 
         String mString = m.marshall(diagram);
-        LOG.debug("MARSHALLED ROUNTRIP RESULTING xml:\n{}\n", mString);
+        LOG.debug("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
 
         // now unmarshal once more, from the marshalled just done above, into a DMNRuntime
         final List<Message> result = kieBuilderMessagesUsingDMNXML(mString);
-        assertTrue("The DMN XML file did NOT resulted in compilation errors and this test method expected errors to be detected. If this was intentional use test method roundTripUnmarshalMarshalThenUnmarshalDMN",
+        assertTrue("The DMN XML content did NOT result in compilation errors and this test method expected errors to be detected. If this was intentional use test method roundTripUnmarshalMarshalThenUnmarshalDMN",
                    messages0.stream().filter(msg -> msg.getLevel().equals(Message.Level.ERROR)).count() > 0);
 
         Definitions definitions = DMNMarshallerFactory.newDefaultMarshaller().unmarshal(mString);
