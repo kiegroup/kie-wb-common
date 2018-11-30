@@ -940,6 +940,15 @@ public class InvocationGridTest {
     }
 
     @Test
+    public void testSelectHeaderExpressionColumnNameRow() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(hasExpression);
+    }
+
+    @Test
     public void testSelectHeaderNameColumnParametersRow() {
         setupGrid(0);
 
@@ -949,12 +958,30 @@ public class InvocationGridTest {
     }
 
     @Test
-    public void testSelectHeaderExpressionColumn() {
+    public void testSelectHeaderExpressionColumnParametersRow() {
         setupGrid(0);
+
+        grid.selectHeaderCell(1, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderNameColumnParametersRowWhenNested() {
+        setupGrid(1);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderExpressionColumnParametersRowWhenNested() {
+        setupGrid(1);
 
         grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
 
-        assertDomainObjectSelection(hasExpression);
+        assertNOPDomainObjectSelection();
     }
 
     private void assertDomainObjectSelection(final DomainObject domainObject) {

@@ -337,7 +337,7 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationGri
     @Override
     protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
                                                 final int uiHeaderColumnIndex) {
-        if (uiHeaderRowIndex == 0) {
+        if (nesting == 0 && uiHeaderRowIndex == 0) {
             if (uiHeaderColumnIndex == InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX || uiHeaderColumnIndex == InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX) {
                 final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
                 if (base instanceof DomainObject) {

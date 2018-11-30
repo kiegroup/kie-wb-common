@@ -956,6 +956,19 @@ public class FunctionGridTest {
 
         grid.selectHeaderCell(1, 0, false, false);
 
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderParametersRowWhenNested() {
+        setupGrid(1);
+
+        grid.selectHeaderCell(0, 0, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    private void assertNOPDomainObjectSelection() {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
