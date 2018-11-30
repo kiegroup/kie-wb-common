@@ -34,13 +34,13 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull
 /**
  * A predicate that checks if two nodes are using sharing the same parent
  * for a given type of Definition. It also filters a given node and
- * used the given parent as a candidate for it, instead of
- * processing the graph structure.
+ * uses the given parent as a candidate for it, instead of processing the graph structure.
  */
 public class FilteredParentsTypeMatcher
         implements BiPredicate<Node<? extends View<?>, ? extends Edge>, Node<? extends View<?>, ? extends Edge>> {
 
     private final ParentsTypeMatchPredicate parentsTypeMatchPredicate;
+    private final NodeCompositePredicate parentsMatchPredicate;
     private final Optional<Element<? extends Definition<?>>> candidateParent;
     private final Optional<Node<? extends Definition<?>, ? extends Edge>> candidateNode;
 
@@ -49,9 +49,10 @@ public class FilteredParentsTypeMatcher
                                       final Node<? extends Definition<?>, ? extends Edge> candidateNode) {
         this.candidateParent = Optional.ofNullable(candidateParent);
         this.candidateNode = Optional.ofNullable(candidateNode);
-        this.parentsTypeMatchPredicate =
-                new ParentsTypeMatchPredicate(new FilteredParentByDefinitionIdProvider(definitionManager),
-                                              new FilteredHasParentPredicate());
+        this.parentsTypeMatchPredicate = new ParentsTypeMatchPredicate(new FilteredParentByDefinitionIdProvider(definitionManager),
+                                                                       new FilteredHasParentPredicate());
+        this.parentsMatchPredicate = new NodeCompositePredicate(parentsTypeMatchPredicate,
+                                                                new ParentsMatchForCandidatePredicate());
     }
 
     public FilteredParentsTypeMatcher forParentType(final Class<?> parentType) {
@@ -65,18 +66,12 @@ public class FilteredParentsTypeMatcher
         checkNotNull("node", node);
         checkNotNull("node2", node2);
 
-        //in case the nodes are not candidate
+        //in case none nodes are candidates
         if (!isCandidate.test(node) && !isCandidate.test(node2)) {
             return true;
         }
 
-        //check if the parent of the target node connection is the same as the candidate parent
-        boolean matchParent = isCandidate.test(node)
-                ? Objects.equals(GraphUtils.getParent(node2), candidateParent.orElse(null))
-                : Objects.equals(GraphUtils.getParent(node), candidateParent.orElse(null));
-
-        //finally check the parent type
-        return matchParent && parentsTypeMatchPredicate.test(node, node2);
+        return parentsMatchPredicate.test(node, node2);
     }
 
     private class FilteredHasParentPredicate implements BiPredicate<Node<?, ? extends Edge>, Element<?>> {
@@ -96,6 +91,21 @@ public class FilteredParentsTypeMatcher
                             .isPresent() :
                     hasParentPredicate.test(node,
                                             parent);
+        }
+    }
+
+    /**
+     * Check if a candidate parent is the same for a given candidate node and is the current parent for other node, on the test condition.
+     * This condition is necessary when changing a connection (source or target), both nodes should have the same parent.
+     */
+    private class ParentsMatchForCandidatePredicate implements BiPredicate<Node<? extends View<?>, ? extends Edge>, Node<? extends View<?>, ? extends Edge>> {
+
+        @Override
+        public boolean test(Node<? extends View<?>, ? extends Edge> node, Node<? extends View<?>, ? extends Edge> node2) {
+            //check if the parent of the target node connection is the same as the candidate parent
+            return isCandidate.test(node)
+                    ? Objects.equals(GraphUtils.getParent(node2), candidateParent.orElse(null))
+                    : Objects.equals(GraphUtils.getParent(node), candidateParent.orElse(null));
         }
     }
 
