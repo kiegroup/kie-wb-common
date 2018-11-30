@@ -92,6 +92,7 @@ import org.uberfire.workbench.model.menu.Menus;
 public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEditorWrapperPresenter {
 
     public static final String SCREEN_ID = "SessionDiagramEditorScreen";
+    private static final int DATA_TYPES_PAGE_INDEX = 1;
     private static Logger LOGGER = Logger.getLogger(SessionDiagramEditorScreen.class.getName());
     private final DefinitionManager definitionManager;
     private final ClientFactoryService clientFactoryServices;
@@ -159,7 +160,7 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
     }
 
     public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageNavTabActiveEvent event) {
-        kieView.getMultiPage().selectPage(1);
+        kieView.getMultiPage().selectPage(DATA_TYPES_PAGE_INDEX);
     }
 
     @OnStartup

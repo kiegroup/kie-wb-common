@@ -82,6 +82,7 @@ import org.uberfire.workbench.model.menu.Menus;
 public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramResourceType> {
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
+    private static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -154,7 +155,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageNavTabActiveEvent event) {
-        kieView.getMultiPage().selectPage(2);
+        kieView.getMultiPage().selectPage(DATA_TYPES_PAGE_INDEX);
     }
 
     void superInitialiseKieEditorForSession(final ProjectDiagram diagram) {
