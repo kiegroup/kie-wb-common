@@ -193,7 +193,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         presenter.setName(nameEditor.getValue());
     }
 
-    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageNavTabActiveEvent event) {
+    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
         hide();
     }
 }

@@ -153,7 +153,7 @@ public class DataTypesPage extends PageImpl {
         return loadedDMNModelNamespace;
     }
 
-    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageNavTabActiveEvent event) {
+    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
         onFocus();
     }
 

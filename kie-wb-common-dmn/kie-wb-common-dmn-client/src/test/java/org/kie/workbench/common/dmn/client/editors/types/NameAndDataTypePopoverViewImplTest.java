@@ -190,7 +190,7 @@ public class NameAndDataTypePopoverViewImplTest {
 
     @Test
     public void testOnDataTypePageNavTabActiveEvent() {
-        view.onDataTypePageNavTabActiveEvent(mock(DataTypePageNavTabActiveEvent.class));
+        view.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
 
         verify(view).hide();
     }

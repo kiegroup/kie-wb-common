@@ -18,9 +18,6 @@ package org.kie.workbench.common.dmn.client.editors.types;
 
 import org.uberfire.workbench.events.UberFireEvent;
 
-/**
- * This event is raised by {@link DataTypePageNavTab} to active the Data Types tab.
- */
-public class DataTypePageNavTabActiveEvent implements UberFireEvent {
+public class DataTypePageTabActiveEvent implements UberFireEvent {
 
 }

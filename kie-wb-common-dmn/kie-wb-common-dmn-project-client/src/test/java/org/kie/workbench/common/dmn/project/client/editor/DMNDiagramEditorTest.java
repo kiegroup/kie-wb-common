@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
-import org.kie.workbench.common.dmn.client.editors.types.DataTypePageNavTabActiveEvent;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
@@ -255,7 +255,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Test
     public void testOnDataTypePageNavTabActiveEvent() {
 
-        diagramEditor.onDataTypePageNavTabActiveEvent(mock(DataTypePageNavTabActiveEvent.class));
+        diagramEditor.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
 
         verify(multiPage).selectPage(2);
     }

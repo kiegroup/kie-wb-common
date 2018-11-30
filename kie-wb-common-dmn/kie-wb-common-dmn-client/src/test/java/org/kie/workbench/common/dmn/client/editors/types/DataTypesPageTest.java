@@ -286,7 +286,7 @@ public class DataTypesPageTest {
     @Test
     public void testOnDataTypePageNavTabActiveEvent() {
 
-        page.onDataTypePageNavTabActiveEvent(mock(DataTypePageNavTabActiveEvent.class));
+        page.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
 
         verify(page).onFocus();
     }
