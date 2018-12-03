@@ -28,7 +28,7 @@ import org.kie.soup.commons.util.Sets;
 import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
-import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
+import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -60,7 +60,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         "decision"
 })
 public class DecisionService extends DRGElement implements HasVariable<InformationItemPrimary>,
-                                                           DMNViewDefinition,
+                                                           DMNViewDefinition<DecisionServiceRectangleDimensionsSet>,
                                                            DomainObject {
 
     @Category
@@ -89,7 +89,7 @@ public class DecisionService extends DRGElement implements HasVariable<Informati
     @PropertySet
     @FormField(afterElement = "fontSet")
     @Valid
-    protected RectangleDimensionsSet dimensionsSet;
+    protected DecisionServiceRectangleDimensionsSet dimensionsSet;
 
     private List<DMNElementReference> outputDecision;
     private List<DMNElementReference> encapsulatedDecision;
@@ -107,7 +107,7 @@ public class DecisionService extends DRGElement implements HasVariable<Informati
              null,
              new BackgroundSet(),
              new FontSet(),
-             new RectangleDimensionsSet());
+             new DecisionServiceRectangleDimensionsSet());
     }
 
     public DecisionService(final Id id,
@@ -120,7 +120,7 @@ public class DecisionService extends DRGElement implements HasVariable<Informati
                            final List<DMNElementReference> inputData,
                            final BackgroundSet backgroundSet,
                            final FontSet fontSet,
-                           final RectangleDimensionsSet dimensionsSet) {
+                           final DecisionServiceRectangleDimensionsSet dimensionsSet) {
         super(id,
               description,
               name);
@@ -166,11 +166,11 @@ public class DecisionService extends DRGElement implements HasVariable<Informati
     }
 
     @Override
-    public RectangleDimensionsSet getDimensionsSet() {
+    public DecisionServiceRectangleDimensionsSet getDimensionsSet() {
         return dimensionsSet;
     }
 
-    public void setDimensionsSet(final RectangleDimensionsSet dimensionsSet) {
+    public void setDimensionsSet(final DecisionServiceRectangleDimensionsSet dimensionsSet) {
         this.dimensionsSet = dimensionsSet;
     }
 

@@ -68,34 +68,51 @@ public class DMNSVGShapeDefImplTest {
 
     @Test
     public void testNewViewInstance() {
-        shapeDef.newViewInstance(viewFactory, new BusinessKnowledgeModel());
+        final BusinessKnowledgeModel businessKnowledgeModel = new BusinessKnowledgeModel();
+        shapeDef.newViewInstance(viewFactory, businessKnowledgeModel);
         verify(viewFactory).businessKnowledgeModel();
-        verify(viewResource).build(true);
+        verify(viewResource).build(businessKnowledgeModel.getDimensionsSet().getWidth().getValue(),
+                                   businessKnowledgeModel.getDimensionsSet().getHeight().getValue(),
+                                   true);
 
         reset(viewResource);
-        shapeDef.newViewInstance(viewFactory, new Decision());
+        final Decision decision = new Decision();
+        shapeDef.newViewInstance(viewFactory, decision);
         verify(viewFactory).decision();
-        verify(viewResource).build(true);
+        verify(viewResource).build(decision.getDimensionsSet().getWidth().getValue(),
+                                   decision.getDimensionsSet().getHeight().getValue(),
+                                   true);
 
         reset(viewResource);
         shapeDef.newViewInstance(viewFactory, new InputData());
         verify(viewFactory).inputData();
-        verify(viewResource).build(true);
+        verify(viewResource).build(businessKnowledgeModel.getDimensionsSet().getWidth().getValue(),
+                                   businessKnowledgeModel.getDimensionsSet().getHeight().getValue(),
+                                   true);
 
         reset(viewResource);
-        shapeDef.newViewInstance(viewFactory, new KnowledgeSource());
+        final KnowledgeSource knowledgeSource = new KnowledgeSource();
+        shapeDef.newViewInstance(viewFactory, knowledgeSource);
         verify(viewFactory).knowledgeSource();
-        verify(viewResource).build(true);
+        verify(viewResource).build(knowledgeSource.getDimensionsSet().getWidth().getValue(),
+                                   knowledgeSource.getDimensionsSet().getHeight().getValue(),
+                                   true);
 
         reset(viewResource);
-        shapeDef.newViewInstance(viewFactory, new TextAnnotation());
+        final TextAnnotation textAnnotation = new TextAnnotation();
+        shapeDef.newViewInstance(viewFactory, textAnnotation);
         verify(viewFactory).textAnnotation();
-        verify(viewResource).build(true);
+        verify(viewResource).build(textAnnotation.getDimensionsSet().getWidth().getValue(),
+                                   textAnnotation.getDimensionsSet().getHeight().getValue(),
+                                   true);
 
         reset(viewResource);
-        shapeDef.newViewInstance(viewFactory, new DecisionService());
+        final DecisionService decisionService = new DecisionService();
+        shapeDef.newViewInstance(viewFactory, decisionService);
         verify(viewFactory).decisionService();
-        verify(viewResource).build(true);
+        verify(viewResource).build(decisionService.getDimensionsSet().getWidth().getValue(),
+                                   decisionService.getDimensionsSet().getHeight().getValue(),
+                                   true);
     }
 
     @Test

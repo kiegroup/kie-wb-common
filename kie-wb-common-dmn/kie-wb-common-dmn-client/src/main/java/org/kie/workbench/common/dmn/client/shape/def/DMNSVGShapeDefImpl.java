@@ -90,9 +90,11 @@ public class DMNSVGShapeDefImpl implements DMNSVGShapeDef<DMNViewDefinition> {
     @Override
     public SVGShapeView<?> newViewInstance(final DMNSVGViewFactory factory,
                                            final DMNViewDefinition bean) {
+        final double width = bean.getDimensionsSet().getWidth().getValue();
+        final double height = bean.getDimensionsSet().getHeight().getValue();
         return VIEW_RESOURCES
                 .getResource(factory, bean)
-                .build(true);
+                .build(width, height, true);
     }
 
     @Override
