@@ -91,7 +91,6 @@ public abstract class DMNGridColumn<G extends GridWidget, T> extends BaseGridCol
         final GridBodyCellEditContext context = RenderContextUtilities.makeRenderContext(gridWidget,
                                                                                          ri,
                                                                                          ci,
-                                                                                         null,
                                                                                          uiHeaderRowIndex);
         headerMetaData.edit(context);
     }
