@@ -826,6 +826,13 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
     }
 
+    @Test
+    public void testDestroyResources() {
+        grid.destroyResources();
+
+        verify(cellEditorControls).hide();
+    }
+
     @SuppressWarnings("unchecked")
     private void doTestSetTypeRefConsumer() {
         grid.setTypeRefConsumer().accept(decision.getVariable(), TYPE_REF);

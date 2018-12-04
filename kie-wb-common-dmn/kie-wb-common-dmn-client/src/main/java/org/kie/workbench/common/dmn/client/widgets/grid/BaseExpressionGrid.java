@@ -75,6 +75,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.util.ColumnIndexUtilities;
 import org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities;
+import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
@@ -85,7 +86,10 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManage
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
 
-public abstract class BaseExpressionGrid<E extends Expression, D extends GridData, M extends BaseUIModelMapper<E>> extends BaseGrid implements ExpressionGridCache.IsCacheable {
+public abstract class BaseExpressionGrid<E extends Expression, D extends GridData, M extends BaseUIModelMapper<E>>
+        extends BaseGrid
+        implements ExpressionGridCache.IsCacheable,
+                   HasDOMElementResources {
 
     public static final double DEFAULT_PADDING = 10.0;
 
@@ -545,6 +549,11 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
             }
         }
         return isSelectionChanged;
+    }
+
+    @Override
+    public void destroyResources() {
+        cellEditorControls.hide();
     }
 
     protected boolean hasAnyHeaderCellSelected() {
