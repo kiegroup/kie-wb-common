@@ -18,12 +18,15 @@ package org.kie.workbench.common.dmn.showcase.client.screens.editor;
 
 import java.util.function.Consumer;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
@@ -31,14 +34,19 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.S
 import org.kie.workbench.common.stunner.client.widgets.views.session.ScreenPanelView;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
 import static org.mockito.Matchers.any;
@@ -72,12 +80,25 @@ public class SessionDiagramEditorScreenTest {
     @Mock
     private DMNEditorSession session;
 
+    @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
     @Captor
     private ArgumentCaptor<Consumer<EditorSession>> clientFullSessionConsumer;
+
+    @Mock
+    private LayoutHelper layoutHelper;
+
+    @Mock
+    private KieEditorWrapperView kieView;
+
+    @Mock
+    private DataTypesPage dataTypesPage;
 
     private SessionDiagramEditorScreen editor;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setup() {
         doReturn(presenter).when(presenter).withToolbar(anyBoolean());
         doReturn(presenter).when(presenter).withPalette(anyBoolean());
@@ -107,17 +128,32 @@ public class SessionDiagramEditorScreenTest {
                                                     presenter,
                                                     null,
                                                     null,
+                                                    refreshFormPropertiesEvent,
                                                     null,
                                                     screenPanelView,
                                                     null,
-                                                    decisionNavigatorDock));
+                                                    decisionNavigatorDock,
+                                                    layoutHelper,
+                                                    kieView,
+                                                    dataTypesPage));
     }
 
     @Test
     public void testInit() {
+
+        final Widget screenPanelWidget = mock(Widget.class);
+        final MultiPageEditor multiPageEditor = mock(MultiPageEditor.class);
+
+        when(kieView.getMultiPage()).thenReturn(multiPageEditor);
+        when(screenPanelView.asWidget()).thenReturn(screenPanelWidget);
+
         editor.init();
 
         verify(decisionNavigatorDock).init(AuthoringPerspective.PERSPECTIVE_ID);
+        verify(kieView).setPresenter(editor);
+        verify(kieView).clear();
+        verify(kieView).addMainEditorPage(screenPanelWidget);
+        verify(multiPageEditor).addPage(dataTypesPage);
     }
 
     @Test
@@ -132,6 +168,7 @@ public class SessionDiagramEditorScreenTest {
         editor.open(diagram, callback);
 
         verify(editor).openDock(session);
+        verify(dataTypesPage).reload();
     }
 
     @Test
@@ -167,5 +204,17 @@ public class SessionDiagramEditorScreenTest {
 
         verify(decisionNavigatorDock).close();
         verify(decisionNavigatorDock).resetContent();
+    }
+
+    @Test
+    public void testOnDataTypePageNavTabActiveEvent() {
+
+        final MultiPageEditor multiPageEditor = mock(MultiPageEditor.class);
+
+        when(kieView.getMultiPage()).thenReturn(multiPageEditor);
+
+        editor.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
+
+        verify(multiPageEditor).selectPage(1);
     }
 }

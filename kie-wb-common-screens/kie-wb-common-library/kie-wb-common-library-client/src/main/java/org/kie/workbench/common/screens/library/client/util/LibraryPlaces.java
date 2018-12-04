@@ -45,6 +45,7 @@ import org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -84,6 +85,8 @@ import org.uberfire.ext.preferences.client.central.screen.PreferencesRootScreen;
 import org.uberfire.ext.preferences.client.event.PreferencesCentralSaveEvent;
 import org.uberfire.ext.preferences.client.event.PreferencesCentralUndoChangesEvent;
 import org.uberfire.ext.widgets.common.client.breadcrumbs.UberfireBreadcrumbs;
+import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -168,6 +171,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private LibraryInternalPreferences libraryInternalPreferences;
 
+    private Caller<RepositoryService> repositoryService;
+
     private boolean docksReady = false;
 
     private boolean docksHidden = true;
@@ -199,7 +204,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final @Source(Source.Kind.EXTERNAL) Event<ImportProjectsSetupEvent> importProjectsSetupEvent,
                          final LibraryBreadcrumbs libraryBreadcrumbs,
                          final SessionInfo sessionInfo,
-                         final LibraryInternalPreferences libraryInternalPreferences) {
+                         final LibraryInternalPreferences libraryInternalPreferences,
+                         final Caller<RepositoryService> repositoryService) {
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
         this.assetDetailEvent = assetDetailEvent;
@@ -220,6 +226,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.libraryBreadcrumbs = libraryBreadcrumbs;
         this.sessionInfo = sessionInfo;
         this.libraryInternalPreferences = libraryInternalPreferences;
+        this.repositoryService = repositoryService;
     }
 
     @PostConstruct
@@ -343,6 +350,13 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             notificationEvent.fire(new NotificationEvent(ts.getTranslation(LibraryConstants.ProjectDeleted),
                                                          NotificationEvent.NotificationType.DEFAULT));
         }
+    }
+
+    public void deleteProject(final WorkspaceProject project,
+                              final HasBusyIndicator view) {
+        repositoryService.call(v -> view.hideBusyIndicator(),
+                               new HasBusyIndicatorDefaultErrorCallback(view)).removeRepository(project.getSpace(),
+                                                                                                project.getRepository().getAlias());
     }
 
     private boolean isRepoForActiveProject(RepositoryRemovedEvent repositoryRemovedEvent) {

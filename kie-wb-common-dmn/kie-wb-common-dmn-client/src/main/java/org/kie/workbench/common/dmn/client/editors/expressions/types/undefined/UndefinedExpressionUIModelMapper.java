@@ -19,31 +19,31 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.undefined;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
 public class UndefinedExpressionUIModelMapper extends BaseUIModelMapper<Expression> {
 
     private final ListSelectorView.Presenter listSelector;
+    private final TranslationService translationService;
     private final HasExpression hasExpression;
-    private final GridCellTuple parent;
 
     public UndefinedExpressionUIModelMapper(final Supplier<GridData> uiModel,
                                             final Supplier<Optional<Expression>> dmnModel,
                                             final ListSelectorView.Presenter listSelector,
-                                            final HasExpression hasExpression,
-                                            final GridCellTuple parent) {
+                                            final TranslationService translationService,
+                                            final HasExpression hasExpression) {
         super(uiModel,
               dmnModel);
         this.listSelector = listSelector;
+        this.translationService = translationService;
         this.hasExpression = hasExpression;
-        this.parent = parent;
     }
 
     @Override
@@ -51,21 +51,7 @@ public class UndefinedExpressionUIModelMapper extends BaseUIModelMapper<Expressi
                              final int columnIndex) {
         uiModel.get().setCell(rowIndex,
                               columnIndex,
-                              () -> new UndefinedExpressionCell(listSelector));
-        uiModel.get().getCell(rowIndex,
-                              columnIndex).setSelectionStrategy((final GridData model,
-                                                                 final int uiRowIndex,
-                                                                 final int uiColumnIndex,
-                                                                 final boolean isShiftKeyDown,
-                                                                 final boolean isControlKeyDown) -> {
-            final GridData parentUiModel = parent.getGridWidget().getModel();
-            return parentUiModel.getCell(parent.getRowIndex(),
-                                         parent.getColumnIndex()).getSelectionStrategy().handleSelection(parentUiModel,
-                                                                                                         parent.getRowIndex(),
-                                                                                                         parent.getColumnIndex(),
-                                                                                                         isShiftKeyDown,
-                                                                                                         isControlKeyDown);
-        });
+                              () -> new UndefinedExpressionCell(listSelector, translationService));
     }
 
     @Override

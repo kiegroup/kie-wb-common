@@ -39,11 +39,11 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorCh
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 
 @ApplicationScoped
 public class RelationEditorDefinition extends BaseEditorDefinition<Relation, RelationGridData> {
@@ -60,7 +60,7 @@ public class RelationEditorDefinition extends BaseEditorDefinition<Relation, Rel
                                     final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                     final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                     final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                    final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                     final ListSelectorView.Presenter listSelector,
                                     final TranslationService translationService,
                                     final NameAndDataTypePopoverView.Presenter headerEditor) {
@@ -69,7 +69,7 @@ public class RelationEditorDefinition extends BaseEditorDefinition<Relation, Rel
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               listSelector,
               translationService);
         this.headerEditor = headerEditor;
@@ -92,6 +92,7 @@ public class RelationEditorDefinition extends BaseEditorDefinition<Relation, Rel
 
     @Override
     public void enrich(final Optional<String> nodeUUID,
+                       final HasExpression hasExpression,
                        final Optional<Relation> expression) {
         expression.ifPresent(relation -> {
             final InformationItem column = new InformationItem();
@@ -130,7 +131,7 @@ public class RelationEditorDefinition extends BaseEditorDefinition<Relation, Rel
                                             sessionCommandManager,
                                             canvasCommandFactory,
                                             editorSelectedEvent,
-                                            refreshFormPropertiesEvent,
+                                            domainObjectSelectionEvent,
                                             getCellEditorControls(),
                                             listSelector,
                                             translationService,

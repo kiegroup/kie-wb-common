@@ -32,7 +32,7 @@ public class DecisionTablePropertyConverter {
     public static DecisionTable wbFromDMN(final org.kie.dmn.model.api.DecisionTable dmn) {
         Id id = new Id(dmn.getId());
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
+        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
 
         DecisionTable result = new DecisionTable();
         result.setId(id);
@@ -76,19 +76,34 @@ public class DecisionTablePropertyConverter {
     }
 
     public static org.kie.dmn.model.api.DecisionTable dmnFromWB(final DecisionTable wb) {
-        org.kie.dmn.model.api.DecisionTable result = new org.kie.dmn.model.v1_1.TDecisionTable();
+        org.kie.dmn.model.api.DecisionTable result = new org.kie.dmn.model.v1_2.TDecisionTable();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         for (InputClause input : wb.getInput()) {
-            result.getInput().add(InputClausePropertyConverter.dmnFromWB(input));
+            org.kie.dmn.model.api.InputClause c = InputClausePropertyConverter.dmnFromWB(input);
+            if (c != null) {
+                c.setParent(result);
+            }
+            result.getInput().add(c);
         }
         for (OutputClause input : wb.getOutput()) {
-            result.getOutput().add(OutputClausePropertyConverter.dmnFromWB(input));
+            org.kie.dmn.model.api.OutputClause c = OutputClausePropertyConverter.dmnFromWB(input);
+            if (c != null) {
+                c.setParent(result);
+            }
+            result.getOutput().add(c);
+        }
+        if (result.getOutput().size() == 1) {
+            result.getOutput().get(0).setName(null); // DROOLS-3281
         }
         for (DecisionRule dr : wb.getRule()) {
-            result.getRule().add(DecisionRulePropertyConverter.dmnFromWB(dr));
+            org.kie.dmn.model.api.DecisionRule c = DecisionRulePropertyConverter.dmnFromWB(dr);
+            if (c != null) {
+                c.setParent(result);
+            }
+            result.getRule().add(c);
         }
         if (wb.getHitPolicy() != null) {
             result.setHitPolicy(org.kie.dmn.model.api.HitPolicy.fromValue(wb.getHitPolicy().value()));

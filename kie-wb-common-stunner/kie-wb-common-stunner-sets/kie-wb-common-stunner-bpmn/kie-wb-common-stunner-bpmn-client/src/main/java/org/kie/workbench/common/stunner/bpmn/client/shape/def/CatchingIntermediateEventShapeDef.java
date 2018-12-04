@@ -16,14 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape.def;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNGlyphFactory;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
 import org.kie.workbench.common.stunner.bpmn.client.shape.view.handler.EventCancelActivityViewHandler;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
@@ -54,28 +55,32 @@ public class CatchingIntermediateEventShapeDef
                     .put(IntermediateConditionalEvent.class,
                          BPMNSVGViewFactory::intermediateConditionalEvent)
                     .put(IntermediateEscalationEvent.class,
-                         BPMNSVGViewFactory::intermediateEscalationCatchingEvent);
+                         BPMNSVGViewFactory::intermediateEscalationCatchingEvent)
+                    .put(IntermediateCompensationEvent.class,
+                         BPMNSVGViewFactory::intermediateCompensationCatchingEvent);
 
     public static final Map<Class<? extends BaseCatchingIntermediateEvent>, Glyph> GLYPHS =
-            new HashMap<Class<? extends BaseCatchingIntermediateEvent>, Glyph>() {{
-                put(IntermediateTimerEvent.class,
-                    BPMNGlyphFactory.EVENT_INTERMEDIATE_TIMER);
-                put(IntermediateSignalEventCatching.class,
-                    BPMNGlyphFactory.EVENT_INTERMEDIATE_SIGNAL);
-                put(IntermediateErrorEventCatching.class,
-                    BPMNGlyphFactory.EVENT_INTERMEDIATE_ERROR);
-                put(IntermediateMessageEventCatching.class,
-                    BPMNGlyphFactory.EVENT_INTERMEDIATE_MESSAGE);
-                put(IntermediateConditionalEvent.class,
-                    BPMNGlyphFactory.EVENT_INTERMEDIATE_CONDITIONAL);
-                put(IntermediateEscalationEvent.class,
-                    BPMNGlyphFactory.EVENT_INTERMEDIATE_ESCALATION);
-            }};
+            new Maps.Builder<Class<? extends BaseCatchingIntermediateEvent>, Glyph>()
+                    .put(IntermediateTimerEvent.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_TIMER)
+                    .put(IntermediateSignalEventCatching.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_SIGNAL)
+                    .put(IntermediateErrorEventCatching.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_ERROR)
+                    .put(IntermediateMessageEventCatching.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_MESSAGE)
+                    .put(IntermediateConditionalEvent.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_CONDITIONAL)
+                    .put(IntermediateEscalationEvent.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_ESCALATION)
+                    .put(IntermediateCompensationEvent.class,
+                         BPMNGlyphFactory.EVENT_INTERMEDIATE_COMPENSATION)
+                    .build();
 
     @Override
     public FontHandler<BaseCatchingIntermediateEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .positon(event -> HasTitle.Position.BOTTOM)
+                .position(event -> HasTitle.Position.BOTTOM)
                 .build();
     }
 

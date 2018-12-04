@@ -151,9 +151,9 @@ public interface DefaultWorkbenchConstants
 
     String StunnerDesigner();
 
-    String DMNDesigner();
-
     String StunnerDesignerPreferences();
+
+    String SSHKeys();
 
     String InvalidBusResponseProbablySessionTimeout();
 
@@ -169,5 +169,13 @@ public interface DefaultWorkbenchConstants
 
     String ScenarioSimulationEditor();
 
+    String ExperimentalSettings();
     String ProcessAdministration();
+
+    String TestReport();
+
+    String EditProfilePreferences();
+
+    String EditProfilePreferencesHelp();
+
 }

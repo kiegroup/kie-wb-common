@@ -39,10 +39,10 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorCh
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 
 public abstract class BaseSupplementaryFunctionEditorDefinition extends BaseEditorDefinition<Context, FunctionSupplementaryGridData> {
 
@@ -57,7 +57,7 @@ public abstract class BaseSupplementaryFunctionEditorDefinition extends BaseEdit
                                                      final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                                      final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                                      final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                                     final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                                     final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                                      final ListSelectorView.Presenter listSelector,
                                                      final TranslationService translationService,
                                                      final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
@@ -66,7 +66,7 @@ public abstract class BaseSupplementaryFunctionEditorDefinition extends BaseEdit
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               listSelector,
               translationService);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
@@ -79,6 +79,7 @@ public abstract class BaseSupplementaryFunctionEditorDefinition extends BaseEdit
 
     @Override
     public void enrich(final Optional<String> nodeUUID,
+                       final HasExpression hasExpression,
                        final Optional<Context> expression) {
         expression.ifPresent(context -> {
             getVariableNames().forEach(name -> {
@@ -113,7 +114,7 @@ public abstract class BaseSupplementaryFunctionEditorDefinition extends BaseEdit
                                                          sessionCommandManager,
                                                          canvasCommandFactory,
                                                          editorSelectedEvent,
-                                                         refreshFormPropertiesEvent,
+                                                         domainObjectSelectionEvent,
                                                          getCellEditorControls(),
                                                          listSelector,
                                                          translationService,

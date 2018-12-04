@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.Question;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.resource.i18n.DMNAPIConstants;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
@@ -41,6 +43,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
@@ -49,17 +52,20 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
-public class Decision extends DRGElement implements HasExpression,
-                                                    HasVariable,
-                                                    DMNViewDefinition {
+@Definition(graphFactory = NodeFactory.class, nameField = "name")
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
+public class Decision extends DRGElement implements DomainObject,
+                                                    HasExpression,
+                                                    DMNViewDefinition,
+                                                    HasVariable<InformationItemPrimary> {
 
     @Category
-    public static final transient String stunnerCategory = Categories.NODES;
+    private static final String stunnerCategory = Categories.NODES;
 
     @Labels
-    private final Set<String> stunnerLabels = new Sets.Builder<String>()
+    private static final Set<String> stunnerLabels = new Sets.Builder<String>()
             .add("decision")
             .build();
 
@@ -76,7 +82,7 @@ public class Decision extends DRGElement implements HasExpression,
     @PropertySet
     @FormField(afterElement = "allowedAnswers")
     @Valid
-    protected InformationItem variable;
+    protected InformationItemPrimary variable;
 
     protected Expression expression;
 
@@ -101,7 +107,7 @@ public class Decision extends DRGElement implements HasExpression,
              new Name(),
              new Question(),
              new AllowedAnswers(),
-             new InformationItem(),
+             new InformationItemPrimary(),
              null,
              new BackgroundSet(),
              new FontSet(),
@@ -113,7 +119,7 @@ public class Decision extends DRGElement implements HasExpression,
                     final Name name,
                     final Question question,
                     final AllowedAnswers allowedAnswers,
-                    final InformationItem variable,
+                    final InformationItemPrimary variable,
                     final Expression expression,
                     final BackgroundSet backgroundSet,
                     final FontSet fontSet,
@@ -128,6 +134,8 @@ public class Decision extends DRGElement implements HasExpression,
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
+
+        setVariableParent();
     }
 
     // -----------------------
@@ -190,12 +198,12 @@ public class Decision extends DRGElement implements HasExpression,
     }
 
     @Override
-    public InformationItem getVariable() {
+    public InformationItemPrimary getVariable() {
         return variable;
     }
 
     @Override
-    public void setVariable(final InformationItem variable) {
+    public void setVariable(final InformationItemPrimary variable) {
         this.variable = variable;
     }
 
@@ -212,6 +220,20 @@ public class Decision extends DRGElement implements HasExpression,
     @Override
     public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
         return this;
+    }
+
+    // ------------------------------------------------------
+    // DomainObject requirements - to use in Properties Panel
+    // ------------------------------------------------------
+
+    @Override
+    public String getDomainObjectUUID() {
+        return getId().getValue();
+    }
+
+    @Override
+    public String getDomainObjectNameTranslationKey() {
+        return DMNAPIConstants.Decision_DomainObjectName;
     }
 
     @Override
@@ -268,5 +290,9 @@ public class Decision extends DRGElement implements HasExpression,
                                          backgroundSet != null ? backgroundSet.hashCode() : 0,
                                          fontSet != null ? fontSet.hashCode() : 0,
                                          dimensionsSet != null ? dimensionsSet.hashCode() : 0);
+    }
+
+    private void setVariableParent() {
+        Optional.ofNullable(variable).ifPresent(v -> v.setParent(this));
     }
 }

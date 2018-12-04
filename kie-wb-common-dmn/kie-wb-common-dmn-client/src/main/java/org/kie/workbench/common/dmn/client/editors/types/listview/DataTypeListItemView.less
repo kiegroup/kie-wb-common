@@ -16,13 +16,20 @@
 
 [data-i18n-prefix="DataTypeListItemView."] {
 
+  &.has-sub-data-types {
+    [data-type-field="constraint-container"] {
+      .nesting-level {
+        padding-left: 35px;
+      }
+    }
+  }
+
   &.list-group-item:hover {
     background: #eff8ff;
   }
 
   &.list-group-item {
     border-color: #e2e4e3;
-    height: 50px;
     padding: 0 5px 0 0;
   }
 
@@ -30,7 +37,7 @@
     background: #eff8ff;
   }
 
-  [data-field="arrow-button"] {
+  [data-type-field="arrow-button"] {
     cursor: pointer;
   }
 
@@ -66,16 +73,54 @@
 
   .list-view-pf-main-info {
     padding-top: 8px;
+    padding-bottom: 8px;
 
-    [data-field="level"] {
-      height: 32px;
-    }
-
-    [data-field="arrow-button"] {
+    [data-type-field="arrow-button"] {
       margin-left: -20px;
       width: 55px;
       display: inline-block
     }
+
+    [data-type-field="type"],
+    [data-type-field="constraint"] {
+      display: inline-block;
+      width: 215px;
+    }
+  }
+
+  .nesting-level {
+    height: 32px;
+  }
+
+  [data-type-field="constraint-container"] {
+    display: flex;
+
+    .nesting-level {
+      flex: 0;
+    }
+
+    [data-type-field="constraint"] {
+      flex: 1;
+      margin-bottom: 15px;
+    }
+  }
+
+  .collection-component {
+    font-size: 11px;
+    padding-left: 15px;
+
+    & > div {
+      margin-top: 2px;
+    }
+
+    span + div {
+      margin-top: -4px;
+    }
+  }
+
+  .constraint-text {
+    padding: 0 35px;
+    font-style: italic;
   }
 
   .list-view-pf-actions {

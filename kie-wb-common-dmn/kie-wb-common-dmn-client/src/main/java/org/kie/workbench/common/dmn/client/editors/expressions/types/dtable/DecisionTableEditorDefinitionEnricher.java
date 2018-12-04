@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable;
@@ -34,12 +36,15 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.HitPolicy;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorModelEnricher;
+import org.kie.workbench.common.dmn.client.editors.expressions.util.TypeRefUtils;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -78,6 +83,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
     @Override
     public void enrich(final Optional<String> nodeUUID,
+                       final HasExpression hasExpression,
                        final Optional<DecisionTable> expression) {
         expression.ifPresent(dtable -> {
             dtable.setHitPolicy(HitPolicy.ANY);
@@ -85,7 +91,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
             final InputClause inputClause = new InputClause();
             final LiteralExpression literalExpression = new LiteralExpression();
-            literalExpression.setText(DecisionTableDefaultValueUtilities.getNewInputClauseName(dtable));
+            literalExpression.getText().setValue(DecisionTableDefaultValueUtilities.getNewInputClauseName(dtable));
             inputClause.setInputExpression(literalExpression);
             dtable.getInput().add(inputClause);
 
@@ -95,11 +101,11 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
             final DecisionRule decisionRule = new DecisionRule();
             final UnaryTests decisionRuleUnaryTest = new UnaryTests();
-            decisionRuleUnaryTest.setText(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
+            decisionRuleUnaryTest.getText().setValue(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
             decisionRule.getInputEntry().add(decisionRuleUnaryTest);
 
             final LiteralExpression decisionRuleLiteralExpression = new LiteralExpression();
-            decisionRuleLiteralExpression.setText(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
+            decisionRuleLiteralExpression.getText().setValue(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
             decisionRule.getOutputEntry().add(decisionRuleLiteralExpression);
 
             final Description description = new Description();
@@ -120,6 +126,13 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                 enrichInputClauses(nodeUUID.get(), dtable);
             } else {
                 enrichOutputClauses(dtable);
+            }
+
+            if (dtable.getOutput().size() > 0) {
+                final HasTypeRef hasTypeRef = TypeRefUtils.getTypeRefOfExpression(dtable, hasExpression);
+                if (!Objects.isNull(hasTypeRef)) {
+                    dtable.getOutput().get(0).setTypeRef(hasTypeRef.getTypeRef());
+                }
             }
         });
     }
@@ -164,14 +177,14 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                 .forEach(inputClauseRequirement -> {
                     final InputClause inputClause = new InputClause();
                     final LiteralExpression literalExpression = new LiteralExpression();
-                    literalExpression.setText(inputClauseRequirement.text);
+                    literalExpression.getText().setValue(inputClauseRequirement.text);
                     literalExpression.setTypeRef(inputClauseRequirement.typeRef);
                     inputClause.setInputExpression(literalExpression);
                     dtable.getInput().add(inputClause);
 
                     dtable.getRule().stream().forEach(decisionRule -> {
                         final UnaryTests decisionRuleUnaryTest = new UnaryTests();
-                        decisionRuleUnaryTest.setText(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
+                        decisionRuleUnaryTest.getText().setValue(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
                         decisionRule.getInputEntry().add(decisionRuleUnaryTest);
                         decisionRuleUnaryTest.setParent(decisionRule);
                     });
@@ -185,21 +198,35 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                                            final Definitions definitions,
                                            final List<InputClauseRequirement> inputClauseRequirements,
                                            final String text) {
-        if (QName.NULL_NS_URI.equals(typeRef.getNamespaceURI()) && QName.DEFAULT_NS_PREFIX.equals(typeRef.getPrefix())) {
-            //Lookup and expand ItemDefinition from the QName's LocalPart
-            definitions.getItemDefinition()
-                    .stream()
-                    .filter(itemDef -> itemDef.getName().getValue().equals(typeRef.getLocalPart()))
-                    .findFirst()
-                    .ifPresent(itemDefinition -> itemDefinition
-                            .getItemComponent()
-                            .forEach(itemDefinitionComponent -> addInputClauseRequirement(itemDefinitionComponent.getTypeRef(),
-                                                                                          definitions,
-                                                                                          inputClauseRequirements,
-                                                                                          text + "." + itemDefinitionComponent.getName().getValue())));
-        } else {
+        //TypeRef matches a BuiltInType
+        for (BuiltInType bi : BuiltInType.values()) {
+            for (String biName : bi.getNames()) {
+                if (Objects.equals(biName, typeRef.getLocalPart())) {
+                    inputClauseRequirements.add(new InputClauseRequirement(text, typeRef));
+                    return;
+                }
+            }
+        }
+
+        //Otherwise lookup and expand ItemDefinition from the QName's LocalPart
+        definitions.getItemDefinition()
+                .stream()
+                .filter(itemDef -> itemDef.getName().getValue().equals(typeRef.getLocalPart()))
+                .findFirst()
+                .ifPresent(itemDefinition -> addInputClauseRequirement(itemDefinition, inputClauseRequirements, text));
+    }
+
+    private void addInputClauseRequirement(final ItemDefinition itemDefinition,
+                                           final List<InputClauseRequirement> inputClauseRequirements,
+                                           final String text) {
+        if (itemDefinition.getItemComponent().size() == 0) {
             inputClauseRequirements.add(new InputClauseRequirement(text,
-                                                                   typeRef));
+                                                                   itemDefinition.getTypeRef()));
+        } else {
+            itemDefinition.getItemComponent()
+                    .forEach(itemComponent -> addInputClauseRequirement(itemComponent,
+                                                                        inputClauseRequirements,
+                                                                        text + "." + itemComponent.getName().getValue()));
         }
     }
 
@@ -215,7 +242,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
             dtable.getRule().stream().forEach(decisionRule -> {
                 final LiteralExpression decisionRuleLiteralExpression = new LiteralExpression();
-                decisionRuleLiteralExpression.setText(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
+                decisionRuleLiteralExpression.getText().setValue(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
                 decisionRule.getOutputEntry().add(decisionRuleLiteralExpression);
                 decisionRuleLiteralExpression.setParent(decisionRule);
             });

@@ -234,8 +234,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
 
     public static String toClassMemberId(final String className) {
         int i = className.lastIndexOf(".");
-        String s = i > -1 ? className.substring(i + 1,
-                                                className.length()) : className;
+        String s = i > -1 ? className.substring(i + 1) : className;
         return toValidId(s);
     }
 
@@ -243,8 +242,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
     protected boolean processWithExceptions(final Set<? extends TypeElement> set,
                                             final RoundEnvironment roundEnv) throws Exception {
         if (roundEnv.processingOver()) {
-            return processLastRound(set,
-                                    roundEnv);
+            return processLastRound();
         }
         //If prior processing threw an error exit
         if (roundEnv.errorRaised()) {
@@ -253,15 +251,11 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         final Elements elementUtils = processingEnv.getElementUtils();
         // Process Definition Sets types found on the processing environment.
         for (Element e : roundEnv.getElementsAnnotatedWith(elementUtils.getTypeElement(ANNOTATION_DEFINITION_SET))) {
-            processDefinitionSets(set,
-                                  e,
-                                  roundEnv);
+            processDefinitionSets(e);
         }
         // Process Definition types found on the processing environment.
         for (Element e : roundEnv.getElementsAnnotatedWith(elementUtils.getTypeElement(ANNOTATION_DEFINITION))) {
-            processDefinitions(set,
-                               e,
-                               roundEnv);
+            processDefinitions(e);
         }
         // Process Property Sets types found on the processing environment
         // AND
@@ -273,9 +267,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             addAll(processingContext.getPropertySetElements());
         }};
         for (Element e : propertySetElements) {
-            processPropertySets(set,
-                                e,
-                                roundEnv);
+            processPropertySets(e);
         }
         // Process Property types found on the processing environment
         // AND
@@ -287,9 +279,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             addAll(processingContext.getPropertyElements());
         }};
         for (Element e : propertyElements) {
-            processProperties(set,
-                              e,
-                              roundEnv);
+            processProperties(e);
         }
         final Set<? extends Element> containRules = new LinkedHashSet<Element>() {{
             addAll(roundEnv.getElementsAnnotatedWith(elementUtils.getTypeElement(ANNOTATION_RULE_CAN_CONTAIN)));
@@ -339,9 +329,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processDefinitionSets(final Set<? extends TypeElement> set,
-                                          final Element e,
-                                          final RoundEnvironment roundEnv) throws Exception {
+    private boolean processDefinitionSets(final Element e) {
         final Messager messager = processingEnv.getMessager();
         final boolean isClass = e.getKind() == ElementKind.CLASS;
         if (isClass) {
@@ -364,7 +352,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             DefinitionSet definitionSetAnn = e.getAnnotation(DefinitionSet.class);
             List<? extends TypeMirror> mirrors = null;
             try {
-                Class<?>[] defsClasses = definitionSetAnn.definitions();
+                definitionSetAnn.definitions();
             } catch (MirroredTypesException mte) {
                 mirrors = mte.getTypeMirrors();
             }
@@ -388,7 +376,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             // Graph factory type.
             TypeMirror mirror = null;
             try {
-                Class<?> graphClass = definitionSetAnn.graphFactory();
+                definitionSetAnn.graphFactory();
             } catch (MirroredTypeException mte) {
                 mirror = mte.getTypeMirror();
             }
@@ -400,7 +388,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                                                                                 fqcn);
             // Definition Set's qualifier.
             try {
-                Class<?> qualifierClass = definitionSetAnn.qualifier();
+                definitionSetAnn.qualifier();
             } catch (MirroredTypeException mte) {
                 mirror = mte.getTypeMirror();
             }
@@ -413,9 +401,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processDefinitions(final Set<? extends TypeElement> set,
-                                       final Element e,
-                                       final RoundEnvironment roundEnv) throws Exception {
+    private boolean processDefinitions(final Element e) {
         final boolean isClass = e.getKind() == ElementKind.CLASS;
         if (isClass) {
             TypeElement classElement = (TypeElement) e;
@@ -467,7 +453,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             Definition definitionAnn = e.getAnnotation(Definition.class);
             TypeMirror mirror = null;
             try {
-                Class<?> graphClass = definitionAnn.graphFactory();
+                definitionAnn.graphFactory();
             } catch (MirroredTypeException mte) {
                 mirror = mte.getTypeMirror();
             }
@@ -477,6 +463,13 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             String fqcn = mirror.toString();
             processingContext.getDefinitionAnnotations().getGraphFactoryFieldNames().put(defintionClassName,
                                                                                          fqcn);
+
+            //Title Field
+            if (StringUtils.isNotBlank(definitionAnn.nameField())) {
+                processingContext.getDefinitionAnnotations().getNameFields().put(defintionClassName,
+                                                                                 definitionAnn.nameField());
+            }
+
             // PropertySets fields.
             Map<String, Element> propertySetElements = getFieldNames(classElement,
                                                                      ANNOTATION_PROPERTY_SET);
@@ -509,7 +502,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 if (null == defaultTypesMap.get(morphBaseClassName)) {
                     TypeMirror morphDefaultTypeMirror = null;
                     try {
-                        Class<?> defaultTypeClass = morphBaseAnn.defaultType();
+                        morphBaseAnn.defaultType();
                     } catch (MirroredTypeException mte) {
                         morphDefaultTypeMirror = mte.getTypeMirror();
                     }
@@ -522,7 +515,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                     // MorphBase - targets
                     List<? extends TypeMirror> morphTargetMirrors = null;
                     try {
-                        Class<?>[] defsClasses = morphBaseAnn.targets();
+                        morphBaseAnn.targets();
                     } catch (MirroredTypesException mte) {
                         morphTargetMirrors = mte.getTypeMirrors();
                     }
@@ -541,7 +534,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 }
                 TypeMirror morphBaseTypeMirror = null;
                 try {
-                    Class<?> defaultTypeClass = morphAnn.base();
+                    morphAnn.base();
                 } catch (MirroredTypeException mte) {
                     morphBaseTypeMirror = mte.getTypeMirror();
                 }
@@ -549,22 +542,11 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                     throw new RuntimeException("No base type class specifyed for the @MorphBase.");
                 }
                 String morphBaseTypeClassName = morphBaseTypeMirror.toString();
-                Set<String> currentTargets = processingContext.getMorphingAnnotations().getBaseTargets().get(morphBaseTypeClassName);
-                if (null == currentTargets) {
-                    currentTargets = new LinkedHashSet<>();
-                    processingContext.getMorphingAnnotations().getBaseTargets().put(morphBaseTypeClassName,
-                                                                                    currentTargets);
-                }
+                Set<String> currentTargets = processingContext.getMorphingAnnotations().getBaseTargets().computeIfAbsent(morphBaseTypeClassName, k -> new LinkedHashSet<>());
                 currentTargets.add(defintionClassName);
             }
         }
         return false;
-    }
-
-    private String getTypeName(final Element e) {
-        TypeElement classElement = (TypeElement) e;
-        PackageElement packageElement = (PackageElement) classElement.getEnclosingElement();
-        return packageElement.getQualifiedName().toString() + "." + classElement.getSimpleName();
     }
 
     private TypeElement getAnnotationInTypeInheritance(final TypeElement classElement,
@@ -617,7 +599,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 MorphProperty morphBaseAnn = variableElement.getAnnotation(MorphProperty.class);
                 TypeMirror morphDefaultTypeMirror = null;
                 try {
-                    Class<?> defaultTypeClass = morphBaseAnn.binder();
+                    morphBaseAnn.binder();
                 } catch (MirroredTypeException mte) {
                     morphDefaultTypeMirror = mte.getTypeMirror();
                 }
@@ -628,12 +610,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 ProcessingMorphProperty morphProperty = new ProcessingMorphProperty(fieldReturnTypeName,
                                                                                     StringUtils.capitalize(fieldName),
                                                                                     binderClassName);
-                List<ProcessingMorphProperty> morphProperties = processingContext.getMorphingAnnotations().getBaseMorphProperties().get(definitionClassName);
-                if (null == morphProperties) {
-                    morphProperties = new LinkedList<>();
-                    processingContext.getMorphingAnnotations().getBaseMorphProperties().put(definitionClassName,
-                                                                                            morphProperties);
-                }
+                List<ProcessingMorphProperty> morphProperties = processingContext.getMorphingAnnotations().getBaseMorphProperties().computeIfAbsent(definitionClassName, k -> new LinkedList<>());
                 morphProperties.add(morphProperty);
             }
         }
@@ -668,7 +645,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         Definition definitionAnn = e.getAnnotation(Definition.class);
         TypeMirror bMirror = null;
         try {
-            Class<?> builderClass = definitionAnn.builder();
+            definitionAnn.builder();
         } catch (MirroredTypeException mte) {
             bMirror = mte.getTypeMirror();
         }
@@ -688,7 +665,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         DefinitionSet definitionAnn = e.getAnnotation(DefinitionSet.class);
         TypeMirror bMirror = null;
         try {
-            Class<?> builderClass = definitionAnn.builder();
+            definitionAnn.builder();
         } catch (MirroredTypeException mte) {
             bMirror = mte.getTypeMirror();
         }
@@ -699,9 +676,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         }
     }
 
-    private boolean processPropertySets(final Set<? extends TypeElement> set,
-                                        final Element e,
-                                        final RoundEnvironment roundEnv) throws Exception {
+    private boolean processPropertySets(final Element e) {
         final boolean isClass = e.getKind() == ElementKind.CLASS;
         if (isClass) {
             TypeElement classElement = (TypeElement) e;
@@ -729,9 +704,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return false;
     }
 
-    private boolean processProperties(final Set<? extends TypeElement> set,
-                                      final Element e,
-                                      final RoundEnvironment roundEnv) throws Exception {
+    private boolean processProperties(final Element e) throws Exception {
         final boolean isClass = e.getKind() == ElementKind.CLASS;
         if (isClass) {
             TypeElement classElement = (TypeElement) e;
@@ -862,7 +835,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return result;
     }
 
-    private boolean processContainmentRules(final Element e) throws Exception {
+    private boolean processContainmentRules(final Element e) {
         final Messager messager = processingEnv.getMessager();
         final boolean isIface = e.getKind() == ElementKind.INTERFACE;
         final boolean isClass = e.getKind() == ElementKind.CLASS;
@@ -881,7 +854,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processRuleExtension(final Element e) throws Exception {
+    private boolean processRuleExtension(final Element e) {
         final Messager messager = processingEnv.getMessager();
         final boolean isIface = e.getKind() == ElementKind.INTERFACE;
         final boolean isClass = e.getKind() == ElementKind.CLASS;
@@ -900,7 +873,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processDockingRules(final Element e) throws Exception {
+    private boolean processDockingRules(final Element e) {
         final Messager messager = processingEnv.getMessager();
         final boolean isIface = e.getKind() == ElementKind.INTERFACE;
         final boolean isClass = e.getKind() == ElementKind.CLASS;
@@ -919,7 +892,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processEdgeCardinalityRules(final Element e) throws Exception {
+    private boolean processEdgeCardinalityRules(final Element e) {
         final Messager messager = processingEnv.getMessager();
         final boolean isIface = e.getKind() == ElementKind.INTERFACE;
         final boolean isClass = e.getKind() == ElementKind.CLASS;
@@ -938,7 +911,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processCardinalityRules(final Element e) throws Exception {
+    private boolean processCardinalityRules(final Element e) {
         final Messager messager = processingEnv.getMessager();
         final boolean isIface = e.getKind() == ElementKind.INTERFACE;
         final boolean isClass = e.getKind() == ElementKind.CLASS;
@@ -957,7 +930,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processConnectionRules(final Element element) throws Exception {
+    private boolean processConnectionRules(final Element element) {
         final Messager messager = processingEnv.getMessager();
         final boolean isIface = element.getKind() == ElementKind.INTERFACE;
         final boolean isClass = element.getKind() == ElementKind.CLASS;
@@ -999,29 +972,19 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         }
     }
 
-    private boolean processLastRound(final Set<? extends TypeElement> set,
-                                     final RoundEnvironment roundEnv) throws Exception {
-        processLastRoundDefinitionSetProxyAdapter(set,
-                                                  roundEnv);
-        processLastRoundDefinitionSetAdapter(set,
-                                             roundEnv);
-        processLastRoundPropertySetAdapter(set,
-                                           roundEnv);
-        processLastRoundDefinitionFactory(set,
-                                          roundEnv);
-        processLastRoundDefinitionAdapter(set,
-                                          roundEnv);
-        processLastRoundPropertyAdapter(set,
-                                        roundEnv);
-        processLastRoundRuleAdapter(set,
-                                    roundEnv);
-        processLastRoundMorphing(set,
-                                 roundEnv);
+    private boolean processLastRound() throws Exception {
+        processLastRoundDefinitionSetProxyAdapter();
+        processLastRoundDefinitionSetAdapter();
+        processLastRoundPropertySetAdapter();
+        processLastRoundDefinitionFactory();
+        processLastRoundDefinitionAdapter();
+        processLastRoundPropertyAdapter();
+        processLastRoundRuleAdapter();
+        processLastRoundMorphing();
         return true;
     }
 
-    private boolean processLastRoundMorphing(final Set<? extends TypeElement> set,
-                                             final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundMorphing() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1106,15 +1069,13 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
     private String[] getMorphDefinitionClassName(final String packageName,
                                                  final String baseType,
                                                  final String suffix) {
-        String baseTypeName = baseType.substring(baseType.lastIndexOf(".") + 1,
-                                                 baseType.length());
+        String baseTypeName = baseType.substring(baseType.lastIndexOf(".") + 1);
         final String className = baseTypeName + suffix;
         String fqcn = packageName + "." + className;
         return new String[]{className, fqcn};
     }
 
-    private boolean processLastRoundRuleAdapter(final Set<? extends TypeElement> set,
-                                                final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundRuleAdapter() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1139,8 +1100,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processLastRoundDefinitionSetAdapter(final Set<? extends TypeElement> set,
-                                                         final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundDefinitionSetAdapter() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1164,8 +1124,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processLastRoundDefinitionSetProxyAdapter(final Set<? extends TypeElement> set,
-                                                              final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundDefinitionSetProxyAdapter() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1190,8 +1149,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processLastRoundPropertySetAdapter(final Set<? extends TypeElement> set,
-                                                       final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundPropertySetAdapter() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1215,8 +1173,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processLastRoundDefinitionFactory(final Set<? extends TypeElement> set,
-                                                      final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundDefinitionFactory() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             final int size = processingContext.getDefinitionAnnotations().getBuilderFieldNames().size() +
@@ -1253,8 +1210,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processLastRoundDefinitionAdapter(final Set<? extends TypeElement> set,
-                                                      final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundDefinitionAdapter() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1278,8 +1234,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    private boolean processLastRoundPropertyAdapter(final Set<? extends TypeElement> set,
-                                                    final RoundEnvironment roundEnv) throws Exception {
+    private boolean processLastRoundPropertyAdapter() throws Exception {
         final Messager messager = processingEnv.getMessager();
         try {
             // Ensure visible on both backend and client sides.
@@ -1315,16 +1270,6 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
 
     private void note(String message) {
         log(Diagnostic.Kind.NOTE,
-            message);
-    }
-
-    private void warn(String message) {
-        log(Diagnostic.Kind.WARNING,
-            message);
-    }
-
-    private void error(String message) {
-        log(Diagnostic.Kind.ERROR,
             message);
     }
 

@@ -23,12 +23,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -39,6 +42,8 @@ import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.GridFactoryCommandUtils;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
@@ -50,6 +55,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellValueTuple;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
@@ -57,7 +63,6 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -65,7 +70,9 @@ import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.DefaultGridWidgetCellSelectorMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 
@@ -79,6 +86,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -92,6 +100,10 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     private static final String DEFINITION = "definition";
 
     private static final String NAME_ID = "nameId";
+
+    private static final double COLUMN_WIDTH = 100.0;
+
+    private static final double HEADER_HEIGHT = 100.0;
 
     private GridCellTuple tupleWithoutValue;
 
@@ -115,6 +127,9 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     @Mock
     private UpdateElementPropertyCommand updateElementPropertyCommand;
 
+    @Mock
+    private Group header;
+
     @Captor
     private ArgumentCaptor<GridLayerRedrawManager.PrioritizedCommand> redrawCommandCaptor;
 
@@ -122,7 +137,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     private ArgumentCaptor<Command> commandCaptor;
 
     @Captor
-    private ArgumentCaptor<RefreshFormProperties> refreshFormPropertiesCaptor;
+    private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
 
     private Decision decision = new Decision();
 
@@ -141,6 +156,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         when(definition.getDefinition()).thenReturn(DEFINITION);
         when(definitionUtils.getNameIdentifier(DEFINITION)).thenReturn(NAME_ID);
         when(updateElementPropertyCommand.execute(canvasHandler)).thenReturn(CanvasCommandResultBuilder.SUCCESS);
+
+        when(grid.getHeader()).thenReturn(header);
+        when(header.getY()).thenReturn(0.0);
+        when(renderer.getHeaderHeight()).thenReturn(HEADER_HEIGHT);
+        when(renderer.getHeaderRowHeight()).thenReturn(HEADER_HEIGHT);
     }
 
     @Override
@@ -164,7 +184,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
                                       sessionCommandManager,
                                       canvasCommandFactory,
                                       editorSelectedEvent,
-                                      refreshFormPropertiesEvent,
+                                      domainObjectSelectionEvent,
                                       cellEditorControls,
                                       listSelector,
                                       translationService,
@@ -189,6 +209,25 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
                 return false;
             }
         };
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testDefaultNodeMouseClickHandlers() {
+        final List<NodeMouseEventHandler> handlers = grid.getNodeMouseClickEventHandlers(gridLayer);
+
+        assertThat(handlers).hasSize(2);
+        assertThat(handlers.get(0)).isInstanceOf(DefaultGridWidgetCellSelectorMouseEventHandler.class);
+        assertThat(handlers.get(1)).isInstanceOf(EditableHeaderGridWidgetEditCellMouseEventHandler.class);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testDefaultNodeMouseDoubleClickHandlers() {
+        final List<NodeMouseEventHandler> handlers = grid.getNodeMouseDoubleClickEventHandlers(gridLayer, gridLayer);
+
+        assertThat(handlers).hasSize(1);
+        assertThat(handlers.get(0)).isInstanceOf(EditableHeaderGridWidgetEditCellMouseEventHandler.class);
     }
 
     @Test
@@ -281,6 +320,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         assertTrue(grid.getModel().getSelectedCells().isEmpty());
         verify(editorSelectedEvent).fire(any(ExpressionEditorChanged.class));
+        verify(grid).clearSelectedDomainObject();
     }
 
     @Test
@@ -299,6 +339,10 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         assertThat(grid.getModel().getSelectedCells()).isNotEmpty();
         assertThat(grid.getModel().getSelectedCells()).contains(new GridData.SelectedCell(0, 0));
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test
@@ -320,29 +364,89 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         assertThat(grid.getModel().getSelectedCells()).isNotEmpty();
         assertThat(grid.getModel().getSelectedCells()).contains(new GridData.SelectedCell(0, 1));
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test
-    public void testSelectParentCellWithNullParent() {
-        grid.selectParentCell();
+    public void testSelectCellWithPoint() {
+        grid.getModel().appendRow(new DMNGridRow());
+        appendColumns(RowNumberColumn.class, GridColumn.class);
 
-        verify(gridLayer, never()).select(any(GridWidget.class));
+        final Point2D point = mock(Point2D.class);
+        final double columnOffset = grid.getModel().getColumns().get(0).getWidth();
+        final double columnWidth = grid.getModel().getColumns().get(1).getWidth() / 2;
+        final double rowOffset = HEADER_HEIGHT + grid.getModel().getRow(0).getHeight() / 2;
+        when(point.getX()).thenReturn(columnOffset + columnWidth);
+        when(point.getY()).thenReturn(rowOffset);
+
+        grid.selectCell(point, false, true);
+
+        assertThat(grid.getModel().getSelectedCells()).isNotEmpty();
+        assertThat(grid.getModel().getSelectedCells()).contains(new GridData.SelectedCell(0, 1));
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test
-    public void testSelectParentCellWithNonNullParent() {
-        final GridWidget parentGrid = mock(BaseExpressionGrid.class);
-        when(parentCell.getGridWidget()).thenReturn(parentGrid);
-        when(parentCell.getRowIndex()).thenReturn(0);
-        when(parentCell.getColumnIndex()).thenReturn(1);
+    public void testSelectExpressionEditorFirstCell() {
+        grid.getModel().appendRow(new DMNGridRow());
+        appendColumns(GridColumn.class);
 
-        grid.selectParentCell();
+        final ExpressionCellValue cellValue = mock(ExpressionCellValue.class);
+        final BaseExpressionGrid cellGrid = mock(BaseExpressionGrid.class);
+        when(cellValue.getValue()).thenReturn(Optional.of(cellGrid));
 
-        verify(gridLayer).select(parentGrid);
-        verify(parentGrid).selectCell(eq(0),
-                                      eq(1),
-                                      eq(false),
-                                      eq(false));
+        grid.getModel().setCellValue(0, 0, cellValue);
+
+        grid.selectExpressionEditorFirstCell(0, 0);
+
+        verify(gridLayer).select(cellGrid);
+        verify(cellGrid).selectFirstCell();
+    }
+
+    @Test
+    public void testSelectHeaderWithPoint() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendColumn(new RowNumberColumn());
+
+        final Point2D point = mock(Point2D.class);
+        final double columnOffset = grid.getModel().getColumns().get(0).getWidth();
+        final double columnWidth = grid.getModel().getColumns().get(1).getWidth() / 2;
+        when(point.getX()).thenReturn(columnOffset + columnWidth);
+        when(point.getY()).thenReturn(HEADER_HEIGHT / 2);
+
+        when(grid.getHeader()).thenReturn(header);
+        when(header.getY()).thenReturn(0.0);
+        when(renderer.getHeaderHeight()).thenReturn(HEADER_HEIGHT);
+        when(renderer.getHeaderRowHeight()).thenReturn(HEADER_HEIGHT);
+
+        grid.selectHeaderCell(point, false, false);
+
+        assertHeaderSelection();
+    }
+
+    @Test
+    public void testSelectHeaderWithCoordinate() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendColumn(new RowNumberColumn());
+
+        grid.selectHeaderCell(0, 1, false, false);
+
+        assertHeaderSelection();
+    }
+
+    private void assertHeaderSelection() {
+        assertThat(grid.getModel().getSelectedHeaderCells()).isNotEmpty();
+        assertThat(grid.getModel().getSelectedHeaderCells()).contains(new GridData.SelectedCell(0, 1));
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test
@@ -453,19 +557,20 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testClearDisplayNameConsumerWhenNotNested() {
-        final String uuid = UUID.uuid();
-        doReturn(Optional.of(uuid)).when(grid).getNodeUUID();
+        grid.fireDomainObjectSelectionEvent(decision);
+        reset(domainObjectSelectionEvent);
 
         doTestClearDisplayNameConsumer(false,
                                        DeleteHasNameCommand.class);
 
         verify(gridLayer).batch();
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
     }
 
     @Test
@@ -477,7 +582,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testClearDisplayNameConsumerWhenNotNestedAndUpdateStunnerTitle() {
+        grid.fireDomainObjectSelectionEvent(decision);
+        reset(domainObjectSelectionEvent);
+
         final String uuid = UUID.uuid();
         doReturn(Optional.of(uuid)).when(grid).getNodeUUID();
         when(index.get(uuid)).thenReturn(element);
@@ -489,11 +598,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         verify(gridLayer).batch();
         verify(updateElementPropertyCommand).execute(eq(canvasHandler));
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
     }
 
     @SuppressWarnings("unchecked")
@@ -520,19 +629,20 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSetDisplayNameConsumerWhenNotNested() {
-        final String uuid = UUID.uuid();
-        doReturn(Optional.of(uuid)).when(grid).getNodeUUID();
+        grid.fireDomainObjectSelectionEvent(decision);
+        reset(domainObjectSelectionEvent);
 
         doTestSetDisplayNameConsumer(false,
                                      SetHasNameCommand.class);
 
         verify(gridLayer).batch();
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
     }
 
     @Test
@@ -544,7 +654,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSetDisplayNameConsumerWhenNotNestedAndUpdateStunnerTitle() {
+        grid.fireDomainObjectSelectionEvent(decision);
+        reset(domainObjectSelectionEvent);
+
         final String uuid = UUID.uuid();
         doReturn(Optional.of(uuid)).when(grid).getNodeUUID();
         when(index.get(uuid)).thenReturn(element);
@@ -556,11 +670,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         verify(gridLayer).batch();
         verify(updateElementPropertyCommand).execute(eq(canvasHandler));
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
     }
 
     @SuppressWarnings("unchecked")
@@ -586,18 +700,19 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSetTypeRefConsumerWhenNotNested() {
-        final String uuid = UUID.uuid();
-        doReturn(Optional.of(uuid)).when(grid).getNodeUUID();
+        grid.fireDomainObjectSelectionEvent(decision);
+        reset(domainObjectSelectionEvent);
 
         doTestSetTypeRefConsumer();
 
         verify(gridLayer).batch();
-        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesCaptor.capture());
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
-        final RefreshFormProperties refreshFormProperties = refreshFormPropertiesCaptor.getValue();
-        assertThat(refreshFormProperties.getUuid()).isEqualTo(uuid);
-        assertThat(refreshFormProperties.getSession()).isEqualTo(session);
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
     }
 
     @SuppressWarnings("unchecked")
@@ -665,7 +780,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
             final GridColumn column = mock(columnClasses[i]);
             doReturn(i).when(column).getIndex();
             doReturn(true).when(column).isVisible();
-            doReturn(100.0).when(column).getWidth();
+            doReturn(COLUMN_WIDTH).when(column).getWidth();
             grid.getModel().appendColumn(column);
         });
     }

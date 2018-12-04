@@ -23,7 +23,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-showcase</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.13.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
 
 
@@ -570,6 +570,10 @@
       <groupId>org.kie.workbench.screens</groupId>
       <artifactId>kie-wb-common-examples-screen-backend</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.profile</groupId>
+      <artifactId>kie-wb-common-profile-api</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.kie.workbench.screens</groupId>
@@ -956,6 +960,11 @@
       <artifactId>uberfire-metadata-backend-elasticsearch</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-metadata-backend-infinispan</artifactId>
+    </dependency>
+
     <!-- UberFire -->
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -1018,6 +1027,21 @@
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3-extras</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Uberfire SSH -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-backend</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-client</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -1120,6 +1144,23 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
 
+    <!-- Experimental Deps -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-backend</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -1178,6 +1219,8 @@
             <compileSourcesArtifact>org.uberfire:uberfire-project-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-message-console-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-message-console-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-ssh-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-ssh-client</compileSourcesArtifact>
 
             <!-- Common dependencies -->
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-library-client</compileSourcesArtifact>
@@ -1217,6 +1260,7 @@
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-default-editor-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-default-editor-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-workbench-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.profile:kie-wb-common-profile-api</compileSourcesArtifact>
 
             <!-- Drools shared models -->
 
@@ -1335,6 +1379,9 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-case-mgmt-project-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-case-mgmt-project-client</compileSourcesArtifact>
 
+            <!-- Experimental Deps -->
+            <compileSourcesArtifact>org.uberfire:uberfire-experimental-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-experimental-client</compileSourcesArtifact>
           </compileSourcesArtifacts>
         </configuration>
         <executions>

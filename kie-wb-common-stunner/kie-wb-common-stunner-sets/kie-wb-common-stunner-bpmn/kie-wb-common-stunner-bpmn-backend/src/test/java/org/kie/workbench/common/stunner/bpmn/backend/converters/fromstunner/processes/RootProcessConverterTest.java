@@ -32,6 +32,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.lane
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
@@ -71,6 +73,9 @@ public class RootProcessConverterTest {
     private CaseRoles caseRoles;
 
     @Mock
+    private CaseFileVariables caseFileVariables;
+
+    @Mock
     private ProcessPropertyWriter processPropertyWriter;
 
     @Mock
@@ -81,6 +86,9 @@ public class RootProcessConverterTest {
 
     @Mock
     private LaneConverter laneConverter;
+
+    @Mock
+    private CaseIdPrefix caseIdPrefix;
 
     @Before
     public void setUp() throws Exception {
@@ -93,15 +101,19 @@ public class RootProcessConverterTest {
         when(propertyWriterFactory.of(Matchers.any(Process.class))).thenReturn(processPropertyWriter);
         when(node.getContent()).thenReturn(content);
         when(content.getDefinition()).thenReturn(diagram);
+        when(caseManagementSet.getCaseIdPrefix()).thenReturn(caseIdPrefix);
         when(caseManagementSet.getCaseRoles()).thenReturn(caseRoles);
+        when(caseManagementSet.getCaseFileVariables()).thenReturn(caseFileVariables);
         when(converterFactory.subProcessConverter()).thenReturn(subProcessConverter);
         when(converterFactory.viewDefinitionConverter()).thenReturn(viewDefinitionConverter);
         when(converterFactory.laneConverter()).thenReturn(laneConverter);
     }
 
     @Test
-    public void convertProcessWithCaseRoles() {
+    public void convertProcessWithCaseProperties() {
         final ProcessPropertyWriter propertyWriter = converter.convertProcess();
+        verify(propertyWriter).setCaseIdPrefix(caseIdPrefix);
         verify(propertyWriter).setCaseRoles(caseRoles);
+        verify(propertyWriter).setCaseFileVariables(caseFileVariables);
     }
 }

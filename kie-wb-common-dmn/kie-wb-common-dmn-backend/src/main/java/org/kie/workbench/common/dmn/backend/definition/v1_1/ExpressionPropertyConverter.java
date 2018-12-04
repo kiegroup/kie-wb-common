@@ -28,15 +28,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 public class ExpressionPropertyConverter {
 
     public static Expression wbFromDMN(final org.kie.dmn.model.api.Expression dmn) {
-        // SPECIAL CASE: to represent a partially edited DMN file.
-        // consider a LiteralExpression with null text as missing expression altogether.
-        if (dmn instanceof org.kie.dmn.model.api.LiteralExpression) {
-            org.kie.dmn.model.api.LiteralExpression literalExpression = (org.kie.dmn.model.api.LiteralExpression) dmn;
-            if (literalExpression.getText() == null) {
-                return null;
-            }
-        }
-
         if (dmn instanceof org.kie.dmn.model.api.LiteralExpression) {
             return LiteralExpressionPropertyConverter.wbFromDMN((org.kie.dmn.model.api.LiteralExpression) dmn);
         } else if (dmn instanceof org.kie.dmn.model.api.Context) {
@@ -59,7 +50,7 @@ public class ExpressionPropertyConverter {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // reference above.
         if (wb == null) {
-            org.kie.dmn.model.api.LiteralExpression mockedExpression = new org.kie.dmn.model.v1_1.TLiteralExpression();
+            org.kie.dmn.model.api.LiteralExpression mockedExpression = new org.kie.dmn.model.v1_2.TLiteralExpression();
             return mockedExpression;
         }
 

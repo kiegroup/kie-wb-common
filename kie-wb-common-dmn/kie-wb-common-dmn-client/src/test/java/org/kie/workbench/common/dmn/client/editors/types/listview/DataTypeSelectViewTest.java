@@ -103,8 +103,6 @@ public class DataTypeSelectViewTest {
         view = spy(new DataTypeSelectView(typeText, typeSelect, typeSelectOptGroup, typeSelectOption, null, translationService));
         dataTypeUtils = new DataTypeUtils(dataTypeStore, dataTypeManager);
 
-        doNothing().when(view).setupDropdown();
-
         view.init(presenter);
     }
 
@@ -198,12 +196,14 @@ public class DataTypeSelectViewTest {
 
         view.setupDropdownItems();
 
-        //Check all items were added to the group
-        verify(view, times(BuiltInType.values().length + customDataTypes.size())).makeOption(dataTypeCaptor.capture(), any(Function.class));
+        final int visibleItems = BuiltInType.values().length - 1;
+
+        //Check all items were added to the group minus the UNDEFINED item
+        verify(view, times(visibleItems + customDataTypes.size())).makeOption(dataTypeCaptor.capture(), any(Function.class));
         final List<DataType> dataTypes = dataTypeCaptor.getAllValues();
 
         //Check the items were sorted correctly
-        assertEquals("any", dataTypes.get(0).getType());
+        assertEquals("Any", dataTypes.get(0).getType());
         assertEquals("boolean", dataTypes.get(1).getType());
         assertEquals("context", dataTypes.get(2).getType());
         assertEquals("date", dataTypes.get(3).getType());
@@ -214,7 +214,7 @@ public class DataTypeSelectViewTest {
         assertEquals("time", dataTypes.get(8).getType());
         assertEquals("years and months duration", dataTypes.get(9).getType());
 
-        final int customDataTypesOffset = BuiltInType.values().length;
+        final int customDataTypesOffset = visibleItems;
         assertEquals("a", dataTypes.get(customDataTypesOffset).getType());
         assertEquals("b", dataTypes.get(customDataTypesOffset + 1).getType());
     }

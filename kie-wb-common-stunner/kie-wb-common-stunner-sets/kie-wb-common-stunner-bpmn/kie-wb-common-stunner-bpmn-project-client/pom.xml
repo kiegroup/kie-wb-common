@@ -20,7 +20,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-bpmn</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.13.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -126,6 +126,11 @@
       <groupId>org.kie.workbench.widgets</groupId>
       <artifactId>kie-wb-common-ui</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>org.kie.workbench.profile</groupId>
+      <artifactId>kie-wb-common-profile-api</artifactId>
+    </dependency>
 
     <!-- GWT and GWT Extensions -->
 
@@ -196,6 +201,11 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client-views-patternfly</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-project-client</artifactId>
     </dependency>
 
     <dependency>
@@ -282,6 +292,12 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-testing-utils</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
 

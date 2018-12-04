@@ -34,6 +34,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -118,6 +119,14 @@ public class DelegatingGridDataTest {
                                      eq(1),
                                      eq(2),
                                      eq(3));
+    }
+
+    @Test
+    public void testDelegateSelectHeaderCell() {
+        uiModel.selectHeaderCell(0, 1);
+
+        verify(delegate).selectHeaderCell(eq(0),
+                                          eq(1));
     }
 
     @Test
@@ -279,6 +288,13 @@ public class DelegatingGridDataTest {
     }
 
     @Test
+    public void testDelegateGetSelectedHeaderCells() {
+        uiModel.getSelectedHeaderCells();
+
+        verify(delegate).getSelectedHeaderCells();
+    }
+
+    @Test
     public void testDelegateGetCell() {
         uiModel.getCell(0, 1);
 
@@ -334,5 +350,40 @@ public class DelegatingGridDataTest {
         uiModel.getRow(0);
 
         verify(delegate).getRow(eq(0));
+    }
+
+    @Test
+    public void testRefreshWidth() {
+        uiModel.refreshWidth();
+
+        verify(delegate, times(1)).refreshWidth();
+    }
+
+    @Test
+    public void testRefreshWidthWithSize() {
+        uiModel.refreshWidth(0.0);
+
+        verify(delegate).refreshWidth(eq(0.0));
+    }
+
+    @Test
+    public void testSetVisibleSizeAndRefresh() {
+        uiModel.setVisibleSizeAndRefresh(0, 1);
+
+        verify(delegate).setVisibleSizeAndRefresh(eq(0), eq(1));
+    }
+
+    @Test
+    public void testGetVisibleWidth() {
+        uiModel.getVisibleWidth();
+
+        verify(delegate, times(1)).getVisibleWidth();
+    }
+
+    @Test
+    public void testGetVisibleHeight() {
+        uiModel.getVisibleHeight();
+
+        verify(delegate, times(1)).getVisibleHeight();
     }
 }

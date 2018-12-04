@@ -22,6 +22,9 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.client.preferences.BPMNTextPreferences;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.AssociationConnectorDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BPMNDiagramShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.CatchingIntermediateEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.EndEventShapeDef;
@@ -33,10 +36,12 @@ import org.kie.workbench.common.stunner.bpmn.client.shape.def.SubprocessShapeDef
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.ThrowingIntermediateEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
@@ -46,6 +51,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
@@ -62,6 +69,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
+import org.kie.workbench.common.stunner.bpmn.definition.StartCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartEscalationEvent;
@@ -71,9 +79,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
+import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.WiresConnectorViewExt;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistries;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerTextPreferences;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.DelegateShapeFactory;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.shapes.client.factory.BasicShapesFactory;
 import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeFactory;
 import org.mockito.ArgumentCaptor;
@@ -92,6 +104,7 @@ import static org.mockito.Mockito.when;
 @RunWith(GwtMockitoTestRunner.class)
 public class BPMNShapeFactoryTest {
 
+    public static final String DEF_ID = "defId";
     @Mock
     private BasicShapesFactory basicShapesFactory;
 
@@ -106,17 +119,37 @@ public class BPMNShapeFactoryTest {
 
     private BPMNShapeFactory tested;
 
+    @Mock
+    private StunnerPreferencesRegistries preferencesRegistries;
+
+    @Mock
+    private DefinitionUtils definitionUtils;
+
+    @Mock
+    private WiresConnectorViewExt sequenceFlowView;
+
+    @Mock
+    private SequenceFlow sequenceFlow;
+
+    private BPMNTextPreferences preferences;
+
     @Before
     @SuppressWarnings("unchecked")
     public void init() {
+        preferences = new BPMNTextPreferences();
         when(delegateShapeFactory.delegate(any(Class.class),
                                            any(ShapeDef.class),
                                            any(Supplier.class)))
                 .thenReturn(delegateShapeFactory);
+        when(definitionUtils.getDefinitionSetId(BPMNDefinitionSet.class)).thenReturn(DEF_ID);
+        when(preferencesRegistries.get(DEF_ID, StunnerTextPreferences.class)).thenReturn(preferences);
+
         this.tested = new BPMNShapeFactory(basicShapesFactory,
                                            svgShapeFactory,
                                            delegateShapeFactory,
-                                           () -> workItemDefinitionRegistry);
+                                           () -> workItemDefinitionRegistry,
+                                           definitionUtils,
+                                           preferencesRegistries);
     }
 
     @Test
@@ -269,20 +302,52 @@ public class BPMNShapeFactoryTest {
                times(1)).delegate(eq(IntermediateEscalationEventThrowing.class),
                                   any(ThrowingIntermediateEventShapeDef.class),
                                   factoryArgumentCaptor.capture());
+
+        ArgumentCaptor<SequenceFlowConnectorDef> sequenceFlowConnectorDefArgumentCaptor = ArgumentCaptor.forClass(SequenceFlowConnectorDef.class);
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(StartCompensationEvent.class),
+                                  any(StartEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(IntermediateCompensationEvent.class),
+                                  any(CatchingIntermediateEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(IntermediateCompensationEventThrowing.class),
+                                  any(ThrowingIntermediateEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(EndCompensationEvent.class),
+                                  any(EndEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(Association.class),
+                                  any(AssociationConnectorDef.class),
+                                  factoryArgumentCaptor.capture());
+
         verify(delegateShapeFactory,
                times(1)).delegate(eq(SequenceFlow.class),
-                                  any(SequenceFlowConnectorDef.class),
+                                 sequenceFlowConnectorDefArgumentCaptor.capture(),
                                   factoryArgumentCaptor.capture());
+        final SequenceFlowConnectorDef sequenceFlowConnectorDef = sequenceFlowConnectorDefArgumentCaptor.getValue();
+        sequenceFlowConnectorDef.newFontHandler().handle(sequenceFlow, sequenceFlowView);
+        verify(sequenceFlowView).setTitleFontColor(BPMNTextPreferences.TEXT_FILL_COLOR);
+        verify(sequenceFlowView).setTitleAlpha(BPMNTextPreferences.TEXT_ALPHA);
+        verify(sequenceFlowView).setTitleFontFamily(BPMNTextPreferences.TEXT_FONT_FAMILY);
+        verify(sequenceFlowView).setTitleFontSize(BPMNTextPreferences.TEXT_FONT_SIZE);
+        verify(sequenceFlowView).setTitleStrokeColor(BPMNTextPreferences.TEXT_STROKE_COLOR);
+        verify(sequenceFlowView).setTitleStrokeWidth(BPMNTextPreferences.TEXT_STROKE_WIDTH);
+
         final long svgFactoryCallCount = factoryArgumentCaptor.getAllValues().stream()
                 .filter(this::isSvgShapeFactory)
                 .count();
         final long basicFactoryCallCount = factoryArgumentCaptor.getAllValues().stream()
                 .filter(this::isBasicShapeFactory)
                 .count();
-        assertEquals(36,
+        assertEquals(40,
                      svgFactoryCallCount,
                      0);
-        assertEquals(1,
+        assertEquals(2,
                      basicFactoryCallCount,
                      0);
     }

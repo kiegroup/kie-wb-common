@@ -98,6 +98,8 @@ public class DataTypeManager {
                 .withUUID()
                 .withParentUUID(TOP_LEVEL_PARENT_UUID)
                 .withNoName()
+                .withNoConstraint()
+                .asCollection(false)
                 .withDefaultType();
     }
 
@@ -109,6 +111,8 @@ public class DataTypeManager {
                 .withItemDefinition(itemDefinition)
                 .withItemDefinitionName()
                 .withItemDefinitionType()
+                .withItemDefinitionConstraint()
+                .withItemDefinitionCollection()
                 .withItemDefinitionSubDataTypes()
                 .withIndexedItemDefinition();
     }
@@ -142,13 +146,27 @@ public class DataTypeManager {
         return this;
     }
 
+    public DataTypeManager withConstraint(final String constraint) {
+        dataType.setConstraint(constraint);
+        return this;
+    }
+
+    public DataTypeManager asCollection(final boolean isCollection) {
+        dataType.setCollection(isCollection);
+        return this;
+    }
+
+    public DataTypeManager withNoConstraint() {
+        return withConstraint("");
+    }
+
     public DataTypeManager withDataType(final DataType dataType) {
         this.dataType = dataType;
         return this;
     }
 
     private DataTypeManager withDefaultType() {
-        return withType(BuiltInType.STRING.getName());
+        return withType(BuiltInType.ANY.getName());
     }
 
     DataTypeManager newDataType() {
@@ -205,6 +223,14 @@ public class DataTypeManager {
 
     DataTypeManager withItemDefinitionName() {
         return withName(itemDefinitionName(itemDefinition));
+    }
+
+    DataTypeManager withItemDefinitionConstraint() {
+        return withConstraint(itemDefinitionUtils.getConstraintText(itemDefinition));
+    }
+
+    DataTypeManager withItemDefinitionCollection() {
+        return asCollection(itemDefinition.isIsCollection());
     }
 
     DataTypeManager withItemDefinitionType() {
@@ -302,6 +328,8 @@ public class DataTypeManager {
                 .withItemDefinition(itemDefinition)
                 .withItemDefinitionName()
                 .withItemDefinitionType()
+                .withItemDefinitionConstraint()
+                .withItemDefinitionCollection()
                 .withTypeStack(getSubDataTypeStack())
                 .withItemDefinitionSubDataTypes()
                 .withIndexedItemDefinition()

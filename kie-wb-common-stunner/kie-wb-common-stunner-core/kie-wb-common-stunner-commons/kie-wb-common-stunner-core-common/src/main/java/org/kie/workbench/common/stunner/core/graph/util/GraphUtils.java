@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.graph.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,18 +50,48 @@ public class GraphUtils {
     public static Object getProperty(final DefinitionManager definitionManager,
                                      final Element<? extends Definition> element,
                                      final String id) {
-        if (null != element) {
-            final Object def = element.getContent().getDefinition();
-            final Set<?> properties = definitionManager.adapters().forDefinition().getProperties(def);
-            return getProperty(definitionManager,
-                               properties,
-                               id);
-        }
-        return null;
+
+        return Optional.ofNullable(element)
+                .map(Element::getContent)
+                .map(Definition::getDefinition)
+                .map(def -> Exceptions.<Set>swallow(() -> definitionManager.adapters().forDefinition().getProperties(def),
+                                                    Collections.emptySet()))
+                .map(properties -> Exceptions.swallow(() -> getProperty(definitionManager, properties, id), null))
+                .orElseGet(
+                        //getting by field if not found by the id (class name)
+                        () -> Optional.ofNullable(element)
+                                .map(Element::getContent)
+                                .map(Definition::getDefinition)
+                                .map(def -> getPropertyByField(definitionManager, def, id))
+                                .orElse(null)
+                );
+    }
+
+    public static Object getPropertyByField(final DefinitionManager definitionManager,
+                                            final Object definition,
+                                            final String field) {
+
+        final int index = field.indexOf('.');
+        final String firstField = index > -1 ? field.substring(0, index) : field;
+        final Object property =
+                Exceptions.<Optional>swallow(() -> definitionManager
+                        .adapters()
+                        .forDefinition()
+                        .getProperty(definition, firstField), Optional.empty())
+                        .orElseGet(() -> Exceptions.<Optional>swallow(() -> definitionManager
+                                .adapters()
+                                .forPropertySet()
+                                .getProperty(definition, firstField), Optional.empty())
+                                .orElse(null)
+                        );
+
+        return (index > 0 && Objects.nonNull(property))
+                ? getPropertyByField(definitionManager, property, field.substring(index + 1))
+                : property;
     }
 
     public static Object getProperty(final DefinitionManager definitionManager,
-                                     final Set<?> properties,
+                                     final Set properties,
                                      final String id) {
         if (null != id && null != properties) {
             for (final Object property : properties) {
@@ -153,7 +184,10 @@ public class GraphUtils {
 
     @SuppressWarnings("unchecked")
     public static Element<?> getParent(final Node<?, ? extends Edge> element) {
-        return element.getInEdges().stream()
+        return Optional.ofNullable(element)
+                .map(Node::getInEdges)
+                .orElse(Collections.emptyList())
+                .stream()
                 .filter(e -> e.getContent() instanceof Child)
                 .findAny()
                 .map(Edge::getSourceNode)
@@ -185,6 +219,22 @@ public class GraphUtils {
         final Bounds.Bound ul = element.getBounds().getUpperLeft();
         final double x = ul.getX();
         final double y = ul.getY();
+        return new Point2D(x,
+                           y);
+    }
+
+    public static Point2D getComputedPosition(final Node<?, ? extends Edge> element) {
+        double x = 0;
+        double y = 0;
+        Element<?> parent = element;
+        while (null != parent
+                && null != parent.asNode()
+                && parent.getContent() instanceof View) {
+            final Point2D position = getPosition((View) parent.getContent());
+            x += position.getX();
+            y += position.getY();
+            parent = getParent((Node<?, ? extends Edge>) parent);
+        }
         return new Point2D(x,
                            y);
     }
@@ -320,12 +370,14 @@ public class GraphUtils {
                 .collect(Collectors.toList());
     }
 
-    public static List<Edge<? extends ViewConnector<?>, Node>> getSourceConnections(final Node<?, ? extends Edge> element) {
+    public static List<Edge<? extends ViewConnector<?>, Node>> getSourceConnections(
+            final Node<?, ? extends Edge> element) {
         Objects.requireNonNull(element.getOutEdges());
         return getConnections(element.getOutEdges());
     }
 
-    public static List<Edge<? extends ViewConnector<?>, Node>> getTargetConnections(final Node<?, ? extends Edge> element) {
+    public static List<Edge<? extends ViewConnector<?>, Node>> getTargetConnections(
+            final Node<?, ? extends Edge> element) {
         Objects.requireNonNull(element.getInEdges());
         return getConnections(element.getInEdges());
     }
@@ -385,10 +437,7 @@ public class GraphUtils {
                             final Element<?> parent) {
             if (null != candidate) {
                 Element<?> p = getParent(candidate);
-                while (p instanceof Node && !p.equals(parent)) {
-                    p = getParent((Node<?, ? extends Edge>) p);
-                }
-                return null != p;
+                return Objects.equals(p, parent);
             }
             return false;
         }

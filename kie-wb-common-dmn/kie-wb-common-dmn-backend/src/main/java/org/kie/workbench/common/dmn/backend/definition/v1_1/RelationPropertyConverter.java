@@ -29,8 +29,8 @@ public class RelationPropertyConverter {
 
     public static Relation wbFromDMN(final org.kie.dmn.model.api.Relation dmn) {
         Id id = new Id(dmn.getId());
-        Description description = new Description(dmn.getDescription());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
+        Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
+        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
 
         List<org.kie.dmn.model.api.InformationItem> column = dmn.getColumn();
         List<org.kie.dmn.model.api.List> row = dmn.getRow();
@@ -53,7 +53,7 @@ public class RelationPropertyConverter {
     }
 
     public static org.kie.dmn.model.api.Relation dmnFromWB(final Relation wb) {
-        org.kie.dmn.model.api.Relation result = new org.kie.dmn.model.v1_1.TRelation();
+        org.kie.dmn.model.api.Relation result = new org.kie.dmn.model.v1_2.TRelation();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
@@ -61,11 +61,17 @@ public class RelationPropertyConverter {
 
         for (InformationItem iitem : wb.getColumn()) {
             org.kie.dmn.model.api.InformationItem iitemConverted = InformationItemPropertyConverter.dmnFromWB(iitem);
+            if (iitemConverted != null) {
+                iitemConverted.setParent(result);
+            }
             result.getColumn().add(iitemConverted);
         }
 
         for (org.kie.workbench.common.dmn.api.definition.v1_1.List list : wb.getRow()) {
             org.kie.dmn.model.api.List listConverted = ListPropertyConverter.dmnFromWB(list);
+            if (listConverted != null) {
+                listConverted.setParent(result);
+            }
             result.getRow().add(listConverted);
         }
 

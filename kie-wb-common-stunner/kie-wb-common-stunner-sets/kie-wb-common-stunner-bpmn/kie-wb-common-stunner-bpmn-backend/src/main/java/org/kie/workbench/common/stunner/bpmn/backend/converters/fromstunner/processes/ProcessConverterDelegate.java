@@ -17,7 +17,9 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
@@ -28,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BoundaryEventPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
 
 import static java.util.stream.Collectors.toList;
@@ -51,14 +54,17 @@ class ProcessConverterDelegate {
                         .map(Result::value)
                         .collect(toList());
 
+        // keep track of nested children to avoid adding them again to ancestors
         Set<String> processed = subprocesses.stream()
                 .flatMap(sub -> sub.getChildElements().stream().map(BasePropertyWriter::getId))
                 .collect(toSet());
 
-        subprocesses.forEach(p::addChildElement);
+        subprocesses.stream()
+                .filter(e -> !processed.contains(e.getId())) // skip processed
+                .forEach(p::addChildElement);
 
         context.nodes()
-                .filter(e -> !processed.contains(e.getUUID()))
+                .filter(e -> !processed.contains(e.getUUID())) // skip processed
                 .map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
@@ -101,9 +107,35 @@ class ProcessConverterDelegate {
                 });
 
         context.edges()
-                .map(e -> converterFactory.sequenceFlowConverter().toFlowElement(e, p))
+                .map(e -> converterFactory.edgeElementConverter().toFlowElement(e, p))
                 .filter(Result::isSuccess)
                 .map(Result::value)
                 .forEach(p::addChildElement);
+    }
+
+    void postConvertChildNodes(ProcessPropertyWriter processWriter,
+                               DefinitionsBuildingContext context) {
+        final Map<String, BasePropertyWriter> propertyWriters = collectPropertyWriters(processWriter);
+        context.nodes().forEach(node -> converterFactory.flowElementPostConverter().postConvert(processWriter,
+                                                                                                propertyWriters.get(node.getUUID()),
+                                                                                                node));
+    }
+
+    private Map<String, BasePropertyWriter> collectPropertyWriters(ElementContainer container) {
+
+        final Map<String, BasePropertyWriter> result = container.getChildElements()
+                .stream()
+                .collect(Collectors.toMap(BasePropertyWriter::getId,
+                                          p -> p));
+
+        container.getChildElements()
+                .stream()
+                .filter(e -> e instanceof ElementContainer)
+                .map(e -> (ElementContainer) e)
+                .map(this::collectPropertyWriters)
+                .collect(Collectors.toList())
+                .forEach(result::putAll);
+
+        return result;
     }
 }

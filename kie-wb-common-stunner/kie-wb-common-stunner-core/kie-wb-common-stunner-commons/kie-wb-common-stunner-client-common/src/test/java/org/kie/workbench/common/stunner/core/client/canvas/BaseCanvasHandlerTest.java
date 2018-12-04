@@ -26,11 +26,13 @@ import org.kie.workbench.common.stunner.core.client.ShapeSet;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
+import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasDomainObjectListener;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.shape.ElementShape;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
+import org.kie.workbench.common.stunner.core.client.shape.impl.AbstractShape;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
@@ -38,6 +40,7 @@ import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapte
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetRuleAdapter;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -129,6 +132,10 @@ public class BaseCanvasHandlerTest {
     Object defSet;
     @Mock
     Object defBean;
+    @Mock
+    DomainObject domainObject;
+    @Mock
+    CanvasDomainObjectListener domainObjectListener;
 
     private BaseCanvasHandlerStub tested;
 
@@ -358,6 +365,63 @@ public class BaseCanvasHandlerTest {
                times(1)).destroyGraphIndex(any(Command.class));
         verify(canvas,
                times(1)).destroy();
+    }
+
+    @Test
+    public void testClearCanvas() {
+        tested.clearCanvas();
+
+        verify(tested).notifyCanvasClear();
+        verify(tested).notifyCanvasDomainObjectClear();
+        verify(canvas).clear();
+    }
+
+    @Test
+    public void testNotifyCanvasDomainObjectAdded() {
+        tested.addDomainObjectListener(domainObjectListener);
+
+        tested.notifyCanvasDomainObjectAdded(domainObject);
+
+        verify(domainObjectListener).register(domainObject);
+    }
+
+    @Test
+    public void testNotifyCanvasDomainObjectRemoved() {
+        tested.addDomainObjectListener(domainObjectListener);
+
+        tested.notifyCanvasDomainObjectRemoved(domainObject);
+
+        verify(domainObjectListener).deregister(domainObject);
+    }
+
+    @Test
+    public void testNotifyCanvasDomainObjectUpdated() {
+        tested.addDomainObjectListener(domainObjectListener);
+
+        tested.notifyCanvasDomainObjectUpdated(domainObject);
+
+        verify(domainObjectListener).update(domainObject);
+    }
+
+    @Test
+    public void testNotifyCanvasDomainObjectClear() {
+        tested.addDomainObjectListener(domainObjectListener);
+
+        tested.notifyCanvasDomainObjectClear();
+
+        verify(domainObjectListener).clear();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testApplyElementMutation() throws Exception {
+        AbstractShape abstractShape = mock(AbstractShape.class);
+
+        tested.applyElementMutation(abstractShape,
+                                    candidate);
+
+        verify(abstractShape, times(1)).beforeDraw();
+        verify(abstractShape, times(1)).afterDraw();
     }
 
     private class BaseCanvasHandlerStub extends BaseCanvasHandler<Diagram, AbstractCanvas> {

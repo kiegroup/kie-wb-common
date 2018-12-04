@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.kie.workbench.services</groupId>
     <artifactId>kie-wb-common-compiler</artifactId>
-    <version>7.13.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -21,7 +21,6 @@
     <container.host>localhost</container.host>
     <container.port>8090</container.port>
     <kie.compiler.url>http://${container.host}:${container.port}/${deployable.context}</kie.compiler.url>
-    <version.wildfly11>11.0.0.Final</version.wildfly11>
   </properties>
 
   <dependencyManagement>
@@ -131,6 +130,16 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-backend</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -315,7 +324,7 @@
                 <artifactItem>
                   <groupId>org.wildfly</groupId>
                   <artifactId>wildfly-dist</artifactId>
-                  <version>11.0.0.Final</version>
+                  <version>${version.org.wildfly}</version>
                   <type>zip</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}</outputDirectory>

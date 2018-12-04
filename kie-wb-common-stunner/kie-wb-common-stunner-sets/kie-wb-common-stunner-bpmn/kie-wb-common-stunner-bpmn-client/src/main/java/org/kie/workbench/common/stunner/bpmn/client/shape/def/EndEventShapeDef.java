@@ -16,12 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape.def;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNGlyphFactory;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
@@ -51,28 +52,31 @@ public class EndEventShapeDef
                     .put(EndErrorEvent.class,
                          BPMNSVGViewFactory::endErrorEvent)
                     .put(EndEscalationEvent.class,
-                         BPMNSVGViewFactory::endEscalationEvent);
+                         BPMNSVGViewFactory::endEscalationEvent)
+                    .put(EndCompensationEvent.class,
+                         BPMNSVGViewFactory::endCompensationEvent);
 
     public static final Map<Class<? extends BaseEndEvent>, Glyph> GLYPHS =
-            new HashMap<Class<? extends BaseEndEvent>, Glyph>() {{
-                put(EndNoneEvent.class,
-                    BPMNGlyphFactory.EVENT_END_NONE);
-                put(EndSignalEvent.class,
-                    BPMNGlyphFactory.EVENT_END_SIGNAL);
-                put(EndMessageEvent.class,
-                    BPMNGlyphFactory.EVENT_END_MESSAGE);
-                put(EndTerminateEvent.class,
-                    BPMNGlyphFactory.EVENT_END_TERMINATE);
-                put(EndErrorEvent.class,
-                    BPMNGlyphFactory.EVENT_END_ERROR);
-                put(EndEscalationEvent.class,
-                    BPMNGlyphFactory.EVENT_END_ESCALATION);
-            }};
+            new Maps.Builder<Class<? extends BaseEndEvent>, Glyph>()
+                    .put(EndNoneEvent.class,
+                         BPMNGlyphFactory.EVENT_END_NONE)
+                    .put(EndSignalEvent.class,
+                         BPMNGlyphFactory.EVENT_END_SIGNAL)
+                    .put(EndMessageEvent.class,
+                         BPMNGlyphFactory.EVENT_END_MESSAGE)
+                    .put(EndTerminateEvent.class,
+                         BPMNGlyphFactory.EVENT_END_TERMINATE)
+                    .put(EndErrorEvent.class,
+                         BPMNGlyphFactory.EVENT_END_ERROR)
+                    .put(EndEscalationEvent.class,
+                         BPMNGlyphFactory.EVENT_END_ESCALATION)
+                    .put(EndCompensationEvent.class, BPMNGlyphFactory.EVENT_END_COMPENSATION)
+                    .build();
 
     @Override
     public FontHandler<BaseEndEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .positon(event -> HasTitle.Position.BOTTOM)
+                .position(event -> HasTitle.Position.BOTTOM)
                 .build();
     }
 

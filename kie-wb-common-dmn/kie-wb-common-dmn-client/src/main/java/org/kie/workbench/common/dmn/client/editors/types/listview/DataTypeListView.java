@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -42,11 +43,11 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.common.Element
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.isHidden;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.show;
+import static org.kie.workbench.common.dmn.client.editors.types.common.JQuery.$;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.ARROW_BUTTON_SELECTOR;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.PARENT_UUID_ATTR;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.UUID_ATTR;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ElementHelper.remove;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.common.JQuery.$;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.isRightArrow;
 
 @Templated
@@ -55,6 +56,9 @@ public class DataTypeListView implements DataTypeList.View {
 
     @DataField("list-items")
     private final HTMLDivElement listItems;
+
+    @DataField("list-items-no")
+    private final HTMLDivElement listItemsNo;
 
     @DataField("collapsed-description")
     private final HTMLDivElement collapsedDescription;
@@ -79,13 +83,15 @@ public class DataTypeListView implements DataTypeList.View {
                             final HTMLDivElement expandedDescription,
                             final HTMLAnchorElement viewMore,
                             final HTMLAnchorElement viewLess,
-                            final HTMLButtonElement addButton) {
+                            final HTMLButtonElement addButton,
+                            final HTMLDivElement listItemsNo) {
         this.listItems = listItems;
         this.collapsedDescription = collapsedDescription;
         this.expandedDescription = expandedDescription;
         this.viewMore = viewMore;
         this.viewLess = viewLess;
         this.addButton = addButton;
+        this.listItemsNo = listItemsNo;
     }
 
     @Override
@@ -102,6 +108,21 @@ public class DataTypeListView implements DataTypeList.View {
     public void setupListItems(final List<DataTypeListItem> listItems) {
         this.listItems.innerHTML = "";
         listItems.forEach(this::appendItem);
+        showOrHideNoCustomItemsMessage();
+    }
+
+    void showOrHideNoCustomItemsMessage() {
+        if (!hasCustomDataType()) {
+            show(this.listItemsNo);
+            hide(this.listItems);
+        } else {
+            hide(this.listItemsNo);
+            show(this.listItems);
+        }
+    }
+
+    boolean hasCustomDataType() {
+        return !Objects.isNull(this.listItems.childNodes) && this.listItems.childNodes.length > 0;
     }
 
     @Override
@@ -123,11 +144,13 @@ public class DataTypeListView implements DataTypeList.View {
         }
 
         showArrowIconIfDataTypeHasChildren(dataType);
+        showOrHideNoCustomItemsMessage();
     }
 
     @Override
     public void addSubItem(final DataTypeListItem listItem) {
         listItems.appendChild(listItem.getElement());
+        showOrHideNoCustomItemsMessage();
     }
 
     @EventHandler("add-button")
@@ -173,6 +196,8 @@ public class DataTypeListView implements DataTypeList.View {
         final Optional<Element> dataTypeRow = Optional.ofNullable(getDataTypeRow(dataType));
 
         dataTypeRow.ifPresent(ElementHelper::remove);
+
+        showOrHideNoCustomItemsMessage();
     }
 
     void cleanSubTypes(final String uuid) {

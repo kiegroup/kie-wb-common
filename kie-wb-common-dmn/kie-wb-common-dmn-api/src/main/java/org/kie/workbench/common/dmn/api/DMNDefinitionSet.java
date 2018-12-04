@@ -19,16 +19,24 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ImportedValues;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
+import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
+import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.definition.annotation.DefinitionSet;
@@ -52,7 +60,15 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 Association.class,
                 InformationRequirement.class,
                 KnowledgeRequirement.class,
-                AuthorityRequirement.class
+                AuthorityRequirement.class,
+                LiteralExpression.class,
+                ImportedValues.class,
+                UnaryTests.class,
+                InformationItem.class,
+                InformationItemPrimary.class,
+                InputClause.class,
+                OutputClause.class,
+                NOPDomainObject.class
         },
         builder = DMNDefinitionSet.DMNDefinitionSetBuilder.class
 )

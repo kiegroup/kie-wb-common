@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-showcase</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.13.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -89,6 +89,17 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-metadata-backend-elasticsearch</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta-regexp</groupId>
+          <artifactId>jakarta-regexp</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-metadata-backend-infinispan</artifactId>
       <exclusions>
         <exclusion>
           <groupId>jakarta-regexp</groupId>
@@ -298,6 +309,21 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Uberfire SSH -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-backend</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-ssh-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Uberfire Security Management -->
 
     <dependency>
@@ -330,6 +356,23 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-security-management-client-wb</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Uberfire Experimentals -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-backend</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-client</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -850,7 +893,7 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
           <strict>true</strict>
-          <localWorkers>${gwt.compiler.localWorkers}</localWorkers>
+          <localWorkers>8</localWorkers>
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <draftCompile>true</draftCompile>
           <extraJvmArgs>-Xmx4096m -Xms1024m -Xss1M -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home} -Derrai.dynamic_validation.enabled=true</extraJvmArgs>
@@ -863,7 +906,6 @@
           <runTarget>stunner.html</runTarget>
           <hostedWebapp>src/main/webapp</hostedWebapp>
           <gwtSdkFirstInClasspath>false</gwtSdkFirstInClasspath>
-          <logLevel>INFO</logLevel>
 
           <compileSourcesArtifacts>
 
@@ -897,6 +939,8 @@
             <compileSourcesArtifact>org.uberfire:uberfire-workingset-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.jboss.errai:errai-data-binding</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-datamodel-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-ssh-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-ssh-client</compileSourcesArtifact>
 
             <!-- UberFire extensions -->
             <compileSourcesArtifact>org.uberfire:uberfire-social-activities-api</compileSourcesArtifact>
@@ -924,6 +968,10 @@
             <compileSourcesArtifact>org.uberfire:uberfire-security-management-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-security-management-client-wb</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-widgets-security-management</compileSourcesArtifact>
+
+            <!-- Uberfire Experimentals -->
+            <compileSourcesArtifact>org.uberfire:uberfire-experimental-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-experimental-client</compileSourcesArtifact>
 
             <!-- Forms -->
             <compileSourcesArtifact>org.kie.workbench.forms:kie-wb-common-forms-api</compileSourcesArtifact>
@@ -990,6 +1038,7 @@
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
+          <failOnError>false</failOnError>
           <filesets>
             <fileset>
               <directory>${basedir}</directory>
@@ -1007,6 +1056,13 @@
                 <include>.index/**</include>
                 <include>**/*.JUnit/**</include>
                 <include>repositories/</include>
+              </includes>
+            </fileset>
+            <fileset>
+              <directory>/tmp/project/dir/</directory>
+              <followSymlinks>false</followSymlinks>
+              <includes>
+                <include>.niogit/**</include>
               </includes>
             </fileset>
           </filesets>

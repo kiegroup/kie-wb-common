@@ -21,14 +21,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.ait.lienzo.client.core.event.NodeMouseClickEvent;
-import com.ait.lienzo.client.core.event.NodeMouseClickHandler;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -57,6 +55,7 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
@@ -64,12 +63,12 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.Bounds;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
+import org.uberfire.ext.wires.core.grids.client.model.GridData.SelectedCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
@@ -170,13 +169,16 @@ public class LiteralExpressionGridTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Mock
     private NameAndDataTypePopoverView.Presenter headerEditor;
 
     @Captor
     private ArgumentCaptor<CompositeCommand> compositeCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
 
     private Decision hasExpression = new Decision();
 
@@ -203,7 +205,7 @@ public class LiteralExpressionGridTest {
                                                            sessionCommandManager,
                                                            canvasCommandFactory,
                                                            editorSelectedEvent,
-                                                           refreshFormPropertiesEvent,
+                                                           domainObjectSelectionEvent,
                                                            listSelector,
                                                            translationService,
                                                            headerEditor);
@@ -212,7 +214,7 @@ public class LiteralExpressionGridTest {
         decision.setName(new Name(NAME));
         hasName = Optional.of(decision);
         expression = definition.getModelClass();
-        expression.ifPresent(e -> e.setText(EXPRESSION_TEXT));
+        expression.ifPresent(e -> e.getText().setValue(EXPRESSION_TEXT));
 
         doReturn(canvasHandler).when(session).getCanvasHandler();
         doReturn(mock(Bounds.class)).when(gridLayer).getVisibleBounds();
@@ -243,25 +245,21 @@ public class LiteralExpressionGridTest {
     }
 
     @Test
-    public void testGridMouseClickHandler() {
-        setupGrid(0);
-
-        final NodeMouseClickHandler handler = grid.getGridMouseClickHandler(selectionManager);
-
-        handler.onNodeMouseClick(mouseClickEvent);
-
-        verify(gridLayer).select(parentGridWidget);
-    }
-
-    @Test
     public void testSelectFirstCell() {
         setupGrid(0);
 
         grid.selectFirstCell();
 
-        verify(parentGridUiModel).clearSelections();
-        verify(parentGridUiModel).selectCell(eq(0), eq(1));
-        verify(gridLayer).select(parentGridWidget);
+        final List<SelectedCell> selectedCells = grid.getModel().getSelectedCells();
+        assertThat(selectedCells.size()).isEqualTo(1);
+        assertThat(selectedCells.get(0).getRowIndex()).isEqualTo(0);
+        assertThat(selectedCells.get(0).getColumnIndex()).isEqualTo(0);
+
+        verify(gridLayer).select(grid);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(expression.get());
     }
 
     @Test
@@ -495,7 +493,7 @@ public class LiteralExpressionGridTest {
     public void testSetTypeRef() {
         setupGrid(0);
 
-        extractHeaderMetaData().setTypeRef(new QName(Namespace.FEEL.getUri(),
+        extractHeaderMetaData().setTypeRef(new QName(QName.NULL_NS_URI,
                                                      BuiltInType.DATE.getName()));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
@@ -510,6 +508,18 @@ public class LiteralExpressionGridTest {
 
         verify(sessionCommandManager, never()).execute(any(AbstractCanvasHandler.class),
                                                        any(SetTypeRefCommand.class));
+    }
+
+    @Test
+    public void testSelectHeader() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, 0, false, false);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(hasExpression);
     }
 
     @Test

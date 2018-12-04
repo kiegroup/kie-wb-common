@@ -52,6 +52,10 @@ public class ShapeStateDefaultHandler
                 return attributes;
             };
         }
+
+        public Function<ShapeState, ShapeStateAttributes> stateAttributesProvider() {
+            return stateAttributesProvider;
+        }
     }
 
     public enum ShapeType {
@@ -63,9 +67,9 @@ public class ShapeStateDefaultHandler
     private static final Shadow SHADOW_HIGHLIGHT = new Shadow(ColorName.BLACK.getColor().setA(0.40), 10, 0, 0);
     private static final Shadow SHADOW_SELECTED = new Shadow(ColorName.BLACK.getColor().setA(0.40), 5, 2, 2);
 
-    private final ShapeStateAttributeAnimationHandler<LienzoShapeView<?>> handler;
-    private Supplier<LienzoShapeView<?>> backgroundShapeSupplier;
-    private Supplier<LienzoShapeView<?>> borderShapeSupplier;
+    protected final ShapeStateAttributeAnimationHandler<LienzoShapeView<?>> handler;
+    protected Supplier<LienzoShapeView<?>> backgroundShapeSupplier;
+    protected Supplier<LienzoShapeView<?>> borderShapeSupplier;
     private ShapeViewUserDataEncoder shapeViewDataEncoder;
 
     public ShapeStateDefaultHandler() {
@@ -80,6 +84,11 @@ public class ShapeStateDefaultHandler
 
     public ShapeStateDefaultHandler setRenderType(final RenderType renderType) {
         handler.getAttributesHandler().useAttributes(renderType.stateAttributesProvider);
+
+        /**
+         * TODO: need to fix when resolution of JBPM-7681 is available
+         * @see <a href="https://issues.jboss.org/browse/JBPM-7681">JBPM-7681</a>
+         */
         shapeViewDataEncoder.applyShapeViewRenderType(borderShapeSupplier, renderType);
         return this;
     }
@@ -87,12 +96,22 @@ public class ShapeStateDefaultHandler
     public ShapeStateDefaultHandler setBorderShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         handler.getAttributesHandler().setView(shapeSupplier);
         borderShapeSupplier = shapeSupplier;
+
+        /**
+         * TODO: need to fix when resolution of JBPM-7681 is available
+         * @see <a href="https://issues.jboss.org/browse/JBPM-7681">JBPM-7681</a>
+         */
         shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BORDER);
         return this;
     }
 
     public ShapeStateDefaultHandler setBackgroundShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         backgroundShapeSupplier = shapeSupplier;
+
+        /**
+         * TODO: need to fix when resolution of JBPM-7681 is available
+         * @see <a href="https://issues.jboss.org/browse/JBPM-7681">JBPM-7681</a>
+         */
         shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BACKGROUND);
         return this;
     }

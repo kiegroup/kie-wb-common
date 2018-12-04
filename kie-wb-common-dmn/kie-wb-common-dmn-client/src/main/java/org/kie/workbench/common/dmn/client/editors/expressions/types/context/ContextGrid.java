@@ -29,6 +29,7 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.context.AddContextEntryCommand;
@@ -51,14 +52,16 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
 import org.uberfire.ext.wires.core.grids.client.widget.dnd.GridWidgetDnDHandlersState;
@@ -86,7 +89,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                        final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                        final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                        final Event<ExpressionEditorChanged> editorSelectedEvent,
-                       final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                       final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                        final CellEditorControlsView.Presenter cellEditorControls,
                        final ListSelectorView.Presenter listSelector,
                        final TranslationService translationService,
@@ -107,7 +110,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
               translationService,
@@ -203,31 +206,29 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
     public List<ListSelectorItem> getItems(final int uiRowIndex,
                                            final int uiColumnIndex) {
         final List<ListSelectorItem> items = new ArrayList<>();
-        if (uiRowIndex == model.getRowCount() - 1) {
-            return items;
-        }
-
         final boolean isMultiRow = SelectionUtils.isMultiRow(model);
         final boolean isMultiSelect = SelectionUtils.isMultiSelect(model);
 
-        items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ContextEditor_InsertContextEntryAbove),
-                                             !isMultiRow,
-                                             () -> {
-                                                 cellEditorControls.hide();
-                                                 expression.ifPresent(e -> addContextEntry(uiRowIndex));
-                                             }));
-        items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ContextEditor_InsertContextEntryBelow),
-                                             !isMultiRow,
-                                             () -> {
-                                                 cellEditorControls.hide();
-                                                 expression.ifPresent(e -> addContextEntry(uiRowIndex + 1));
-                                             }));
-        items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ContextEditor_DeleteContextEntry),
-                                             !isMultiRow && model.getRowCount() > 2 && uiRowIndex < model.getRowCount() - 1,
-                                             () -> {
-                                                 cellEditorControls.hide();
-                                                 deleteContextEntry(uiRowIndex);
-                                             }));
+        if (uiRowIndex < model.getRowCount() - 1) {
+            items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ContextEditor_InsertContextEntryAbove),
+                                                 !isMultiRow,
+                                                 () -> {
+                                                     cellEditorControls.hide();
+                                                     expression.ifPresent(e -> addContextEntry(uiRowIndex));
+                                                 }));
+            items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ContextEditor_InsertContextEntryBelow),
+                                                 !isMultiRow,
+                                                 () -> {
+                                                     cellEditorControls.hide();
+                                                     expression.ifPresent(e -> addContextEntry(uiRowIndex + 1));
+                                                 }));
+            items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ContextEditor_DeleteContextEntry),
+                                                 !isMultiRow && model.getRowCount() > 2 && uiRowIndex < model.getRowCount() - 1,
+                                                 () -> {
+                                                     cellEditorControls.hide();
+                                                     deleteContextEntry(uiRowIndex);
+                                                 }));
+        }
 
         //If not ExpressionEditor column don't add extra items
         if (ContextUIModelMapperHelper.getSection(uiColumnIndex) != ContextUIModelMapperHelper.ContextSection.EXPRESSION) {
@@ -245,7 +246,9 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
             return items;
         }
 
-        items.add(new ListSelectorDividerItem());
+        if (items.size() > 0) {
+            items.add(new ListSelectorDividerItem());
+        }
         items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ExpressionEditor_Clear),
                                              !isMultiSelect,
                                              () -> {
@@ -307,12 +310,47 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                                                                          uiModelMapper,
                                                                          () -> {
                                                                              resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                             selectParentCell();
+                                                                             selectExpressionEditorFirstCell(uiRowIndex, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX);
                                                                          },
                                                                          () -> {
                                                                              resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                             selectFirstCell();
+                                                                             selectExpressionEditorFirstCell(uiRowIndex, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX);
                                                                          }));
         });
+    }
+
+    @Override
+    protected void doAfterSelectionChange(final int uiRowIndex,
+                                          final int uiColumnIndex) {
+        if (hasAnyHeaderCellSelected() || hasMultipleRowsSelected()) {
+            super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+            return;
+        }
+
+        if (uiRowIndex < model.getRowCount() - 1) {
+            if (expression.isPresent()) {
+                final Context context = expression.get();
+                fireDomainObjectSelectionEvent(context.getContextEntry().get(uiRowIndex).getVariable());
+                return;
+            }
+        }
+        super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+    }
+
+    private boolean hasMultipleRowsSelected() {
+        return getModel().getSelectedCells().stream().map(GridData.SelectedCell::getRowIndex).distinct().count() > 1;
+    }
+
+    @Override
+    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                                final int uiHeaderColumnIndex) {
+        if (uiHeaderColumnIndex == ContextUIModelMapperHelper.NAME_COLUMN_INDEX) {
+            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+            if (base instanceof DomainObject) {
+                fireDomainObjectSelectionEvent((DomainObject) base);
+                return;
+            }
+        }
+        super.doAfterHeaderSelectionChange(uiHeaderRowIndex, uiHeaderColumnIndex);
     }
 }

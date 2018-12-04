@@ -16,11 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.components.palette;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,7 +33,10 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.soup.commons.util.Lists;
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNImageResources;
+import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
@@ -120,25 +121,20 @@ public class BPMNPaletteDefinitionBuilder
                                  .useGlyph(Builder.build(BPMNImageResources.INSTANCE.categoryServiceTasks().getSafeUri())));
 
     //palette categories order customization.
-    private static final List<String> CATEGORIES_ORDER = new ArrayList<String>() {
-        {
-            add(BPMNCategories.START_EVENTS);
-            add(BPMNCategories.INTERMEDIATE_EVENTS);
-            add(BPMNCategories.END_EVENTS);
-            add(BPMNCategories.ACTIVITIES);
-            add(BPMNCategories.SUB_PROCESSES);
-            add(BPMNCategories.GATEWAYS);
-            add(BPMNCategories.CONTAINERS);
-            add(BPMNCategories.SERVICE_TASKS);
-        }
-    };
+    private static final List<String> CATEGORIES_ORDER = new Lists.Builder<String>()
+            .add(BPMNCategories.START_EVENTS)
+            .add(BPMNCategories.INTERMEDIATE_EVENTS)
+            .add(BPMNCategories.END_EVENTS)
+            .add(BPMNCategories.ACTIVITIES)
+            .add(BPMNCategories.SUB_PROCESSES)
+            .add(BPMNCategories.GATEWAYS)
+            .add(BPMNCategories.CONTAINERS)
+            .add(BPMNCategories.SERVICE_TASKS)
+            .build();
 
-    private static final Map<String, String> CUSTOM_GROUPS = new HashMap<String, String>() {
-        {
-            put(Lane.class.getName(),
-                "org.kie.workbench.common.stunner.bpmn.definition.customGroup.Containers");
-        }
-    };
+    private static final Map<String, String> CUSTOM_GROUPS = new Maps.Builder<String, String>()
+            .put(Lane.class.getName(), "org.kie.workbench.common.stunner.bpmn.definition.customGroup.Containers")
+            .build();
 
     private final DefinitionManager definitionManager;
     private final ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder;
@@ -234,6 +230,7 @@ public class BPMNPaletteDefinitionBuilder
         return isType(BPMNDiagramImpl.class)
                 .or(isType(NoneTask.class))
                 .or(isType(SequenceFlow.class))
+                .or(isType(Association.class))
                 .negate();
     }
 

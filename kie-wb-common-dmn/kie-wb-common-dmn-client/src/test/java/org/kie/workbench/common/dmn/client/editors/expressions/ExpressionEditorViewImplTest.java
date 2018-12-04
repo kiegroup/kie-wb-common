@@ -51,6 +51,7 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanelContainer;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -59,6 +60,7 @@ import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -117,6 +119,9 @@ public class ExpressionEditorViewImplTest {
 
     @Mock
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+
+    @Mock
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Mock
     private ExpressionEditorDefinition undefinedExpressionEditorDefinition;
@@ -193,7 +198,8 @@ public class ExpressionEditorViewImplTest {
                                                      listSelector,
                                                      sessionManager,
                                                      sessionCommandManager,
-                                                     expressionEditorDefinitionsSupplier));
+                                                     expressionEditorDefinitionsSupplier,
+                                                     domainObjectSelectionEvent));
         view.init(presenter);
         view.bind(session);
 

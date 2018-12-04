@@ -44,6 +44,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TextAnnotationTextPropertyProviderImplTest {
 
+    public static final String NAME_FIELD = "name";
+    public static final String NAME_VALUE = "text";
     @Mock
     private DefinitionUtils definitionUtils;
 
@@ -76,12 +78,11 @@ public class TextAnnotationTextPropertyProviderImplTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
-        this.provider = new TextAnnotationTextPropertyProviderImpl(canvasCommandFactory);
+        this.provider = new TextAnnotationTextPropertyProviderImpl(canvasCommandFactory, definitionUtils);
         when(element.getContent()).thenReturn(content);
         when(content.getDefinition()).thenReturn(definition);
         when(definition.getText()).thenReturn(text);
-
-        when(definitionUtils.getNameIdentifier(eq(definition))).thenReturn("name");
+        when(definitionUtils.getNameIdentifier(eq(definition))).thenReturn(NAME_FIELD);
         when(canvasCommandFactory.updatePropertyValue(eq(element),
                                                       anyString(),
                                                       anyString())).thenReturn(command);
@@ -115,15 +116,9 @@ public class TextAnnotationTextPropertyProviderImplTest {
 
     @Test
     public void checkWriteUsesCommandToUpdateTextProperty() {
-        provider.setText(canvasHandler,
-                         commandManager,
-                         element,
-                         "text");
+        provider.setText(canvasHandler, commandManager, element, NAME_VALUE);
 
-        verify(canvasCommandFactory).updatePropertyValue(eq(element),
-                                                         eq(Text.class.getName()),
-                                                         eq("text"));
-        verify(commandManager).execute(eq(canvasHandler),
-                                       eq(command));
+        verify(canvasCommandFactory).updatePropertyValue(element, NAME_FIELD, NAME_VALUE);
+        verify(commandManager).execute(eq(canvasHandler), eq(command));
     }
 }

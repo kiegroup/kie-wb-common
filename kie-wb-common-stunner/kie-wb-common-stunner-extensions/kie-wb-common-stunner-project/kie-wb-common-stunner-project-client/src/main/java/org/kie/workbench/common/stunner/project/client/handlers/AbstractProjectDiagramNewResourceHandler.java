@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.project.client.handlers;
 
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,8 +32,6 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
-import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
 
 public abstract class AbstractProjectDiagramNewResourceHandler<R extends ClientResourceType> extends DefaultNewResourceHandler {
@@ -56,8 +55,6 @@ public abstract class AbstractProjectDiagramNewResourceHandler<R extends ClientR
 
     protected abstract Class<?> getDefinitionSetType();
 
-    protected abstract String getEditorIdentifier();
-
     @Override
     public ResourceTypeDefinition getResourceType() {
         return projectDiagramResourceType;
@@ -73,11 +70,17 @@ public abstract class AbstractProjectDiagramNewResourceHandler<R extends ClientR
         final String setId = getId(type);
         final String moduleName = context.getActiveModule().isPresent() ? context.getActiveModule().get().getModuleName() : "";
 
+        createDiagram(pkg, name, presenter, path, setId, moduleName, Optional.empty());
+    }
+
+    public void createDiagram(Package pkg, String name, NewResourcePresenter presenter, Path path, String setId,
+                         String moduleName, Optional<String> projectType) {
         projectDiagramServices.create(path,
                                       name,
                                       setId,
                                       moduleName,
                                       pkg,
+                                      projectType,
                                       new ServiceCallback<Path>() {
                                           @Override
                                           public void onSuccess(final Path path) {
@@ -85,9 +88,8 @@ public abstract class AbstractProjectDiagramNewResourceHandler<R extends ClientR
                                               presenter.complete();
                                               notifySuccess();
                                               newResourceSuccessEvent.fire(new NewResourceSuccessEvent(path));
-                                              PlaceRequest place = new PathPlaceRequest(path,
-                                                                                        getEditorIdentifier());
-                                              placeManager.goTo(place);
+
+                                              placeManager.goTo(path);
                                           }
 
                                           @Override

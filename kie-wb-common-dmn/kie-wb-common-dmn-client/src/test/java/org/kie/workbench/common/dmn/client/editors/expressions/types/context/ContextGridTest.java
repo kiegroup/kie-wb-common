@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +33,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -50,6 +51,7 @@ import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.GridFactoryCommandUtils;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.editors.types.HasNameAndTypeRef;
@@ -61,7 +63,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxS
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellValueTuple;
@@ -70,19 +71,21 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseBounds;
@@ -114,6 +117,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -198,6 +202,15 @@ public class ContextGridTest {
     private NameAndDataTypePopoverView.Presenter headerEditor;
 
     @Mock
+    private GridWidget parentGridWidget;
+
+    @Mock
+    private GridData parentGridData;
+
+    @Mock
+    private GridColumn parentGridColumn;
+
+    @Mock
     private GridCellTuple parent;
 
     @Mock
@@ -219,7 +232,7 @@ public class ContextGridTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Captor
     private ArgumentCaptor<AddContextEntryCommand> addContextEntryCommandCaptor;
@@ -236,6 +249,9 @@ public class ContextGridTest {
     @Captor
     private ArgumentCaptor<CompositeCommand> compositeCommandCaptor;
 
+    @Captor
+    private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
+
     private LiteralExpression literalExpression = new LiteralExpression();
 
     private Decision hasExpression = new Decision();
@@ -251,6 +267,10 @@ public class ContextGridTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+        when(parent.getGridWidget()).thenReturn(parentGridWidget);
+        when(parentGridWidget.getModel()).thenReturn(parentGridData);
+        when(parentGridData.getColumns()).thenReturn(Collections.singletonList(parentGridColumn));
+
         when(sessionManager.getCurrentSession()).thenReturn(session);
         when(session.getGridPanel()).thenReturn(gridPanel);
         when(session.getGridLayer()).thenReturn(gridLayer);
@@ -264,7 +284,7 @@ public class ContextGridTest {
                                                  sessionCommandManager,
                                                  canvasCommandFactory,
                                                  editorSelectedEvent,
-                                                 refreshFormPropertiesEvent,
+                                                 domainObjectSelectionEvent,
                                                  listSelector,
                                                  translationService,
                                                  expressionEditorDefinitionsSupplier,
@@ -274,7 +294,7 @@ public class ContextGridTest {
         decision.setName(new Name(NAME));
         hasName = Optional.of(decision);
         expression = definition.getModelClass();
-        definition.enrich(Optional.empty(), expression);
+        definition.enrich(Optional.empty(), hasExpression, expression);
 
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
@@ -367,7 +387,7 @@ public class ContextGridTest {
                      ((InformationItemCell.HasNameCell) uiModel.getCell(1, 1).getValue().getValue()).getName().getValue());
         assertTrue(uiModel.getCell(1, 2).getValue() instanceof ExpressionCellValue);
         final ExpressionCellValue dcv1 = (ExpressionCellValue) uiModel.getCell(1, 2).getValue();
-        assertEquals(literalExpressionEditor,
+        assertEquals(undefinedExpressionEditor,
                      dcv1.getValue().get());
     }
 
@@ -467,6 +487,49 @@ public class ContextGridTest {
                                true);
 
         ((HasListSelectorControl.ListSelectorTextItem) items.get(CLEAR_EXPRESSION_TYPE)).getCommand().execute();
+        verify(cellEditorControls).hide();
+        verify(sessionCommandManager).execute(eq(canvasHandler),
+                                              any(ClearExpressionTypeCommand.class));
+    }
+
+    @Test
+    public void testGetItemsRowNumberColumnDefaultResultRow() {
+        setupGrid(0);
+
+        assertThat(grid.getItems(1, 0)).isEmpty();
+    }
+
+    @Test
+    public void testOnItemSelectedNameColumnDefaultResultRow() {
+        setupGrid(0);
+
+        assertThat(grid.getItems(1, 1)).isEmpty();
+    }
+
+    @Test
+    public void testOnItemSelectedExpressionColumnUndefinedExpressionTypeDefaultResultRow() {
+        setupGrid(0);
+
+        assertThat(grid.getItems(1, 2)).isEmpty();
+    }
+
+    @Test
+    public void testOnItemSelectedExpressionColumnDefinedExpressionTypeDefaultResultRow() {
+        setupGrid(0);
+
+        //Set an editor for expression at (1, 2)
+        final BaseExpressionGrid editor = mock(BaseExpressionGrid.class);
+        grid.getModel().setCellValue(1, 2, new ExpressionCellValue(Optional.of(editor)));
+
+        final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(1, 2);
+
+        assertThat(items.size()).isEqualTo(1);
+
+        assertListSelectorItem(items.get(0),
+                               DMNEditorConstants.ExpressionEditor_Clear,
+                               true);
+
+        ((HasListSelectorControl.ListSelectorTextItem) items.get(0)).getCommand().execute();
         verify(cellEditorControls).hide();
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               any(ClearExpressionTypeCommand.class));
@@ -705,11 +768,8 @@ public class ContextGridTest {
         clearExpressionTypeCommand.execute(canvasHandler);
 
         verify(grid).resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-        verify(gridLayer).select(gridWidget);
-        verify(gridWidget).selectCell(eq(0),
-                                      eq(2),
-                                      eq(false),
-                                      eq(false));
+        verify(gridLayer).select(undefinedExpressionEditor);
+        verify(undefinedExpressionEditor).selectFirstCell();
         verify(gridLayer).batch(redrawCommandCaptor.capture());
         redrawCommandCaptor.getValue().execute();
         verify(gridLayer).draw();
@@ -719,10 +779,12 @@ public class ContextGridTest {
         clearExpressionTypeCommand.undo(canvasHandler);
 
         //Verify Expression has been restored and UndefinedExpressionEditor resized
-        assertThat(grid.getModel().getColumns().get(2).getWidth()).isEqualTo(DMNGridColumn.DEFAULT_WIDTH);
+        assertThat(grid.getModel().getColumns().get(2).getWidth()).isEqualTo(UndefinedExpressionColumn.DEFAULT_WIDTH);
         verify(grid).resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-        verify(gridLayer).select(grid);
-        verify(grid).selectFirstCell();
+
+        verify(grid).selectExpressionEditorFirstCell(eq(0), eq(ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX));
+        verify(gridLayer).select(undefinedExpressionEditor);
+        verify(undefinedExpressionEditor, times(2)).selectFirstCell();
 
         verify(gridLayer).batch(redrawCommandCaptor.capture());
         assertThat(redrawCommandCaptor.getAllValues()).hasSize(2);
@@ -827,7 +889,7 @@ public class ContextGridTest {
     public void testSetTypeRef() {
         setupGrid(0);
 
-        extractHeaderMetaData().setTypeRef(new QName(DMNModelInstrumentedBase.Namespace.FEEL.getUri(),
+        extractHeaderMetaData().setTypeRef(new QName(QName.NULL_NS_URI,
                                                      BuiltInType.DATE.getName()));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
@@ -842,6 +904,117 @@ public class ContextGridTest {
 
         verify(sessionCommandManager, never()).execute(any(AbstractCanvasHandler.class),
                                                        any(SetTypeRefCommand.class));
+    }
+
+    @Test
+    public void testSelectRow() {
+        setupGrid(0);
+
+        grid.selectCell(0, ContextUIModelMapperHelper.ROW_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getContextEntry().get(0).getVariable());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectMultipleRows() {
+        setupGrid(0);
+
+        grid.selectCell(0, ContextUIModelMapperHelper.ROW_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getContextEntry().get(0).getVariable());
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(1, ContextUIModelMapperHelper.ROW_COLUMN_INDEX, false, true);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSelectSingleRowWithHeaderSelected() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(hasExpression);
+
+        //Reset DomainObjectSelectionEvent tested above.
+        reset(domainObjectSelectionEvent);
+
+        grid.selectCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, true);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectInformationItem() {
+        setupGrid(0);
+
+        grid.selectCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getContextEntry().get(0).getVariable());
+    }
+
+    @Test
+    public void testSelectUndefinedExpression() {
+        setupGrid(0);
+
+        grid.selectCell(0, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(expression.get().getContextEntry().get(0).getVariable());
+    }
+
+    @Test
+    public void testSelectDefaultRow() {
+        setupGrid(0);
+
+        grid.selectCell(grid.getModel().getRowCount() - 1, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderRowNumberColumn() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, ContextUIModelMapperHelper.ROW_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderNameColumn() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(hasExpression);
+    }
+
+    @Test
+    public void testSelectHeaderExpressionColumn() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    private void assertDomainObjectSelection(final DomainObject domainObject) {
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(domainObject);
+    }
+
+    private void assertNOPDomainObjectSelection() {
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
     }
 
     @Test

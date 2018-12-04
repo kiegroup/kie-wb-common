@@ -15,12 +15,16 @@
  */
 package org.kie.workbench.common.stunner.core.backend.definition.adapter.bind;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.AbstractReflectAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindablePropertySetAdapter;
+import org.kie.workbench.common.stunner.core.graph.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +73,16 @@ class BackendBindablePropertySetAdapter<T> extends AbstractReflectAdapter<T>
             LOG.error("Error obtaining properties for Property Set with id " + getId(propertySet));
         }
         return null;
+    }
+
+    @Override
+    public Optional<?> getProperty(T definition, String propertyName) {
+        return Optional.ofNullable(propertiesFieldNames.get(definition.getClass()))
+                .orElse(Collections.emptySet())
+                .stream()
+                .filter(name -> Objects.equals(name, propertyName))
+                .findFirst()
+                .map(prop -> Exceptions.swallow(() -> getFieldValue(definition, prop), null));
     }
 
     @Override

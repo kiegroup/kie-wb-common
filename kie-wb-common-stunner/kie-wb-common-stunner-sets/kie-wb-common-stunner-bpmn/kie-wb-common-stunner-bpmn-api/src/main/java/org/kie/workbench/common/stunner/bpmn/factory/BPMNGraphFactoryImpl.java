@@ -58,15 +58,12 @@ public class BPMNGraphFactoryImpl
         extends AbstractGraphFactory
         implements BPMNGraphFactory {
 
-    static final double START_X = 100d;
-    static final double START_Y = 100d;
-
-    private final DefinitionManager definitionManager;
+    protected final DefinitionManager definitionManager;
     private final RuleManager ruleManager;
     private final GraphIndexBuilder<?> indexBuilder;
     private final GraphCommandManager graphCommandManager;
-    private final GraphCommandFactory graphCommandFactory;
-    private final FactoryManager factoryManager;
+    protected final GraphCommandFactory graphCommandFactory;
+    protected final FactoryManager factoryManager;
 
     private Class<? extends BPMNDiagram> diagramType;
 
@@ -97,6 +94,10 @@ public class BPMNGraphFactoryImpl
 
     public void setDiagramType(final Class<? extends BPMNDiagram> diagramType) {
         this.diagramType = diagramType;
+    }
+
+    public Class<? extends BPMNDiagram> getDiagramType() {
+        return diagramType;
     }
 
     @Override

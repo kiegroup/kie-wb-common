@@ -98,11 +98,10 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
 
     @Override
     @SuppressWarnings("unchecked")
-    public String marshall(final Diagram diagram) throws IOException {
+    public String marshall(final Diagram diagram) {
         LOG.debug("Starting diagram marshalling...");
 
-        final Bpmn2Marshaller marshaller = new Bpmn2Marshaller(definitionManager,
-                                                               oryxManager);
+        final Bpmn2Marshaller marshaller = createBpmn2Marshaller(definitionManager, oryxManager);
         String result = null;
         try {
             // Marshall the diagram definition
@@ -121,6 +120,10 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
         return result;
     }
 
+    protected Bpmn2Marshaller createBpmn2Marshaller(DefinitionManager definitionManager, OryxManager oryxManager) {
+        return new Bpmn2Marshaller(definitionManager, oryxManager);
+    }
+
     protected abstract String getPreProcessingData(Metadata metadata);
 
     public JBPMBpmn2ResourceImpl marshallToBpmn2Resource(final Diagram<Graph, Metadata> diagram) throws IOException {
@@ -132,7 +135,7 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
 
     @Override
     public Graph unmarshall(final Metadata metadata,
-                            final InputStream inputStream) throws IOException {
+                            final InputStream inputStream) {
         LOG.debug("Starting diagram unmarshalling...");
 
         // No rule checking for marshalling/unmarshalling, current jbpm designer marshallers should do it for us.
@@ -189,11 +192,15 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
     private String getTitle(final Graph graph) {
         final Node<Definition<BPMNDiagram>, ?> diagramNode = getFirstDiagramNode(graph);
         final BPMNDiagram diagramBean = null != diagramNode ? (BPMNDiagram) ((Definition) diagramNode.getContent()).getDefinition() : null;
+        if (diagramBean == null) {
+            return null;
+        }
+
         return getTitle(diagramBean);
     }
 
     private String getTitle(final BPMNDiagram diagram) {
-        final String title = diagram.getDiagramSet().getName().getValue();
+        final String title = diagram != null ? diagram.getDiagramSet().getName().getValue() : null;
         return title != null && title.trim().length() > 0 ? title : "-- Untitled diagram --";
     }
 
@@ -226,7 +233,7 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
                                                  "UTF-8");
             resource.setEncoding("UTF-8");
 
-            final Map<String, Object> options = new HashMap<String, Object>();
+            final Map<String, Object> options = new HashMap<>();
             options.put(JBPMBpmn2ResourceImpl.OPTION_ENCODING,
                         "UTF-8");
             options.put(JBPMBpmn2ResourceImpl.OPTION_DEFER_IDREF_RESOLUTION,

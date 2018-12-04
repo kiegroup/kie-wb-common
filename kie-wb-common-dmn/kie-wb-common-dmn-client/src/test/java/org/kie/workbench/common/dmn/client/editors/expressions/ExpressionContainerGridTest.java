@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.event.INodeXYEvent;
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -28,15 +29,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.general.ClearExpressionTypeCommand;
+import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
@@ -52,6 +56,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
@@ -62,6 +67,8 @@ import org.uberfire.ext.wires.core.grids.client.model.Bounds;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.selections.CellSelectionManager;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 
@@ -89,7 +96,7 @@ public class ExpressionContainerGridTest {
 
     private static final String NAME = "name";
 
-    private static final double COLUMN_NEW_WIDTH = 200.0;
+    private static final double COLUMN_NEW_WIDTH = 300.0;
 
     @Mock
     private CellEditorControlsView.Presenter cellEditorControls;
@@ -137,16 +144,25 @@ public class ExpressionContainerGridTest {
     private HasExpression hasExpression;
 
     @Mock
+    private ParameterizedCommand<Optional<Expression>> onHasExpressionChanged;
+
+    @Mock
     private ParameterizedCommand<Optional<HasName>> onHasNameChanged;
 
     @Mock
-    private ParameterizedCommand<Optional<Expression>> onHasExpressionChanged;
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
+
+    @Mock
+    private CellSelectionManager cellSelectionManager;
 
     @Captor
     private ArgumentCaptor<Optional<HasName>> hasNameCaptor;
 
     @Captor
     private ArgumentCaptor<ClearExpressionTypeCommand> clearExpressionTypeCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
 
     private HasName hasName = new HasName() {
 
@@ -185,7 +201,13 @@ public class ExpressionContainerGridTest {
                                                 expressionEditorDefinitionsSupplier,
                                                 () -> expressionGridCache,
                                                 onHasExpressionChanged,
-                                                onHasNameChanged);
+                                                onHasNameChanged,
+                                                domainObjectSelectionEvent) {
+            @Override
+            protected CellSelectionManager getCellSelectionManager() {
+                return cellSelectionManager;
+            }
+        };
 
         this.gridLayer.add(grid);
 
@@ -194,6 +216,7 @@ public class ExpressionContainerGridTest {
         expressionEditorDefinitions.add(literalExpressionEditorDefinition);
 
         doReturn(expressionEditorDefinitions).when(expressionEditorDefinitionsSupplier).get();
+        doReturn(true).when(literalExpressionEditor).isCacheable();
         doReturn(parent).when(literalExpressionEditor).getParentInformation();
         doReturn(new BaseGridData()).when(literalExpressionEditor).getModel();
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditorDefinition).getModelClass();
@@ -306,6 +329,27 @@ public class ExpressionContainerGridTest {
     }
 
     @Test
+    public void testSetDefinedExpressionWhenReopeningWhenWorkbenchRestarted() {
+        //Emulate User setting expression and resizing column
+        when(hasExpression.getExpression()).thenReturn(literalExpression);
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        //Emulate re-starting the Workbench and re-opening the editor
+        when(literalExpressionEditor.getWidth()).thenReturn(DMNGridColumn.DEFAULT_WIDTH);
+        when(literalExpressionEditor.getMinimumWidth()).thenReturn(UndefinedExpressionColumn.DEFAULT_WIDTH);
+        expressionGridCache.removeExpressionGrid(NODE_UUID);
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        //Verify width is equal to the minimum required
+        assertThat(grid.getModel().getColumns().get(0).getWidth()).isEqualTo(UndefinedExpressionColumn.DEFAULT_WIDTH);
+    }
+
+    @Test
     public void testGetItemsWithClearEnabled() {
         when(hasExpression.isClearSupported()).thenReturn(true);
 
@@ -410,24 +454,6 @@ public class ExpressionContainerGridTest {
     }
 
     @Test
-    public void testSpyHasNameWithHasNameSetNameValue() {
-        final String NEW_NAME = "new-name";
-
-        grid.setExpression(NODE_UUID,
-                           hasExpression,
-                           Optional.of(hasName));
-
-        final Optional<HasName> spy = grid.spyHasName(Optional.of(hasName));
-
-        assertThat(spy.isPresent()).isTrue();
-        spy.get().getName().setValue(NEW_NAME);
-
-        assertThat(hasName.getName().getValue()).isEqualTo(NEW_NAME);
-        verify(onHasNameChanged).execute(hasNameCaptor.capture());
-        assertThat(hasNameCaptor.getValue().get().getName().getValue()).isEqualTo(NEW_NAME);
-    }
-
-    @Test
     public void testSpyHasNameWithHasNameSetNameObject() {
         final String NEW_NAME = "new-name";
 
@@ -461,24 +487,6 @@ public class ExpressionContainerGridTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testSpyHasNameWithoutHasNameSetNameValue() {
-        final String NEW_NAME = "new-name";
-
-        grid.setExpression(NODE_UUID,
-                           hasExpression,
-                           Optional.empty());
-
-        final Optional<HasName> spy = grid.spyHasName(Optional.empty());
-
-        assertThat(spy.isPresent()).isTrue();
-        spy.get().getName().setValue(NEW_NAME);
-
-        assertThat(hasName.getName().getValue()).isEqualTo(NAME);
-        verify(onHasNameChanged, never()).execute(any(Optional.class));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
     public void testSpyHasNameWithoutHasNameSetNameObject() {
         final String NEW_NAME = "new-name";
 
@@ -495,6 +503,29 @@ public class ExpressionContainerGridTest {
 
         assertThat(hasName.getName().getValue()).isEqualTo(NAME);
         verify(onHasNameChanged, never()).execute(any(Optional.class));
+    }
+
+    @Test
+    public void testSpyHasNameUpdateUndoWithSetHasNameCommand() {
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        final Optional<HasName> spy = grid.spyHasName(Optional.of(hasName));
+
+        final Name newName = new Name("new-name");
+        final Name oldName = spy.get().getName();
+        final org.uberfire.mvp.Command canvasOperation = mock(org.uberfire.mvp.Command.class);
+
+        final SetHasNameCommand command = new SetHasNameCommand(spy.get(),
+                                                                newName,
+                                                                canvasOperation);
+
+        command.execute(canvasHandler);
+        spy.ifPresent(name -> assertThat(name.getName().getValue()).isEqualTo(newName.getValue()));
+
+        command.undo(canvasHandler);
+        spy.ifPresent(name -> assertThat(name.getName().getValue()).isEqualTo(oldName.getValue()));
     }
 
     @Test
@@ -565,5 +596,71 @@ public class ExpressionContainerGridTest {
         final HasExpression spy = grid.spyHasExpression(hasExpression);
 
         assertThat(spy.asDMNModelInstrumentedBase()).isEqualTo(literalExpression);
+    }
+
+    @Test
+    public void testSelectCellWithPoint() {
+        final Point2D point = mock(Point2D.class);
+        final LiteralExpression domainObject = mock(LiteralExpression.class);
+        when(hasExpression.asDMNModelInstrumentedBase()).thenReturn(domainObject);
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        grid.selectCell(point, false, true);
+
+        verify(gridLayer).select(eq(grid));
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(domainObject);
+
+        verify(cellSelectionManager).selectCell(eq(point), eq(false), eq(true));
+    }
+
+    @Test
+    public void testSelectCellWithCoordinates() {
+        final int uiRowIndex = 0;
+        final int uiColumnIndex = 1;
+        final LiteralExpression domainObject = mock(LiteralExpression.class);
+        when(hasExpression.asDMNModelInstrumentedBase()).thenReturn(domainObject);
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        grid.selectCell(uiRowIndex, uiColumnIndex, false, true);
+
+        verify(gridLayer).select(eq(grid));
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(domainObject);
+
+        verify(cellSelectionManager).selectCell(eq(uiRowIndex), eq(uiColumnIndex), eq(false), eq(true));
+    }
+
+    @Test
+    public void testSelectCellWithCoordinatesNonDomainObject() {
+        final int uiRowIndex = 0;
+        final int uiColumnIndex = 1;
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        grid.selectCell(uiRowIndex, uiColumnIndex, false, true);
+
+        verify(gridLayer).select(eq(grid));
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
+
+        verify(cellSelectionManager).selectCell(eq(uiRowIndex), eq(uiColumnIndex), eq(false), eq(true));
     }
 }

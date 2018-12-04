@@ -23,11 +23,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
 
@@ -95,5 +99,28 @@ public class ProcessPropertyWriterTest {
         p.setCaseRoles(caseRole);
         String cdata = CustomElement.caseRole.of(p.getProcess()).get();
         assertThat("role").isEqualTo(CustomElement.caseRole.stripCData(cdata));
+    }
+
+    @Test
+    public void caseIdPrefix() {
+        CaseIdPrefix caseIdPrefix = new CaseIdPrefix("caseIdPrefix");
+        p.setCaseIdPrefix(caseIdPrefix);
+        String cdata = CustomElement.caseIdPrefix.of(p.getProcess()).get();
+        assertThat("caseIdPrefix").isEqualTo(CustomElement.caseIdPrefix.stripCData(cdata));
+    }
+
+    @Test
+    public void caseFileVariables() {
+        CaseFileVariables caseFileVariables = new CaseFileVariables("CFV1:Boolean,CFV2:Boolean,CFV3:Boolean");
+        p.setCaseFileVariables(caseFileVariables);
+        assertThat(p.itemDefinitions.size() == 3);
+    }
+
+    @Test
+    public void testSetDocumentationNotEmpty() {
+        p.setDocumentation("DocumentationValue");
+        assertNotNull(p.getProcess().getDocumentation());
+        assertEquals(1, p.getProcess().getDocumentation().size());
+        assertEquals("<![CDATA[DocumentationValue]]>", p.getProcess().getDocumentation().get(0).getText());
     }
 }

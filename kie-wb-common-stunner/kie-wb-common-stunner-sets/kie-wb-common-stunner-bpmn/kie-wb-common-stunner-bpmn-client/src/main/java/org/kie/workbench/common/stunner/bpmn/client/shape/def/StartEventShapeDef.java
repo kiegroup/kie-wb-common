@@ -16,14 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape.def;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNGlyphFactory;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
 import org.kie.workbench.common.stunner.bpmn.client.shape.view.handler.EventInterruptingViewHandler;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.StartCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartEscalationEvent;
@@ -57,30 +58,33 @@ public class StartEventShapeDef
                     .put(StartConditionalEvent.class,
                          BPMNSVGViewFactory::startConditionalEvent)
                     .put(StartEscalationEvent.class,
-                         BPMNSVGViewFactory::startEscalationEvent);
+                         BPMNSVGViewFactory::startEscalationEvent)
+                    .put(StartCompensationEvent.class,
+                         BPMNSVGViewFactory::startCompensationEvent);
 
     public static final Map<Class<? extends BaseStartEvent>, Glyph> GLYPHS =
-            new HashMap<Class<? extends BaseStartEvent>, Glyph>() {{
-                put(StartNoneEvent.class,
-                    BPMNGlyphFactory.EVENT_START_NONE);
-                put(StartTimerEvent.class,
-                    BPMNGlyphFactory.EVENT_START_TIMER);
-                put(StartSignalEvent.class,
-                    BPMNGlyphFactory.EVENT_START_SIGNAL);
-                put(StartMessageEvent.class,
-                    BPMNGlyphFactory.EVENT_START_MESSAGE);
-                put(StartErrorEvent.class,
-                    BPMNGlyphFactory.EVENT_START_ERROR);
-                put(StartConditionalEvent.class,
-                    BPMNGlyphFactory.EVENT_START_CONDITIONAL);
-                put(StartEscalationEvent.class,
-                    BPMNGlyphFactory.EVENT_START_ESCALATION);
-            }};
+            new Maps.Builder<Class<? extends BaseStartEvent>, Glyph>()
+                    .put(StartNoneEvent.class,
+                         BPMNGlyphFactory.EVENT_START_NONE)
+                    .put(StartTimerEvent.class,
+                         BPMNGlyphFactory.EVENT_START_TIMER)
+                    .put(StartSignalEvent.class,
+                         BPMNGlyphFactory.EVENT_START_SIGNAL)
+                    .put(StartMessageEvent.class,
+                         BPMNGlyphFactory.EVENT_START_MESSAGE)
+                    .put(StartErrorEvent.class,
+                         BPMNGlyphFactory.EVENT_START_ERROR)
+                    .put(StartConditionalEvent.class,
+                         BPMNGlyphFactory.EVENT_START_CONDITIONAL)
+                    .put(StartEscalationEvent.class,
+                         BPMNGlyphFactory.EVENT_START_ESCALATION)
+                    .put(StartCompensationEvent.class, BPMNGlyphFactory.EVENT_START_COMPENSATION)
+                    .build();
 
     @Override
     public FontHandler<BaseStartEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .positon(event -> HasTitle.Position.BOTTOM)
+                .position(event -> HasTitle.Position.BOTTOM)
                 .build();
     }
 

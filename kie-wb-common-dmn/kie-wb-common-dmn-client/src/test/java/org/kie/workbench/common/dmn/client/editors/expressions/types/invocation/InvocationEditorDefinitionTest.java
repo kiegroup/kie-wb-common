@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.invocation;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -43,11 +44,13 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
+import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.mocks.EventSourceMock;
 
@@ -100,6 +103,15 @@ public class InvocationEditorDefinitionTest {
     private NameAndDataTypePopoverView.Presenter headerEditor;
 
     @Mock
+    private GridWidget parentGridWidget;
+
+    @Mock
+    private GridData parentGridData;
+
+    @Mock
+    private GridColumn parentGridColumn;
+
+    @Mock
     private GridCellTuple parent;
 
     @Mock
@@ -109,7 +121,7 @@ public class InvocationEditorDefinitionTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     private Optional<HasName> hasName = Optional.empty();
 
@@ -118,6 +130,10 @@ public class InvocationEditorDefinitionTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+        when(parent.getGridWidget()).thenReturn(parentGridWidget);
+        when(parentGridWidget.getModel()).thenReturn(parentGridData);
+        when(parentGridData.getColumns()).thenReturn(Collections.singletonList(parentGridColumn));
+
         when(sessionManager.getCurrentSession()).thenReturn(session);
         when(session.getGridPanel()).thenReturn(gridPanel);
         when(session.getGridLayer()).thenReturn(gridLayer);
@@ -128,7 +144,7 @@ public class InvocationEditorDefinitionTest {
                                                          sessionCommandManager,
                                                          canvasCommandFactory,
                                                          editorSelectedEvent,
-                                                         refreshFormPropertiesEvent,
+                                                         domainObjectSelectionEvent,
                                                          listSelector,
                                                          translationService,
                                                          expressionEditorDefinitionsSupplier,
@@ -162,7 +178,7 @@ public class InvocationEditorDefinitionTest {
     @Test
     public void testModelEnrichment() {
         final Optional<Invocation> oModel = definition.getModelClass();
-        definition.enrich(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), hasExpression, oModel);
 
         final Invocation model = oModel.get();
         assertNotNull(model.getExpression());

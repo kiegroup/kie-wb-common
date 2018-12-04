@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.bootstrap;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
@@ -42,6 +43,11 @@ class BootstrapPropertySetAdapter implements PropertySetAdapter<Object> {
     @Override
     public Set<?> getProperties(final Object pojo) {
         return getWrapped(pojo).getProperties(pojo);
+    }
+
+    @Override
+    public Optional<?> getProperty(Object pojo, String propertyName) {
+        return getWrapped(pojo).getProperty(pojo, propertyName);
     }
 
     @Override

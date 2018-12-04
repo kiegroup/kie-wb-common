@@ -43,6 +43,7 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -52,7 +53,6 @@ import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
@@ -106,7 +106,7 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Mock
     private NameAndDataTypePopoverView.Presenter headerEditor;
@@ -137,7 +137,7 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
                                                             sessionCommandManager,
                                                             canvasCommandFactory,
                                                             editorSelectedEvent,
-                                                            refreshFormPropertiesEvent,
+                                                            domainObjectSelectionEvent,
                                                             listSelector,
                                                             translationService,
                                                             hitPolicyEditor,
@@ -162,7 +162,7 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
         final List<InputClause> input = model.getInput();
         assertThat(input.size()).isEqualTo(1);
         assertThat(input.get(0).getInputExpression()).isInstanceOf(LiteralExpression.class);
-        assertThat(input.get(0).getInputExpression().getText()).isEqualTo(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_PREFIX + "1");
+        assertThat(input.get(0).getInputExpression().getText().getValue()).isEqualTo(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_PREFIX + "1");
     }
 
     protected void assertStandardOutputClauseEnrichment(final DecisionTable model) {
@@ -181,13 +181,13 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
         assertThat(rule.getInputEntry().size()).isEqualTo(inputClauseCount);
         rule.getInputEntry().forEach(inputEntry -> {
             assertThat(inputEntry).isInstanceOf(UnaryTests.class);
-            assertThat(inputEntry.getText()).isEqualTo(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
+            assertThat(inputEntry.getText().getValue()).isEqualTo(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
         });
 
         assertThat(rule.getOutputEntry().size()).isEqualTo(outputClauseCount);
         rule.getOutputEntry().forEach(outputEntry -> {
             assertThat(outputEntry).isInstanceOf(LiteralExpression.class);
-            assertThat(outputEntry.getText()).isEqualTo(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
+            assertThat(outputEntry.getText().getValue()).isEqualTo(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
         });
 
         assertThat(rule.getDescription()).isNotNull();

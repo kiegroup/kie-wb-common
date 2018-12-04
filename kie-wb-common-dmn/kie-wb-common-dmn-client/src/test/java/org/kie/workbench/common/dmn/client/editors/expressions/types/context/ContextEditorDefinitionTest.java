@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -27,7 +28,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
-import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
@@ -43,11 +43,13 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
+import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.mocks.EventSourceMock;
 
@@ -100,6 +102,15 @@ public class ContextEditorDefinitionTest {
     private NameAndDataTypePopoverView.Presenter headerEditor;
 
     @Mock
+    private GridWidget parentGridWidget;
+
+    @Mock
+    private GridData parentGridData;
+
+    @Mock
+    private GridColumn parentGridColumn;
+
+    @Mock
     private GridCellTuple parent;
 
     @Mock
@@ -109,7 +120,7 @@ public class ContextEditorDefinitionTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
-    private EventSourceMock<RefreshFormProperties> refreshFormPropertiesEvent;
+    private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     private Optional<HasName> hasName = Optional.empty();
 
@@ -118,6 +129,10 @@ public class ContextEditorDefinitionTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+        when(parent.getGridWidget()).thenReturn(parentGridWidget);
+        when(parentGridWidget.getModel()).thenReturn(parentGridData);
+        when(parentGridData.getColumns()).thenReturn(Collections.singletonList(parentGridColumn));
+
         when(sessionManager.getCurrentSession()).thenReturn(session);
         when(session.getGridPanel()).thenReturn(gridPanel);
         when(session.getGridLayer()).thenReturn(gridLayer);
@@ -128,7 +143,7 @@ public class ContextEditorDefinitionTest {
                                                       sessionCommandManager,
                                                       canvasCommandFactory,
                                                       editorSelectedEvent,
-                                                      refreshFormPropertiesEvent,
+                                                      domainObjectSelectionEvent,
                                                       listSelector,
                                                       translationService,
                                                       expressionEditorDefinitionsSupplier,
@@ -162,7 +177,7 @@ public class ContextEditorDefinitionTest {
     @Test
     public void testModelEnrichment() {
         final Optional<Context> oModel = definition.getModelClass();
-        definition.enrich(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), hasExpression, oModel);
 
         final Context model = oModel.get();
         assertEquals(2,
@@ -173,14 +188,12 @@ public class ContextEditorDefinitionTest {
                      model.getContextEntry().get(0).getVariable().getName().getValue());
 
         assertNull(model.getContextEntry().get(1).getVariable());
-        assertTrue(model.getContextEntry().get(1).getExpression() instanceof LiteralExpression);
+        assertNull(model.getContextEntry().get(1).getExpression());
 
         model.getContextEntry().forEach(ce -> assertEquals(model, ce.getParent()));
 
         assertEquals(model.getContextEntry().get(0),
                      model.getContextEntry().get(0).getVariable().getParent());
-        assertEquals(model.getContextEntry().get(1),
-                     model.getContextEntry().get(1).getExpression().getParent());
     }
 
     @Test

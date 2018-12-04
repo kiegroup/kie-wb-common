@@ -43,11 +43,11 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorCh
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 
 @ApplicationScoped
 public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation, InvocationGridData> {
@@ -65,7 +65,7 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
                                       final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                       final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                       final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                      final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                      final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                       final ListSelectorView.Presenter listSelector,
                                       final TranslationService translationService,
                                       final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
@@ -75,7 +75,7 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               listSelector,
               translationService);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
@@ -99,6 +99,7 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
 
     @Override
     public void enrich(final Optional<String> nodeUUID,
+                       final HasExpression hasExpression,
                        final Optional<Invocation> expression) {
         expression.ifPresent(invocation -> {
             final LiteralExpression literalExpression = new LiteralExpression();
@@ -137,7 +138,7 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
                                               sessionCommandManager,
                                               canvasCommandFactory,
                                               editorSelectedEvent,
-                                              refreshFormPropertiesEvent,
+                                              domainObjectSelectionEvent,
                                               getCellEditorControls(),
                                               listSelector,
                                               translationService,

@@ -29,6 +29,8 @@ import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
@@ -39,16 +41,19 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
+import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -77,10 +82,14 @@ import org.uberfire.workbench.model.menu.Menus;
 public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramResourceType> {
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
+    private static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final DecisionNavigatorDock decisionNavigatorDock;
+    private final LayoutHelper layoutHelper;
+    private final DataTypesPage dataTypesPage;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -95,6 +104,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final DMNProjectEditorMenuSessionItems menuSessionItems,
                             final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
                             final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
+                            final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final ProjectMessagesListener projectMessagesListener,
                             final DiagramClientErrorHandler diagramClientErrorHandler,
                             final ClientTranslationService translationService,
@@ -102,7 +112,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller,
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                            final DecisionNavigatorDock decisionNavigatorDock) {
+                            final DecisionNavigatorDock decisionNavigatorDock,
+                            final LayoutHelper layoutHelper,
+                            final DataTypesPage dataTypesPage) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -122,7 +134,10 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
               projectDiagramResourceServiceCaller);
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
+        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.decisionNavigatorDock = decisionNavigatorDock;
+        this.layoutHelper = layoutHelper;
+        this.dataTypesPage = dataTypesPage;
     }
 
     @OnStartup
@@ -130,6 +145,27 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                           final PlaceRequest place) {
         superDoStartUp(path, place);
         decisionNavigatorDock.init(PerspectiveIds.LIBRARY);
+    }
+
+    @Override
+    protected void initialiseKieEditorForSession(final ProjectDiagram diagram) {
+        superInitialiseKieEditorForSession(diagram);
+
+        kieView.getMultiPage().addPage(dataTypesPage);
+    }
+
+    public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
+        kieView.getMultiPage().selectPage(DATA_TYPES_PAGE_INDEX);
+    }
+
+    void superInitialiseKieEditorForSession(final ProjectDiagram diagram) {
+        super.initialiseKieEditorForSession(diagram);
+    }
+
+    @Override
+    public void open(final ProjectDiagram diagram) {
+        this.layoutHelper.applyLayout(diagram);
+        super.open(diagram);
     }
 
     @Override
@@ -163,6 +199,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
             expressionEditor.setToolbarStateHandler(new ProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.setupContent(c);
             decisionNavigatorDock.open();
+            dataTypesPage.reload();
         });
     }
 
@@ -170,11 +207,13 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     public void onFocus() {
         superDoFocus();
         onDiagramLoad();
+        dataTypesPage.onFocus();
     }
 
     @OnLostFocus
     public void onLostFocus() {
         super.doLostFocus();
+        dataTypesPage.onLostFocus();
     }
 
     @Override
@@ -220,6 +259,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                                                                                 getSessionPresenter(),
                                                                                 sessionManager,
                                                                                 sessionCommandManager,
+                                                                                refreshFormPropertiesEvent,
                                                                                 event.getNodeUUID(),
                                                                                 event.getHasExpression(),
                                                                                 event.getHasName()));

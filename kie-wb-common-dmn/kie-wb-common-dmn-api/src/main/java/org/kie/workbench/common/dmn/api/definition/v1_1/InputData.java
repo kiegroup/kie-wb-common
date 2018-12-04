@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -45,23 +46,25 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
+@Definition(graphFactory = NodeFactory.class, nameField = "name")
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
 public class InputData extends DRGElement implements DMNViewDefinition,
-                                                     HasVariable {
+                                                     HasVariable<InformationItemPrimary> {
 
     @Category
-    public static final transient String stunnerCategory = Categories.NODES;
+    private static final String stunnerCategory = Categories.NODES;
 
     @Labels
-    private final Set<String> stunnerLabels = new Sets.Builder<String>()
+    private static final Set<String> stunnerLabels = new Sets.Builder<String>()
             .add("input-data")
             .build();
 
     @PropertySet
     @FormField(afterElement = "name")
     @Valid
-    protected InformationItem variable;
+    protected InformationItemPrimary variable;
 
     @PropertySet
     @FormField(afterElement = "variable")
@@ -82,7 +85,7 @@ public class InputData extends DRGElement implements DMNViewDefinition,
         this(new Id(),
              new org.kie.workbench.common.dmn.api.property.dmn.Description(),
              new Name(),
-             new InformationItem(),
+             new InformationItemPrimary(),
              new BackgroundSet(),
              new FontSet(),
              new RectangleDimensionsSet());
@@ -91,7 +94,7 @@ public class InputData extends DRGElement implements DMNViewDefinition,
     public InputData(final Id id,
                      final org.kie.workbench.common.dmn.api.property.dmn.Description description,
                      final Name name,
-                     final InformationItem variable,
+                     final InformationItemPrimary variable,
                      final BackgroundSet backgroundSet,
                      final FontSet fontSet,
                      final RectangleDimensionsSet dimensionsSet) {
@@ -102,6 +105,8 @@ public class InputData extends DRGElement implements DMNViewDefinition,
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
+
+        setVariableParent();
     }
 
     // -----------------------
@@ -148,12 +153,12 @@ public class InputData extends DRGElement implements DMNViewDefinition,
     // -----------------------
 
     @Override
-    public InformationItem getVariable() {
+    public InformationItemPrimary getVariable() {
         return variable;
     }
 
     @Override
-    public void setVariable(final InformationItem variable) {
+    public void setVariable(final InformationItemPrimary variable) {
         this.variable = variable;
     }
 
@@ -203,5 +208,9 @@ public class InputData extends DRGElement implements DMNViewDefinition,
                                          backgroundSet != null ? backgroundSet.hashCode() : 0,
                                          fontSet != null ? fontSet.hashCode() : 0,
                                          dimensionsSet != null ? dimensionsSet.hashCode() : 0);
+    }
+
+    private void setVariableParent() {
+        Optional.ofNullable(variable).ifPresent(v -> v.setParent(this));
     }
 }

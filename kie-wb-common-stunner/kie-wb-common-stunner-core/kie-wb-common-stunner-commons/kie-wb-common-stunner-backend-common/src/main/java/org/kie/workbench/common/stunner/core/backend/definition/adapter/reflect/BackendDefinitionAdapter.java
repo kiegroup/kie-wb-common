@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.context.Dependent;
@@ -130,6 +131,12 @@ public class BackendDefinitionAdapter<T> extends AbstractReflectAdapter<T>
             LOG.error("Error obtaining annotated title for Definition with id " + getId(definition));
         }
         return BindableAdapterUtils.toSimpleName(definition);
+    }
+
+    @Override
+    public Optional<String> getNameField(T definition) {
+        return Optional.ofNullable(getDefinitionAnnotation(definition.getClass()))
+                .map(Definition::nameField);
     }
 
     @Override

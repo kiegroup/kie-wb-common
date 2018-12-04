@@ -107,6 +107,9 @@ public class DMNEditorConstants {
     public static final String InvocationEditor_EditParameter = "InvocationEditor.EditParameter";
 
     @TranslationKey(defaultValue = "")
+    public static final String InvocationEditor_EnterFunction = "InvocationEditor.EnterFunction";
+
+    @TranslationKey(defaultValue = "")
     public static final String FunctionEditor_FEEL = "FunctionEditor.FEEL";
 
     @TranslationKey(defaultValue = "")
@@ -176,7 +179,10 @@ public class DMNEditorConstants {
     public static final String DecisionTableEditor_BuiltinAggregatorLabel = "DecisionTableEditor.BuiltinAggregatorLabel";
 
     @TranslationKey(defaultValue = "")
-    public static final String DecisionTableEditor_DecisionTableOrientationLabel = "DecisionTableEditor.DecisionTableOrientationLabel";
+    public static final String UndefinedExpressionEditor_SelectorTitle = "UndefinedExpressionEditor.SelectorTitle";
+
+    @TranslationKey(defaultValue = "")
+    public static final String UndefinedExpressionEditor_SelectExpression = "UndefinedExpressionEditor.SelectExpression";
 
     @TranslationKey(defaultValue = "")
     public static final String DecisionNavigatorPresenter_DecisionNavigator = "DecisionNavigatorPresenter.DecisionNavigator";
@@ -219,4 +225,40 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String NameIsNotUniqueErrorMessage_RegularMessage = "NameIsNotUniqueErrorMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeWithFieldsWarningMessage_StrongMessage = "DataTypeWithFieldsWarningMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeWithFieldsWarningMessage_RegularMessage = "DataTypeWithFieldsWarningMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ReferencedDataTypeWarningMessage_StrongMessage = "ReferencedDataTypeWarningMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ReferencedDataTypeWarningMessage_RegularMessage = "ReferencedDataTypeWarningMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String NameIsDefaultTypeMessage_StrongMessage = "NameIsDefaultTypeMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String NameIsDefaultTypeMessage_RegularMessage = "NameIsDefaultTypeMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeConstraintView_ConstraintsTooltip = "DataTypeConstraintView.ConstraintsTooltip";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeListItemView_Constraints = "DataTypeListItemView.Constraints";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeListItemView_Collection = "DataTypeListItemView.Collection";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SmallSwitchComponentView_Yes = "SmallSwitchComponentView.Yes";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SmallSwitchComponentView_No = "SmallSwitchComponentView.No";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypesPage_Label = "DataTypesPage.Label";
 }

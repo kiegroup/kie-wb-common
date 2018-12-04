@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -37,4 +38,9 @@ public interface PropertySetAdapter<T> extends PriorityAdapter {
      * Returns the property set's properties for a given pojo.
      */
     Set<?> getProperties(final T pojo);
+
+    /**
+     * Returns property of a given pojo and the property name.
+     */
+    Optional<?> getProperty(final T pojo, final String propertyName);
 }

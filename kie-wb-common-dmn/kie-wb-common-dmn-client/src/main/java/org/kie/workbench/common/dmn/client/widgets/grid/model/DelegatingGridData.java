@@ -83,6 +83,18 @@ public class DelegatingGridData implements GridData {
     }
 
     @Override
+    public Range selectHeaderCell(final int headerRowIndex,
+                                  final int headerColumnIndex) {
+        return delegate.selectHeaderCell(headerRowIndex,
+                                         headerColumnIndex);
+    }
+
+    @Override
+    public List<SelectedCell> getSelectedHeaderCells() {
+        return delegate.getSelectedHeaderCells();
+    }
+
+    @Override
     public Range setCell(final int rowIndex,
                          final int columnIndex,
                          final Supplier<GridCell<?>> cellSupplier) {
@@ -246,5 +258,30 @@ public class DelegatingGridData implements GridData {
     @Override
     public GridRow getRow(final int rowIndex) {
         return delegate.getRow(rowIndex);
+    }
+
+    @Override
+    public boolean refreshWidth() {
+        return delegate.refreshWidth();
+    }
+
+    @Override
+    public boolean refreshWidth(final double currentWidth) {
+        return delegate.refreshWidth(currentWidth);
+    }
+
+    @Override
+    public boolean setVisibleSizeAndRefresh(final int width, final int height) {
+        return delegate.setVisibleSizeAndRefresh(width, height);
+    }
+
+    @Override
+    public int getVisibleWidth() {
+        return delegate.getVisibleWidth();
+    }
+
+    @Override
+    public int getVisibleHeight() {
+        return delegate.getVisibleHeight();
     }
 }

@@ -16,21 +16,30 @@
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateDomainObjectPropertyCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
@@ -38,16 +47,26 @@ import org.uberfire.mvp.Command;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FormsCanvasSessionHandlerTest {
 
+    private static final String GRAPH_UUID = "graph-uuid";
+
     private static final String UUID = "uuid";
+
+    private static final String FIELD_NAME = "fieldName";
+
+    private static final String FIELD_PROPERTY_ID = "fieldPropertyId";
+
+    private static final String FIELD_VALUE = "value";
 
     @Mock
     private EditorSession session;
@@ -56,10 +75,19 @@ public class FormsCanvasSessionHandlerTest {
     private DefinitionManager definitionManager;
 
     @Mock
+    private AdapterManager adapterManager;
+
+    @Mock
+    private PropertyAdapter propertyAdapter;
+
+    @Mock
     private AbstractCanvasHandler abstractCanvasHandler;
 
     @Mock
     private CanvasCommandFactory<AbstractCanvasHandler> commandFactory;
+
+    @Mock
+    private SelectionControl selectionControl;
 
     @Mock
     private FormsCanvasSessionHandler.FormRenderer formRenderer;
@@ -76,23 +104,88 @@ public class FormsCanvasSessionHandlerTest {
     @Mock
     private Element<? extends Definition<?>> element;
 
-    private RefreshFormProperties refreshFormPropertiesEvent;
+    @Mock
+    private DomainObject domainObject;
+
+    @Mock
+    private FormsCanvasSessionHandler.FormsDomainObjectCanvasListener domainObjectCanvasListener;
+
+    private RefreshFormPropertiesEvent refreshFormPropertiesEvent;
 
     private CanvasSelectionEvent canvasSelectionEvent;
 
+    private DomainObjectSelectionEvent domainObjectSelectionEvent;
+
     private FormsCanvasSessionHandler handler;
 
+    @Mock
+    private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+
+    @Mock
+    private UpdateDomainObjectPropertyCommand updateDomainObjectPropertyCommand;
+
     @Before
+    @SuppressWarnings("unchecked")
     public void setup() {
-        this.refreshFormPropertiesEvent = new RefreshFormProperties(session, UUID);
-        this.handler = spy(new FormsCanvasSessionHandler(definitionManager, commandFactory));
+        this.refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(session, UUID);
+        this.handler = spy(new FormsCanvasSessionHandler(definitionManager, commandFactory, sessionCommandManager) {
+            @Override
+            protected FormsCanvasSessionHandler.FormsDomainObjectCanvasListener getFormsDomainObjectCanvasListener() {
+                return domainObjectCanvasListener;
+            }
+        });
         this.handler.setRenderer(formRenderer);
 
         when(session.getCanvasHandler()).thenReturn(abstractCanvasHandler);
+        when(session.getSelectionControl()).thenReturn(selectionControl);
         when(abstractCanvasHandler.getGraphIndex()).thenReturn(index);
         when(abstractCanvasHandler.getDiagram()).thenReturn(diagram);
         when(index.get(eq(UUID))).thenReturn(element);
         when(diagram.getGraph()).thenReturn(graph);
+        when(graph.getUUID()).thenReturn(GRAPH_UUID);
+
+        when(definitionManager.adapters()).thenReturn(adapterManager);
+        when(adapterManager.forProperty()).thenReturn(propertyAdapter);
+        when(propertyAdapter.getId(any())).thenReturn(FIELD_PROPERTY_ID);
+        when(commandFactory.updateDomainObjectPropertyValue(domainObject, FIELD_NAME, FIELD_VALUE))
+                .thenReturn(updateDomainObjectPropertyCommand);
+    }
+
+    @Test
+    public void testShowWithNothingSelected() {
+        handler.bind(session);
+
+        when(selectionControl.getSelectedItemDefinition()).thenReturn(Optional.empty());
+
+        handler.show();
+
+        verifyNoMoreInteractions(formRenderer);
+    }
+
+    @Test
+    public void testShowWithElementSelected() {
+        handler.bind(session);
+
+        when(selectionControl.getSelectedItemDefinition()).thenReturn(Optional.of(element));
+
+        handler.show();
+
+        verify(formRenderer).render(eq(GRAPH_UUID),
+                                    eq(element),
+                                    any(Command.class));
+    }
+
+    @Test
+    public void testShowWithDomainObjectSelected() {
+        handler.bind(session);
+
+        when(selectionControl.getSelectedItemDefinition()).thenReturn(Optional.of(domainObject));
+
+        handler.show();
+
+        verify(formRenderer).render(eq(GRAPH_UUID),
+                                    eq(domainObject),
+                                    any(Command.class));
     }
 
     @Test
@@ -143,6 +236,47 @@ public class FormsCanvasSessionHandlerTest {
 
         handler.onCanvasSelectionEvent(canvasSelectionEvent);
 
+        verify(formRenderer, never()).render(anyString(), any(DomainObject.class), any(Command.class));
+    }
+
+    @Test
+    public void testOnDomainObjectSelectionEventSameSession() {
+        handler.bind(session);
+
+        domainObjectSelectionEvent = new DomainObjectSelectionEvent(abstractCanvasHandler, domainObject);
+
+        handler.onDomainObjectSelectionEvent(domainObjectSelectionEvent);
+
+        verify(formRenderer).render(anyString(), eq(domainObject), any(Command.class));
+    }
+
+    @Test
+    public void testOnDomainObjectSelectionEventDifferentSession() {
+        handler.bind(mock(EditorSession.class));
+
+        domainObjectSelectionEvent = new DomainObjectSelectionEvent(abstractCanvasHandler, domainObject);
+
+        handler.onDomainObjectSelectionEvent(domainObjectSelectionEvent);
+
         verify(formRenderer, never()).render(anyString(), any(Element.class), any(Command.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testExecuteUpdateDomainObjectProperty() {
+        handler.bind(session);
+        handler.executeUpdateDomainObjectProperty(domainObject,
+                                                  FIELD_NAME,
+                                                  FIELD_VALUE);
+
+        final InOrder inOrder = inOrder(domainObjectCanvasListener,
+                                        commandFactory,
+                                        sessionCommandManager,
+                                        domainObjectCanvasListener);
+
+        inOrder.verify(commandFactory).updateDomainObjectPropertyValue(domainObject, FIELD_NAME, FIELD_VALUE);
+        inOrder.verify(domainObjectCanvasListener).startProcessing();
+        inOrder.verify(sessionCommandManager).execute(abstractCanvasHandler, updateDomainObjectPropertyCommand);
+        inOrder.verify(domainObjectCanvasListener).endProcessing();
     }
 }

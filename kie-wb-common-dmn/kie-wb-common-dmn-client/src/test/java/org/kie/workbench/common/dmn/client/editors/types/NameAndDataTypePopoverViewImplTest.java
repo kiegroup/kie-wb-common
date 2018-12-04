@@ -41,7 +41,7 @@ import org.uberfire.client.views.pfly.widgets.Popover;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -103,7 +103,7 @@ public class NameAndDataTypePopoverViewImplTest {
     private NameAndDataTypePopoverViewImpl view;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         view = spy(new NameAndDataTypePopoverViewImpl(nameEditor,
                                                       dataTypeEditor,
                                                       popoverElement,
@@ -111,10 +111,14 @@ public class NameAndDataTypePopoverViewImplTest {
                                                       nameLabel,
                                                       dataTypeLabel,
                                                       jQueryProducer,
-                                                      translationService));
+                                                      translationService) {
+            @Override
+            public HTMLElement getElement() {
+                return element;
+            }
+        });
         view.init(presenter);
 
-        doReturn(element).when(view).getElement();
         when(valueChangeEvent.getValue()).thenReturn(typeRef);
         when(jQueryProducer.wrap(element)).thenReturn(popover);
 
@@ -182,5 +186,12 @@ public class NameAndDataTypePopoverViewImplTest {
         view.onNameChange(blurEvent);
 
         verify(presenter).setName(eq(NAME));
+    }
+
+    @Test
+    public void testOnDataTypePageNavTabActiveEvent() {
+        view.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
+
+        verify(view).hide();
     }
 }

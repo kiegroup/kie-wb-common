@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
@@ -37,6 +38,7 @@ import org.gwtbootstrap3.extras.select.client.ui.OptGroup;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -57,12 +59,24 @@ import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 public class DataTypePickerWidget extends Composite implements HasValue<QName>,
                                                                HasEnabled {
 
-    static final Comparator<BuiltInType> BUILT_IN_TYPE_COMPARATOR = Comparator.comparing(o -> o.getName());
+    static final String CSS_DISPLAY = "display";
+
+    static final String CSS_DISPLAY_NONE = "none";
+
+    static final Comparator<BuiltInType> BUILT_IN_TYPE_COMPARATOR = Comparator.comparing(o -> {
+        if (o == BuiltInType.UNDEFINED) {
+            return "";
+        }
+        return o.getName();
+    });
 
     static final Comparator<ItemDefinition> ITEM_DEFINITION_COMPARATOR = Comparator.comparing(o -> o.getName().getValue());
 
     @DataField
     private Anchor typeButton;
+
+    @DataField
+    private Div manageContainer;
 
     @DataField
     private Span manageLabel;
@@ -76,7 +90,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
 
     private DMNGraphUtils dmnGraphUtils;
 
-    private DataTypeModal dataTypeModal;
+    private Event<DataTypePageTabActiveEvent> dataTypePageActiveEvent;
 
     private ItemDefinitionUtils itemDefinitionUtils;
 
@@ -90,19 +104,21 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
 
     @Inject
     public DataTypePickerWidget(final Anchor typeButton,
+                                final Div manageContainer,
                                 final Span manageLabel,
                                 final TranslationService translationService,
                                 final QNameConverter qNameConverter,
                                 final DMNGraphUtils dmnGraphUtils,
-                                final DataTypeModal dataTypeModal,
+                                final Event<DataTypePageTabActiveEvent> dataTypePageActiveEvent,
                                 final ItemDefinitionUtils itemDefinitionUtils) {
         this.typeButton = typeButton;
+        this.manageContainer = manageContainer;
         this.manageLabel = manageLabel;
         this.translationService = translationService;
         this.typeSelector = GWT.create(Select.class);
         this.qNameConverter = qNameConverter;
         this.dmnGraphUtils = dmnGraphUtils;
-        this.dataTypeModal = dataTypeModal;
+        this.dataTypePageActiveEvent = dataTypePageActiveEvent;
         this.itemDefinitionUtils = itemDefinitionUtils;
 
         this.typeSelector.setShowTick(true);
@@ -183,7 +199,15 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     @EventHandler("typeButton")
     @SuppressWarnings("unused")
     public void onClickTypeButton(final ClickEvent clickEvent) {
-        dataTypeModal.show();
+        dataTypePageActiveEvent.fire(new DataTypePageTabActiveEvent());
+    }
+
+    public void showManageLabel() {
+        manageContainer.getStyle().removeProperty(CSS_DISPLAY);
+    }
+
+    public void hideManageLabel() {
+        manageContainer.getStyle().setProperty(CSS_DISPLAY, CSS_DISPLAY_NONE);
     }
 
     @Override

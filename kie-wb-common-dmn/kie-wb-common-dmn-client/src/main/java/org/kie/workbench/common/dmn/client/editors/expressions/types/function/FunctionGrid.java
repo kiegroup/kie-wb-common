@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -28,15 +27,18 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.AddParameterCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.ClearExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.RemoveParameterCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.SetKindCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.function.UpdateParameterNameCommand;
+import org.kie.workbench.common.dmn.client.commands.expressions.types.function.UpdateParameterTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
@@ -59,10 +61,11 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.mvp.Command;
@@ -89,7 +92,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                         final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                         final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                         final Event<ExpressionEditorChanged> editorSelectedEvent,
-                        final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                        final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                         final CellEditorControlsView.Presenter cellEditorControls,
                         final ListSelectorView.Presenter listSelector,
                         final TranslationService translationService,
@@ -106,13 +109,13 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
               gridPanel,
               gridLayer,
               gridData,
-              new FunctionGridRenderer(nesting > 0),
+              new FunctionGridRenderer(gridData),
               definitionUtils,
               sessionManager,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
               translationService,
@@ -146,22 +149,26 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
 
     @Override
     protected void initialiseUiColumns() {
+        final List<GridColumn.HeaderMetaData> headerMetaData = new ArrayList<>();
+        if (nesting == 0) {
+            headerMetaData.add(new FunctionColumnNameHeaderMetaData(hasExpression,
+                                                                    expression,
+                                                                    hasName,
+                                                                    clearDisplayNameConsumer(true),
+                                                                    setDisplayNameConsumer(true),
+                                                                    setTypeRefConsumer(),
+                                                                    cellEditorControls,
+                                                                    headerEditor,
+                                                                    Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditExpression))));
+        }
+        headerMetaData.add(new FunctionColumnParametersHeaderMetaData(expression::get,
+                                                                      translationService,
+                                                                      cellEditorControls,
+                                                                      parametersEditor,
+                                                                      Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditParameters)),
+                                                                      this));
         final GridColumn expressionColumn = new FunctionColumn(gridLayer,
-                                                               Arrays.asList(new FunctionColumnNameHeaderMetaData(hasExpression,
-                                                                                                                  expression,
-                                                                                                                  hasName,
-                                                                                                                  clearDisplayNameConsumer(true),
-                                                                                                                  setDisplayNameConsumer(true),
-                                                                                                                  setTypeRefConsumer(),
-                                                                                                                  cellEditorControls,
-                                                                                                                  headerEditor,
-                                                                                                                  Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditExpression))),
-                                                                             new FunctionColumnParametersHeaderMetaData(expression::get,
-                                                                                                                        translationService,
-                                                                                                                        cellEditorControls,
-                                                                                                                        parametersEditor,
-                                                                                                                        Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditParameters)),
-                                                                                                                        this)),
+                                                               headerMetaData,
                                                                this);
 
         model.appendColumn(expressionColumn);
@@ -283,6 +290,17 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
         });
     }
 
+    @Override
+    public void updateParameterTypeRef(final InformationItem parameter,
+                                       final QName typeRef) {
+        expression.ifPresent(e -> {
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          new UpdateParameterTypeRefCommand(parameter,
+                                                                            typeRef,
+                                                                            gridLayer::batch));
+        });
+    }
+
     void setKind(final FunctionDefinition.Kind kind) {
         expression.ifPresent(function -> {
             switch (kind) {
@@ -312,7 +330,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                                      0,
                                                                      this);
             final Optional<Expression> expression = definition.getModelClass();
-            definition.enrich(nodeUUID, expression);
+            definition.enrich(nodeUUID, hasExpression, expression);
 
             final Optional<BaseExpressionGrid> gridWidget = definition.getEditor(expressionParent,
                                                                                  Optional.empty(),
@@ -361,12 +379,31 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                                          uiModelMapper,
                                                                          () -> {
                                                                              resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                             selectParentCell();
+                                                                             selectExpressionEditorFirstCell(0, 0);
                                                                          },
                                                                          () -> {
                                                                              resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                             selectFirstCell();
+                                                                             selectExpressionEditorFirstCell(0, 0);
                                                                          }));
         });
+    }
+
+    @Override
+    protected void doAfterSelectionChange(final int uiRowIndex,
+                                          final int uiColumnIndex) {
+        selectExpressionEditorFirstCell(0, 0);
+    }
+
+    @Override
+    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                                final int uiHeaderColumnIndex) {
+        if (uiHeaderRowIndex == 0) {
+            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+            if (base instanceof DomainObject) {
+                fireDomainObjectSelectionEvent((DomainObject) base);
+                return;
+            }
+        }
+        super.doAfterHeaderSelectionChange(uiHeaderRowIndex, uiHeaderColumnIndex);
     }
 }

@@ -17,10 +17,13 @@
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.ImportedValues;
+import org.kie.workbench.common.dmn.api.definition.v1_1.IsLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
+import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 
 public class LiteralExpressionPropertyConverter {
 
@@ -30,9 +33,9 @@ public class LiteralExpressionPropertyConverter {
         }
         Id id = new Id(dmn.getId());
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
-        String text = dmn.getText();
-        String expressionLanguage = dmn.getExpressionLanguage();
+        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        Text text = new Text(dmn.getText() != null ? dmn.getText() : "");
+        ExpressionLanguage expressionLanguage = ExpressionLanguagePropertyConverter.wbFromDMN(dmn.getExpressionLanguage());
         ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
         LiteralExpression result = new LiteralExpression(id,
                                                          description,
@@ -46,18 +49,20 @@ public class LiteralExpressionPropertyConverter {
         return result;
     }
 
-    public static org.kie.dmn.model.api.LiteralExpression dmnFromWB(final LiteralExpression wb) {
+    public static org.kie.dmn.model.api.LiteralExpression dmnFromWB(final IsLiteralExpression wb) {
         if (wb == null) {
             return null;
         }
-        org.kie.dmn.model.api.LiteralExpression result = new org.kie.dmn.model.v1_1.TLiteralExpression();
+        org.kie.dmn.model.api.LiteralExpression result = new org.kie.dmn.model.v1_2.TLiteralExpression();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
                                             result::setTypeRef);
-        result.setText(wb.getText());
-        result.setExpressionLanguage(wb.getExpressionLanguage());
-        result.setImportedValues(ImportedValuesConverter.wbFromDMN(wb.getImportedValues()));
+        result.setText(wb.getText().getValue());
+        org.kie.dmn.model.api.ImportedValues importedValues = ImportedValuesConverter.dmnFromWB(wb.getImportedValues());
+        if (importedValues != null) {
+            importedValues.setParent(result);
+        }
+        result.setImportedValues(importedValues);
         return result;
     }
 }

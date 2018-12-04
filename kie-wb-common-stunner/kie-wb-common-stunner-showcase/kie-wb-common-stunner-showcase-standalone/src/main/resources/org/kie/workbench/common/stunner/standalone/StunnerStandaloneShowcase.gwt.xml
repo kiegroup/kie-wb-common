@@ -31,6 +31,11 @@
   <inherits name="org.kie.workbench.common.services.datamodel.KieWorkbenchCommonDataModelAPI"/>
   <inherits name="org.uberfire.ext.security.management.UberfireSecurityManagementWorkbench"/>
   <inherits name="org.uberfire.ext.widgets.core.UberfireWidgetsCore"/>
+  <inherits name="org.uberfire.ssh.UberfireSSHClient"/>
+
+  <!-- Experimental -->
+  <inherits name="org.uberfire.experimental.UberfireExperimentalAPI"/>
+  <inherits name="org.uberfire.experimental.UberfireExperimentalClient"/>
 
   <!-- Stunner.-->
   <inherits name="org.kie.workbench.common.stunner.client.StunnerWidgets"/>

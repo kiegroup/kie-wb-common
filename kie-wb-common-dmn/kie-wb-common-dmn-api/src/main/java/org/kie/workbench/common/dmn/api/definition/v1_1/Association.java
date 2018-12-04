@@ -41,7 +41,9 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Portable
 @Bindable
 @Definition(graphFactory = EdgeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
 @CanConnect(startRole = "business-knowledge-model", endRole = "text-annotation")
 @CanConnect(startRole = "decision", endRole = "text-annotation")
 @CanConnect(startRole = "input-data", endRole = "text-annotation")
@@ -52,10 +54,10 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 public class Association extends Artifact {
 
     @Category
-    public static final transient String stunnerCategory = Categories.CONNECTORS;
+    private static final String stunnerCategory = Categories.CONNECTORS;
 
     @Labels
-    private final Set<String> stunnerLabels = new Sets.Builder<String>()
+    private static final Set<String> stunnerLabels = new Sets.Builder<String>()
             .add("association")
             .build();
 

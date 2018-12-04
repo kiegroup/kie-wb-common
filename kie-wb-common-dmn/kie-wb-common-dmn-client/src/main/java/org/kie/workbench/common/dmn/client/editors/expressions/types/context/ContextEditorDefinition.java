@@ -29,7 +29,6 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
-import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
@@ -43,11 +42,11 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorCh
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 
 @ApplicationScoped
 public class ContextEditorDefinition extends BaseEditorDefinition<Context, ContextGridData> {
@@ -65,7 +64,7 @@ public class ContextEditorDefinition extends BaseEditorDefinition<Context, Conte
                                    final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                    final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                    final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                   final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                   final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                    final ListSelectorView.Presenter listSelector,
                                    final TranslationService translationService,
                                    final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
@@ -75,7 +74,7 @@ public class ContextEditorDefinition extends BaseEditorDefinition<Context, Conte
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               listSelector,
               translationService);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
@@ -99,6 +98,7 @@ public class ContextEditorDefinition extends BaseEditorDefinition<Context, Conte
 
     @Override
     public void enrich(final Optional<String> nodeUUID,
+                       final HasExpression hasExpression,
                        final Optional<Context> expression) {
         expression.ifPresent(context -> {
             final ContextEntry contextEntry = new ContextEntry();
@@ -109,15 +109,12 @@ public class ContextEditorDefinition extends BaseEditorDefinition<Context, Conte
 
             //Add (default) "result" entry
             final ContextEntry resultEntry = new ContextEntry();
-            final LiteralExpression literalExpression = new LiteralExpression();
-            resultEntry.setExpression(literalExpression);
             context.getContextEntry().add(resultEntry);
 
             //Setup parent relationships
             contextEntry.setParent(context);
             informationItem.setParent(contextEntry);
             resultEntry.setParent(context);
-            literalExpression.setParent(resultEntry);
         });
     }
 
@@ -141,7 +138,7 @@ public class ContextEditorDefinition extends BaseEditorDefinition<Context, Conte
                                            sessionCommandManager,
                                            canvasCommandFactory,
                                            editorSelectedEvent,
-                                           refreshFormPropertiesEvent,
+                                           domainObjectSelectionEvent,
                                            getCellEditorControls(),
                                            listSelector,
                                            translationService,

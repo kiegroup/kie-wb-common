@@ -16,9 +16,12 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.IsUnaryTests;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
+import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 
 public class UnaryTestsPropertyConverter {
 
@@ -27,21 +30,22 @@ public class UnaryTestsPropertyConverter {
             return null;
         }
         Id id = new Id(dmn.getId());
-        Description description = new Description(dmn.getDescription());
-
-        UnaryTests result = new UnaryTests(id, description, dmn.getText(), dmn.getExpressionLanguage());
+        Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
+        ExpressionLanguage expressionLanguage = ExpressionLanguagePropertyConverter.wbFromDMN(dmn.getExpressionLanguage());
+        UnaryTests result = new UnaryTests(id,
+                                           description,
+                                           new Text(dmn.getText()),
+                                           expressionLanguage);
         return result;
     }
 
-    public static org.kie.dmn.model.api.UnaryTests dmnFromWB(final UnaryTests wb) {
+    public static org.kie.dmn.model.api.UnaryTests dmnFromWB(final IsUnaryTests wb) {
         if (wb == null) {
             return null;
         }
-        org.kie.dmn.model.api.UnaryTests result = new org.kie.dmn.model.v1_1.TUnaryTests();
+        org.kie.dmn.model.api.UnaryTests result = new org.kie.dmn.model.v1_2.TUnaryTests();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        result.setText(wb.getText());
-        result.setExpressionLanguage(wb.getExpressionLanguage());
+        result.setText(wb.getText().getValue());
 
         return result;
     }

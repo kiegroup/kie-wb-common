@@ -47,15 +47,17 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
+@Definition(graphFactory = NodeFactory.class, nameField = "name")
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
 public class KnowledgeSource extends DRGElement implements DMNViewDefinition {
 
     @Category
-    public static final transient String stunnerCategory = Categories.NODES;
+    private static final String stunnerCategory = Categories.NODES;
 
     @Labels
-    private final Set<String> stunnerLabels = new Sets.Builder<String>()
+    private static final Set<String> stunnerLabels = new Sets.Builder<String>()
             .add("knowledge-source")
             .build();
 

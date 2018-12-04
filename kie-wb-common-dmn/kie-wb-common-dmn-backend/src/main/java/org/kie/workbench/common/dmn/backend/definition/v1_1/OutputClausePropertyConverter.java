@@ -16,21 +16,24 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.dmn.model.api.LiteralExpression;
+import org.kie.dmn.model.api.UnaryTests;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
-import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
+import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClauseLiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClauseUnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class OutputClausePropertyConverter {
 
     public static OutputClause wbFromDMN(final org.kie.dmn.model.api.OutputClause dmn) {
         Id id = new Id(dmn.getId());
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        UnaryTests outputValues = UnaryTestsPropertyConverter.wbFromDMN(dmn.getOutputValues());
-        LiteralExpression defaultOutputEntry = LiteralExpressionPropertyConverter.wbFromDMN(dmn.getDefaultOutputEntry());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
+        OutputClauseUnaryTests outputValues = OutputClauseUnaryTestsPropertyConverter.wbFromDMN(dmn.getOutputValues());
+        OutputClauseLiteralExpression defaultOutputEntry = OutputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getDefaultOutputEntry());
+        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
 
         OutputClause result = new OutputClause();
         result.setId(id);
@@ -51,12 +54,23 @@ public class OutputClausePropertyConverter {
     }
 
     public static org.kie.dmn.model.api.OutputClause dmnFromWB(final OutputClause wb) {
-        org.kie.dmn.model.api.OutputClause result = new org.kie.dmn.model.v1_1.TOutputClause();
+        org.kie.dmn.model.api.OutputClause result = new org.kie.dmn.model.v1_2.TOutputClause();
         result.setId(wb.getId().getValue());
         result.setName(wb.getName());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        result.setOutputValues(UnaryTestsPropertyConverter.dmnFromWB(wb.getOutputValues()));
-        result.setDefaultOutputEntry(LiteralExpressionPropertyConverter.dmnFromWB(wb.getDefaultOutputEntry()));
+
+        UnaryTests outputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getOutputValues());
+        if (outputValues != null && StringUtils.nonEmpty(outputValues.getText())) {
+            outputValues.setParent(result);
+            result.setOutputValues(outputValues);
+        }
+
+        LiteralExpression defaultOutputEntry = LiteralExpressionPropertyConverter.dmnFromWB(wb.getDefaultOutputEntry());
+        if (defaultOutputEntry != null && StringUtils.nonEmpty(defaultOutputEntry.getText())) {
+            defaultOutputEntry.setParent(result);
+            result.setDefaultOutputEntry(defaultOutputEntry);
+        }
+
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         return result;

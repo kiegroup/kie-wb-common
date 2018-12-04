@@ -43,7 +43,9 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED,
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+        startElement = "id")
 @CanContain(roles = {
         "input-data",
         "knowledge-source",
@@ -58,10 +60,10 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 public class DMNDiagram extends DMNModelInstrumentedBase implements DMNDefinition {
 
     @Category
-    public static final transient String stunnerCategory = Categories.DIAGRAM;
+    private static final String stunnerCategory = Categories.DIAGRAM;
 
     @Labels
-    public static final Set<String> stunnerLabels = new Sets.Builder<String>()
+    private static final Set<String> stunnerLabels = new Sets.Builder<String>()
             .add("dmn_diagram")
             .build();
 

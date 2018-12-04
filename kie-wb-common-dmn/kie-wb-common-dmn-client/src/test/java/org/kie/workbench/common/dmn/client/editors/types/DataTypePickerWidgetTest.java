@@ -28,6 +28,8 @@ import org.gwtbootstrap3.extras.select.client.ui.OptGroup;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
+import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -46,6 +48,7 @@ import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -68,10 +71,16 @@ public class DataTypePickerWidgetTest {
 
     private static final QName VALUE = new QName();
 
-    private static final String WIDGET_VALUE = "[][string][feel]";
+    private static final String WIDGET_VALUE = "[][<Undefined>][]";
 
     @Mock
     private Anchor typeButton;
+
+    @Mock
+    private Div manageContainer;
+
+    @Mock
+    private CSSStyleDeclaration manageContainerStyle;
 
     @Mock
     private Span manageLabel;
@@ -83,7 +92,7 @@ public class DataTypePickerWidgetTest {
     private DMNGraphUtils dmnGraphUtils;
 
     @Mock
-    private DataTypeModal dataTypeModal;
+    private EventSourceMock<DataTypePageTabActiveEvent> dataTypePageActiveEvent;
 
     @GwtMock
     @SuppressWarnings("unused")
@@ -134,15 +143,17 @@ public class DataTypePickerWidgetTest {
         when(option.getElement()).thenReturn(optionElement);
         when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
         when(dmnModel.getPrefixForNamespaceURI(anyString())).thenReturn(Optional.empty());
+        when(manageContainer.getStyle()).thenReturn(manageContainerStyle);
 
         when(translationService.getTranslation(anyString())).thenAnswer(i -> i.getArguments()[0]);
 
         this.picker = spy(new DataTypePickerWidget(typeButton,
+                                                   manageContainer,
                                                    manageLabel,
                                                    translationService,
                                                    qNameConverter,
                                                    dmnGraphUtils,
-                                                   dataTypeModal,
+                                                   dataTypePageActiveEvent,
                                                    itemDefinitionUtils));
     }
 
@@ -188,6 +199,9 @@ public class DataTypePickerWidgetTest {
 
         //Check the items were sorted correctly
         assertTrue(Ordering.from(DataTypePickerWidget.BUILT_IN_TYPE_COMPARATOR).isOrdered(builtInTypesAddedToWidget));
+
+        //First item must be "<Undefined>"
+        assertEquals(builtInTypesAddedToWidget.get(0).getName(), BuiltInType.UNDEFINED.getName());
     }
 
     @Test
@@ -238,12 +252,12 @@ public class DataTypePickerWidgetTest {
 
         final QName normalisedQName = qNameCaptor.getValue();
         assertEquals("", normalisedQName.getNamespaceURI());
-        assertEquals(Namespace.FEEL.getPrefix(), normalisedQName.getPrefix());
+        assertEquals(QName.NULL_NS_URI, normalisedQName.getPrefix());
         assertEquals(bit.getName(), normalisedQName.getLocalPart());
 
         assertTrue(oo.isPresent());
         assertEquals(bit.getName(), optionTextCaptor.getValue());
-        assertEquals("[][any][feel]", optionValueCaptor.getValue());
+        assertEquals("[][Any][]", optionValueCaptor.getValue());
     }
 
     @Test
@@ -330,12 +344,26 @@ public class DataTypePickerWidgetTest {
 
     @Test
     public void testOnClickTypeButton() {
-
         final ClickEvent clickEvent = mock(ClickEvent.class);
 
         picker.onClickTypeButton(clickEvent);
 
-        verify(dataTypeModal).show();
+        verify(dataTypePageActiveEvent).fire(any(DataTypePageTabActiveEvent.class));
+    }
+
+    @Test
+    public void testShowManageLabel() {
+        picker.showManageLabel();
+
+        verify(manageContainerStyle).removeProperty(eq(DataTypePickerWidget.CSS_DISPLAY));
+    }
+
+    @Test
+    public void testHideManageLabel() {
+        picker.hideManageLabel();
+
+        verify(manageContainerStyle).setProperty(eq(DataTypePickerWidget.CSS_DISPLAY),
+                                                 eq(DataTypePickerWidget.CSS_DISPLAY_NONE));
     }
 
     @Test

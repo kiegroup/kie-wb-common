@@ -31,6 +31,7 @@ import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.selector.UndefinedExpressionSelectorPopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
@@ -40,15 +41,16 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorCh
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 
 @ApplicationScoped
 public class UndefinedExpressionEditorDefinition extends BaseEditorDefinition<Expression, DMNGridData> {
 
+    private UndefinedExpressionSelectorPopoverView.Presenter undefinedExpressionSelector;
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
 
     public UndefinedExpressionEditorDefinition() {
@@ -61,18 +63,20 @@ public class UndefinedExpressionEditorDefinition extends BaseEditorDefinition<Ex
                                                final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                                final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                                final Event<ExpressionEditorChanged> editorSelectedEvent,
-                                               final Event<RefreshFormProperties> refreshFormPropertiesEvent,
+                                               final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                                final ListSelectorView.Presenter listSelector,
                                                final TranslationService translationService,
+                                               final UndefinedExpressionSelectorPopoverView.Presenter undefinedExpressionSelector,
                                                final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
         super(definitionUtils,
               sessionManager,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
-              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
               listSelector,
               translationService);
+        this.undefinedExpressionSelector = undefinedExpressionSelector;
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
     }
 
@@ -111,11 +115,12 @@ public class UndefinedExpressionEditorDefinition extends BaseEditorDefinition<Ex
                                                        sessionCommandManager,
                                                        canvasCommandFactory,
                                                        editorSelectedEvent,
-                                                       refreshFormPropertiesEvent,
+                                                       domainObjectSelectionEvent,
                                                        getCellEditorControls(),
                                                        listSelector,
                                                        translationService,
                                                        nesting,
+                                                       undefinedExpressionSelector,
                                                        expressionEditorDefinitionsSupplier,
                                                        ((DMNSession) sessionManager.getCurrentSession()).getExpressionGridCache()));
     }

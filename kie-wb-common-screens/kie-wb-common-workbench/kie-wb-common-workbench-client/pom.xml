@@ -5,7 +5,7 @@
   <parent>
     <artifactId>kie-wb-common-workbench</artifactId>
     <groupId>org.kie.workbench.screens</groupId>
-    <version>7.13.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -64,6 +64,10 @@
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-message-console-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-security-api</artifactId>
     </dependency>
     <dependency>
@@ -89,6 +93,14 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-experimental-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.soup</groupId>
@@ -214,6 +226,10 @@
       <artifactId>kie-wb-common-library-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.kie.workbench.profile</groupId>
+      <artifactId>kie-wb-common-profile-api</artifactId>
+    </dependency>    
+    <dependency>
       <groupId>org.kie.server</groupId>
       <artifactId>kie-server-api</artifactId>
     </dependency>
@@ -243,6 +259,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
   </dependencies>
 
 </project>
