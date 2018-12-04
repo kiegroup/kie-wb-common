@@ -93,6 +93,8 @@ public interface ProjectEditorConstants
 
     String BuildSuccessful();
 
+    String BuildAndInstallSuccessful();
+
     String DeploySuccessful();
 
     String BuildFailed();
@@ -332,4 +334,6 @@ public interface ProjectEditorConstants
     String DeploySuccessfulButContainerFailedToStart();
 
     String DeploySuccessfulAndContainerStarted();
+
+    String DeploySuccessfulAndContainerUpdated();
 }

@@ -21,11 +21,8 @@ import javax.enterprise.event.Event;
 
 import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
-import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.messageconsole.client.console.widget.button.ViewHideAlertsButtonPresenter;
-import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.repositories.Branch;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -44,7 +41,6 @@ import org.kie.workbench.common.screens.library.client.screens.project.rename.Re
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPermissions;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
-import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
@@ -106,9 +102,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
     private NewResourcePresenter newResourcePresenter;
 
     @Mock
-    private BuildExecutor buildExecutor;
-
-    @Mock
     private ManagedInstance<DeleteProjectPopUpScreen> deleteProjectPopUpScreenInstance;
 
     @Mock
@@ -146,12 +139,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
     private Event<NotificationEvent> notificationEvent;
 
     @Mock
-    private ViewHideAlertsButtonPresenter viewHideAlertsButtonPresenter;
-
-    @Mock
-    private ViewHideAlertsButtonPresenter.View viewHideAlertsButtonView;
-
-    @Mock
     private ProjectContributorsListServiceImpl projectContributorsListService;
 
     private SyncPromises promises;
@@ -162,7 +149,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         promises = spy(new SyncPromises());
 
         when(assetsScreen.getView()).thenReturn(assetsView);
-        when(viewHideAlertsButtonPresenter.getView()).thenReturn(viewHideAlertsButtonView);
 
         when(deleteProjectPopUpScreenInstance.get()).thenReturn(deleteProjectPopUpScreen);
         when(deleteBranchPopUpScreenInstance.get()).thenReturn(deleteBranchPopUpScreen);
@@ -180,7 +166,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
                                                               this.settingsPresenter,
                                                               this.newFileUploader,
                                                               this.newResourcePresenter,
-                                                              this.buildExecutor,
                                                               this.deleteProjectPopUpScreenInstance,
                                                               this.deleteBranchPopUpScreenInstance,
                                                               this.renameProjectPopUpScreenInstance,
@@ -190,7 +175,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
                                                               projectNameValidator,
                                                               promises,
                                                               notificationEvent,
-                                                              viewHideAlertsButtonPresenter,
                                                               projectContributorsListService);
         this.presenter = spy(projectScreen);
 
@@ -203,9 +187,7 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         presenter.initialize();
 
         verify(view).init(presenter);
-        verify(buildExecutor).init(view);
         verify(view).setTitle("mainModuleName");
-        verify(view).addMainAction(viewHideAlertsButtonView);
     }
 
     @Test
@@ -220,8 +202,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(true);
         verify(view).setDeleteProjectVisible(false);
         verify(view).setDeleteBranchVisible(false);
-        verify(view).setBuildEnabled(false);
-        verify(view).setDeployEnabled(false);
         verify(view).setActionsVisible(true);
     }
 
@@ -237,8 +217,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(false);
         verify(view).setDeleteProjectVisible(true);
         verify(view).setDeleteBranchVisible(false);
-        verify(view).setBuildEnabled(false);
-        verify(view).setDeployEnabled(false);
         verify(view).setActionsVisible(true);
     }
 
@@ -254,8 +232,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(false);
         verify(view).setDeleteProjectVisible(false);
         verify(view).setDeleteBranchVisible(false);
-        verify(view).setBuildEnabled(true);
-        verify(view).setDeployEnabled(false);
         verify(view).setActionsVisible(true);
     }
 
@@ -271,8 +247,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(false);
         verify(view).setDeleteProjectVisible(false);
         verify(view).setDeleteBranchVisible(false);
-        verify(view).setBuildEnabled(false);
-        verify(view).setDeployEnabled(true);
         verify(view).setActionsVisible(true);
     }
 
@@ -288,8 +262,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(false);
         verify(view).setDeleteProjectVisible(false);
         verify(view).setDeleteBranchVisible(false);
-        verify(view).setBuildEnabled(false);
-        verify(view).setDeployEnabled(false);
         verify(view).setActionsVisible(true);
     }
 
@@ -303,8 +275,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(false);
         verify(view).setDeleteProjectVisible(false);
         verify(view).setDeleteBranchVisible(false);
-        verify(view).setBuildEnabled(false);
-        verify(view).setDeployEnabled(false);
         verify(view).setActionsVisible(false);
     }
 
@@ -321,8 +291,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         verify(view).setReimportVisible(false);
         verify(view).setDeleteProjectVisible(true);
         verify(view).setDeleteBranchVisible(true);
-        verify(view).setBuildEnabled(false);
-        verify(view).setDeployEnabled(false);
         verify(view).setActionsVisible(true);
     }
 
@@ -386,6 +354,8 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         }
     }
 
+    /*
+
     @Test
     public void testDeploy() {
         {
@@ -417,7 +387,7 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
                    times(1)).triggerBuild();
         }
     }
-
+*/
     @Test
     public void testDuplicate() {
         {
