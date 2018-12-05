@@ -1,0 +1,15 @@
+{
+  "name": "kie-wb-common-home-client",
+  "type": "lib",
+  "main": "./dist/index.js",
+  "decorators": {},
+  "components": [
+    {
+      "id": "HomePerspective",
+      "type": "perspective",
+      "params": {
+        "is_default": true
+      }
+    }
+  ]
+}

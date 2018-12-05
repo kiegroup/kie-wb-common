@@ -16,21 +16,22 @@
 
 package org.kie.workbench.common.screens.home.client.perspectives;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.home.client.resources.i18n.HomeConstants;
 import org.uberfire.client.annotations.Perspective;
-import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
-@ApplicationScoped
-@WorkbenchPerspective(identifier = "HomePerspective", isDefault = true)
+// This perspective was implemented in JavaScript. Kept it here for history.
+// See /src/main/resources/kie-wb-common-home-client/src/index.tsx
+
+//@ApplicationScoped
+//@WorkbenchPerspective(identifier = "HomePerspective", isDefault = true)
 public class HomePerspective {
 
     @Inject
