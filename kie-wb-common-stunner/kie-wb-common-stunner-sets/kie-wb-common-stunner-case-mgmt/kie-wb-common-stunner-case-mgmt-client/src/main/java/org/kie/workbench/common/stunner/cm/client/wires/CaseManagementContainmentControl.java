@@ -75,7 +75,7 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
 
         if ((getParent() instanceof CaseManagementShapeView)) {
             ((CaseManagementShapeView) getParent()).logicallyReplace((CaseManagementShapeView) getShape(),
-                                                                         state.getGhost().get());
+                                                                     state.getGhost().get());
         }
     }
 
@@ -137,12 +137,14 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
 
     @Override
     public void execute() {
-        // Execute.
-        final CaseManagementShapeView ghost = state.getGhost().get();
-        //Children contains m_ghost and others excluding m_shape. This replaces m_ghost with m_shape.
-        final WiresContainer originalParent = state.getOriginalParent().get();
-        reparentDraggedShape(ghost,
-                             originalParent);
+        if (state.getGhost().isPresent() && state.getOriginalParent().isPresent()) {
+            // Execute.
+            final CaseManagementShapeView ghost = state.getGhost().get();
+            //Children contains m_ghost and others excluding m_shape. This replaces m_ghost with m_shape.
+            final WiresContainer originalParent = state.getOriginalParent().get();
+            reparentDraggedShape(ghost,
+                                 originalParent);
+        }
         clearState();
         batch();
     }
@@ -174,11 +176,13 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
     }
 
     private void restore(final CaseManagementShapeView ghost) {
-        final WiresContainer originalParent = state.getOriginalParent().get();
-        final int originalIndex = state.getOriginalIndex().get();
-        restore(ghost,
-                originalParent,
-                originalIndex);
+        if (state.getOriginalParent().isPresent() && state.getOriginalIndex().isPresent()) {
+            final WiresContainer originalParent = state.getOriginalParent().get();
+            final int originalIndex = state.getOriginalIndex().get();
+            restore(ghost,
+                    originalParent,
+                    originalIndex);
+        }
     }
 
     private void batch() {
@@ -238,11 +242,9 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
         if (ghost.getParent() != null) {
             final CaseManagementShapeView ghostContainer = (CaseManagementShapeView) ghost.getParent();
             final int ghostIndex = ghostContainer.getIndex(ghost);
-            if (ghostContainer instanceof CaseManagementShapeView) {
-                restore(ghost,
-                        ghostContainer,
-                        ghostIndex);
-            }
+            restore(ghost,
+                    ghostContainer,
+                    ghostIndex);
         }
     }
 }
