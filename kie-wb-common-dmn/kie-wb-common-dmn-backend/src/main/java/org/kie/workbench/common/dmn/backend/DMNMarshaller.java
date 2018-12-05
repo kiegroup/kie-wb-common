@@ -52,6 +52,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
@@ -68,6 +69,7 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionServiceConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DefinitionsConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.KnowledgeSourceConverter;
@@ -107,6 +109,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     private BusinessKnowledgeModelConverter bkmConverter;
     private KnowledgeSourceConverter knowledgeSourceConverter;
     private TextAnnotationConverter textAnnotationConverter;
+    private DecisionServiceConverter decisionServiceConverter;
     private org.kie.dmn.api.marshalling.DMNMarshaller marshaller;
 
     protected DMNMarshaller() {
@@ -124,6 +127,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.bkmConverter = new BusinessKnowledgeModelConverter(factoryManager);
         this.knowledgeSourceConverter = new KnowledgeSourceConverter(factoryManager);
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
+        this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
         this.marshaller = DMNMarshallerFactory.newDefaultMarshaller();
     }
 
@@ -280,6 +284,22 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                         setConnectionMagnets(myEdge, ir.getId(), dmnXml);
                     }
                 }
+            } else if (elem instanceof org.kie.dmn.model.api.DecisionService) {
+                org.kie.dmn.model.api.DecisionService ds = (org.kie.dmn.model.api.DecisionService) elem;
+                for (org.kie.dmn.model.api.DMNElementReference er : ds.getEncapsulatedDecision()) {
+                    String reqInputID = getId(er);
+                    Node requiredNode = elems.get(reqInputID).getValue();
+                    Edge myEdge = factoryManager.newElement(ds.getId() + "er" + reqInputID, Child.class).asEdge();
+                    connectEdge(myEdge, requiredNode, currentNode);
+                    setConnectionMagnets(myEdge, reqInputID, dmnXml);
+                }
+                for (org.kie.dmn.model.api.DMNElementReference er : ds.getOutputDecision()) {
+                    String reqInputID = getId(er);
+                    Node requiredNode = elems.get(reqInputID).getValue();
+                    Edge myEdge = factoryManager.newElement(ds.getId() + "er" + reqInputID, Child.class).asEdge();
+                    connectEdge(myEdge, requiredNode, currentNode);
+                    setConnectionMagnets(myEdge, reqInputID, dmnXml);
+                }
             }
         }
 
@@ -353,6 +373,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             return bkmConverter.nodeFromDMN((org.kie.dmn.model.api.BusinessKnowledgeModel) dmn);
         } else if (dmn instanceof org.kie.dmn.model.api.KnowledgeSource) {
             return knowledgeSourceConverter.nodeFromDMN((org.kie.dmn.model.api.KnowledgeSource) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.api.DecisionService) {
+            return decisionServiceConverter.nodeFromDMN((org.kie.dmn.model.api.DecisionService) dmn);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO 
         }
@@ -723,6 +745,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 return bkmConverter.dmnFromNode((Node<View<BusinessKnowledgeModel>, ?>) node);
             } else if (view.getDefinition() instanceof KnowledgeSource) {
                 return knowledgeSourceConverter.dmnFromNode((Node<View<KnowledgeSource>, ?>) node);
+            } else if (view.getDefinition() instanceof DecisionService) {
+                return decisionServiceConverter.dmnFromNode((Node<View<DecisionService>, ?>) node);
             } else {
                 throw new UnsupportedOperationException("TODO"); // TODO 
             }

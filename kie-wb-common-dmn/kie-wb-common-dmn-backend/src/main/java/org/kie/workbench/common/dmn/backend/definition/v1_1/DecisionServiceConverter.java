@@ -16,65 +16,151 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
-import org.kie.dmn.model.api.DMNElementReference;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItemPrimary;
-import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
-import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
+import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
+import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class DecisionServiceConverter {
+public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model.api.DecisionService, org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService> {
 
-    public static DecisionService wbFromDMN(final org.kie.dmn.model.api.DecisionService dmn) {
-        Id id = new Id(dmn.getId());
-        Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
+    private FactoryManager factoryManager;
 
-        DecisionService result = new DecisionService();
-        result.setId(id);
-        result.setDescription(description);
-
-        InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable());
-        // TODO unable to map.
-
-        for (DMNElementReference ie : dmn.getInputData()) {
-            UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(ie);
-            if (inputEntryConverted != null) {
-                inputEntryConverted.setParent(inputEntryConverted);
-            }
-            result.getInputEntry().add(inputEntryConverted);
-        }
-        for (org.kie.dmn.model.api.LiteralExpression oe : dmn.getOutputEntry()) {
-            LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(oe);
-            if (outputEntryConverted != null) {
-                outputEntryConverted.setParent(result);
-            }
-            result.getOutputEntry().add(outputEntryConverted);
-        }
-
-        return result;
+    public DecisionServiceConverter(final FactoryManager factoryManager) {
+        super();
+        this.factoryManager = factoryManager;
     }
 
-    public static org.kie.dmn.model.api.DecisionService dmnFromWB(final DecisionService wb) {
-        org.kie.dmn.model.api.DecisionRule result = new org.kie.dmn.model.v1_2.TDecisionRule();
-        result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+    @Override
+    public Node<View<DecisionService>, ?> nodeFromDMN(final org.kie.dmn.model.api.DecisionService dmn) {
+        @SuppressWarnings("unchecked")
+        Node<View<DecisionService>, ?> node = (Node<View<DecisionService>, ?>) factoryManager.newElement(dmn.getId(),
+                                                                                                         DecisionService.class).asNode();
+        Id id = new Id(dmn.getId());
+        Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
+        Name name = new Name(dmn.getName());
+        InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable());
+        DecisionService decisionService = new DecisionService(id,
+                                                              description,
+                                                              name,
+                                                              informationItem,
+                                                              null,
+                                                              null,
+                                                              null,
+                                                              null,
+                                                              new BackgroundSet(),
+                                                              new FontSet(),
+                                                              new DecisionServiceRectangleDimensionsSet());
+        node.getContent().setDefinition(decisionService);
 
-        for (UnaryTests ie : wb.getInputEntry()) {
-            org.kie.dmn.model.api.UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.dmnFromWB(ie);
-            if (inputEntryConverted != null) {
-                inputEntryConverted.setParent(inputEntryConverted);
-            }
-            result.getInputEntry().add(inputEntryConverted);
-        }
-        for (LiteralExpression oe : wb.getOutputEntry()) {
-            org.kie.dmn.model.api.LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.dmnFromWB(oe);
-            if (outputEntryConverted != null) {
-                outputEntryConverted.setParent(result);
-            }
-            result.getOutputEntry().add(outputEntryConverted);
+        if (informationItem != null) {
+            informationItem.setParent(decisionService);
         }
 
-        return result;
+        return node;
+    }
+
+    @Override
+    public org.kie.dmn.model.api.DecisionService dmnFromNode(Node<View<DecisionService>, ?> node) {
+        DecisionService source = node.getContent().getDefinition();
+        org.kie.dmn.model.api.DecisionService ds = new org.kie.dmn.model.v1_2.TDecisionService();
+        ds.setId(source.getId().getValue());
+        ds.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        ds.setName(source.getName().getValue());
+        org.kie.dmn.model.api.InformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable());
+        if (variable != null) {
+            variable.setParent(ds);
+        }
+        ds.setVariable(variable);
+        List<InputData> reqInputs = new ArrayList<>();
+        List<Decision> reqDecisions = new ArrayList<>();
+        // DMN spec table 2: Requirements connection rules
+        List<Edge<?, ?>> outEdges = (List<Edge<?, ?>>) node.getOutEdges();
+        for (Edge<?, ?> e : outEdges) {
+            if (e.getContent() instanceof Child) {
+                @SuppressWarnings("unchecked")
+                Node<View<?>, ?> targetNode = e.getTargetNode();
+                if (targetNode.getContent() instanceof View<?>) {
+                    View<?> view = (View<?>) targetNode.getContent();
+                    if (view.getDefinition() instanceof DRGElement) {
+                        DRGElement drgElement = (DRGElement) view.getDefinition();
+                        if (drgElement instanceof Decision) {
+                            Decision decision = (Decision) drgElement;
+                            org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
+                            ri.setHref(new StringBuilder("#").append(decision.getId().getValue()).toString());
+                            if (isNodeUpperHalfOfDS(targetNode, node)) {
+                                ds.getOutputDecision().add(ri);
+                            } else {
+                                ds.getEncapsulatedDecision().add(ri);
+                            }
+                            inspectDecisionForDSReqs(targetNode, reqInputs, reqDecisions);
+                        } else {
+                            throw new UnsupportedOperationException("wrong model definition: a DecisionService is expected to encapsulate only Decision");
+                        }
+                    }
+                }
+            } else if (e.getContent() instanceof KnowledgeRequirement) {
+                // this was taken care by the receiving Decision or BKM.
+            } else {
+                throw new UnsupportedOperationException("wrong model definition.");
+            }
+        }
+        reqInputs.stream()
+                 .sorted(Comparator.comparing(x -> x.getName().getValue()))
+                 .map(x -> {
+                     org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
+                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
+                     return ri;
+                 })
+                 .forEach(ds.getInputData()::add);
+        reqDecisions.stream()
+                    .sorted(Comparator.comparing(x -> x.getName().getValue()))
+                    .map(x -> {
+                        org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
+                        ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
+                        return ri;
+                    })
+                    .forEach(ds.getInputDecision()::add);
+        return ds;
+    }
+
+    private void inspectDecisionForDSReqs(Node<View<?>, ?> targetNode, List<InputData> reqInputs, List<Decision> reqDecisions) {
+        List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) targetNode.getInEdges();
+        for (Edge<?, ?> e : inEdges) {
+            Node<?, ?> sourceNode = e.getSourceNode();
+            if (sourceNode.getContent() instanceof View<?>) {
+                View<?> view = (View<?>) sourceNode.getContent();
+                if (view.getDefinition() instanceof DRGElement) {
+                    DRGElement drgElement = (DRGElement) view.getDefinition();
+                    if (drgElement instanceof Decision) {
+                        reqDecisions.add((Decision) drgElement);
+                    } else if (drgElement instanceof InputData) {
+                        reqInputs.add((InputData) drgElement);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isNodeUpperHalfOfDS(Node<View<?>, ?> node, Node<View<DecisionService>, ?> dsNode) {
+        double dsHeight = node.getContent().getBounds().getLowerRight().getY() - node.getContent().getBounds().getUpperLeft().getY();
+        double yUpperHalf = node.getContent().getBounds().getUpperLeft().getY() + (dsHeight / 2);
+        return node.getContent().getBounds().getUpperLeft().getY() < yUpperHalf;
     }
 }
