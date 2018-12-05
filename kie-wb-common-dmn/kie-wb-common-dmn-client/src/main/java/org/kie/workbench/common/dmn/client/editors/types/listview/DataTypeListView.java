@@ -57,8 +57,8 @@ public class DataTypeListView implements DataTypeList.View {
     @DataField("list-items")
     private final HTMLDivElement listItems;
 
-    @DataField("list-items-no")
-    private final HTMLDivElement listItemsNo;
+    @DataField("placeholder")
+    private final HTMLDivElement placeholder;
 
     @DataField("collapsed-description")
     private final HTMLDivElement collapsedDescription;
@@ -75,6 +75,18 @@ public class DataTypeListView implements DataTypeList.View {
     @DataField("add-button")
     private final HTMLButtonElement addButton;
 
+    @DataField("search-bar-container")
+    private final HTMLDivElement searchBarContainer;
+
+    @DataField("expand-all")
+    private final HTMLAnchorElement expandAll;
+
+    @DataField("collapse-all")
+    private final HTMLAnchorElement collapseAll;
+
+    @DataField("no-data-types-found")
+    private final HTMLDivElement noDataTypesFound;
+
     private DataTypeList presenter;
 
     @Inject
@@ -84,19 +96,33 @@ public class DataTypeListView implements DataTypeList.View {
                             final HTMLAnchorElement viewMore,
                             final HTMLAnchorElement viewLess,
                             final HTMLButtonElement addButton,
-                            final HTMLDivElement listItemsNo) {
+                            final HTMLDivElement placeholder,
+                            final HTMLDivElement searchBarContainer,
+                            final HTMLAnchorElement expandAll,
+                            final HTMLAnchorElement collapseAll,
+                            final HTMLDivElement noDataTypesFound) {
         this.listItems = listItems;
         this.collapsedDescription = collapsedDescription;
         this.expandedDescription = expandedDescription;
         this.viewMore = viewMore;
         this.viewLess = viewLess;
         this.addButton = addButton;
-        this.listItemsNo = listItemsNo;
+        this.placeholder = placeholder;
+        this.searchBarContainer = searchBarContainer;
+        this.expandAll = expandAll;
+        this.collapseAll = collapseAll;
+        this.noDataTypesFound = noDataTypesFound;
     }
 
     @Override
     public void init(final DataTypeList presenter) {
         this.presenter = presenter;
+
+        setupSearchBar();
+    }
+
+    private void setupSearchBar() {
+        searchBarContainer.appendChild(presenter.getSearchBar().getElement());
     }
 
     @PostConstruct
@@ -111,13 +137,12 @@ public class DataTypeListView implements DataTypeList.View {
         showOrHideNoCustomItemsMessage();
     }
 
-    void showOrHideNoCustomItemsMessage() {
+    @Override
+    public void showOrHideNoCustomItemsMessage() {
         if (!hasCustomDataType()) {
-            show(this.listItemsNo);
-            hide(this.listItems);
+            showPlaceHolder();
         } else {
-            hide(this.listItemsNo);
-            show(this.listItems);
+            showListItems();
         }
     }
 
@@ -151,6 +176,16 @@ public class DataTypeListView implements DataTypeList.View {
     public void addSubItem(final DataTypeListItem listItem) {
         listItems.appendChild(listItem.getElement());
         showOrHideNoCustomItemsMessage();
+    }
+
+    @EventHandler("expand-all")
+    public void expandAll(final ClickEvent e) {
+        presenter.expandAll();
+    }
+
+    @EventHandler("collapse-all")
+    public void collapseAll(final ClickEvent e) {
+        presenter.collapseAll();
     }
 
     @EventHandler("add-button")
@@ -230,7 +265,7 @@ public class DataTypeListView implements DataTypeList.View {
         ElementHelper.insertBefore(listItem.getElement(), elementReference);
     }
 
-    boolean isCollapsed(final Element arrow) {
+    private boolean isCollapsed(final Element arrow) {
         return isRightArrow(arrow);
     }
 
@@ -290,6 +325,30 @@ public class DataTypeListView implements DataTypeList.View {
         final int duration = 800;
 
         $(listItems).animate(scrollTopProperty, duration);
+    }
+
+    @Override
+    public void showNoDataTypesFound() {
+        show(noDataTypesFound);
+        hide(placeholder);
+        hide(listItems);
+    }
+
+    void showListItems() {
+        hide(noDataTypesFound);
+        hide(placeholder);
+        show(listItems);
+    }
+
+    void showPlaceHolder() {
+        hide(noDataTypesFound);
+        show(placeholder);
+        hide(listItems);
+    }
+
+    @Override
+    public HTMLDivElement getListItems() {
+        return listItems;
     }
 
     private JavaScriptObject property(final String key,

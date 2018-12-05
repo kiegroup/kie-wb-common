@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
@@ -68,6 +69,9 @@ public class DataTypeListTest {
     @Mock
     private DataTypeManager dataTypeManager;
 
+    @Mock
+    private DataTypeSearchBar searchBar;
+
     @Captor
     private ArgumentCaptor<List<DataTypeListItem>> listItemsCaptor;
 
@@ -75,7 +79,7 @@ public class DataTypeListTest {
 
     @Before
     public void setup() {
-        dataTypeList = spy(new DataTypeList(view, listItems, dataTypeManager));
+        dataTypeList = spy(new DataTypeList(view, listItems, dataTypeManager, searchBar));
         when(listItems.get()).thenReturn(treeGridItem);
     }
 
@@ -118,7 +122,7 @@ public class DataTypeListTest {
     }
 
     @Test
-    public void testCollapseFirstLevel() {
+    public void testCollapseItemsInTheFirstLevel() {
 
         final DataTypeListItem listItem1 = mock(DataTypeListItem.class);
         final DataTypeListItem listItem2 = mock(DataTypeListItem.class);
@@ -138,6 +142,40 @@ public class DataTypeListTest {
         verify(listItem2, never()).collapse();
         verify(listItem3).collapse();
         verify(listItem4, never()).collapse();
+    }
+
+    @Test
+    public void testExpandAll() {
+
+        final DataTypeListItem listItem1 = mock(DataTypeListItem.class);
+        final DataTypeListItem listItem2 = mock(DataTypeListItem.class);
+        final DataTypeListItem listItem3 = mock(DataTypeListItem.class);
+        final List<DataTypeListItem> listItems = asList(listItem1, listItem2, listItem3);
+
+        doReturn(listItems).when(dataTypeList).getItems();
+
+        dataTypeList.expandAll();
+
+        verify(listItem1).expand();
+        verify(listItem2).expand();
+        verify(listItem3).expand();
+    }
+
+    @Test
+    public void testCollapseAll() {
+
+        final DataTypeListItem listItem1 = mock(DataTypeListItem.class);
+        final DataTypeListItem listItem2 = mock(DataTypeListItem.class);
+        final DataTypeListItem listItem3 = mock(DataTypeListItem.class);
+        final List<DataTypeListItem> listItems = asList(listItem1, listItem2, listItem3);
+
+        doReturn(listItems).when(dataTypeList).getItems();
+
+        dataTypeList.collapseAll();
+
+        verify(listItem1).collapse();
+        verify(listItem2).collapse();
+        verify(listItem3).collapse();
     }
 
     @Test
@@ -335,7 +373,7 @@ public class DataTypeListTest {
     }
 
     @Test
-    public void testRefreshUpdatedItems() {
+    public void testRefreshItemsByUpdatedDataTypes() {
 
         final String uuid1 = "uuid1";
         final String uuid2 = "uuid2";
@@ -360,6 +398,7 @@ public class DataTypeListTest {
 
         verify(listItem).refresh();
         verify(dataTypeList).refreshSubItemsFromListItem(listItem, subDataTypes);
+        verify(searchBar).refresh();
     }
 
     @Test
@@ -423,6 +462,20 @@ public class DataTypeListTest {
         verify(expectedListItem).setupDataType(dataType, 1);
         assertEquals(expectedListItem, actualListItem);
         assertEquals(expectedItems, actualItems);
+    }
+
+    @Test
+    public void testShowNoDataTypesFound() {
+        dataTypeList.showNoDataTypesFound();
+
+        verify(view).showNoDataTypesFound();
+    }
+
+    @Test
+    public void testShowListItems() {
+        dataTypeList.showListItems();
+
+        verify(view).showOrHideNoCustomItemsMessage();
     }
 
     private DataType makeDataType(final String name,

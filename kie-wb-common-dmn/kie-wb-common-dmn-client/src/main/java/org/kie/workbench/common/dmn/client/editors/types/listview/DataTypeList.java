@@ -25,11 +25,13 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
 import org.uberfire.client.mvp.UberElemental;
 
 @ApplicationScoped
@@ -41,15 +43,19 @@ public class DataTypeList {
 
     private final DataTypeManager dataTypeManager;
 
+    private final DataTypeSearchBar searchBar;
+
     private List<DataTypeListItem> items;
 
     @Inject
     public DataTypeList(final DataTypeList.View view,
                         final ManagedInstance<DataTypeListItem> listItems,
-                        final DataTypeManager dataTypeManager) {
+                        final DataTypeManager dataTypeManager,
+                        final DataTypeSearchBar searchBar) {
         this.view = view;
         this.listItems = listItems;
         this.dataTypeManager = dataTypeManager;
+        this.searchBar = searchBar;
     }
 
     @PostConstruct
@@ -133,6 +139,7 @@ public class DataTypeList {
                 refreshSubItemsFromListItem(listItem, dataType.getSubDataTypes());
             });
         }
+        searchBar.refresh();
     }
 
     Optional<DataTypeListItem> findItem(final DataType dataType) {
@@ -183,6 +190,18 @@ public class DataTypeList {
         view.insertAbove(makeListItem(dataType), reference);
     }
 
+    public void showNoDataTypesFound() {
+        view.showNoDataTypesFound();
+    }
+
+    public void showListItems() {
+        view.showOrHideNoCustomItemsMessage();
+    }
+
+    public HTMLElement getListItemsElement() {
+        return view.getListItems();
+    }
+
     DataTypeListItem makeListItem(final DataType dataType) {
 
         final DataTypeListItem listItem = makeListItem();
@@ -193,10 +212,24 @@ public class DataTypeList {
         return listItem;
     }
 
+    void expandAll() {
+        getItems().forEach(DataTypeListItem::expand);
+    }
+
+    void collapseAll() {
+        getItems().forEach(DataTypeListItem::collapse);
+    }
+
+    DataTypeSearchBar getSearchBar() {
+        return searchBar;
+    }
+
     public interface View extends UberElemental<DataTypeList>,
                                   IsElement {
 
         void setupListItems(final List<DataTypeListItem> treeGridItems);
+
+        void showOrHideNoCustomItemsMessage();
 
         void addSubItems(final DataType dataType,
                          final List<DataTypeListItem> treeGridItems);
@@ -210,5 +243,9 @@ public class DataTypeList {
 
         void insertAbove(final DataTypeListItem listItem,
                          final DataType reference);
+
+        void showNoDataTypesFound();
+
+        HTMLDivElement getListItems();
     }
 }

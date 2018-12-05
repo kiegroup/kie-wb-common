@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.ElementHelper;
+import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -86,7 +87,25 @@ public class DataTypeListViewTest {
     private HTMLButtonElement addButton;
 
     @Mock
-    private HTMLDivElement listItemsNo;
+    private HTMLDivElement placeholder;
+
+    @Mock
+    private HTMLDivElement searchBarContainer;
+
+    @Mock
+    private HTMLAnchorElement expandAll;
+
+    @Mock
+    private HTMLAnchorElement collapseAll;
+
+    @Mock
+    private HTMLDivElement noDataTypesFound;
+
+    @Mock
+    private DataTypeSearchBar searchBar;
+
+    @Mock
+    private HTMLElement searchBarElement;
 
     @Mock
     private DataTypeList presenter;
@@ -95,12 +114,103 @@ public class DataTypeListViewTest {
 
     @Before
     public void setup() {
-        listItemsNo.classList = mock(DOMTokenList.class);
+
+        when(presenter.getSearchBar()).thenReturn(searchBar);
+        when(searchBar.getElement()).thenReturn(searchBarElement);
+
+        placeholder.classList = mock(DOMTokenList.class);
+        noDataTypesFound.classList = mock(DOMTokenList.class);
         listItems.classList = mock(DOMTokenList.class);
         listItems.childNodes = new NodeList<>();
-        view = spy(new DataTypeListView(listItems, collapsedDescription, expandedDescription, viewMore, viewLess, addButton, listItemsNo));
+
+        view = spy(new DataTypeListView(listItems, collapsedDescription, expandedDescription, viewMore, viewLess, addButton, placeholder, searchBarContainer, expandAll, collapseAll, noDataTypesFound));
         view.init(presenter);
+
         doReturn(element).when(view).getElement();
+    }
+
+    @Test
+    public void testInit() {
+        // "view.init(..)" called in the setup.
+        verify(searchBarContainer).appendChild(searchBarElement);
+    }
+
+    @Test
+    public void testShowOrHideNoCustomItemsMessageWhenListHasCustomDataType() {
+
+        doReturn(true).when(view).hasCustomDataType();
+
+        view.showOrHideNoCustomItemsMessage();
+
+        verify(view).showListItems();
+        verify(view, never()).showPlaceHolder();
+    }
+
+    @Test
+    public void testShowOrHideNoCustomItemsMessageWhenListDoesNotHaveCustomDataType() {
+
+        doReturn(false).when(view).hasCustomDataType();
+
+        view.showOrHideNoCustomItemsMessage();
+
+        verify(view).showPlaceHolder();
+        verify(view, never()).showListItems();
+    }
+
+    @Test
+    public void testExpandAll() {
+        view.expandAll(mock(ClickEvent.class));
+
+        verify(presenter).expandAll();
+    }
+
+    @Test
+    public void testCollapseAll() {
+        view.collapseAll(mock(ClickEvent.class));
+
+        verify(presenter).collapseAll();
+    }
+
+    @Test
+    public void testShowNoDataTypesFound() {
+
+        noDataTypesFound.classList = mock(DOMTokenList.class);
+        placeholder.classList = mock(DOMTokenList.class);
+        listItems.classList = mock(DOMTokenList.class);
+
+        view.showNoDataTypesFound();
+
+        verify(noDataTypesFound.classList).remove(HIDDEN_CSS_CLASS);
+        verify(placeholder.classList).add(HIDDEN_CSS_CLASS);
+        verify(listItems.classList).add(HIDDEN_CSS_CLASS);
+    }
+
+    @Test
+    public void testShowListItems() {
+
+        noDataTypesFound.classList = mock(DOMTokenList.class);
+        placeholder.classList = mock(DOMTokenList.class);
+        listItems.classList = mock(DOMTokenList.class);
+
+        view.showListItems();
+
+        verify(noDataTypesFound.classList).add(HIDDEN_CSS_CLASS);
+        verify(placeholder.classList).add(HIDDEN_CSS_CLASS);
+        verify(listItems.classList).remove(HIDDEN_CSS_CLASS);
+    }
+
+    @Test
+    public void testShowPlaceHolder() {
+
+        noDataTypesFound.classList = mock(DOMTokenList.class);
+        placeholder.classList = mock(DOMTokenList.class);
+        listItems.classList = mock(DOMTokenList.class);
+
+        view.showPlaceHolder();
+
+        verify(noDataTypesFound.classList).add(HIDDEN_CSS_CLASS);
+        verify(placeholder.classList).remove(HIDDEN_CSS_CLASS);
+        verify(listItems.classList).add(HIDDEN_CSS_CLASS);
     }
 
     @Test
@@ -229,7 +339,7 @@ public class DataTypeListViewTest {
         view.setupListItems(Arrays.asList(gridItem1, gridItem2));
 
         verify(listItems.classList).remove(HIDDEN_CSS_CLASS);
-        verify(listItemsNo.classList).add(HIDDEN_CSS_CLASS);
+        verify(placeholder.classList).add(HIDDEN_CSS_CLASS);
     }
 
     @Test
@@ -237,7 +347,7 @@ public class DataTypeListViewTest {
 
         view.setupListItems(new ArrayList<>());
 
-        verify(listItemsNo.classList).remove(HIDDEN_CSS_CLASS);
+        verify(placeholder.classList).remove(HIDDEN_CSS_CLASS);
         verify(listItems.classList).add(HIDDEN_CSS_CLASS);
     }
 
