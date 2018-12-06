@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
@@ -429,6 +431,17 @@ public class ExpressionEditorColumnTest {
 
             @Override
             protected void initialiseUiModel() {
+                //Nothing for this test
+            }
+
+            @Override
+            public List<ListSelectorItem> getItems(final int uiRowIndex,
+                                                   final int uiColumnIndex) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void onItemSelected(final ListSelectorItem item) {
                 //Nothing for this test
             }
 

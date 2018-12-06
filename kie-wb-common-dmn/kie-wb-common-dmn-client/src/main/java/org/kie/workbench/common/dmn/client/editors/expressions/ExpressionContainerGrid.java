@@ -19,10 +19,8 @@ package org.kie.workbench.common.dmn.client.editors.expressions;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.StreamSupport;
 
 import javax.enterprise.event.Event;
 
@@ -32,7 +30,6 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -43,9 +40,9 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.context.Exp
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
-import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
@@ -54,45 +51,25 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
-import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidget;
-import org.uberfire.ext.wires.core.grids.client.widget.layer.GridLayer;
 import org.uberfire.mvp.ParameterizedCommand;
 
-public class ExpressionContainerGrid extends BaseGridWidget implements HasListSelectorControl {
+public class ExpressionContainerGrid extends BaseGrid {
 
     private static final String COLUMN_GROUP = "ExpressionContainerGrid$Expression0";
 
-    private final GridLayer gridLayer;
-    private final CellEditorControlsView.Presenter cellEditorControls;
-    private final TranslationService translationService;
-
-    private final SessionManager sessionManager;
-    private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final Supplier<ExpressionGridCache> expressionGridCache;
     private final GridCellTuple parent = new GridCellTuple(0, 0, this);
     private final GridColumn expressionColumn;
 
-    private String nodeUUID;
-    private Optional<HasName> hasName = Optional.empty();
-    private HasExpression hasExpression;
-
     private final ParameterizedCommand<Optional<Expression>> onHasExpressionChanged;
     private final ParameterizedCommand<Optional<HasName>> onHasNameChanged;
-    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
-    private final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     private ExpressionContainerUIModelMapper uiModelMapper;
 
@@ -108,26 +85,23 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                                    final ParameterizedCommand<Optional<HasName>> onHasNameChanged,
                                    final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent) {
-        super(new DMNGridData(),
-              gridLayer,
-              gridLayer,
-              new ExpressionContainerRenderer());
-        this.gridLayer = gridLayer;
-        this.cellEditorControls = cellEditorControls;
-        this.translationService = translationService;
-        this.sessionManager = sessionManager;
-        this.sessionCommandManager = sessionCommandManager;
+        super(gridLayer,
+              new DMNGridData(),
+              new ExpressionContainerRenderer(),
+              sessionManager,
+              sessionCommandManager,
+              refreshFormPropertiesEvent,
+              domainObjectSelectionEvent,
+              cellEditorControls,
+              translationService);
         this.expressionGridCache = expressionGridCache;
-
         this.onHasExpressionChanged = onHasExpressionChanged;
         this.onHasNameChanged = onHasNameChanged;
-        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
-        this.domainObjectSelectionEvent = domainObjectSelectionEvent;
 
         this.uiModelMapper = new ExpressionContainerUIModelMapper(parent,
                                                                   this::getModel,
                                                                   () -> Optional.ofNullable(hasExpression.getExpression()),
-                                                                  () -> nodeUUID,
+                                                                  () -> nodeUUID.get(),
                                                                   () -> hasExpression,
                                                                   () -> hasName,
                                                                   expressionEditorDefinitions,
@@ -162,7 +136,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
     public void setExpression(final String nodeUUID,
                               final HasExpression hasExpression,
                               final Optional<HasName> hasName) {
-        this.nodeUUID = nodeUUID;
+        this.nodeUUID = Optional.of(nodeUUID);
         this.hasExpression = spyHasExpression(hasExpression);
         this.hasName = spyHasName(hasName);
 
@@ -276,7 +250,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
     void clearExpressionType() {
         sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                       new ClearExpressionTypeCommand(parent,
-                                                                     nodeUUID,
+                                                                     nodeUUID.get(),
                                                                      hasExpression,
                                                                      uiModelMapper,
                                                                      expressionGridCache.get(),
@@ -305,7 +279,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                               final boolean isShiftKeyDown,
                               final boolean isControlKeyDown) {
         gridLayer.select(this);
-        fireRefreshFormPropertiesEvent();
+        fireDomainObjectSelectionEvent();
         return super.selectCell(ap,
                                 isShiftKeyDown,
                                 isControlKeyDown);
@@ -317,36 +291,10 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
                               final boolean isShiftKeyDown,
                               final boolean isControlKeyDown) {
         gridLayer.select(this);
-        fireRefreshFormPropertiesEvent();
+        fireDomainObjectSelectionEvent();
         return super.selectCell(uiRowIndex,
                                 uiColumnIndex,
                                 isShiftKeyDown,
                                 isControlKeyDown);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void fireRefreshFormPropertiesEvent() {
-        final ClientSession session = sessionManager.getCurrentSession();
-        if (session != null) {
-            final CanvasHandler canvasHandler = session.getCanvasHandler();
-            if (canvasHandler != null) {
-                final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-                if (base instanceof DomainObject) {
-                    final DomainObject domainObject = (DomainObject) base;
-                    final Graph<?, Node> graph = canvasHandler.getDiagram().getGraph();
-                    final Optional<Node> domainObjectNode = StreamSupport.stream(graph.nodes().spliterator(), false)
-                            .filter(node -> node.getContent() instanceof Definition)
-                            .filter(node -> Objects.equals(domainObject, ((Definition) node.getContent()).getDefinition()))
-                            .findFirst();
-                    if (domainObjectNode.isPresent()) {
-                        refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(session, domainObjectNode.get().getUUID()));
-                    } else {
-                        domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, domainObject));
-                    }
-                    return;
-                }
-                domainObjectSelectionEvent.fire(new DomainObjectSelectionEvent(canvasHandler, new NOPDomainObject()));
-            }
-        }
     }
 }
