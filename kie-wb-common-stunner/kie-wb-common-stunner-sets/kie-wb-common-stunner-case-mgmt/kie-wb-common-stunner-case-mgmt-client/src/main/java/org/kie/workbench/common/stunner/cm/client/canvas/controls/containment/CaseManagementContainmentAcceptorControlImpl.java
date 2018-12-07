@@ -240,15 +240,10 @@ public class CaseManagementContainmentAcceptorControlImpl
                 return targetIndex;
             }
 
-            // Otherwise, add to a stage vertically
-            // And if it is the same stage
-            if (state.getOriginalParent().isPresent()) {
-                if (state.getOriginalParent().get().equals(container)) {
-                    return parent.getOutEdges().size() - 1;
-                }
-            }
-
-            return parent.getOutEdges().size();
+            return state.getOriginalParent()
+                    .filter(container::equals)
+                    .map(p -> parent.getOutEdges().size() -1)
+                    .orElse(parent.getOutEdges().size());
         }
     }
 }

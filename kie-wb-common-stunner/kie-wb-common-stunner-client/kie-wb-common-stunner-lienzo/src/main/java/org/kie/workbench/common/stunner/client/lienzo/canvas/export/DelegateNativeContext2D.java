@@ -82,10 +82,10 @@ public class DelegateNativeContext2D implements INativeContext2D {
     public void saveContainer(String id) {
         HashMap<String, String> map = new HashMap<>();
         //setting the node id in case it exists on graph
-        Optional.ofNullable(canvasHandler.getGraphIndex().get(id)).ifPresent(node -> {
+        if (canvasHandler.getGraphIndex().get(id) != null) {
             map.put(DEFAULT_NODE_ID, id);
             map.put(svgNodeId, id);
-        });
+        }
         context.saveGroup(map);
     }
 
@@ -102,7 +102,9 @@ public class DelegateNativeContext2D implements INativeContext2D {
         context.saveStyle();
         HashMap<String, String> map = new HashMap<>();
         //setting the node id in case it exists on graph
-        Optional.ofNullable(id).ifPresent(node -> map.put(DEFAULT_NODE_ID, id));
+        if (id != null) {
+            map.put(DEFAULT_NODE_ID, id);
+        }
         context.addAttributes(map);
     }
 
