@@ -61,6 +61,9 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.impl.ManagedSession;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
@@ -79,7 +82,6 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -118,7 +120,16 @@ public class UndefinedExpressionGridTest {
     private DMNEditorSession session;
 
     @Mock
-    private AbstractCanvasHandler handler;
+    private AbstractCanvasHandler canvasHandler;
+
+    @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -169,6 +180,9 @@ public class UndefinedExpressionGridTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
+    @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Mock
@@ -215,6 +229,7 @@ public class UndefinedExpressionGridTest {
                                                              sessionCommandManager,
                                                              canvasCommandFactory,
                                                              editorSelectedEvent,
+                                                             refreshFormPropertiesEvent,
                                                              domainObjectSelectionEvent,
                                                              listSelector,
                                                              translationService,
@@ -246,7 +261,11 @@ public class UndefinedExpressionGridTest {
                                                                                                          any(Optional.class),
                                                                                                          anyInt());
 
-        doReturn(handler).when(session).getCanvasHandler();
+        doReturn(canvasHandler).when(session).getCanvasHandler();
+
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
 
         when(parentGridWidget.getModel()).thenReturn(parentGridUiModel);
         setupParent();
@@ -285,7 +304,7 @@ public class UndefinedExpressionGridTest {
 
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionArgumentEventCaptor.capture());
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionArgumentEventCaptor.getValue();
-        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(handler);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
         assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
     }
 
@@ -314,20 +333,6 @@ public class UndefinedExpressionGridTest {
         assertThat(uiModel.getCell(0, 0)).isNotNull();
 
         assertThat(uiModel.getCell(0, 0)).isInstanceOf(UndefinedExpressionCell.class);
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNested() {
-        setupGrid(1);
-
-        assertTrue(grid.isHeaderHidden());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNotNested() {
-        setupGrid(0);
-
-        assertTrue(grid.isHeaderHidden());
     }
 
     @Test
@@ -486,7 +491,7 @@ public class UndefinedExpressionGridTest {
 
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionArgumentEventCaptor.capture());
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionArgumentEventCaptor.getValue();
-        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(handler);
+        assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
         assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
     }
 
@@ -516,11 +521,11 @@ public class UndefinedExpressionGridTest {
                                                             eq(hasName),
                                                             eq(nesting));
 
-        verify(sessionCommandManager).execute(eq(handler),
+        verify(sessionCommandManager).execute(eq(canvasHandler),
                                               setCellValueCommandArgumentCaptor.capture());
 
         final SetCellValueCommand setCellValueCommand = setCellValueCommandArgumentCaptor.getValue();
-        setCellValueCommand.execute(handler);
+        setCellValueCommand.execute(canvasHandler);
 
         assertResize(BaseExpressionGrid.RESIZE_EXISTING);
         verify(literalExpressionEditor).selectCell(eq(0),
@@ -532,7 +537,7 @@ public class UndefinedExpressionGridTest {
         reset(gridPanel, gridLayer, parent);
         setupParent();
 
-        setCellValueCommand.undo(handler);
+        setCellValueCommand.undo(canvasHandler);
 
         assertResize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
         verify(gridLayer).select(grid);

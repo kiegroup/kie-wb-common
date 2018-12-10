@@ -107,6 +107,9 @@ public class DMNEditorConstants {
     public static final String InvocationEditor_EditParameter = "InvocationEditor.EditParameter";
 
     @TranslationKey(defaultValue = "")
+    public static final String InvocationEditor_EnterFunction = "InvocationEditor.EnterFunction";
+
+    @TranslationKey(defaultValue = "")
     public static final String FunctionEditor_FEEL = "FunctionEditor.FEEL";
 
     @TranslationKey(defaultValue = "")
@@ -258,4 +261,7 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String SmallSwitchComponentView_No = "SmallSwitchComponentView.No";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypesPage_Label = "DataTypesPage.Label";
 }

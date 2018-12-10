@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.kie.workbench</groupId>
     <artifactId>kie-wb-common-dmn</artifactId>
-    <version>7.15.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -248,6 +248,12 @@
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-core</artifactId>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 

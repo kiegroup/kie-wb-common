@@ -78,10 +78,14 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -95,7 +99,6 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -153,6 +156,15 @@ public class FunctionGridTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
+
+    @Mock
     private Index index;
 
     @Mock
@@ -193,6 +205,9 @@ public class FunctionGridTest {
 
     @Mock
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
+
+    @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
@@ -287,6 +302,7 @@ public class FunctionGridTest {
                                                   sessionCommandManager,
                                                   canvasCommandFactory,
                                                   editorSelectedEvent,
+                                                  refreshFormPropertiesEvent,
                                                   domainObjectSelectionEvent,
                                                   listSelector,
                                                   translationService,
@@ -300,6 +316,7 @@ public class FunctionGridTest {
                                                                                       sessionCommandManager,
                                                                                       canvasCommandFactory,
                                                                                       editorSelectedEvent,
+                                                                                      refreshFormPropertiesEvent,
                                                                                       domainObjectSelectionEvent,
                                                                                       listSelector,
                                                                                       translationService,
@@ -334,8 +351,12 @@ public class FunctionGridTest {
         doCallRealMethod().when(supplementaryLiteralExpressionEditor).selectFirstCell();
 
         doReturn(canvasHandler).when(session).getCanvasHandler();
-
         when(gridWidget.getModel()).thenReturn(new BaseGridData(false));
+
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
+
         when(canvasHandler.getGraphIndex()).thenReturn(index);
         when(index.get(anyString())).thenReturn(element);
         when(element.getContent()).thenReturn(mock(Definition.class));
@@ -378,20 +399,6 @@ public class FunctionGridTest {
         assertTrue(uiModel.getCell(0, 1).getValue() instanceof ExpressionCellValue);
         final ExpressionCellValue dcv = (ExpressionCellValue) uiModel.getCell(0, 1).getValue();
         assertTrue(dcv.getValue().get() instanceof LiteralExpressionGrid);
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNested() {
-        setupGrid(1);
-
-        assertFalse(grid.isHeaderHidden());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNotNested() {
-        setupGrid(0);
-
-        assertFalse(grid.isHeaderHidden());
     }
 
     @Test
@@ -917,6 +924,19 @@ public class FunctionGridTest {
 
         grid.selectHeaderCell(1, 1, false, false);
 
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderParametersRowWhenNested() {
+        setupGrid(1);
+
+        grid.selectHeaderCell(0, 0, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    private void assertNOPDomainObjectSelection() {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();

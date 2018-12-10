@@ -15,66 +15,18 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.inject.Inject;
-
-import org.kie.soup.commons.util.Sets;
-import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
-import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
-import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueResourceIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
-import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.kie.workbench.common.stunner.bpmn.backend.query.FindBpmnProcessIdsQuery;
-import org.uberfire.backend.vfs.Path;
 
-public class CalledElementFormProvider implements SelectorDataProvider {
-
-    @Inject
-    protected RefactoringQueryService queryService;
+public class CalledElementFormProvider extends AbstractCalledElementFormProvider {
 
     @Override
-    public String getProviderName() {
-        return getClass().getSimpleName();
-    }
-
-    public void setQueryService(RefactoringQueryService queryService) {
-        this.queryService = queryService;
+    protected ResourceType getProcessIdResourceType() {
+        return ResourceType.BPMN2;
     }
 
     @Override
-    public SelectorData getSelectorData(FormRenderingContext context) {
-        return new SelectorData(getBusinessProcessIDs(),
-                                null);
-    }
-
-    public Map<Object, String> getBusinessProcessIDs() {
-        final Set<ValueIndexTerm> queryTerms = new Sets.Builder<ValueIndexTerm>()
-                .add(new ValueResourceIndexTerm("*",
-                                                ResourceType.BPMN2,
-                                                ValueIndexTerm.TermSearchType.WILDCARD))
-                .build();
-
-        List<RefactoringPageRow> results = queryService.query(
-                FindBpmnProcessIdsQuery.NAME,
-                queryTerms);
-
-        Map<Object, String> businessProcessIDs = new TreeMap<>();
-
-        for (RefactoringPageRow row : results) {
-            Map<String, Path> mapRow = (Map<String, Path>) row.getValue();
-            for (String rKey : mapRow.keySet()) {
-                businessProcessIDs.put(rKey,
-                                       rKey);
-            }
-        }
-
-        return businessProcessIDs;
+    protected String getQueryName() {
+        return FindBpmnProcessIdsQuery.NAME;
     }
 }

@@ -75,11 +75,15 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
@@ -95,7 +99,6 @@ import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
 import org.uberfire.ext.wires.core.grids.client.widget.dnd.GridWidgetDnDHandlersState;
 import org.uberfire.ext.wires.core.grids.client.widget.dnd.GridWidgetDnDHandlersState.GridWidgetHandlersOperation;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.selections.impl.RowSelectionStrategy;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 import org.uberfire.mocks.EventSourceMock;
@@ -103,7 +106,6 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -175,6 +177,15 @@ public class ContextGridTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
+
+    @Mock
     private Index index;
 
     @Mock
@@ -232,6 +243,9 @@ public class ContextGridTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
+    @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Captor
@@ -284,6 +298,7 @@ public class ContextGridTest {
                                                  sessionCommandManager,
                                                  canvasCommandFactory,
                                                  editorSelectedEvent,
+                                                 refreshFormPropertiesEvent,
                                                  domainObjectSelectionEvent,
                                                  listSelector,
                                                  translationService,
@@ -329,6 +344,10 @@ public class ContextGridTest {
         when(gridLayer.getViewport()).thenReturn(viewport);
         when(viewport.getTransform()).thenReturn(transform);
 
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
+
         when(canvasHandler.getGraphIndex()).thenReturn(index);
         when(index.get(anyString())).thenReturn(element);
         when(element.getContent()).thenReturn(mock(Definition.class));
@@ -363,7 +382,7 @@ public class ContextGridTest {
 
         assertEquals(3,
                      uiModel.getColumnCount());
-        assertTrue(uiModel.getColumns().get(0) instanceof RowNumberColumn);
+        assertTrue(uiModel.getColumns().get(0) instanceof ContextGridRowNumberColumn);
         assertTrue(uiModel.getColumns().get(1) instanceof NameColumn);
         assertTrue(uiModel.getColumns().get(2) instanceof ExpressionEditorColumn);
 
@@ -389,20 +408,6 @@ public class ContextGridTest {
         final ExpressionCellValue dcv1 = (ExpressionCellValue) uiModel.getCell(1, 2).getValue();
         assertEquals(undefinedExpressionEditor,
                      dcv1.getValue().get());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNested() {
-        setupGrid(1);
-
-        assertTrue(grid.isHeaderHidden());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNotNested() {
-        setupGrid(0);
-
-        assertFalse(grid.isHeaderHidden());
     }
 
     @Test
@@ -1000,7 +1005,7 @@ public class ContextGridTest {
 
         grid.selectHeaderCell(0, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX, false, false);
 
-        assertNOPDomainObjectSelection();
+        assertDomainObjectSelection(hasExpression);
     }
 
     private void assertDomainObjectSelection(final DomainObject domainObject) {

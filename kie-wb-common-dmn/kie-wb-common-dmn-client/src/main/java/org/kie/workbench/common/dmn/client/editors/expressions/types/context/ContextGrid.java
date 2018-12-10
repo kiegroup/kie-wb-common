@@ -41,6 +41,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.util.SelectionUti
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -60,18 +61,17 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
 import org.uberfire.ext.wires.core.grids.client.widget.dnd.GridWidgetDnDHandlersState;
 import org.uberfire.ext.wires.core.grids.client.widget.dnd.GridWidgetDnDHandlersState.GridWidgetHandlersOperation;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 
 public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, ContextUIModelMapper> implements HasRowDragRestrictions,
                                                                                                                HasListSelectorControl {
-
-    private static final String EXPRESSION_COLUMN_GROUP = "ContextGrid$ExpressionColumn1";
 
     private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
     private final NameAndDataTypePopoverView.Presenter headerEditor;
@@ -89,6 +89,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                        final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                        final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                        final Event<ExpressionEditorChanged> editorSelectedEvent,
+                       final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                        final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                        final CellEditorControlsView.Presenter cellEditorControls,
                        final ListSelectorView.Presenter listSelector,
@@ -104,12 +105,13 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
               gridPanel,
               gridLayer,
               gridData,
-              new ContextGridRenderer(nesting > 0),
+              new BaseExpressionGridRenderer(gridData),
               definitionUtils,
               sessionManager,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
+              refreshFormPropertiesEvent,
               domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
@@ -141,15 +143,22 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
 
     @Override
     public void initialiseUiColumns() {
-        final NameColumn nameColumn = new NameColumn(new NameColumnHeaderMetaData(hasExpression,
-                                                                                  expression,
-                                                                                  hasName,
-                                                                                  clearDisplayNameConsumer(true),
-                                                                                  setDisplayNameConsumer(true),
-                                                                                  setTypeRefConsumer(),
-                                                                                  cellEditorControls,
-                                                                                  headerEditor,
-                                                                                  Optional.of(translationService.getTranslation(DMNEditorConstants.ContextEditor_EditExpression))),
+        final List<GridColumn.HeaderMetaData> headerMetaData = new ArrayList<>();
+        final ContextGridRowNumberColumn rowNumberColumn = new ContextGridRowNumberColumn(headerMetaData);
+        if (nesting == 0) {
+            rowNumberColumn.getHeaderMetaData().add(new BaseHeaderMetaData("#"));
+            headerMetaData.add(new NameColumnHeaderMetaData(hasExpression,
+                                                            expression,
+                                                            hasName,
+                                                            clearDisplayNameConsumer(true),
+                                                            setDisplayNameConsumer(true),
+                                                            setTypeRefConsumer(),
+                                                            cellEditorControls,
+                                                            headerEditor,
+                                                            Optional.of(translationService.getTranslation(DMNEditorConstants.ContextEditor_EditExpression))));
+        }
+
+        final NameColumn nameColumn = new NameColumn(headerMetaData,
                                                      this,
                                                      (rowIndex) -> rowIndex != getModel().getRowCount() - 1,
                                                      clearDisplayNameConsumer(false),
@@ -159,11 +168,10 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                                                      headerEditor,
                                                      Optional.of(translationService.getTranslation(DMNEditorConstants.ContextEditor_EditContextEntry)));
         final ExpressionEditorColumn expressionColumn = new ExpressionEditorColumn(gridLayer,
-                                                                                   new BaseHeaderMetaData("",
-                                                                                                          EXPRESSION_COLUMN_GROUP),
+                                                                                   headerMetaData,
                                                                                    this);
 
-        model.appendColumn(new RowNumberColumn());
+        model.appendColumn(rowNumberColumn);
         model.appendColumn(nameColumn);
         model.appendColumn(expressionColumn);
 
@@ -183,11 +191,6 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                                            2);
             });
         });
-    }
-
-    @Override
-    protected boolean isHeaderHidden() {
-        return nesting > 0;
     }
 
     @Override
@@ -344,7 +347,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
     @Override
     protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
                                                 final int uiHeaderColumnIndex) {
-        if (uiHeaderColumnIndex == ContextUIModelMapperHelper.NAME_COLUMN_INDEX) {
+        if (uiHeaderColumnIndex == ContextUIModelMapperHelper.NAME_COLUMN_INDEX || uiHeaderColumnIndex == ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX) {
             final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
             if (base instanceof DomainObject) {
                 fireDomainObjectSelectionEvent((DomainObject) base);
