@@ -125,6 +125,9 @@ public class DMNEditorConstants {
     public static final String FunctionEditor_EditParameters = "FunctionEditor.EditParameters";
 
     @TranslationKey(defaultValue = "")
+    public static final String FunctionEditor_SelectFunctionKind = "FunctionEditor.SelectFunctionKind";
+
+    @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_DescriptionColumnHeader = "DecisionTableEditor.DescriptionColumnHeader";
 
     @TranslationKey(defaultValue = "")
