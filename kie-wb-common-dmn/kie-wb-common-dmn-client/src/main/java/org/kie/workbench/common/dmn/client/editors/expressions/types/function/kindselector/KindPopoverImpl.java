@@ -38,11 +38,11 @@ public class KindPopoverImpl implements KindPopoverView.Presenter {
     public KindPopoverImpl(final KindPopoverView view) {
         this.view = view;
         view.init(this);
-        view.setFunctionKind(FunctionDefinition.Kind.values());
+        view.setFunctionKinds(FunctionDefinition.Kind.values());
     }
 
     @Override
-    public void show(Optional<String> editorTitle) {
+    public void show(final Optional<String> editorTitle) {
         binding.ifPresent(b -> view.show(editorTitle));
     }
 
@@ -52,7 +52,7 @@ public class KindPopoverImpl implements KindPopoverView.Presenter {
     }
 
     @Override
-    public void bind(HasKindSelectControl bound, int uiRowIndex, int uiColumnIndex) {
+    public void bind(final HasKindSelectControl bound, final int uiRowIndex, final int uiColumnIndex) {
         binding = Optional.ofNullable(bound);
     }
 
@@ -62,7 +62,7 @@ public class KindPopoverImpl implements KindPopoverView.Presenter {
     }
 
     @Override
-    public void onFunctionKindSelected(FunctionDefinition.Kind kind) {
+    public void onFunctionKindSelected(final FunctionDefinition.Kind kind) {
         binding.ifPresent(b -> {
             b.setFunctionKind(kind);
             view.hide();

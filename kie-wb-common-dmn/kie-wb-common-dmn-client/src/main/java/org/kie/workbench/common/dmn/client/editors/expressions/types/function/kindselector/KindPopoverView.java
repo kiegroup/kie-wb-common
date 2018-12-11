@@ -29,5 +29,5 @@ public interface KindPopoverView extends PopoverView,
         void onFunctionKindSelected(final FunctionDefinition.Kind kind);
     }
 
-    void setFunctionKind(final FunctionDefinition.Kind[] definitions);
+    void setFunctionKinds(final FunctionDefinition.Kind[] kinds);
 }

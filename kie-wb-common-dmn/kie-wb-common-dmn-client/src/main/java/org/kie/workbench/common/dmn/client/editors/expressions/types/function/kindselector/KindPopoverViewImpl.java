@@ -40,7 +40,7 @@ public class KindPopoverViewImpl extends AbstractPopoverViewImpl implements Kind
     @DataField("definitions-container")
     private UnorderedList definitionsContainer;
 
-    private ManagedInstance<ListSelectorTextItemView> listSelectorTextItemViews;
+    private final ManagedInstance<ListSelectorTextItemView> listSelectorTextItemViews;
 
     private KindPopoverView.Presenter presenter;
 
@@ -59,13 +59,13 @@ public class KindPopoverViewImpl extends AbstractPopoverViewImpl implements Kind
     }
 
     @Override
-    public void init(KindPopoverView.Presenter presenter) {
+    public void init(final KindPopoverView.Presenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void setFunctionKind(FunctionDefinition.Kind[] definitions) {
-        Arrays.stream(definitions)
+    public void setFunctionKinds(final FunctionDefinition.Kind[] kinds) {
+        Arrays.stream(kinds)
                 .forEach(definition -> definitionsContainer.appendChild(makeListSelectorItemView(definition).getElement()));
     }
 

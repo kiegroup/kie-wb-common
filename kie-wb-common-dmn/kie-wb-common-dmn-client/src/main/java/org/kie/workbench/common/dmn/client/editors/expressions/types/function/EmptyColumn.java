@@ -16,31 +16,22 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.function;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridColumn;
-import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
 import org.uberfire.ext.wires.core.grids.client.widget.dnd.IsRowDragHandle;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.impl.StringColumnRenderer;
 
 class EmptyColumn extends BaseGridColumn<String> implements IsRowDragHandle {
 
-    public EmptyColumn() {
-        this(new ArrayList<HeaderMetaData>() {{
-                 add(new BaseHeaderMetaData("#"));
-             }},
-             new StringColumnRenderer());
-    }
-
-    public EmptyColumn(final List<HeaderMetaData> headerMetaData) {
+    EmptyColumn(final List<HeaderMetaData> headerMetaData) {
         this(headerMetaData,
              new StringColumnRenderer());
     }
 
-    public EmptyColumn(final List<HeaderMetaData> headerMetaData,
-                       final GridColumnRenderer<String> columnRenderer) {
+    private EmptyColumn(final List<HeaderMetaData> headerMetaData,
+                        final GridColumnRenderer<String> columnRenderer) {
         super(headerMetaData,
               columnRenderer,
               50.0);
