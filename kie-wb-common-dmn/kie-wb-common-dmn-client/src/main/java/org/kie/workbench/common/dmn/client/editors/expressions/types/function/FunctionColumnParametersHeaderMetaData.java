@@ -21,14 +21,17 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.ait.lienzo.client.core.shape.Group;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.parameters.HasParametersControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.parameters.ParametersPopoverView;
+import org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditablePopupHeaderMetaData;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
+import org.uberfire.ext.wires.core.grids.client.widget.context.GridHeaderColumnRenderContext;
 
 public class FunctionColumnParametersHeaderMetaData extends EditablePopupHeaderMetaData<HasParametersControl, ParametersPopoverView.Presenter> {
 
@@ -71,6 +74,27 @@ public class FunctionColumnParametersHeaderMetaData extends EditablePopupHeaderM
         return sb.toString();
     }
 
+    @Override
+    public Group render(final GridHeaderColumnRenderContext context,
+                        final double blockWidth,
+                        final double blockHeight) {
+        if (!hasFormalParametersSet()) {
+            return RendererUtils.getEditableHeaderPlaceHolderText(this,
+                                                                  context,
+                                                                  blockWidth,
+                                                                  blockHeight);
+        } else {
+            return super.render(context,
+                                blockWidth,
+                                blockHeight);
+        }
+    }
+
+    @Override
+    public Optional<String> getPlaceHolder() {
+        return Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_SelectParameters));
+    }
+
     String getExpressionLanguageTitle() {
         final FunctionDefinition.Kind kind = KindUtilities.getKind(functionSupplier.get());
         return kind == null ? translationService.getTranslation(DMNEditorConstants.FunctionEditor_Undefined) : kind.code();
@@ -85,5 +109,9 @@ public class FunctionColumnParametersHeaderMetaData extends EditablePopupHeaderM
         }
         sb.append(")");
         return sb.toString();
+    }
+
+    boolean hasFormalParametersSet() {
+        return !functionSupplier.get().getFormalParameter().isEmpty();
     }
 }
