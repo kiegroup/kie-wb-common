@@ -154,8 +154,6 @@ public class DataTypeListView implements DataTypeList.View {
     public void addSubItems(final DataType dataType,
                             final List<DataTypeListItem> listItems) {
 
-        cleanSubTypes(dataType.getUUID());
-
         Element parent = getDataTypeRow(dataType);
 
         for (final DataTypeListItem item : listItems) {
@@ -174,7 +172,7 @@ public class DataTypeListView implements DataTypeList.View {
 
     @Override
     public void addSubItem(final DataTypeListItem listItem) {
-        listItems.appendChild(listItem.getElement());
+        appendItem(listItem);
         showOrHideNoCustomItemsMessage();
     }
 
@@ -230,9 +228,14 @@ public class DataTypeListView implements DataTypeList.View {
 
         final Optional<Element> dataTypeRow = Optional.ofNullable(getDataTypeRow(dataType));
 
-        dataTypeRow.ifPresent(ElementHelper::remove);
+        dataTypeRow.ifPresent(this::removeDataTypeRow);
 
         showOrHideNoCustomItemsMessage();
+    }
+
+    @Override
+    public void cleanSubTypes(final DataType dataType) {
+        cleanSubTypes(dataType.getUUID());
     }
 
     void cleanSubTypes(final String uuid) {
@@ -244,9 +247,14 @@ public class DataTypeListView implements DataTypeList.View {
             final Element item = subDataTypeRows.getAt(i);
             if (item != null && item.parentNode != null) {
                 cleanSubTypes(item.getAttribute(UUID_ATTR));
-                remove(item);
+                removeDataTypeRow(item);
             }
         }
+    }
+
+    private void removeDataTypeRow(final Element item) {
+        presenter.removeItem(item.getAttribute(UUID_ATTR));
+        remove(item);
     }
 
     @Override

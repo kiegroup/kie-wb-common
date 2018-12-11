@@ -84,15 +84,29 @@ public class DataTypeList {
 
         final DataType dataType = listItem.getDataType();
         final int level = listItem.getLevel();
-        final List<DataTypeListItem> gridItems = new ArrayList<>();
+        final List<DataTypeListItem> listItems = new ArrayList<>();
 
         for (final DataType subDataType : subDataTypes) {
-            gridItems.addAll(makeTreeListItems(subDataType, level + 1));
+            listItems.addAll(makeTreeListItems(subDataType, level + 1));
         }
 
-        refreshItemsList(subDataTypes, gridItems);
+        cleanAndUnIndex(dataType);
+        addNewSubItems(dataType, listItems);
+        listItems.forEach(this::reIndexDataTypes);
 
+        getItems().addAll(listItems);
+    }
+
+    private void reIndexDataTypes(final DataTypeListItem listItem) {
+        dataTypeManager.from(listItem.getDataType()).withIndexedItemDefinition();
+    }
+
+    private void addNewSubItems(final DataType dataType, final List<DataTypeListItem> gridItems) {
         view.addSubItems(dataType, gridItems);
+    }
+
+    private void cleanAndUnIndex(final DataType dataType) {
+        view.cleanSubTypes(dataType);
     }
 
     List<DataTypeListItem> makeTreeListItems(final DataType dataType,
@@ -118,18 +132,13 @@ public class DataTypeList {
         return listItem;
     }
 
-    void refreshItemsList(final List<DataType> subDataTypes,
-                          final List<DataTypeListItem> gridItems) {
-
-        getItems().removeIf(item -> subDataTypes.stream().anyMatch(dataType -> {
-            return Objects.equals(item.getDataType().getUUID(), dataType.getUUID());
-        }));
-
-        getItems().addAll(gridItems);
+    void removeItem(final DataType dataType) {
+        removeItem(dataType.getUUID());
+        view.removeItem(dataType);
     }
 
-    void removeItem(final DataType dataType) {
-        view.removeItem(dataType);
+    void removeItem(final String uuid) {
+        getItems().removeIf(listItem -> Objects.equals(uuid, listItem.getDataType().getUUID()));
     }
 
     void refreshItemsByUpdatedDataTypes(final List<DataType> updateDataTypes) {
@@ -175,6 +184,7 @@ public class DataTypeList {
 
         dataType.create();
 
+        searchBar.reset();
         view.addSubItem(listItem);
 
         listItem.enableEditMode();
@@ -213,11 +223,15 @@ public class DataTypeList {
     }
 
     void expandAll() {
-        getItems().forEach(DataTypeListItem::expand);
+        if (!getSearchBar().isEnabled()) {
+            getItems().forEach(DataTypeListItem::expand);
+        }
     }
 
     void collapseAll() {
-        getItems().forEach(DataTypeListItem::collapse);
+        if (!getSearchBar().isEnabled()) {
+            getItems().forEach(DataTypeListItem::collapse);
+        }
     }
 
     DataTypeSearchBar getSearchBar() {
@@ -237,6 +251,8 @@ public class DataTypeList {
         void addSubItem(final DataTypeListItem listItem);
 
         void removeItem(final DataType dataType);
+
+        void cleanSubTypes(DataType dataType);
 
         void insertBelow(final DataTypeListItem listItem,
                          final DataType reference);

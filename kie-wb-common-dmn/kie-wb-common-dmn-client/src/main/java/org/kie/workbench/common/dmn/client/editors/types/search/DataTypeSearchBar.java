@@ -64,6 +64,7 @@ public class DataTypeSearchBar {
     }
 
     public void reset() {
+        setCurrentSearch("");
         dataTypeList.showListItems();
         view.resetSearchBar();
     }
@@ -100,6 +101,10 @@ public class DataTypeSearchBar {
         } else {
             dataTypeList.showListItems();
         }
+    }
+
+    public boolean isEnabled() {
+        return !isEmpty(getCurrentSearch());
     }
 
     public interface View extends UberElemental<DataTypeSearchBar>,

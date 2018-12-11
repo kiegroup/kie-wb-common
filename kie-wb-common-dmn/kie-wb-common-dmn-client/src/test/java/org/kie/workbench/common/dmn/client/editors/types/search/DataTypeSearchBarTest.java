@@ -30,9 +30,12 @@ import org.mockito.Mock;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -90,6 +93,7 @@ public class DataTypeSearchBarTest {
     public void testReset() {
         searchBar.reset();
 
+        verify(searchBar).setCurrentSearch("");
         verify(dataTypeList).showListItems();
         verify(view).resetSearchBar();
     }
@@ -134,7 +138,7 @@ public class DataTypeSearchBarTest {
         searchBar.search(keyword);
 
         verify(dataTypeList).showNoDataTypesFound();
-        verify(searchBar).setCurrentSearch(keyword);
+        verify(searchBar, times(2)).setCurrentSearch(keyword);
         verify(dataTypeList).showListItems();
         verify(view).resetSearchBar();
     }
@@ -152,6 +156,22 @@ public class DataTypeSearchBarTest {
         verify(searchBar).setCurrentSearch(keyword);
         verify(dataTypeList).showListItems();
         verify(view).resetSearchBar();
+    }
+
+    @Test
+    public void testIsEnabledWhenItReturnsTrue() {
+
+        doReturn("something").when(searchBar).getCurrentSearch();
+
+        assertTrue(searchBar.isEnabled());
+    }
+
+    @Test
+    public void testIsEnabledWhenItReturnsFalse() {
+
+        doReturn("").when(searchBar).getCurrentSearch();
+
+        assertFalse(searchBar.isEnabled());
     }
 
     @Test
