@@ -23,14 +23,17 @@ import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresDockingControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -109,6 +112,8 @@ public class WiresLayerTest {
         WiresShape parent = mock(WiresShape.class);
         tested.dock(parent, shape);
         verify(dockingControl, times(1)).dock(eq(parent));
+        verify(dockingControl, never()).getCandidateLocation();
+        verify(shape, never()).setLocation(any(Point2D.class));
     }
 
     @Test

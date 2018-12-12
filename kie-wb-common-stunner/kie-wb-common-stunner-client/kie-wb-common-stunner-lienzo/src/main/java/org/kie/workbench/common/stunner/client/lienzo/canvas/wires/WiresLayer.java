@@ -81,7 +81,6 @@ public class WiresLayer extends LienzoLayer {
                            final WiresShape child) {
         final WiresDockingControl dockingControl = child.getControl().getDockingControl();
         dockingControl.dock(parent);
-        child.setLocation(dockingControl.getCandidateLocation());
         return this;
     }
 
