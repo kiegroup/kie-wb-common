@@ -174,7 +174,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                                       translationService,
                                                                       cellEditorControls,
                                                                       parametersEditor,
-                                                                      Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditParameters)),
+                                                                      Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditParametersTitle)),
                                                                       this));
         final GridColumn expressionColumn = new FunctionColumn(gridLayer,
                                                                headerMetaData,

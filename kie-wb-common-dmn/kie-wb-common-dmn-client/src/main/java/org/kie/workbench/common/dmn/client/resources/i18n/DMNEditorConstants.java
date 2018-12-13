@@ -128,6 +128,9 @@ public class DMNEditorConstants {
     public static final String FunctionEditor_EditParameters = "FunctionEditor.EditParameters";
 
     @TranslationKey(defaultValue = "")
+    public static final String FunctionEditor_EditParametersTitle = "FunctionEditor.EditParametersTitle";
+
+    @TranslationKey(defaultValue = "")
     public static final String FunctionEditor_SelectFunctionKind = "FunctionEditor.SelectFunctionKind";
 
     @TranslationKey(defaultValue = "")
