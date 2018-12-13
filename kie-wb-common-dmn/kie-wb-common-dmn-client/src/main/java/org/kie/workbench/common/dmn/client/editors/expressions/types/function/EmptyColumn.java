@@ -19,11 +19,10 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.function;
 import java.util.List;
 
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridColumn;
-import org.uberfire.ext.wires.core.grids.client.widget.dnd.IsRowDragHandle;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.impl.StringColumnRenderer;
 
-class EmptyColumn extends BaseGridColumn<String> implements IsRowDragHandle {
+class EmptyColumn extends BaseGridColumn<String> {
 
     EmptyColumn(final List<HeaderMetaData> headerMetaData) {
         this(headerMetaData,
