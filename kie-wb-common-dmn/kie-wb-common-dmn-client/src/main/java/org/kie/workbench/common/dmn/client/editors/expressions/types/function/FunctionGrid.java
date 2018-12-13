@@ -400,7 +400,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
     }
 
     @Override
-    public void setFunctionKind(FunctionDefinition.Kind kind) {
+    public void setFunctionKind(final FunctionDefinition.Kind kind) {
         setKind(kind);
     }
 }

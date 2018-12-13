@@ -37,5 +37,6 @@ public class FunctionKindRowColumn extends EmptyColumn {
                                                                                 editorTitle,
                                                                                 gridWidget)));
         setMovable(false);
+        setResizable(false);
     }
 }

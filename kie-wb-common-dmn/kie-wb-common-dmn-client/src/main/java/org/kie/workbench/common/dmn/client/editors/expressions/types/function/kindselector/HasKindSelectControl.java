@@ -20,5 +20,5 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 
 public interface HasKindSelectControl {
 
-    void setFunctionKind(FunctionDefinition.Kind kind);
+    void setFunctionKind(final FunctionDefinition.Kind kind);
 }

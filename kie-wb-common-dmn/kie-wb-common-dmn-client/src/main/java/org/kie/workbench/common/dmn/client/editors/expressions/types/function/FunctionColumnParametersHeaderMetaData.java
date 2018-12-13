@@ -67,11 +67,7 @@ public class FunctionColumnParametersHeaderMetaData extends EditablePopupHeaderM
 
     @Override
     public String getTitle() {
-        //TODO {manstis} We need the FunctionGridRendered to render the two sections as different cells
-        final StringBuilder sb = new StringBuilder(getExpressionLanguageTitle());
-        sb.append(" : ");
-        sb.append(getFormalParametersTitle());
-        return sb.toString();
+        return getFormalParametersTitle();
     }
 
     @Override
@@ -92,7 +88,7 @@ public class FunctionColumnParametersHeaderMetaData extends EditablePopupHeaderM
 
     @Override
     public Optional<String> getPlaceHolder() {
-        return Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_SelectParameters));
+        return Optional.of(translationService.getTranslation(DMNEditorConstants.FunctionEditor_EditParameters));
     }
 
     String getExpressionLanguageTitle() {
