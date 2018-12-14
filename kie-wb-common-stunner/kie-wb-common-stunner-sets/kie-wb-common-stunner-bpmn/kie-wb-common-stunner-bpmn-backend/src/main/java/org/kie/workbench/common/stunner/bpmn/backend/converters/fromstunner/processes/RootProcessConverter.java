@@ -26,7 +26,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseAdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -62,7 +62,7 @@ public class RootProcessConverter<D extends BPMNDiagram, A extends BaseAdHocSubp
         ProcessPropertyWriter p = propertyWriterFactory.of(process);
         D definition = node.getContent().getDefinition();
 
-        DiagramSet diagramSet = definition.getDiagramSet();
+        BaseDiagramSet diagramSet = definition.getDiagramSet();
 
         p.setName(diagramSet.getName().getValue());
         p.setDocumentation(diagramSet.getDocumentation().getValue());

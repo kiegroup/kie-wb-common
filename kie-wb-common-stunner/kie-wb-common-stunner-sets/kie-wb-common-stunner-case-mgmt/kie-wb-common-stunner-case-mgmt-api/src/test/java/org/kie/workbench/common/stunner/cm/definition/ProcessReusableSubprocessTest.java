@@ -54,9 +54,8 @@ public class ProcessReusableSubprocessTest {
         tested = new ProcessReusableSubprocess();
         BPMNGeneralSet generalSet = tested.getGeneral();
         generalSet.setName(new Name(NAME_VALID));
-        ProcessReusableSubprocessTaskExecutionSet executionSet =tested.getExecutionSet();
+        ProcessReusableSubprocessTaskExecutionSet executionSet = tested.getExecutionSet();
         executionSet.setIsCase(new IsCase(CASE_VALID));
-
     }
 
     @Test

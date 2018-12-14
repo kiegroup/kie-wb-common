@@ -20,6 +20,15 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BaseCo
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl> {
 
@@ -33,5 +42,17 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     @Override
     public Class<BPMNDiagramImpl> getDiagramClass() {
         return BPMNDiagramImpl.class;
+    }
+
+    @Override
+    protected DiagramSet createDiagramSet(Name name,
+                                          Documentation documentation,
+                                          Id id,
+                                          Package pkg,
+                                          Version version,
+                                          AdHoc adHoc,
+                                          ProcessInstanceDescription processInstanceDescription,
+                                          Executable executable) {
+        return new DiagramSet(name, documentation, id, pkg, version, adHoc, processInstanceDescription, executable);
     }
 }

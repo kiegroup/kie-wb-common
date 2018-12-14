@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
@@ -31,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -45,14 +45,14 @@ public class DefinitionsConverterTest {
         GraphNodeStoreImpl nodeStore = new GraphNodeStoreImpl();
         NodeImpl x = new NodeImpl("x");
         CaseManagementDiagram diag = new CaseManagementDiagram();
-        diag.setDiagramSet(new DiagramSet(new Name("x"),
-                                          new Documentation("doc"),
-                                          new Id("x"),
-                                          new Package("org.jbpm"),
-                                          new Version("1.0"),
-                                          new AdHoc(false),
-                                          new ProcessInstanceDescription("descr"),
-                                          new Executable(true)
+        diag.setDiagramSet(new CaseManagementDiagramSet(new Name("x"),
+                                                        new Documentation("doc"),
+                                                        new Id("x"),
+                                                        new Package("org.jbpm"),
+                                                        new Version("1.0"),
+                                                        new AdHoc(false),
+                                                        new ProcessInstanceDescription("descr"),
+                                                        new Executable(true)
         ));
         x.setContent(new ViewImpl<>(diag, Bounds.create()));
         nodeStore.add(x);

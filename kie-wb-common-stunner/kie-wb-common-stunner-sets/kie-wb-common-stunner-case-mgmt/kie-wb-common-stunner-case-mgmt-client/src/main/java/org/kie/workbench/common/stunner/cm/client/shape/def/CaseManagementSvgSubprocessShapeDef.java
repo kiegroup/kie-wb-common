@@ -69,7 +69,8 @@ public final class CaseManagementSvgSubprocessShapeDef extends BaseDimensionedSh
     }
 
     @Override
-    public SVGShapeView<?> newViewInstance(final CaseManagementSVGViewFactory factory, final BaseCaseManagementReusableSubprocess bean) {
+    public SVGShapeView<?> newViewInstance(final CaseManagementSVGViewFactory factory,
+                                           final BaseCaseManagementReusableSubprocess bean) {
         return newViewInstance(Optional.ofNullable(bean.getDimensionsSet().getWidth()),
                                Optional.ofNullable(bean.getDimensionsSet().getHeight()),
                                VIEW_RESOURCES.getResource(factory, bean));

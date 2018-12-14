@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
+package org.kie.workbench.common.stunner.cm.definition.property.diagram;
 
 import javax.validation.Valid;
 
@@ -25,6 +25,13 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -38,9 +45,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         policy = FieldPolicy.ONLY_MARKED,
         startElement = "name"
 )
-public class DiagramSet implements BaseDiagramSet {
-
-    public static final String ADHOC = "adHoc";
+public class CaseManagementDiagramSet implements BaseDiagramSet {
 
     @Property
     @FormField
@@ -77,15 +82,12 @@ public class DiagramSet implements BaseDiagramSet {
     private Version version;
 
     @Property
-    @FormField(
-            afterElement = "version"
-    )
     @Valid
     private AdHoc adHoc;
 
     @Property
     @FormField(
-            afterElement = ADHOC
+            afterElement = "version"
     )
     @Valid
     private ProcessInstanceDescription processInstanceDescription;
@@ -93,25 +95,25 @@ public class DiagramSet implements BaseDiagramSet {
     @Property
     private Executable executable;
 
-    public DiagramSet() {
+    public CaseManagementDiagramSet() {
         this(new Name(),
              new Documentation(),
              new Id(),
              new Package(),
              new Version(),
-             new AdHoc(),
+             new AdHoc(true),
              new ProcessInstanceDescription(),
              new Executable());
     }
 
-    public DiagramSet(final @MapsTo("name") Name name,
-                      final @MapsTo("documentation") Documentation documentation,
-                      final @MapsTo("id") Id id,
-                      final @MapsTo("packageProperty") Package packageProperty,
-                      final @MapsTo("version") Version version,
-                      final @MapsTo(ADHOC) AdHoc adHoc,
-                      final @MapsTo("processInstanceDescription") ProcessInstanceDescription processInstanceDescription,
-                      final @MapsTo("executable") Executable executable) {
+    public CaseManagementDiagramSet(final @MapsTo("name") Name name,
+                                    final @MapsTo("documentation") Documentation documentation,
+                                    final @MapsTo("id") Id id,
+                                    final @MapsTo("packageProperty") Package packageProperty,
+                                    final @MapsTo("version") Version version,
+                                    final @MapsTo("adHoc") AdHoc adHoc,
+                                    final @MapsTo("processInstanceDescription") ProcessInstanceDescription processInstanceDescription,
+                                    final @MapsTo("executable") Executable executable) {
         this.name = name;
         this.documentation = documentation;
         this.id = id;
@@ -122,13 +124,13 @@ public class DiagramSet implements BaseDiagramSet {
         this.executable = executable;
     }
 
-    public DiagramSet(final String name) {
+    public CaseManagementDiagramSet(final String name) {
         this(new Name(name),
              new Documentation(),
              new Id(),
              new Package(),
              new Version(),
-             new AdHoc(),
+             new AdHoc(true),
              new ProcessInstanceDescription(),
              new Executable());
     }
@@ -219,8 +221,8 @@ public class DiagramSet implements BaseDiagramSet {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof DiagramSet) {
-            DiagramSet other = (DiagramSet) o;
+        if (o instanceof CaseManagementDiagramSet) {
+            CaseManagementDiagramSet other = (CaseManagementDiagramSet) o;
             return name.equals(other.name) &&
                     documentation.equals(other.documentation) &&
                     id.equals(other.id) &&
@@ -232,4 +234,5 @@ public class DiagramSet implements BaseDiagramSet {
         }
         return false;
     }
+
 }

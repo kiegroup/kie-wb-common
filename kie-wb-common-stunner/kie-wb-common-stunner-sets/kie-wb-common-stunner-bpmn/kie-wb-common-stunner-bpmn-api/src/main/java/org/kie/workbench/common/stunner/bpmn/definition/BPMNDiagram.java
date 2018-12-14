@@ -18,15 +18,15 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 
-public interface BPMNDiagram extends BPMNViewDefinition {
+public interface BPMNDiagram<D extends BaseDiagramSet> extends BPMNViewDefinition {
 
-    DiagramSet getDiagramSet();
+    D getDiagramSet();
 
-    void setDiagramSet(final DiagramSet diagramSet);
+    void setDiagramSet(final D diagramSet);
 
     ProcessData getProcessData();
 

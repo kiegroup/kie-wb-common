@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
@@ -87,14 +87,14 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram>  {
 
         ProcessPropertyReader e = delegate.propertyReaderFactory.of(process);
 
-        definition.setDiagramSet(new DiagramSet(new Name(process.getName()),
-                                                new Documentation(e.getDocumentation()),
-                                                new Id(process.getId()),
-                                                new Package(e.getPackage()),
-                                                new Version(e.getVersion()),
-                                                new AdHoc(e.isAdHoc()),
-                                                new ProcessInstanceDescription(e.getDescription()),
-                                                new Executable(process.isIsExecutable()))
+        definition.setDiagramSet(createDiagramSet(new Name(process.getName()),
+                                                  new Documentation(e.getDocumentation()),
+                                                  new Id(process.getId()),
+                                                  new Package(e.getPackage()),
+                                                  new Version(e.getVersion()),
+                                                  new AdHoc(e.isAdHoc()),
+                                                  new ProcessInstanceDescription(e.getDescription()),
+                                                  new Executable(process.isIsExecutable()))
         );
 
         definition.setCaseManagementSet(new CaseManagementSet(new CaseIdPrefix(e.getCaseIdPrefix()),
@@ -113,4 +113,13 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram>  {
     }
 
     public abstract Class<D> getDiagramClass();
+
+    protected abstract BaseDiagramSet createDiagramSet(Name name,
+                                                       Documentation documentation,
+                                                       Id id,
+                                                       Package pkg,
+                                                       Version version,
+                                                       AdHoc adHoc,
+                                                       ProcessInstanceDescription processInstanceDescription,
+                                                       Executable executable);
 }

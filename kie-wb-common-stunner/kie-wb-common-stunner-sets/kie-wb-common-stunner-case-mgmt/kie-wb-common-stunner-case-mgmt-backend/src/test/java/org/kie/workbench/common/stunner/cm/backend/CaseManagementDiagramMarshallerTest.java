@@ -27,13 +27,13 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.Bpmn2Marshall
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.Bpmn2UnMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementMarshaller;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementUnMarshaller;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -143,7 +143,7 @@ public class CaseManagementDiagramMarshallerTest {
     }
 
     private Diagram mockDiagram(final String name, final String id) {
-        final DiagramSet diagramSet = mock(DiagramSet.class);
+        final CaseManagementDiagramSet diagramSet = mock(CaseManagementDiagramSet.class);
         when(diagramSet.getName()).thenReturn(new Name(name));
         when(diagramSet.getId()).thenReturn(new Id(id));
 

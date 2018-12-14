@@ -43,7 +43,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Prio
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
@@ -79,6 +78,7 @@ import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.CaseReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.ProcessReusableSubprocess;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.CaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.ProcessReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -560,7 +560,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
                    "<bpmn2:itemDefinition id=\"_StageTestItem\" structureRef=\"Boolean\"/>");
 
         hasElement(result,
-                   "<bpmn2:process id=\"StageTest\" drools:version=\"1.0\" drools:adHoc=\"false\" name=\"StageTest\" isExecutable=\"true\">");
+                   "<bpmn2:process id=\"StageTest\" drools:version=\"1.0\" drools:adHoc=\"true\" name=\"StageTest\" isExecutable=\"true\">");
 
         hasElement(result,
                    "<bpmn2:adHocSubProcess id=\"" + UUID_REGEX + "\" name=\"StageTest\" ordering=\"Sequential\">");
@@ -688,7 +688,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
                    "<bpmn2:itemDefinition id=\"_+" + UUID_REGEX + "_SubcaseTestOutputXItem\" structureRef=\"Boolean\"/>");
 
         hasElement(result,
-                   "<bpmn2:process id=\"SubcaseTest\" drools:version=\"1.0\" drools:adHoc=\"false\" name=\"SubcaseTest\" isExecutable=\"true\">");
+                   "<bpmn2:process id=\"SubcaseTest\" drools:version=\"1.0\" drools:adHoc=\"true\" name=\"SubcaseTest\" isExecutable=\"true\">");
 
         hasElement(result,
                    "<bpmn2:adHocSubProcess id=\"" + UUID_REGEX + "\" name=\"StageSubcaseTest\" ordering=\"Sequential\">");
@@ -855,7 +855,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
                    "<bpmn2:itemDefinition id=\"_+" + UUID_REGEX + "_SubprocessTestOutputXItem\" structureRef=\"Boolean\"/>");
 
         hasElement(result,
-                   "<bpmn2:process id=\"SubprocessTest\" drools:version=\"1.0\" drools:adHoc=\"false\" name=\"SubprocessTest\" isExecutable=\"true\">");
+                   "<bpmn2:process id=\"SubprocessTest\" drools:version=\"1.0\" drools:adHoc=\"true\" name=\"SubprocessTest\" isExecutable=\"true\">");
 
         hasElement(result,
                    "<bpmn2:adHocSubProcess id=\"" + UUID_REGEX + "\" name=\"StageSubprocessTest\" ordering=\"Sequential\">");
@@ -1048,7 +1048,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
                    "<bpmn2:itemDefinition id=\"_" + UUID_REGEX + "_TaskTestOutputXItem\" structureRef=\"Boolean\"/>");
 
         hasElement(result,
-                   "<bpmn2:process id=\"TaskTest\" drools:version=\"1.0\" drools:adHoc=\"false\" name=\"TaskTest\" isExecutable=\"true\">");
+                   "<bpmn2:process id=\"TaskTest\" drools:version=\"1.0\" drools:adHoc=\"true\" name=\"TaskTest\" isExecutable=\"true\">");
 
         hasElement(result,
                    "<bpmn2:adHocSubProcess id=\"" + UUID_REGEX + "\" name=\"StageTaskTest\" ordering=\"Sequential\">");
@@ -1243,7 +1243,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
             CaseManagementDiagram diagram = (CaseManagementDiagram) root.getContent().getDefinition();
 
-            DiagramSet diagramSet = diagram.getDiagramSet();
+            CaseManagementDiagramSet diagramSet = diagram.getDiagramSet();
             assertEquals("DiagramTest", diagramSet.getName().getValue());
             assertEquals("DiagramTest", diagramSet.getDocumentation().getValue());
             assertEquals("DiagramTest", diagramSet.getId().getValue());
@@ -1280,7 +1280,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
             CaseManagementDiagram diagram = (CaseManagementDiagram) root.getContent().getDefinition();
 
-            DiagramSet diagramSet = diagram.getDiagramSet();
+            CaseManagementDiagramSet diagramSet = diagram.getDiagramSet();
             assertEquals("StageTest", diagramSet.getName().getValue());
             assertEquals("StageTest", diagramSet.getId().getValue());
 
@@ -1329,7 +1329,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
             CaseManagementDiagram diagram = (CaseManagementDiagram) root.getContent().getDefinition();
 
-            DiagramSet diagramSet = diagram.getDiagramSet();
+            CaseManagementDiagramSet diagramSet = diagram.getDiagramSet();
             assertEquals("SubcaseTest", diagramSet.getName().getValue());
             assertEquals("SubcaseTest", diagramSet.getId().getValue());
 
@@ -1384,7 +1384,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
             CaseManagementDiagram diagram = (CaseManagementDiagram) root.getContent().getDefinition();
 
-            DiagramSet diagramSet = diagram.getDiagramSet();
+            CaseManagementDiagramSet diagramSet = diagram.getDiagramSet();
             assertEquals("SubprocessTest", diagramSet.getName().getValue());
             assertEquals("SubprocessTest", diagramSet.getId().getValue());
 
@@ -1439,7 +1439,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
             CaseManagementDiagram diagram = (CaseManagementDiagram) root.getContent().getDefinition();
 
-            DiagramSet diagramSet = diagram.getDiagramSet();
+            CaseManagementDiagramSet diagramSet = diagram.getDiagramSet();
             assertEquals("TaskTest", diagramSet.getName().getValue());
             assertEquals("TaskTest", diagramSet.getId().getValue());
 

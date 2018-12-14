@@ -27,13 +27,13 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.Bpmn2UnMarsha
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementMarshaller;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementUnMarshaller;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -120,7 +120,7 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
         if (node != null && node.getContent() != null) {
             CaseManagementDiagram definition = node.getContent().getDefinition();
             if (definition != null) {
-                DiagramSet diagramSet = definition.getDiagramSet();
+                CaseManagementDiagramSet diagramSet = definition.getDiagramSet();
                 if (diagramSet != null) {
                     Name name = diagramSet.getName();
                     Id id = diagramSet.getId();

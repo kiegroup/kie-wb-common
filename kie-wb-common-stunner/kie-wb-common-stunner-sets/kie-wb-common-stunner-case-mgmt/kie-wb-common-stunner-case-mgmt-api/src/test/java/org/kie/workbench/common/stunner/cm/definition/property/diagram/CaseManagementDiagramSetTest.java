@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.cm.definition;
+
+package org.kie.workbench.common.stunner.cm.definition.property.diagram;
 
 import java.util.Set;
 
@@ -28,76 +29,71 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
-import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CaseManagementDiagramTest {
+public class CaseManagementDiagramSetTest {
 
     private Validator validator;
 
-    private static final String NAME_VALID = "My New CM";
+    private static final String NAME_VALID = "My New Name";
     private static final String NAME_INVALID = "";
 
-    private static final String ID_VALID = "Project1.MyNewCM";
+    private static final String ID_VALID = "My New Id";
     private static final String ID_INVALID = "";
 
-    private static final String PACKAGE_VALID = "myorg.project1";
+    private static final String PACKAGE_VALID = "My New Package";
     private static final String PACKAGE_INVALID = "";
 
-    private static final String VERSION_VALID = "1.0";
+    private static final String VERSION_VALID = "5.0";
     private static final String VERSION_INVALID = "";
 
-    private CaseManagementDiagram tested;
+    private CaseManagementDiagramSet tested;
 
     @Before
-    public void init() {
+    public void setUp() throws Exception {
         ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
         this.validator = vf.getValidator();
-    }
 
-    @Before
-    public void setup() {
-        tested = new CaseManagementDiagram();
-        CaseManagementDiagramSet diagramSet = tested.getDiagramSet();
-        diagramSet.setName(new Name(NAME_VALID));
-        diagramSet.setId(new Id(ID_VALID));
-        diagramSet.setPackageProperty(new Package(PACKAGE_VALID));
-        diagramSet.setVersion(new Version(VERSION_VALID));
+        tested = new CaseManagementDiagramSet();
+        tested.setName(new Name((NAME_VALID)));
+        tested.setId(new Id(ID_VALID));
+        tested.setPackageProperty(new Package(PACKAGE_VALID));
+        tested.setVersion(new Version(VERSION_VALID));
     }
 
     @Test
     public void testAllValid() {
-        Set<ConstraintViolation<CaseManagementDiagram>> violations = this.validator.validate(tested);
+        Set<ConstraintViolation<CaseManagementDiagramSet>> violations = this.validator.validate(tested);
         assertTrue(violations.isEmpty());
     }
 
     @Test
     public void testNameInvalid() {
-        tested.getDiagramSet().setName(new Name(NAME_INVALID));
-        Set<ConstraintViolation<CaseManagementDiagram>> violations = this.validator.validate(tested);
+        tested.setName(new Name(NAME_INVALID));
+        Set<ConstraintViolation<CaseManagementDiagramSet>> violations = this.validator.validate(tested);
         assertEquals(1, violations.size());
     }
 
     @Test
     public void testIDInvalid() {
-        tested.getDiagramSet().setId(new Id(ID_INVALID));
-        Set<ConstraintViolation<CaseManagementDiagram>> violations = this.validator.validate(tested);
+        tested.setId(new Id(ID_INVALID));
+        Set<ConstraintViolation<CaseManagementDiagramSet>> violations = this.validator.validate(tested);
         assertEquals(1, violations.size());
     }
 
     @Test
     public void testPackageInvalid() {
-        tested.getDiagramSet().setPackageProperty(new Package(PACKAGE_INVALID));
-        Set<ConstraintViolation<CaseManagementDiagram>> violations = this.validator.validate(tested);
+        tested.setPackageProperty(new Package(PACKAGE_INVALID));
+        Set<ConstraintViolation<CaseManagementDiagramSet>> violations = this.validator.validate(tested);
         assertEquals(1, violations.size());
     }
 
     @Test
     public void testVersionInvalid() {
-        tested.getDiagramSet().setVersion(new Version(VERSION_INVALID));
-        Set<ConstraintViolation<CaseManagementDiagram>> violations = this.validator.validate(tested);
+        tested.setVersion(new Version(VERSION_INVALID));
+        Set<ConstraintViolation<CaseManagementDiagramSet>> violations = this.validator.validate(tested);
         assertEquals(1, violations.size());
     }
 }
