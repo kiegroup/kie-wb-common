@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.api.definition;
+package org.kie.workbench.common.dmn.client.shape.def;
 
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
-import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
+import org.kie.workbench.common.dmn.client.resources.DMNDecisionServiceSVGViewFactory;
 
-public interface DMNViewDefinition<D extends RectangleDimensionsSet> extends DMNDefinition {
+public interface DMNDecisionServiceSVGShapeDef
+        extends DMNSVGShapeDef<DecisionService, DMNDecisionServiceSVGViewFactory> {
 
-    BackgroundSet getBackgroundSet();
-
-    FontSet getFontSet();
-
-    D getDimensionsSet();
 }

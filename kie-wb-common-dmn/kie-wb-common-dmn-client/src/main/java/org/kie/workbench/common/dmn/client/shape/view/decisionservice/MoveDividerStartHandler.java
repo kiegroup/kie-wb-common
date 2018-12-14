@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.api.definition;
 
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
-import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+package org.kie.workbench.common.dmn.client.shape.view.decisionservice;
 
-public interface DMNViewDefinition<D extends RectangleDimensionsSet> extends DMNDefinition {
+import com.ait.lienzo.client.core.shape.wires.event.WiresEventHandler;
 
-    BackgroundSet getBackgroundSet();
+public interface MoveDividerStartHandler extends WiresEventHandler {
 
-    FontSet getFontSet();
-
-    D getDimensionsSet();
+    void onMoveDividerStart(final MoveDividerStartEvent event);
 }
