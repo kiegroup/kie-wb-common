@@ -79,13 +79,12 @@ public class ContainerRemoteStatusPresenter {
                 final Map<String, ContainerCardPresenter> newIndexIndex = new HashMap<String, ContainerCardPresenter>( serverInstanceUpdated.getServerInstance().getContainers().size() );
                 index.put( updatedServerInstanceKey, newIndexIndex );
                 for ( final Container container : serverInstanceUpdated.getServerInstance().getContainers() ) {
-                    ContainerCardPresenter presenter = oldIndex.remove( container.getContainerSpecId() );
+                    ContainerCardPresenter presenter = oldIndex.remove( container.getContainerName() );
                     if ( !container.getStatus().equals( KieContainerStatus.STOPPED ) ) {
                         if ( presenter != null ) {
-                            presenter.updateContent( serverInstanceUpdated.getServerInstance(),
-                                                     container );
+                            presenter.updateContent( serverInstanceUpdated.getServerInstance(), container );
                         } else {
-                            presenter = buildContainer( container, false );
+                            presenter = buildContainer( container );
                         }
                         newIndexIndex.put( container.getContainerName(), presenter );
                     }
@@ -135,15 +134,13 @@ public class ContainerRemoteStatusPresenter {
     }
 
     private void buildAndIndexContainer( final Container container ) {
-        index( container, buildContainer( container, true ) );
+        index( container, buildContainer( container ) );
     }
 
-    private ContainerCardPresenter buildContainer( final Container container, boolean addCard ) {
+    private ContainerCardPresenter buildContainer( final Container container ) {
         final ContainerCardPresenter cardPresenter = iocUtil.newInstance( this, ContainerCardPresenter.class );
         cardPresenter.setup( container.getServerInstanceKey(), container );
-        if(addCard) {
-            view.addCard(cardPresenter.getView().asWidget());
-        }
+        view.addCard( cardPresenter.getView().asWidget() );
         return cardPresenter;
     }
 
@@ -152,7 +149,7 @@ public class ContainerRemoteStatusPresenter {
         if ( !index.containsKey( container.getServerInstanceKey().getServerInstanceId() ) ) {
             index.put( container.getServerInstanceKey().getServerInstanceId(), new HashMap<String, ContainerCardPresenter>() );
         }
-        index.get( container.getServerInstanceKey().getServerInstanceId() ).put( container.getContainerSpecId(), cardPresenter );
+        index.get( container.getServerInstanceKey().getServerInstanceId() ).put( container.getContainerName(), cardPresenter );
     }
 
     @PreDestroy
