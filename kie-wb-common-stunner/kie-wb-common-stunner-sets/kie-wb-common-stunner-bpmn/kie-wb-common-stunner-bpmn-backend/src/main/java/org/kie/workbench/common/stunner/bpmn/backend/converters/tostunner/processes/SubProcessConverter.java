@@ -19,9 +19,14 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proce
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AdHocSubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
@@ -43,7 +48,15 @@ public class SubProcessConverter extends BaseSubProcessConverter<AdHocSubprocess
     }
 
     @Override
-    protected BaseProcessData createProcessData(String processVariables) {
+    protected ProcessData createProcessData(String processVariables) {
         return new ProcessData(new ProcessVariables(processVariables));
+    }
+
+    @Override
+    protected AdHocSubprocessTaskExecutionSet createAdHocSubprocessTaskExecutionSet(AdHocSubProcessPropertyReader p) {
+        return new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(p.getAdHocCompletionCondition()),
+                                                   new AdHocOrdering(p.getAdHocOrdering()),
+                                                   new OnEntryAction(p.getOnEntryAction()),
+                                                   new OnExitAction(p.getOnExitAction()));
     }
 }

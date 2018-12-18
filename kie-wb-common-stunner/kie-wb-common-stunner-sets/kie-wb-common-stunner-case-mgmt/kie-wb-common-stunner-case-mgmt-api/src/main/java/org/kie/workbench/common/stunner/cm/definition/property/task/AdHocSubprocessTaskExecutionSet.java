@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.task;
+package org.kie.workbench.common.stunner.cm.definition.property.task;
 
 import java.util.Objects;
 
@@ -28,6 +28,12 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseAdHocSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -69,8 +75,7 @@ public class AdHocSubprocessTaskExecutionSet implements BaseAdHocSubprocessTaskE
     private OnExitAction onExitAction;
 
     public AdHocSubprocessTaskExecutionSet() {
-        this(new AdHocCompletionCondition(new ScriptTypeValue("mvel",
-                                                              "autocomplete")),
+        this(new AdHocCompletionCondition(new ScriptTypeValue("mvel", "autocomplete")),
              new AdHocOrdering("Sequential"),
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),

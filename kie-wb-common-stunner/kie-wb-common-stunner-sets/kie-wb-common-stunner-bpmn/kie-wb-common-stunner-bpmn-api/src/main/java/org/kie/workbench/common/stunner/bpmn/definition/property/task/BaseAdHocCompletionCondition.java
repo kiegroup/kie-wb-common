@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
+package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
 
-public interface BaseProcessInstanceDescription extends BPMNProperty  {
+public interface BaseAdHocCompletionCondition extends BPMNProperty {
 
-    String getValue();
-
-    void setValue(final String value);
+    ScriptTypeValue getValue();
 }

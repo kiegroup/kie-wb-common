@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.task;
-
-import java.util.Objects;
+package org.kie.workbench.common.stunner.cm.definition.property.task;
 
 import javax.validation.Valid;
 
@@ -26,12 +24,13 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseAdHocCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.type.ScriptType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
@@ -68,15 +67,14 @@ public class AdHocCompletionCondition implements BaseAdHocCompletionCondition {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(Objects.hashCode(value));
+        return (null != value) ? value.hashCode() : 0;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof AdHocCompletionCondition) {
             AdHocCompletionCondition other = (AdHocCompletionCondition) o;
-            return Objects.equals(value,
-                                  other.value);
+            return (null != value) ? value.equals(other.value) : null == other.value;
         }
         return false;
     }

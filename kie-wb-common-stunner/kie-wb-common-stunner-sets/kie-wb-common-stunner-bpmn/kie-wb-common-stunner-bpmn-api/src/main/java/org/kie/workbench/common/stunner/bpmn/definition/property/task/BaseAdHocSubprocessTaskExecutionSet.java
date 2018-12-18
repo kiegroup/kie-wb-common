@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
+package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 
-public interface BaseProcessInstanceDescription extends BPMNProperty  {
+public interface BaseAdHocSubprocessTaskExecutionSet extends BPMNPropertySet {
 
-    String getValue();
+    BaseAdHocCompletionCondition getAdHocCompletionCondition();
 
-    void setValue(final String value);
+    AdHocOrdering getAdHocOrdering();
+
+    OnEntryAction getOnEntryAction();
+
+    OnExitAction getOnExitAction();
 }

@@ -37,9 +37,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EventSubprocessExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompletionCondition;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseAdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MITrigger;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
@@ -142,11 +140,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
 
         definition.setProcessData(createProcessData(p.getProcessVariables()));
 
-        definition.setExecutionSet(new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(p.getAdHocCompletionCondition()),
-                                                                       new AdHocOrdering(p.getAdHocOrdering()),
-                                                                       new OnEntryAction(p.getOnEntryAction()),
-                                                                       new OnExitAction(p.getOnExitAction())
-        ));
+        definition.setExecutionSet(createAdHocSubprocessTaskExecutionSet(p));
 
         definition.setSimulationSet(p.getSimulationSet());
 
@@ -217,4 +211,6 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
     protected abstract Class<A> getAdhocSubprocessClass();
 
     protected abstract BaseProcessData createProcessData(String processVariables);
+
+    protected abstract BaseAdHocSubprocessTaskExecutionSet createAdHocSubprocessTaskExecutionSet(AdHocSubProcessPropertyReader p);
 }

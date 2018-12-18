@@ -51,9 +51,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompletionCondition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
@@ -77,6 +75,8 @@ import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSe
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.Version;
+import org.kie.workbench.common.stunner.cm.definition.property.task.AdHocCompletionCondition;
+import org.kie.workbench.common.stunner.cm.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.CaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.ProcessReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;

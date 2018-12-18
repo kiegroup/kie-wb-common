@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubproce
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EventSubprocessExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseAdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
@@ -126,7 +126,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess>
         BaseProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
 
-        AdHocSubprocessTaskExecutionSet executionSet = definition.getExecutionSet();
+        BaseAdHocSubprocessTaskExecutionSet executionSet = definition.getExecutionSet();
         p.setAdHocCompletionCondition(executionSet.getAdHocCompletionCondition());
         p.setAdHocOrdering(executionSet.getAdHocOrdering());
         p.setOnEntryAction(executionSet.getOnEntryAction());
