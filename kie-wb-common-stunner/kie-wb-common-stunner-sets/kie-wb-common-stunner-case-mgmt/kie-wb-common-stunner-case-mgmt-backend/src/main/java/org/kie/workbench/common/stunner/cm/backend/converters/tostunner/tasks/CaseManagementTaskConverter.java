@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks;
+package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.tasks;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.UserTaskPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks.BaseTaskConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseUserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
+import org.kie.workbench.common.stunner.cm.definition.UserTask;
+import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExecutionSet;
 
-public class TaskConverter extends BaseTaskConverter<UserTask> {
+public class CaseManagementTaskConverter extends BaseTaskConverter<UserTask> {
 
-    public TaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
+    public CaseManagementTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         super(factoryManager, propertyReaderFactory);
     }
 
@@ -47,7 +47,7 @@ public class TaskConverter extends BaseTaskConverter<UserTask> {
     }
 
     @Override
-    protected UserTaskExecutionSet createUserTaskExecutionSet(UserTaskPropertyReader p) {
+    protected BaseUserTaskExecutionSet createUserTaskExecutionSet(UserTaskPropertyReader p) {
         return new UserTaskExecutionSet(new TaskName(p.getTaskName()),
                                         p.getActors(),
                                         new Groupid(p.getGroupid()),
@@ -60,8 +60,6 @@ public class TaskConverter extends BaseTaskConverter<UserTask> {
                                         new CreatedBy(p.getCreatedBy()),
                                         new AdHocAutostart(p.isAdHocAutostart()),
                                         new OnEntryAction(p.getOnEntryAction()),
-                                        new OnExitAction(p.getOnExitAction()),
-                                        new Content(p.getContent()),
-                                        new SLADueDate(p.getSLADueDate()));
+                                        new OnExitAction(p.getOnExitAction()));
     }
 }

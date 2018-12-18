@@ -58,6 +58,7 @@ public class AdHocCompletionCondition implements BaseAdHocCompletionCondition {
         return type;
     }
 
+    @Override
     public ScriptTypeValue getValue() {
         return value;
     }

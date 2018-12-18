@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.Defini
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.activities.CaseManagementCallActivityConverter;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes.CaseManagementRootProcessConverter;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes.CaseManagementSubProcessConverter;
-import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementPropertyReaderFactory;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 
 import static org.junit.Assert.assertTrue;
@@ -70,11 +69,6 @@ public class CaseManagementConverterFactoryTest {
 
     @Test
     public void testCreateCallActivityConverter() throws Exception {
-        assertTrue(tested.createCallActivityConverter() instanceof CaseManagementCallActivityConverter);
-    }
-
-    @Test
-    public void testCreatePropertyReaderFactory() throws Exception {
-        assertTrue(tested.createPropertyReaderFactory() instanceof CaseManagementPropertyReaderFactory);
+        assertTrue(tested.callActivityConverter() instanceof CaseManagementCallActivityConverter);
     }
 }

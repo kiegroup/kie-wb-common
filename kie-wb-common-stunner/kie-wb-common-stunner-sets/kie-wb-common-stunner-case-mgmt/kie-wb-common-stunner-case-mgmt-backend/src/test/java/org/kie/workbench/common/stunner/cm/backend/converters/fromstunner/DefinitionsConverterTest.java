@@ -17,6 +17,7 @@ package org.kie.workbench.common.stunner.cm.backend.converters.fromstunner;
 
 import org.eclipse.bpmn2.Definitions;
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
@@ -59,7 +60,7 @@ public class DefinitionsConverterTest {
 
         CaseManagementPropertyWriterFactory factory = new CaseManagementPropertyWriterFactory();
 
-        CaseManagementConverterFactory f = new CaseManagementConverterFactory(
+        ConverterFactory f = new ConverterFactory(
                 new DefinitionsBuildingContext(new GraphImpl("x", nodeStore), CaseManagementDiagram.class),
                 factory);
 

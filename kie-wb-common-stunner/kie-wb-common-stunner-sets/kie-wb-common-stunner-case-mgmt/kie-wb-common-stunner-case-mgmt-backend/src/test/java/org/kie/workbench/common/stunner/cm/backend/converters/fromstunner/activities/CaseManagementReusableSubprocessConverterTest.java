@@ -20,12 +20,12 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.backend.converters.customproperties.CaseManagementCustomElement;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementCallActivityPropertyWriter;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.definition.CaseReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.ProcessReusableSubprocess;
-import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -42,9 +42,9 @@ public class CaseManagementReusableSubprocessConverterTest {
 
     @Test
     public void testToFlowElement_case() throws Exception {
-        final ReusableSubprocess definition = new CaseReusableSubprocess();
-        final View<ReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
-        final Node<View<ReusableSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
+        final BaseReusableSubprocess definition = new CaseReusableSubprocess();
+        final View<BaseReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
+        final Node<View<BaseReusableSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
         node.setContent(view);
 
         final PropertyWriter propertyWriter = tested.toFlowElement(node);
@@ -54,9 +54,9 @@ public class CaseManagementReusableSubprocessConverterTest {
 
     @Test
     public void testToFlowElement_process() throws Exception {
-        final ReusableSubprocess definition = new ProcessReusableSubprocess();
-        final View<ReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
-        final Node<View<ReusableSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
+        final BaseReusableSubprocess definition = new ProcessReusableSubprocess();
+        final View<BaseReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
+        final Node<View<BaseReusableSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
         node.setContent(view);
 
         final PropertyWriter propertyWriter = tested.toFlowElement(node);

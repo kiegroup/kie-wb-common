@@ -21,6 +21,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -45,13 +46,13 @@ public class CallActivityConverter extends BaseCallActivityConverter<ReusableSub
     }
 
     @Override
-    protected ReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CalledElement calledElement,
-                                                                                          Independent independent,
-                                                                                          WaitForCompletion waitForCompletion,
-                                                                                          IsAsync isAsync,
-                                                                                          OnEntryAction onEntryAction,
-                                                                                          OnExitAction onExitAction,
-                                                                                          ActivityPropertyReader p) {
-        return new ReusableSubprocessTaskExecutionSet(calledElement, independent, waitForCompletion, isAsync, onEntryAction, onExitAction);
+    protected BaseReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CallActivity activity,
+                                                                                              ActivityPropertyReader p) {
+        return new ReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
+                                                      new Independent(p.isIndependent()),
+                                                      new WaitForCompletion(p.isWaitForCompletion()),
+                                                      new IsAsync(p.isAsync()),
+                                                      new OnEntryAction(p.getOnEntryAction()),
+                                                      new OnExitAction(p.getOnExitAction()));
     }
 }

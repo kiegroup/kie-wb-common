@@ -19,31 +19,20 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Base
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.activities.CaseManagementReusableSubprocessConverter;
-import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.processes.CaseManagementSubProcessConverter;
-import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
-import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 
-public class CaseManagementConverterFactory
-        extends BaseConverterFactory<CaseManagementDiagram, AdHocSubprocess, ReusableSubprocess> {
+public class CaseManagementConverterFactory extends BaseConverterFactory {
+
+    private CaseManagementReusableSubprocessConverter reusableSubprocessConverter;
 
     public CaseManagementConverterFactory(DefinitionsBuildingContext context,
                                           PropertyWriterFactory propertyWriterFactory) {
         super(context, propertyWriterFactory);
+
+        this.reusableSubprocessConverter = new CaseManagementReusableSubprocessConverter(propertyWriterFactory);
     }
 
     @Override
     public CaseManagementReusableSubprocessConverter reusableSubprocessConverter() {
-        return new CaseManagementReusableSubprocessConverter(propertyWriterFactory);
-    }
-
-    @Override
-    public CaseManagementSubProcessConverter subProcessConverter() {
-        return new CaseManagementSubProcessConverter(context, propertyWriterFactory, this);
-    }
-
-    @Override
-    protected CaseManagementFlowElementConverter createFlowElementConverter() {
-        return new CaseManagementFlowElementConverter(this);
+        return reusableSubprocessConverter;
     }
 }

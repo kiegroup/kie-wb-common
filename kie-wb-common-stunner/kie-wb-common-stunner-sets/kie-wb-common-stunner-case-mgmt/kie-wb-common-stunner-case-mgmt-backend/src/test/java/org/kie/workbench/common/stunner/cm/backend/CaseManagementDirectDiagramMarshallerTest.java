@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeMode
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
-import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
@@ -63,7 +62,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptType
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
@@ -71,6 +69,7 @@ import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.CaseReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.ProcessReusableSubprocess;
+import org.kie.workbench.common.stunner.cm.definition.UserTask;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.ProcessInstanceDescription;
@@ -79,6 +78,7 @@ import org.kie.workbench.common.stunner.cm.definition.property.task.AdHocComplet
 import org.kie.workbench.common.stunner.cm.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.CaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.ProcessReusableSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -266,7 +266,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
         View<UserTask> task1Content = new ViewImpl<>(task1, Bounds.create(0.0, 0.0, 153.0, 103.0));
         Node<View<UserTask>, Edge> task1Node = new NodeImpl<>("_E95AD08A-4595-4FA4-8948-3318D8BE7941");
         task1Node.getLabels().addAll(task1.getLabels());
-        task1Node.getLabels().add("org.kie.workbench.common.stunner.bpmn.definition.UserTask");
+        task1Node.getLabels().add("org.kie.workbench.common.stunner.cm.definition.UserTask");
         task1Node.setContent(task1Content);
 
         Edge<Child, Node> task1InEdge = new EdgeImpl<>("_B24CB4A4-93A0-4BC0-87A5-BD3968CC184F");
@@ -985,7 +985,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
         View<UserTask> taskContent = new ViewImpl<>(task, Bounds.create(0.0, 0.0, 153.0, 103.0));
         Node<View<UserTask>, Edge> taskNode = new NodeImpl<>("_E95AD08A-4595-4FA4-8948-3318D8BE7941");
         taskNode.getLabels().addAll(task.getLabels());
-        taskNode.getLabels().add("org.kie.workbench.common.stunner.bpmn.definition.UserTask");
+        taskNode.getLabels().add("org.kie.workbench.common.stunner.cm.definition.UserTask");
         taskNode.setContent(taskContent);
 
         Edge<Child, Node> taskInEdge = new EdgeImpl<>("_B24CB4A4-93A0-4BC0-87A5-BD3968CC184F");

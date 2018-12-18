@@ -40,7 +40,7 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     public RootProcessConverter(TypedFactoryManager typedFactoryManager,
                                 PropertyReaderFactory propertyReaderFactory,
                                 DefinitionResolver definitionResolver,
-                                BaseConverterFactory<BPMNDiagramImpl, ?, ?> factory) {
+                                BaseConverterFactory<BPMNDiagramImpl, ?, ?, ?> factory) {
         super(typedFactoryManager, propertyReaderFactory, definitionResolver, factory);
     }
 

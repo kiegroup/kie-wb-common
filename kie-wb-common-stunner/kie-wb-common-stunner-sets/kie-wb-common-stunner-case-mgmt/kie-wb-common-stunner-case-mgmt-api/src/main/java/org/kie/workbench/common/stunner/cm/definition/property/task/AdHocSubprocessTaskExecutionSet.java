@@ -94,6 +94,7 @@ public class AdHocSubprocessTaskExecutionSet implements BaseAdHocSubprocessTaskE
         this.onExitAction = onExitAction;
     }
 
+    @Override
     public AdHocCompletionCondition getAdHocCompletionCondition() {
         return adHocCompletionCondition;
     }
@@ -102,6 +103,7 @@ public class AdHocSubprocessTaskExecutionSet implements BaseAdHocSubprocessTaskE
         this.adHocCompletionCondition = adHocCompletionCondition;
     }
 
+    @Override
     public AdHocOrdering getAdHocOrdering() {
         return adHocOrdering;
     }
@@ -110,6 +112,7 @@ public class AdHocSubprocessTaskExecutionSet implements BaseAdHocSubprocessTaskE
         this.adHocOrdering = adHocOrdering;
     }
 
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
@@ -118,6 +121,7 @@ public class AdHocSubprocessTaskExecutionSet implements BaseAdHocSubprocessTaskE
         this.onEntryAction = onEntryAction;
     }
 
+    @Override
     public OnExitAction getOnExitAction() {
         return onExitAction;
     }

@@ -22,15 +22,22 @@ import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.activiti
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes.CaseManagementRootProcessConverter;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes.CaseManagementSubProcessConverter;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementPropertyReaderFactory;
+import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.tasks.CaseManagementTaskConverter;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
+import org.kie.workbench.common.stunner.cm.definition.UserTask;
 
 public class CaseManagementConverterFactory
-        extends BaseConverterFactory<CaseManagementDiagram, AdHocSubprocess, ReusableSubprocess> {
+        extends BaseConverterFactory<CaseManagementDiagram, AdHocSubprocess, ReusableSubprocess, UserTask> {
 
     public CaseManagementConverterFactory(DefinitionResolver definitionResolver, TypedFactoryManager factoryManager) {
-        super(definitionResolver, factoryManager);
+        super(definitionResolver, factoryManager, new CaseManagementPropertyReaderFactory(definitionResolver));
+    }
+
+    @Override
+    public CaseManagementCallActivityConverter callActivityConverter() {
+        return new CaseManagementCallActivityConverter(factoryManager, propertyReaderFactory);
     }
 
     @Override
@@ -47,12 +54,7 @@ public class CaseManagementConverterFactory
     }
 
     @Override
-    protected CaseManagementCallActivityConverter createCallActivityConverter() {
-        return new CaseManagementCallActivityConverter(factoryManager, propertyReaderFactory);
-    }
-
-    @Override
-    protected CaseManagementPropertyReaderFactory createPropertyReaderFactory() {
-        return new CaseManagementPropertyReaderFactory(definitionResolver);
+    public CaseManagementTaskConverter taskConverter() {
+        return new CaseManagementTaskConverter(factoryManager, propertyReaderFactory);
     }
 }

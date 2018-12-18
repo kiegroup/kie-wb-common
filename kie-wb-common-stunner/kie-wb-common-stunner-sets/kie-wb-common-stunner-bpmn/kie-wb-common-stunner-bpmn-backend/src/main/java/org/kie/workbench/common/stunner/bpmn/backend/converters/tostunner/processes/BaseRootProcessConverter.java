@@ -48,7 +48,7 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram>  {
     public BaseRootProcessConverter(TypedFactoryManager typedFactoryManager,
                                     PropertyReaderFactory propertyReaderFactory,
                                     DefinitionResolver definitionResolver,
-                                    BaseConverterFactory<D, ?, ?> factory) {
+                                    BaseConverterFactory<D, ?, ?, ?> factory) {
         this.delegate = new ProcessConverterDelegate(typedFactoryManager,
                                                      propertyReaderFactory,
                                                      definitionResolver,

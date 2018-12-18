@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.activities.BaseReusableSubprocessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.activities.ReusableSubprocessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.associations.AssociationConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.EndEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.IntermediateCatchEventConverter;
@@ -23,35 +23,29 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.even
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.StartEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.gateways.GatewayConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.lanes.LaneConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.BaseSubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.RootProcessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.SubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.sequenceflows.SequenceFlowConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.tasks.TaskConverter;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseAdHocSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
 
-public abstract class BaseConverterFactory<D extends BPMNDiagram,
-        A extends BaseAdHocSubprocess,
-        R extends BaseReusableSubprocess> {
+public abstract class BaseConverterFactory {
 
-    protected final PropertyWriterFactory propertyWriterFactory;
+    private final PropertyWriterFactory propertyWriterFactory;
 
     private final TaskConverter taskConverter;
-    private final BaseFlowElementConverter<R> flowElementConverter;
+    private final FlowElementConverter flowElementConverter;
     private final StartEventConverter startEventConverter;
     private final IntermediateCatchEventConverter intermediateCatchEventConverter;
     private final IntermediateThrowEventConverter intermediateThrowEventConverter;
     private final EndEventConverter endEventConverter;
     private final LaneConverter laneConverter;
     private final GatewayConverter gatewayConverter;
-    protected final DefinitionsBuildingContext context;
+    private final DefinitionsBuildingContext context;
     private final EdgeConverter edgeConverter;
     private final FlowElementPostConverter flowElementPostConverter;
 
-    public BaseConverterFactory(DefinitionsBuildingContext context,
-                                PropertyWriterFactory propertyWriterFactory) {
+    public BaseConverterFactory(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory) {
         this.context = context;
         this.propertyWriterFactory = propertyWriterFactory;
 
@@ -63,7 +57,7 @@ public abstract class BaseConverterFactory<D extends BPMNDiagram,
         this.laneConverter = new LaneConverter(propertyWriterFactory);
         this.gatewayConverter = new GatewayConverter(propertyWriterFactory);
 
-        this.flowElementConverter = createFlowElementConverter();
+        this.flowElementConverter = new FlowElementConverter(this);
         this.edgeConverter = new EdgeConverter(this);
         this.flowElementPostConverter = new FlowElementPostConverter();
     }
@@ -72,7 +66,7 @@ public abstract class BaseConverterFactory<D extends BPMNDiagram,
         return taskConverter;
     }
 
-    public BaseFlowElementConverter<R> viewDefinitionConverter() {
+    public FlowElementConverter viewDefinitionConverter() {
         return flowElementConverter;
     }
 
@@ -100,13 +94,15 @@ public abstract class BaseConverterFactory<D extends BPMNDiagram,
         return gatewayConverter;
     }
 
-    public abstract BaseReusableSubprocessConverter<R> reusableSubprocessConverter();
+    public abstract ReusableSubprocessConverter reusableSubprocessConverter();
 
-    public RootProcessConverter<D, A> processConverter() {
-        return new RootProcessConverter<>(context, propertyWriterFactory, this);
+    public RootProcessConverter processConverter() {
+        return new RootProcessConverter(context, propertyWriterFactory, this);
     }
 
-    public abstract BaseSubProcessConverter<A> subProcessConverter();
+    public SubProcessConverter subProcessConverter() {
+        return new SubProcessConverter(context, propertyWriterFactory, this);
+    }
 
     public EdgeConverter edgeElementConverter() {
         return edgeConverter;
@@ -123,7 +119,5 @@ public abstract class BaseConverterFactory<D extends BPMNDiagram,
     public FlowElementPostConverter flowElementPostConverter() {
         return flowElementPostConverter;
     }
-
-    protected abstract BaseFlowElementConverter<R> createFlowElementConverter();
 
 }

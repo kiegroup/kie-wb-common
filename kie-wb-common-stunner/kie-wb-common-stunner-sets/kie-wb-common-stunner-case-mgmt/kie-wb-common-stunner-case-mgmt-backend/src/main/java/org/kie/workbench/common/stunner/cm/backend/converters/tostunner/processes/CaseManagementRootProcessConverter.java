@@ -42,7 +42,7 @@ public class CaseManagementRootProcessConverter extends BaseRootProcessConverter
     public CaseManagementRootProcessConverter(TypedFactoryManager typedFactoryManager,
                                               PropertyReaderFactory propertyReaderFactory,
                                               DefinitionResolver definitionResolver,
-                                              BaseConverterFactory<CaseManagementDiagram, ?, ?> factory) {
+                                              BaseConverterFactory<CaseManagementDiagram, ?, ?, ?> factory) {
         super(typedFactoryManager, propertyReaderFactory, definitionResolver, factory);
     }
 
