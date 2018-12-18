@@ -145,8 +145,6 @@ public class ContainerPresenterTest {
         containerSpec.addConfig( Capability.RULE, new RuleConfig() );
         containers = new ArrayList<Container>();
         containerSpecData = new ContainerSpecData( containerSpec, containers );
-
-        presenter.setContainerSpec(containerSpec);
     }
 
     @Test
@@ -325,24 +323,6 @@ public class ContainerPresenterTest {
         presenter.removeContainer();
         verify( notification ).fire( new NotificationEvent( errorMessage, NotificationEvent.NotificationType.ERROR ) );
         verify( serverTemplateSelectedEvent, times( 2 ) ).fire( new ServerTemplateSelected( containerSpec.getServerTemplateKey() ) );
-    }
-
-    @Test
-    public void testLoadContainersOnlyOnSelectedContainerEvent() {
-        ContainerSpec containerSpec1 = new ContainerSpec("containerId1",
-                                                         "containerName",
-                                                         serverTemplateKey,
-                                                         releaseId,
-                                                         KieContainerStatus.STOPPED,
-                                                         new HashMap<Capability, ContainerConfig>());
-        presenter.setContainerSpec(containerSpec1);
-        presenter.loadContainers(containerSpecData);
-        verifyLoad(true,
-                   0);
-        presenter.setContainerSpec(containerSpec);
-        presenter.loadContainers(containerSpecData);
-        verifyLoad(true,
-                   1);
     }
 
 }

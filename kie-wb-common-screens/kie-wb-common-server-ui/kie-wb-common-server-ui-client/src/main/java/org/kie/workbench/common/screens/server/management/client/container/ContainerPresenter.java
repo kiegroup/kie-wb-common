@@ -149,10 +149,6 @@ public class ContainerPresenter {
         return view;
     }
 
-    protected void setContainerSpec(ContainerSpec containerSpec){
-        this.containerSpec = containerSpec;
-    }
-
     public void onRefresh( @Observes final RefreshRemoteServers refresh ) {
         if ( refresh != null && refresh.getContainerSpecKey() != null ) {
             load( refresh.getContainerSpecKey() );
@@ -171,12 +167,9 @@ public class ContainerPresenter {
     }
 
     public void loadContainers( @Observes final ContainerSpecData content ) {
-        if (content != null &&
+        if ( content != null &&
                 content.getContainerSpec() != null &&
-                content.getContainers() != null &&
-                containerSpec!=null &&
-                containerSpec.getId()!=null &&
-                containerSpec.getId().equals(content.getContainerSpec().getId())) {
+                content.getContainers() != null ) {
             setup( content.getContainerSpec(), content.getContainers() );
         } else {
             logger.warn( "Illegal event argument." );
@@ -193,7 +186,6 @@ public class ContainerPresenter {
             @Override
             public void callback( final ContainerSpecData content ) {
                 checkNotNull( "content", content );
-                setContainerSpec(content.getContainerSpec());
                 setup( content.getContainerSpec(), content.getContainers() );
             }
         } ).getContainersByContainerSpec( containerSpecKey.getServerTemplateKey().getId(),
