@@ -17,16 +17,16 @@ package org.kie.workbench.common.stunner.cm.backend.converters.fromstunner;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.BaseConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.BaseFlowElementConverter;
-import org.kie.workbench.common.stunner.cm.definition.BaseCaseManagementReusableSubprocess;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 
-public class CaseManagementFlowElementConverter extends BaseFlowElementConverter<BaseCaseManagementReusableSubprocess> {
+public class CaseManagementFlowElementConverter extends BaseFlowElementConverter<ReusableSubprocess> {
 
-    public CaseManagementFlowElementConverter(BaseConverterFactory<?, ?, BaseCaseManagementReusableSubprocess> converterFactory) {
+    public CaseManagementFlowElementConverter(BaseConverterFactory<?, ?, ReusableSubprocess> converterFactory) {
         super(converterFactory);
     }
 
     @Override
-    protected Class<BaseCaseManagementReusableSubprocess> getReusableSubprocessClass() {
-        return BaseCaseManagementReusableSubprocess.class;
+    protected Class<ReusableSubprocess> getReusableSubprocessClass() {
+        return ReusableSubprocess.class;
     }
 }

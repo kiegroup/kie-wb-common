@@ -20,8 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
-import org.kie.workbench.common.stunner.cm.definition.BaseCaseManagementReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 
@@ -45,6 +45,6 @@ public class CaseManagementFlowElementConverterTest {
 
     @Test
     public void testGetReusableSubprocessClass() throws Exception {
-        assertEquals(tested.getReusableSubprocessClass(), BaseCaseManagementReusableSubprocess.class);
+        assertEquals(tested.getReusableSubprocessClass(), ReusableSubprocess.class);
     }
 }

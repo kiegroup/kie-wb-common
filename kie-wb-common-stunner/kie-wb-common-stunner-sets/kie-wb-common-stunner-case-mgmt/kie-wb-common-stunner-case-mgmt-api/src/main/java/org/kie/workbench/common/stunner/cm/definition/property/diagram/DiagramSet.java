@@ -29,9 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -45,7 +42,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         policy = FieldPolicy.ONLY_MARKED,
         startElement = "name"
 )
-public class CaseManagementDiagramSet implements BaseDiagramSet {
+public class DiagramSet implements BaseDiagramSet {
 
     @Property
     @FormField
@@ -95,7 +92,7 @@ public class CaseManagementDiagramSet implements BaseDiagramSet {
     @Property
     private Executable executable;
 
-    public CaseManagementDiagramSet() {
+    public DiagramSet() {
         this(new Name(),
              new Documentation(),
              new Id(),
@@ -106,14 +103,14 @@ public class CaseManagementDiagramSet implements BaseDiagramSet {
              new Executable());
     }
 
-    public CaseManagementDiagramSet(final @MapsTo("name") Name name,
-                                    final @MapsTo("documentation") Documentation documentation,
-                                    final @MapsTo("id") Id id,
-                                    final @MapsTo("packageProperty") Package packageProperty,
-                                    final @MapsTo("version") Version version,
-                                    final @MapsTo("adHoc") AdHoc adHoc,
-                                    final @MapsTo("processInstanceDescription") ProcessInstanceDescription processInstanceDescription,
-                                    final @MapsTo("executable") Executable executable) {
+    public DiagramSet(final @MapsTo("name") Name name,
+                      final @MapsTo("documentation") Documentation documentation,
+                      final @MapsTo("id") Id id,
+                      final @MapsTo("packageProperty") Package packageProperty,
+                      final @MapsTo("version") Version version,
+                      final @MapsTo("adHoc") AdHoc adHoc,
+                      final @MapsTo("processInstanceDescription") ProcessInstanceDescription processInstanceDescription,
+                      final @MapsTo("executable") Executable executable) {
         this.name = name;
         this.documentation = documentation;
         this.id = id;
@@ -124,7 +121,7 @@ public class CaseManagementDiagramSet implements BaseDiagramSet {
         this.executable = executable;
     }
 
-    public CaseManagementDiagramSet(final String name) {
+    public DiagramSet(final String name) {
         this(new Name(name),
              new Documentation(),
              new Id(),
@@ -221,8 +218,8 @@ public class CaseManagementDiagramSet implements BaseDiagramSet {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof CaseManagementDiagramSet) {
-            CaseManagementDiagramSet other = (CaseManagementDiagramSet) o;
+        if (o instanceof DiagramSet) {
+            DiagramSet other = (DiagramSet) o;
             return name.equals(other.name) &&
                     documentation.equals(other.documentation) &&
                     id.equals(other.id) &&

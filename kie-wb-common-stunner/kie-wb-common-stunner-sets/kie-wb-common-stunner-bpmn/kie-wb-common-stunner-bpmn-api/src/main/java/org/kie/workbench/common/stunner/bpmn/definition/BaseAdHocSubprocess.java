@@ -21,9 +21,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 
-public abstract class BaseAdHocSubprocess
+public abstract class BaseAdHocSubprocess<P extends BaseProcessData>
         extends BaseSubprocess {
 
     public BaseAdHocSubprocess(BPMNGeneralSet general,
@@ -38,7 +38,7 @@ public abstract class BaseAdHocSubprocess
 
     public abstract void setExecutionSet(final AdHocSubprocessTaskExecutionSet executionSet);
 
-    public abstract ProcessData getProcessData();
+    public abstract P getProcessData();
 
-    public abstract void setProcessData(final ProcessData processData);
+    public abstract void setProcessData(final P processData);
 }

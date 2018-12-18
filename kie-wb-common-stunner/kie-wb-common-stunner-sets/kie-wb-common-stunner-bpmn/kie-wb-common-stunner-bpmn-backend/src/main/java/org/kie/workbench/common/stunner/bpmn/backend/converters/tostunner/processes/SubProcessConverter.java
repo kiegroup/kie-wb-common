@@ -21,6 +21,9 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.Conver
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
 public class SubProcessConverter extends BaseSubProcessConverter<AdHocSubprocess> {
 
@@ -39,4 +42,8 @@ public class SubProcessConverter extends BaseSubProcessConverter<AdHocSubprocess
         return AdHocSubprocess.class;
     }
 
+    @Override
+    protected BaseProcessData createProcessData(String processVariables) {
+        return new ProcessData(new ProcessVariables(processVariables));
+    }
 }

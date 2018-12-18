@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementMarshaller;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementUnMarshaller;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
-import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -143,7 +143,7 @@ public class CaseManagementDiagramMarshallerTest {
     }
 
     private Diagram mockDiagram(final String name, final String id) {
-        final CaseManagementDiagramSet diagramSet = mock(CaseManagementDiagramSet.class);
+        final DiagramSet diagramSet = mock(DiagramSet.class);
         when(diagramSet.getName()).thenReturn(new Name(name));
         when(diagramSet.getId()).thenReturn(new Id(id));
 

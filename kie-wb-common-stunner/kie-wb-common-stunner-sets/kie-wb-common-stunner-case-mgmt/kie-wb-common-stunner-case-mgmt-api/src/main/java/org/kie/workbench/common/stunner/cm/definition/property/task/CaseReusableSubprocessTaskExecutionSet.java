@@ -45,7 +45,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "calledElement"
 )
 public class CaseReusableSubprocessTaskExecutionSet
-        implements BaseCaseManagementReusableSubprocessTaskExecutionSet {
+        implements ReusableSubprocessTaskExecutionSet {
 
     @Property
     @SelectorDataProvider(

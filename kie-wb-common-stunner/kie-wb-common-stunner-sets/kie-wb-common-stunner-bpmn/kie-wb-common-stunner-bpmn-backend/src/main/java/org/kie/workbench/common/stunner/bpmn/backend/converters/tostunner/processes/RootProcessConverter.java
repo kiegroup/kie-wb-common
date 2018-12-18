@@ -15,9 +15,11 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes;
 
+import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BaseConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
@@ -29,6 +31,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Process
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
 public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl> {
 
@@ -45,14 +50,19 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     }
 
     @Override
-    protected DiagramSet createDiagramSet(Name name,
-                                          Documentation documentation,
-                                          Id id,
-                                          Package pkg,
-                                          Version version,
-                                          AdHoc adHoc,
-                                          ProcessInstanceDescription processInstanceDescription,
-                                          Executable executable) {
-        return new DiagramSet(name, documentation, id, pkg, version, adHoc, processInstanceDescription, executable);
+    protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader e) {
+        return new DiagramSet(new Name(process.getName()),
+                              new Documentation(e.getDocumentation()),
+                              new Id(process.getId()),
+                              new Package(e.getPackage()),
+                              new Version(e.getVersion()),
+                              new AdHoc(e.isAdHoc()),
+                              new ProcessInstanceDescription(e.getDescription()),
+                              new Executable(process.isIsExecutable()));
+    }
+
+    @Override
+    protected BaseProcessData createProcessData(String processVariables) {
+        return new ProcessData(new ProcessVariables(processVariables));
     }
 }

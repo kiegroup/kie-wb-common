@@ -50,6 +50,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleIn
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -139,7 +140,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
                                                  new Documentation(p.getDocumentation())
         ));
 
-        definition.setProcessData(new ProcessData(new ProcessVariables(p.getProcessVariables())));
+        definition.setProcessData(createProcessData(p.getProcessVariables()));
 
         definition.setExecutionSet(new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(p.getAdHocCompletionCondition()),
                                                                        new AdHocOrdering(p.getAdHocOrdering()),
@@ -214,4 +215,6 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
     }
 
     protected abstract Class<A> getAdhocSubprocessClass();
+
+    protected abstract BaseProcessData createProcessData(String processVariables);
 }

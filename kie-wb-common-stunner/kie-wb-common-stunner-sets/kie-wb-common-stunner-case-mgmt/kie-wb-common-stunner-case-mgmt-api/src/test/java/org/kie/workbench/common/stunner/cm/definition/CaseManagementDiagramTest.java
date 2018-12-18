@@ -25,10 +25,10 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
-import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.Package;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.Version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -60,7 +60,7 @@ public class CaseManagementDiagramTest {
     @Before
     public void setup() {
         tested = new CaseManagementDiagram();
-        CaseManagementDiagramSet diagramSet = tested.getDiagramSet();
+        DiagramSet diagramSet = tested.getDiagramSet();
         diagramSet.setName(new Name(NAME_VALID));
         diagramSet.setId(new Id(ID_VALID));
         diagramSet.setPackageProperty(new Package(PACKAGE_VALID));

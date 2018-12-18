@@ -34,8 +34,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
-import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
@@ -60,7 +60,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 // Unfortunately extending the foregoing and providing a new @CanContain annotation leads to problems with identifying
 // Factories for Definitions; as CM's BindableDefinitionAdapterProxy is then generated with support for the super-class.
 // This then leads the unmarshalling of model Elements to Definitions to use the wrong Factory and hence fail.
-public class CaseManagementDiagram implements BPMNDiagram<CaseManagementDiagramSet> {
+public class CaseManagementDiagram implements BPMNDiagram<DiagramSet, ProcessData> {
 
     @Category
     public static final transient String category = BPMNCategories.CONTAINERS;
@@ -71,7 +71,7 @@ public class CaseManagementDiagram implements BPMNDiagram<CaseManagementDiagramS
     @PropertySet
     @FormField
     @Valid
-    private CaseManagementDiagramSet diagramSet;
+    private DiagramSet diagramSet;
 
     @PropertySet
     @FormField(
@@ -105,7 +105,7 @@ public class CaseManagementDiagram implements BPMNDiagram<CaseManagementDiagramS
     public static final Double HEIGHT = 1400d;
 
     public CaseManagementDiagram() {
-        this(new CaseManagementDiagramSet(""),
+        this(new DiagramSet(""),
              new ProcessData(),
              new CaseManagementSet(),
              new BackgroundSet(),
@@ -113,7 +113,7 @@ public class CaseManagementDiagram implements BPMNDiagram<CaseManagementDiagramS
              new RectangleDimensionsSet(WIDTH, HEIGHT));
     }
 
-    public CaseManagementDiagram(final @MapsTo(DIAGRAM_SET) CaseManagementDiagramSet diagramSet,
+    public CaseManagementDiagram(final @MapsTo(DIAGRAM_SET) DiagramSet diagramSet,
                                  final @MapsTo(PROCESS_DATA) ProcessData processData,
                                  final @MapsTo(CASE_MANAGEMENT_SET) CaseManagementSet caseManagementSet,
                                  final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
@@ -136,7 +136,7 @@ public class CaseManagementDiagram implements BPMNDiagram<CaseManagementDiagramS
     }
 
     @Override
-    public CaseManagementDiagramSet getDiagramSet() {
+    public DiagramSet getDiagramSet() {
         return diagramSet;
     }
 
@@ -174,7 +174,7 @@ public class CaseManagementDiagram implements BPMNDiagram<CaseManagementDiagramS
     }
 
     @Override
-    public void setDiagramSet(final CaseManagementDiagramSet diagramSet) {
+    public void setDiagramSet(final DiagramSet diagramSet) {
         this.diagramSet = diagramSet;
     }
 

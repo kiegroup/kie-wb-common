@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementMarshaller;
 import org.kie.workbench.common.stunner.cm.backend.marshall.json.CaseManagementUnMarshaller;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
-import org.kie.workbench.common.stunner.cm.definition.property.diagram.CaseManagementDiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -120,7 +120,7 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
         if (node != null && node.getContent() != null) {
             CaseManagementDiagram definition = node.getContent().getDefinition();
             if (definition != null) {
-                CaseManagementDiagramSet diagramSet = definition.getDiagramSet();
+                DiagramSet diagramSet = definition.getDiagramSet();
                 if (diagramSet != null) {
                     Name name = diagramSet.getName();
                     Id id = diagramSet.getId();

@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
+package org.kie.workbench.common.stunner.bpmn.definition.property.variables;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
 
-public interface BaseDiagramSet extends BPMNPropertySet,
-                                        BPMNBaseInfo {
+public interface BaseProcessVariables extends BPMNProperty {
 
-    Id getId();
-
-    AdHoc getAdHoc();
-
-    BasePackage getPackageProperty();
-
-    BaseVersion getVersion();
-
-    BaseProcessInstanceDescription getProcessInstanceDescription();
-
-    Executable getExecutable();
+    String getValue();
 }

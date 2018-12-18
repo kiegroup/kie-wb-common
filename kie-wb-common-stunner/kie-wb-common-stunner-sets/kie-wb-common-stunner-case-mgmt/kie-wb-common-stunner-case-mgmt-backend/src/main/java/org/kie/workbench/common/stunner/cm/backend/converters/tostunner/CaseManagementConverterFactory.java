@@ -23,11 +23,11 @@ import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processe
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes.CaseManagementSubProcessConverter;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementPropertyReaderFactory;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.cm.definition.BaseCaseManagementReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 
 public class CaseManagementConverterFactory
-        extends BaseConverterFactory<CaseManagementDiagram, AdHocSubprocess, BaseCaseManagementReusableSubprocess> {
+        extends BaseConverterFactory<CaseManagementDiagram, AdHocSubprocess, ReusableSubprocess> {
 
     public CaseManagementConverterFactory(DefinitionResolver definitionResolver, TypedFactoryManager factoryManager) {
         super(definitionResolver, factoryManager);

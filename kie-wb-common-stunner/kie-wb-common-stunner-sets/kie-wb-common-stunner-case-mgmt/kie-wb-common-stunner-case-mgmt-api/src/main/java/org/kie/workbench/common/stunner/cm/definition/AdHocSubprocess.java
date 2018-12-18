@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
@@ -58,7 +58,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 // presumably because there are two fields called "labels" (although I've also tried with a different name field
 // and it leads to the same errors).
 public class AdHocSubprocess
-        extends BaseAdHocSubprocess {
+        extends BaseAdHocSubprocess<ProcessData> {
 
     @PropertySet
     @FormField(afterElement = "general")

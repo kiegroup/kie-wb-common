@@ -16,21 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
 
-public interface BaseDiagramSet extends BPMNPropertySet,
-                                        BPMNBaseInfo {
+public interface BasePackage extends BPMNProperty {
 
-    Id getId();
+    String getValue();
 
-    AdHoc getAdHoc();
-
-    BasePackage getPackageProperty();
-
-    BaseVersion getVersion();
-
-    BaseProcessInstanceDescription getProcessInstanceDescription();
-
-    Executable getExecutable();
+    void setValue(final String value);
 }

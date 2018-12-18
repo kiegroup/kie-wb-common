@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.exec
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EventSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -122,7 +123,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess>
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
 
-        ProcessData processData = definition.getProcessData();
+        BaseProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
 
         AdHocSubprocessTaskExecutionSet executionSet = definition.getExecutionSet();

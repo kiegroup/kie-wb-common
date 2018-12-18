@@ -27,18 +27,18 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAct
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementActivityPropertyReader;
-import org.kie.workbench.common.stunner.cm.definition.BaseCaseManagementReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.ProcessReusableSubprocess;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.property.subprocess.IsCase;
-import org.kie.workbench.common.stunner.cm.definition.property.task.BaseCaseManagementReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.CaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.ProcessReusableSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.cm.definition.property.task.ReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class CaseManagementCallActivityConverter extends BaseCallActivityConverter<BaseCaseManagementReusableSubprocess> {
+public class CaseManagementCallActivityConverter extends BaseCallActivityConverter<ReusableSubprocess> {
 
     public CaseManagementCallActivityConverter(TypedFactoryManager factoryManager,
                                                PropertyReaderFactory propertyReaderFactory) {
@@ -46,21 +46,21 @@ public class CaseManagementCallActivityConverter extends BaseCallActivityConvert
     }
 
     @Override
-    protected Node<View<BaseCaseManagementReusableSubprocess>, Edge> createNode(CallActivity activity, ActivityPropertyReader p) {
-        Class<? extends BaseCaseManagementReusableSubprocess> clazz = ((CaseManagementActivityPropertyReader) p).isCase() ?
+    protected Node<View<ReusableSubprocess>, Edge> createNode(CallActivity activity, ActivityPropertyReader p) {
+        Class<? extends ReusableSubprocess> clazz = ((CaseManagementActivityPropertyReader) p).isCase() ?
                 CaseReusableSubprocess.class : ProcessReusableSubprocess.class;
 
         return factoryManager.newNode(activity.getId(), clazz);
     }
 
     @Override
-    protected BaseCaseManagementReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CalledElement calledElement,
-                                                                                                            Independent independent,
-                                                                                                            WaitForCompletion waitForCompletion,
-                                                                                                            IsAsync isAsync,
-                                                                                                            OnEntryAction onEntryAction,
-                                                                                                            OnExitAction onExitAction,
-                                                                                                            ActivityPropertyReader p) {
+    protected ReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CalledElement calledElement,
+                                                                                          Independent independent,
+                                                                                          WaitForCompletion waitForCompletion,
+                                                                                          IsAsync isAsync,
+                                                                                          OnEntryAction onEntryAction,
+                                                                                          OnExitAction onExitAction,
+                                                                                          ActivityPropertyReader p) {
         return ((CaseManagementActivityPropertyReader) p).isCase() ?
                 new CaseReusableSubprocessTaskExecutionSet(calledElement,
                                                            new IsCase(true),
