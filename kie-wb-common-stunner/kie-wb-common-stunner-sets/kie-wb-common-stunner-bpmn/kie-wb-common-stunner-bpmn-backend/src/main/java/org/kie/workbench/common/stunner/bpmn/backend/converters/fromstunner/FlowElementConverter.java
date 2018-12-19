@@ -52,5 +52,4 @@ public class FlowElementConverter {
                 .ignore(Lane.class)
                 .apply(node);
     }
-
 }

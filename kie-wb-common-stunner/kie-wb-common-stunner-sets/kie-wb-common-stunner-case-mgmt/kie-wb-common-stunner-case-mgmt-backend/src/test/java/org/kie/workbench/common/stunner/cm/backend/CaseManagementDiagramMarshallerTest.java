@@ -59,33 +59,26 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CaseManagementDiagramMarshallerTest {
 
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
     @Mock
     private XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller;
-
     @Mock
     private GraphObjectBuilderFactory graphBuilderFactory;
-
     @Mock
     private DefinitionManager definitionManager;
-
     @Mock
     private GraphIndexBuilder<?> indexBuilder;
-
     @Mock
     private OryxManager oryxManager;
-
     @Mock
     private FactoryManager factoryManager;
-
     @Mock
     private GraphCommandManager graphCommandManager;
-
     @Mock
     private GraphCommandFactory commandFactory;
-
     @Mock
     private RuleManager rulesManager;
-
     private CaseManagementDiagramMarshaller marshaller;
 
     @Before
@@ -122,9 +115,6 @@ public class CaseManagementDiagramMarshallerTest {
 
         assertEquals(metadata.getTitle(), name);
     }
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
     public void testMarshall_validateName() throws Exception {

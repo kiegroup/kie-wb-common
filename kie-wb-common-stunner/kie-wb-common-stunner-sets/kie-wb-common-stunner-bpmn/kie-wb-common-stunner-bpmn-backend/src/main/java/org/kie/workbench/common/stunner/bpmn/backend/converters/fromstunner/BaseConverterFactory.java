@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.task
 public abstract class BaseConverterFactory {
 
     protected final PropertyWriterFactory propertyWriterFactory;
-
+    protected final DefinitionsBuildingContext context;
     private final TaskConverter taskConverter;
     private final FlowElementConverter flowElementConverter;
     private final StartEventConverter startEventConverter;
@@ -41,7 +41,6 @@ public abstract class BaseConverterFactory {
     private final EndEventConverter endEventConverter;
     private final LaneConverter laneConverter;
     private final GatewayConverter gatewayConverter;
-    protected final DefinitionsBuildingContext context;
     private final EdgeConverter edgeConverter;
     private final FlowElementPostConverter flowElementPostConverter;
 
@@ -118,5 +117,4 @@ public abstract class BaseConverterFactory {
     public FlowElementPostConverter flowElementPostConverter() {
         return flowElementPostConverter;
     }
-
 }

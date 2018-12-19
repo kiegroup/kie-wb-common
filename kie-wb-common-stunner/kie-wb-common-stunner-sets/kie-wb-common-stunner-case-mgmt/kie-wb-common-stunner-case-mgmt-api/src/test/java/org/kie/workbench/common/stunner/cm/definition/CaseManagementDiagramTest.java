@@ -35,20 +35,15 @@ import static org.junit.Assert.assertTrue;
 
 public class CaseManagementDiagramTest {
 
-    private Validator validator;
-
     private static final String NAME_VALID = "My New CM";
     private static final String NAME_INVALID = "";
-
     private static final String ID_VALID = "Project1.MyNewCM";
     private static final String ID_INVALID = "";
-
     private static final String PACKAGE_VALID = "myorg.project1";
     private static final String PACKAGE_INVALID = "";
-
     private static final String VERSION_VALID = "1.0";
     private static final String VERSION_INVALID = "";
-
+    private Validator validator;
     private CaseManagementDiagram tested;
 
     @Before

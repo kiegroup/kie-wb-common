@@ -73,5 +73,4 @@ public abstract class BaseCallActivityConverter<R extends BaseReusableSubprocess
 
     protected abstract E createReusableSubprocessTaskExecutionSet(CallActivity activity,
                                                                   ActivityPropertyReader p);
-
 }

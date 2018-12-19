@@ -139,9 +139,17 @@ public class DiagramSet implements BaseDiagramSet {
         return name;
     }
 
+    public void setName(final Name name) {
+        this.name = name;
+    }
+
     @Override
     public Documentation getDocumentation() {
         return documentation;
+    }
+
+    public void setDocumentation(final Documentation documentation) {
+        this.documentation = documentation;
     }
 
     @Override
@@ -149,9 +157,17 @@ public class DiagramSet implements BaseDiagramSet {
         return id;
     }
 
+    public void setId(Id id) {
+        this.id = id;
+    }
+
     @Override
     public Package getPackageProperty() {
         return packageProperty;
+    }
+
+    public void setPackageProperty(final Package packageProperty) {
+        this.packageProperty = packageProperty;
     }
 
     @Override
@@ -159,9 +175,17 @@ public class DiagramSet implements BaseDiagramSet {
         return version;
     }
 
+    public void setVersion(final Version version) {
+        this.version = version;
+    }
+
     @Override
     public AdHoc getAdHoc() {
         return adHoc;
+    }
+
+    public void setAdHoc(final AdHoc adHoc) {
+        this.adHoc = adHoc;
     }
 
     @Override
@@ -169,37 +193,13 @@ public class DiagramSet implements BaseDiagramSet {
         return processInstanceDescription;
     }
 
+    public void setProcessInstanceDescription(final ProcessInstanceDescription processInstanceDescription) {
+        this.processInstanceDescription = processInstanceDescription;
+    }
+
     @Override
     public Executable getExecutable() {
         return executable;
-    }
-
-    public void setName(final Name name) {
-        this.name = name;
-    }
-
-    public void setDocumentation(final Documentation documentation) {
-        this.documentation = documentation;
-    }
-
-    public void setId(Id id) {
-        this.id = id;
-    }
-
-    public void setPackageProperty(final Package packageProperty) {
-        this.packageProperty = packageProperty;
-    }
-
-    public void setVersion(final Version version) {
-        this.version = version;
-    }
-
-    public void setAdHoc(final AdHoc adHoc) {
-        this.adHoc = adHoc;
-    }
-
-    public void setProcessInstanceDescription(final ProcessInstanceDescription processInstanceDescription) {
-        this.processInstanceDescription = processInstanceDescription;
     }
 
     public void setExecutable(final Executable executable) {
@@ -233,5 +233,4 @@ public class DiagramSet implements BaseDiagramSet {
         }
         return false;
     }
-
 }

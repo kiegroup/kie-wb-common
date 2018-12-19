@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
 
-public interface BaseProcessInstanceDescription extends BPMNProperty  {
+public interface BaseProcessInstanceDescription extends BPMNProperty {
 
     String getValue();
 

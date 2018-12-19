@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.cm.definition.property.task.ReusableSubp
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
-
 public abstract class ReusableSubprocess<E extends ReusableSubprocessTaskExecutionSet>
         extends BaseReusableSubprocess<E> implements DataIOModel {
 

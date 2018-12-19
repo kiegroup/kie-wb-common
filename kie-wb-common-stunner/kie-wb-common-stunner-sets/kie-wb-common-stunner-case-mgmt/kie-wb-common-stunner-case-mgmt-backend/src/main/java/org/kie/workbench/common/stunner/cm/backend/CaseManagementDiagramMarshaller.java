@@ -111,7 +111,6 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
 
     /**
      * Check if name and id are assigned for the CM diagram
-     *
      * @param diagram the case modeler diagram
      * @return <code>true</code> if name and id are set, <code>false</code> if name or id is not set.
      */

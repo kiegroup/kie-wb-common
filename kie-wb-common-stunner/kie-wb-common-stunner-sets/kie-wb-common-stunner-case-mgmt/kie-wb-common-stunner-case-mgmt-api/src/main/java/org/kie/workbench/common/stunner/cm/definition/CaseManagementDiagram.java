@@ -67,42 +67,34 @@ public class CaseManagementDiagram implements BPMNDiagram<DiagramSet, ProcessDat
     public static final String DIAGRAM_SET = "diagramSet";
     public static final String PROCESS_DATA = "processData";
     public static final String CASE_MANAGEMENT_SET = "caseManagementSet";
-
-    @PropertySet
-    @FormField
-    @Valid
-    private DiagramSet diagramSet;
-
+    public static final Double WIDTH = 2800d;
+    public static final Double HEIGHT = 1400d;
+    @Labels
+    private final Set<String> labels = new Sets.Builder<String>()
+            .add("canContainArtifacts")
+            .add("diagram")
+            .build();
     @PropertySet
     @FormField(
             afterElement = DIAGRAM_SET
     )
     @Valid
     protected ProcessData processData;
-
     @PropertySet
     @FormField(
             afterElement = PROCESS_DATA
     )
     protected CaseManagementSet caseManagementSet;
-
-    @PropertySet
-    private BackgroundSet backgroundSet;
-
-    @PropertySet
-    private FontSet fontSet;
-
     @PropertySet
     protected RectangleDimensionsSet dimensionsSet;
-
-    @Labels
-    private final Set<String> labels = new Sets.Builder<String>()
-            .add("canContainArtifacts")
-            .add("diagram")
-            .build();
-
-    public static final Double WIDTH = 2800d;
-    public static final Double HEIGHT = 1400d;
+    @PropertySet
+    @FormField
+    @Valid
+    private DiagramSet diagramSet;
+    @PropertySet
+    private BackgroundSet backgroundSet;
+    @PropertySet
+    private FontSet fontSet;
 
     public CaseManagementDiagram() {
         this(new DiagramSet(""),
@@ -140,6 +132,11 @@ public class CaseManagementDiagram implements BPMNDiagram<DiagramSet, ProcessDat
         return diagramSet;
     }
 
+    @Override
+    public void setDiagramSet(final DiagramSet diagramSet) {
+        this.diagramSet = diagramSet;
+    }
+
     public RectangleDimensionsSet getDimensionsSet() {
         return dimensionsSet;
     }
@@ -164,28 +161,23 @@ public class CaseManagementDiagram implements BPMNDiagram<DiagramSet, ProcessDat
     }
 
     @Override
-    public BackgroundSet getBackgroundSet() {
-        return backgroundSet;
-    }
-
-    @Override
-    public FontSet getFontSet() {
-        return fontSet;
-    }
-
-    @Override
-    public void setDiagramSet(final DiagramSet diagramSet) {
-        this.diagramSet = diagramSet;
-    }
-
-    @Override
     public void setProcessData(final ProcessData processData) {
         this.processData = processData;
     }
 
     @Override
+    public BackgroundSet getBackgroundSet() {
+        return backgroundSet;
+    }
+
+    @Override
     public void setBackgroundSet(final BackgroundSet backgroundSet) {
         this.backgroundSet = backgroundSet;
+    }
+
+    @Override
+    public FontSet getFontSet() {
+        return fontSet;
     }
 
     @Override

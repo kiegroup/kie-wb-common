@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Valu
 @Bindable
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
-public class ProcessInstanceDescription implements BaseProcessInstanceDescription{
+public class ProcessInstanceDescription implements BaseProcessInstanceDescription {
 
     @Value
     @FieldValue

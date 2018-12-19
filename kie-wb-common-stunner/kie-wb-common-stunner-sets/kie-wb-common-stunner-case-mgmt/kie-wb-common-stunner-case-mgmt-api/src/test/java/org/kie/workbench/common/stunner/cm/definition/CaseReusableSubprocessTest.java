@@ -34,13 +34,10 @@ import static org.junit.Assert.assertTrue;
 
 public class CaseReusableSubprocessTest {
 
-    private Validator validator;
-
     private static final String NAME_VALID = "My New Process";
-
     private static final Boolean CASE_VALID = Boolean.TRUE;
     private static final Boolean CASE_INVALID = null;
-
+    private Validator validator;
     private CaseReusableSubprocess tested;
 
     @Before

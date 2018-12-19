@@ -33,20 +33,15 @@ import static org.junit.Assert.assertTrue;
 
 public class DiagramSetTest {
 
-    private Validator validator;
-
     private static final String NAME_VALID = "My New Name";
     private static final String NAME_INVALID = "";
-
     private static final String ID_VALID = "My New Id";
     private static final String ID_INVALID = "";
-
     private static final String PACKAGE_VALID = "My New Package";
     private static final String PACKAGE_INVALID = "";
-
     private static final String VERSION_VALID = "5.0";
     private static final String VERSION_INVALID = "";
-
+    private Validator validator;
     private DiagramSet tested;
 
     @Before

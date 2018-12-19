@@ -33,10 +33,6 @@ import org.kie.workbench.common.stunner.cm.definition.UserTask;
 
 public class CaseManagementShapeCommand {
 
-    interface Command {
-        CaseManagementShape configure(CaseManagementShapeView shapeView);
-    }
-
     private static final Map<Class, Command> CM_SHAPE_TYPES;
     private static final String DIAGRAM = "";
     private static final String STAGE = "stage";
@@ -81,5 +77,10 @@ public class CaseManagementShapeCommand {
             throw new IllegalArgumentException("Unsupported shapeView type: " + clazz.getSimpleName());
         }
         return command.configure(shapeView);
+    }
+
+    interface Command {
+
+        CaseManagementShape configure(CaseManagementShapeView shapeView);
     }
 }

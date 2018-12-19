@@ -71,7 +71,6 @@ public class CaseManagementOryxIdMappingsTest {
         assertNotNull(cmDefinitionMappings);
     }
 
-
     @Test
     public void testGetDefinition() throws Exception {
         assertGetDefinistion("AdHocSubprocess", AdHocSubprocess.class);

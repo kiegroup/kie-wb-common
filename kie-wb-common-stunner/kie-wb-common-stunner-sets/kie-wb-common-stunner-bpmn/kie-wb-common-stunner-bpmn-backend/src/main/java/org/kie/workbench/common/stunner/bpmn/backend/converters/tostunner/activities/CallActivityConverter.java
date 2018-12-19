@@ -46,7 +46,7 @@ public class CallActivityConverter extends BaseCallActivityConverter<ReusableSub
 
     @Override
     protected ReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CallActivity activity,
-                                                                                              ActivityPropertyReader p) {
+                                                                                          ActivityPropertyReader p) {
         return new ReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
                                                       new Independent(p.isIndependent()),
                                                       new WaitForCompletion(p.isWaitForCompletion()),

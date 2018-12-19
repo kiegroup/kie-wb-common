@@ -48,6 +48,7 @@ import static org.mockito.Mockito.when;
 
 public class CaseManagementUnMarshallerTest {
 
+    private String expectedStencil;
     private CaseManagementUnMarshaller tested = new CaseManagementUnMarshaller(mock(GraphObjectBuilderFactory.class),
                                                                                mock(DefinitionManager.class),
                                                                                mock(FactoryManager.class),
@@ -71,8 +72,6 @@ public class CaseManagementUnMarshallerTest {
             assertEquals(stencil, expectedStencil);
         }
     };
-
-    private String expectedStencil;
 
     @Test
     public void testMarshallNode_AdHocSubprocess() throws Exception {

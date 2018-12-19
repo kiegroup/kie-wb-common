@@ -161,13 +161,13 @@ public class ProcessReusableSubprocessTaskExecutionSet
     }
 
     @Override
-    public WaitForCompletion getWaitForCompletion() {
-        return waitForCompletion;
+    public void setIndependent(final Independent independent) {
+        this.independent = independent;
     }
 
     @Override
-    public void setIndependent(final Independent independent) {
-        this.independent = independent;
+    public WaitForCompletion getWaitForCompletion() {
+        return waitForCompletion;
     }
 
     @Override
@@ -242,5 +242,4 @@ public class ProcessReusableSubprocessTaskExecutionSet
         }
         return false;
     }
-
 }

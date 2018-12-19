@@ -59,25 +59,25 @@ public class CaseManagementPaletteDefinitionBuilder
     public static final String SUBCASES = "Subcases";
 
     private static final Map<String, String> CAT_TITLES = new Maps.Builder<String, String>()
-        .put(STAGES,
-             STAGES)
-        .put(TASKS,
-             TASKS)
-        .put(SUBPROCESSES,
-             SUBPROCESSES)
-        .put(SUBCASES,
-             SUBCASES)
+            .put(STAGES,
+                 STAGES)
+            .put(TASKS,
+                 TASKS)
+            .put(SUBPROCESSES,
+                 SUBPROCESSES)
+            .put(SUBCASES,
+                 SUBCASES)
             .build();
 
     private static final Map<String, String> DEFINITION_CATEGORY_MAPPINGS = new Maps.Builder<String, String>()
-        .put(AdHocSubprocess.class.getName(),
-             STAGES)
-        .put(UserTask.class.getName(),
-             TASKS)
-        .put(ProcessReusableSubprocess.class.getName(),
-             SUBPROCESSES)
-        .put(CaseReusableSubprocess.class.getName(),
-             SUBCASES)
+            .put(AdHocSubprocess.class.getName(),
+                 STAGES)
+            .put(UserTask.class.getName(),
+                 TASKS)
+            .put(ProcessReusableSubprocess.class.getName(),
+                 SUBPROCESSES)
+            .put(CaseReusableSubprocess.class.getName(),
+                 SUBCASES)
             .build();
 
     private final AbstractPaletteDefinitionBuilder paletteDefinitionBuilder;
