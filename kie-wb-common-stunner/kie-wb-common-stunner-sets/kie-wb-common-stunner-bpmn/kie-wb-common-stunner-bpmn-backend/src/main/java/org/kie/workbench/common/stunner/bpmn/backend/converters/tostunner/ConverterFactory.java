@@ -22,13 +22,9 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proces
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.SubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks.TaskConverter;
-import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 
 public class ConverterFactory
-        extends BaseConverterFactory<BPMNDiagramImpl, AdHocSubprocess, ReusableSubprocess, UserTask> {
+        extends BaseConverterFactory {
 
     public ConverterFactory(DefinitionResolver definitionResolver,
                             TypedFactoryManager factoryManager) {

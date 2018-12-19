@@ -23,12 +23,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proces
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.Package;
@@ -36,23 +34,30 @@ import org.kie.workbench.common.stunner.cm.definition.property.diagram.ProcessIn
 import org.kie.workbench.common.stunner.cm.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class CaseManagementRootProcessConverter extends BaseRootProcessConverter<CaseManagementDiagram> {
+public class CaseManagementRootProcessConverter extends BaseRootProcessConverter<CaseManagementDiagram, DiagramSet, ProcessData> {
+
+    private TypedFactoryManager factoryManager;
 
     public CaseManagementRootProcessConverter(TypedFactoryManager typedFactoryManager,
                                               PropertyReaderFactory propertyReaderFactory,
                                               DefinitionResolver definitionResolver,
-                                              BaseConverterFactory<CaseManagementDiagram, ?, ?, ?> factory) {
+                                              BaseConverterFactory factory) {
         super(typedFactoryManager, propertyReaderFactory, definitionResolver, factory);
+
+        this.factoryManager = typedFactoryManager;
     }
 
     @Override
-    public Class<CaseManagementDiagram> getDiagramClass() {
-        return CaseManagementDiagram.class;
+    protected Node<View<CaseManagementDiagram>, Edge> createNode(String id) {
+        return factoryManager.newNode(id, CaseManagementDiagram.class);
     }
 
     @Override
-    protected BaseDiagramSet createDiagramSet(Process process, ProcessPropertyReader e) {
+    protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader e) {
         return new DiagramSet(new Name(process.getName()),
                               new Documentation(e.getDocumentation()),
                               new Id(process.getId()),
@@ -64,7 +69,7 @@ public class CaseManagementRootProcessConverter extends BaseRootProcessConverter
     }
 
     @Override
-    protected BaseProcessData createProcessData(String processVariables) {
+    protected ProcessData createProcessData(String processVariables) {
         return new ProcessData(new ProcessVariables(processVariables));
     }
 }

@@ -34,16 +34,19 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class TaskConverter extends BaseTaskConverter<UserTask> {
+public class TaskConverter extends BaseTaskConverter<UserTask, UserTaskExecutionSet> {
 
     public TaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         super(factoryManager, propertyReaderFactory);
     }
 
     @Override
-    protected Class<UserTask> getUserTaskClass() {
-        return UserTask.class;
+    protected Node<View<UserTask>, Edge> createNode(String id) {
+        return factoryManager.newNode(id, UserTask.class);
     }
 
     @Override

@@ -504,6 +504,8 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
         stage.getExecutionSet().setAdHocOrdering(new AdHocOrdering("Sequential"));
 
+        stage.getExecutionSet().setAdHocAutostart(new AdHocAutostart(true));
+
         ScriptTypeValue completionCondition = new ScriptTypeValue();
         completionCondition.setScript("autocomplete");
         completionCondition.setLanguage("drools");
@@ -573,6 +575,10 @@ public class CaseManagementDirectDiagramMarshallerTest {
                            + "(\\s*)</drools:metaData>");
 
         hasElement(result,
+                   "<drools:metaData name=\"customAutoStart\">(\\s*)" + Pattern.quote("<drools:metaValue><![CDATA[true]]></drools:metaValue>")
+                           + "(\\s*)</drools:metaData>");
+
+        hasElement(result,
                    "<drools:onEntry-script scriptFormat=\"http://www.java.com/java\">(\\s*)"
                            + Pattern.quote("<drools:script><![CDATA[StageTest]]></drools:script>")
                            + "(\\s*)</drools:onEntry-script>");
@@ -628,6 +634,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
         subcaseExecutionSet.setIndependent(new Independent(true));
         subcaseExecutionSet.setIsAsync(new IsAsync(true));
         subcaseExecutionSet.setWaitForCompletion(new WaitForCompletion(true));
+        subcaseExecutionSet.setAdHocAutostart(new AdHocAutostart(true));
 
         ScriptTypeValue entryAction = new ScriptTypeValue();
         entryAction.setScript(("SubcaseTest"));
@@ -722,6 +729,10 @@ public class CaseManagementDirectDiagramMarshallerTest {
                            + "(\\s*)</drools:metaData>");
 
         hasElement(result,
+                   "<drools:metaData name=\"customAutoStart\">(\\s*)" + Pattern.quote("<drools:metaValue><![CDATA[true]]></drools:metaValue>")
+                           + "(\\s*)</drools:metaData>");
+
+        hasElement(result,
                    "<bpmn2:ioSpecification id=\"" + ID_REGEX + "\">");
 
         hasElement(result,
@@ -795,6 +806,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
         subprocessExecutionSet.setIndependent(new Independent(true));
         subprocessExecutionSet.setIsAsync(new IsAsync(true));
         subprocessExecutionSet.setWaitForCompletion(new WaitForCompletion(true));
+        subprocessExecutionSet.setAdHocAutostart(new AdHocAutostart(true));
 
         ScriptTypeValue entryAction = new ScriptTypeValue();
         entryAction.setScript(("SubprocessTest"));
@@ -882,6 +894,10 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
         hasElement(result,
                    "<drools:metaData name=\"customAsync\">(\\s*)" + Pattern.quote("<drools:metaValue><![CDATA[true]]></drools:metaValue>")
+                           + "(\\s*)</drools:metaData>");
+
+        hasElement(result,
+                   "<drools:metaData name=\"customAutoStart\">(\\s*)" + Pattern.quote("<drools:metaValue><![CDATA[true]]></drools:metaValue>")
                            + "(\\s*)</drools:metaData>");
 
         hasElement(result,
@@ -1296,6 +1312,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
             AdHocSubprocessTaskExecutionSet executionSet = stage.getExecutionSet();
             assertEquals("Sequential", executionSet.getAdHocOrdering().getValue());
+            assertTrue(executionSet.getAdHocAutostart().getValue());
 
             ScriptTypeValue completionCondition = executionSet.getAdHocCompletionCondition().getValue();
             assertEquals("autocomplete", completionCondition.getScript());
@@ -1352,6 +1369,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
             assertTrue(subcaseExecutionSet.getIndependent().getValue());
             assertTrue(subcaseExecutionSet.getIsAsync().getValue());
             assertTrue(subcaseExecutionSet.getWaitForCompletion().getValue());
+            assertTrue(subcaseExecutionSet.getAdHocAutostart().getValue());
 
             ScriptTypeValue entryAction = subcaseExecutionSet.getOnEntryAction().getValue().getValues().get(0);
             assertEquals("SubcaseTest", entryAction.getScript());
@@ -1407,6 +1425,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
             assertTrue(subprocessExecutionSet.getIndependent().getValue());
             assertTrue(subprocessExecutionSet.getIsAsync().getValue());
             assertTrue(subprocessExecutionSet.getWaitForCompletion().getValue());
+            assertTrue(subprocessExecutionSet.getAdHocAutostart().getValue());
 
             ScriptTypeValue entryAction = subprocessExecutionSet.getOnEntryAction().getValue().getValues().get(0);
             assertEquals("SubprocessTest", entryAction.getScript());

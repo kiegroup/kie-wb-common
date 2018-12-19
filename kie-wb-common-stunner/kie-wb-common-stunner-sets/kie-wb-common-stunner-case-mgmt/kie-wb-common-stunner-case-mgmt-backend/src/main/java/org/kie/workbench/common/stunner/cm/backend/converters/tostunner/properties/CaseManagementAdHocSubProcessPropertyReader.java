@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties;
 
-import org.eclipse.bpmn2.Activity;
-import org.eclipse.bpmn2.di.BPMNDiagram;
+import org.eclipse.bpmn2.AdHocSubProcess;
+import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ActivityPropertyReader;
-import org.kie.workbench.common.stunner.cm.backend.converters.customproperties.CaseManagementCustomElement;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AdHocSubProcessPropertyReader;
 
-public class CaseManagementActivityPropertyReader extends ActivityPropertyReader {
+public class CaseManagementAdHocSubProcessPropertyReader extends AdHocSubProcessPropertyReader {
 
-    public CaseManagementActivityPropertyReader(Activity activity,
-                                                BPMNDiagram diagram,
-                                                DefinitionResolver definitionResolver) {
-        super(activity, diagram, definitionResolver);
-    }
-
-    public boolean isCase() {
-        return CaseManagementCustomElement.isCase.of(element).get();
+    public CaseManagementAdHocSubProcessPropertyReader(AdHocSubProcess element,
+                                                       BPMNPlane plane,
+                                                       DefinitionResolver definitionResolver) {
+        super(element, plane, definitionResolver);
     }
 
     public boolean isAdHocAutostart() {

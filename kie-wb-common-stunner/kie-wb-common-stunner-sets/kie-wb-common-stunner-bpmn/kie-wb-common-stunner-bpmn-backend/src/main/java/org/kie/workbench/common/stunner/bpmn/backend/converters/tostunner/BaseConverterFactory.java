@@ -27,13 +27,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proces
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.BaseSubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks.BaseTaskConverter;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseAdHocSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
 
-public abstract class BaseConverterFactory<D extends BPMNDiagram,
-        A extends BaseAdHocSubprocess, R extends BaseReusableSubprocess, U extends BaseUserTask> {
+public abstract class BaseConverterFactory {
 
     protected final DefinitionResolver definitionResolver;
     protected final TypedFactoryManager factoryManager;
@@ -91,11 +86,11 @@ public abstract class BaseConverterFactory<D extends BPMNDiagram,
         return endEventConverter;
     }
 
-    public abstract BaseCallActivityConverter<R> callActivityConverter();
+    public abstract BaseCallActivityConverter callActivityConverter();
 
-    public abstract BaseRootProcessConverter<D> rootProcessConverter();
+    public abstract BaseRootProcessConverter rootProcessConverter();
 
-    public abstract BaseSubProcessConverter<A> subProcessConverter();
+    public abstract BaseSubProcessConverter subProcessConverter();
 
     public LaneConverter laneConverter() {
         return laneConverter;
@@ -105,5 +100,5 @@ public abstract class BaseConverterFactory<D extends BPMNDiagram,
         return gatewayConverter;
     }
 
-    public abstract BaseTaskConverter<U> taskConverter();
+    public abstract BaseTaskConverter taskConverter();
 }

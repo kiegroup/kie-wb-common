@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.activities.ReusableSubprocessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.SubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 
 public class ConverterFactory extends BaseConverterFactory {
@@ -32,5 +33,10 @@ public class ConverterFactory extends BaseConverterFactory {
     @Override
     public ReusableSubprocessConverter reusableSubprocessConverter() {
         return reusableSubprocessConverter;
+    }
+
+    @Override
+    public SubProcessConverter subProcessConverter() {
+        return new SubProcessConverter(context, propertyWriterFactory, this);
     }
 }

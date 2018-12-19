@@ -110,7 +110,7 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         return p;
     }
 
-    private SubProcessPropertyWriter convertAdHocSubprocessNode(Node<View<BaseAdHocSubprocess>, ?> n) {
+    protected SubProcessPropertyWriter convertAdHocSubprocessNode(Node<View<BaseAdHocSubprocess>, ?> n) {
         org.eclipse.bpmn2.AdHocSubProcess process = bpmn2.createAdHocSubProcess();
         process.setId(n.getUUID());
 

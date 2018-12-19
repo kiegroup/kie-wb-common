@@ -42,6 +42,8 @@ public class CaseManagementReusableSubprocessConverter
 
         p.setCase(executionSet.getIsCase().getValue());
 
+        p.setAdHocAutostart(executionSet.getAdHocAutostart().getValue());
+
         return p;
     }
 }

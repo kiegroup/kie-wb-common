@@ -56,9 +56,9 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public abstract class BaseTaskConverter<U extends BaseUserTask> {
+public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends BaseUserTaskExecutionSet> {
 
-    private final TypedFactoryManager factoryManager;
+    protected final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
 
     public BaseTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
@@ -200,7 +200,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask> {
     }
 
     private BpmnNode userTask(org.eclipse.bpmn2.UserTask task) {
-        Node<View<U>, Edge> node = factoryManager.newNode(task.getId(), getUserTaskClass());
+        Node<View<U>, Edge> node = createNode(task.getId());
 
         U definition = node.getContent().getDefinition();
         UserTaskPropertyReader p = propertyReaderFactory.of(task);
@@ -262,7 +262,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask> {
         return BpmnNode.of(node);
     }
 
-    protected abstract Class<U> getUserTaskClass();
+    protected abstract Node<View<U>, Edge> createNode(String id);
 
-    protected abstract BaseUserTaskExecutionSet createUserTaskExecutionSet(UserTaskPropertyReader p);
+    protected abstract S createUserTaskExecutionSet(UserTaskPropertyReader p);
 }

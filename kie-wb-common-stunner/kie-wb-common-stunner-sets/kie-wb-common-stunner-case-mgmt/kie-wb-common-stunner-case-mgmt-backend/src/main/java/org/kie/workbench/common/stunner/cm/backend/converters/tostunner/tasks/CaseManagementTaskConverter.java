@@ -23,7 +23,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks.
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseUserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -34,20 +33,23 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.cm.definition.UserTask;
 import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExecutionSet;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class CaseManagementTaskConverter extends BaseTaskConverter<UserTask> {
+public class CaseManagementTaskConverter extends BaseTaskConverter<UserTask, UserTaskExecutionSet> {
 
     public CaseManagementTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         super(factoryManager, propertyReaderFactory);
     }
 
     @Override
-    protected Class<UserTask> getUserTaskClass() {
-        return UserTask.class;
+    protected Node<View<UserTask>, Edge> createNode(String id) {
+        return factoryManager.newNode(id, UserTask.class);
     }
 
     @Override
-    protected BaseUserTaskExecutionSet createUserTaskExecutionSet(UserTaskPropertyReader p) {
+    protected UserTaskExecutionSet createUserTaskExecutionSet(UserTaskPropertyReader p) {
         return new UserTaskExecutionSet(new TaskName(p.getTaskName()),
                                         p.getActors(),
                                         new Groupid(p.getGroupid()),

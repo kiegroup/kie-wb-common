@@ -31,22 +31,24 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Process
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl> {
+public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData> {
 
     public RootProcessConverter(TypedFactoryManager typedFactoryManager,
                                 PropertyReaderFactory propertyReaderFactory,
                                 DefinitionResolver definitionResolver,
-                                BaseConverterFactory<BPMNDiagramImpl, ?, ?, ?> factory) {
+                                BaseConverterFactory factory) {
         super(typedFactoryManager, propertyReaderFactory, definitionResolver, factory);
     }
 
     @Override
-    public Class<BPMNDiagramImpl> getDiagramClass() {
-        return BPMNDiagramImpl.class;
+    protected Node<View<BPMNDiagramImpl>, Edge> createNode(String id) {
+        return delegate.factoryManager.newNode(id, BPMNDiagramImpl.class);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     }
 
     @Override
-    protected BaseProcessData createProcessData(String processVariables) {
+    protected ProcessData createProcessData(String processVariables) {
         return new ProcessData(new ProcessVariables(processVariables));
     }
 }

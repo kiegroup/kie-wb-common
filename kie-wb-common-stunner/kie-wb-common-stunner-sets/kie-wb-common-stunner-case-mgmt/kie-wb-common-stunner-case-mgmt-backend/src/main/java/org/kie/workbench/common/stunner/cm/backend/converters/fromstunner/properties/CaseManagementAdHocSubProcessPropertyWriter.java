@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties;
 
 import org.eclipse.bpmn2.AdHocSubProcess;
-import org.eclipse.bpmn2.CallActivity;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.AdHocSubProcessPropertyWriter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.VariableScope;
 
-public class CaseManagementPropertyWriterFactory extends PropertyWriterFactory {
+public class CaseManagementAdHocSubProcessPropertyWriter extends AdHocSubProcessPropertyWriter {
 
-    @Override
-    public CaseManagementCallActivityPropertyWriter of(CallActivity e) {
-        return new CaseManagementCallActivityPropertyWriter(e, variableScope);
+    public CaseManagementAdHocSubProcessPropertyWriter(AdHocSubProcess process, VariableScope variableScope) {
+        super(process, variableScope);
     }
 
-    @Override
-    public AdHocSubProcessPropertyWriter of(AdHocSubProcess e) {
-        return new CaseManagementAdHocSubProcessPropertyWriter(e, variableScope);
+    public void setAdHocAutostart(boolean autoStart) {
+        CustomElement.autoStart.of(flowElement).set(autoStart);
     }
 }

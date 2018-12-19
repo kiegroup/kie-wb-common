@@ -28,11 +28,19 @@ import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.CaseMana
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementPropertyReaderFactory;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
+import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CaseManagementSubProcessConverterTest {
 
@@ -48,7 +56,12 @@ public class CaseManagementSubProcessConverterTest {
 
         DefinitionResolver definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
 
+        Node node = new NodeImpl("");
+        View<AdHocSubprocess> content = new ViewImpl<>(new AdHocSubprocess(), BoundsImpl.build());
+        node.setContent(content);
+
         FactoryManager factoryManager = mock(FactoryManager.class);
+        when(factoryManager.newElement(anyString(), eq(AdHocSubprocess.class))).thenReturn(node);
 
         TypedFactoryManager typedFactoryManager = new TypedFactoryManager(factoryManager);
 
@@ -59,7 +72,7 @@ public class CaseManagementSubProcessConverterTest {
     }
 
     @Test
-    public void testGetAdhocSubprocessClass() throws Exception {
-        assertEquals(tested.getAdhocSubprocessClass(), AdHocSubprocess.class);
+    public void testCreateNode() throws Exception {
+        assertTrue(tested.createNode("id").getContent().getDefinition() instanceof AdHocSubprocess);
     }
 }

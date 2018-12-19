@@ -29,8 +29,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAct
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class SubProcessConverter extends BaseSubProcessConverter<AdHocSubprocess> {
+public class SubProcessConverter extends BaseSubProcessConverter<AdHocSubprocess, ProcessData, AdHocSubprocessTaskExecutionSet> {
 
     public SubProcessConverter(TypedFactoryManager typedFactoryManager,
                                PropertyReaderFactory propertyReaderFactory,
@@ -43,8 +46,8 @@ public class SubProcessConverter extends BaseSubProcessConverter<AdHocSubprocess
     }
 
     @Override
-    protected Class<AdHocSubprocess> getAdhocSubprocessClass() {
-        return AdHocSubprocess.class;
+    protected Node<View<AdHocSubprocess>, Edge> createNode(String id) {
+        return delegate.factoryManager.newNode(id, AdHocSubprocess.class);
     }
 
     @Override

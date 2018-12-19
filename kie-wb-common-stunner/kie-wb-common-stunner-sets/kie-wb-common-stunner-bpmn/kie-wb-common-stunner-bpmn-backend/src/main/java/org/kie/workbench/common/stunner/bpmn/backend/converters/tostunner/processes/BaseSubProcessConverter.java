@@ -55,9 +55,10 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
+public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S>,
+        P extends BaseProcessData, S extends BaseAdHocSubprocessTaskExecutionSet> {
 
-    private final ProcessConverterDelegate delegate;
+    final ProcessConverterDelegate delegate;
 
     public BaseSubProcessConverter(TypedFactoryManager typedFactoryManager,
                                    PropertyReaderFactory propertyReaderFactory,
@@ -130,7 +131,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
     }
 
     private BpmnNode convertAdHocSubProcess(org.eclipse.bpmn2.AdHocSubProcess subProcess) {
-        Node<View<A>, Edge> node = delegate.factoryManager.newNode(subProcess.getId(), getAdhocSubprocessClass());
+        Node<View<A>, Edge> node = createNode(subProcess.getId());
         A definition = node.getContent().getDefinition();
         AdHocSubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
@@ -208,9 +209,9 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess> {
         return BpmnNode.of(node);
     }
 
-    protected abstract Class<A> getAdhocSubprocessClass();
+    protected abstract Node<View<A>, Edge> createNode(String id);
 
-    protected abstract BaseProcessData createProcessData(String processVariables);
+    protected abstract P createProcessData(String processVariables);
 
-    protected abstract BaseAdHocSubprocessTaskExecutionSet createAdHocSubprocessTaskExecutionSet(AdHocSubProcessPropertyReader p);
+    protected abstract S createAdHocSubprocessTaskExecutionSet(AdHocSubProcessPropertyReader p);
 }

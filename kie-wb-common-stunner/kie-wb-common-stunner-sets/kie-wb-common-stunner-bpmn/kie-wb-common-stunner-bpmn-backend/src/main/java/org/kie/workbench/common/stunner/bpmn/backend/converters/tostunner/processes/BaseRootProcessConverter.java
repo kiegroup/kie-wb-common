@@ -41,14 +41,14 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 /**
  * Convert the root Process with all its children to a BPMNDiagram
  */
-public abstract class BaseRootProcessConverter<D extends BPMNDiagram>  {
+public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P>, S extends BaseDiagramSet, P extends BaseProcessData>  {
 
-    private final ProcessConverterDelegate delegate;
+    final ProcessConverterDelegate delegate;
 
     public BaseRootProcessConverter(TypedFactoryManager typedFactoryManager,
                                     PropertyReaderFactory propertyReaderFactory,
                                     DefinitionResolver definitionResolver,
-                                    BaseConverterFactory<D, ?, ?, ?> factory) {
+                                    BaseConverterFactory factory) {
         this.delegate = new ProcessConverterDelegate(typedFactoryManager,
                                                      propertyReaderFactory,
                                                      definitionResolver,
@@ -73,7 +73,7 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram>  {
     }
 
     private BpmnNode convertProcessNode(String id, Process process) {
-        Node<View<D>, Edge> diagramNode = delegate.factoryManager.newNode(id, getDiagramClass());
+        Node<View<D>, Edge> diagramNode = createNode(id);
         D definition = diagramNode.getContent().getDefinition();
 
         ProcessPropertyReader e = delegate.propertyReaderFactory.of(process);
@@ -95,9 +95,9 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram>  {
         return BpmnNode.of(diagramNode);
     }
 
-    public abstract Class<D> getDiagramClass();
+    protected abstract Node<View<D>, Edge> createNode(String id);
 
-    protected abstract BaseDiagramSet createDiagramSet(Process process, ProcessPropertyReader e);
+    protected abstract S createDiagramSet(Process process, ProcessPropertyReader e);
 
-    protected abstract BaseProcessData createProcessData(String processVariables);
+    protected abstract P createProcessData(String processVariables);
 }

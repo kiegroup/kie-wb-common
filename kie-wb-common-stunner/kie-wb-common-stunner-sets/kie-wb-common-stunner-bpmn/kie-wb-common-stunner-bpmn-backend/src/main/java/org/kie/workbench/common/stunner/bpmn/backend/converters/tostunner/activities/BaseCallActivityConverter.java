@@ -30,7 +30,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public abstract class BaseCallActivityConverter <R extends BaseReusableSubprocess> {
+public abstract class BaseCallActivityConverter<R extends BaseReusableSubprocess, E extends BaseReusableSubprocessTaskExecutionSet> {
 
     protected final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
@@ -71,7 +71,7 @@ public abstract class BaseCallActivityConverter <R extends BaseReusableSubproces
 
     protected abstract Node<View<R>, Edge> createNode(CallActivity activity, ActivityPropertyReader p);
 
-    protected abstract BaseReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CallActivity activity,
-                                                                                                       ActivityPropertyReader p);
+    protected abstract E createReusableSubprocessTaskExecutionSet(CallActivity activity,
+                                                                  ActivityPropertyReader p);
 
 }

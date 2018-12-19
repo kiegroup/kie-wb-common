@@ -17,8 +17,10 @@ package org.kie.workbench.common.stunner.cm.backend.converters.fromstunner;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.BaseConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.SubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.activities.CaseManagementReusableSubprocessConverter;
+import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.processes.CaseManagementSubProcessConverter;
 
 public class CaseManagementConverterFactory extends BaseConverterFactory {
 
@@ -34,5 +36,10 @@ public class CaseManagementConverterFactory extends BaseConverterFactory {
     @Override
     public CaseManagementReusableSubprocessConverter reusableSubprocessConverter() {
         return reusableSubprocessConverter;
+    }
+
+    @Override
+    public SubProcessConverter subProcessConverter() {
+        return new CaseManagementSubProcessConverter(context, propertyWriterFactory, this);
     }
 }

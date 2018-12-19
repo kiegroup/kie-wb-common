@@ -25,6 +25,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -87,7 +88,12 @@ public class CaseReusableSubprocessTaskExecutionSet
     protected IsAsync isAsync;
 
     @Property
-    @FormField(afterElement = "isAsync",
+    @FormField(afterElement = "isAsync")
+    @Valid
+    private AdHocAutostart adHocAutostart;
+
+    @Property
+    @FormField(afterElement = "adHocAutostart",
             settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")}
     )
     @Valid
@@ -106,6 +112,7 @@ public class CaseReusableSubprocessTaskExecutionSet
              new Independent(),
              new WaitForCompletion(),
              new IsAsync(),
+             new AdHocAutostart(),
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java", ""))),
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java", ""))));
     }
@@ -115,6 +122,7 @@ public class CaseReusableSubprocessTaskExecutionSet
                                                   final @MapsTo("independent") Independent independent,
                                                   final @MapsTo("waitForCompletion") WaitForCompletion waitForCompletion,
                                                   final @MapsTo("isAsync") IsAsync isAsync,
+                                                  final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
                                                   final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
                                                   final @MapsTo("onExitAction") OnExitAction onExitAction) {
         this.calledElement = calledElement;
@@ -122,6 +130,7 @@ public class CaseReusableSubprocessTaskExecutionSet
         this.independent = independent;
         this.waitForCompletion = waitForCompletion;
         this.isAsync = isAsync;
+        this.adHocAutostart = adHocAutostart;
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
     }
@@ -177,6 +186,16 @@ public class CaseReusableSubprocessTaskExecutionSet
     }
 
     @Override
+    public AdHocAutostart getAdHocAutostart() {
+        return adHocAutostart;
+    }
+
+    @Override
+    public void setAdHocAutostart(AdHocAutostart adHocAutostart) {
+        this.adHocAutostart = adHocAutostart;
+    }
+
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
@@ -203,6 +222,7 @@ public class CaseReusableSubprocessTaskExecutionSet
                                          independent.hashCode(),
                                          waitForCompletion.hashCode(),
                                          isAsync.hashCode(),
+                                         adHocAutostart.hashCode(),
                                          onEntryAction.hashCode(),
                                          onExitAction.hashCode());
     }
@@ -216,6 +236,7 @@ public class CaseReusableSubprocessTaskExecutionSet
                     independent.equals(other.independent) &&
                     waitForCompletion.equals(other.waitForCompletion) &&
                     isAsync.equals(other.isAsync) &&
+                    adHocAutostart.equals(other.adHocAutostart) &&
                     onEntryAction.equals(other.onEntryAction) &&
                     onExitAction.equals(other.onExitAction);
         }

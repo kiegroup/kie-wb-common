@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.cm.definition.property.task;
 
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.subprocess.IsCase;
 
@@ -24,4 +25,8 @@ public interface ReusableSubprocessTaskExecutionSet
     IsCase getIsCase();
 
     void setIsCase(final IsCase isCase);
+
+    AdHocAutostart getAdHocAutostart();
+
+    void setAdHocAutostart(AdHocAutostart adHocAutostart);
 }

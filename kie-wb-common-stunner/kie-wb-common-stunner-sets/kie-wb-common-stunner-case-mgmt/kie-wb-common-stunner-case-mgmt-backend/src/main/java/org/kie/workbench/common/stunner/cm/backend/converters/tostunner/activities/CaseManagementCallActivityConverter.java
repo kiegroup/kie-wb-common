@@ -20,7 +20,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.activities.BaseCallActivityConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -34,11 +34,12 @@ import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.property.subprocess.IsCase;
 import org.kie.workbench.common.stunner.cm.definition.property.task.CaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.cm.definition.property.task.ProcessReusableSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.cm.definition.property.task.ReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class CaseManagementCallActivityConverter extends BaseCallActivityConverter<ReusableSubprocess> {
+public class CaseManagementCallActivityConverter extends BaseCallActivityConverter<ReusableSubprocess, ReusableSubprocessTaskExecutionSet> {
 
     public CaseManagementCallActivityConverter(TypedFactoryManager factoryManager,
                                                PropertyReaderFactory propertyReaderFactory) {
@@ -54,22 +55,26 @@ public class CaseManagementCallActivityConverter extends BaseCallActivityConvert
     }
 
     @Override
-    protected BaseReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CallActivity activity,
-                                                                                              ActivityPropertyReader p) {
-        return ((CaseManagementActivityPropertyReader) p).isCase() ?
+    protected ReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CallActivity activity,
+                                                                                          ActivityPropertyReader p) {
+        CaseManagementActivityPropertyReader reader = (CaseManagementActivityPropertyReader) p;
+
+        return reader.isCase() ?
                 new CaseReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
                                                            new IsCase(true),
-                                                           new Independent(p.isIndependent()),
-                                                           new WaitForCompletion(p.isWaitForCompletion()),
-                                                           new IsAsync(p.isAsync()),
-                                                           new OnEntryAction(p.getOnEntryAction()),
-                                                           new OnExitAction(p.getOnExitAction())) :
+                                                           new Independent(reader.isIndependent()),
+                                                           new WaitForCompletion(reader.isWaitForCompletion()),
+                                                           new IsAsync(reader.isAsync()),
+                                                           new AdHocAutostart(reader.isAdHocAutostart()),
+                                                           new OnEntryAction(reader.getOnEntryAction()),
+                                                           new OnExitAction(reader.getOnExitAction())) :
                 new ProcessReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
                                                               new IsCase(false),
-                                                              new Independent(p.isIndependent()),
-                                                              new WaitForCompletion(p.isWaitForCompletion()),
-                                                              new IsAsync(p.isAsync()),
-                                                              new OnEntryAction(p.getOnEntryAction()),
-                                                              new OnExitAction(p.getOnExitAction()));
+                                                              new Independent(reader.isIndependent()),
+                                                              new WaitForCompletion(reader.isWaitForCompletion()),
+                                                              new IsAsync(reader.isAsync()),
+                                                              new AdHocAutostart(reader.isAdHocAutostart()),
+                                                              new OnEntryAction(reader.getOnEntryAction()),
+                                                              new OnExitAction(reader.getOnExitAction()));
     }
 }
