@@ -383,7 +383,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
     @Override
     public void doAfterSelectionChange(final int uiRowIndex,
                                        final int uiColumnIndex) {
-        selectExpressionEditorFirstCell(0, 0);
+        selectExpressionEditorFirstCell(0, 1);
     }
 
     @Override
