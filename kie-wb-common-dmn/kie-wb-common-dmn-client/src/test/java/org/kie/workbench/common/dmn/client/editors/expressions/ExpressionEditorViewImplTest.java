@@ -53,11 +53,13 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidgetKeyboardHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
 import org.uberfire.mocks.EventSourceMock;
@@ -119,6 +121,9 @@ public class ExpressionEditorViewImplTest {
 
     @Mock
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+
+    @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
@@ -199,6 +204,7 @@ public class ExpressionEditorViewImplTest {
                                                      sessionManager,
                                                      sessionCommandManager,
                                                      expressionEditorDefinitionsSupplier,
+                                                     refreshFormPropertiesEvent,
                                                      domainObjectSelectionEvent));
         view.init(presenter);
         view.bind(session);
@@ -250,6 +256,7 @@ public class ExpressionEditorViewImplTest {
                      transform.getScaleY(),
                      0.0);
 
+        verify(gridPanel).addKeyDownHandler(any(BaseGridWidgetKeyboardHandler.class));
         verify(gridPanel).add(gridLayer);
         verify(gridPanelContainer).clear();
         verify(gridPanelContainer).setWidget(gridPanel);
@@ -334,5 +341,12 @@ public class ExpressionEditorViewImplTest {
                            hasName);
 
         verify(expressionType).setTextContent(eq("<" + DMNEditorConstants.ExpressionEditor_UndefinedExpressionType + ">"));
+    }
+
+    @Test
+    public void testSetFocus() {
+        view.setFocus();
+
+        verify(gridPanel).setFocus(true);
     }
 }

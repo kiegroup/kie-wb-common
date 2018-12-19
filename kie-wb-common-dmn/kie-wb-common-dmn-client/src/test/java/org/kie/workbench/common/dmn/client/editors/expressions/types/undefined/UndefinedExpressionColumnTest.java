@@ -63,9 +63,6 @@ public class UndefinedExpressionColumnTest {
     private static final double RY = 42.0;
 
     @Mock
-    private GridColumn.HeaderMetaData headerMetaData;
-
-    @Mock
     private UndefinedExpressionGrid gridWidget;
 
     @Mock
@@ -108,8 +105,7 @@ public class UndefinedExpressionColumnTest {
         doReturn(parentGridData).when(parentGridWidget).getModel();
         doReturn(Collections.singletonList(parentGridColumn)).when(parentGridData).getColumns();
 
-        this.column = spy(new UndefinedExpressionColumn(headerMetaData,
-                                                        gridWidget,
+        this.column = spy(new UndefinedExpressionColumn(gridWidget,
                                                         cellEditorControls,
                                                         undefinedExpressionSelector,
                                                         translationService));
@@ -194,5 +190,12 @@ public class UndefinedExpressionColumnTest {
                                         any(Optional.class),
                                         eq((int) (ABSOLUTE_CELL_X)),
                                         eq((int) (ABSOLUTE_CELL_Y)));
+    }
+
+    @Test
+    public void testDestroyResources() {
+        column.destroyResources();
+
+        verify(undefinedExpressionSelector).hide();
     }
 }

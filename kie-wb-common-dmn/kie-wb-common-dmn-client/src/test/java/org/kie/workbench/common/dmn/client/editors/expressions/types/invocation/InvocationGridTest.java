@@ -77,12 +77,16 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -101,7 +105,6 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -173,6 +176,15 @@ public class InvocationGridTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
+
+    @Mock
     private Index index;
 
     @Mock
@@ -233,6 +245,9 @@ public class InvocationGridTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
+    @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Captor
@@ -285,6 +300,7 @@ public class InvocationGridTest {
                                                     sessionCommandManager,
                                                     canvasCommandFactory,
                                                     editorSelectedEvent,
+                                                    refreshFormPropertiesEvent,
                                                     domainObjectSelectionEvent,
                                                     listSelector,
                                                     translationService,
@@ -331,6 +347,10 @@ public class InvocationGridTest {
         when(gridLayer.getVisibleBounds()).thenReturn(new BaseBounds(0, 0, 100, 200));
         when(gridLayer.getViewport()).thenReturn(viewport);
         when(viewport.getTransform()).thenReturn(transform);
+
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
 
         when(canvasHandler.getGraphIndex()).thenReturn(index);
         when(index.get(anyString())).thenReturn(element);
@@ -381,20 +401,6 @@ public class InvocationGridTest {
         final ExpressionCellValue dcv0 = (ExpressionCellValue) uiModel.getCell(0, 2).getValue();
         assertEquals(undefinedExpressionEditor,
                      dcv0.getValue().get());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNested() {
-        setupGrid(1);
-
-        assertFalse(grid.isHeaderHidden());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNotNested() {
-        setupGrid(0);
-
-        assertFalse(grid.isHeaderHidden());
     }
 
     @Test
@@ -933,7 +939,7 @@ public class InvocationGridTest {
 
         grid.selectCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, true);
 
-        assertNOPDomainObjectSelection();
+        assertDomainObjectSelection(expression.get().getBinding().get(0).getVariable());
     }
 
     @Test
@@ -951,10 +957,16 @@ public class InvocationGridTest {
 
         grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
 
-        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        assertDomainObjectSelection(hasExpression);
+    }
 
-        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
-        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(hasExpression);
+    @Test
+    public void testSelectHeaderExpressionColumnNameRow() {
+        setupGrid(0);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertDomainObjectSelection(hasExpression);
     }
 
     @Test
@@ -967,8 +979,26 @@ public class InvocationGridTest {
     }
 
     @Test
-    public void testSelectHeaderExpressionColumn() {
+    public void testSelectHeaderExpressionColumnParametersRow() {
         setupGrid(0);
+
+        grid.selectHeaderCell(1, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderNameColumnParametersRowWhenNested() {
+        setupGrid(1);
+
+        grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
+
+        assertNOPDomainObjectSelection();
+    }
+
+    @Test
+    public void testSelectHeaderExpressionColumnParametersRowWhenNested() {
+        setupGrid(1);
 
         grid.selectHeaderCell(0, InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX, false, false);
 

@@ -43,9 +43,9 @@ import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueComman
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.GridFactoryCommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.EditableHeaderGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
@@ -59,10 +59,14 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.UUID;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -74,6 +78,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandle
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.DefaultGridWidgetCellSelectorMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.selections.SelectionExtension;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,7 +86,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -92,6 +99,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
+
+    private static final String NODE_UUID = "uuid";
 
     private static final Name NAME = new Name("name");
 
@@ -114,6 +123,15 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
     @Mock
     private AbstractCanvasHandler canvasHandler;
+
+    @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
 
     @Mock
     private Index<?, ?> index;
@@ -139,6 +157,9 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     @Captor
     private ArgumentCaptor<DomainObjectSelectionEvent> domainObjectSelectionEventCaptor;
 
+    @Captor
+    private ArgumentCaptor<RefreshFormPropertiesEvent> refreshFormPropertiesEventCaptor;
+
     private Decision decision = new Decision();
 
     @Override
@@ -150,6 +171,10 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         when(sessionManager.getCurrentSession()).thenReturn(session);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
+
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
 
         when(canvasHandler.getGraphIndex()).thenReturn(index);
         when(element.getContent()).thenReturn(definition);
@@ -184,6 +209,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
                                       sessionCommandManager,
                                       canvasCommandFactory,
                                       editorSelectedEvent,
+                                      refreshFormPropertiesEvent,
                                       domainObjectSelectionEvent,
                                       cellEditorControls,
                                       listSelector,
@@ -205,8 +231,14 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
             }
 
             @Override
-            protected boolean isHeaderHidden() {
-                return false;
+            public List<ListSelectorItem> getItems(final int uiRowIndex,
+                                                   final int uiColumnIndex) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void onItemSelected(final ListSelectorItem item) {
+                //Nothing for this test
             }
         };
     }
@@ -428,6 +460,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         grid.selectHeaderCell(point, false, false);
 
         assertHeaderSelection();
+        assertDomainObjectEventFiring();
     }
 
     @Test
@@ -438,12 +471,90 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         grid.selectHeaderCell(0, 1, false, false);
 
         assertHeaderSelection();
+        assertDomainObjectEventFiring();
+    }
+
+    @Test
+    public void testSelectHeaderCellWithDomainObjectInStunnerGraph() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendColumn(new RowNumberColumn());
+
+        //Mock graph to contain decision
+        final Definition definition = mock(Definition.class);
+        when(node.getUUID()).thenReturn(NODE_UUID);
+        when(node.getContent()).thenReturn(definition);
+        when(definition.getDefinition()).thenReturn(decision);
+
+        //Mock grid to dispatch header selection as a DomainObject
+        doAnswer(i -> {
+            grid.fireDomainObjectSelectionEvent(decision);
+            return null;
+        }).when(grid).doAfterHeaderSelectionChange(anyInt(), anyInt());
+
+        grid.selectHeaderCell(0, 1, false, false);
+
+        assertHeaderSelection();
+
+        verify(refreshFormPropertiesEvent).fire(refreshFormPropertiesEventCaptor.capture());
+        final RefreshFormPropertiesEvent refreshFormPropertiesEvent = refreshFormPropertiesEventCaptor.getValue();
+        assertThat(refreshFormPropertiesEvent.getUuid()).isEqualTo(NODE_UUID);
+        assertThat(refreshFormPropertiesEvent.getSession()).isEqualTo(session);
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_DataCells() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectHeaderCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.DOWN, false);
+
+        verify(grid).doAfterSelectionChange(0, 0);
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_HeaderCells() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.UP, false);
+
+        verify(grid).doAfterHeaderSelectionChange(0, 0);
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_MoveUpWhenOnTopAlready() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectHeaderCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.UP, false);
+
+        verify(grid, never()).doAfterHeaderSelectionChange(anyInt(), anyInt());
+    }
+
+    @Test
+    public void testAdjustSelectionHandling_MoveDownWhenAtBottomAlready() {
+        grid.getModel().appendColumn(new RowNumberColumn());
+        grid.getModel().appendRow(new DMNGridRow());
+
+        grid.selectCell(0, 0, false, false);
+        reset(grid);
+        grid.adjustSelection(SelectionExtension.DOWN, false);
+
+        verify(grid, never()).doAfterSelectionChange(anyInt(), anyInt());
     }
 
     private void assertHeaderSelection() {
         assertThat(grid.getModel().getSelectedHeaderCells()).isNotEmpty();
         assertThat(grid.getModel().getSelectedHeaderCells()).contains(new GridData.SelectedCell(0, 1));
+    }
 
+    private void assertDomainObjectEventFiring() {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
         assertThat(domainObjectSelectionEvent.getDomainObject()).isInstanceOf(NOPDomainObject.class);
@@ -713,6 +824,13 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
         assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(decision);
         assertThat(domainObjectSelectionEvent.getCanvasHandler()).isEqualTo(canvasHandler);
+    }
+
+    @Test
+    public void testDestroyResources() {
+        grid.destroyResources();
+
+        verify(cellEditorControls).hide();
     }
 
     @SuppressWarnings("unchecked")

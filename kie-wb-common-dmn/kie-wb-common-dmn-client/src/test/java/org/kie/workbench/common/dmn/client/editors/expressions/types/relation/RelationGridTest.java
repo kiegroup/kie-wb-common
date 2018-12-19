@@ -70,7 +70,11 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -88,7 +92,6 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -170,6 +173,15 @@ public class RelationGridTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
+
+    @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
@@ -186,6 +198,9 @@ public class RelationGridTest {
 
     @Mock
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
+
+    @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
@@ -244,6 +259,7 @@ public class RelationGridTest {
                                                   sessionCommandManager,
                                                   canvasCommandFactory,
                                                   editorSelectedEvent,
+                                                  refreshFormPropertiesEvent,
                                                   domainObjectSelectionEvent,
                                                   listSelector,
                                                   translationService,
@@ -260,6 +276,10 @@ public class RelationGridTest {
         doReturn(Collections.singletonList(parentGridColumn)).when(parentGridData).getColumns();
 
         parent = spy(new GridCellTuple(0, 0, parentGridWidget));
+
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
 
         when(gridWidget.getModel()).thenReturn(new BaseGridData(false));
         when(gridLayer.getDomElementContainer()).thenReturn(gridLayerDomElementContainer);
@@ -357,20 +377,6 @@ public class RelationGridTest {
 
         assertThat(uiModel.getCell(0, 0).getValue().getValue()).isEqualTo(1);
         assertThat(uiModel.getCell(0, 1).getValue().getValue()).isEqualTo("");
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNested() {
-        setupGrid(1);
-
-        assertFalse(grid.isHeaderHidden());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNotNested() {
-        setupGrid(0);
-
-        assertFalse(grid.isHeaderHidden());
     }
 
     @Test
@@ -880,7 +886,7 @@ public class RelationGridTest {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
         final DomainObjectSelectionEvent event2 = domainObjectSelectionEventCaptor.getValue();
-        assertThat(event2.getDomainObject()).isInstanceOf(NOPDomainObject.class);
+        assertThat(event2.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0));
     }
 
     @Test

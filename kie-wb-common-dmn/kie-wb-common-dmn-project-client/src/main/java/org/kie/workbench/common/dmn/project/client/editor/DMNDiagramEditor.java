@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -149,6 +148,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     @Override
     protected void initialiseKieEditorForSession(final ProjectDiagram diagram) {
+        decisionNavigatorDock.setupDiagram(diagram);
         superInitialiseKieEditorForSession(diagram);
 
         kieView.getMultiPage().addPage(dataTypesPage);
@@ -166,16 +166,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     public void open(final ProjectDiagram diagram) {
         this.layoutHelper.applyLayout(diagram);
         super.open(diagram);
-    }
-
-    @Override
-    protected int getCanvasWidth() {
-        return (int) DMNGraphFactory.GRAPH_DEFAULT_WIDTH;
-    }
-
-    @Override
-    protected int getCanvasHeight() {
-        return (int) DMNGraphFactory.GRAPH_DEFAULT_HEIGHT;
     }
 
     @OnOpen
@@ -197,7 +187,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         canvasHandler.ifPresent(c -> {
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
             expressionEditor.setToolbarStateHandler(new ProjectToolbarStateHandler(getMenuSessionItems()));
-            decisionNavigatorDock.setupContent(c);
+            decisionNavigatorDock.setupCanvasHandler(c);
             decisionNavigatorDock.open();
             dataTypesPage.reload();
         });

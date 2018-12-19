@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.undefined;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -35,12 +36,16 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.selector.UndefinedExpressionSelectorPopoverView;
+import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseDelegatingExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
-import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetCellSelectorMouseEventHandler;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
@@ -56,14 +61,12 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.uberfire.ext.wires.core.grids.client.model.GridCell;
-import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
+import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
+import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
 
-public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNGridData, UndefinedExpressionUIModelMapper> implements HasListSelectorControl {
-
-    public static final double PADDING = 0.0;
-
-    private static final String EXPRESSION_COLUMN_GROUP = "UndefinedExpressionGrid$ExpressionColumn";
+public class UndefinedExpressionGrid extends BaseDelegatingExpressionGrid<Expression, DMNGridData, UndefinedExpressionUIModelMapper> implements HasListSelectorControl {
 
     private final UndefinedExpressionSelectorPopoverView.Presenter undefinedExpressionSelector;
     private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
@@ -82,6 +85,7 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
                                    final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                    final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                    final Event<ExpressionEditorChanged> editorSelectedEvent,
+                                   final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                    final CellEditorControlsView.Presenter cellEditorControls,
                                    final ListSelectorView.Presenter listSelector,
@@ -98,12 +102,13 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
               gridPanel,
               gridLayer,
               gridData,
-              new UndefinedExpressionGridRenderer(),
+              new BaseExpressionGridRenderer(gridData),
               definitionUtils,
               sessionManager,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
+              refreshFormPropertiesEvent,
               domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
@@ -119,6 +124,23 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
         super.doInitialisation();
+    }
+
+    @Override
+    protected List<NodeMouseEventHandler> getNodeMouseClickEventHandlers(final GridSelectionManager selectionManager) {
+        final List<NodeMouseEventHandler> handlers = new ArrayList<>();
+        handlers.add(new DelegatingGridWidgetCellSelectorMouseEventHandler(selectionManager,
+                                                                           this::getParentInformation,
+                                                                           () -> nesting));
+        handlers.add(new DelegatingGridWidgetEditCellMouseEventHandler(this::getParentInformation,
+                                                                       () -> nesting));
+        return handlers;
+    }
+
+    @Override
+    protected List<NodeMouseEventHandler> getNodeMouseDoubleClickEventHandlers(final GridSelectionManager selectionManager,
+                                                                               final GridPinnedModeManager pinnedModeManager) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -138,9 +160,7 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
 
     @Override
     protected void initialiseUiColumns() {
-        final DMNGridColumn undefinedExpressionColumn = new UndefinedExpressionColumn(new BaseHeaderMetaData("",
-                                                                                                             EXPRESSION_COLUMN_GROUP),
-                                                                                      this,
+        final DMNGridColumn undefinedExpressionColumn = new UndefinedExpressionColumn(this,
                                                                                       cellEditorControls,
                                                                                       undefinedExpressionSelector,
                                                                                       translationService);
@@ -158,11 +178,6 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
     }
 
     @Override
-    protected boolean isHeaderHidden() {
-        return true;
-    }
-
-    @Override
     public double getPadding() {
         return PADDING;
     }
@@ -170,39 +185,6 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
     @Override
     public boolean isCacheable() {
         return false;
-    }
-
-    @Override
-    @SuppressWarnings("unused")
-    public List<ListSelectorItem> getItems(final int uiRowIndex,
-                                           final int uiColumnIndex) {
-        final List<ListSelectorItem> items = new ArrayList<>();
-        final Optional<BaseExpressionGrid> parent = findParentGrid();
-        parent.ifPresent(grid -> {
-            if (grid instanceof HasListSelectorControl) {
-                final int parentUiRowIndex = getParentInformation().getRowIndex();
-                final int parentUiColumnIndex = getParentInformation().getColumnIndex();
-                final GridCell<?> parentCell = getParentInformation().getGridWidget().getModel().getCell(parentUiRowIndex, parentUiColumnIndex);
-
-                if (parentCell instanceof HasCellEditorControls) {
-                    final List<ListSelectorItem> parentItems = ((HasListSelectorControl) grid).getItems(parentUiRowIndex,
-                                                                                                        parentUiColumnIndex);
-                    if (!parentItems.isEmpty()) {
-                        items.addAll(parentItems);
-                    }
-                }
-            }
-        });
-
-        return items;
-    }
-
-    @Override
-    public void onItemSelected(final ListSelectorItem item) {
-        if (item instanceof ListSelectorTextItem) {
-            final ListSelectorTextItem li = (ListSelectorTextItem) item;
-            li.getCommand().execute();
-        }
     }
 
     public void onExpressionTypeChanged(final ExpressionType type) {
@@ -245,6 +227,10 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
                                                                   () -> {
                                                                       resize(BaseExpressionGrid.RESIZE_EXISTING);
                                                                       _editor.selectFirstCell();
+                                                                      if (sessionManager.getCurrentSession() instanceof DMNEditorSession) {
+                                                                          final DMNEditorSession dmnEditorSession = (DMNEditorSession) sessionManager.getCurrentSession();
+                                                                          dmnEditorSession.getGridPanel().setFocus(true);
+                                                                      }
                                                                   },
                                                                   () -> {
                                                                       resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
@@ -254,8 +240,8 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
     }
 
     @SuppressWarnings("unused")
-    protected void doAfterSelectionChange(final int uiRowIndex,
-                                          final int uiColumnIndex) {
+    public void doAfterSelectionChange(final int uiRowIndex,
+                                       final int uiColumnIndex) {
         if (nodeUUID.isPresent()) {
             final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
             if (base instanceof DomainObject) {

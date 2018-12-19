@@ -66,6 +66,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.mvp.Command;
@@ -92,6 +93,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                         final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                         final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                         final Event<ExpressionEditorChanged> editorSelectedEvent,
+                        final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                         final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                         final CellEditorControlsView.Presenter cellEditorControls,
                         final ListSelectorView.Presenter listSelector,
@@ -115,6 +117,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
+              refreshFormPropertiesEvent,
               domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
@@ -182,11 +185,6 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
             model.appendRow(new DMNGridRow());
             uiModelMapper.fromDMNModel(0, 0);
         });
-    }
-
-    @Override
-    protected boolean isHeaderHidden() {
-        return false;
     }
 
     @Override
@@ -389,15 +387,15 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
     }
 
     @Override
-    protected void doAfterSelectionChange(final int uiRowIndex,
-                                          final int uiColumnIndex) {
+    public void doAfterSelectionChange(final int uiRowIndex,
+                                       final int uiColumnIndex) {
         selectExpressionEditorFirstCell(0, 0);
     }
 
     @Override
-    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
-                                                final int uiHeaderColumnIndex) {
-        if (uiHeaderRowIndex == 0) {
+    public void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                             final int uiHeaderColumnIndex) {
+        if (nesting == 0 && uiHeaderRowIndex == 0) {
             final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
             if (base instanceof DomainObject) {
                 fireDomainObjectSelectionEvent((DomainObject) base);

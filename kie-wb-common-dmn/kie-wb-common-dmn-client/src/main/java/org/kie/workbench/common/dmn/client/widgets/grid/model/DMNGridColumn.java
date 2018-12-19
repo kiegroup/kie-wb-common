@@ -25,12 +25,14 @@ import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderUt
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridColumn;
+import org.uberfire.ext.wires.core.grids.client.util.RenderContextUtilities;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellEditContext;
+import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.impl.BaseGridRendererHelper;
 
-public abstract class DMNGridColumn<G extends GridWidget, T> extends BaseGridColumn<T> {
+public abstract class DMNGridColumn<G extends GridWidget, T> extends BaseGridColumn<T> implements HasDOMElementResources {
 
     public static final double DEFAULT_WIDTH = 100.0;
 
@@ -87,10 +89,21 @@ public abstract class DMNGridColumn<G extends GridWidget, T> extends BaseGridCol
         final double columnXCoordinate = rendererHelper.getColumnOffset(this) + this.getWidth() / 2;
         final BaseGridRendererHelper.ColumnInformation ci = rendererHelper.getColumnInformation(columnXCoordinate);
         final EditableHeaderMetaData headerMetaData = (EditableHeaderMetaData) this.getHeaderMetaData().get(uiHeaderRowIndex);
-        final GridBodyCellEditContext context = EditableHeaderUtilities.makeRenderContext(gridWidget,
-                                                                                          ri,
-                                                                                          ci,
-                                                                                          uiHeaderRowIndex);
+        final GridBodyCellEditContext context = RenderContextUtilities.makeRenderContext(gridWidget,
+                                                                                         ri,
+                                                                                         ci,
+                                                                                         uiHeaderRowIndex);
         headerMetaData.edit(context);
+    }
+
+    @Override
+    public void destroyResources() {
+        if (gridWidget instanceof BaseExpressionGrid) {
+            ((BaseExpressionGrid) gridWidget).destroyResources();
+        }
+        getHeaderMetaData().stream()
+                .filter(md -> md instanceof HasDOMElementResources)
+                .map(md -> (HasDOMElementResources) md)
+                .forEach(HasDOMElementResources::destroyResources);
     }
 }

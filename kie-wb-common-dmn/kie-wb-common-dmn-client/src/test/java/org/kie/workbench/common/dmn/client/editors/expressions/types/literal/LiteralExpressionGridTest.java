@@ -46,6 +46,8 @@ import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextArea
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetCellSelectorMouseEventHandler;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -59,27 +61,30 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.Bounds;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
-import org.uberfire.ext.wires.core.grids.client.model.GridData.SelectedCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -95,6 +100,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class LiteralExpressionGridTest {
+
+    private static final int PARENT_ROW_INDEX = 0;
+
+    private static final int PARENT_COLUMN_INDEX = 1;
 
     private static final String EXPRESSION_TEXT = "expression";
 
@@ -136,6 +145,15 @@ public class LiteralExpressionGridTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
+
+    @Mock
     private Index index;
 
     @Mock
@@ -167,6 +185,9 @@ public class LiteralExpressionGridTest {
 
     @Mock
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
+
+    @Mock
+    private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
 
     @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
@@ -205,6 +226,7 @@ public class LiteralExpressionGridTest {
                                                            sessionCommandManager,
                                                            canvasCommandFactory,
                                                            editorSelectedEvent,
+                                                           refreshFormPropertiesEvent,
                                                            domainObjectSelectionEvent,
                                                            listSelector,
                                                            translationService,
@@ -218,8 +240,12 @@ public class LiteralExpressionGridTest {
 
         doReturn(canvasHandler).when(session).getCanvasHandler();
         doReturn(mock(Bounds.class)).when(gridLayer).getVisibleBounds();
-
         when(gridWidget.getModel()).thenReturn(new BaseGridData(false));
+
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
+
         when(canvasHandler.getGraphIndex()).thenReturn(index);
         when(index.get(anyString())).thenReturn(element);
         when(element.getContent()).thenReturn(mock(Definition.class));
@@ -229,8 +255,8 @@ public class LiteralExpressionGridTest {
                                                       any())).thenReturn(mock(UpdateElementPropertyCommand.class));
         when(parentGridWidget.getModel()).thenReturn(parentGridUiModel);
         when(parent.getGridWidget()).thenReturn(parentGridWidget);
-        when(parent.getRowIndex()).thenReturn(0);
-        when(parent.getColumnIndex()).thenReturn(1);
+        when(parent.getRowIndex()).thenReturn(PARENT_ROW_INDEX);
+        when(parent.getColumnIndex()).thenReturn(PARENT_COLUMN_INDEX);
 
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).getTranslation(anyString());
     }
@@ -245,12 +271,45 @@ public class LiteralExpressionGridTest {
     }
 
     @Test
-    public void testSelectFirstCell() {
+    public void testMouseClickEventHandlers() {
+        setupGrid(0);
+
+        final List<NodeMouseEventHandler> handlers = grid.getNodeMouseClickEventHandlers(selectionManager);
+        assertThat(handlers).hasSize(1);
+        assertThat(handlers.get(0)).isInstanceOf(DelegatingGridWidgetCellSelectorMouseEventHandler.class);
+    }
+
+    @Test
+    public void testMouseDoubleClickEventHandlers() {
+        setupGrid(0);
+
+        final List<NodeMouseEventHandler> handlers = grid.getNodeMouseDoubleClickEventHandlers(selectionManager, gridLayer);
+        assertThat(handlers).hasSize(1);
+        assertThat(handlers.get(0)).isInstanceOf(DelegatingGridWidgetEditCellMouseEventHandler.class);
+    }
+
+    @Test
+    public void testSelectFirstCellWhenNested() {
+        setupGrid(1);
+
+        grid.selectFirstCell();
+
+        assertThat(grid.getModel().getSelectedCells().size()).isEqualTo(0);
+        verify(parentGridUiModel).selectCell(eq(PARENT_ROW_INDEX), eq(PARENT_COLUMN_INDEX));
+        verify(gridLayer).select(parentGridWidget);
+
+        verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
+        final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(expression.get());
+    }
+
+    @Test
+    public void testSelectFirstCellWhenNotNested() {
         setupGrid(0);
 
         grid.selectFirstCell();
 
-        final List<SelectedCell> selectedCells = grid.getModel().getSelectedCells();
+        final List<GridData.SelectedCell> selectedCells = grid.getModel().getSelectedCells();
         assertThat(selectedCells.size()).isEqualTo(1);
         assertThat(selectedCells.get(0).getRowIndex()).isEqualTo(0);
         assertThat(selectedCells.get(0).getColumnIndex()).isEqualTo(0);
@@ -275,20 +334,6 @@ public class LiteralExpressionGridTest {
         assertThat(uiModel.getRowCount()).isEqualTo(1);
 
         assertThat(uiModel.getCell(0, 0).getValue().getValue()).isEqualTo(EXPRESSION_TEXT);
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNested() {
-        setupGrid(1);
-
-        assertTrue(grid.isHeaderHidden());
-    }
-
-    @Test
-    public void testHeaderVisibilityWhenNotNested() {
-        setupGrid(0);
-
-        assertFalse(grid.isHeaderHidden());
     }
 
     @Test

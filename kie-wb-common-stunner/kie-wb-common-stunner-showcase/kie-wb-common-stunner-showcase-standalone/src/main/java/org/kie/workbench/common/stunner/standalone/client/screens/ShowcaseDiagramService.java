@@ -19,10 +19,11 @@ package org.kie.workbench.common.stunner.standalone.client.screens;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.client.widgets.presenters.diagram.impl.DiagramLoader;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.CanvasExport;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.Layer;
+import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExport;
+import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasURLExportSettings;
 import org.kie.workbench.common.stunner.core.client.service.ClientDiagramServiceImpl;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
@@ -38,17 +39,15 @@ import org.uberfire.backend.vfs.Path;
 @ApplicationScoped
 public class ShowcaseDiagramService {
 
+    private final DiagramLoader diagramLoader;
     private final ClientDiagramServiceImpl clientDiagramServices;
     private final CanvasExport<AbstractCanvasHandler> canvasExport;
 
-    protected ShowcaseDiagramService() {
-        this(null,
-             null);
-    }
-
     @Inject
-    public ShowcaseDiagramService(final ClientDiagramServiceImpl clientDiagramServices,
+    public ShowcaseDiagramService(final DiagramLoader diagramLoader,
+                                  final ClientDiagramServiceImpl clientDiagramServices,
                                   final CanvasExport<AbstractCanvasHandler> canvasExport) {
+        this.diagramLoader = diagramLoader;
         this.clientDiagramServices = clientDiagramServices;
         this.canvasExport = canvasExport;
     }
@@ -77,18 +76,7 @@ public class ShowcaseDiagramService {
     @SuppressWarnings("unchecked")
     public void loadByPath(final Path path,
                            final ServiceCallback<Diagram> callback) {
-        clientDiagramServices.getByPath(path,
-                                        new ServiceCallback<Diagram<Graph, Metadata>>() {
-                                            @Override
-                                            public void onSuccess(final Diagram<Graph, Metadata> diagram) {
-                                                callback.onSuccess(diagram);
-                                            }
-
-                                            @Override
-                                            public void onError(final ClientRuntimeError error) {
-                                                callback.onError(error);
-                                            }
-                                        });
+        diagramLoader.loadByPath(path, callback);
     }
 
     @SuppressWarnings("unchecked")
@@ -113,6 +101,6 @@ public class ShowcaseDiagramService {
 
     private String toImageData(final EditorSession session) {
         return canvasExport.toImageData(session.getCanvasHandler(),
-                                        Layer.URLDataType.JPG);
+                                        CanvasURLExportSettings.build(CanvasExport.URLDataType.JPG));
     }
 }

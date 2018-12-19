@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.literal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +31,13 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
-import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseDelegatingExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetCellSelectorMouseEventHandler;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
@@ -48,12 +51,13 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
+import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
+import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
 
-public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression, DMNGridData, LiteralExpressionUIModelMapper> implements HasListSelectorControl {
-
-    public static final double PADDING = 0.0;
+public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralExpression, DMNGridData, LiteralExpressionUIModelMapper> implements HasListSelectorControl {
 
     private final NameAndDataTypePopoverView.Presenter headerEditor;
 
@@ -70,6 +74,7 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
                                  final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                  final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                  final Event<ExpressionEditorChanged> editorSelectedEvent,
+                                 final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                  final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                  final CellEditorControlsView.Presenter cellEditorControls,
                                  final ListSelectorView.Presenter listSelector,
@@ -84,12 +89,13 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
               gridPanel,
               gridLayer,
               gridData,
-              new LiteralExpressionGridRenderer(nesting > 0),
+              new BaseExpressionGridRenderer(gridData),
               definitionUtils,
               sessionManager,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
+              refreshFormPropertiesEvent,
               domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
@@ -100,6 +106,20 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
         super.doInitialisation();
+    }
+
+    @Override
+    protected List<NodeMouseEventHandler> getNodeMouseClickEventHandlers(final GridSelectionManager selectionManager) {
+        return Collections.singletonList(new DelegatingGridWidgetCellSelectorMouseEventHandler(selectionManager,
+                                                                                               this::getParentInformation,
+                                                                                               () -> nesting));
+    }
+
+    @Override
+    protected List<NodeMouseEventHandler> getNodeMouseDoubleClickEventHandlers(final GridSelectionManager selectionManager,
+                                                                               final GridPinnedModeManager pinnedModeManager) {
+        return Collections.singletonList(new DelegatingGridWidgetEditCellMouseEventHandler(this::getParentInformation,
+                                                                                           () -> nesting));
     }
 
     @Override
@@ -117,15 +137,20 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
 
     @Override
     protected void initialiseUiColumns() {
-        final GridColumn literalExpressionColumn = new LiteralExpressionColumn(new LiteralExpressionColumnHeaderMetaData(hasExpression,
-                                                                                                                         expression,
-                                                                                                                         hasName,
-                                                                                                                         clearDisplayNameConsumer(true),
-                                                                                                                         setDisplayNameConsumer(true),
-                                                                                                                         setTypeRefConsumer(),
-                                                                                                                         cellEditorControls,
-                                                                                                                         headerEditor,
-                                                                                                                         Optional.of(translationService.getTranslation(DMNEditorConstants.LiteralExpression_EditExpression))),
+        final List<GridColumn.HeaderMetaData> headerMetaData = new ArrayList<>();
+        if (nesting == 0) {
+            headerMetaData.add(new LiteralExpressionColumnHeaderMetaData(hasExpression,
+                                                                         expression,
+                                                                         hasName,
+                                                                         clearDisplayNameConsumer(true),
+                                                                         setDisplayNameConsumer(true),
+                                                                         setTypeRefConsumer(),
+                                                                         cellEditorControls,
+                                                                         headerEditor,
+                                                                         Optional.of(translationService.getTranslation(DMNEditorConstants.LiteralExpression_EditExpression))));
+        }
+
+        final GridColumn literalExpressionColumn = new LiteralExpressionColumn(headerMetaData,
                                                                                getBodyTextAreaFactory(),
                                                                                this);
 
@@ -142,56 +167,20 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
     }
 
     @Override
-    protected boolean isHeaderHidden() {
-        return nesting > 0;
-    }
-
-    @Override
     public double getPadding() {
         return findParentGrid().isPresent() ? PADDING : DEFAULT_PADDING;
     }
 
     @Override
     @SuppressWarnings("unused")
-    public List<ListSelectorItem> getItems(final int uiRowIndex,
-                                           final int uiColumnIndex) {
-        final List<ListSelectorItem> items = new ArrayList<>();
-        final Optional<BaseExpressionGrid> parent = findParentGrid();
-        parent.ifPresent(grid -> {
-            if (grid instanceof HasListSelectorControl) {
-                final int parentUiRowIndex = getParentInformation().getRowIndex();
-                final int parentUiColumnIndex = getParentInformation().getColumnIndex();
-                final GridCell<?> parentCell = getParentInformation().getGridWidget().getModel().getCell(parentUiRowIndex, parentUiColumnIndex);
-
-                if (parentCell instanceof HasCellEditorControls) {
-                    final List<ListSelectorItem> parentItems = ((HasListSelectorControl) grid).getItems(parentUiRowIndex,
-                                                                                                        parentUiColumnIndex);
-                    if (!parentItems.isEmpty()) {
-                        items.addAll(parentItems);
-                    }
-                }
-            }
-        });
-
-        return items;
-    }
-
-    @Override
-    public void onItemSelected(final ListSelectorItem item) {
-        final ListSelectorTextItem li = (ListSelectorTextItem) item;
-        li.getCommand().execute();
-    }
-
-    @Override
-    @SuppressWarnings("unused")
-    protected void doAfterSelectionChange(final int uiRowIndex,
-                                          final int uiColumnIndex) {
+    public void doAfterSelectionChange(final int uiRowIndex,
+                                       final int uiColumnIndex) {
         getExpression().ifPresent(this::fireDomainObjectSelectionEvent);
     }
 
     @Override
-    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
-                                                final int uiHeaderColumnIndex) {
+    public void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                             final int uiHeaderColumnIndex) {
         if (uiHeaderRowIndex == 0 && uiHeaderColumnIndex == 0) {
             final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
             if (base instanceof DomainObject) {

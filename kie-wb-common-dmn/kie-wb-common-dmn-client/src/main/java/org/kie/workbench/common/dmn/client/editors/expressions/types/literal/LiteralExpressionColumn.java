@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.literal;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.kie.soup.commons.validation.PortablePreconditions;
@@ -26,14 +27,13 @@ import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
-import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 import org.uberfire.ext.wires.core.grids.client.widget.dom.single.HasSingletonDOMElementResource;
 
 public class LiteralExpressionColumn extends DMNSimpleGridColumn<LiteralExpressionGrid, String> implements HasSingletonDOMElementResource {
 
     private final TextAreaSingletonDOMElementFactory factory;
 
-    public LiteralExpressionColumn(final HeaderMetaData headerMetaData,
+    public LiteralExpressionColumn(final List<HeaderMetaData> headerMetaData,
                                    final TextAreaSingletonDOMElementFactory factory,
                                    final LiteralExpressionGrid gridWidget) {
         super(headerMetaData,
@@ -66,11 +66,8 @@ public class LiteralExpressionColumn extends DMNSimpleGridColumn<LiteralExpressi
 
     @Override
     public void destroyResources() {
+        super.destroyResources();
         factory.destroyResources();
-        getHeaderMetaData().stream()
-                .filter(md -> md instanceof HasDOMElementResources)
-                .map(md -> (HasDOMElementResources) md)
-                .forEach(HasDOMElementResources::destroyResources);
     }
 
     @Override

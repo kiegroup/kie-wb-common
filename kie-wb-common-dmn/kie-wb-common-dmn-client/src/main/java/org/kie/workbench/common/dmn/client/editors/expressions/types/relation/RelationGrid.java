@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.util.SelectionUti
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
@@ -57,6 +58,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 
@@ -79,6 +81,7 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
                         final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                         final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                         final Event<ExpressionEditorChanged> editorSelectedEvent,
+                        final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                         final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                         final CellEditorControlsView.Presenter cellEditorControls,
                         final ListSelectorView.Presenter listSelector,
@@ -93,12 +96,13 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
               gridPanel,
               gridLayer,
               gridData,
-              new RelationGridRenderer(),
+              new BaseExpressionGridRenderer(gridData),
               definitionUtils,
               sessionManager,
               sessionCommandManager,
               canvasCommandFactory,
               editorSelectedEvent,
+              refreshFormPropertiesEvent,
               domainObjectSelectionEvent,
               cellEditorControls,
               listSelector,
@@ -164,11 +168,6 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
                 }
             });
         });
-    }
-
-    @Override
-    protected boolean isHeaderHidden() {
-        return false;
     }
 
     @Override
@@ -284,8 +283,8 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
     }
 
     @Override
-    protected void doAfterSelectionChange(final int uiRowIndex,
-                                          final int uiColumnIndex) {
+    public void doAfterSelectionChange(final int uiRowIndex,
+                                       final int uiColumnIndex) {
         if (hasAnyHeaderCellSelected() || hasMultipleCellsSelected()) {
             super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
             return;
@@ -308,8 +307,8 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
     }
 
     @Override
-    protected void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
-                                                final int uiHeaderColumnIndex) {
+    public void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                             final int uiHeaderColumnIndex) {
         if (expression.isPresent()) {
             final Relation relation = expression.get();
             final RelationUIModelMapperHelper.RelationSection section = RelationUIModelMapperHelper.getSection(relation, uiHeaderColumnIndex);
