@@ -109,10 +109,24 @@ public class WiresLayerTest {
         WiresDockingControl dockingControl = mock(WiresDockingControl.class);
         when(control.getDockingControl()).thenReturn(dockingControl);
         when(shape.getControl()).thenReturn(control);
+        Point2D location = new Point2D(1, 1);
+        when(dockingControl.getCandidateLocation()).thenReturn(location);
         WiresShape parent = mock(WiresShape.class);
         tested.dock(parent, shape);
         verify(dockingControl, times(1)).dock(eq(parent));
-        verify(dockingControl, never()).getCandidateLocation();
+        verify(shape, times(1)).setLocation(eq(location));
+    }
+
+    @Test
+    public void testDockButNoContext() {
+        WiresShapeControl control = mock(WiresShapeControl.class);
+        WiresDockingControl dockingControl = mock(WiresDockingControl.class);
+        when(control.getDockingControl()).thenReturn(dockingControl);
+        when(shape.getControl()).thenReturn(control);
+        when(dockingControl.getCandidateLocation()).thenReturn(null);
+        WiresShape parent = mock(WiresShape.class);
+        tested.dock(parent, shape);
+        verify(dockingControl, times(1)).dock(eq(parent));
         verify(shape, never()).setLocation(any(Point2D.class));
     }
 
