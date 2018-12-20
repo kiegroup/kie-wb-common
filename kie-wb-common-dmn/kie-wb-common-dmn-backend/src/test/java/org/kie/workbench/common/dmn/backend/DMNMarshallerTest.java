@@ -134,6 +134,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -534,6 +535,45 @@ public class DMNMarshallerTest {
     }
 
     @Test
+    public void test_decisionservice() throws IOException {
+        final DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                                                  applicationFactoryManager);
+
+        @SuppressWarnings("unchecked")
+        final Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream("/DROOLS-3372.dmn"));
+
+        Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
+        Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
+        Node<?, ?> nodeDecisionPrefix = g.getNode("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a");
+        
+        moveNode(nodeDecisionPostfix, 0, -280);
+        makeNodeChildOf(nodeDecisionPostfix, nodeDS);
+
+        // round trip to Stunner DMN Graph back to DMN XML
+        DiagramImpl diagram = new DiagramImpl("", null);
+        diagram.setGraph(g);
+
+        String mString = m.marshall(diagram);
+        LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+    }
+
+    private void makeNodeChildOf(Node nodeDecisionPostfix, Node nodeDS) {
+        final String id = UUID.uuid();
+        Edge myEdge = applicationFactoryManager.newElement(id, Child.class).asEdge();
+        myEdge.setSourceNode(nodeDS);
+        myEdge.setTargetNode(nodeDecisionPostfix);
+        nodeDS.getOutEdges().add(myEdge);
+        nodeDecisionPostfix.getInEdges().add(myEdge);
+    }
+
+    private void moveNode(Node<?, ?> nodeDecisionPostfix, int dx, int dy) {
+        View content = (View) nodeDecisionPostfix.getContent();
+        Bound ul = content.getBounds().getUpperLeft();
+        Bound lr = content.getBounds().getLowerRight();
+        content.setBounds(BoundsImpl.build(ul.getX() + dx, ul.getY() + dy, lr.getX() + dx, lr.getY() + dy));
+    }
+
+    @Test
     public void test_fontsize_stunner() throws IOException {
         roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/test-FontSize-stunner.dmn"),
                                                this::checkFontsize_stunner);
@@ -640,7 +680,7 @@ public class DMNMarshallerTest {
         diagram.setGraph(g);
 
         String mString = m.marshall(diagram);
-        LOG.debug(mString);
+        LOG.info(mString);
 
         // now unmarshal once more, from the marshalled just done above, back again to Stunner DMN Graph to complete check for round-trip
         @SuppressWarnings("unchecked")
