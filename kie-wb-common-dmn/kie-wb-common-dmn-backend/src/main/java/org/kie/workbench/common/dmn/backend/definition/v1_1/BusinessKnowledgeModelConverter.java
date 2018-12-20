@@ -115,7 +115,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
                         iReq.setRequiredAuthority(ri);
                         result.getAuthorityRequirement().add(iReq);
                     } else if (drgElement instanceof DecisionService) {
-                        if (e.getContent() instanceof KnowledgeRequirement) {
+                        if (e.getContent() instanceof View && ((View) e.getContent()).getDefinition() instanceof KnowledgeRequirement) {
                             org.kie.dmn.model.api.KnowledgeRequirement iReq = new org.kie.dmn.model.v1_2.TKnowledgeRequirement();
                             iReq.setId(e.getUUID());
                             org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();

@@ -63,7 +63,6 @@
             </dmndi:DMNEdge>
             <dmndi:DMNEdge id="_45257c6f-145e-4d76-86ae-fe75351d6c69" dmnElementRef="_8b49bd6d-131d-4991-a511-2b5e27127d78">
                 <di:waypoint x="198.25" y="323.99999618530273"/>
-                <di:waypoint x="224.75" y="323.99999618530273"/>
                 <di:waypoint x="253.25" y="323.99999618530273"/>
                 <dmndi:DMNLabel sharedStyle="LS_d4a1a3e8-cccb-4d7a-893f-4d57ad08244e_0"/>
             </dmndi:DMNEdge>
