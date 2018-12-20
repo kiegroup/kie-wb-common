@@ -84,7 +84,9 @@ public class ConnectorDragProxyImpl implements ConnectorDragProxy<AbstractCanvas
                                                           1)
                                              .setFillAlpha(0)
                                              .setStrokeAlpha(0));
-        this.transientShapeMagnets = getWiresManager().getMagnetManager().createMagnets(transientShapeView);
+        final WiresManager wiresManager = getWiresManager();
+        final MagnetManager magnetManager = wiresManager.getMagnetManager();
+        this.transientShapeMagnets = magnetManager.createMagnets(transientShapeView);
 
         // Create the transient connector's shape and view.
         final Edge<View<?>, Node> edge = item.getEdge();
@@ -165,7 +167,7 @@ public class ConnectorDragProxyImpl implements ConnectorDragProxy<AbstractCanvas
         return ((WiresCanvas) getCanvas()).getWiresManager();
     }
 
-    private void deregisterTransientConnector() {
+    void deregisterTransientConnector() {
         if (null != this.connectorShapeView) {
             getWiresManager().deregister(connectorShapeView);
             this.connectorShapeView = null;
