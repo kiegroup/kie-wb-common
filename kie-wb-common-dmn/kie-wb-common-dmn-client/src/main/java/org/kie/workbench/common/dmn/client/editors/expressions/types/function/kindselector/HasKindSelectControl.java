@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.listview.common;
+package org.kie.workbench.common.dmn.client.editors.expressions.types.function.kindselector;
 
-import jsinterop.annotations.JsType;
+import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 
-@JsType(isNative = true)
-public abstract class JQuerySelectPickerEvent {
+public interface HasKindSelectControl {
 
-    public JQuerySelectPickerTarget target;
+    void setFunctionKind(final FunctionDefinition.Kind kind);
 }
