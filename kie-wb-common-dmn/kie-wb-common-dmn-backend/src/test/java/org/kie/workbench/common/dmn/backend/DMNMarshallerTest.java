@@ -93,6 +93,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
@@ -143,6 +144,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
+import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
@@ -535,31 +537,63 @@ public class DMNMarshallerTest {
     }
 
     @Test
-    public void test_decisionservice() throws IOException {
+    public void test_decisionservice_1outputDecision() throws IOException {
         final DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                                   applicationFactoryManager);
-
         @SuppressWarnings("unchecked")
         final Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream("/DROOLS-3372.dmn"));
-
         Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
         Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
         Node<?, ?> nodeDecisionPrefix = g.getNode("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a");
-        
         moveNode(nodeDecisionPostfix, 0, -280);
         makeNodeChildOf(nodeDecisionPostfix, nodeDS);
-
-        // round trip to Stunner DMN Graph back to DMN XML
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
-
         String mString = m.marshall(diagram);
         LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+        roundTripUnmarshalThenMarshalUnmarshal(new ReaderInputStream(new StringReader(mString)),
+                                               this::check_decisionservice_1outputDecision);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private void check_decisionservice_1outputDecision(Graph<?, Node<?, ?>> graph) {
+        Node<?, ?> node = graph.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
+        assertNodeContentDefinitionIs(node, DecisionService.class);
+        DecisionService definition = ((View<DecisionService>) node.getContent()).getDefinition();
+        assertEquals(0, definition.getEncapsulatedDecision().size());
+        assertEquals(0, definition.getInputData().size());
+        assertEquals(1, definition.getOutputDecision().size());
+        assertEquals("_3a69915a-30af-4de3-a07f-6be514f53caa", definition.getOutputDecision().get(0).getHref());
+        assertEquals(1, definition.getInputDecision().size());
+        assertEquals("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a", definition.getInputDecision().get(0).getHref());
+    }
+
+    @Test
+    public void test_decisionservice_1outputDecision1encapsulatedDecision() throws IOException {
+        final DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                                                  applicationFactoryManager);
+        @SuppressWarnings("unchecked")
+        final Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream("/DROOLS-3372.dmn"));
+        Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
+        Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
+        Node<?, ?> nodeDecisionPrefix = g.getNode("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a");
+        moveNode(nodeDecisionPostfix, 0, -280);
+        makeNodeChildOf(nodeDecisionPostfix, nodeDS);
+        moveNode(nodeDecisionPrefix, 0, -170);
+        makeNodeChildOf(nodeDecisionPrefix, nodeDS);
+        DiagramImpl diagram = new DiagramImpl("", null);
+        diagram.setGraph(g);
+        String mString = m.marshall(diagram);
+        LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+        //        roundTripUnmarshalThenMarshalUnmarshal(new ReaderInputStream(new StringReader(mString)),
+        //                                               this::check_decisionservice_1outputDecision);
+
     }
 
     private void makeNodeChildOf(Node nodeDecisionPostfix, Node nodeDS) {
-        final String id = UUID.uuid();
-        Edge myEdge = applicationFactoryManager.newElement(id, Child.class).asEdge();
+        Edge myEdge = new EdgeImpl<>(UUID.uuid());
+        myEdge.setContent(new Child());
         myEdge.setSourceNode(nodeDS);
         myEdge.setTargetNode(nodeDecisionPostfix);
         nodeDS.getOutEdges().add(myEdge);
