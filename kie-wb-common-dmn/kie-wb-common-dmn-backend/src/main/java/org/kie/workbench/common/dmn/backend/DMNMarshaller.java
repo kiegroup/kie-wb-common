@@ -38,6 +38,7 @@ import org.jboss.errai.marshalling.server.ServerMarshalling;
 import org.kie.dmn.backend.marshalling.v1x.DMNMarshallerFactory;
 import org.kie.dmn.model.api.dmndi.Bounds;
 import org.kie.dmn.model.api.dmndi.Color;
+import org.kie.dmn.model.api.dmndi.DMNDecisionServiceDividerLine;
 import org.kie.dmn.model.api.dmndi.DMNEdge;
 import org.kie.dmn.model.api.dmndi.DMNShape;
 import org.kie.dmn.model.api.dmndi.DMNStyle;
@@ -691,6 +692,15 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
+        } else if (v.getDefinition() instanceof DecisionService) {
+            DecisionService d = (DecisionService) v.getDefinition();
+            applyBounds(d.getDimensionsSet(), bounds);
+            applyBackgroundStyles(d.getBackgroundSet(), result);
+            applyFontStyle(d.getFontSet(), result);
+            DMNDecisionServiceDividerLine dl = new org.kie.dmn.model.v1_2.dmndi.DMNDecisionServiceDividerLine();
+            org.kie.dmn.model.api.dmndi.Point leftPoint = new org.kie.dmn.model.v1_2.dmndi.Point();
+            //            leftPoint.setX(xOfShape);
+            //            leftPoint.setY(point2d.getY());
         }
         return result;
     }
