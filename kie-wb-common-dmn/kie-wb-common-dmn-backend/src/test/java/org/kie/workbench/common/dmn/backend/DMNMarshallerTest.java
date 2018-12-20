@@ -554,7 +554,7 @@ public class DMNMarshallerTest {
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
         String mString = m.marshall(diagram);
-        LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+        LOG.debug("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
         roundTripUnmarshalThenMarshalUnmarshal(new ReaderInputStream(new StringReader(mString)),
                                                this::check_decisionservice_1outputDecision);
     }
@@ -588,7 +588,7 @@ public class DMNMarshallerTest {
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
         String mString = m.marshall(diagram);
-        LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+        LOG.debug("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
         roundTripUnmarshalThenMarshalUnmarshal(new ReaderInputStream(new StringReader(mString)),
                                                this::check_decisionservice_1outputDecision1encapsulatedDecision);
     }
@@ -623,7 +623,7 @@ public class DMNMarshallerTest {
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
         String mString = m.marshall(diagram);
-        LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+        LOG.debug("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
         roundTripUnmarshalThenMarshalUnmarshal(new ReaderInputStream(new StringReader(mString)),
                                                this::check_decisionservice2_1outputDecision1encapsulatedDecision);
     }
@@ -671,7 +671,7 @@ public class DMNMarshallerTest {
         removeNodeChildOf(nodeHardcoded2, nodeDS);
         diagram.setGraph(g);
         String mString = m.marshall(diagram);
-        LOG.info("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
+        LOG.debug("MARSHALLED ROUNDTRIP RESULTING xml:\n{}\n", mString);
         roundTripUnmarshalThenMarshalUnmarshal(new ReaderInputStream(new StringReader(mString)),
                                                this::check_decisionservice2_remove_1outputDecision1encapsulatedDecision);
     }
@@ -841,7 +841,7 @@ public class DMNMarshallerTest {
         diagram.setGraph(g);
 
         String mString = m.marshall(diagram);
-        LOG.info(mString);
+        LOG.debug(mString);
 
         // now unmarshal once more, from the marshalled just done above, back again to Stunner DMN Graph to complete check for round-trip
         @SuppressWarnings("unchecked")
