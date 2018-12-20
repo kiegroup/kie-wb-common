@@ -17,7 +17,6 @@ package org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.prope
 
 import org.eclipse.bpmn2.AdHocSubProcess;
 import org.eclipse.bpmn2.CallActivity;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.AdHocSubProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 
 public class CaseManagementPropertyWriterFactory extends PropertyWriterFactory {
@@ -28,7 +27,7 @@ public class CaseManagementPropertyWriterFactory extends PropertyWriterFactory {
     }
 
     @Override
-    public AdHocSubProcessPropertyWriter of(AdHocSubProcess e) {
+    public CaseManagementAdHocSubProcessPropertyWriter of(AdHocSubProcess e) {
         return new CaseManagementAdHocSubProcessPropertyWriter(e, variableScope);
     }
 }

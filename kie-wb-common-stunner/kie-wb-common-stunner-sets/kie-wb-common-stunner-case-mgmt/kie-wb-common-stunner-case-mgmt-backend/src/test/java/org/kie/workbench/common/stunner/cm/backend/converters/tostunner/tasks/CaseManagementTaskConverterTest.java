@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes;
+package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.tasks;
 
 import java.util.Collections;
 
-import org.eclipse.bpmn2.AdHocOrdering;
-import org.eclipse.bpmn2.AdHocSubProcess;
 import org.eclipse.bpmn2.Definitions;
-import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.CaseManagementConverterFactory;
-import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementAdHocSubProcessPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.UserTaskPropertyReader;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementPropertyReaderFactory;
-import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.cm.definition.property.task.AdHocSubprocessTaskExecutionSet;
-import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.cm.definition.UserTask;
+import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -48,11 +43,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CaseManagementSubProcessConverterTest {
+public class CaseManagementTaskConverterTest {
 
     private DefinitionResolver definitionResolver;
 
-    private CaseManagementSubProcessConverter tested;
+    private CaseManagementTaskConverter tested;
 
     @Before
     public void setUp() throws Exception {
@@ -65,39 +60,28 @@ public class CaseManagementSubProcessConverterTest {
         definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
 
         Node node = new NodeImpl("");
-        View<AdHocSubprocess> content = new ViewImpl<>(new AdHocSubprocess(), BoundsImpl.build());
+        View<UserTask> content = new ViewImpl<>(new UserTask(), BoundsImpl.build());
         node.setContent(content);
 
         FactoryManager factoryManager = mock(FactoryManager.class);
-        when(factoryManager.newElement(anyString(), eq(AdHocSubprocess.class))).thenReturn(node);
+        when(factoryManager.newElement(anyString(), eq(UserTask.class))).thenReturn(node);
 
         TypedFactoryManager typedFactoryManager = new TypedFactoryManager(factoryManager);
 
-        tested = new CaseManagementSubProcessConverter(typedFactoryManager,
-                                                       new CaseManagementPropertyReaderFactory(definitionResolver),
-                                                       definitionResolver,
-                                                       new CaseManagementConverterFactory(definitionResolver, typedFactoryManager));
+        tested = new CaseManagementTaskConverter(typedFactoryManager,
+                                                 new CaseManagementPropertyReaderFactory(definitionResolver));
     }
 
     @Test
     public void testCreateNode() throws Exception {
-        assertTrue(AdHocSubprocess.class.isInstance(tested.createNode("id").getContent().getDefinition()));
+        assertTrue(UserTask.class.isInstance(tested.createNode("id").getContent().getDefinition()));
     }
 
     @Test
-    public void testCreateProcessData() throws Exception {
-        assertTrue(ProcessData.class.isInstance(tested.createProcessData("id")));
-    }
-
-    @Test
-    public void testCreateAdHocSubprocessTaskExecutionSet() throws Exception {
-        AdHocSubProcess adHocSubProcess = mock(AdHocSubProcess.class);
-        when(adHocSubProcess.getCompletionCondition()).thenReturn(mock(FormalExpression.class));
-        when(adHocSubProcess.getOrdering()).thenReturn(AdHocOrdering.SEQUENTIAL);
-
-        assertTrue(AdHocSubprocessTaskExecutionSet.class.isInstance(tested.createAdHocSubprocessTaskExecutionSet(
-                new CaseManagementAdHocSubProcessPropertyReader(adHocSubProcess,
-                                                                definitionResolver.getPlane(),
-                                                                definitionResolver))));
+    public void testCreateUserTaskExecutionSet() throws Exception {
+        assertTrue(UserTaskExecutionSet.class.isInstance(tested.createUserTaskExecutionSet(
+                new UserTaskPropertyReader(bpmn2.createUserTask(),
+                                           definitionResolver.getPlane(),
+                                           definitionResolver))));
     }
 }

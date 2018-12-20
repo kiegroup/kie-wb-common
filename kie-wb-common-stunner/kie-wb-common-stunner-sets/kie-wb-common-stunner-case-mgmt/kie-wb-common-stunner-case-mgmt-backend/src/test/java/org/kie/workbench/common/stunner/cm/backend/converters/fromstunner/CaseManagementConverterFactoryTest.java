@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.activities.CaseManagementReusableSubprocessConverter;
+import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.processes.CaseManagementSubProcessConverter;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
@@ -42,6 +43,11 @@ public class CaseManagementConverterFactoryTest {
 
     @Test
     public void testReusableSubprocessConverter() throws Exception {
-        assertTrue(tested.reusableSubprocessConverter() instanceof CaseManagementReusableSubprocessConverter);
+        assertTrue(CaseManagementReusableSubprocessConverter.class.isInstance(tested.reusableSubprocessConverter()));
+    }
+
+    @Test
+    public void testSubProcessConverter() throws Exception {
+        assertTrue(CaseManagementSubProcessConverter.class.isInstance(tested.subProcessConverter()));
     }
 }

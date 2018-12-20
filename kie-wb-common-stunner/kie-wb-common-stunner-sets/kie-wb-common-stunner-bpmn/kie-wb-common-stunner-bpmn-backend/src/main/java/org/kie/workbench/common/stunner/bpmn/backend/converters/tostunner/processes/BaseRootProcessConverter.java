@@ -41,7 +41,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 /**
  * Convert the root Process with all its children to a BPMNDiagram
  */
-public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P>, S extends BaseDiagramSet, P extends BaseProcessData> {
+public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P>,
+        S extends BaseDiagramSet, P extends BaseProcessData> {
 
     final ProcessConverterDelegate delegate;
 

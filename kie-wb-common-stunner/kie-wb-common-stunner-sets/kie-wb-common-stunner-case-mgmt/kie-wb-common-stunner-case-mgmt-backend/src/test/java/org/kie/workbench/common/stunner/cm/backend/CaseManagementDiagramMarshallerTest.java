@@ -159,7 +159,7 @@ public class CaseManagementDiagramMarshallerTest {
     public void testCreateBpmn2Marshaller() throws Exception {
         final Bpmn2Marshaller bpmn2Marshaller = this.marshaller.createBpmn2Marshaller(mock(DefinitionManager.class),
                                                                                       mock(OryxManager.class));
-        assertTrue(bpmn2Marshaller instanceof CaseManagementMarshaller);
+        assertTrue(CaseManagementMarshaller.class.isInstance(bpmn2Marshaller));
     }
 
     @Test
@@ -176,6 +176,6 @@ public class CaseManagementDiagramMarshallerTest {
                                                                                             Object.class,
                                                                                             CaseManagementDiagram.class);
 
-        assertTrue(bpmn2UnMarshaller instanceof CaseManagementUnMarshaller);
+        assertTrue(CaseManagementUnMarshaller.class.isInstance(bpmn2UnMarshaller));
     }
 }

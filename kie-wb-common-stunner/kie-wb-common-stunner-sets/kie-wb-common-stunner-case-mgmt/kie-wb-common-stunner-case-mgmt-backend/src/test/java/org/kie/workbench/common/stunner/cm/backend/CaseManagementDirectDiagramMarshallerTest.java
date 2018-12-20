@@ -1210,34 +1210,34 @@ public class CaseManagementDirectDiagramMarshallerTest {
             Node<View<AdHocSubprocess>, Edge> stage1 = root.getOutEdges().get(0).getTargetNode();
             assertEquals(1, stage1.getInEdges().size());
             assertEquals(2, stage1.getOutEdges().size());
-            assertTrue(stage1.getContent().getDefinition() instanceof AdHocSubprocess);
+            assertTrue(AdHocSubprocess.class.isInstance(stage1.getContent().getDefinition()));
 
             Node<View<UserTask>, Edge> task1 = stage1.getOutEdges().get(0).getTargetNode();
             assertEquals(1, task1.getInEdges().size());
             assertEquals(0, task1.getOutEdges().size());
-            assertTrue(task1.getContent().getDefinition() instanceof UserTask);
+            assertTrue(UserTask.class.isInstance(task1.getContent().getDefinition()));
 
             Node<View<CaseReusableSubprocess>, Edge> case1 = stage1.getOutEdges().get(1).getTargetNode();
             assertEquals(1, case1.getInEdges().size());
             assertEquals(0, case1.getOutEdges().size());
-            assertTrue(case1.getContent().getDefinition() instanceof CaseReusableSubprocess);
+            assertTrue(CaseReusableSubprocess.class.isInstance(case1.getContent().getDefinition()));
             assertTrue(case1.getContent().getDefinition().getExecutionSet().getIsCase().getValue());
 
             Node<View<AdHocSubprocess>, Edge> stage2 = root.getOutEdges().get(1).getTargetNode();
             assertEquals(1, stage2.getInEdges().size());
             assertEquals(2, stage2.getOutEdges().size());
-            assertTrue(stage2.getContent().getDefinition() instanceof AdHocSubprocess);
+            assertTrue(AdHocSubprocess.class.isInstance(stage2.getContent().getDefinition()));
 
             Node<View<CaseReusableSubprocess>, Edge> case2 = stage2.getOutEdges().get(0).getTargetNode();
             assertEquals(1, case2.getInEdges().size());
             assertEquals(0, case2.getOutEdges().size());
-            assertTrue(case2.getContent().getDefinition() instanceof CaseReusableSubprocess);
+            assertTrue(CaseReusableSubprocess.class.isInstance(case2.getContent().getDefinition()));
             assertTrue(case2.getContent().getDefinition().getExecutionSet().getIsCase().getValue());
 
             Node<View<ProcessReusableSubprocess>, Edge> process2 = stage2.getOutEdges().get(1).getTargetNode();
             assertEquals(1, process2.getInEdges().size());
             assertEquals(0, process2.getOutEdges().size());
-            assertTrue(process2.getContent().getDefinition() instanceof ProcessReusableSubprocess);
+            assertTrue(ProcessReusableSubprocess.class.isInstance(process2.getContent().getDefinition()));
             assertFalse(process2.getContent().getDefinition().getExecutionSet().getIsCase().getValue());
         }
     }
@@ -1502,8 +1502,8 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
     @Test
     public void testCreateFromStunnerConverterFactory() throws Exception {
-        assertTrue(tested.createFromStunnerConverterFactory(new GraphImpl("x", new GraphNodeStoreImpl()), new CaseManagementPropertyWriterFactory())
-                           instanceof org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.CaseManagementConverterFactory);
+        assertTrue(org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.CaseManagementConverterFactory.class.isInstance(
+                tested.createFromStunnerConverterFactory(new GraphImpl("x", new GraphNodeStoreImpl()), new CaseManagementPropertyWriterFactory())));
     }
 
     @Test
@@ -1520,13 +1520,13 @@ public class CaseManagementDirectDiagramMarshallerTest {
 
         TypedFactoryManager typedFactoryManager = new TypedFactoryManager(factoryManager);
 
-        assertTrue(tested.createToStunnerConverterFactory(definitionResolver, typedFactoryManager)
-                           instanceof org.kie.workbench.common.stunner.cm.backend.converters.tostunner.CaseManagementConverterFactory);
+        assertTrue(org.kie.workbench.common.stunner.cm.backend.converters.tostunner.CaseManagementConverterFactory.class.isInstance(
+                tested.createToStunnerConverterFactory(definitionResolver, typedFactoryManager)));
     }
 
     @Test
     public void testCreatePropertyWriterFactory() throws Exception {
-        assertTrue(tested.createPropertyWriterFactory() instanceof CaseManagementPropertyWriterFactory);
+        assertTrue(CaseManagementPropertyWriterFactory.class.isInstance(tested.createPropertyWriterFactory()));
     }
 
     @Test

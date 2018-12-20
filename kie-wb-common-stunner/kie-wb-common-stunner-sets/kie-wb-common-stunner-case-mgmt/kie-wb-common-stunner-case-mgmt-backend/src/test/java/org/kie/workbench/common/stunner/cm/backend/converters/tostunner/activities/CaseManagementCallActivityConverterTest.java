@@ -117,7 +117,7 @@ public class CaseManagementCallActivityConverterTest {
         BaseReusableSubprocessTaskExecutionSet result =
                 tested.createReusableSubprocessTaskExecutionSet(callActivity, propertyReader);
 
-        assertTrue(result instanceof CaseReusableSubprocessTaskExecutionSet);
+        assertTrue(CaseReusableSubprocessTaskExecutionSet.class.isInstance(result));
         assertTrue(((CaseReusableSubprocessTaskExecutionSet) result).getIsCase().getValue());
     }
 
@@ -136,7 +136,7 @@ public class CaseManagementCallActivityConverterTest {
         BaseReusableSubprocessTaskExecutionSet result =
                 tested.createReusableSubprocessTaskExecutionSet(callActivity, propertyReader);
 
-        assertTrue(result instanceof ProcessReusableSubprocessTaskExecutionSet);
+        assertTrue(ProcessReusableSubprocessTaskExecutionSet.class.isInstance(result));
         assertFalse(((ProcessReusableSubprocessTaskExecutionSet) result).getIsCase().getValue());
     }
 }

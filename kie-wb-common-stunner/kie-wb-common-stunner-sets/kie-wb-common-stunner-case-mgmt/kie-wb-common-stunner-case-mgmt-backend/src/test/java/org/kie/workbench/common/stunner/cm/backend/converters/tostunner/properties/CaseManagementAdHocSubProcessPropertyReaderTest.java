@@ -17,22 +17,26 @@
 package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties;
 
 import java.util.Collections;
+import java.util.UUID;
 
+import org.eclipse.bpmn2.AdHocSubProcess;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
 
-public class CaseManagementPropertyReaderFactoryTest {
+public class CaseManagementAdHocSubProcessPropertyReaderTest {
 
     private DefinitionResolver definitionResolver;
 
-    private CaseManagementPropertyReaderFactory tested;
+    private CaseManagementAdHocSubProcessPropertyReader tested;
 
     @Before
     public void setUp() throws Exception {
@@ -43,17 +47,35 @@ public class CaseManagementPropertyReaderFactoryTest {
         definitions.getDiagrams().add(bpmnDiagram);
 
         definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
-
-        tested = new CaseManagementPropertyReaderFactory(definitionResolver);
     }
 
     @Test
-    public void testOf_callActivity() throws Exception {
-        assertTrue(CaseManagementActivityPropertyReader.class.isInstance(tested.of(bpmn2.createCallActivity())));
+    public void testIsAdHocAutostart_true() throws Exception {
+        String id = UUID.randomUUID().toString();
+
+        AdHocSubProcess adHocSubProcess = bpmn2.createAdHocSubProcess();
+        adHocSubProcess.setId(id);
+        CustomElement.autoStart.of(adHocSubProcess).set(Boolean.TRUE);
+
+        tested = new CaseManagementAdHocSubProcessPropertyReader(adHocSubProcess,
+                                                                 definitionResolver.getPlane(),
+                                                                 definitionResolver);
+
+        assertTrue(tested.isAdHocAutostart());
     }
 
     @Test
-    public void testOf_adHocSubProcess() throws Exception {
-        assertTrue(CaseManagementAdHocSubProcessPropertyReader.class.isInstance(tested.of(bpmn2.createAdHocSubProcess())));
+    public void testIisAdHocAutostart_false() throws Exception {
+        String id = UUID.randomUUID().toString();
+
+        AdHocSubProcess adHocSubProcess = bpmn2.createAdHocSubProcess();
+        adHocSubProcess.setId(id);
+        CustomElement.autoStart.of(adHocSubProcess).set(Boolean.FALSE);
+
+        tested = new CaseManagementAdHocSubProcessPropertyReader(adHocSubProcess,
+                                                                 definitionResolver.getPlane(),
+                                                                 definitionResolver);
+
+        assertFalse(tested.isAdHocAutostart());
     }
 }

@@ -18,8 +18,6 @@ package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.propert
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.AdHocSubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ActivityPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AdHocSubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 
 public class CaseManagementPropertyReaderFactory extends PropertyReaderFactory {
@@ -29,12 +27,12 @@ public class CaseManagementPropertyReaderFactory extends PropertyReaderFactory {
     }
 
     @Override
-    public ActivityPropertyReader of(Activity el) {
+    public CaseManagementActivityPropertyReader of(Activity el) {
         return new CaseManagementActivityPropertyReader(el, diagram, definitionResolver);
     }
 
     @Override
-    public AdHocSubProcessPropertyReader of(AdHocSubProcess el) {
-        return new CaseManagementAdHocSubProcessPropertyReader(el, plane, definitionResolver);
+    public CaseManagementAdHocSubProcessPropertyReader of(AdHocSubProcess el) {
+        return new CaseManagementAdHocSubProcessPropertyReader(el, diagram, definitionResolver);
     }
 }

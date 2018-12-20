@@ -17,7 +17,7 @@
 package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties;
 
 import org.eclipse.bpmn2.AdHocSubProcess;
-import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AdHocSubProcessPropertyReader;
@@ -25,9 +25,9 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 public class CaseManagementAdHocSubProcessPropertyReader extends AdHocSubProcessPropertyReader {
 
     public CaseManagementAdHocSubProcessPropertyReader(AdHocSubProcess element,
-                                                       BPMNPlane plane,
+                                                       BPMNDiagram diagram,
                                                        DefinitionResolver definitionResolver) {
-        super(element, plane, definitionResolver);
+        super(element, diagram, definitionResolver);
     }
 
     public boolean isAdHocAutostart() {

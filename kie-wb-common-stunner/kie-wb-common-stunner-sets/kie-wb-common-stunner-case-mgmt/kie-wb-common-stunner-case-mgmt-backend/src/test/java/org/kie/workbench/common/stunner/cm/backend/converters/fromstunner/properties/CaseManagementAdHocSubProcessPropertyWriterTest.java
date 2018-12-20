@@ -19,31 +19,15 @@ package org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.prope
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.FlatVariableScope;
-import org.kie.workbench.common.stunner.cm.backend.converters.customproperties.CaseManagementCustomElement;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
-public class CaseManagementCallActivityPropertyWriterTest {
+public class CaseManagementAdHocSubProcessPropertyWriterTest {
 
-    private CaseManagementCallActivityPropertyWriter tested =
-            new CaseManagementCallActivityPropertyWriter(bpmn2.createCallActivity(),
-                                                         new FlatVariableScope());
-
-    @Test
-    public void testSetCase_true() throws Exception {
-        tested.setCase(Boolean.TRUE);
-
-        assertTrue(CaseManagementCustomElement.isCase.of(tested.getFlowElement()).get());
-    }
-
-    @Test
-    public void testSetCase_false() throws Exception {
-        tested.setCase(Boolean.FALSE);
-
-        assertFalse(CaseManagementCustomElement.isCase.of(tested.getFlowElement()).get());
-    }
+    private CaseManagementAdHocSubProcessPropertyWriter tested = new CaseManagementAdHocSubProcessPropertyWriter(bpmn2.createAdHocSubProcess(),
+                                                                                                                 new FlatVariableScope());
 
     @Test
     public void testSetAdHocAutostart_true() throws Exception {

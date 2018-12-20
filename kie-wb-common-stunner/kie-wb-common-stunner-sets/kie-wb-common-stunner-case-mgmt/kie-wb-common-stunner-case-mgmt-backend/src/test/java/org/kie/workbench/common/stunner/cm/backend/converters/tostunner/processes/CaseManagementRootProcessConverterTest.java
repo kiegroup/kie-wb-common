@@ -19,14 +19,18 @@ package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.process
 import java.util.Collections;
 
 import org.eclipse.bpmn2.Definitions;
+import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.CaseManagementConverterFactory;
 import org.kie.workbench.common.stunner.cm.backend.converters.tostunner.properties.CaseManagementPropertyReaderFactory;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -44,17 +48,22 @@ import static org.mockito.Mockito.when;
 
 public class CaseManagementRootProcessConverterTest {
 
+    private DefinitionResolver definitionResolver;
+
+    private Process process;
+
     private CaseManagementRootProcessConverter tested;
 
     @Before
     public void setUp() throws Exception {
         Definitions definitions = bpmn2.createDefinitions();
-        definitions.getRootElements().add(bpmn2.createProcess());
+        process = bpmn2.createProcess();
+        definitions.getRootElements().add(process);
         BPMNDiagram bpmnDiagram = di.createBPMNDiagram();
         bpmnDiagram.setPlane(di.createBPMNPlane());
         definitions.getDiagrams().add(bpmnDiagram);
 
-        DefinitionResolver definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
+        definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
 
         Node node = new NodeImpl("");
         View<CaseManagementDiagram> content = new ViewImpl<>(new CaseManagementDiagram(), BoundsImpl.build());
@@ -73,6 +82,19 @@ public class CaseManagementRootProcessConverterTest {
 
     @Test
     public void testCreateNode() throws Exception {
-        assertTrue(tested.createNode("id").getContent().getDefinition() instanceof CaseManagementDiagram);
+        assertTrue(CaseManagementDiagram.class.isInstance(tested.createNode("id").getContent().getDefinition()));
+    }
+
+    @Test
+    public void testCreateDiagramSet() throws Exception {
+        assertTrue(DiagramSet.class.isInstance(tested.createDiagramSet(process,
+                                                                       new ProcessPropertyReader(process,
+                                                                                                 definitionResolver.getPlane(),
+                                                                                                 definitionResolver.getShape(process.getId())))));
+    }
+
+    @Test
+    public void testCreateProcessData() throws Exception {
+        assertTrue(ProcessData.class.isInstance(tested.createProcessData("id")));
     }
 }
