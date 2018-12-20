@@ -142,7 +142,7 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.api.De
                     } else if (drgElement instanceof DecisionService) {
                         if (e.getContent() instanceof Child) {
                             // Stunner relationship of this Decision be encapsulated by the DecisionService, not managed here.
-                        } else if (e.getContent() instanceof KnowledgeRequirement) {
+                        } else if (e.getContent() instanceof View && ((View) e.getContent()).getDefinition() instanceof KnowledgeRequirement) {
                             org.kie.dmn.model.api.KnowledgeRequirement iReq = new org.kie.dmn.model.v1_2.TKnowledgeRequirement();
                             iReq.setId(e.getUUID());
                             org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();

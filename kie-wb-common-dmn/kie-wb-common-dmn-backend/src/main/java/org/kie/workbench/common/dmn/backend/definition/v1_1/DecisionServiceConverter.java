@@ -131,7 +131,7 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
                         }
                     }
                 }
-            } else if (e.getContent() instanceof KnowledgeRequirement) {
+            } else if (e.getContent() instanceof View && ((View) e.getContent()).getDefinition() instanceof KnowledgeRequirement) {
                 // this was taken care by the receiving Decision or BKM.
             } else {
                 throw new UnsupportedOperationException("wrong model definition.");
@@ -153,6 +153,12 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
                         return ri;
                     })
                     .forEach(candidate_inputDecision::add);
+        for (org.kie.dmn.model.api.DMNElementReference er : candidate_outputDecision) {
+            candidate_inputDecision.removeIf(x -> x.getHref().equals(er.getHref()));
+        }
+        for (org.kie.dmn.model.api.DMNElementReference er : candidate_encapsulatedDecision) {
+            candidate_inputDecision.removeIf(x -> x.getHref().equals(er.getHref()));
+        }
 
         reconcileExistingAndCandidate(ds.getInputData(), existing_inputData, candidate_inputData);
         reconcileExistingAndCandidate(ds.getInputDecision(), existing_inputDecision, candidate_inputDecision);
@@ -197,8 +203,8 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
     }
 
     private static boolean isNodeUpperHalfOfDS(Node<View<?>, ?> node, Node<View<DecisionService>, ?> dsNode) {
-        double dsHeight = node.getContent().getBounds().getLowerRight().getY() - node.getContent().getBounds().getUpperLeft().getY();
-        double yUpperHalf = node.getContent().getBounds().getUpperLeft().getY() + (dsHeight / 2);
+        double dsHeight = dsNode.getContent().getBounds().getLowerRight().getY() - dsNode.getContent().getBounds().getUpperLeft().getY();
+        double yUpperHalf = dsNode.getContent().getBounds().getUpperLeft().getY() + (dsHeight / 2);
         return node.getContent().getBounds().getUpperLeft().getY() < yUpperHalf;
     }
 }

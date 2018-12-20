@@ -61,6 +61,9 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.background.BgColour;
 import org.kie.workbench.common.dmn.api.property.background.BorderColour;
+import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceHeight;
+import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet;
+import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceWidth;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralHeight;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralWidth;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
@@ -291,15 +294,13 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     String reqInputID = getId(er);
                     Node requiredNode = elems.get(reqInputID).getValue();
                     Edge myEdge = factoryManager.newElement(ds.getId() + "er" + reqInputID, Child.class).asEdge();
-                    connectEdge(myEdge, requiredNode, currentNode);
-                    setConnectionMagnets(myEdge, reqInputID, dmnXml);
+                    connectEdge(myEdge, currentNode, requiredNode);
                 }
                 for (org.kie.dmn.model.api.DMNElementReference er : ds.getOutputDecision()) {
                     String reqInputID = getId(er);
                     Node requiredNode = elems.get(reqInputID).getValue();
                     Edge myEdge = factoryManager.newElement(ds.getId() + "er" + reqInputID, Child.class).asEdge();
-                    connectEdge(myEdge, requiredNode, currentNode);
-                    setConnectionMagnets(myEdge, reqInputID, dmnXml);
+                    connectEdge(myEdge, currentNode, requiredNode);
                 }
             }
         }
@@ -600,6 +601,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         } else if (content.getDefinition() instanceof TextAnnotation) {
             TextAnnotation d = (TextAnnotation) content.getDefinition();
             internalAugment(drgShapeStream, d.getId(), upperLeftBound(content), d.getDimensionsSet(), lowerRightBound(content), d.getBackgroundSet(), d::setFontSet);
+        } else if (content.getDefinition() instanceof DecisionService) {
+            DecisionService d = (DecisionService) content.getDefinition();
+            internalAugment(drgShapeStream, d.getId(), upperLeftBound(content), d.getDimensionsSet(), lowerRightBound(content), d.getBackgroundSet(), d::setFontSet);
         }
     }
 
@@ -615,8 +619,13 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             ((BoundImpl) ul).setX(xOfShape(drgShape));
             ((BoundImpl) ul).setY(yOfShape(drgShape));
         }
-        dimensionsSet.setWidth(new GeneralWidth(widthOfShape(drgShape)));
-        dimensionsSet.setHeight(new GeneralHeight(heightOfShape(drgShape)));
+        if (dimensionsSet instanceof DecisionServiceRectangleDimensionsSet) {
+            dimensionsSet.setWidth(new DecisionServiceWidth(widthOfShape(drgShape)));
+            dimensionsSet.setHeight(new DecisionServiceHeight(heightOfShape(drgShape)));
+        } else {
+            dimensionsSet.setWidth(new GeneralWidth(widthOfShape(drgShape)));
+            dimensionsSet.setHeight(new GeneralHeight(heightOfShape(drgShape)));
+        }
         if (lr != null) {
             ((BoundImpl) lr).setX(xOfShape(drgShape) + widthOfShape(drgShape));
             ((BoundImpl) lr).setY(yOfShape(drgShape) + heightOfShape(drgShape));
@@ -699,8 +708,15 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             applyFontStyle(d.getFontSet(), result);
             DMNDecisionServiceDividerLine dl = new org.kie.dmn.model.v1_2.dmndi.DMNDecisionServiceDividerLine();
             org.kie.dmn.model.api.dmndi.Point leftPoint = new org.kie.dmn.model.v1_2.dmndi.Point();
-            //            leftPoint.setX(xOfShape);
-            //            leftPoint.setY(point2d.getY());
+            leftPoint.setX(v.getBounds().getUpperLeft().getX());
+            double dlY = v.getBounds().getUpperLeft().getY() + (d.getDimensionsSet().getHeight().getValue() / 2);
+            leftPoint.setY(dlY);
+            dl.getWaypoint().add(leftPoint);
+            org.kie.dmn.model.api.dmndi.Point rightPoint = new org.kie.dmn.model.v1_2.dmndi.Point();
+            rightPoint.setX(v.getBounds().getLowerRight().getX());
+            rightPoint.setY(dlY);
+            dl.getWaypoint().add(rightPoint);
+            result.setDMNDecisionServiceDividerLine(dl);
         }
         return result;
     }
