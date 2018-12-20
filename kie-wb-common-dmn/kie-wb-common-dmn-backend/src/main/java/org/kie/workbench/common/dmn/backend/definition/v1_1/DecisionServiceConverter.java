@@ -19,7 +19,9 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElementReference;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
@@ -56,14 +58,18 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         Name name = new Name(dmn.getName());
         InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable());
+        final List<DMNElementReference> outputDecision = dmn.getOutputDecision().stream().map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
+        final List<DMNElementReference> encapsulatedDecision = dmn.getEncapsulatedDecision().stream().map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
+        final List<DMNElementReference> inputDecision = dmn.getInputDecision().stream().map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
+        final List<DMNElementReference> inputData = dmn.getInputData().stream().map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
         DecisionService decisionService = new DecisionService(id,
                                                               description,
                                                               name,
                                                               informationItem,
-                                                              null,
-                                                              null,
-                                                              null,
-                                                              null,
+                                                              outputDecision,
+                                                              encapsulatedDecision,
+                                                              inputDecision,
+                                                              inputData,
                                                               new BackgroundSet(),
                                                               new FontSet(),
                                                               new DecisionServiceRectangleDimensionsSet());
@@ -88,6 +94,16 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
             variable.setParent(ds);
         }
         ds.setVariable(variable);
+        
+        List<org.kie.dmn.model.api.DMNElementReference> existing_outputDecision = source.getOutputDecision().stream().map(DMNElementReferenceConverter::dmnFromWB).collect(Collectors.toList());
+        List<org.kie.dmn.model.api.DMNElementReference> existing_encapsulatedDecision = source.getEncapsulatedDecision().stream().map(DMNElementReferenceConverter::dmnFromWB).collect(Collectors.toList());
+        List<org.kie.dmn.model.api.DMNElementReference> existing_inputDecision = source.getInputDecision().stream().map(DMNElementReferenceConverter::dmnFromWB).collect(Collectors.toList());
+        List<org.kie.dmn.model.api.DMNElementReference> existing_inputData = source.getInputData().stream().map(DMNElementReferenceConverter::dmnFromWB).collect(Collectors.toList());
+        List<org.kie.dmn.model.api.DMNElementReference> candidate_outputDecision = new ArrayList<>();
+        List<org.kie.dmn.model.api.DMNElementReference> candidate_encapsulatedDecision = new ArrayList<>();
+        List<org.kie.dmn.model.api.DMNElementReference> candidate_inputDecision = new ArrayList<>();
+        List<org.kie.dmn.model.api.DMNElementReference> candidate_inputData = new ArrayList<>();
+        
         List<InputData> reqInputs = new ArrayList<>();
         List<Decision> reqDecisions = new ArrayList<>();
         // DMN spec table 2: Requirements connection rules
@@ -105,9 +121,9 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
                             org.kie.dmn.model.api.DMNElementReference ri = new org.kie.dmn.model.v1_2.TDMNElementReference();
                             ri.setHref(new StringBuilder("#").append(decision.getId().getValue()).toString());
                             if (isNodeUpperHalfOfDS(targetNode, node)) {
-                                ds.getOutputDecision().add(ri);
+                                candidate_outputDecision.add(ri);
                             } else {
-                                ds.getEncapsulatedDecision().add(ri);
+                                candidate_encapsulatedDecision.add(ri);
                             }
                             inspectDecisionForDSReqs(targetNode, reqInputs, reqDecisions);
                         } else {
@@ -128,7 +144,7 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
                      ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                      return ri;
                  })
-                 .forEach(ds.getInputData()::add);
+                 .forEach(candidate_inputData::add);
         reqDecisions.stream()
                     .sorted(Comparator.comparing(x -> x.getName().getValue()))
                     .map(x -> {
@@ -136,8 +152,30 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
                         ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                         return ri;
                     })
-                    .forEach(ds.getInputDecision()::add);
+                    .forEach(candidate_inputDecision::add);
+
+        reconcileExistingAndCandidate(ds.getInputData(), existing_inputData, candidate_inputData);
+        reconcileExistingAndCandidate(ds.getInputDecision(), existing_inputDecision, candidate_inputDecision);
+        reconcileExistingAndCandidate(ds.getEncapsulatedDecision(), existing_encapsulatedDecision, candidate_encapsulatedDecision);
+        reconcileExistingAndCandidate(ds.getOutputDecision(), existing_outputDecision, candidate_outputDecision);
+
         return ds;
+    }
+
+    private void reconcileExistingAndCandidate(List<org.kie.dmn.model.api.DMNElementReference> targetList,
+                                               List<org.kie.dmn.model.api.DMNElementReference> existingList,
+                                               List<org.kie.dmn.model.api.DMNElementReference> candidateList) {
+        List<org.kie.dmn.model.api.DMNElementReference> existing = new ArrayList<>(existingList);
+        List<org.kie.dmn.model.api.DMNElementReference> candidate = new ArrayList<>(candidateList);
+        for (org.kie.dmn.model.api.DMNElementReference e : existing) {
+            boolean existingIsAlsoCandidate = candidate.removeIf(er -> er.getHref().equals(e.getHref()));
+            if (existingIsAlsoCandidate) {
+                targetList.add(e);
+            }
+        }
+        for (org.kie.dmn.model.api.DMNElementReference c : candidate) {
+            targetList.add(c);
+        }
     }
 
     private void inspectDecisionForDSReqs(Node<View<?>, ?> targetNode, List<InputData> reqInputs, List<Decision> reqDecisions) {
