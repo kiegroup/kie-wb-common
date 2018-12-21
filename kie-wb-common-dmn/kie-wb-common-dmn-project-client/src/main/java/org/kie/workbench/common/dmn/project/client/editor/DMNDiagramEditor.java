@@ -48,6 +48,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
@@ -92,6 +93,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     @Inject
     public DMNDiagramEditor(final View view,
+                            final DocumentationView documentationView,
                             final PlaceManager placeManager,
                             final ErrorPopupPresenter errorPopupPresenter,
                             final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
@@ -115,6 +117,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final LayoutHelper layoutHelper,
                             final DataTypesPage dataTypesPage) {
         super(view,
+              documentationView,
               placeManager,
               errorPopupPresenter,
               changeTitleNotificationEvent,

@@ -37,6 +37,7 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -100,6 +101,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     private DMNDiagramEditor diagramEditor;
 
+    @Mock
+    private DocumentationView documentationView;
+
     @Before
     public void before() {
         when(kieView.getMultiPage()).thenReturn(multiPage);
@@ -124,6 +128,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Override
     protected AbstractProjectDiagramEditor createDiagramEditor() {
         diagramEditor = spy(new DMNDiagramEditor(view,
+                                                 documentationView,
                                                  placeManager,
                                                  errorPopupPresenter,
                                                  changeTitleNotificationEvent,

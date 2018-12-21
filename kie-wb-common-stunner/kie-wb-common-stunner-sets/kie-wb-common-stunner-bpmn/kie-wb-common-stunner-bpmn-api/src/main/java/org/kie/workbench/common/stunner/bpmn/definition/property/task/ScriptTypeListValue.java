@@ -69,4 +69,9 @@ public class ScriptTypeListValue {
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(values));
     }
+
+    @Override
+    public String toString() {
+        return values.toString();
+    }
 }

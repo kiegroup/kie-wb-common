@@ -72,4 +72,9 @@ public class ScriptTypeValue {
         return HashUtil.combineHashCodes(Objects.hashCode(language),
                                          Objects.hashCode(script));
     }
+
+    @Override
+    public String toString() {
+        return this.language + " : " + script;
+    }
 }
