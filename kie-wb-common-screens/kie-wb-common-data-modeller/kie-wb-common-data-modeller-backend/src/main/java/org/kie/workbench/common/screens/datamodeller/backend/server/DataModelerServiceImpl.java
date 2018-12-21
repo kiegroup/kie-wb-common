@@ -17,8 +17,10 @@
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +41,11 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
+import org.guvnor.structure.backend.pom.DynamicDependencyTypeConfigurationMap;
 import org.guvnor.structure.pom.AddPomDependencyEvent;
 import org.guvnor.structure.pom.DependencyType;
+//import org.guvnor.structure.pom.JPADependencyType;
+import org.guvnor.structure.pom.types.JPADependencyType;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.forge.roaster.Roaster;
@@ -159,8 +164,12 @@ public class DataModelerServiceImpl
     private Instance<DomainHandler> domainHandlers;
     @Inject
     private FilterHolder filterHolder;
+    @Inject
+    private DynamicDependencyTypeConfigurationMap dynamicDependencyTypeConfigurationMap;
 
     public DataModelerServiceImpl() {
+        DependencyType type = new JPADependencyType();
+        dynamicDependencyTypeConfigurationMap.addDependencies(type, type.getDependencies());
     }
 
     @Override
@@ -241,7 +250,7 @@ public class DataModelerServiceImpl
             Object currentValue = options.get( "persistable" );
             boolean isPersistable = Boolean.valueOf( currentValue != null ? currentValue.toString() : null );
             if(isPersistable){
-                addPomDependencyEvent.fire(new AddPomDependencyEvent(EnumSet.of(DependencyType.JPA), currentModule.getPomXMLPath()));
+                addPomDependencyEvent.fire(new AddPomDependencyEvent(new HashSet(Arrays.asList(new JPADependencyType())), currentModule.getPomXMLPath()));
             }
 
             return newPath;
