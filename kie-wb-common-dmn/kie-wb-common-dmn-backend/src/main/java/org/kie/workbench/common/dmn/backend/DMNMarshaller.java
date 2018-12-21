@@ -293,13 +293,17 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 for (org.kie.dmn.model.api.DMNElementReference er : ds.getEncapsulatedDecision()) {
                     String reqInputID = getId(er);
                     Node requiredNode = elems.get(reqInputID).getValue();
-                    Edge myEdge = factoryManager.newElement(ds.getId() + "er" + reqInputID, Child.class).asEdge();
+                    final String uuid = ds.getId() + "er" + reqInputID;
+                    final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
+                    myEdge.setContent(new Child());
                     connectEdge(myEdge, currentNode, requiredNode);
                 }
                 for (org.kie.dmn.model.api.DMNElementReference er : ds.getOutputDecision()) {
                     String reqInputID = getId(er);
                     Node requiredNode = elems.get(reqInputID).getValue();
-                    Edge myEdge = factoryManager.newElement(ds.getId() + "er" + reqInputID, Child.class).asEdge();
+                    final String uuid = ds.getId() + "er" + reqInputID;
+                    final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
+                    myEdge.setContent(new Child());
                     connectEdge(myEdge, currentNode, requiredNode);
                 }
             }

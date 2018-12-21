@@ -284,11 +284,6 @@ public class DMNMarshallerTest {
                                                             DMN_DEF_SET_ID);
                 return graph;
             }
-            if (Child.class.equals(type)) {
-                final Edge edge = new EdgeImpl(uuid);
-                edge.setContent(new Child());
-                return edge;
-            }
             Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
             if (null != model) {
                 Class<? extends ElementFactory> element = BackendDefinitionAdapter.getGraphFactory(model.getClass());
