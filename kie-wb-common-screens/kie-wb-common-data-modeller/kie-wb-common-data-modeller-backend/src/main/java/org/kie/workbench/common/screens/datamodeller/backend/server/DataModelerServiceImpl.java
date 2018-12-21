@@ -17,11 +17,12 @@
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
@@ -39,6 +40,9 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
+import org.guvnor.structure.backend.pom.DynamicDependencyTypeConfigurationMap;
+import org.guvnor.structure.pom.AddPomDependencyEvent;
+import org.guvnor.structure.pom.DependencyType;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.forge.roaster.Roaster;
@@ -52,6 +56,7 @@ import org.kie.workbench.common.screens.datamodeller.backend.server.file.DataMod
 import org.kie.workbench.common.screens.datamodeller.backend.server.handler.DomainHandler;
 import org.kie.workbench.common.screens.datamodeller.backend.server.helper.DataModelerRenameWorkaroundHelper;
 import org.kie.workbench.common.screens.datamodeller.backend.server.helper.DataModelerSaveHelper;
+import org.kie.workbench.common.screens.datamodeller.backend.server.pom.types.JPADependencyType;
 import org.kie.workbench.common.screens.datamodeller.events.DataObjectCreatedEvent;
 import org.kie.workbench.common.screens.datamodeller.events.DataObjectDeletedEvent;
 import org.kie.workbench.common.screens.datamodeller.events.DataObjectRenamedEvent;
@@ -155,8 +160,13 @@ public class DataModelerServiceImpl
     private Instance<DomainHandler> domainHandlers;
     @Inject
     private FilterHolder filterHolder;
+    @Inject
+    private Event<AddPomDependencyEvent> addPomDependencyEvent;
+    @Inject
+    private DynamicDependencyTypeConfigurationMap dynamicDependencyTypeConfigurationMap;
 
     public DataModelerServiceImpl() {
+        initDependendenciesType();
     }
 
     @Override
@@ -232,6 +242,13 @@ public class DataModelerServiceImpl
 
             dataObjectCreatedEvent.fire(new DataObjectCreatedEvent(currentModule,
                                                                    dataObject));
+
+            Object currentValue = options.get("persistable");
+            boolean isPersistable = Boolean.valueOf(currentValue != null ? currentValue.toString() : null);
+            if (isPersistable) {
+                addPomDependencyEvent.fire(new AddPomDependencyEvent(new HashSet(Arrays.asList(new JPADependencyType())),
+                                                                     currentModule.getPomXMLPath()));
+            }
 
             return newPath;
         } catch (Exception e) {
@@ -1346,5 +1363,16 @@ public class DataModelerServiceImpl
         }
 
         return javaPath;
+    }
+
+    public void initDependendenciesType() {
+
+        DependencyType type = new JPADependencyType();
+        if (dynamicDependencyTypeConfigurationMap == null) {
+            dynamicDependencyTypeConfigurationMap = new DynamicDependencyTypeConfigurationMap();
+        }
+        dynamicDependencyTypeConfigurationMap.addDependencies(type,
+                                                              type.getDependencies());
+        logger.info("Initialized DynamicDependencyTypeConfigurationMap into DataModelerServiceImpl");
     }
 }
