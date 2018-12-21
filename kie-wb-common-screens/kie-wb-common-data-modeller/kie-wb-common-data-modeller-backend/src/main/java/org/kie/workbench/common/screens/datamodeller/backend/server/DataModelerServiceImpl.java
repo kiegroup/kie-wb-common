@@ -17,7 +17,10 @@
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.Arrays;
+=======
+>>>>>>> 5d12d894b68345cc51b1eb74d367dfe9e369d867
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,11 +44,16 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
+<<<<<<< HEAD
 import org.guvnor.structure.backend.pom.DynamicDependencyTypeConfigurationMap;
 import org.guvnor.structure.pom.AddPomDependencyEvent;
 import org.guvnor.structure.pom.DependencyType;
 //import org.guvnor.structure.pom.JPADependencyType;
 import org.guvnor.structure.pom.types.JPADependencyType;
+=======
+import org.guvnor.structure.pom.AddPomDependencyEvent;
+import org.guvnor.structure.pom.DependencyType;
+>>>>>>> 5d12d894b68345cc51b1eb74d367dfe9e369d867
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.forge.roaster.Roaster;
