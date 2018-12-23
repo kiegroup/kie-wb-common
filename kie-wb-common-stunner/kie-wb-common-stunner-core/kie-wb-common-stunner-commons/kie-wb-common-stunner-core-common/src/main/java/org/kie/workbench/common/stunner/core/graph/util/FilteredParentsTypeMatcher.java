@@ -95,7 +95,7 @@ public class FilteredParentsTypeMatcher
         @Override
         public Optional<Element<?>> apply(final Node<? extends View<?>, ? extends Edge> node,
                                           final Class<?> parentType) {
-                return getParent(node, parentType);
+            return getParent(node, parentType);
         }
 
         private Optional<Element<?>> getParent(final Node<? extends View<?>, ? extends Edge> node,
@@ -120,7 +120,8 @@ public class FilteredParentsTypeMatcher
             return candidateParent.isPresent() ?
                     Optional.ofNullable(provider.definitionManager.adapters()
                                                 .forDefinition()
-                                                .getId(candidateParent.get().getContent().getDefinition())) :
+                                                .getId(candidateParent.get().getContent().getDefinition())
+                                                .value()) :
                     Optional.empty();
         }
     }
