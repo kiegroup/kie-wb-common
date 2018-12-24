@@ -21,10 +21,12 @@ import java.io.InputStreamReader;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -173,6 +175,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                                                                                                                     dmn -> new SimpleEntry<>(dmn,
                                                                                                                                                              dmnToStunner(dmn))));
 
+        Set<org.kie.dmn.model.api.DecisionService> dmnDecisionServices = new HashSet<>();
         Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
 
         for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {
@@ -290,6 +293,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 }
             } else if (elem instanceof org.kie.dmn.model.api.DecisionService) {
                 org.kie.dmn.model.api.DecisionService ds = (org.kie.dmn.model.api.DecisionService) elem;
+                dmnDecisionServices.add(ds);
                 for (org.kie.dmn.model.api.DMNElementReference er : ds.getEncapsulatedDecision()) {
                     String reqInputID = getId(er);
                     Node requiredNode = elems.get(reqInputID).getValue();
@@ -348,8 +352,21 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         Node<?, ?> dmnDiagramRoot = findDMNDiagramRoot(graph);
         Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(dmnXml);
         ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(definitionsStunnerPojo);
-        elems.values().stream().map(Map.Entry::getValue).forEach(node -> connectRootWithChild(dmnDiagramRoot,
-                                                                                              node));
+
+        //Only connect Nodes to the Diagram that are not referenced by DecisionServices
+        final List<String> references = new ArrayList<>();
+        dmnDecisionServices.forEach(ds -> references.addAll(ds.getEncapsulatedDecision().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
+        dmnDecisionServices.forEach(ds -> references.addAll(ds.getInputData().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
+        dmnDecisionServices.forEach(ds -> references.addAll(ds.getInputDecision().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
+        dmnDecisionServices.forEach(ds -> references.addAll(ds.getOutputDecision().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
+
+        final Map<org.kie.dmn.model.api.DRGElement, Node> elemsToConnectToRoot = elems.values().stream()
+                .filter(elem -> !references.contains("#" + elem.getKey().getId()))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        elemsToConnectToRoot.values().stream()
+                .forEach(node -> connectRootWithChild(dmnDiagramRoot,
+                                                      node));
+
         textAnnotations.values().stream().forEach(node -> connectRootWithChild(dmnDiagramRoot,
                                                                                node));
 
