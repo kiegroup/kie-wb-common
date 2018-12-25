@@ -25,7 +25,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
@@ -38,6 +37,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
 import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
+import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
@@ -47,12 +47,13 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class)
+@Morph(base = CaseManagementBaseUserTask.class)
 @FormDefinition(
         policy = FieldPolicy.ONLY_MARKED,
         startElement = "general",
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)}
 )
-public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
+public class UserTask extends CaseManagementBaseUserTask {
 
     @PropertySet
     @FormField(
@@ -69,6 +70,7 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
              new FontSet(),
              new RectangleDimensionsSet(),
              new SimulationSet(),
+             new TaskType(TaskTypes.USER),
              new TaskType(TaskTypes.USER));
     }
 
@@ -78,13 +80,15 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
                     final @MapsTo("fontSet") FontSet fontSet,
                     final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                     final @MapsTo("simulationSet") SimulationSet simulationSet,
-                    final @MapsTo("taskType") TaskType taskType) {
+                    final @MapsTo("taskType") TaskType taskType,
+                    final @MapsTo("caseManagementTaskType") TaskType caseManagementTaskType) {
         super(general,
               backgroundSet,
               fontSet,
               dimensionsSet,
               simulationSet,
-              taskType);
+              taskType,
+              caseManagementTaskType);
         this.executionSet = executionSet;
     }
 
