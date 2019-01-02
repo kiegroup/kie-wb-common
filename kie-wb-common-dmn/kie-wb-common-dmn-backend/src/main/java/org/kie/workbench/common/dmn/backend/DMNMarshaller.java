@@ -356,8 +356,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
         final List<String> references = new ArrayList<>();
         dmnDecisionServices.forEach(ds -> references.addAll(ds.getEncapsulatedDecision().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
-        dmnDecisionServices.forEach(ds -> references.addAll(ds.getInputData().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
-        dmnDecisionServices.forEach(ds -> references.addAll(ds.getInputDecision().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
         dmnDecisionServices.forEach(ds -> references.addAll(ds.getOutputDecision().stream().map(org.kie.dmn.model.api.DMNElementReference::getHref).collect(Collectors.toList())));
 
         final Map<org.kie.dmn.model.api.DRGElement, Node> elemsToConnectToRoot = elems.values().stream()
