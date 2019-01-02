@@ -34,6 +34,7 @@ import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.stunner.bpmn.client.components.palette.BPMNCategoryDefinitionProvider;
 import org.kie.workbench.common.stunner.bpmn.client.documentation.template.BPMNDocumentationTemplateSource;
 import org.kie.workbench.common.stunner.bpmn.client.shape.factory.BPMNShapeFactory;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
@@ -72,6 +73,7 @@ import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasFileExport;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.shape.ImageStripGlyph;
 import org.kie.workbench.common.stunner.core.client.template.mustache.ClientMustacheTemplateRenderer;
@@ -100,6 +102,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     private final SessionManager sessionManager;
     private final BPMNCategoryDefinitionProvider categoryDefinitionProvider;
     private final DOMGlyphRenderers glyphRenderer;
+    private final ClientTranslationService translationService;
 
     @Inject
     public ClientBPMNDocumentationService(final ClientMustacheTemplateRenderer mustacheTemplateRenderer,
@@ -109,7 +112,8 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                                           final CanvasFileExport canvasFileExport,
                                           final SessionManager sessionManager,
                                           final BPMNCategoryDefinitionProvider categoryDefinitionProvider,
-                                          final DOMGlyphRenderers glyphRenderer) {
+                                          final DOMGlyphRenderers glyphRenderer,
+                                          final ClientTranslationService translationService) {
         this.mustacheTemplateRenderer = mustacheTemplateRenderer;
         this.definitionManager = definitionManager;
         this.definitionUtils = definitionUtils;
@@ -118,6 +122,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
         this.sessionManager = sessionManager;
         this.categoryDefinitionProvider = categoryDefinitionProvider;
         this.glyphRenderer = glyphRenderer;
+        this.translationService = translationService;
     }
 
     @Override
@@ -214,6 +219,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                 .filter(e -> !(e instanceof BPMNDiagram))
                 .map(def -> Element.create(getElementName(def),
                                            getElementCategory(def),
+                                           getElementTitle(def),
                                            getDefinitionIcon(def),
                                            getElementProperties(def))
                 )
@@ -221,11 +227,15 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                 .entrySet()
                 .stream()
                 .map(entry -> ElementTotal.create(entry.getValue(),
-                                                  entry.getKey(),
+                                                  getCategoryName(entry.getKey()),
                                                   getCategoryIcon(entry.getKey())))
                 .collect(Collectors.toList());
 
         return ElementDetails.create(elementsTotals);
+    }
+
+    private String getElementTitle(Object def) {
+        return definitionUtils.getTitle(definitionManager.adapters().forDefinition().getId(def));
     }
 
     private String getElementName(Object def) {
@@ -234,6 +244,10 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
 
     private String getElementCategory(Object def) {
         return definitionManager.adapters().forDefinition().getCategory(def);
+    }
+
+    private String getCategoryName(String category) {
+        return translationService.getValue(BPMNCategories.class.getName() + "." + category);
     }
 
     @Override

@@ -29,6 +29,7 @@ public class Element {
 
     private String name;
     private String type;
+    private String title;
     private String icon;
     private KeyValue[] properties;
 
@@ -37,10 +38,12 @@ public class Element {
     }
 
     @JsOverlay
-    public static final Element create(String name, String type, String icon, Map<String, String> properties) {
+    public static final Element create(String name, String type, String title, String icon,
+                                       Map<String, String> properties) {
         final Element instance = new Element();
         instance.name = name;
         instance.type = type;
+        instance.title = title;
         instance.icon = icon;
         instance.properties = JsConverter.fromMap(properties);
         return instance;
@@ -49,5 +52,15 @@ public class Element {
     @JsOverlay
     public final String getType() {
         return type;
+    }
+
+    @JsOverlay
+    public final String getIcon() {
+        return icon;
+    }
+
+    @JsOverlay
+    public final String getTitle() {
+        return title;
     }
 }
