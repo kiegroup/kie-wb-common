@@ -295,20 +295,14 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 org.kie.dmn.model.api.DecisionService ds = (org.kie.dmn.model.api.DecisionService) elem;
                 dmnDecisionServices.add(ds);
                 for (org.kie.dmn.model.api.DMNElementReference er : ds.getEncapsulatedDecision()) {
-                    String reqInputID = getId(er);
-                    Node requiredNode = elems.get(reqInputID).getValue();
-                    final String uuid = ds.getId() + "er" + reqInputID;
-                    final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
-                    myEdge.setContent(new Child());
-                    connectEdge(myEdge, currentNode, requiredNode);
+                    final String reqInputID = getId(er);
+                    final Node requiredNode = elems.get(reqInputID).getValue();
+                    connectDSChildEdge(currentNode, requiredNode);
                 }
                 for (org.kie.dmn.model.api.DMNElementReference er : ds.getOutputDecision()) {
-                    String reqInputID = getId(er);
-                    Node requiredNode = elems.get(reqInputID).getValue();
-                    final String uuid = ds.getId() + "er" + reqInputID;
-                    final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
-                    myEdge.setContent(new Child());
-                    connectEdge(myEdge, currentNode, requiredNode);
+                    final String reqInputID = getId(er);
+                    final Node requiredNode = elems.get(reqInputID).getValue();
+                    connectDSChildEdge(currentNode, requiredNode);
                 }
             }
         }
@@ -369,6 +363,18 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                                                                node));
 
         return graph;
+    }
+
+    /**
+     * Stunner's factoryManager is only used to create Nodes that are considered part of a "Definition Set" (a collection of nodes visible to the User e.g. BPMN2 StartNode, EndNode and DMN's DecisionNode etc).
+     * Relationships are not created with the factory.
+     * This method specializes to connect with an Edge containing a Child relationship the target Node.
+     */
+    private static void connectDSChildEdge(Node dsNode, Node requiredNode) {
+        final String uuid = dsNode.getUUID() + "er" + requiredNode.getUUID();
+        final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
+        myEdge.setContent(new Child());
+        connectEdge(myEdge, dsNode, requiredNode);
     }
 
     private static String idOfDMNorWBUUID(org.kie.dmn.model.api.DMNElement dmn) {
