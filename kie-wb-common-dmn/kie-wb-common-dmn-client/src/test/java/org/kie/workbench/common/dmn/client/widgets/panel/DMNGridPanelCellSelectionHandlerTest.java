@@ -63,11 +63,6 @@ public class DMNGridPanelCellSelectionHandlerTest {
         this.cellSelectionHandler = new DMNGridPanelCellSelectionHandlerImpl(gridLayer);
 
         when(gridCell.getSelectionStrategy()).thenReturn(cellSelectionStrategy);
-        when(cellSelectionStrategy.handleSelection(any(GridData.class),
-                                                   anyInt(),
-                                                   anyInt(),
-                                                   anyBoolean(),
-                                                   anyBoolean())).thenReturn(true);
     }
 
     @Test
@@ -76,15 +71,40 @@ public class DMNGridPanelCellSelectionHandlerTest {
         final GridData gridData = gridWidget.getModel();
         gridData.setCell(0, 1, () -> gridCell);
 
+        when(gridWidget.selectCell(anyInt(),
+                                   anyInt(),
+                                   anyBoolean(),
+                                   anyBoolean())).thenReturn(true);
+
         cellSelectionHandler.selectCellIfRequired(0, 1, gridWidget, true, false);
 
         verify(gridLayer).select(eq(gridWidget));
-        verify(cellSelectionStrategy).handleSelection(eq(gridData),
-                                                      eq(0),
-                                                      eq(1),
-                                                      eq(true),
-                                                      eq(false));
+        verify(gridWidget).selectCell(eq(0),
+                                      eq(1),
+                                      eq(true),
+                                      eq(false));
         verify(gridLayer).batch();
+    }
+
+    @Test
+    public void testSelectCellIfRequiredButSelectionDidNotChanged() {
+        final GridWidget gridWidget = mockGridWidget(BaseExpressionGrid.class);
+        final GridData gridData = gridWidget.getModel();
+        gridData.setCell(0, 1, () -> gridCell);
+
+        when(gridWidget.selectCell(anyInt(),
+                                   anyInt(),
+                                   anyBoolean(),
+                                   anyBoolean())).thenReturn(false);
+
+        cellSelectionHandler.selectCellIfRequired(0, 1, gridWidget, true, false);
+
+        verify(gridLayer).select(eq(gridWidget));
+        verify(gridWidget).selectCell(eq(0),
+                                      eq(1),
+                                      eq(true),
+                                      eq(false));
+        verify(gridLayer, never()).batch();
     }
 
     @Test
@@ -102,6 +122,10 @@ public class DMNGridPanelCellSelectionHandlerTest {
                                                                anyInt(),
                                                                anyBoolean(),
                                                                anyBoolean());
+        verify(gridWidget, never()).selectCell(anyInt(),
+                                               anyInt(),
+                                               anyBoolean(),
+                                               anyBoolean());
         verify(gridLayer, never()).batch();
     }
 
