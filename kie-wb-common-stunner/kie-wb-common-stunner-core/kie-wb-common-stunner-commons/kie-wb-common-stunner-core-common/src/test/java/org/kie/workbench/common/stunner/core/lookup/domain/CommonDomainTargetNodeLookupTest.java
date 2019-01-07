@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.lookup.domain;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,13 +56,11 @@ public class CommonDomainTargetNodeLookupTest {
     private DomainLookupsCache cache;
 
     private CommonDomainLookups tested;
-    private TestingGraphMockHandler graphTestHandler;
     private TestingGraphInstanceBuilder.TestGraph1 graph;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        graphTestHandler = new TestingGraphMockHandler();
+        final TestingGraphMockHandler graphTestHandler = new TestingGraphMockHandler();
         graph = TestingGraphInstanceBuilder.newGraph1(graphTestHandler);
         TestingGraphInstanceBuilder.createDefaultRulesForGraph1(graphTestHandler.ruleSet);
 
@@ -70,8 +68,8 @@ public class CommonDomainTargetNodeLookupTest {
         when(cache.getRuleSet()).thenReturn(graphTestHandler.ruleSet);
         CanConnect connectionRule = (CanConnect) ((List<Rule>) graphTestHandler.ruleSet.getRules()).get(0);
         when(cache.getConnectionRules()).thenReturn(Collections.singletonList(connectionRule));
-        when(cache.getDefinitions(contains("label1"))).thenReturn(Arrays.asList(TestingGraphInstanceBuilder.DEF1_ID).stream().collect(Collectors.toSet()));
-        when(cache.getDefinitions(contains("label2"))).thenReturn(Arrays.asList(TestingGraphInstanceBuilder.DEF2_ID).stream().collect(Collectors.toSet()));
+        when(cache.getDefinitions(contains("label1"))).thenReturn(Stream.of(TestingGraphInstanceBuilder.DEF1_ID).collect(Collectors.toSet()));
+        when(cache.getDefinitions(contains("label2"))).thenReturn(Stream.of(TestingGraphInstanceBuilder.DEF2_ID).collect(Collectors.toSet()));
         when(definitionsRegistry.getLabels(eq(TestingGraphInstanceBuilder.DEF1_ID))).thenReturn(TestingGraphInstanceBuilder.DEF1_LABELS);
         when(definitionsRegistry.getLabels(eq(TestingGraphInstanceBuilder.DEF2_ID))).thenReturn(TestingGraphInstanceBuilder.DEF2_LABELS);
 

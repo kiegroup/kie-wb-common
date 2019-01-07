@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.core.profile;
 
 public interface Profile {
 
-    public String getProfileId();
+    String getProfileId();
 
-    public String getName();
+    String getName();
 }

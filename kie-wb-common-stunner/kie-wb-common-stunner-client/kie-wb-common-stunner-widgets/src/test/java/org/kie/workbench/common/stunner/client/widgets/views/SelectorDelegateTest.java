@@ -64,7 +64,6 @@ public class SelectorDelegateTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testGetSelecteItem() {
         Object item = mock(Object.class);
         when(delegate.getSelectedItem()).thenReturn(item);
@@ -72,21 +71,18 @@ public class SelectorDelegateTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testClear() {
         tested.clear();
         verify(delegate, times(1)).clear();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testOnValueChanged() {
         tested.onValueChanged();
         verify(delegate, times(1)).onValueChanged();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testGetView() {
         SelectorView view = mock(SelectorView.class);
         when(delegate.getView()).thenReturn(view);

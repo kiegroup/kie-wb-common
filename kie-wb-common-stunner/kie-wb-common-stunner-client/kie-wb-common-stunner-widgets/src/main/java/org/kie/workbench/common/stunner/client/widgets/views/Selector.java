@@ -18,15 +18,15 @@ package org.kie.workbench.common.stunner.client.widgets.views;
 
 public interface Selector<T> {
 
-    public Selector<T> addItem(T item);
+    Selector<T> addItem(T item);
 
-    public Selector<T> setSelectedItem(T item);
+    Selector<T> setSelectedItem(T item);
 
-    public T getSelectedItem();
+    T getSelectedItem();
 
-    public Selector<T> clear();
+    Selector<T> clear();
 
-    public void onValueChanged();
+    void onValueChanged();
 
-    public SelectorView getView();
+    SelectorView getView();
 }

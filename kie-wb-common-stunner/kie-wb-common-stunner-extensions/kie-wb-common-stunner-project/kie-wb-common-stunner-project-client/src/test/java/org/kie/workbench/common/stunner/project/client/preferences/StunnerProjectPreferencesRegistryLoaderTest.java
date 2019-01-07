@@ -78,7 +78,7 @@ public class StunnerProjectPreferencesRegistryLoaderTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setUp() throws Exception {
+    public void setUp() {
         metadata = new MetadataImpl.MetadataImplBuilder(DEF_SET_ID).build();
         when(definitionUtils.getQualifier(eq(DEF_SET_ID))).thenReturn(qualifier);
         preferencesHolders = spy(new ManagedInstanceStub<>(preferencesHolder));

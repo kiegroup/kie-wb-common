@@ -16,11 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.profile;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -68,9 +67,6 @@ public class DomainProfileManagerTest {
     private Object definitionSet;
 
     @Mock
-    private Annotation domainQualifier;
-
-    @Mock
     private DomainProfile domainProfile;
 
     @Mock
@@ -91,7 +87,7 @@ public class DomainProfileManagerTest {
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.forDefinitionSet()).thenReturn(definitionSetAdapter);
         when(definitionSetAdapter.getDefinitions(eq(definitionSet)))
-                .thenReturn(Arrays.asList(DEF1, DEF2).stream().collect(Collectors.toSet()));
+                .thenReturn(Stream.of(DEF1, DEF2).collect(Collectors.toSet()));
         when(profileManager.getProfile(eq(DEF_SET_ID), eq(DEFAULT_PROFILE.getProfileId())))
                 .thenReturn(DEFAULT_PROFILE);
         when(profileManager.getProfile(eq(DEF_SET_ID), eq(PROFILE_DOMAIN_ID)))

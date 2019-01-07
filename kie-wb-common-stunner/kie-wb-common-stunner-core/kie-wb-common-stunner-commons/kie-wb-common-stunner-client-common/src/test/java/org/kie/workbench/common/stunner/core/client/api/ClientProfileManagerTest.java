@@ -53,9 +53,8 @@ public class ClientProfileManagerTest {
     private ManagedInstance<Profile> profileInstances;
 
     @Before
-    @SuppressWarnings("unchecked")
-    public void setup() throws Exception {
-        profileInstances = spy(new ManagedInstanceStub<Profile>(profile1, profile2));
+    public void setup() {
+        profileInstances = spy(new ManagedInstanceStub<>(profile1, profile2));
         tested = new ClientProfileManager(definitionUtils,
                                           profileInstances);
     }

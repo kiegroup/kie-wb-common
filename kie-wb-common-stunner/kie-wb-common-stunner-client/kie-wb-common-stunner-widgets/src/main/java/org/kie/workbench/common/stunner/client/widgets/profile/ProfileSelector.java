@@ -92,4 +92,3 @@ public class ProfileSelector extends SelectorDelegate<Profile> {
         return profileManager.getProfile(id);
     }
 }
-;

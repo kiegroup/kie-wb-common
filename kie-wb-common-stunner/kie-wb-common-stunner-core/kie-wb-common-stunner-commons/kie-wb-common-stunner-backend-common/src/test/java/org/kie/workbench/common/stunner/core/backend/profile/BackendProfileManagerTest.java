@@ -54,8 +54,7 @@ public class BackendProfileManagerTest {
     private Instance<Profile> profileInstances;
 
     @Before
-    @SuppressWarnings("unchecked")
-    public void setup() throws Exception {
+    public void setup() {
         profileInstances = spy(new MockInstanceImpl<>(profile1, profile2));
         tested = new BackendProfileManager(definitionUtils,
                                            profileInstances);

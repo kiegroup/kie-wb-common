@@ -64,7 +64,7 @@ public class StunnerProfilePreferencesLoaderTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setup() throws Exception {
+    public void setup() {
         when(metadata.getDefinitionSetId()).thenReturn(DEF_SET_ID);
         when(profile.getProjectProfileName()).thenReturn(org.kie.workbench.common.profile.api.preferences.Profile.PLANNER_AND_RULES.getName());
         doAnswer(invocation -> {

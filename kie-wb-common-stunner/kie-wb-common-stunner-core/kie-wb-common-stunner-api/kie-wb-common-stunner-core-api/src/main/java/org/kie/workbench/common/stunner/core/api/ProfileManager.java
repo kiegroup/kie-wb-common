@@ -32,7 +32,7 @@ public interface ProfileManager {
     Collection<Profile> getAllProfiles();
 
     /**
-     * Returns a given profiel by its identifier
+     * Returns a given profile by its identifier
      * @return A profile with the given id, if any, otherwise the return value
      * depends on the implementations.
      */
@@ -45,7 +45,7 @@ public interface ProfileManager {
     Collection<Profile> getProfiles(String definitionSetId);
 
     /**
-     * Returns a given profiel by its identifier and its Definition Set domain.
+     * Returns a given profile by its identifier and its Definition Set domain.
      * @return A profile with the given id, if any, otherwise the return value
      * depends on the implementations.
      */
