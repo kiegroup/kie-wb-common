@@ -155,10 +155,10 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
             CommandResult<CanvasViolation> finalResult;
             if (wasNodesDeletedFromGraph()) {
                 //in case of a cut command the source elements were deleted from graph, so first undo the command to take node back into canvas
-                clipboardControl.getRollbackCommands().forEach(command -> command.undo(getCanvasHandler()));
+                clipboardControl.getRollbackCommands().forEach(command -> sessionCommandManager.undo(getCanvasHandler(), command));
                 finalResult = executeCommands(nodesCommandBuilder, processedNodesCountdown);
                 //after the clone execution than delete source elements again
-                clipboardControl.getRollbackCommands().forEach(command -> command.execute(getCanvasHandler()));
+                clipboardControl.getRollbackCommands().forEach(command -> sessionCommandManager.execute(getCanvasHandler(), command));
             } else {
                 //if elements are still on the graph, in case copy command, just execute the clone commands
                 finalResult = executeCommands(nodesCommandBuilder, processedNodesCountdown);

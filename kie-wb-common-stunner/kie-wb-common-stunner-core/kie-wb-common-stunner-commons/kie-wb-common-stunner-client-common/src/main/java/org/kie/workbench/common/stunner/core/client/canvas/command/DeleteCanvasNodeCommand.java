@@ -53,11 +53,15 @@ public class DeleteCanvasNodeCommand extends AbstractCanvasCommand {
                                 candidate);
         }
         context.deregister(candidate);
+        parentApplyElementMutation(context);
+        return buildResult();
+    }
+
+    protected void parentApplyElementMutation(final AbstractCanvasHandler context) {
         if (null != parent) {
             context.applyElementMutation(parent,
                                          MutationContext.STATIC);
         }
-        return buildResult();
     }
 
     @Override

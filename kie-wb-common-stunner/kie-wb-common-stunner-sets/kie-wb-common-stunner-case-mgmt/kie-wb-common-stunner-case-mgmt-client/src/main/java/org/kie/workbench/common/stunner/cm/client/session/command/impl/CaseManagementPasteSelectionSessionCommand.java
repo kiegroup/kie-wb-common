@@ -27,16 +27,17 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 
 @Dependent
 @CaseManagementEditor
-public class PasteSelectionSessionCommand extends org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand {
+public class CaseManagementPasteSelectionSessionCommand extends PasteSelectionSessionCommand {
 
     @Inject
-    public PasteSelectionSessionCommand(@Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                        @CaseManagementEditor CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                                        Event<CanvasSelectionEvent> elementSelectedEvent,
-                                        CopySelectionSessionCommand copySelectionSessionCommand) {
+    public CaseManagementPasteSelectionSessionCommand(@Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                                      @CaseManagementEditor CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
+                                                      Event<CanvasSelectionEvent> elementSelectedEvent,
+                                                      CopySelectionSessionCommand copySelectionSessionCommand) {
         super(sessionCommandManager, canvasCommandFactory, elementSelectedEvent, copySelectionSessionCommand);
     }
 }
