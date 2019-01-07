@@ -21,16 +21,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.ait.lienzo.client.core.animation.AnimationProperties;
 import com.ait.lienzo.client.core.animation.AnimationProperty;
-import com.ait.lienzo.client.core.animation.AnimationTweener;
 import com.ait.lienzo.client.core.event.NodeDragEndEvent;
 import com.ait.lienzo.client.core.event.NodeDragEndHandler;
 import com.ait.lienzo.client.core.event.NodeDragMoveEvent;
 import com.ait.lienzo.client.core.event.NodeDragStartEvent;
+import com.ait.lienzo.client.core.shape.AbstractMultiPathPartShape;
 import com.ait.lienzo.client.core.shape.Circle;
 import com.ait.lienzo.client.core.shape.IPrimitive;
-import com.ait.lienzo.client.core.shape.Node;
+import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.AbstractControlHandle;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
@@ -41,7 +40,6 @@ import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.widget.DefaultDragConstraintEnforcer;
 import com.ait.lienzo.client.widget.DragConstraintEnforcer;
 import com.ait.lienzo.client.widget.DragContext;
-import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.lienzo.shared.core.types.DragConstraint;
 import com.ait.lienzo.shared.core.types.DragMode;
 import com.ait.tooling.nativetools.client.event.HandlerRegistrationManager;
@@ -53,6 +51,11 @@ import org.kie.workbench.common.stunner.core.client.shape.view.event.DragHandler
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
+
+import static com.ait.lienzo.client.core.shape.AbstractMultiPathPartShape.DefaultMultiPathShapeHandleFactory.R0;
+import static com.ait.lienzo.client.core.shape.AbstractMultiPathPartShape.DefaultMultiPathShapeHandleFactory.R1;
+import static com.ait.lienzo.client.core.shape.AbstractMultiPathPartShape.DefaultMultiPathShapeHandleFactory.animate;
+import static com.ait.lienzo.client.core.shape.AbstractMultiPathPartShape.DefaultMultiPathShapeHandleFactory.getControlPrimitive;
 
 public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
 
@@ -82,7 +85,7 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
 
         addWiresResizeStepHandler(event -> {
             decisionServiceControlHandleFactory
-                    .getDividerResizeControlHandle()
+                    .getMoveDividerControlHandle()
                     .ifPresent(handle -> handle.getControl().setX(shape.getBoundingBox().getWidth() / 2));
         });
     }
@@ -105,8 +108,14 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
     public void setDividerLineY(final double y) {
         divider.setY(y);
         decisionServiceControlHandleFactory
-                .getDividerResizeControlHandle()
+                .getMoveDividerControlHandle()
                 .ifPresent(handle -> handle.getControl().setY(y));
+    }
+
+    @Override
+    //Override to increase visibility for Unit Tests
+    public HandlerManager getHandlerManager() {
+        return super.getHandlerManager();
     }
 
     @Override
@@ -115,20 +124,14 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
         super.destroy();
     }
 
-    private class DecisionServiceControlHandleFactory implements IControlHandleFactory {
-
-        private static final double R0 = 5;
-
-        private static final double R1 = 10;
-
-        private static final double ANIMATION_DURATION = 150d;
+    class DecisionServiceControlHandleFactory implements IControlHandleFactory {
 
         private final DecisionServiceDividerLine divider;
         private final IControlHandleFactory delegateControlHandleFactory;
         private final Supplier<Double> dragBoundsWidthSupplier;
         private final Supplier<Double> dragBoundsHeightSupplier;
 
-        private Optional<ResizeControlHandle> dividerResizeControlHandle = Optional.empty();
+        private Optional<MoveDividerControlHandle> moveDividerControlHandle = Optional.empty();
 
         DecisionServiceControlHandleFactory(final DecisionServiceDividerLine divider,
                                             final IControlHandleFactory delegateControlHandleFactory,
@@ -140,117 +143,96 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
             this.dragBoundsHeightSupplier = dragBoundsHeightSupplier;
         }
 
-        Optional<ResizeControlHandle> getDividerResizeControlHandle() {
-            return dividerResizeControlHandle;
+        Optional<MoveDividerControlHandle> getMoveDividerControlHandle() {
+            return moveDividerControlHandle;
         }
 
         @Override
         public Map<IControlHandle.ControlHandleType, IControlHandleList> getControlHandles(final IControlHandle.ControlHandleType... types) {
             final Map<IControlHandle.ControlHandleType, IControlHandleList> controlHandles = delegateControlHandleFactory.getControlHandles(types);
-            appendDividerResizeControlPoint(controlHandles);
+            appendMoveDividerControlPoint(controlHandles);
             return controlHandles;
         }
 
         @Override
         public Map<IControlHandle.ControlHandleType, IControlHandleList> getControlHandles(final List<IControlHandle.ControlHandleType> types) {
             final Map<IControlHandle.ControlHandleType, IControlHandleList> controlHandles = delegateControlHandleFactory.getControlHandles(types);
-            appendDividerResizeControlPoint(controlHandles);
+            appendMoveDividerControlPoint(controlHandles);
             return controlHandles;
         }
 
-        private void appendDividerResizeControlPoint(final Map<IControlHandle.ControlHandleType, IControlHandleList> controlHandles) {
+        private void appendMoveDividerControlPoint(final Map<IControlHandle.ControlHandleType, IControlHandleList> controlHandles) {
             final IControlHandleList resizeControlHandles = controlHandles.get(IControlHandle.ControlHandleStandardType.RESIZE);
-            if (!dividerResizeControlHandle.isPresent()) {
-                dividerResizeControlHandle = Optional.of(getResizeControlHandle(resizeControlHandles,
-                                                                                new Point2D(dragBoundsWidthSupplier.get() / 2, 0)));
-                setupControlHandleEventHandlers();
+            if (!moveDividerControlHandle.isPresent()) {
+                moveDividerControlHandle = Optional.of(getMoveDividerControlHandle(divider,
+                                                                                   resizeControlHandles,
+                                                                                   new Point2D(dragBoundsWidthSupplier.get() / 2, 0)));
+                setupMoveDividerEventHandlers();
             }
-            dividerResizeControlHandle.ifPresent(resizeControlHandles::add);
+            resizeControlHandles.add(moveDividerControlHandle.get());
         }
 
-        private void setupControlHandleEventHandlers() {
-            dividerResizeControlHandle.ifPresent(handle -> {
+        private void setupMoveDividerEventHandlers() {
+            moveDividerControlHandle.ifPresent(handle -> {
                 final IPrimitive<?> control = handle.getControl();
-                registrationManager.register(control.addNodeDragStartHandler(this::resizeStart));
-                registrationManager.register(control.addNodeDragMoveHandler(this::resizeMove));
-                registrationManager.register(control.addNodeDragEndHandler(this::resizeEnd));
+                registrationManager.register(control.addNodeDragStartHandler(this::moveDividerStart));
+                registrationManager.register(control.addNodeDragMoveHandler(this::moveDividerMove));
+                registrationManager.register(control.addNodeDragEndHandler(this::moveDividerEnd));
             });
         }
 
-        private void resizeStart(final NodeDragStartEvent event) {
-            fireDragEvent(new MoveDividerStartEvent(DecisionServiceSVGShapeView.this, event));
+        private void moveDividerStart(final NodeDragStartEvent event) {
+            fireMoveDividerEvent(new MoveDividerStartEvent(DecisionServiceSVGShapeView.this, event));
         }
 
-        private void resizeMove(final NodeDragMoveEvent event) {
-            fireDragEvent(new MoveDividerStepEvent(DecisionServiceSVGShapeView.this, event));
+        private void moveDividerMove(final NodeDragMoveEvent event) {
+            fireMoveDividerEvent(new MoveDividerStepEvent(DecisionServiceSVGShapeView.this, event));
         }
 
-        private void resizeEnd(final NodeDragEndEvent event) {
-            fireDragEvent(new MoveDividerEndEvent(DecisionServiceSVGShapeView.this, event));
+        private void moveDividerEnd(final NodeDragEndEvent event) {
+            fireMoveDividerEvent(new MoveDividerEndEvent(DecisionServiceSVGShapeView.this, event));
         }
 
-        private void fireDragEvent(final GwtEvent<?> event) {
-            dividerResizeControlHandle.ifPresent(handle -> {
+        private void fireMoveDividerEvent(final GwtEvent<?> event) {
+            moveDividerControlHandle.ifPresent(handle -> {
                 divider.setY(handle.getControl().getY());
                 getHandlerManager().fireEvent(event);
             });
         }
 
-        private ResizeControlHandle getResizeControlHandle(final IControlHandleList resizeControlHandles,
-                                                           final Point2D controlPointOffset) {
-            final Circle controlShape = getControlPrimitive(R0, controlPointOffset);
-            final ResizeControlHandle handle = new ResizeControlHandle(controlShape,
-                                                                       resizeControlHandles,
-                                                                       dragBoundsWidthSupplier,
-                                                                       dragBoundsHeightSupplier);
+        private MoveDividerControlHandle getMoveDividerControlHandle(final DecisionServiceDividerLine divider,
+                                                                     final IControlHandleList resizeControlHandles,
+                                                                     final Point2D controlPointOffset) {
+            final Circle controlShape = getControlPrimitive(R0,
+                                                            controlPointOffset.getX(),
+                                                            controlPointOffset.getY(),
+                                                            divider,
+                                                            DragMode.SAME_LAYER).setDragConstraint(DragConstraint.VERTICAL);
+            final MoveDividerControlHandle handle = new MoveDividerControlHandle(controlShape,
+                                                                                 resizeControlHandles,
+                                                                                 dragBoundsWidthSupplier,
+                                                                                 dragBoundsHeightSupplier);
 
             animate(handle, AnimationProperty.Properties.RADIUS(R1), AnimationProperty.Properties.RADIUS(R0));
 
             return handle;
         }
-
-        private Circle getControlPrimitive(final double size,
-                                           final Point2D controlPointOffset) {
-            return new Circle(size)
-                    .setX(divider.getX() + controlPointOffset.getX())
-                    .setY(divider.getY() + controlPointOffset.getY())
-                    .setFillColor(ColorName.DARKRED)
-                    .setFillAlpha(0.8)
-                    .setStrokeColor(ColorName.BLACK)
-                    .setStrokeWidth(0.5)
-                    .setDraggable(true)
-                    .setDragConstraint(DragConstraint.VERTICAL)
-                    .setDragMode(DragMode.SAME_LAYER);
-        }
-
-        private void animate(final AbstractControlHandle handle,
-                             final AnimationProperty initialProperty,
-                             final AnimationProperty endProperty) {
-            final Node<?> node = (Node<?>) handle.getControl();
-
-            handle.getHandlerRegistrationManager().register(node.addNodeMouseEnterHandler((event) -> animate(node, initialProperty)));
-            handle.getHandlerRegistrationManager().register(node.addNodeMouseExitHandler((event) -> animate(node, endProperty)));
-        }
-
-        private void animate(final Node<?> node, final AnimationProperty property) {
-            node.animate(AnimationTweener.LINEAR, AnimationProperties.toPropertyList(property), ANIMATION_DURATION);
-        }
     }
 
-    private class ResizeControlHandle extends AbstractControlHandle {
+    static class MoveDividerControlHandle extends AbstractControlHandle {
 
         private final Circle controlShape;
 
-        public ResizeControlHandle(final Circle controlShape,
-                                   final IControlHandleList resizeControlHandles,
-                                   final Supplier<Double> dragBoundsWidthSupplier,
-                                   final Supplier<Double> dragBoundsHeightSupplier) {
+        public MoveDividerControlHandle(final Circle controlShape,
+                                        final IControlHandleList resizeControlHandles,
+                                        final Supplier<Double> dragBoundsWidthSupplier,
+                                        final Supplier<Double> dragBoundsHeightSupplier) {
             this.controlShape = controlShape;
-            final ResizeHandleDragHandler handler = new ResizeHandleDragHandler(controlShape,
-                                                                                resizeControlHandles,
-                                                                                this,
-                                                                                dragBoundsWidthSupplier,
-                                                                                dragBoundsHeightSupplier);
+            final MoveDividerDragHandler handler = new MoveDividerDragHandler(controlShape,
+                                                                              resizeControlHandles,
+                                                                              this,
+                                                                              dragBoundsWidthSupplier,
+                                                                              dragBoundsHeightSupplier);
             controlShape.setDragConstraints(handler);
             register(controlShape.addNodeDragEndHandler(handler));
         }
@@ -271,24 +253,24 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
         }
     }
 
-    private class ResizeHandleDragHandler implements DragConstraintEnforcer,
-                                                     NodeDragEndHandler {
+    static class MoveDividerDragHandler implements DragConstraintEnforcer,
+                                                   NodeDragEndHandler {
 
         private final Circle controlShape;
         private final IControlHandleList resizeControlHandles;
-        private final ResizeControlHandle resizeControlHandle;
+        private final MoveDividerControlHandle moveDividerControlHandle;
         private final Supplier<Double> dragBoundsWidthSupplier;
         private final Supplier<Double> dragBoundsHeightSupplier;
         private final DragConstraintEnforcer delegateDragConstraintEnforcer = new DefaultDragConstraintEnforcer();
 
-        public ResizeHandleDragHandler(final Circle controlShape,
-                                       final IControlHandleList resizeControlHandles,
-                                       final ResizeControlHandle resizeControlHandle,
-                                       final Supplier<Double> dragBoundsWidthSupplier,
-                                       final Supplier<Double> dragBoundsHeightSupplier) {
+        MoveDividerDragHandler(final Circle controlShape,
+                               final IControlHandleList resizeControlHandles,
+                               final MoveDividerControlHandle moveDividerControlHandle,
+                               final Supplier<Double> dragBoundsWidthSupplier,
+                               final Supplier<Double> dragBoundsHeightSupplier) {
             this.controlShape = controlShape;
             this.resizeControlHandles = resizeControlHandles;
-            this.resizeControlHandle = resizeControlHandle;
+            this.moveDividerControlHandle = moveDividerControlHandle;
             this.dragBoundsWidthSupplier = dragBoundsWidthSupplier;
             this.dragBoundsHeightSupplier = dragBoundsHeightSupplier;
         }
@@ -298,9 +280,9 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
             dragContext.getNode().setDragBounds(makeDragBounds());
             delegateDragConstraintEnforcer.startDrag(dragContext);
 
-            if ((resizeControlHandle.isActive()) && (resizeControlHandles.isActive())) {
-                controlShape.setFillColor(ColorName.GREEN);
-                controlShape.getLayer().draw();
+            if ((moveDividerControlHandle.isActive()) && (resizeControlHandles.isActive())) {
+                controlShape.setFillColor(AbstractMultiPathPartShape.CONTROL_POINT_DRAG_FILL);
+                doSafeDraw();
             }
         }
 
@@ -311,10 +293,15 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
 
         @Override
         public void onNodeDragEnd(final NodeDragEndEvent event) {
-            if ((resizeControlHandle.isActive()) && (resizeControlHandles.isActive())) {
-                controlShape.setFillColor(ColorName.DARKRED);
-                controlShape.getLayer().draw();
+            if ((moveDividerControlHandle.isActive()) && (resizeControlHandles.isActive())) {
+                controlShape.setFillColor(AbstractMultiPathPartShape.CONTROL_POINT_ACTIVE_FILL);
+                doSafeDraw();
             }
+        }
+
+        private void doSafeDraw() {
+            //In Unit Tests the ControlShape is not attached to a Layer so draw() operations fail.
+            Optional.ofNullable(controlShape.getLayer()).ifPresent(Layer::draw);
         }
 
         private DragBounds makeDragBounds() {

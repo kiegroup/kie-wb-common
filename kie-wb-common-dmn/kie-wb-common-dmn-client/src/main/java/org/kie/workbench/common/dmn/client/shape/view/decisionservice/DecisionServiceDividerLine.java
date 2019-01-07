@@ -34,7 +34,7 @@ public class DecisionServiceDividerLine extends Line {
         this.dynamicWidthSupplier = dynamicWidthSupplier;
 
         setStrokeWidth(2.0);
-        setStrokeColor(ColorName.BLACK.getHexColor());
+        setStrokeColor(ColorName.BLACK);
         setLocation(new Point2D(0, 0));
     }
 
@@ -49,8 +49,8 @@ public class DecisionServiceDividerLine extends Line {
                               final Attributes attr,
                               final double alpha) {
         context.beginPath();
-        context.moveTo(0, 0);
-        context.lineTo(dynamicWidthSupplier.get(), 0);
+        context.moveTo(0.0, 0.0);
+        context.lineTo(dynamicWidthSupplier.get(), 0.0);
 
         return true;
     }

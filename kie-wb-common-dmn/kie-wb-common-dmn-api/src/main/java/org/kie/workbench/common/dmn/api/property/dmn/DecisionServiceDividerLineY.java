@@ -19,21 +19,16 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.DMNProperty;
 import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
-@FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class DecisionServiceDividerLineY implements DMNProperty {
 
     private static final double DEFAULT = DecisionServiceRectangleDimensionsSet.DEFAULT_HEIGHT / 2;
 
     @Value
-    @FieldValue
     private Double value;
 
     public DecisionServiceDividerLineY() {

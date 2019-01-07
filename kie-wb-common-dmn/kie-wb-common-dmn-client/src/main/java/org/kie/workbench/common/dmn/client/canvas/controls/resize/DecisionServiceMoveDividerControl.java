@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.canvas.controls.resize;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,17 +27,18 @@ import org.kie.workbench.common.dmn.client.shape.view.decisionservice.DecisionSe
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.RequiresCommandManager;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.DragEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.DragHandler;
-import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -49,7 +48,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class DecisionServiceMoveDividerControl extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler> implements RequiresCommandManager<AbstractCanvasHandler>,
                                                                                                                                   RequiresCommandManager.CommandManagerProvider<AbstractCanvasHandler> {
 
-    private static final String DIVIDER_Y_PROPERTY_ID = "dividerLineY";
+    static final String DIVIDER_Y_PROPERTY_ID = "dividerLineY";
 
     private static Logger LOGGER = Logger.getLogger(DecisionServiceMoveDividerControl.class.getName());
 
@@ -118,26 +117,33 @@ public class DecisionServiceMoveDividerControl extends AbstractCanvasHandlerRegi
 
     private CommandResult<CanvasViolation> doMoveDivider(final Element<? extends View<?>> element,
                                                          final double dividerY) {
-        final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = getMoveDividerCommands(element, dividerY);
-        final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
-        commands.forEach(commandBuilder::addCommand);
-
-        return getCommandManager().execute(canvasHandler, commandBuilder.build());
+        final Optional<CanvasCommand<AbstractCanvasHandler>> oCommand = getMoveDividerCommand(element, dividerY);
+        if (oCommand.isPresent()) {
+            final CanvasCommand<AbstractCanvasHandler> command = oCommand.get();
+            return getCommandManager().execute(canvasHandler, command);
+        }
+        return CanvasCommandResultBuilder.FAILED;
     }
 
-    private List<Command<AbstractCanvasHandler, CanvasViolation>> getMoveDividerCommands(final Element<? extends Definition<?>> element,
-                                                                                         final double dividerY) {
+    private Optional<CanvasCommand<AbstractCanvasHandler>> getMoveDividerCommand(final Element<? extends Definition<?>> element,
+                                                                                 final double dividerY) {
         final Definition content = element.getContent();
         final Object definition = content.getDefinition();
         final DefinitionAdapter<Object> adapter = canvasHandler.getDefinitionManager().adapters().registry().getDefinitionAdapter(definition.getClass());
-        final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = new LinkedList<>();
         final Optional<?> dividerYProperty = adapter.getProperty(definition, DIVIDER_Y_PROPERTY_ID);
-        dividerYProperty.ifPresent(dyp -> {
+        if (dividerYProperty.isPresent()) {
+            final Object dyp = dividerYProperty.get();
             final String id = canvasHandler.getDefinitionManager().adapters().forProperty().getId(dyp);
-            commands.add(canvasCommandFactory.updatePropertyValue(element, id, dividerY));
-        });
+            return Optional.of(canvasCommandFactory.updatePropertyValue(element, id, dividerY));
+        }
+        return Optional.empty();
+    }
 
-        return commands;
+    @Override
+    //Override to increase visibility for Unit Tests
+    public void registerHandler(final String uuid,
+                                final ViewHandler<?> handler) {
+        super.registerHandler(uuid, handler);
     }
 
     @Override

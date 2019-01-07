@@ -106,7 +106,7 @@ public class DMNSVGShapeDefImplTest {
     }
 
     @Test
-    public void testGetGlyph() {
+    public void testGetToolboxGlyph() {
         assertEquals(DMNSVGGlyphFactory.BUSINESS_KNOWLEDGE_MODEL_TOOLBOX,
                      shapeDef.getGlyph(BusinessKnowledgeModel.class, DEFINITION_ID));
         assertEquals(DMNSVGGlyphFactory.DECISION_TOOLBOX,
@@ -122,7 +122,7 @@ public class DMNSVGShapeDefImplTest {
     }
 
     @Test
-    public void testGetGlyphWithConsumer() {
+    public void testGetPaletteGlyphWithConsumer() {
         assertEquals(DMNSVGGlyphFactory.BUSINESS_KNOWLEDGE_MODEL_PALETTE,
                      shapeDef.getGlyph(BusinessKnowledgeModel.class, PaletteGlyphConsumer.class, DEFINITION_ID));
         assertEquals(DMNSVGGlyphFactory.DECISION_PALETTE,
