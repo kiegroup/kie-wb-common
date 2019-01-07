@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
@@ -45,6 +46,7 @@ public class BPMNRuleFlowProfileTest {
         assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(NoneTask.class)));
         assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(ScriptTask.class)));
         assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(BusinessRuleTask.class)));
+        assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(ReusableSubprocess.class)));
         assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(StartNoneEvent.class)));
         assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(EndNoneEvent.class)));
         assertTrue(profile.definitionAllowedFilter().test(getDefinitionId(EndTerminateEvent.class)));
