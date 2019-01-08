@@ -165,6 +165,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.backend.DMNMarshaller.moveBounds;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -544,7 +545,7 @@ public class DMNMarshallerTest {
         final Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream("/DROOLS-3372.dmn"));
         Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
         Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
-        moveNode(nodeDecisionPostfix, 0, -280);
+        moveBounds(nodeDecisionPostfix, 0, -280);
         makeNodeChildOf(nodeDecisionPostfix, nodeDS);
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
@@ -576,9 +577,9 @@ public class DMNMarshallerTest {
         Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
         Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
         Node<?, ?> nodeDecisionPrefix = g.getNode("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a");
-        moveNode(nodeDecisionPostfix, 0, -280);
+        moveBounds(nodeDecisionPostfix, 0, -280);
         makeNodeChildOf(nodeDecisionPostfix, nodeDS);
-        moveNode(nodeDecisionPrefix, 0, -170);
+        moveBounds(nodeDecisionPrefix, 0, -170);
         makeNodeChildOf(nodeDecisionPrefix, nodeDS);
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
@@ -611,9 +612,9 @@ public class DMNMarshallerTest {
         Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
         Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
         Node<?, ?> nodeDecisionPrefix = g.getNode("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a");
-        moveNode(nodeDecisionPostfix, 0, -280);
+        moveBounds(nodeDecisionPostfix, 0, -280);
         makeNodeChildOf(nodeDecisionPostfix, nodeDS);
-        moveNode(nodeDecisionPrefix, 0, -170);
+        moveBounds(nodeDecisionPrefix, 0, -170);
         makeNodeChildOf(nodeDecisionPrefix, nodeDS);
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
@@ -650,19 +651,19 @@ public class DMNMarshallerTest {
         Node<?, ?> nodeDS = g.getNode("_659a06e2-ae80-496c-8783-f790a640bb49");
         Node<?, ?> nodeDecisionPostfix = g.getNode("_3a69915a-30af-4de3-a07f-6be514f53caa");
         Node<?, ?> nodeDecisionPrefix = g.getNode("_afce4fb3-9a7c-4791-bbfe-63d4b76bd61a");
-        moveNode(nodeDecisionPostfix, 0, -280);
+        moveBounds(nodeDecisionPostfix, 0, -280);
         makeNodeChildOf(nodeDecisionPostfix, nodeDS);
-        moveNode(nodeDecisionPrefix, 0, -170);
+        moveBounds(nodeDecisionPrefix, 0, -170);
         makeNodeChildOf(nodeDecisionPrefix, nodeDS);
         DiagramImpl diagram = new DiagramImpl("", null);
         Node<?, ?> nodeEncaps1 = g.getNode("_ca9d65e7-a5fa-4a13-98b7-8404f4601147");
-        moveNode(nodeEncaps1, 0, +400);
+        moveBounds(nodeEncaps1, 0, +400);
         removeNodeChildOf(nodeEncaps1, nodeDS);
         Node<?, ?> nodeEncaps2 = g.getNode("_4b02cf97-5f9b-48ee-a4ae-229233238876");
-        moveNode(nodeEncaps2, 0, +400);
+        moveBounds(nodeEncaps2, 0, +400);
         removeNodeChildOf(nodeEncaps2, nodeDS);
         Node<?, ?> nodeHardcoded2 = g.getNode("_8878539e-1c50-4622-b601-5878c97dc34e");
-        moveNode(nodeHardcoded2, 0, +400);
+        moveBounds(nodeHardcoded2, 0, +400);
         removeNodeChildOf(nodeHardcoded2, nodeDS);
         diagram.setGraph(g);
         String mString = m.marshall(diagram);
@@ -680,6 +681,8 @@ public class DMNMarshallerTest {
             Edge<View<?>, ?> edge = x;
             return edge.getContent() instanceof Child && edge.getSourceNode().equals(nodeDS);
         });
+        Bound dsULBound = ((View<?>) nodeDS.getContent()).getBounds().getUpperLeft();
+        moveBounds(childNode, +dsULBound.getX(), +dsULBound.getY());
     }
 
     @SuppressWarnings("unchecked")
@@ -708,13 +711,8 @@ public class DMNMarshallerTest {
         myEdge.setTargetNode(nodeDecisionPostfix);
         nodeDS.getOutEdges().add(myEdge);
         nodeDecisionPostfix.getInEdges().add(myEdge);
-    }
-
-    private void moveNode(Node<?, ?> nodeDecisionPostfix, int dx, int dy) {
-        View content = (View) nodeDecisionPostfix.getContent();
-        Bound ul = content.getBounds().getUpperLeft();
-        Bound lr = content.getBounds().getLowerRight();
-        content.setBounds(BoundsImpl.build(ul.getX() + dx, ul.getY() + dy, lr.getX() + dx, lr.getY() + dy));
+        Bound dsULBound = ((View<?>) nodeDS.getContent()).getBounds().getUpperLeft();
+        moveBounds(nodeDecisionPostfix, -dsULBound.getX(), -dsULBound.getY());
     }
 
     @Test

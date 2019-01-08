@@ -96,6 +96,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
@@ -184,6 +185,31 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
             // Stunner rely on relative positioning for Edge connections, so need to cycle on DMNShape first.
             ddExtAugmentStunner(dmnDDDiagram, currentNode);
+        }
+
+        // Need to cycle first Decision Service in order to reposition encapsulated/output Decision as needed by Stunner.
+        for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {
+            org.kie.dmn.model.api.DRGElement elem = kv.getKey();
+            Node currentNode = kv.getValue();
+
+            // DMN spec table 2: Requirements connection rules
+            if (elem instanceof org.kie.dmn.model.api.DecisionService) {
+                org.kie.dmn.model.api.DecisionService ds = (org.kie.dmn.model.api.DecisionService) elem;
+                dmnDecisionServices.add(ds);
+                View dsView = (View) currentNode.getContent();
+                for (org.kie.dmn.model.api.DMNElementReference er : ds.getEncapsulatedDecision()) {
+                    final String reqInputID = getId(er);
+                    final Node requiredNode = elems.get(reqInputID).getValue();
+                    connectDSChildEdge(currentNode, requiredNode);
+                    moveBounds(requiredNode, -dsView.getBounds().getUpperLeft().getX(), -dsView.getBounds().getUpperLeft().getY());
+                }
+                for (org.kie.dmn.model.api.DMNElementReference er : ds.getOutputDecision()) {
+                    final String reqInputID = getId(er);
+                    final Node requiredNode = elems.get(reqInputID).getValue();
+                    connectDSChildEdge(currentNode, requiredNode);
+                    moveBounds(requiredNode, -dsView.getBounds().getUpperLeft().getX(), -dsView.getBounds().getUpperLeft().getY());
+                }
+            }
         }
 
         for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {
@@ -291,19 +317,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                         setConnectionMagnets(myEdge, ir.getId(), dmnXml);
                     }
                 }
-            } else if (elem instanceof org.kie.dmn.model.api.DecisionService) {
-                org.kie.dmn.model.api.DecisionService ds = (org.kie.dmn.model.api.DecisionService) elem;
-                dmnDecisionServices.add(ds);
-                for (org.kie.dmn.model.api.DMNElementReference er : ds.getEncapsulatedDecision()) {
-                    final String reqInputID = getId(er);
-                    final Node requiredNode = elems.get(reqInputID).getValue();
-                    connectDSChildEdge(currentNode, requiredNode);
-                }
-                for (org.kie.dmn.model.api.DMNElementReference er : ds.getOutputDecision()) {
-                    final String reqInputID = getId(er);
-                    final Node requiredNode = elems.get(reqInputID).getValue();
-                    connectDSChildEdge(currentNode, requiredNode);
-                }
             }
         }
 
@@ -377,6 +390,13 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         connectEdge(myEdge, dsNode, requiredNode);
     }
 
+    public static void moveBounds(Node<?, ?> node, double dx, double dy) {
+        View content = (View) node.getContent();
+        Bound ul = content.getBounds().getUpperLeft();
+        Bound lr = content.getBounds().getLowerRight();
+        content.setBounds(BoundsImpl.build(ul.getX() + dx, ul.getY() + dy, lr.getX() + dx, lr.getY() + dy));
+    }
+
     private static String idOfDMNorWBUUID(org.kie.dmn.model.api.DMNElement dmn) {
         return dmn.getId() != null ? dmn.getId() : UUID.uuid();
     }
@@ -447,19 +467,35 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         if (dmnEdge.isPresent()) {
             DMNEdge e = dmnEdge.get();
             Point source = e.getWaypoint().get(0);
-            final Node sourceNode = edge.getSourceNode();
+            final Node<?, ?> sourceNode = edge.getSourceNode();
             if (null != sourceNode) {
                 View<?> sourceView = (View<?>) sourceNode.getContent();
+                // Need to compute what would be the absolute x,y positioning of Source to determine from DMNDI the relative positioning for Stunner.
                 double xSource = xOfBound(upperLeftBound(sourceView));
                 double ySource = yOfBound(upperLeftBound(sourceView));
+                for (Edge<?, ?> inEdge : (List<Edge<?, ?>>) sourceNode.getInEdges()) {
+                    if (inEdge.getContent() instanceof Child) {
+                        View<?> parentDsView = ((View<?>) ((Node<?, ?>) inEdge.getSourceNode()).getContent());
+                        xSource += xOfBound(upperLeftBound(parentDsView));
+                        ySource += yOfBound(upperLeftBound(parentDsView));
+                    }
+                }
                 connectionContent.setSourceConnection(MagnetConnection.Builder.at(source.getX() - xSource, source.getY() - ySource)); // Stunner connection x,y is relative to shape
             }
             Point target = e.getWaypoint().get(e.getWaypoint().size() - 1);
             final Node targetNode = edge.getTargetNode();
             if (null != targetNode) {
                 View<?> targetView = (View<?>) targetNode.getContent();
+                // Need to compute what would be the absolute x,y positioning of Target to determine from DMNDI the relative positioning for Stunner.
                 double xTarget = xOfBound(upperLeftBound(targetView));
                 double yTarget = yOfBound(upperLeftBound(targetView));
+                for (Edge<?, ?> inEdge : (List<Edge<?, ?>>) targetNode.getInEdges()) {
+                    if (inEdge.getContent() instanceof Child) {
+                        View<?> parentDsView = ((View<?>) ((Node<?, ?>) inEdge.getSourceNode()).getContent());
+                        xTarget += xOfBound(upperLeftBound(parentDsView));
+                        yTarget += yOfBound(upperLeftBound(parentDsView));
+                    }
+                }
                 connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX() - xTarget, target.getY() - yTarget)); // Stunner connection x,y is relative to shape
             }
             if (e.getWaypoint().size() > 2) {
@@ -517,12 +553,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     DRGElement n = (org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement) view.getDefinition();
                     nodes.put(n.getId().getValue(),
                               stunnerToDMN(node));
-                    dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((View<? extends DMNElement>) view));
+                    dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((Node<View<? extends DMNElement>, ?>) node));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(),
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node));
-                    dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((View<? extends DMNElement>) view));
+                    dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((Node<View<? extends DMNElement>, ?>) node));
 
                     List<org.kie.dmn.model.api.Association> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     definitions.getArtifact().addAll(associations);
@@ -564,6 +600,22 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                 double xTarget = xOfBound(upperLeftBound(view));
                                 double yTarget = yOfBound(upperLeftBound(view));
                                 targetPoint = Point2D.create(xTarget + targetPoint.getX(), yTarget + targetPoint.getY());
+                            }
+
+                            // Manage relative positioning of Decision(s) Child of DecisionService.
+                            for (Edge<?, ?> inEdge : (List<Edge<?, ?>>) e.getSourceNode().getInEdges()) {
+                                if (inEdge.getContent() instanceof Child) {
+                                    View<?> parentDsView = ((View<?>) ((Node<?, ?>) inEdge.getSourceNode()).getContent());
+                                    sourcePoint.setX(sourcePoint.getX() + xOfBound(upperLeftBound(parentDsView)));
+                                    sourcePoint.setY(sourcePoint.getY() + yOfBound(upperLeftBound(parentDsView)));
+                                }
+                            }
+                            for (Edge<?, ?> inEdge : (List<Edge<?, ?>>) e.getTargetNode().getInEdges()) {
+                                if (inEdge.getContent() instanceof Child) {
+                                    View<?> parentDsView = ((View<?>) ((Node<?, ?>) inEdge.getSourceNode()).getContent());
+                                    targetPoint.setX(targetPoint.getX() + xOfBound(upperLeftBound(parentDsView)));
+                                    targetPoint.setY(targetPoint.getY() + yOfBound(upperLeftBound(parentDsView)));
+                                }
                             }
 
                             DMNEdge dmnEdge = new org.kie.dmn.model.v1_2.dmndi.DMNEdge();
@@ -691,54 +743,62 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         }
     }
 
-    private static DMNShape stunnerToDDExt(View<? extends DMNElement> v) {
+    private static DMNShape stunnerToDDExt(Node<View<? extends DMNElement>, ?> node) {
+        View<? extends DMNElement> view = node.getContent();
         DMNShape result = new org.kie.dmn.model.v1_2.dmndi.DMNShape();
-        result.setId("dmnshape-" + v.getDefinition().getId().getValue());
-        result.setDmnElementRef(new QName(v.getDefinition().getId().getValue()));
+        result.setId("dmnshape-" + view.getDefinition().getId().getValue());
+        result.setDmnElementRef(new QName(view.getDefinition().getId().getValue()));
         Bounds bounds = new org.kie.dmn.model.v1_2.dmndi.Bounds();
         result.setBounds(bounds);
-        bounds.setX(xOfBound(upperLeftBound(v)));
-        bounds.setY(yOfBound(upperLeftBound(v)));
+        bounds.setX(xOfBound(upperLeftBound(view)));
+        bounds.setY(yOfBound(upperLeftBound(view)));
+        for (Edge<?, ?> inEdge : (List<Edge<?, ?>>) node.getInEdges()) {
+            if (inEdge.getContent() instanceof Child) {
+                View<?> parentDsView = ((View<?>) ((Node<?, ?>) inEdge.getSourceNode()).getContent());
+                bounds.setX(bounds.getX() + xOfBound(upperLeftBound(parentDsView)));
+                bounds.setY(bounds.getY() + yOfBound(upperLeftBound(parentDsView)));
+            }
+        }
         result.setStyle(new org.kie.dmn.model.v1_2.dmndi.DMNStyle());
         result.setDMNLabel(new org.kie.dmn.model.v1_2.dmndi.DMNLabel());
-        if (v.getDefinition() instanceof Decision) {
-            Decision d = (Decision) v.getDefinition();
+        if (view.getDefinition() instanceof Decision) {
+            Decision d = (Decision) view.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof InputData) {
-            InputData d = (InputData) v.getDefinition();
+        } else if (view.getDefinition() instanceof InputData) {
+            InputData d = (InputData) view.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
-            BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
+        } else if (view.getDefinition() instanceof BusinessKnowledgeModel) {
+            BusinessKnowledgeModel d = (BusinessKnowledgeModel) view.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof KnowledgeSource) {
-            KnowledgeSource d = (KnowledgeSource) v.getDefinition();
+        } else if (view.getDefinition() instanceof KnowledgeSource) {
+            KnowledgeSource d = (KnowledgeSource) view.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof TextAnnotation) {
-            TextAnnotation d = (TextAnnotation) v.getDefinition();
+        } else if (view.getDefinition() instanceof TextAnnotation) {
+            TextAnnotation d = (TextAnnotation) view.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof DecisionService) {
-            DecisionService d = (DecisionService) v.getDefinition();
+        } else if (view.getDefinition() instanceof DecisionService) {
+            DecisionService d = (DecisionService) view.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), result);
             applyFontStyle(d.getFontSet(), result);
             DMNDecisionServiceDividerLine dl = new org.kie.dmn.model.v1_2.dmndi.DMNDecisionServiceDividerLine();
             org.kie.dmn.model.api.dmndi.Point leftPoint = new org.kie.dmn.model.v1_2.dmndi.Point();
-            leftPoint.setX(v.getBounds().getUpperLeft().getX());
-            double dlY = v.getBounds().getUpperLeft().getY() + (d.getDimensionsSet().getHeight().getValue() / 2);
+            leftPoint.setX(view.getBounds().getUpperLeft().getX());
+            double dlY = view.getBounds().getUpperLeft().getY() + (d.getDimensionsSet().getHeight().getValue() / 2);
             leftPoint.setY(dlY);
             dl.getWaypoint().add(leftPoint);
             org.kie.dmn.model.api.dmndi.Point rightPoint = new org.kie.dmn.model.v1_2.dmndi.Point();
-            rightPoint.setX(v.getBounds().getLowerRight().getX());
+            rightPoint.setX(view.getBounds().getLowerRight().getX());
             rightPoint.setY(dlY);
             dl.getWaypoint().add(rightPoint);
             result.setDMNDecisionServiceDividerLine(dl);

@@ -204,7 +204,6 @@ public class DecisionServiceConverter implements NodeConverter<org.kie.dmn.model
 
     private static boolean isNodeUpperHalfOfDS(Node<View<?>, ?> node, Node<View<DecisionService>, ?> dsNode) {
         double dsHeight = dsNode.getContent().getBounds().getLowerRight().getY() - dsNode.getContent().getBounds().getUpperLeft().getY();
-        double yUpperHalf = dsNode.getContent().getBounds().getUpperLeft().getY() + (dsHeight / 2);
-        return node.getContent().getBounds().getUpperLeft().getY() < yUpperHalf;
+        return node.getContent().getBounds().getUpperLeft().getY() < (dsHeight / 2); // Child node is relatively positioned to this dsNode
     }
 }
