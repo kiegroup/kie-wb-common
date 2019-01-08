@@ -84,9 +84,9 @@ import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationServic
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.shape.ImageStripGlyph;
 import org.kie.workbench.common.stunner.core.client.template.mustache.ClientMustacheTemplateRenderer;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
-import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -249,7 +249,11 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     private String getElementTitle(Object def) {
-        return definitionUtils.getTitle(definitionManager.adapters().forDefinition().getId(def));
+        final DefinitionId definitionId = definitionManager.adapters().forDefinition().getId(def);
+        return Optional.ofNullable(definitionId)
+                .map(DefinitionId::value)
+                .map(id -> definitionUtils.getTitle(id))
+                .orElse("");
     }
 
     private String getElementName(Object def) {
@@ -348,9 +352,10 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
         }
 
         private Optional<String> getDefaultDefinitionIcon(Object definition) {
-            final String id = definitionManager.adapters().forDefinition().getId(definition);
-            final Glyph glyph = shapeFactory.getGlyph(id);
-            return Optional.ofNullable(glyph)
+            final DefinitionId definitionId = definitionManager.adapters().forDefinition().getId(definition);
+            return Optional.ofNullable(definitionId)
+                    .map(DefinitionId::value)
+                    .map(shapeFactory::getGlyph)
                     .filter(glyphImg -> glyphImg instanceof ImageStripGlyph)
                     .map(glyphImg -> (ImageStripGlyph) glyphImg)
                     .map(glyphImg -> glyphRenderer.render(glyphImg, ICON_WIDTH, ICON_HEIGHT))
