@@ -19,8 +19,10 @@ package org.kie.workbench.common.stunner.bpmn.client.documentation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -31,9 +33,11 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.HTMLElement;
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.client.components.palette.BPMNCategoryDefinitionProvider;
 import org.kie.workbench.common.stunner.bpmn.client.documentation.template.BPMNDocumentationTemplateSource;
 import org.kie.workbench.common.stunner.bpmn.client.shape.factory.BPMNShapeFactory;
+import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientRegistry;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
@@ -68,6 +72,9 @@ import org.kie.workbench.common.stunner.bpmn.documentation.model.element.Element
 import org.kie.workbench.common.stunner.bpmn.documentation.model.general.DataTotal;
 import org.kie.workbench.common.stunner.bpmn.documentation.model.general.General;
 import org.kie.workbench.common.stunner.bpmn.documentation.model.general.ProcessOverview;
+import org.kie.workbench.common.stunner.bpmn.workitem.IconDefinition;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.client.widgets.components.glyph.DOMGlyphRenderers;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -103,6 +110,8 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     private final BPMNCategoryDefinitionProvider categoryDefinitionProvider;
     private final DOMGlyphRenderers glyphRenderer;
     private final ClientTranslationService translationService;
+    private final WorkItemDefinitionClientRegistry workItemDefinitionClientRegistry;
+    private final DefinitionHelper definitionHelper;
 
     @Inject
     public ClientBPMNDocumentationService(final ClientMustacheTemplateRenderer mustacheTemplateRenderer,
@@ -113,7 +122,10 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                                           final SessionManager sessionManager,
                                           final BPMNCategoryDefinitionProvider categoryDefinitionProvider,
                                           final DOMGlyphRenderers glyphRenderer,
-                                          final ClientTranslationService translationService) {
+                                          final ClientTranslationService translationService,
+                                          final WorkItemDefinitionClientRegistry workItemDefinitionClientRegistry
+
+    ) {
         this.mustacheTemplateRenderer = mustacheTemplateRenderer;
         this.definitionManager = definitionManager;
         this.definitionUtils = definitionUtils;
@@ -123,6 +135,8 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
         this.categoryDefinitionProvider = categoryDefinitionProvider;
         this.glyphRenderer = glyphRenderer;
         this.translationService = translationService;
+        this.workItemDefinitionClientRegistry = workItemDefinitionClientRegistry;
+        definitionHelper = new DefinitionHelper();
     }
 
     @Override
@@ -243,11 +257,14 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     private String getElementCategory(Object def) {
-        return definitionManager.adapters().forDefinition().getCategory(def);
+        //return definitionManager.adapters().forDefinition().getCategory(def); //definitionHelper
+        return definitionHelper.getDefinitionCategory(def).orElse("");
     }
 
     private String getCategoryName(String category) {
-        return translationService.getValue(BPMNCategories.class.getName() + "." + category);
+        return Optional.ofNullable(translationService.getValue(BPMNCategories.class.getName() + "." + category))
+                .filter(cat -> !cat.trim().isEmpty())
+                .orElse(category);
     }
 
     @Override
@@ -262,30 +279,16 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     public String buildDocumentation(Diagram<Graph, Metadata> diagram) {
-
         //todo:tiago
-
         return "";
     }
 
     private String getCategoryIcon(String category) {
-        return Optional.ofNullable(categoryDefinitionProvider.glyphProvider().apply(category))
-                .map(glyph -> glyphRenderer.render(glyph, ICON_WIDTH, ICON_HEIGHT))
-                .map(IsElement::getElement)
-                .map(HTMLElement::getInnerHTML)
-                .orElse("");
+        return definitionHelper.getCategoryIcon(category);
     }
 
     private String getDefinitionIcon(Object definition) {
-        final String id = definitionManager.adapters().forDefinition().getId(definition);
-        final Glyph glyph = shapeFactory.getGlyph(id);
-        return Optional.ofNullable(glyph)
-                .filter(glyphImg -> glyphImg instanceof ImageStripGlyph)
-                .map(glyphImg -> (ImageStripGlyph) glyphImg)
-                .map(glyphImg -> glyphRenderer.render(glyphImg, ICON_WIDTH, ICON_HEIGHT))
-                .map(IsElement::getElement)
-                .map(HTMLElement::getInnerHTML)
-                .orElse("");
+        return definitionHelper.getDefinitionIcon(definition).orElse("");
     }
 
     private Map<String, String> getElementProperties(Object definition) {
@@ -316,5 +319,106 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                          BindableAdapterUtils.getPropertyId(ProcessVariables.class),
                          BindableAdapterUtils.getPropertyId(AssignmentsInfo.class))
                 .collect(Collectors.toMap(id -> id, id -> Boolean.TRUE));
+    }
+
+    private class DefinitionHelper {
+
+        final Map<Class, Function<Object, Optional<String>>> iconFactory;
+        final Map<Class, Function<Object, Optional<String>>> categoryFactory;
+
+        private DefinitionHelper() {
+
+            iconFactory = new Maps.Builder<Class, Function<Object, Optional<String>>>()
+                    .put(ServiceTask.class, def -> getServiceTaskIcon(def))
+                    .build();
+
+            categoryFactory = new Maps.Builder<Class, Function<Object, Optional<String>>>()
+                    .put(ServiceTask.class, def -> getServiceTaskCategory(def))
+                    .build();
+        }
+
+        public Optional<String> getDefinitionIcon(Object definition) {
+            return Optional.ofNullable(definition)
+                    .map(Object::getClass)
+                    .map(iconFactory::get)
+                    .filter(Objects::nonNull)
+                    .map(factory -> factory.apply(definition))
+                    .filter(Objects::nonNull)
+                    .orElseGet(() -> getDefaultDefinitionIcon(definition));
+        }
+
+        private Optional<String> getDefaultDefinitionIcon(Object definition) {
+            final String id = definitionManager.adapters().forDefinition().getId(definition);
+            final Glyph glyph = shapeFactory.getGlyph(id);
+            return Optional.ofNullable(glyph)
+                    .filter(glyphImg -> glyphImg instanceof ImageStripGlyph)
+                    .map(glyphImg -> (ImageStripGlyph) glyphImg)
+                    .map(glyphImg -> glyphRenderer.render(glyphImg, ICON_WIDTH, ICON_HEIGHT))
+                    .map(element -> element.getElement())
+                    .map(element -> element.getInnerHTML());
+        }
+
+        private Optional<String> getServiceTaskIcon(Object definition) {
+            return Optional.ofNullable(definition)
+                    .filter(def -> def instanceof ServiceTask)
+                    .map(def -> (ServiceTask) def)
+                    .map(ServiceTask::getName)
+                    .map(name -> Optional.ofNullable(workItemDefinitionClientRegistry
+                                                             .getRegistry()
+                                                             .get(name))
+                            .map(WorkItemDefinition::getIconDefinition)
+                            .map(IconDefinition::getIconData).orElse(null))
+                    .map(data -> createImageTag(data));
+        }
+
+        public Optional<String> getDefinitionCategory(Object definition) {
+            return Optional.ofNullable(definition)
+                    .map(Object::getClass)
+                    .map(categoryFactory::get)
+                    .filter(Objects::nonNull)
+                    .map(factory -> factory.apply(definition))
+                    .filter(Objects::nonNull)
+                    .orElseGet(() -> getDefaultDefinitionCategory(definition));
+        }
+
+        private Optional<String> getServiceTaskCategory(Object definition) {
+            return Optional.ofNullable(definition)
+                    .filter(def -> def instanceof ServiceTask)
+                    .map(def -> (ServiceTask) def)
+                    .map(ServiceTask::getName)
+                    .map(name -> Optional.ofNullable(workItemDefinitionClientRegistry
+                                                             .getRegistry()
+                                                             .get(name))
+                            .map(WorkItemDefinition::getCategory)
+                            .orElse(null));
+        }
+
+        private Optional<String> getDefaultDefinitionCategory(Object definition) {
+            return Optional.ofNullable(definitionManager.adapters().forDefinition().getCategory(definition));
+        }
+
+        public String getCategoryIcon(String category) {
+            return Optional.ofNullable(categoryDefinitionProvider.glyphProvider().apply(category))
+                    .map(glyph -> glyphRenderer.render(glyph, ICON_WIDTH, ICON_HEIGHT))
+                    .map(IsElement::getElement)
+                    .map(HTMLElement::getInnerHTML)
+                    //try to get the service task icon if category icon is not found
+                    .orElseGet(() -> Optional.ofNullable(category)
+                            .map(name -> workItemDefinitionClientRegistry
+                                    .getRegistry()
+                                    .items()
+                                    .stream()
+                                    .filter(wid -> Objects.equals(wid.getCategory(), category))
+                                    .findFirst()
+                                    .orElse(null))
+                            .filter(Objects::nonNull)
+                            .map(WorkItemDefinition::getIconDefinition)
+                            .map(IconDefinition::getIconData)
+                            .map(data -> createImageTag(data)).orElse(""));
+        }
+
+        private String createImageTag(String data) {
+            return "<img src=\"" + data + "\">";
+        }
     }
 }
