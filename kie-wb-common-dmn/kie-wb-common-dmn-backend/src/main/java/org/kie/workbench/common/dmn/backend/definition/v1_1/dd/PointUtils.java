@@ -17,10 +17,14 @@
 package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.kie.dmn.model.api.dmndi.DMNShape;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -46,36 +50,21 @@ public class PointUtils {
 
     // In Stunner terms the location of a child (target) is always relative to the
     // Parent (source) location however DMN requires all locations to be absolute.
-    @SuppressWarnings("unchecked")
     public static void convertToAbsoluteBounds(final Node<?, ?> targetNode) {
-        if (targetNode.getContent() instanceof View<?>) {
-            final View<?> targetNodeView = (View<?>) targetNode.getContent();
-            double boundsX = xOfBound(upperLeftBound(targetNodeView));
-            double boundsY = yOfBound(upperLeftBound(targetNodeView));
-            final double boundsWidth = xOfBound(lowerRightBound(targetNodeView)) - boundsX;
-            final double boundsHeight = yOfBound(lowerRightBound(targetNodeView)) - boundsY;
-            final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) targetNode.getInEdges();
-            for (Edge<?, ?> e : inEdges) {
-                if (e.getContent() instanceof Child) {
-                    final Node<?, ?> sourceNode = e.getSourceNode();
-                    final View<?> sourceView = (View<?>) sourceNode.getContent();
-                    final org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound sourceViewULBound = sourceView.getBounds().getUpperLeft();
-                    final double dx = sourceViewULBound.getX();
-                    final double dy = sourceViewULBound.getY();
-                    boundsX = boundsX + dx;
-                    boundsY = boundsY + dy;
-                    targetNodeView.setBounds(new BoundsImpl(new BoundImpl(boundsX, boundsY),
-                                                            new BoundImpl(boundsX + boundsWidth, boundsY + boundsHeight)));
-                    break;
-                }
-            }
-        }
+        convertBounds(targetNode,
+                      (base, delta) -> base + delta);
     }
 
     // In DMN terms the location of a Node is always absolute however Stunner requires
     // children (target) to have a relative location to their Parent (source).
-    @SuppressWarnings("unchecked")
     public static void convertToRelativeBounds(final Node<?, ?> targetNode) {
+        convertBounds(targetNode,
+                      (base, delta) -> base - delta);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void convertBounds(final Node<?, ?> targetNode,
+                                      final BiFunction<Double, Double, Double> convertor) {
         if (targetNode.getContent() instanceof View<?>) {
             final View<?> targetNodeView = (View<?>) targetNode.getContent();
             double boundsX = xOfBound(upperLeftBound(targetNodeView));
@@ -87,11 +76,11 @@ public class PointUtils {
                 if (e.getContent() instanceof Child) {
                     final Node<?, ?> sourceNode = e.getSourceNode();
                     final View<?> sourceView = (View<?>) sourceNode.getContent();
-                    final org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound sourceViewULBound = sourceView.getBounds().getUpperLeft();
+                    final Bound sourceViewULBound = sourceView.getBounds().getUpperLeft();
                     final double dx = sourceViewULBound.getX();
                     final double dy = sourceViewULBound.getY();
-                    boundsX = boundsX - dx;
-                    boundsY = boundsY - dy;
+                    boundsX = convertor.apply(boundsX, dx);
+                    boundsY = convertor.apply(boundsY, dy);
                     targetNodeView.setBounds(new BoundsImpl(new BoundImpl(boundsX, boundsY),
                                                             new BoundImpl(boundsX + boundsWidth, boundsY + boundsHeight)));
                     break;
@@ -101,69 +90,61 @@ public class PointUtils {
     }
 
     public static double xOfShape(final DMNShape shape) {
-        if (shape != null) {
-            if (shape.getBounds() != null) {
-                return shape.getBounds().getX();
-            }
-        }
-        return 0.0;
+        return extractValue(shape, org.kie.dmn.model.api.dmndi.Bounds::getX);
     }
 
     public static double yOfShape(final DMNShape shape) {
-        if (shape != null) {
-            if (shape.getBounds() != null) {
-                return shape.getBounds().getY();
-            }
-        }
-        return 0.0;
+        return extractValue(shape, org.kie.dmn.model.api.dmndi.Bounds::getY);
     }
 
     public static double widthOfShape(final DMNShape shape) {
-        if (shape != null) {
-            if (shape.getBounds() != null) {
-                return shape.getBounds().getWidth();
-            }
-        }
-        return 0.0;
+        return extractValue(shape, org.kie.dmn.model.api.dmndi.Bounds::getWidth);
     }
 
     public static double heightOfShape(final DMNShape shape) {
+        return extractValue(shape, org.kie.dmn.model.api.dmndi.Bounds::getHeight);
+    }
+
+    public static Bound upperLeftBound(final View view) {
+        return extractBounds(view, Bounds::getUpperLeft);
+    }
+
+    public static Bound lowerRightBound(final View view) {
+        return extractBounds(view, Bounds::getLowerRight);
+    }
+
+    public static double xOfBound(final Bound bound) {
+        return extractBound(bound, Bound::getX);
+    }
+
+    public static double yOfBound(final Bound bound) {
+        return extractBound(bound, Bound::getY);
+    }
+
+    private static double extractValue(final DMNShape shape,
+                                       final Function<org.kie.dmn.model.api.dmndi.Bounds, Double> extractor) {
         if (shape != null) {
             if (shape.getBounds() != null) {
-                return shape.getBounds().getHeight();
+                return extractor.apply(shape.getBounds());
             }
         }
         return 0.0;
     }
 
-    public static org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound upperLeftBound(final View view) {
+    private static Bound extractBounds(final View view,
+                                       final Function<Bounds, Bound> extractor) {
         if (view != null) {
             if (view.getBounds() != null) {
-                return view.getBounds().getUpperLeft();
+                return extractor.apply(view.getBounds());
             }
         }
         return null;
     }
 
-    public static org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound lowerRightBound(final View view) {
-        if (view != null) {
-            if (view.getBounds() != null) {
-                return view.getBounds().getLowerRight();
-            }
-        }
-        return null;
-    }
-
-    public static double xOfBound(final org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound bound) {
+    private static double extractBound(final Bound bound,
+                                       final Function<Bound, Double> extractor) {
         if (bound != null) {
-            return bound.getX();
-        }
-        return 0.0;
-    }
-
-    public static double yOfBound(final org.kie.workbench.common.stunner.core.graph.content.Bounds.Bound bound) {
-        if (bound != null) {
-            return bound.getY();
+            return extractor.apply(bound);
         }
         return 0.0;
     }

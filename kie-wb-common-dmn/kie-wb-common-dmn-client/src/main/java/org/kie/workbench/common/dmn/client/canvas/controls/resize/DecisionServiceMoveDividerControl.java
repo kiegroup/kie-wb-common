@@ -82,15 +82,6 @@ public class DecisionServiceMoveDividerControl extends AbstractCanvasHandlerRegi
 
             final DecisionServiceSVGShapeView decisionServiceShapeView = (DecisionServiceSVGShapeView) shapeView;
             final DragHandler dragHandler = new DragHandler() {
-                @Override
-                public void start(final DragEvent event) {
-                    //NOP
-                }
-
-                @Override
-                public void handle(final DragEvent event) {
-                    //NOP
-                }
 
                 @Override
                 public void end(final DragEvent event) {
