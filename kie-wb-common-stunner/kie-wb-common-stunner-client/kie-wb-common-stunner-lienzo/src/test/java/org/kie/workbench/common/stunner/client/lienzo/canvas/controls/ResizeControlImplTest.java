@@ -57,10 +57,9 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -92,12 +91,7 @@ public class ResizeControlImplTest {
     private static final String W_PROPERTY_ID = "w-property-id";
     private static final String H_PROPERTY_ID = "h-property-id";
     private static final String R_PROPERTY_ID = "r-property-id";
-    private static final BoundsImpl ELEMENT_BOUNDS = new BoundsImpl(
-            new BoundImpl(10d,
-                          20d),
-            new BoundImpl(30d,
-                          40d)
-    );
+    private static final Bounds ELEMENT_BOUNDS = Bounds.create(10d, 20d, 30d, 40d);
 
     private static final String DOCKED_NODE_UUID = UUID.uuid();
     private static final String CONNECTOR_EDGE_UUID = UUID.uuid();

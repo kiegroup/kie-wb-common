@@ -24,9 +24,9 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.exception.BadCommandArgumentsException;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
@@ -149,7 +149,7 @@ public class UpdateElementPositionCommandTest extends AbstractGraphCommandTest {
         verify((View) dockedNode.getContent(), times(1)).setBounds(boundsArgumentCaptor.capture());
         assertEquals(CommandResult.Type.INFO, result.getType());
         Bounds bounds = boundsArgumentCaptor.getValue();
-        assertEquals(bounds.getUpperLeft(), new BoundImpl(600d, 600d));
-        assertEquals(bounds.getLowerRight(), new BoundImpl(650d, 650d));
+        assertEquals(bounds.getUpperLeft(), Bound.create(600d, 600d));
+        assertEquals(bounds.getLowerRight(), Bound.create(650d, 650d));
     }
 }

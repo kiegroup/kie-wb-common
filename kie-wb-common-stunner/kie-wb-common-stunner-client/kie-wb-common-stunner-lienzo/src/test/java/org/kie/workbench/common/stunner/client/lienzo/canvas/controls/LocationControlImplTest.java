@@ -67,9 +67,8 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -99,12 +98,7 @@ public class LocationControlImplTest {
     private static final String ROOT_UUID = "root-uuid1";
     private static final String ELEMENT_UUID = "element-uuid1";
     private static final String DEF_ID = "def-id";
-    private static final BoundsImpl ELEMENT_BOUNDS = new BoundsImpl(
-            new BoundImpl(10d,
-                          20d),
-            new BoundImpl(30d,
-                          40d)
-    );
+    private static final Bounds ELEMENT_BOUNDS = Bounds.create(10d, 20d, 30d, 40d);
 
     @Mock
     private CanvasCommandManager<AbstractCanvasHandler> commandManager;
@@ -344,7 +338,6 @@ public class LocationControlImplTest {
         tested.init(canvasHandler);
         tested.clear();
         verify(selectionManager, atLeastOnce()).getControl();
-        verify(wiresCompositeControl).setBoundsConstraint(null);
     }
 
     @Test
@@ -353,8 +346,6 @@ public class LocationControlImplTest {
         tested.destroy();
         verify(selectionManager,
                atLeastOnce()).getControl();
-        verify(wiresCompositeControl,
-               atLeastOnce()).setBoundsConstraint(null);
         verify(wiresManager,
                atLeastOnce()).setLocationAcceptor(eq(ILocationAcceptor.ALL));
     }

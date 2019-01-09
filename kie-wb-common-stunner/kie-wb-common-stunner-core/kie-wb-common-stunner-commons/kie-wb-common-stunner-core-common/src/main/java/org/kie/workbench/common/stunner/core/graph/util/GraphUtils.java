@@ -34,6 +34,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
@@ -207,7 +208,7 @@ public class GraphUtils {
     }
 
     public static Point2D getPosition(final View element) {
-        final Bounds.Bound ul = element.getBounds().getUpperLeft();
+        final Bound ul = element.getBounds().getUpperLeft();
         final double x = ul.getX();
         final double y = ul.getY();
         return new Point2D(x,
@@ -235,8 +236,8 @@ public class GraphUtils {
     }
 
     private static double[] getSize(Bounds bounds) {
-        final Bounds.Bound ul = bounds.getUpperLeft();
-        final Bounds.Bound lr = bounds.getLowerRight();
+        final Bound ul = bounds.getUpperLeft();
+        final Bound lr = bounds.getLowerRight();
         final double w = lr.getX() - ul.getX();
         final double h = lr.getY() - ul.getY();
         return new double[]{Math.abs(w), Math.abs(h)};

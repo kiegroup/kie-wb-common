@@ -60,9 +60,8 @@ import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTyp
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
@@ -253,12 +252,10 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
         // Calculate the new graph element's bounds.
         final Point2D current = (null != x && null != y) ? new Point2D(x,
                                                                        y) : GraphUtils.getPosition(element.getContent());
-        final BoundsImpl newBounds = new BoundsImpl(
-                new BoundImpl(current.getX(),
-                              current.getY()),
-                new BoundImpl(current.getX() + w,
-                              current.getY() + h)
-        );
+        final Bounds newBounds = Bounds.create(current.getX(),
+                                               current.getY(),
+                                               current.getX() + w,
+                                               current.getY() + h);
         // Execute the update position and update property/ies command/s on the bean instance to achieve the new bounds.
         final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = getResizeCommands(element,
                                                                                                  w,

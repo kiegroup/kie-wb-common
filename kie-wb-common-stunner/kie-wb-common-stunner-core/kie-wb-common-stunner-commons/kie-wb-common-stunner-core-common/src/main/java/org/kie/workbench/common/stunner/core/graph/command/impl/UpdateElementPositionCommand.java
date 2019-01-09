@@ -31,8 +31,6 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
@@ -100,7 +98,7 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
     @Override
     @SuppressWarnings("unchecked")
     public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
-        final BoundsImpl newBounds = getTargetBounds(getNodeNotNull(context));
+        final Bounds newBounds = getTargetBounds(getNodeNotNull(context));
         LOGGER.log(Level.FINE,
                    "Moving element bounds to " +
                            "[" + newBounds.getX() + "," + newBounds.getY() + "] " +
@@ -113,7 +111,7 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
         final Node<? extends View<?>, Edge> element = getNodeNotNull(context);
         final Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) getGraph(context);
 
-        final BoundsImpl newBounds = getTargetBounds(element);
+        final Bounds newBounds = getTargetBounds(element);
 
         final GraphCommandResultBuilder result = new GraphCommandResultBuilder();
 
@@ -137,14 +135,14 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
     }
 
     @SuppressWarnings("unchecked")
-    private BoundsImpl getTargetBounds(final Element<? extends View<?>> element) {
+    private Bounds getTargetBounds(final Element<? extends View<?>> element) {
         final double[] oldSize = GraphUtils.getNodeSize(element.getContent());
         final double w = oldSize[0];
         final double h = oldSize[1];
-        return new BoundsImpl(new BoundImpl(location.getX(),
-                                            location.getY()),
-                              new BoundImpl(location.getX() + w,
-                                            location.getY() + h));
+        return Bounds.create(location.getX(),
+                             location.getY(),
+                             location.getX() + w,
+                             location.getY() + h);
     }
 
     @SuppressWarnings("unchecked")
@@ -156,7 +154,7 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
 
         if (parent != null && !GraphUtils.isRootNode(parent, graph)) {
             final double[] size = GraphUtils.getNodeSize(parent.getContent());
-            return new BoundsImpl(new BoundImpl(0d, 0d), new BoundImpl(size[0], size[1]));
+            return Bounds.create(0d, 0d, size[0], size[1]);
         } else {
             return null;
         }

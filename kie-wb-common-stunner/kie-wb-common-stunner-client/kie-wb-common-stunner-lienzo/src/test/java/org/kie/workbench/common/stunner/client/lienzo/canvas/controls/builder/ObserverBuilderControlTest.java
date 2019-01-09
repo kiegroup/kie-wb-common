@@ -59,9 +59,8 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
@@ -146,7 +145,7 @@ public class ObserverBuilderControlTest {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) {
                 ServiceCallback<Node<View<Object>, Edge>> callback = (ServiceCallback<Node<View<Object>, Edge>>) (invocationOnMock.getArguments()[2]);
-                view = new ViewImpl<>(new Object(), new BoundsImpl(new BoundImpl(0.0, 0.0), new BoundImpl(10.0, 20.0)));
+                view = new ViewImpl<>(new Object(), Bounds.create(0.0, 0.0, 10.0, 20.0));
                 Node<View<Object>, Edge> item = new NodeImpl<>("UUID");
                 item.setContent(view);
                 callback.onSuccess(item);

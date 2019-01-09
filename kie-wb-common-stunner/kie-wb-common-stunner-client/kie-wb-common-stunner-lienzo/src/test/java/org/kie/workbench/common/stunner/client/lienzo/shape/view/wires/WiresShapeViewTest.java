@@ -29,7 +29,8 @@ import com.ait.lienzo.client.core.shape.wires.MagnetManager;
 import com.ait.lienzo.client.core.shape.wires.WiresConnection;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
-import com.ait.lienzo.client.core.types.BoundingBox;
+import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresBounds;
+import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresShapeControlImpl;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
@@ -61,7 +62,7 @@ public class WiresShapeViewTest {
     private WiresShapeView tested;
 
     @Mock
-    private WiresShapeControl control;
+    private WiresShapeControlImpl control;
 
     @Before
     public void setup() throws Exception {
@@ -138,19 +139,13 @@ public class WiresShapeViewTest {
                              6.4d,
                              564.78d,
                              543.84d);
-        ArgumentCaptor<BoundingBox> bbCaptor = ArgumentCaptor.forClass(BoundingBox.class);
-        verify(control, times(1)).setBoundsConstraint(bbCaptor.capture());
-        final BoundingBox bb = bbCaptor.getValue();
+        ArgumentCaptor<WiresBounds> bbCaptor = ArgumentCaptor.forClass(WiresBounds.class);
+        verify(control, times(1)).setLocationBounds(bbCaptor.capture());
+        final WiresBounds bb = bbCaptor.getValue();
         assertEquals(1.5d, bb.getMinX(), 0d);
         assertEquals(6.4d, bb.getMinY(), 0d);
         assertEquals(564.78d, bb.getMaxX(), 0d);
         assertEquals(543.84d, bb.getMaxY(), 0d);
-    }
-
-    @Test
-    public void testUnSetDragBounds() {
-        tested.unsetDragBounds();
-        verify(control, times(1)).setBoundsConstraint(eq(null));
     }
 
     @Test
