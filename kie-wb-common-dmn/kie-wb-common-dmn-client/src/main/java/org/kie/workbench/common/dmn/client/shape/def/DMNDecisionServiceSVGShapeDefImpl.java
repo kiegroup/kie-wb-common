@@ -25,6 +25,8 @@ import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDime
 import org.kie.workbench.common.dmn.client.resources.DMNDecisionServiceSVGViewFactory;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGGlyphFactory;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
+import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeGlyph;
@@ -57,6 +59,17 @@ public class DMNDecisionServiceSVGShapeDefImpl implements DMNDecisionServiceSVGS
                 .maxWidth(p -> p.getDimensionsSet().getMaximumWidth())
                 .minHeight(p -> p.getDividerLineY().getValue() + GeneralRectangleDimensionsSet.DEFAULT_HEIGHT)
                 .maxHeight(p -> p.getDimensionsSet().getMaximumHeight())
+                .build();
+    }
+
+    @Override
+    public FontHandler<DecisionService, SVGShapeView> newFontHandler() {
+        return new FontHandler.Builder<DecisionService, SVGShapeView>()
+                .fontFamily(bean -> bean.getFontSet().getFontFamily().getValue())
+                .fontColor(bean -> bean.getFontSet().getFontColour().getValue())
+                .fontSize(bean -> bean.getFontSet().getFontSize().getValue())
+                .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
+                .position(bean -> HasTitle.Position.TOP)
                 .build();
     }
 

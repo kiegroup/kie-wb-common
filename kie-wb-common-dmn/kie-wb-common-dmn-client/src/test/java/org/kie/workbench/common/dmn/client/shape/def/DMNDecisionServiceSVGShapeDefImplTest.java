@@ -21,14 +21,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
+import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.client.resources.DMNDecisionServiceSVGViewFactory;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGGlyphFactory;
 import org.kie.workbench.common.stunner.core.client.components.palette.AbstractPalette.PaletteGlyphConsumer;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
+import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeGlyph;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeViewResource;
 import org.mockito.Mock;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet.DEFAULT_HEIGHT;
+import static org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet.DEFAULT_WIDTH;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +72,37 @@ public class DMNDecisionServiceSVGShapeDefImplTest {
         verify(viewResource).build(decisionService.getDimensionsSet().getWidth().getValue(),
                                    decisionService.getDimensionsSet().getHeight().getValue(),
                                    true);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testNewSizeHandler() {
+        final DecisionService decisionService = new DecisionService();
+        final View<DecisionService> view = new ViewImpl<>(decisionService, BoundsImpl.build(0,
+                                                                                            0,
+                                                                                            DEFAULT_WIDTH,
+                                                                                            DEFAULT_HEIGHT));
+        final SVGShapeView<?> shapeView = mock(SVGShapeView.class);
+
+        final SizeHandler<DecisionService, SVGShapeView> handler = shapeDef.newSizeHandler();
+        handler.handle(view, shapeView);
+
+        verify(shapeView).setMinWidth(decisionService.getDimensionsSet().getMinimumWidth());
+        verify(shapeView).setMaxWidth(decisionService.getDimensionsSet().getMaximumWidth());
+        verify(shapeView).setMinHeight(decisionService.getDividerLineY().getValue() + GeneralRectangleDimensionsSet.DEFAULT_HEIGHT);
+        verify(shapeView).setMaxHeight(decisionService.getDimensionsSet().getMaximumHeight());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testNewFontHandler() {
+        final DecisionService decisionService = new DecisionService();
+        final SVGShapeView<?> shapeView = mock(SVGShapeView.class);
+
+        final FontHandler<DecisionService, SVGShapeView> handler = shapeDef.newFontHandler();
+        handler.handle(decisionService, shapeView);
+
+        verify(shapeView).setTitlePosition(HasTitle.Position.TOP);
     }
 
     @Test
