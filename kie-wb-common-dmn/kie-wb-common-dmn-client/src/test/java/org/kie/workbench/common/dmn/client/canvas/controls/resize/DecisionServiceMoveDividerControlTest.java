@@ -69,10 +69,10 @@ public class DecisionServiceMoveDividerControlTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
-    private Canvas<?> canvas;
+    private Canvas canvas;
 
     @Mock
-    private Shape<?> shape;
+    private Shape shape;
 
     @Mock
     private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
