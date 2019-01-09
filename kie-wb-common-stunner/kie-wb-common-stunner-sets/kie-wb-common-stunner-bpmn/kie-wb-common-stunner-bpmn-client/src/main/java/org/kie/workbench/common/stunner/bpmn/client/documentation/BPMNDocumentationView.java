@@ -26,9 +26,9 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.bpmn.documentation.BPMNDocumentationService;
-import org.kie.workbench.common.stunner.bpmn.documentation.model.BPMNDocumentation;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.documentation.DefaultDiagramDocumentationView;
+import org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput;
 
 @Dependent
 @Specializes
@@ -64,15 +64,11 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
 
     @Override
     public BPMNDocumentationView refresh() {
-        return getDiagram()
-                .map(diagram -> {
-                    BPMNDocumentation documentation = documentationService.processDocumentation(diagram);
-                    String documentationTemplate = documentationService.getDocumentationTemplate(diagram);
-                    String html = documentationService.buildDocumentation(documentationTemplate, documentation);
-                    documentationDiv.innerHTML = html;
-                    return this;
-                })
-                .orElse(this);
+        documentationDiv.innerHTML = getDiagram()
+                .map(documentationService::generate)
+                .map(DocumentationOutput::getValue)
+                .orElse("");
+        return this;
     }
 
     @Override

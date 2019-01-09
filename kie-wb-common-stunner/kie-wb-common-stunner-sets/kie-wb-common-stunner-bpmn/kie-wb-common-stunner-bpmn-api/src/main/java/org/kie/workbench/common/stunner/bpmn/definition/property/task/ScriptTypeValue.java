@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 @Portable
 @Bindable
@@ -75,6 +76,6 @@ public class ScriptTypeValue {
 
     @Override
     public String toString() {
-        return this.language + " : " + script;
+        return StringUtils.nonEmpty(script) ? this.language + " : " + script : "";
     }
 }

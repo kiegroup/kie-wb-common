@@ -88,7 +88,8 @@ import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput;
+import org.kie.workbench.common.stunner.core.documentation.model.HTMLDocumentationTemplate;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -140,7 +141,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     @Override
-    public BPMNDocumentation processDocumentation(Diagram<Graph, Metadata> diagram) {
+    public BPMNDocumentation processDocumentation(Diagram diagram) {
         final Graph<?, Node> graph = diagram.getGraph();
 
         final Optional<BPMNDiagramImpl> diagramModel = StreamSupport.stream(graph.nodes().spliterator(), false)
@@ -272,19 +273,23 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     @Override
-    public String getDocumentationTemplate(Diagram<Graph, Metadata> diagram) {
+    public HTMLDocumentationTemplate getDocumentationTemplate() {
         final BPMNDocumentationTemplateSource source = GWT.create(BPMNDocumentationTemplateSource.class);
-        return source.documentationTemplate().getText();
+        return new HTMLDocumentationTemplate(source.documentationTemplate().getText());
     }
 
     @Override
-    public String buildDocumentation(String template, BPMNDocumentation diagramDocumentation) {
-        return mustacheTemplateRenderer.render(template, diagramDocumentation);
+    public DocumentationOutput buildDocumentation(HTMLDocumentationTemplate template, BPMNDocumentation diagramDocumentation) {
+        final String rendered = mustacheTemplateRenderer.render(template.getTemplate(), diagramDocumentation);
+        return new DocumentationOutput(rendered);
     }
 
-    public String buildDocumentation(Diagram<Graph, Metadata> diagram) {
-        //todo:tiago
-        return "";
+    @Override
+    public DocumentationOutput generate(Diagram diagram) {
+        return Optional.ofNullable(diagram)
+                .map(this::processDocumentation)
+                .map(d -> buildDocumentation(getDocumentationTemplate(), d))
+                .orElse(DocumentationOutput.EMPTY);
     }
 
     private String getCategoryIcon(String category) {
@@ -300,8 +305,11 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
         final Set<?> properties = definitionManager.adapters().forDefinition().getProperties(definition);
         return properties.stream()
                 .filter(prop -> !ignoredPropertiesIds.containsKey(propertyAdapter.getId(prop)))
-                .collect(Collectors.toMap(propertyAdapter::getCaption,
-                                          prop -> String.valueOf(propertyAdapter.getValue(prop))));
+                .collect(Collectors.toMap(propertyAdapter::getCaption, this::getElementValue));
+    }
+
+    private String getElementValue(Object prop) {
+        return String.valueOf(definitionManager.adapters().forProperty().getValue(prop));
     }
 
     private String getDiagramImage(Optional<AbstractCanvasHandler> canvasHandler) {

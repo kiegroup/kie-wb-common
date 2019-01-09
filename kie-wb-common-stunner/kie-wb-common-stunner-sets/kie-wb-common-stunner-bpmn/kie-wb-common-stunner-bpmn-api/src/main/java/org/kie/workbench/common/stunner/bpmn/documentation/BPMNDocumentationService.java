@@ -18,11 +18,11 @@ package org.kie.workbench.common.stunner.bpmn.documentation;
 
 import org.kie.workbench.common.stunner.bpmn.documentation.model.BPMNDocumentation;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput;
+import org.kie.workbench.common.stunner.core.documentation.model.HTMLDocumentationTemplate;
 import org.kie.workbench.common.stunner.core.documentation.service.DiagramDocumentationService;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 
-public interface BPMNDocumentationService extends DiagramDocumentationService<Diagram<Graph, Metadata>, Metadata,
-        BPMNDocumentation> {
+public interface BPMNDocumentationService extends DiagramDocumentationService<Diagram, BPMNDocumentation,
+        HTMLDocumentationTemplate, DocumentationOutput> {
 
 }

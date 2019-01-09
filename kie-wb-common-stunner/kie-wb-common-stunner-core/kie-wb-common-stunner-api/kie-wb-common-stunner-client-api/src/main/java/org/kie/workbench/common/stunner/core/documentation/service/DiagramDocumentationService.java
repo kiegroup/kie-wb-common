@@ -17,12 +17,12 @@
 package org.kie.workbench.common.stunner.core.documentation.service;
 
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.model.DiagramDocumentation;
-import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput;
+import org.kie.workbench.common.stunner.core.documentation.model.HTMLDocumentationTemplate;
 
-public interface DiagramDocumentationService<D extends Diagram<Graph, M>, M extends Metadata,
-        R extends DiagramDocumentation> {
+public interface DiagramDocumentationService<D extends Diagram, R extends DiagramDocumentation,
+        T extends HTMLDocumentationTemplate, P extends DocumentationOutput> {
 
     /**
      * Process the diagram generating the documentation output bean.
@@ -33,16 +33,22 @@ public interface DiagramDocumentationService<D extends Diagram<Graph, M>, M exte
 
     /**
      * Returns the template to be used to build the serialized documentation.
-     * @param diagram
      * @return
      */
-    String getDocumentationTemplate(D diagram);
+    T getDocumentationTemplate();
 
     /**
-     * Generates the documentation serialized output
+     * Generates the documentation serialized output based on the given template.
      * @param template
      * @param diagramDocumentation
      * @return
      */
-    String buildDocumentation(String template, R diagramDocumentation);
+    DocumentationOutput buildDocumentation(T template, R diagramDocumentation);
+
+    /**
+     * This is the method that executed the full documentations process.
+     * @param diagram
+     * @return the processed documentation output
+     */
+    DocumentationOutput generate(D diagram);
 }

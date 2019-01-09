@@ -19,11 +19,13 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 @Portable
 @Bindable
@@ -72,6 +74,9 @@ public class ScriptTypeListValue {
 
     @Override
     public String toString() {
-        return values.toString();
+        return values.stream()
+                .map(String::valueOf)
+                .filter(StringUtils::nonEmpty)
+                .collect(Collectors.joining(","));
     }
 }

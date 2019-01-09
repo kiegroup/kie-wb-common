@@ -399,11 +399,12 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     private void addDocumentationPage(ProjectDiagram diagram) {
-        //todo:tiago i18n on label inject the DocumentationPage itself
         Optional.ofNullable(documentationView.isEnabled())
                 .filter(Boolean.TRUE::equals)
-                .ifPresent(enabled -> addPage(new DocumentationPage(documentationView.initialize(diagram),
-                                                                    "Documentation")));
+                .ifPresent(enabled -> {
+                    final String label = translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION);
+                    addPage(new DocumentationPage(documentationView.initialize(diagram), label));
+                });
     }
 
     protected void onDiagramLoad() {
