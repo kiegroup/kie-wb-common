@@ -23,6 +23,7 @@ import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresDockingControl;
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Composite;
@@ -155,8 +156,10 @@ public class CanvasView extends Composite implements AbstractCanvas.View<com.ait
                                   final WiresShape childShape) {
         final WiresDockingControl dockingControl = childShape.getControl().getDockingControl();
         dockingControl.dock(parentShape);
-        //setting the candidate location after docking
-        childShape.setLocation(dockingControl.getCandidateLocation());
+        final Point2D candidateLocation = dockingControl.getCandidateLocation();
+        if (null != candidateLocation) {
+            childShape.setLocation(candidateLocation);
+        }
         return this;
     }
 
