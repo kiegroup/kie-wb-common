@@ -27,18 +27,28 @@ public class Bounds {
         return create(0d, 0d, 0d, 0d);
     }
 
+    public static Bounds createEmpty() {
+        return create(null, null);
+    }
+
     public static Bounds createMinBounds(final double x1,
                                          final double y1) {
-        return new Bounds(Bound.create(x1, y1),
-                          null);
+        return create(Bound.create(x1, y1),
+                      null);
     }
 
     public static Bounds create(final double x1,
                                 final double y1,
                                 final double x2,
                                 final double y2) {
-        return new Bounds(Bound.create(x1, y1),
-                          Bound.create(x2, y2));
+        return create(Bound.create(x1, y1),
+                      Bound.create(x2, y2));
+    }
+
+    public static Bounds create(final Bound xy0,
+                                final Bound xy1) {
+        return new Bounds(xy0,
+                          xy1);
     }
 
     private Bound lr;

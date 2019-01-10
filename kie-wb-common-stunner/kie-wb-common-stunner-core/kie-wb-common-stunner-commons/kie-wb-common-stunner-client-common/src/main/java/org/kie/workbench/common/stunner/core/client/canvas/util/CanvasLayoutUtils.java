@@ -147,6 +147,7 @@ public class CanvasLayoutUtils {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public Point2D getNext(final AbstractCanvasHandler canvasHandler,
                            final Node<View<?>, Edge> root,
                            final double rootNodeWidth,
@@ -161,8 +162,8 @@ public class CanvasLayoutUtils {
         checkNotNull("root",
                      root);
 
-        final int canvasHeight = canvasHandler.getCanvas().getHeight();
-        final int canvasWidth = canvasHandler.getCanvas().getWidth();
+        final int canvasHeight = canvasHandler.getCanvas().getHeightPx();
+        final int canvasWidth = canvasHandler.getCanvas().getWidthPx();
 
         Point2D newPositionUL = getNextPositionWithOffset(rootNodeCoordinates,
                                                           offset);

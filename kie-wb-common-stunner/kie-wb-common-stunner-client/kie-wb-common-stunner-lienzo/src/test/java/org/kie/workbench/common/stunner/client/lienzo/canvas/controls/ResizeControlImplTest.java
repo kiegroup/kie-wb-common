@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.Wires
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasPanel;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
@@ -111,6 +112,12 @@ public class ResizeControlImplTest {
 
     @Mock
     private AbstractCanvas canvas;
+
+    @Mock
+    private AbstractCanvas.CanvasView canvasView;
+
+    @Mock
+    private CanvasPanel canvasPanel;
 
     @Mock
     private Diagram diagram;
@@ -242,6 +249,9 @@ public class ResizeControlImplTest {
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getCanvasRootUUID()).thenReturn(ROOT_UUID);
         when(canvasHandler.getCanvas()).thenReturn(canvas);
+        when(canvasHandler.getAbstractCanvas()).thenReturn(canvas);
+        when(canvas.getView()).thenReturn(canvasView);
+        when(canvasView.getPanel()).thenReturn(canvasPanel);
         when(canvas.getShape(eq(ELEMENT_UUID))).thenReturn(shape);
         when(canvas.getShapes()).thenReturn(Collections.singletonList(shape));
         when(shape.getUUID()).thenReturn(ELEMENT_UUID);

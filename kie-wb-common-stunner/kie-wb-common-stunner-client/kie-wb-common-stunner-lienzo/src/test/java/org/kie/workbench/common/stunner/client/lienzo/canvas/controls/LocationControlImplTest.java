@@ -40,9 +40,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvasView;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresShapeView;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasPanel;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
@@ -108,6 +110,12 @@ public class LocationControlImplTest {
 
     @Mock
     private WiresCanvas canvas;
+
+    @Mock
+    private WiresCanvasView canvasView;
+
+    @Mock
+    private CanvasPanel canvasPanel;
 
     @Mock
     private WiresManager wiresManager;
@@ -183,9 +191,11 @@ public class LocationControlImplTest {
         when(metadata.getCanvasRootUUID()).thenReturn(ROOT_UUID);
         when(canvasHandler.getAbstractCanvas()).thenReturn(canvas);
         when(canvasHandler.getCanvas()).thenReturn(canvas);
+        when(canvas.getView()).thenReturn(canvasView);
         when(canvas.getShape(eq(ELEMENT_UUID))).thenReturn(shape);
         when(canvas.getShapes()).thenReturn(Collections.singletonList(shape));
         when(canvas.getWiresManager()).thenReturn(wiresManager);
+        when(canvasView.getPanel()).thenReturn(canvasPanel);
         when(shape.getUUID()).thenReturn(ELEMENT_UUID);
         when(shape.getShapeView()).thenReturn(shapeView);
         when(shapeEventHandler.supports(any(ViewEventType.class))).thenReturn(true);
@@ -324,6 +334,15 @@ public class LocationControlImplTest {
     }
 
     @Test
+    public void testEnsureDragConstraints() throws Exception {
+        tested.init(canvasHandler);
+        Bounds bounds = Bounds.create(0d, 0d, 600d, 600d);
+        when(canvasPanel.getLocationConstraints()).thenReturn(bounds);
+        tested.register(element);
+        verify(shapeView, times(1)).setDragBounds(eq(bounds));
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testDeregister() {
         tested.init(canvasHandler);
@@ -334,18 +353,9 @@ public class LocationControlImplTest {
     }
 
     @Test
-    public void testClear() {
-        tested.init(canvasHandler);
-        tested.clear();
-        verify(selectionManager, atLeastOnce()).getControl();
-    }
-
-    @Test
     public void testDestroy() {
         tested.init(canvasHandler);
         tested.destroy();
-        verify(selectionManager,
-               atLeastOnce()).getControl();
         verify(wiresManager,
                atLeastOnce()).setLocationAcceptor(eq(ILocationAcceptor.ALL));
     }

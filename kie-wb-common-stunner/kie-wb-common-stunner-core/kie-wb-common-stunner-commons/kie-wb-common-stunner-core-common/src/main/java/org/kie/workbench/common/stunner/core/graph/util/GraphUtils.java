@@ -259,13 +259,17 @@ public class GraphUtils {
         if (null == parentBounds) {
             return true;
         }
-        if ((bounds.getUpperLeft().getX() < parentBounds.getUpperLeft().getX())
-                || (bounds.getUpperLeft().getY() < parentBounds.getUpperLeft().getY())) {
-            return false;
+        if (parentBounds.hasUpperLeft()) {
+            if ((bounds.getUpperLeft().getX() < parentBounds.getUpperLeft().getX())
+                    || (bounds.getUpperLeft().getY() < parentBounds.getUpperLeft().getY())) {
+                return false;
+            }
         }
-        if ((bounds.getLowerRight().getX() > parentBounds.getLowerRight().getX())
-                || (bounds.getLowerRight().getY() > parentBounds.getLowerRight().getY())) {
-            return false;
+        if (parentBounds.hasLowerRight()) {
+            if ((bounds.getLowerRight().getX() > parentBounds.getLowerRight().getX())
+                    || (bounds.getLowerRight().getY() > parentBounds.getLowerRight().getY())) {
+                return false;
+            }
         }
         return true;
     }

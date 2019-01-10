@@ -163,8 +163,8 @@ public class CanvasLayoutUtilsTest {
                                         0d);
         Point2D canvasMax = new Point2D(1200d,
                                         1200d);
-        when(canvasHandler.getCanvas().getHeight()).thenReturn((int) canvasMax.getY());
-        when(canvasHandler.getCanvas().getWidth()).thenReturn((int) canvasMax.getX());
+        when(canvasHandler.getCanvas().getHeightPx()).thenReturn((int) canvasMax.getY());
+        when(canvasHandler.getCanvas().getWidthPx()).thenReturn((int) canvasMax.getX());
 
         canvasLayoutUtils = new CanvasLayoutUtils(graphBoundsIndexer,
                                                   ruleManager,

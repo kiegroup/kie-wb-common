@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandlerImpl;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasPanel;
 import org.kie.workbench.common.stunner.core.client.canvas.Transform;
 import org.kie.workbench.common.stunner.core.client.canvas.TransformImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasNodeCommand;
@@ -132,6 +133,7 @@ public class ObserverBuilderControlTest {
     private AbstractCanvas canvas;
     private Transform canvasTransform;
     private AbstractCanvas.CanvasView canvasView;
+    private CanvasPanel canvasPanel;
     private Widget canvasWidget;
     private com.google.gwt.user.client.Element canvasElement;
     private Document document;
@@ -239,6 +241,8 @@ public class ObserverBuilderControlTest {
         when(canvasView.asWidget()).thenReturn(canvasWidget);
         when(canvasWidget.getElement()).thenReturn(canvasElement);
         when(canvasElement.getOwnerDocument()).thenReturn(document);
+        canvasPanel = mock(CanvasPanel.class);
+        when(canvasView.getPanel()).thenReturn(canvasPanel);
         canvasHandler = new CanvasHandlerImpl(clientDefinitionManager,
                                               canvasCommandFactory,
                                               clientFactoryServices,

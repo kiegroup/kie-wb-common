@@ -39,6 +39,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.resize.Resiz
 import org.kie.workbench.common.stunner.core.client.canvas.event.AbstractCanvasHandlerEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasUtils;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
@@ -256,6 +257,11 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
                                                current.getY(),
                                                current.getX() + w,
                                                current.getY() + h);
+
+        if (CanvasUtils.areBoundsExceeded(canvasHandler, newBounds)) {
+            return CanvasUtils.createBoundsExceededCommandResult(canvasHandler, newBounds);
+        }
+
         // Execute the update position and update property/ies command/s on the bean instance to achieve the new bounds.
         final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = getResizeCommands(element,
                                                                                                  w,
