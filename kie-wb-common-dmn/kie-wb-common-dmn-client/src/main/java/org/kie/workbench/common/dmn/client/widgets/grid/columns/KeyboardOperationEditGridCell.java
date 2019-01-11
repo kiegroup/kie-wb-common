@@ -35,7 +35,7 @@ public class KeyboardOperationEditGridCell extends KeyboardOperationEditCell {
 
     @Override
     public boolean perform(final GridWidget gridWidget, final boolean isShiftKeyDown, final boolean isControlKeyDown) {
-        final boolean needToRedraw = super.perform(gridWidget, isShiftKeyDown, isControlKeyDown);
+        final boolean changesToBeRendered = super.perform(gridWidget, isShiftKeyDown, isControlKeyDown);
 
         final GridData model = gridWidget.getModel();
         if (model.getSelectedCells().size() == 1) {
@@ -53,6 +53,6 @@ public class KeyboardOperationEditGridCell extends KeyboardOperationEditCell {
             }
         }
 
-        return needToRedraw;
+        return changesToBeRendered;
     }
 }
