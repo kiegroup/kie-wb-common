@@ -128,6 +128,12 @@ public class DMNEditorConstants {
     public static final String FunctionEditor_EditParameters = "FunctionEditor.EditParameters";
 
     @TranslationKey(defaultValue = "")
+    public static final String FunctionEditor_EditParametersTitle = "FunctionEditor.EditParametersTitle";
+
+    @TranslationKey(defaultValue = "")
+    public static final String FunctionEditor_SelectFunctionKind = "FunctionEditor.SelectFunctionKind";
+
+    @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_DescriptionColumnHeader = "DecisionTableEditor.DescriptionColumnHeader";
 
     @TranslationKey(defaultValue = "")
@@ -251,7 +257,7 @@ public class DMNEditorConstants {
     public static final String DataTypeListItemView_Constraints = "DataTypeListItemView.Constraints";
 
     @TranslationKey(defaultValue = "")
-    public static final String DataTypeListItemView_Collection = "DataTypeListItemView.Collection";
+    public static final String DataTypeListItemView_List = "DataTypeListItemView.List";
 
     @TranslationKey(defaultValue = "")
     public static final String SmallSwitchComponentView_Yes = "SmallSwitchComponentView.Yes";

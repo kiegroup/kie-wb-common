@@ -24,8 +24,10 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.i18n.StunnerTranslationService;
+import org.kie.workbench.common.stunner.core.profile.DomainProfileManager;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
@@ -46,6 +48,9 @@ public class CollapsedPaletteDefinitionBuilderTest {
 
     @Mock
     private DefinitionUtils definitionUtils;
+
+    @Mock
+    private DomainProfileManager profileManager;
 
     @Mock
     private DefinitionManager definitionManager;
@@ -78,11 +83,12 @@ public class CollapsedPaletteDefinitionBuilderTest {
         when(definitionUtils.getDefinitionManager()).thenReturn(definitionManager);
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.forDefinition()).thenReturn(definitionAdapter1);
-        when(definitionAdapter1.getId(eq(definition1))).thenReturn(DEF1_ID);
+        when(definitionAdapter1.getId(eq(definition1))).thenReturn(DefinitionId.build(DEF1_ID));
         when(definitionAdapter1.getCategory(eq(definition1))).thenReturn(DEF1_CATEGORY);
         when(definitionAdapter1.getTitle(eq(definition1))).thenReturn(DEF1_TITLE);
         when(definitionAdapter1.getDescription(eq(definition1))).thenReturn(DEF1_DESC);
         tested = new CollapsedPaletteDefinitionBuilder(definitionUtils,
+                                                       profileManager,
                                                        definitionsRegistry,
                                                        translationService);
     }

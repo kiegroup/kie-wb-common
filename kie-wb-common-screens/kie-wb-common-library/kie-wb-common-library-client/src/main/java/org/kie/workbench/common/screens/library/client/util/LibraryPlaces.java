@@ -40,8 +40,8 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.messageconsole.client.console.MessageConsoleScreen;
+import org.guvnor.structure.events.AfterDeleteOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
@@ -266,7 +266,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             final PlaceRequest place = placeGainFocusEvent.getPlace();
 
             if (place instanceof PathPlaceRequest) {
-                libraryBreadcrumbs.setupForAsset(getActiveWorkspace(), ((PathPlaceRequest) place).getPath());
+                libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
+                                                 ((PathPlaceRequest) place).getPath());
                 showDocks();
             } else if (!place.getIdentifier().equals(ALERTS) && isLibraryPlace(place)) {
                 hideDocks();
@@ -335,7 +336,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         if (isLibraryPerspectiveOpen()) {
             final ObservablePath path = concurrentRenameAcceptedEvent.getPath();
             goToAsset(path);
-            libraryBreadcrumbs.setupForAsset(getActiveWorkspace(), path);
+            libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
+                                             path);
         }
     }
 
@@ -369,13 +371,11 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                 .isPresent();
     }
 
-    public void onOrganizationalUnitRemoved(@Observes final RemoveOrganizationalUnitEvent removedOrganizationalUnitEvent) {
+    public void onOrganizationalUnitRemoved(@Observes final AfterDeleteOrganizationalUnitEvent removedOrganizationalUnitEvent) {
         if (isLibraryPerspectiveOpen()) {
             projectContext.getActiveOrganizationalUnit()
                     .filter(active -> active.equals(removedOrganizationalUnitEvent.getOrganizationalUnit()))
-                    .ifPresent(active -> {
-                        projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
-                    });
+                    .ifPresent(active -> this.goToOrganizationalUnits());
         }
     }
 
@@ -476,19 +476,20 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     public void goToOrganizationalUnits() {
-        closeAllPlacesOrNothing(() -> {
-            PortablePreconditions.checkNotNull("libraryPerspective.closeAllPlacesOrNothing",
-                                               libraryPerspective);
+        closeAllPlacesOrNothing(this::goToSpaces);
+    }
 
-            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
+    private void goToSpaces() {
+        PortablePreconditions.checkNotNull("libraryPerspective.closeAllPlacesOrNothing",
+                                           libraryPerspective);
+        projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
 
-            final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN);
-            final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
-            part.setSelectable(false);
-            placeManager.goTo(part,
-                              libraryPerspective.getRootPanel());
-            libraryBreadcrumbs.setupForSpacesScreen();
-        });
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN);
+        final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
+        part.setSelectable(false);
+        placeManager.goTo(part,
+                          libraryPerspective.getRootPanel());
+        libraryBreadcrumbs.setupForSpacesScreen();
     }
 
     public void goToLibrary() {
@@ -544,7 +545,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                                                 closeAllPlacesOrNothing(() -> {
                                                     projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project,
                                                                                                                           project.getMainModule()));
-                                                    goToProject(project, loadedLibraryInternalPreferences.getLastBranchOpened(project).orElse(project.getBranch()));
+                                                    goToProject(project,
+                                                                loadedLibraryInternalPreferences.getLastBranchOpened(project).orElse(project.getBranch()));
                                                 });
                                             },
                                             error -> {
@@ -558,7 +560,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                             final Branch branch) {
         libraryInternalPreferences.load(loadedLibraryInternalPreferences -> {
                                             final Optional<Branch> lastBranchOpened = loadedLibraryInternalPreferences.getLastBranchOpened(project);
-                                            final Command goToProjectCommand = () -> projectService.call((RemoteCallback<WorkspaceProject>) this::goToProject).resolveProject(project.getSpace(), branch);
+                                            final Command goToProjectCommand = () -> projectService.call((RemoteCallback<WorkspaceProject>) this::goToProject).resolveProject(project.getSpace(),
+                                                                                                                                                                              branch);
 
                                             if (!lastBranchOpened.isPresent() || !lastBranchOpened.get().equals(branch)) {
                                                 loadedLibraryInternalPreferences.setLastBranchOpened(project,
@@ -608,7 +611,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
             if (path != null) {
                 final ObservablePath observablePath = ((PathPlaceRequest) placeRequest).getPath();
-                observablePath.onRename(() -> libraryBreadcrumbs.setupForAsset(getActiveWorkspace(), observablePath));
+                observablePath.onRename(() -> libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
+                                                                               observablePath));
             }
         }).resolvePackage(path);
     }
@@ -789,7 +793,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                 closeAllPlacesOrNothing(this::goToProject);
             }
 
-            if (Utils.hasModuleChanged(previous.getModule(), current.getModule())) {
+            if (Utils.hasModuleChanged(previous.getModule(),
+                                       current.getModule())) {
                 libraryBreadcrumbs.setupForProject(projectContext.getActiveWorkspaceProject().get());
             }
         }

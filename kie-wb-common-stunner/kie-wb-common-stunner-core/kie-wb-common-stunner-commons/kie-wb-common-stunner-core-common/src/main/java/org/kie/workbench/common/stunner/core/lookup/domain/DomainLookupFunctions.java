@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -73,7 +74,11 @@ public class DomainLookupFunctions {
                                                       Optional.of(CardinalityContext.Operation.ADD)));
             if (isValid(outEdgeCardinalityResult)) {
                 final String defId =
-                        context.getDefinitionManager().adapters().forDefinition().getId(sourceNode.getContent().getDefinition());
+                        context.getDefinitionManager()
+                                .adapters()
+                                .forDefinition()
+                                .getId(sourceNode.getContent().getDefinition())
+                                .value();
                 return new LookupConnectionTargetRoles(edgeId, defId)
                         .execute(context);
             }
@@ -182,16 +187,19 @@ public class DomainLookupFunctions {
 
         private final Graph<?, ? extends Node> graph;
         private final Set<String> labels;
+        private final Predicate<String> definitionIdsAllowedFilter;
 
         public LookupAllowedDefinitionsByLabels(final Graph<?, ? extends Node> graph,
-                                                final Set<String> labels) {
+                                                final Set<String> labels,
+                                                final Predicate<String> definitionIdsAllowedFilter) {
             this.graph = graph;
             this.labels = labels;
+            this.definitionIdsAllowedFilter = definitionIdsAllowedFilter;
         }
 
         @Override
         public Set<String> execute(final DomainLookupContext context) {
-            final Set<String> ids = new LookupDefinitionsByLabels(labels).execute(context);
+            final Set<String> ids = new LookupDefinitionsByLabels(labels, definitionIdsAllowedFilter).execute(context);
             final Map<String, Integer> graphLabelCount = GraphUtils.getLabelsCount(graph,
                                                                                    labels);
             final Set<String> result = new LinkedHashSet<>();
@@ -217,9 +225,12 @@ public class DomainLookupFunctions {
     public static class LookupDefinitionsByLabels implements DomainLookupFunction {
 
         private final Set<String> labels;
+        private final Predicate<String> definitionIdsAllowedFilter;
 
-        public LookupDefinitionsByLabels(final Set<String> labels) {
+        public LookupDefinitionsByLabels(final Set<String> labels,
+                                         final Predicate<String> definitionIdsAllowedFilter) {
             this.labels = labels;
+            this.definitionIdsAllowedFilter = definitionIdsAllowedFilter;
         }
 
         @Override
@@ -227,6 +238,7 @@ public class DomainLookupFunctions {
             final DomainLookupsCache cache = context.getCache();
             return labels.stream()
                     .flatMap(label -> cache.getDefinitions(label).stream())
+                    .filter(definitionIdsAllowedFilter::test)
                     .collect(Collectors.toSet());
         }
     }

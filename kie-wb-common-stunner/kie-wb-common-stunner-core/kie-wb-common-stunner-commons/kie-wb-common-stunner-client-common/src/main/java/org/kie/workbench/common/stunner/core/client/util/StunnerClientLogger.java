@@ -63,7 +63,7 @@ public class StunnerClientLogger {
                                      final Object def) {
         final DefinitionAdapter<Object> defAdapter =
                 definitionManager.adapters().registry().getDefinitionAdapter(def.getClass());
-        final String id = defAdapter.getId(def);
+        final String id = defAdapter.getId(def).value();
         final String category = defAdapter.getCategory(def);
         final String description = defAdapter.getDescription(def);
         final String title = defAdapter.getTitle(def);
@@ -158,6 +158,7 @@ public class StunnerClientLogger {
                     final Metadata metadata = diagram.getMetadata();
                     if (null != metadata) {
                         log("Metadata defSetId = " + metadata.getDefinitionSetId());
+                        log("Metadata profileId = " + metadata.getProfileId());
                         log("Metadata shapeSetId = " + metadata.getShapeSetId());
                         log("Metadata canvas root = " + metadata.getCanvasRootUUID());
                         log("Metadata title = " + metadata.getTitle());

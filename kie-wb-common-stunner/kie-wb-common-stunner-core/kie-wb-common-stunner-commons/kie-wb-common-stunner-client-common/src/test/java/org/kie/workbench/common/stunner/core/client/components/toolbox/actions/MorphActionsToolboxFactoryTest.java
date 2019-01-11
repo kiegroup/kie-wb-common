@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.components.toolbox.actions;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
@@ -29,18 +30,23 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.components.toolbox.Toolbox;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.definition.adapter.MorphAdapter;
 import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.profile.DomainProfileManager;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -58,6 +64,12 @@ public class MorphActionsToolboxFactoryTest {
 
     @Mock
     private DefinitionManager definitionManager;
+
+    @Mock
+    private DomainProfileManager profileManager;
+
+    @Mock
+    private Predicate<String> profileFilter;
 
     @Mock
     private DefinitionUtils definitionUtils;
@@ -90,6 +102,12 @@ public class MorphActionsToolboxFactoryTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Metadata metadata;
+
+    @Mock
     private Node<View, Edge> element;
 
     @Mock
@@ -106,6 +124,10 @@ public class MorphActionsToolboxFactoryTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getMetadata()).thenReturn(metadata);
+        when(profileFilter.test(anyString())).thenReturn(true);
+        when(profileManager.isDefinitionIdAllowed(eq(metadata))).thenReturn(profileFilter);
         when(morphNodeAction.setMorphDefinition(any(MorphDefinition.class))).thenReturn(morphNodeAction);
         when(morphNodeAction.setTargetDefinitionId(anyString())).thenReturn(morphNodeAction);
         when(definitionManager.adapters()).thenReturn(adapters);
@@ -119,11 +141,12 @@ public class MorphActionsToolboxFactoryTest {
         when(element.getUUID()).thenReturn(E_UUID);
         when(element.getContent()).thenReturn(elementContent);
         when(element.asNode()).thenReturn(element);
-        when(definitionAdapter.getId(eq(definition))).thenReturn(DEF_ID);
+        when(definitionAdapter.getId(eq(definition))).thenReturn(DefinitionId.build(DEF_ID));
         when(elementContent.getDefinition()).thenReturn(definition);
         when(definitionUtils.getDefinitionManager()).thenReturn(definitionManager);
         when(definitionUtils.hasMorphTargets(eq(definition))).thenReturn(true);
         this.tested = new MorphActionsToolboxFactory(definitionUtils,
+                                                     profileManager,
                                                      () -> morphNodeAction,
                                                      morphNodeActionDestroyer,
                                                      () -> view,
@@ -133,9 +156,11 @@ public class MorphActionsToolboxFactoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testBuildToolbox() {
+        when(profileFilter.test(eq(MORPH_TARGET_ID))).thenReturn(true);
         final Optional<Toolbox<?>> toolbox =
                 tested.build(canvasHandler,
                              element);
+        verify(profileManager, times(1)).isDefinitionIdAllowed(eq(metadata));
         assertTrue(toolbox.isPresent());
         assertTrue(toolbox.get() instanceof ActionsToolbox);
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox.get();
@@ -155,6 +180,16 @@ public class MorphActionsToolboxFactoryTest {
                times(1)).addButton(any(Glyph.class),
                                    anyString(),
                                    any(Consumer.class));
+    }
+
+    @Test
+    public void testBuildToolboxWithProfileRestrictions() {
+        when(profileFilter.test(eq(MORPH_TARGET_ID))).thenReturn(false);
+        final Optional<Toolbox<?>> toolbox =
+                tested.build(canvasHandler,
+                             element);
+        verify(profileManager, times(1)).isDefinitionIdAllowed(eq(metadata));
+        assertFalse(toolbox.isPresent());
     }
 
     @Test

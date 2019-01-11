@@ -26,6 +26,7 @@ import org.kie.workbench.common.stunner.core.client.components.palette.DefaultPa
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.i18n.StunnerTranslationService;
+import org.kie.workbench.common.stunner.core.profile.DomainProfileManager;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
@@ -39,9 +40,11 @@ public class CollapsedPaletteDefinitionBuilder
 
     @Inject
     public CollapsedPaletteDefinitionBuilder(final DefinitionUtils definitionUtils,
+                                             final DomainProfileManager profileManager,
                                              final DefinitionsCacheRegistry definitionsRegistry,
                                              final StunnerTranslationService translationService) {
         super(definitionUtils,
+              profileManager,
               definitionsRegistry,
               translationService);
     }
@@ -52,7 +55,7 @@ public class CollapsedPaletteDefinitionBuilder
                                             final Metadata metadata,
                                             final Function<String, DefaultPaletteItem> itemSupplier) {
         final DefinitionAdapter<Object> definitionAdapter = getDefinitionManager().adapters().forDefinition();
-        final String id = definitionAdapter.getId(definition);
+        final String id = definitionAdapter.getId(definition).value();
         final String title = definitionAdapter.getTitle(definition);
         // Notice it creates the item by using the title as for the item's tooltip property,
         // setting this an empty item title, in order to not display text once the rendered

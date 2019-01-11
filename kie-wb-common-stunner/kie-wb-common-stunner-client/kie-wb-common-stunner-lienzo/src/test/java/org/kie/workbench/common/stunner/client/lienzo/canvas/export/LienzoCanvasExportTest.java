@@ -208,8 +208,8 @@ public class LienzoCanvasExportTest {
         wiresLayer.add(new WiresShape(new MultiPath().rect(0, 0, 100, 150)).setLocation(new Point2D(1, 3)));
         LienzoCanvasExport.WiresLayerBoundsProvider provider = new LienzoCanvasExport.WiresLayerBoundsProvider();
         int[] size0 = provider.compute(lienzoLayer, CanvasExportSettings.build());
-        assertEquals(1, size0[0]);
-        assertEquals(3, size0[1]);
+        assertEquals(0, size0[0]);
+        assertEquals(0, size0[1]);
         assertEquals(151, size0[2]);
         assertEquals(203, size0[3]);
     }
@@ -233,6 +233,7 @@ public class LienzoCanvasExportTest {
         verify(layer, times(1)).draw(any(Context2D.class));
         ArgumentCaptor<Transform> transformArgumentCaptor = ArgumentCaptor.forClass(Transform.class);
         verify(viewport, times(2)).setTransform(transformArgumentCaptor.capture());
+        verify(layer).draw();
         List<Transform> transforms = transformArgumentCaptor.getAllValues();
         Transform t0 = transforms.get(0);
         Transform t1 = transforms.get(1);
