@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Text;
-import com.ait.lienzo.client.core.shape.TextBoundsWrap;
+import com.ait.lienzo.client.core.shape.TextTruncateWrapper;
 import com.ait.lienzo.client.core.shape.wires.LayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.shared.core.types.TextAlign;
@@ -62,14 +62,15 @@ public class WiresTextDecorator {
     private ViewHandler<TextClickEvent> textClickEventViewHandler;
     private ViewHandler<TextDoubleClickEvent> textDblClickEventViewHandler;
     private Text text;
-    private TextBoundsWrap textWrapper;
+    private TextTruncateWrapper textWrapper;
     private LayoutContainer.Layout currentTextLayout;
     private double width;
     private double height;
 
-    public WiresTextDecorator(final Supplier<ViewEventHandlerManager> eventHandlerManager) {
+    public WiresTextDecorator(final Supplier<ViewEventHandlerManager> eventHandlerManager,
+                              final BoundingBox boundingBox) {
         this.eventHandlerManager = eventHandlerManager;
-        initialize();
+        initialize(boundingBox);
     }
 
     public void setTextClickHandler(final ViewHandler<TextClickEvent> textClickEventViewHandler) {
@@ -88,7 +89,7 @@ public class WiresTextDecorator {
         this.textOutEventViewHandler = textOutEventViewHandler;
     }
 
-    private void initialize() {
+    private void initialize(final BoundingBox boundingBox) {
         this.text = new Text("")
                 .setAlpha(TEXT_ALPHA)
                 .setFontFamily(TEXT_FONT_FAMILY)
@@ -98,17 +99,19 @@ public class WiresTextDecorator {
                 .setStrokeWidth(TEXT_STROKE_WIDTH)
                 .setTextAlign(TEXT_ALIGN)
                 .setDraggable(false);
-        this.textWrapper = new TextBoundsWrap(text,
-                                              new BoundingBox(0,
-                                                              0,
-                                                              1,
-                                                              1));
+        this.textWrapper = new TextTruncateWrapper(text,
+                                                   new BoundingBox(0,
+                                                                   0,
+                                                                   1,
+                                                                   1));
         this.text.setWrapper(textWrapper);
         this.currentTextLayout = TEXT_LAYOUT_ALIGN;
         textContainer.add(text);
         // Ensure path bounds are available on the selection context.
         text.setFillBoundsForSelection(true);
         initializeHandlers();
+        resize(boundingBox.getWidth(), boundingBox.getHeight());
+        update();
     }
 
     private void initializeHandlers() {
@@ -242,6 +245,10 @@ public class WiresTextDecorator {
     @SuppressWarnings("unchecked")
     public void setTitleStrokeWidth(final double strokeWidth) {
         text.setStrokeWidth(strokeWidth);
+    }
+
+    public void setTitleStrokeAlpha(double strokeAlpha) {
+        text.setStrokeAlpha(strokeAlpha);
     }
 
     @SuppressWarnings("unchecked")
