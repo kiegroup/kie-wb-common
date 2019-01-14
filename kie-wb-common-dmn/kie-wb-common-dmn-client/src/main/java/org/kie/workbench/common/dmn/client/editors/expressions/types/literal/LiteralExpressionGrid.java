@@ -177,7 +177,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
     private double getExpressionTextHeight() {
         if (expression.isPresent()) {
             final LiteralExpression literalExpression = expression.get();
-            final String[] lines = literalExpression.getText().getValue().split("\\r?\\n");
+            final String[] lines = literalExpression.getText().getValue().split("\\r?\\n", -1);
             final double lineHeight = RendererUtils.getExpressionTextLineHeight(LiteralExpressionGrid.this.getRenderer().getTheme());
             return lines.length * lineHeight + (RendererUtils.EXPRESSION_TEXT_PADDING * 3);
         }

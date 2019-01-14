@@ -610,6 +610,7 @@ public class LiteralExpressionGridTest {
         when(theme.getBodyText()).thenReturn(expressionText);
         when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
 
+        //Lines [1,2,3,4]
         expression.get().getText().setValue("1\n2\n3\n4");
 
         assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
@@ -627,6 +628,7 @@ public class LiteralExpressionGridTest {
         when(theme.getBodyText()).thenReturn(expressionText);
         when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
 
+        //Lines [1,2,<empty>,<empty>,3,4]
         expression.get().getText().setValue("1\n2\n\n\n3\n4");
 
         assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
@@ -644,10 +646,11 @@ public class LiteralExpressionGridTest {
         when(theme.getBodyText()).thenReturn(expressionText);
         when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
 
+        //Lines [1,2, ,3,4 ,<empty>]
         expression.get().getText().setValue("1\n2\r\n \n3\n4 \r\n");
 
         assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
-                                                       + 5 * TEXT_LINE_HEIGHT
+                                                       + 6 * TEXT_LINE_HEIGHT
                                                        + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
     }
 
@@ -661,7 +664,8 @@ public class LiteralExpressionGridTest {
         when(theme.getBodyText()).thenReturn(expressionText);
         when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
 
-        expression.get().getText().setValue("1\n2\r\n3\n\n");
+        //Lines [1,2,3,<empty>]
+        expression.get().getText().setValue("1\n2\r\n3\n");
 
         assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
                                                        + 4 * TEXT_LINE_HEIGHT
