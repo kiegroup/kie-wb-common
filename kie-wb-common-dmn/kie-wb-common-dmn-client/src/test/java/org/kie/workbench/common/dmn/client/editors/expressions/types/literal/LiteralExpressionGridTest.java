@@ -616,5 +616,39 @@ public class LiteralExpressionGridTest {
                                                        + 4 * TEXT_LINE_HEIGHT
                                                        + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
     }
+
+    @Test
+    public void testGetHeightWithEmptyLinesExpressionText() {
+        setupGrid(0);
+
+        final GridRendererTheme theme = mock(GridRendererTheme.class);
+        grid.getRenderer().setTheme(theme);
+
+        when(theme.getBodyText()).thenReturn(expressionText);
+        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
+
+        expression.get().getText().setValue("1\n2\n\n\n3\n4");
+
+        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
+                                                       + 6 * TEXT_LINE_HEIGHT
+                                                       + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
+    }
+
+    @Test
+    public void testGetHeightWithDifferentEndOfLinesExpressionText() {
+        setupGrid(0);
+
+        final GridRendererTheme theme = mock(GridRendererTheme.class);
+        grid.getRenderer().setTheme(theme);
+
+        when(theme.getBodyText()).thenReturn(expressionText);
+        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
+
+        expression.get().getText().setValue("1\n2\r\n \n3\n4 \r\n");
+
+        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
+                                                       + 5 * TEXT_LINE_HEIGHT
+                                                       + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
+    }
 }
 
