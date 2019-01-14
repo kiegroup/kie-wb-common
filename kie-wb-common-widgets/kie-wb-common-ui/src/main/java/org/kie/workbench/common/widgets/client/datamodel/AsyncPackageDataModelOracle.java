@@ -164,6 +164,21 @@ public interface AsyncPackageDataModelOracle {
      */
     List<String> getAvailableCollectionTypes();
 
+    /**
+     *
+     * @return <code>Map</code> of the fields that contains the parametrized type of a collection.
+     * For example given "List<String> name", key = "name" value = "String"
+     */
+    Map<String, String> getModuleFieldParametersTypes();
+
+    /**
+     *
+     * @param propertyName
+     * @return the <b>generic type</b> of the given field. Returns <b>null</b> if such field is not present in the backing map
+     *
+     */
+    String getModuleFieldParametersType(String propertyName);
+
     // DSL related methods
     List<DSLSentence> getDSLConditions();
 
@@ -231,4 +246,11 @@ public interface AsyncPackageDataModelOracle {
     void addDslActionSentences(final List<DSLSentence> dslActionSentences);
 
     void addGlobals(final Map<String, String> packageGlobalTypes);
+
+    /**
+     * Add a <code>Map</code>  of the fields that contains the parametrized type of a collection.
+     * For example given "List<String> name", key = "name" value = "String"
+     * @param moduleFieldParametersTypes
+     */
+    void addModuleFieldParametersTypes(Map<String, String> moduleFieldParametersTypes);
 }

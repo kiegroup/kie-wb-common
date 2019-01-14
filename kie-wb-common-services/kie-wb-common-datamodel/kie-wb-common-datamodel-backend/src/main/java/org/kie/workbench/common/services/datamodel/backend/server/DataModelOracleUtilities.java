@@ -242,6 +242,8 @@ public class DataModelOracleUtilities {
         dataModel.setAllPackageElements(oracle.getAllExtensions());
         dataModel.setGlobalTypes(oracle.getPackageGlobals());
         dataModel.setPackageNames(oracle.getModulePackageNames());
+
+        dataModel.setModuleFieldParametersTypes(oracle.getModuleFieldParametersType());
     }
 
     public static void populateDataModel(final PackageDataModelOracle oracle,

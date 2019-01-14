@@ -75,5 +75,7 @@ public class AsyncPackageDataModelOracleFactory {
         oracle.addDslConditionSentences(payload.getPackageElements(DSLConditionSentence.INSTANCE));
         oracle.addDslActionSentences(payload.getPackageElements(DSLActionSentence.INSTANCE));
         oracle.addGlobals(payload.getGlobals());
+
+        oracle.addModuleFieldParametersTypes(payload.getModuleFieldParametersTypes());
     }
 }

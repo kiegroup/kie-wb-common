@@ -49,6 +49,8 @@ import org.uberfire.client.callbacks.Callback;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
@@ -98,6 +100,8 @@ public class AsyncPackageDataModelOracleImplTest {
         oracle.addSuperTypes(createSuperTypes());
         oracle.addPackageNames(createPackageNames());
         oracle.addCollectionTypes(createCollectionTypes());
+
+        oracle.addModuleFieldParametersTypes(createModuleFieldParametersTypes());
 
         oracle.filter(imports);
 
@@ -333,6 +337,15 @@ public class AsyncPackageDataModelOracleImplTest {
                             false);
 
         return collectionTypes;
+    }
+
+    private Map<String, String> createModuleFieldParametersTypes() {
+        Map<String, String> moduleFieldParametersTypes = new HashMap<>();
+        moduleFieldParametersTypes.put("org.test.Person#phones",
+                            "String");
+        moduleFieldParametersTypes.put("org.test.Person#addresses",
+                                       "org.Address");
+        return moduleFieldParametersTypes;
     }
 
     @Test
@@ -806,6 +819,20 @@ public class AsyncPackageDataModelOracleImplTest {
                      packageNames.get(1));
         assertEquals("org.test",
                      packageNames.get(2));
+    }
+
+    @Test
+    public void testGetModuleFieldParametersTypes() {
+        final Map<String, String> moduleFieldParametersTypes = oracle.getModuleFieldParametersTypes();
+        assertNotNull(moduleFieldParametersTypes);
+        assertEquals(2, moduleFieldParametersTypes.size());
+    }
+
+    @Test
+    public void testGetModuleFieldParametersType() {
+        assertEquals("String", oracle.getModuleFieldParametersType("org.test.Person#phones"));
+        assertEquals("org.Address", oracle.getModuleFieldParametersType("org.test.Person#addresses"));
+        assertNull(oracle.getModuleFieldParametersType("org.test.Person#books"));
     }
 
     private LazyModelField getLazyThisField(String clazz) {

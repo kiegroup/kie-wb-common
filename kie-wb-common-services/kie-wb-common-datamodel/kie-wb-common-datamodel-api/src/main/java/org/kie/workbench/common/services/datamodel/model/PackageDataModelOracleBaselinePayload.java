@@ -83,6 +83,10 @@ public class PackageDataModelOracleBaselinePayload {
     // Map of arbitray objects associated with this model. Mostly used to store DSLSentence lists
     private Map<ExtensionKind<?>, List<?>> packageElements = new HashMap<>();
 
+    //Map of the field that contains the parametrized type of a collection
+    //for example given "List<String> name", key = "name" value = "String"
+    protected Map<String, String> moduleFieldParametersTypes = new HashMap<String, String>();
+
     public String getModuleName() {
         return moduleName;
     }
@@ -218,5 +222,13 @@ public class PackageDataModelOracleBaselinePayload {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> List<T> getPackageElements(ExtensionKind<T> kind) {
         return (List) packageElements.computeIfAbsent(kind, k -> new ArrayList<>());
+    }
+
+    public Map<String, String> getModuleFieldParametersTypes() {
+        return moduleFieldParametersTypes;
+    }
+
+    public void setModuleFieldParametersTypes(Map<String, String> moduleFieldParametersTypes) {
+        this.moduleFieldParametersTypes = moduleFieldParametersTypes;
     }
 }

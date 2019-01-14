@@ -112,6 +112,10 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
     // A map of FactTypes {factType, isCollection} to determine which Fact Types are Collections.
     protected Map<String, Boolean> projectCollectionTypes = new HashMap<String, Boolean>();
 
+    //Map of the field that contains the parametrized type of a collection
+    //for example given "List<String> name", key = "name" value = "String"
+    protected Map<String, String> moduleFieldParametersTypes = new HashMap<String, String>();
+
     // ####################################
     // Package Scope
     // ####################################
@@ -1056,6 +1060,16 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
                                                     .collect(Collectors.toList()));
     }
 
+    @Override
+    public Map<String, String> getModuleFieldParametersTypes() {
+        return moduleFieldParametersTypes;
+    }
+
+    @Override
+    public String getModuleFieldParametersType(String propertyName) {
+        return moduleFieldParametersTypes.getOrDefault(propertyName, null);
+    }
+
     // ####################################
     // DSLs
     // ####################################
@@ -1324,6 +1338,11 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
     @Override
     public void addGlobals(final Map<String, String> packageGlobalTypes) {
         this.packageGlobalTypes.putAll(packageGlobalTypes);
+    }
+
+    @Override
+    public void addModuleFieldParametersTypes(Map<String, String> moduleFieldParametersTypes) {
+        this.moduleFieldParametersTypes.putAll(moduleFieldParametersTypes);
     }
 
     private Comparator<ModelField> getModelFieldComparator() {
