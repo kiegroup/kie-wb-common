@@ -34,8 +34,25 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
         super(task, plane, definitionResolver);
     }
 
+    public String getImplementation() {
+        BusinessRuleTask businessRuleTask = (BusinessRuleTask) task;
+        return businessRuleTask.getImplementation();
+    }
+
     public String getRuleFlowGroup() {
         return CustomAttribute.ruleFlowGroup.of(element).get();
+    }
+
+    public String getNamespace() {
+        return CustomElement.namespace.of(element).get();
+    }
+
+    public String getDecisionName() {
+        return CustomElement.decisionName.of(element).get();
+    }
+
+    public String getDmnModelName() {
+        return CustomElement.dmnModelName.of(element).get();
     }
 
     public AssignmentsInfo getAssignmentsInfo() {

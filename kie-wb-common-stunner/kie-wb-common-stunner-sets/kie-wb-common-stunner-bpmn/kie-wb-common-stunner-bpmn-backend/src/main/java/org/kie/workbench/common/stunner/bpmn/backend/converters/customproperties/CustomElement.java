@@ -40,6 +40,9 @@ public class CustomElement<T> {
     };
     public static final ElementDefinition<String> caseIdPrefix = new StringElement("customCaseIdPrefix", "");
     public static final ElementDefinition<String> caseRole = new StringElement("customCaseRoles", "");
+    public static final ElementDefinition<String> namespace = new StringElement("customNamespace", "");
+    public static final ElementDefinition<String> decisionName = new StringElement("customDecisionName", "");
+    public static final ElementDefinition<String> dmnModelName = new StringElement("customDmnModelName", "");
     public static final ElementDefinition<String> slaDueDate = new StringElement("customSLADueDate", "");
 
     private final ElementDefinition<T> elementDefinition;
