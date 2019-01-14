@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.event.NodeMouseClickEvent;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
@@ -41,11 +40,9 @@ import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.GridFactoryCommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextGrid;
-import org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
@@ -53,7 +50,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelect
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetCellSelectorMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellValueTuple;
@@ -85,7 +81,6 @@ import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidget;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.themes.GridRendererTheme;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
@@ -118,8 +113,6 @@ public class LiteralExpressionGridTest {
     private static final String NAME = "name";
 
     private static final String NAME_NEW = "name-new";
-
-    private static final double TEXT_LINE_HEIGHT = 10.0;
 
     private GridCellTuple tupleWithoutValue;
 
@@ -583,93 +576,6 @@ public class LiteralExpressionGridTest {
         setupGrid(0);
 
         assertThat(extractHeaderMetaData().asDMNModelInstrumentedBase()).isInstanceOf(hasExpression.getVariable().getClass());
-    }
-
-    @Test
-    public void testGetHeightWithEmptyExpressionText() {
-        setupGrid(0);
-
-        final GridRendererTheme theme = mock(GridRendererTheme.class);
-        grid.getRenderer().setTheme(theme);
-
-        when(theme.getBodyText()).thenReturn(expressionText);
-        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
-
-        expression.get().getText().setValue("");
-
-        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT + DMNGridRow.DEFAULT_HEIGHT);
-    }
-
-    @Test
-    public void testGetHeightWithMultiLineExpressionText() {
-        setupGrid(0);
-
-        final GridRendererTheme theme = mock(GridRendererTheme.class);
-        grid.getRenderer().setTheme(theme);
-
-        when(theme.getBodyText()).thenReturn(expressionText);
-        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
-
-        //Lines [1,2,3,4]
-        expression.get().getText().setValue("1\n2\n3\n4");
-
-        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
-                                                       + 4 * TEXT_LINE_HEIGHT
-                                                       + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
-    }
-
-    @Test
-    public void testGetHeightWithEmptyLinesExpressionText() {
-        setupGrid(0);
-
-        final GridRendererTheme theme = mock(GridRendererTheme.class);
-        grid.getRenderer().setTheme(theme);
-
-        when(theme.getBodyText()).thenReturn(expressionText);
-        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
-
-        //Lines [1,2,<empty>,<empty>,3,4]
-        expression.get().getText().setValue("1\n2\n\n\n3\n4");
-
-        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
-                                                       + 6 * TEXT_LINE_HEIGHT
-                                                       + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
-    }
-
-    @Test
-    public void testGetHeightWithDifferentEndOfLinesExpressionText() {
-        setupGrid(0);
-
-        final GridRendererTheme theme = mock(GridRendererTheme.class);
-        grid.getRenderer().setTheme(theme);
-
-        when(theme.getBodyText()).thenReturn(expressionText);
-        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
-
-        //Lines [1,2, ,3,4 ,<empty>]
-        expression.get().getText().setValue("1\n2\r\n \n3\n4 \r\n");
-
-        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
-                                                       + 6 * TEXT_LINE_HEIGHT
-                                                       + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
-    }
-
-    @Test
-    public void testGetHeightEndingWithEmptyLineExpressionText() {
-        setupGrid(0);
-
-        final GridRendererTheme theme = mock(GridRendererTheme.class);
-        grid.getRenderer().setTheme(theme);
-
-        when(theme.getBodyText()).thenReturn(expressionText);
-        when(expressionText.getLineHeight(any(Context2D.class))).thenReturn(TEXT_LINE_HEIGHT);
-
-        //Lines [1,2,3,<empty>]
-        expression.get().getText().setValue("1\n2\r\n3\n");
-
-        assertThat(grid.getHeight()).isEqualTo(BaseExpressionGridRenderer.HEADER_ROW_HEIGHT
-                                                       + 4 * TEXT_LINE_HEIGHT
-                                                       + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
     }
 }
 

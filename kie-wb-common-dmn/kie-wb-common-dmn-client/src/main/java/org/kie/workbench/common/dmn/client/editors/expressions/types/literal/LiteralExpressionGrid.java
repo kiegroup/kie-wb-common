@@ -29,7 +29,6 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
-import org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseDelegatingExpressionGrid;
@@ -40,9 +39,9 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelect
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetCellSelectorMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetEditCellMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.LiteralExpressionGridRow;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -57,6 +56,8 @@ import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.NodeMouseEventHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
+
+import static org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils.getExpressionTextLineHeight;
 
 public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralExpression, DMNGridData, LiteralExpressionUIModelMapper> implements HasListSelectorControl {
 
@@ -161,27 +162,10 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
     @Override
     protected void initialiseUiModel() {
         expression.ifPresent(e -> {
-            model.appendRow(new DMNGridRow() {
-                @Override
-                public double getHeight() {
-                    final double defaultHeight = super.getHeight();
-                    final double requiredHeight = getExpressionTextHeight();
-                    return Math.max(defaultHeight, requiredHeight);
-                }
-            });
+            model.appendRow(new LiteralExpressionGridRow(getExpressionTextLineHeight(getRenderer().getTheme())));
             uiModelMapper.fromDMNModel(0,
                                        0);
         });
-    }
-
-    private double getExpressionTextHeight() {
-        if (expression.isPresent()) {
-            final LiteralExpression literalExpression = expression.get();
-            final String[] lines = literalExpression.getText().getValue().split("\\r?\\n", -1);
-            final double lineHeight = RendererUtils.getExpressionTextLineHeight(LiteralExpressionGrid.this.getRenderer().getTheme());
-            return lines.length * lineHeight + (RendererUtils.EXPRESSION_TEXT_PADDING * 3);
-        }
-        return 0.0;
     }
 
     @Override
