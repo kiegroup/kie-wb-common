@@ -187,6 +187,6 @@ public class ConnectorParentsMatchConnectionHandlerTest extends AbstractGraphDef
                 new Class[]{ParentDefinition.class, RootDefinition.class});
 
         violations = tested.evaluate(ruleExtension, connectionContext);
-        assertViolations(violations, true);
+        assertViolations(violations, false);
     }
 }

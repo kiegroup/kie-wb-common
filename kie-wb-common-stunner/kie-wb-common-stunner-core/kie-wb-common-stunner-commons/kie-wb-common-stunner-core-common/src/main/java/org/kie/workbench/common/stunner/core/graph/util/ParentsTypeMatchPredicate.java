@@ -39,14 +39,10 @@ class ParentsTypeMatchPredicate implements BiPredicate<Node<? extends View<?>, ?
     private Class<?> parentType;
 
     ParentsTypeMatchPredicate(final BiFunction<Node<? extends View<?>, ? extends Edge>, Class<?>, Optional<Element<?>>> parentProvider,
-                              final BiPredicate<Node<?, ? extends Edge>, Element<?>> hasParentPredicate) {
+                              final BiPredicate<Node<?, ? extends Edge>, Element<?>> hasParentPredicate, final Class<?> parentType) {
         this.parentProvider = parentProvider;
         this.hasParentPredicate = hasParentPredicate;
-    }
-
-    public ParentsTypeMatchPredicate forParentType(final Class<?> parentType) {
         this.parentType = parentType;
-        return this;
     }
 
     /**
@@ -63,16 +59,15 @@ class ParentsTypeMatchPredicate implements BiPredicate<Node<? extends View<?>, ?
 
         checkNotNull("nodeA", nodeA);
         checkNotNull("nodeB", nodeB);
-        final Optional<Element<?>> parentInstanceA = getParentInstance(nodeA, parentType);
-        final Optional<Element<?>> parentInstanceB = getParentInstance(nodeB, parentType);
+        final Element<?> parentInstanceA = getParentInstance(nodeA, parentType).orElse(null);
+        final Element<?> parentInstanceB = getParentInstance(nodeB, parentType).orElse(null);
 
-        if (!parentInstanceA.isPresent() && !parentInstanceB.isPresent()) {
-            return true;
+        if (Objects.nonNull(parentType) && (Objects.isNull(parentInstanceA) || Objects.isNull(parentInstanceB))) {
+            return false;
         }
 
-        return (parentInstanceA.isPresent() && parentInstanceB.isPresent())
-                && (Objects.equals(parentInstanceA.get(), parentInstanceB.get()))
-                && (hasParent(nodeA, parentInstanceA.get()) && hasParent(nodeB, parentInstanceB.get()));
+        return Objects.equals(parentInstanceA, parentInstanceB)
+                && (hasParent(nodeA, parentInstanceA) && hasParent(nodeB, parentInstanceB));
     }
 
     private Optional<Element<?>> getParentInstance(final Node<? extends View<?>, ? extends Edge> node,
