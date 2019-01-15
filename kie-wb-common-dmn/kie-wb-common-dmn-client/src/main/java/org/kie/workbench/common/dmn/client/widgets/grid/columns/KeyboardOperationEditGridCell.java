@@ -34,23 +34,26 @@ public class KeyboardOperationEditGridCell extends KeyboardOperationEditCell {
     }
 
     @Override
+    public boolean isExecutable(final GridWidget gridWidget) {
+        return gridWidget.getModel().getSelectedCells().size() == 1;
+    }
+
+    @Override
     public boolean perform(final GridWidget gridWidget, final boolean isShiftKeyDown, final boolean isControlKeyDown) {
         final boolean changesToBeRendered = super.perform(gridWidget, isShiftKeyDown, isControlKeyDown);
 
         final GridData model = gridWidget.getModel();
-        if (model.getSelectedCells().size() == 1) {
-            final GridData.SelectedCell selectedCell = model.getSelectedCells().get(0);
-            final GridCellValue<?> value =
-                    model.getCell(selectedCell.getRowIndex(),
-                                  ColumnIndexUtilities.findUiColumnIndex(model.getColumns(),
-                                                                         selectedCell.getColumnIndex())).getValue();
-            if (value instanceof ExpressionCellValue) {
-                final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();
-                grid.ifPresent(baseExpressionGrid -> {
-                    gridLayer.select(baseExpressionGrid);
-                    baseExpressionGrid.selectFirstCell();
-                });
-            }
+        final GridData.SelectedCell selectedCell = model.getSelectedCells().get(0);
+        final GridCellValue<?> value =
+                model.getCell(selectedCell.getRowIndex(),
+                              ColumnIndexUtilities.findUiColumnIndex(model.getColumns(),
+                                                                     selectedCell.getColumnIndex())).getValue();
+        if (value instanceof ExpressionCellValue) {
+            final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();
+            grid.ifPresent(baseExpressionGrid -> {
+                gridLayer.select(baseExpressionGrid);
+                baseExpressionGrid.selectFirstCell();
+            });
         }
 
         return changesToBeRendered;
