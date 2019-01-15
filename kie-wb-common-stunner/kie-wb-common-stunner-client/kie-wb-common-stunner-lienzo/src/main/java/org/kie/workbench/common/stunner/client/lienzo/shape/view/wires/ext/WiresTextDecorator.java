@@ -111,7 +111,6 @@ public class WiresTextDecorator {
         text.setFillBoundsForSelection(true);
         initializeHandlers();
         resize(boundingBox.getWidth(), boundingBox.getHeight());
-        update();
     }
 
     private void initializeHandlers() {
@@ -272,6 +271,7 @@ public class WiresTextDecorator {
                        final double height) {
         this.width = width;
         this.height = height;
+        update();
     }
 
     public void destroy() {
