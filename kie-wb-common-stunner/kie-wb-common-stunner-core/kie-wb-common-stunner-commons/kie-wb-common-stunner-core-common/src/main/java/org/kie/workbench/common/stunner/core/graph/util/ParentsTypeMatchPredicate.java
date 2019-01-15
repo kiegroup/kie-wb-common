@@ -57,12 +57,17 @@ class ParentsTypeMatchPredicate implements BiPredicate<Node<? extends View<?>, ?
     public boolean test(final Node<? extends View<?>, ? extends Edge> nodeA,
                         final Node<? extends View<?>, ? extends Edge> nodeB) {
 
-        checkNotNull("nodeA", nodeA);
         checkNotNull("nodeB", nodeB);
+        checkNotNull("nodeA", nodeA);
+
+        if (Objects.isNull(parentType)) {
+            return true;
+        }
+
         final Element<?> parentInstanceA = getParentInstance(nodeA, parentType).orElse(null);
         final Element<?> parentInstanceB = getParentInstance(nodeB, parentType).orElse(null);
 
-        if (Objects.nonNull(parentType) && (Objects.isNull(parentInstanceA) || Objects.isNull(parentInstanceB))) {
+        if (Objects.isNull(parentInstanceA) || Objects.isNull(parentInstanceB)) {
             return false;
         }
 

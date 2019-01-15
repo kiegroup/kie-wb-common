@@ -116,9 +116,8 @@ public class FilteredParentsTypeMatcherTest extends AbstractGraphDefinitionTypes
     @SuppressWarnings("unchecked")
     public void testWithParentAndNoParentType() {
 
-        assertTrue(newPredicate(RootDefinition.class)
-                           .test(nodeA,
-                                 nodeC));
+        assertTrue(newPredicate(RootDefinition.class).test(nodeA,
+                                                           nodeC));
 
         assertFalse(newPredicate(DefinitionB.class)
                             .test(nodeA,
@@ -127,6 +126,14 @@ public class FilteredParentsTypeMatcherTest extends AbstractGraphDefinitionTypes
         assertTrue(newPredicate(null)
                            .test(nodeA,
                                  nodeC));
+
+        assertFalse(newPredicate(RootDefinition.class)
+                            .test(nodeA,
+                                  nodeB));
+
+        assertTrue(newPredicate(null)
+                           .test(nodeA,
+                                 nodeB));
     }
 
     @Test

@@ -109,4 +109,13 @@ public class ParentsTypeMatcherTest extends AbstractGraphDefinitionTypesTest {
         graphHandler.setChild(rootNode, nodeA);
         assertTrue(newPredicate(RootDefinition.class).test(nodeA, nodeC));
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testWithParentAndNoParentType() {
+        assertTrue(newPredicate(null).test(nodeA, nodeC));
+        assertFalse(newPredicate(DefinitionB.class).test(nodeA, nodeC));
+        assertTrue(newPredicate(null).test(nodeA, nodeB));
+        assertFalse(newPredicate(RootDefinition.class).test(nodeA, nodeB));
+    }
 }
