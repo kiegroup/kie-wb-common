@@ -51,7 +51,8 @@ public class AssigneeLiveSearchService implements EntryCreationLiveSearchService
     private List<String> customEntries = new ArrayList<>();
 
     public AssigneeLiveSearchService() {
-        this(null, null);
+    /* due to spotbugs error commented out
+       this(null, null); */
     }
 
     @Inject
