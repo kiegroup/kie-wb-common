@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
-import elemental2.dom.Element.OnclickCallbackFn;
+import elemental2.dom.Element.OnclickFn;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
@@ -382,56 +382,56 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         getRemoveButton().onclick = getOnRemoveButtonAction();
     }
 
-    OnclickCallbackFn getOnEditAction() {
+    OnclickFn getOnEditAction() {
         return (e) -> {
             presenter.enableEditMode();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnSaveAction() {
+    OnclickFn getOnSaveAction() {
         return (e) -> {
             presenter.saveAndCloseEditMode();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnCloseAction() {
+    OnclickFn getOnCloseAction() {
         return (e) -> {
             presenter.disableEditMode();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnArrowClickAction() {
+    OnclickFn getOnArrowClickAction() {
         return (e) -> {
             presenter.expandOrCollapseSubTypes();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnInsertFieldAboveAction() {
+    OnclickFn getOnInsertFieldAboveAction() {
         return (e) -> {
             presenter.insertFieldAbove();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnInsertFieldBelowAction() {
+    OnclickFn getOnInsertFieldBelowAction() {
         return (e) -> {
             presenter.insertFieldBelow();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnInsertNestedFieldAction() {
+    OnclickFn getOnInsertNestedFieldAction() {
         return (e) -> {
             presenter.insertNestedField();
             return true;
         };
     }
 
-    OnclickCallbackFn getOnRemoveButtonAction() {
+    OnclickFn getOnRemoveButtonAction() {
         return (e) -> {
             presenter.remove();
             return true;

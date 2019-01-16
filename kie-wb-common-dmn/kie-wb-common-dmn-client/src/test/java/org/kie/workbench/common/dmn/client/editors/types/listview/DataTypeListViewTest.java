@@ -331,7 +331,7 @@ public class DataTypeListViewTest {
     public void testOnAddClick() {
 
         final ClickEvent event = mock(ClickEvent.class);
-        final double expectedScrollTop = 200d;
+        final int expectedScrollTop = 200;
 
         doNothing().when(view).scrollTo(any(), anyDouble());
         listItems.scrollHeight = expectedScrollTop;
@@ -449,7 +449,7 @@ public class DataTypeListViewTest {
         final String uuid = "uuid";
 
         dataTypeRowArrow.classList = arrowClassList;
-        elementNodeList.length = 1d;
+        elementNodeList.length = 1;
 
         when(dataType.getUUID()).thenReturn(uuid);
         when(listItems.querySelectorAll("[" + PARENT_UUID_ATTR + "=\"uuid\"]")).thenReturn(elementNodeList);
@@ -472,7 +472,7 @@ public class DataTypeListViewTest {
         final String uuid = "uuid";
 
         dataTypeRowArrow.classList = arrowClassList;
-        elementNodeList.length = 0d;
+        elementNodeList.length = 0;
 
         when(dataType.getUUID()).thenReturn(uuid);
         when(listItems.querySelectorAll("[" + PARENT_UUID_ATTR + "=\"uuid\"]")).thenReturn(elementNodeList);
