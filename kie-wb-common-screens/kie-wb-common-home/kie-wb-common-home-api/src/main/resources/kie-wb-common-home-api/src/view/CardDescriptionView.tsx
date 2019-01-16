@@ -7,11 +7,7 @@ interface Props {
     description: CardDescription;
 }
 
-interface State {
-
-}
-
-export class CardDescriptionView extends React.Component<Props, State> {
+export class CardDescriptionView extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
@@ -19,7 +15,7 @@ export class CardDescriptionView extends React.Component<Props, State> {
         this.state = {};
     }
 
-    render() {
+    public render() {
         return <>
             {this.props.description.elements.map((element, idx) => {
                 if (element.isText()) {
