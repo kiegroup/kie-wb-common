@@ -83,7 +83,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasFileExport
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.shape.ImageStripGlyph;
-import org.kie.workbench.common.stunner.core.client.template.mustache.ClientMustacheTemplateRenderer;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -94,6 +93,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.uberfire.ext.editor.commons.client.template.mustache.ClientMustacheTemplateRenderer;
 
 @Dependent
 public class ClientBPMNDocumentationService implements BPMNDocumentationService {
@@ -262,7 +262,6 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     private String getElementCategory(Object def) {
-        //return definitionManager.adapters().forDefinition().getCategory(def); //definitionHelper
         return definitionHelper.getDefinitionCategory(def).orElse("");
     }
 

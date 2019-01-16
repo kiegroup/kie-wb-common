@@ -19,46 +19,25 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 
-    <title>Process Documentation</title>
+    <title>Process Documentation - {{process.general.id}}</title>
+
+    <link type="text/css" rel="stylesheet" href="{{&moduleName}}/css/patternfly.min.css"/>
 
     <style>
-        @media print {
-            .noprint {
-                display: none !important;
-            }
-
-            .printonly {
-                display: block;
-            }
-        }
-
-        .label-pill {
-            background-color: white;
-            color: black;
-        }
-
         .categoryCaption {
-            display: inline-block;
             padding-left: 5px;
             vertical-align: top;
+            display: inline-block;
         }
 
         .categoryIcon {
-            width: 16px;
-            height: auto;
+            width: 20px;
             display: inline-block;
         }
 
         .elementIcon {
-            width: 16px;
-            height: auto;
-            padding: 5px;
-        }
-
-        .elementIconCaption {
-            width: 100%;
-            height: auto;
-            padding-left: 5px;
+            background: transparent !important;
+            vertical-align: top;
         }
 
         .diagramImage {
@@ -70,213 +49,213 @@
             max-width: 100%;
             max-height: 100%;
         }
+
+        #pagecontainer {
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
-<div class="container" id="pagecontainer">
-    <div class="row">
-        <div class="col-sm-9">
+<div id="pagecontainer">
+    <div>
+        <p id="pagecontainercore">
 
-            <p id="pagecontainercore">
+        <p>
+        <h1 class="page-header" id="process-documentation">Process Documentation</h1>
+        </p>
 
-            <p>
-            <h1 class="page-header" id="process-documentation">Process Documentation</h1>
-            </p>
+        <h2 id="overview"><span class="badge badge-inverse">1.0</span> Process Overview</h2>
 
-            <h2 id="overview"><span class="badge badge-inverse">1.0</span> Process Overview</h2>
+        <p>
+        <h3 id="process-info"><span class="badge badge-inverse">1.1</span> General</h3>
+        </p>
 
-            <p>
-            <h3 id="process-info"><span class="badge badge-inverse">1.1</span> General</h3>
-            </p>
-
-            <!-- Process info -->
-            {{#process}}
-            {{#general}}
-            <p id="processinfocontent">
-            <table class="table table-inverse">
-                <tbody>
-                <tr>
-                    <td><b>ID</b></td>
-                    <td>{{id}}</td>
-                </tr>
-                <tr>
-                    <td><b>Package</b></td>
-                    <td>{{pkg}}</td>
-                </tr>
-                <tr>
-                    <td><b>Name</b></td>
-                    <td>{{name}}</td>
-                </tr>
-                <tr>
-                    <td><b>Is executable</b></td>
-                    <td>{{isExecutable}}</td>
-                </tr>
-                <tr>
-                    <td><b>Is AdHoc</b></td>
-                    <td>{{isAdhoc}}</td>
-                </tr>
-                <tr>
-                    <td><b>Version</b></td>
-                    <td>{{version}}</td>
-                </tr>
-                <tr>
-                    <td><b>Documentation</b></td>
-                    <td>{{documentation}}</td>
-                </tr>
-                </tbody>
-            </table>
-            </p>
-            {{/general}}
-            <!-- End Process info -->
+        <!-- Process info -->
+        {{#process}}
+        {{#general}}
+        <p id="processinfocontent">
+        <table class="table table-inverse">
+            <tbody>
+            <tr>
+                <td><b>ID</b></td>
+                <td>{{id}}</td>
+            </tr>
+            <tr>
+                <td><b>Package</b></td>
+                <td>{{pkg}}</td>
+            </tr>
+            <tr>
+                <td><b>Name</b></td>
+                <td>{{name}}</td>
+            </tr>
+            <tr>
+                <td><b>Is executable</b></td>
+                <td>{{isExecutable}}</td>
+            </tr>
+            <tr>
+                <td><b>Is AdHoc</b></td>
+                <td>{{isAdhoc}}</td>
+            </tr>
+            <tr>
+                <td><b>Version</b></td>
+                <td>{{version}}</td>
+            </tr>
+            <tr>
+                <td><b>Documentation</b></td>
+                <td>{{documentation}}</td>
+            </tr>
+            </tbody>
+        </table>
+        </p>
+        {{/general}}
+        <!-- End Process info -->
 
 
-            <!-- DataTotal -->
-            {{#dataTotal}}
-            <p id="processTotal">
-            <h3 id="process-titals"><span class="badge badge-inverse">1.2</span> Data Totals</h3></p>
+        <!-- DataTotal -->
+        {{#dataTotal}}
+        <p id="processTotal">
+        <h3 id="process-titals"><span class="badge badge-inverse">1.2</span> Data Totals</h3></p>
 
-            <p id="processdatatotals">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    Variables
-                    <span class="label label-default label-pill pull-xs-right">{{totalVariables}}</span>
-                </li>
-            </ul>
-            </p>
+        <p id="processdatatotals">
+        <ul class="list-group">
+            <li class="list-group-item">
+                Variables
+                <span class="pull-xs-right">{{totalVariables}}</span>
+            </li>
+        </ul>
+        </p>
 
-            <p>
-            <h3 id="process-vars"><span class="badge badge-inverse">1.3</span> Variables</h3></p>
+        <p>
+        <h3 id="process-vars"><span class="badge badge-inverse">1.3</span> Variables</h3></p>
 
-            <p id="processvarcontent">
-            <table class="table table-inverse">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>KPI</th>
-                </tr>
-                </thead>
-                <tbody>
+        <p id="processvarcontent">
+        <table class="table table-inverse">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>KPI</th>
+            </tr>
+            </thead>
+            <tbody>
 
-                {{#variables}}
-                <tr>
-                    <td></td>
-                    <td>{{key}}</td>
-                    <td>{{value}}</td>
-                    <td>0</td>
-                </tr>
-                {{/variables}}
+            {{#variables}}
+            <tr>
+                <td></td>
+                <td>{{key}}</td>
+                <td>{{value}}</td>
+                <td>0</td>
+            </tr>
+            {{/variables}}
 
-                </tbody>
-            </table>
-            </p>
+            </tbody>
+        </table>
+        </p>
 
-            <!-- End DataTotal -->
-            {{/dataTotal}}
+        <!-- End DataTotal -->
+        {{/dataTotal}}
 
-            <!-- End Process Overview -->
-            {{/process}}
+        <!-- End Process Overview -->
+        {{/process}}
 
 
-            {{#elementsDetails}}
-            <p id="elementsDetails">
+        {{#elementsDetails}}
+        <p id="elementsDetails">
 
-            <h2 id="element-details"><span class="badge badge-inverse">2.0</span> Element Details</h2>
+        <h2 id="element-details"><span class="badge badge-inverse">2.0</span> Element Details</h2>
 
-            <p>
-            <h3 id="element-totals"><span class="badge badge-inverse">2.1</span> Totals</h3>
-            </p>
+        <p>
+        <h3 id="element-totals"><span class="badge badge-inverse">2.1</span> Totals</h3>
+        </p>
 
-            <p id="processelementtotals">
+        <p id="processelementtotals">
 
-            <ul class="list-group">
-                {{#totals}}
-                <li class="list-group-item">
-                    <span class="categoryIcon">{{&typeIcon}}</span>
-                    <span class="label label-default label-pill pull-xs-right categoryCaption">{{type}}</span>
-                    <span class="label label-default label-pill pull-xs-right categoryCaption">{{quantity}}</span>
-                </li>
-                {{/totals}}
-            </ul>
+        <ul class="list-group">
+            {{#totals}}
+            <li class="list-group-item">
+                <span class="categoryIcon">{{&typeIcon}}</span>
+                <span class="pull-xs-right categoryCaption">{{type}}</span>
+                <span class="pull-xs-right categoryCaption">{{quantity}}</span>
+            </li>
+            {{/totals}}
+        </ul>
 
-            </p>
+        </p>
 
-            <p>
-            <h3 id="elemen-info"><span class="badge badge-inverse">2.2</span> Elements</h3>
-            </p>
+        <p>
+        <h3 id="elemen-info"><span class="badge badge-inverse">2.2</span> Elements</h3>
+        </p>
 
-            <p id="processelementdetails">
+        <p id="processelementdetails">
 
-                {{#totals}}
+            {{#totals}}
 
-            <div class="list-group">
+        <div class="list-group">
 				    <span class="list-group-item">
 				        <h3 class="list-group-item-heading">{{type}}</h3>
                     </span>
-            </div>
+        </div>
 
-            {{#elements}}
-            <p class="list-group-item-text">
-            <div id="_BFEB21E9-AD01-4F45-9D73-70911579BD72" class="panel panel-default">
-                <table class="panel-heading elementIconCaption">
-                    <tr>
-                        <td class="elementIcon">
-                            {{&icon}}
-                        </td>
-                        <td width="50%">
-                            <b>Name:</b> {{name}}
-                        </td>
-                        <td>
-                            <b>Type:</b> {{title}}
-                        </td>
-                    </tr>
-                </table>
+        {{#elements}}
 
-                <table class="table table-inverse">
-                    <thead>
-                    <tr>
-                        <th>Property Name</th>
-                        <th>Property Value</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Name</td>
-                        <td>{{name}}</td>
-                    </tr>
+        <p class="list-group-item-text">
+        <div id="_BFEB21E9-AD01-4F45-9D73-70911579BD72" class="panel panel-default">
+            <table class="table table-inverse">
 
-                    {{#properties}}
-                    <tr>
-                        <td>{{key}}</td>
-                        <td>{{value}}</td>
-                    </tr>
-                    {{/properties}}
+                <thead class="panel-heading">
+                <tr>
+                    <th width="5%" class="elementIcon">
+                        {{&icon}}
+                    </th>
+                    <th width="45%">
+                        <b>Name:</b> {{name}}
+                    </th>
+                    <th width="50%">
+                        <b>Type:</b> {{title}}
+                    </th>
+                </tr>
+                </thead>
 
+                <thead>
+                <tr>
+                    <th colspan="2">Property Name</th>
+                    <th>Property Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="2">Name</td>
+                    <td>{{name}}</td>
+                </tr>
 
-                    </tbody>
-                </table>
-            </div>
-            </p>
-            {{/elements}}
-            {{/totals}}
+                {{#properties}}
+                <tr>
+                    <td colspan="2">{{key}}</td>
+                    <td>{{value}}</td>
+                </tr>
+                {{/properties}}
 
-            </p>
+                </tbody>
+            </table>
+        </div>
+        </p>
+        {{/elements}}
+        {{/totals}}
 
-            </p>
-            {{/elementsDetails}}
+        </p>
 
-            <div id="diagramImageDiv" class="diagramImage">
-                <h1 id="process-image"><span class="badge badge-inverse">3.0</span> Process Image</h1>
+        </p>
+        {{/elementsDetails}}
 
-                {{&diagramImage}}
+        <div id="diagramImageDiv" class="diagramImage">
+            <h1 id="process-image"><span class="badge badge-inverse">3.0</span> Process Image</h1>
 
-            </div>
+            {{&diagramImage}}
 
         </div>
     </div>
 </div>
-
 
 </body>
 </html>

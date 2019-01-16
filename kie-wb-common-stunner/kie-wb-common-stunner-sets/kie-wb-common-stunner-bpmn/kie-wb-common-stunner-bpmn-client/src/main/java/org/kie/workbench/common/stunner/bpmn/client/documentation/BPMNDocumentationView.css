@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.client.template.mustache;
+.documentationPanel {
+    width: 100%;
+    overflow: auto;
+}
 
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsPackage;
-import jsinterop.annotations.JsType;
+.printButton {
+    float: right;
+    width: 120px;
+    vertical-align: middle;
+}
 
-@JsType(isNative = true, namespace = JsPackage.GLOBAL)
-public final class Mustache {
-
-    @JsMethod
-    public static final native String to_html(String template, Object bean);
+.documentationContent {
+    width: 80%;
+    max-width: 1920px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
