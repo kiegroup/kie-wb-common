@@ -25,13 +25,10 @@ import org.guvnor.common.services.project.backend.server.utils.PathUtil;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.service.ModuleService;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 
 @Alternative
 public class MigrationWorkspaceProjectMigrationServiceImpl extends WorkspaceProjectMigrationServiceImpl {
-
-    public MigrationWorkspaceProjectMigrationServiceImpl() {
-        super();
-    }
 
     @Inject
     public MigrationWorkspaceProjectMigrationServiceImpl(final MigrationWorkspaceProjectServiceImpl workspaceProjectService,
@@ -39,12 +36,14 @@ public class MigrationWorkspaceProjectMigrationServiceImpl extends WorkspaceProj
                                                          final MigrationOrganizationalUnitServiceImpl organizationalUnitService,
                                                          final PathUtil pathUtil,
                                                          final Event<NewProjectEvent> newProjectEvent,
-                                                         final ModuleService<? extends Module> moduleService) {
+                                                         final ModuleService<? extends Module> moduleService,
+                                                         final SpaceConfigStorageRegistry spaceConfigStorageRegistry) {
         super(workspaceProjectService,
               repositoryService,
               organizationalUnitService,
               pathUtil,
               newProjectEvent,
-              moduleService);
+              moduleService,
+              spaceConfigStorageRegistry);
     }
 }

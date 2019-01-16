@@ -8,13 +8,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorage;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
+import org.guvnor.structure.organizationalunit.config.SpaceInfo;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.server.config.ConfigGroup;
 import org.guvnor.structure.server.config.ConfigItem;
 import org.guvnor.structure.server.config.ConfigType;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.migration.cli.SystemAccess;
+import org.kie.workbench.common.project.cli.util.ConfigGroupToSpaceInfoConverter;
 import org.kie.workbench.common.project.config.MigrationConfigurationServiceImpl;
 import org.kie.workbench.common.project.config.MigrationRepositoryServiceImpl;
 import org.kie.workbench.common.project.config.MigrationWorkspaceProjectMigrationServiceImpl;
@@ -27,10 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({InternalMigrationService.class})
@@ -64,8 +66,20 @@ public class MigrateAllProjectsTest {
     @Mock
     private SystemAccess system;
 
+    @Mock
+    private ConfigGroupToSpaceInfoConverter configGroupToSpaceInfoConverter;
+
+    @Mock
+    private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
+
     @InjectMocks
     private InternalMigrationService service;
+
+    @Before
+    public void init() {
+        when(configGroupToSpaceInfoConverter.toSpaceInfo(any())).thenReturn(mock(SpaceInfo.class));
+        when(spaceConfigStorageRegistry.get(anyString())).thenReturn(mock(SpaceConfigStorage.class));
+    }
 
     public List<ConfigGroup> initConfigGroups() {
         List<ConfigGroup> spaceConfigs = new ArrayList<>();
@@ -101,7 +115,8 @@ public class MigrateAllProjectsTest {
         return repo;
     }
 
-    private WorkspaceProject mockProject(String name, Repository repository) {
+    private WorkspaceProject mockProject(String name,
+                                         Repository repository) {
         WorkspaceProject project = mock(WorkspaceProject.class);
         when(project.getName()).thenReturn(name);
         when(project.getRepository()).thenReturn(repository);
@@ -115,10 +130,14 @@ public class MigrateAllProjectsTest {
         Repository repoB = mockRepo(REPO_B);
         Repository repoC = mockRepo(REPO_C);
 
-        WorkspaceProject projectA = mockProject(PROJECT_A, repoA);
-        WorkspaceProject projectB = mockProject(PROJECT_B, repoA);
-        WorkspaceProject projectC = mockProject(PROJECT_C, repoB);
-        WorkspaceProject projectD = mockProject(PROJECT_D, repoC);
+        WorkspaceProject projectA = mockProject(PROJECT_A,
+                                                repoA);
+        WorkspaceProject projectB = mockProject(PROJECT_B,
+                                                repoA);
+        WorkspaceProject projectC = mockProject(PROJECT_C,
+                                                repoB);
+        WorkspaceProject projectD = mockProject(PROJECT_D,
+                                                repoC);
 
         workspaceProjects.add(projectA);
         workspaceProjects.add(projectB);
@@ -137,7 +156,8 @@ public class MigrateAllProjectsTest {
         Path niogitDir = mock(Path.class);
         File niogitDirFile = mock(File.class);
 
-        when(Files.move(any(Path.class), any(Path.class))).thenReturn(niogitDir);
+        when(Files.move(any(Path.class),
+                        any(Path.class))).thenReturn(niogitDir);
         when(projectService.getAllWorkspaceProjects()).thenReturn(workspaceProjects);
         when(system.out()).thenReturn(System.out);
         when(configService.getConfiguration(ConfigType.ORGANIZATIONAL_UNIT)).thenReturn(spaceConfigs);
@@ -148,9 +168,12 @@ public class MigrateAllProjectsTest {
         service.migrateAllProjects(niogitDir);
 
         PowerMockito.verifyStatic(times(NUMBER_OF_REPOS));
-        Files.move(any(Path.class), any(Path.class));
+        Files.move(any(Path.class),
+                   any(Path.class));
 
-        verify(projectMigrationService, times(workspaceProjects.size())).migrate(any(WorkspaceProject.class));
-        verify(repoService, times(NUMBER_OF_REPOS)).removeRepository(any(), anyString());
+        verify(projectMigrationService,
+               times(workspaceProjects.size())).migrate(any(WorkspaceProject.class));
+        verify(repoService,
+               times(NUMBER_OF_REPOS)).deleteRepository(any());
     }
 }

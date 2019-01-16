@@ -28,14 +28,8 @@ public class MigrationOrganizationalUnitFactoryImpl extends OrganizationalUnitFa
 
     @Inject
     public MigrationOrganizationalUnitFactoryImpl(final MigrationRepositoryServiceImpl repositoryService,
-                                                  final BackwardCompatibleUtil backward,
-                                                  final SpacesAPI spacesAPI,
-                                                  final MigrationConfigurationServiceImpl configurationService,
-                                                  final MigrationConfigurationFactoryImpl configurationFactory) {
+                                                  final SpacesAPI spacesAPI) {
         super(repositoryService,
-              backward,
-              spacesAPI,
-              configurationService,
-              configurationFactory);
+              spacesAPI);
     }
 }

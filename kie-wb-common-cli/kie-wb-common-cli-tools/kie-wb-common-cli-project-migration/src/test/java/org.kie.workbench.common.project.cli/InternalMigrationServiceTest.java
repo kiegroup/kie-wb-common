@@ -22,18 +22,65 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorage;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.server.config.ConfigGroup;
 import org.guvnor.structure.server.config.ConfigItem;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.migration.cli.SystemAccess;
+import org.kie.workbench.common.project.cli.util.ConfigGroupToSpaceInfoConverter;
+import org.kie.workbench.common.project.config.MigrationConfigurationServiceImpl;
+import org.kie.workbench.common.project.config.MigrationRepositoryServiceImpl;
+import org.kie.workbench.common.project.config.MigrationWorkspaceProjectMigrationServiceImpl;
+import org.kie.workbench.common.project.config.MigrationWorkspaceProjectServiceImpl;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InternalMigrationServiceTest {
+
+    @Mock
+    private MigrationWorkspaceProjectServiceImpl projectService;
+
+    @Mock
+    private MigrationConfigurationServiceImpl configService;
+
+    @Mock
+    private MigrationWorkspaceProjectMigrationServiceImpl projectMigrationService;
+
+    @Mock
+    private MigrationRepositoryServiceImpl repoService;
+
+    @Mock
+    private SystemAccess system;
+
+    @Mock
+    private ConfigGroupToSpaceInfoConverter configGroupToSpaceInfoConverter;
+
+    @Mock
+    private SpaceConfigStorage spaceConfigStorage;
+
+    @Mock
+    private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
+
+    private InternalMigrationService internalMigrationService;
+
+    @Before
+    public void init() {
+        when(spaceConfigStorageRegistry.get(anyString())).thenReturn(spaceConfigStorage);
+
+        internalMigrationService = new InternalMigrationService(projectService, configService, projectMigrationService, repoService, system, configGroupToSpaceInfoConverter, spaceConfigStorageRegistry);
+    }
 
     @Test
     public void testGetOrgUnitsByRepo() {
@@ -70,7 +117,7 @@ public class InternalMigrationServiceTest {
         ouConfigs.add(space1);
         ouConfigs.add(space2);
 
-        Map<String, String> orgUnitsByRepo = InternalMigrationService.getOrgUnitsByRepo(ouConfigs);
+        Map<String, String> orgUnitsByRepo = internalMigrationService.getOrgUnitsByRepo(ouConfigs);
 
         assertEquals(numberOfRepositories, orgUnitsByRepo.size());
         assertEquals(space1Name, orgUnitsByRepo.get(repo1Name));
@@ -102,10 +149,13 @@ public class InternalMigrationServiceTest {
         when(mockPath.toFile()).thenReturn(mockFile);
         when(mockPath.resolve(anyString())).thenReturn(mockPath);
 
-        InternalMigrationService.createSpaceDirs(mockPath, orgUnitConfigs);
+        internalMigrationService.createSpaceDirs(mockPath, orgUnitConfigs);
 
         verify(mockPath).resolve(firstOuName);
         verify(mockPath).resolve(secondOuName);
         verify(mockFile, times(expectedCreatedDirs)).mkdir();
+        verify(configGroupToSpaceInfoConverter, times(expectedCreatedDirs)).toSpaceInfo(any());
+        verify(spaceConfigStorageRegistry, times(expectedCreatedDirs)).get(anyString());
+        verify(spaceConfigStorage, times(expectedCreatedDirs)).saveSpaceInfo(any());
     }
 }

@@ -22,22 +22,34 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.guvnor.common.services.project.events.RepositoryContributorsUpdatedEvent;
 import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
 import org.guvnor.structure.backend.repositories.RepositoryServiceImpl;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorage;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
+import org.guvnor.structure.organizationalunit.config.SpaceInfo;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.GitMetadataStore;
 import org.guvnor.structure.repositories.NewRepositoryEvent;
+import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
 import org.guvnor.structure.server.repositories.RepositoryFactory;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.io.IOService;
+import org.uberfire.java.nio.file.Path;
 import org.uberfire.security.authz.AuthorizationManager;
 import org.uberfire.spaces.SpacesAPI;
+
+import static org.uberfire.backend.server.util.Paths.convert;
 
 @Alternative
 @Service
 @ApplicationScoped
 public class MigrationRepositoryServiceImpl extends RepositoryServiceImpl {
+
+    private SpaceConfigStorageRegistry spaceConfigStorage;
+    private IOService ioService;
 
     public MigrationRepositoryServiceImpl() {
         super();
@@ -56,7 +68,9 @@ public class MigrationRepositoryServiceImpl extends RepositoryServiceImpl {
                                           final MigrationConfiguredRepositories configuredRepositories,
                                           final AuthorizationManager authorizationManager,
                                           final User user,
-                                          final SpacesAPI spacesAPI) {
+                                          final SpacesAPI spacesAPI,
+                                          final SpaceConfigStorageRegistry spaceConfigStorage,
+                                          final Event<RepositoryContributorsUpdatedEvent> projectContributorsUpdatedEvent) {
         super(ioService,
               metadataStore,
               configurationService,
@@ -69,6 +83,28 @@ public class MigrationRepositoryServiceImpl extends RepositoryServiceImpl {
               configuredRepositories,
               authorizationManager,
               user,
-              spacesAPI);
+              spacesAPI,
+              spaceConfigStorage,
+              projectContributorsUpdatedEvent);
+        this.ioService = ioService;
+        this.spaceConfigStorage = spaceConfigStorage;
+    }
+
+    public void deleteRepository(Repository repository) {
+        Path path = getPath(repository);
+        ioService.delete(path);
+        this.removeRepositoryFromSpaceInfo(repository);
+    }
+
+    private org.uberfire.java.nio.file.Path getPath(Repository repo) {
+        Branch defaultBranch = repo.getDefaultBranch().orElseThrow(() -> new IllegalStateException("Repository should have at least one branch."));
+        return convert(defaultBranch.getPath()).getFileSystem().getPath(null);
+    }
+
+    private void removeRepositoryFromSpaceInfo(Repository repo) {
+        SpaceConfigStorage spaceConfigStorage = this.spaceConfigStorage.get(repo.getSpace().getName());
+        SpaceInfo spaceInfo = this.spaceConfigStorage.get(repo.getSpace().getName()).loadSpaceInfo();
+        spaceInfo.removeRepository(repo.getAlias());
+        spaceConfigStorage.saveSpaceInfo(spaceInfo);
     }
 }
