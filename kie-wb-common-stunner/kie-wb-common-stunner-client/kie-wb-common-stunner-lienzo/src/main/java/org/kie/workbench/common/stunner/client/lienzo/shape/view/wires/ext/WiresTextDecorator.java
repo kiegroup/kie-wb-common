@@ -209,6 +209,14 @@ public class WiresTextDecorator {
         return changed;
     }
 
+    public void setTitleXOffsetPosition(final double xOffset) {
+        this.text.setX(xOffset);
+    }
+
+    public void setTitleYOffsetPosition(final double yOffset) {
+        this.text.setY(yOffset);
+    }
+
     @SuppressWarnings("unchecked")
     public void setTitleRotation(final double degrees) {
         text.setRotationDegrees(degrees);
