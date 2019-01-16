@@ -7,26 +7,11 @@ module.exports = {
     entry: {
         index: "./src/index.tsx"
     },
-    externals: {
-        'appformer-js': {
-            root: 'AppFormer', //indicates global variable
-            commonjs: 'appformer-js',
-            commonjs2: 'appformer-js',
-            amd: 'appformer-js'
-        },
-        react: {
-            root: "React", //indicates global variable
-            commonjs: "react",
-            commonjs2: "react",
-            amd: "react"
-        },
-        "react-dom": {
-            root: "ReactDOM", //indicates global variable
-            commonjs: "react-dom",
-            commonjs2: "react-dom",
-            amd: "react-dom"
+    externals: [
+        function (context, request, callback) {
+            return request.startsWith('.') ? callback() : callback(null, 'umd ' + request);
         }
-    },
+    ],
     output: {
         path: path.resolve(__dirname, "./dist"),
         filename: "index.js",
