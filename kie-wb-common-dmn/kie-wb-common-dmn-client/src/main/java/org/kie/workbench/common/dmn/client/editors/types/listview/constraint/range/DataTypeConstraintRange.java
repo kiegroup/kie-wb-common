@@ -22,11 +22,11 @@ import javax.inject.Inject;
 
 import elemental2.dom.Element;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
 import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
-public class DataTypeConstraintRange implements DataTypeConstrainComponent {
+public class DataTypeConstraintRange implements DataTypeConstraintComponent {
 
     private final View view;
 

@@ -18,7 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.co
 
 import elemental2.dom.Element;
 
-public interface DataTypeConstrainComponent {
+public interface DataTypeConstraintComponent {
 
     String getValue();
 
@@ -26,7 +26,7 @@ public interface DataTypeConstrainComponent {
 
     Element getElement();
 
-    DataTypeConstrainComponent NONE = new DataTypeConstrainComponent() {
+    DataTypeConstraintComponent NONE = new DataTypeConstraintComponent() {
 
         @Override
         public String getValue() {

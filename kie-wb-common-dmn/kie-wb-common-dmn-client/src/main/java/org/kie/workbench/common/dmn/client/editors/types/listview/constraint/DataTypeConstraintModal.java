@@ -23,17 +23,17 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.NONE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.ENUMERATION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.EXPRESSION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.RANGE;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.NONE;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.ENUMERATION;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.EXPRESSION;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.RANGE;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
@@ -49,7 +49,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     private final DataTypeConstraintRange constraintRange;
 
-    private DataTypeConstrainComponent currentComponent = NONE;
+    private DataTypeConstraintComponent currentComponent = NONE;
 
     private String constraintValue = CONSTRAINT_INITIAL_VALUE;
 
@@ -104,7 +104,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return constraintValue;
     }
 
-    DataTypeConstrainComponent getCurrentComponent() {
+    DataTypeConstraintComponent getCurrentComponent() {
         return currentComponent;
     }
 
@@ -112,7 +112,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return getCurrentComponent().getValue();
     }
 
-    private DataTypeConstrainComponent getComponentByType(final String constraintType) {
+    private DataTypeConstraintComponent getComponentByType(final String constraintType) {
         switch (Type.valueOf(constraintType)) {
             case ENUMERATION:
                 return getConstraintEnumeration();
@@ -176,15 +176,15 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         super.show();
     }
 
-    DataTypeConstraintEnumeration getConstraintEnumeration() {
+    private DataTypeConstraintEnumeration getConstraintEnumeration() {
         return constraintEnumeration;
     }
 
-    DataTypeConstraintExpression getConstraintExpression() {
+    private DataTypeConstraintExpression getConstraintExpression() {
         return constraintExpression;
     }
 
-    DataTypeConstraintRange getConstraintRange() {
+    private DataTypeConstraintRange getConstraintRange() {
         return constraintRange;
     }
 

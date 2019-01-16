@@ -22,8 +22,8 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
@@ -32,9 +32,9 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal.CONSTRAINT_INITIAL_VALUE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal.WIDTH;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.ENUMERATION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.EXPRESSION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.RANGE;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.ENUMERATION;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.EXPRESSION;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.RANGE;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -81,7 +81,7 @@ public class DataTypeConstraintModalTest {
     @Test
     public void testSave() {
 
-        final DataTypeConstrainComponent constrainComponent = mock(DataTypeConstrainComponent.class);
+        final DataTypeConstraintComponent constrainComponent = mock(DataTypeConstraintComponent.class);
         final String value = "value";
 
         doNothing().when(modal).doSave(anyString());
@@ -154,6 +154,18 @@ public class DataTypeConstraintModalTest {
 
         verify(view).setType(type);
         verify(view).loadComponent(ENUMERATION.name());
+    }
+
+    @Test
+    public void testPrepareViewWhenConstraintValueSimilarToRange() {
+
+        final String constraint = "..";
+        final String type = "string";
+
+        modal.prepareView(type, constraint);
+
+        verify(view).setType(type);
+        verify(view).loadComponent(RANGE.name());
     }
 
     @Test
