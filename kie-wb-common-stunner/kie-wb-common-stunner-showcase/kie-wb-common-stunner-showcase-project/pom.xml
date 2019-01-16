@@ -72,6 +72,12 @@
       <artifactId>kie-wb-common-contributors-backend</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-showcase-project-screens</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
 
     <!-- errai-cdi-jboss provides gwt-dev with the proper dependency exclusions and should be first on the classpath -->
     <dependency>
@@ -223,6 +229,12 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client-views-patternfly</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.appformer</groupId>
+      <artifactId>appformer-js</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
     <!-- UberFire Preferences Extension -->
@@ -1245,7 +1257,6 @@
             <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-data-modeller-core</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-data-modeller-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-data-modeller-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-home-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-home-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.widgets:kie-wb-common-ui</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.widgets:kie-wb-decorated-grid-widget</compileSourcesArtifact>
@@ -1309,6 +1320,7 @@
             <compileSourcesArtifact>org.uberfire:uberfire-nio2-model</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-js</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:appformer-js-bridge</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-security-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-security-client</compileSourcesArtifact>
 
@@ -1472,6 +1484,62 @@
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>set-ts-exporter-output-dir</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>set-system-properties</goal>
+            </goals>
+            <configuration>
+              <properties>
+                <property>
+                  <name>ts-exporter-output-dir</name>
+                  <value>${project.build.directory}</value>
+                </property>
+                <property>
+                  <name>ts-exporter-project</name>
+                  <value>${project}</value>
+                </property>
+              </properties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>set-ts-exporter-all</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>set-system-properties</goal>
+            </goals>
+            <configuration>
+              <properties>
+                <property>
+                  <name>ts-exporter</name>
+                  <value>export</value>
+                </property>
+              </properties>
+            </configuration>
+          </execution>
+          <execution>
+            <id>set-ts-exporter-none</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>set-system-properties</goal>
+            </goals>
+            <configuration>
+              <properties>
+                <property>
+                  <name>ts-exporter</name>
+                  <value>default</value>
+                </property>
+              </properties>
             </configuration>
           </execution>
         </executions>

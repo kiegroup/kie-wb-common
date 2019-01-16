@@ -16,11 +16,26 @@
 
 package org.kie.workbench.common.screens.home.client;
 
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.kie.workbench.common.screens.home.client.widgets.shortcut.utils.HomeModelAuthorizationManager;
+import org.uberfire.client.workbench.events.ApplicationReadyEvent;
 
 @EntryPoint
 @Bundle("resources/i18n/HomeConstants.properties")
 public class HomeEntryPoint {
 
+    private final HomeModelAuthorizationManager authManager;
+
+    @Inject
+    public HomeEntryPoint(final HomeModelAuthorizationManager authManager) {
+        this.authManager = authManager;
+    }
+
+    public void setup(@Observes ApplicationReadyEvent event) {
+        this.authManager.setup();
+    }
 }

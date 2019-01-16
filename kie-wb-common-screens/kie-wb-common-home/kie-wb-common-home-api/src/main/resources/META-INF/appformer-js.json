@@ -1,0 +1,7 @@
+{
+  "name": "kie-wb-common-home-api",
+  "type": "lib",
+  "main": "./dist/index.js",
+  "decorators": {},
+  "components": []
+}

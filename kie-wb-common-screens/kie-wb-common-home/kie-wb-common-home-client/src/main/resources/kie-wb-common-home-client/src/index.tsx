@@ -2,6 +2,7 @@ import * as AppFormer from "appformer-js";
 import * as React from "react";
 
 export class HomePerspectiveAppFormerComponent extends AppFormer.Perspective {
+
     constructor() {
         super("HomePerspective");
         this.af_isReact = true;
@@ -10,9 +11,7 @@ export class HomePerspectiveAppFormerComponent extends AppFormer.Perspective {
     }
 
     public af_componentRoot(children?: any): AppFormer.Element {
-        return (
-            <div af-js-component={"org.kie.workbench.common.screens.home.client.HomePresenter"} />
-        );
+        return <div af-js-component={"org.kie.workbench.common.screens.home.client.HomePresenter"}/>;
     }
 }
 
