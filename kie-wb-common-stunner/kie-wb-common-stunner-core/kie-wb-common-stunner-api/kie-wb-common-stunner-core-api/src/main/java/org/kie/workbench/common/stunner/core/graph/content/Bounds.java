@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.graph.content;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -109,15 +111,14 @@ public class Bounds {
     public boolean equals(Object o) {
         if (o instanceof Bounds) {
             Bounds other = (Bounds) o;
-            return ((null != ul) ? ul.equals(other.ul) : null == other.ul) &&
-                    ((null != lr) ? lr.equals(other.lr) : null == other.lr);
+            return Objects.equals(ul, other.ul) && Objects.equals(lr, other.lr);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes((null != ul) ? ul.hashCode() : 0,
-                                         (null != lr) ? lr.hashCode() : 0);
+        return HashUtil.combineHashCodes(Objects.hashCode(ul),
+                                         Objects.hashCode(lr));
     }
 }

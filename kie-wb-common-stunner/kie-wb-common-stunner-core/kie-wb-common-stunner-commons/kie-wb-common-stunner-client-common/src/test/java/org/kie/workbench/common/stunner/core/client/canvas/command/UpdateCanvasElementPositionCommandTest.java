@@ -58,7 +58,6 @@ public class UpdateCanvasElementPositionCommandTest extends AbstractCanvasComman
         super.setUp();
         when(canvasPanel.getLocationConstraints()).thenReturn(PANEL_BOUNDS);
         when(candidate.getContent()).thenReturn(new ViewImpl<>(mock(Object.class), ELEMENT_BOUNDS));
-        ;
     }
 
     @Test
