@@ -191,10 +191,6 @@ public class DataTypeConstraintViewTest {
     }
 
     @Test
-    public void testSetupTooltip() {
-    }
-
-    @Test
     public void testProperties() {
 
         final JSONObject jsonObject = mock(JSONObject.class);
@@ -204,9 +200,5 @@ public class DataTypeConstraintViewTest {
         view.properties();
 
         verify(jsonObject).put(eq("container"), eq(new JSONString("body")));
-    }
-
-    @Test
-    public void testMakeJsonObject() {
     }
 }

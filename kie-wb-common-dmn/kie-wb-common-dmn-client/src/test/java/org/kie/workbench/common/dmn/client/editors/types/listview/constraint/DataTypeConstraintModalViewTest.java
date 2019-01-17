@@ -26,13 +26,13 @@ import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
 import org.mockito.Mock;
 import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerEvent;
 import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerTarget;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstrainComponent.Type.ENUMERATION;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.ENUMERATION;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -187,7 +187,7 @@ public class DataTypeConstraintModalViewTest {
     public void testLoadComponent() {
 
         final String constraintType = ENUMERATION.name();
-        final DataTypeConstrainComponent constrainComponent = mock(DataTypeConstrainComponent.class);
+        final DataTypeConstraintComponent constrainComponent = mock(DataTypeConstraintComponent.class);
         final Element element = mock(Element.class);
 
         when(presenter.getCurrentComponent()).thenReturn(constrainComponent);
