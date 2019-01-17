@@ -32,6 +32,8 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRef
 @Portable
 public class FunctionDefinition extends Expression implements HasExpression {
 
+    private static final int STATIC_COLUMNS = 2;
+
     private Expression expression;
 
     private Kind kind = Kind.FEEL; // same default as per DMN spec.
@@ -98,6 +100,11 @@ public class FunctionDefinition extends Expression implements HasExpression {
         hasTypeRefs.addAll(getFlatHasTypeRefs(getFormalParameter()));
 
         return hasTypeRefs;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return STATIC_COLUMNS;
     }
 
     @Override

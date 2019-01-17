@@ -104,6 +104,8 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                                          relativeOldIndex,
                                          relation.getColumn(),
                                          informationItemIndexesToMove);
+                    moveComponentWidths(Relation.STATIC_COLUMNS + relativeIndex,
+                                        Relation.STATIC_COLUMNS + relativeOldIndex);
 
                     updateRowsData(relativeIndex,
                                    relativeOldIndex,
@@ -132,6 +134,19 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                 } else if (relativeIndex > relativeOldIndex) {
                     informationItems.addAll(relativeIndex - informationItemsToMove.size() + 1,
                                             informationItemsToMove);
+                }
+            }
+
+            private void moveComponentWidths(final int index,
+                                             final int oldIndex) {
+                final java.util.List<Double> componentWidths = relation.getComponentWidths();
+                final Double componentWidth = componentWidths.remove(oldIndex);
+                if (index < oldIndex) {
+                    componentWidths.add(index,
+                                        componentWidth);
+                } else if (index > oldIndex) {
+                    componentWidths.add(oldIndex + 1,
+                                        componentWidth);
                 }
             }
 

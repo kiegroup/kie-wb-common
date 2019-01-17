@@ -32,6 +32,8 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRef
 @Portable
 public class Invocation extends Expression implements HasExpression {
 
+    private static final int STATIC_COLUMNS = 3;
+
     private Expression expression;
     private List<Binding> binding;
 
@@ -86,6 +88,11 @@ public class Invocation extends Expression implements HasExpression {
         hasTypeRefs.addAll(getFlatHasTypeRefs(getBinding()));
 
         return hasTypeRefs;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return STATIC_COLUMNS;
     }
 
     @Override

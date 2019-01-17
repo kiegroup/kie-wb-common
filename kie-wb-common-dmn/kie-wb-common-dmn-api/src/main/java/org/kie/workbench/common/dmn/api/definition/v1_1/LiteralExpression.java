@@ -50,6 +50,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 public class LiteralExpression extends Expression implements IsLiteralExpression,
                                                              DomainObject {
 
+    private static final int STATIC_COLUMNS = 1;
+
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
 
@@ -141,6 +143,11 @@ public class LiteralExpression extends Expression implements IsLiteralExpression
     @Override
     public String getDomainObjectNameTranslationKey() {
         return DMNAPIConstants.LiteralExpression_DomainObjectName;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return STATIC_COLUMNS;
     }
 
     @Override

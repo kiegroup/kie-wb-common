@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,5 +78,12 @@ public class DecisionTableTest {
         final List<HasTypeRef> expectedHasTypeRefs = asList(decisionTable, hasTypeRef1, hasTypeRef2, hasTypeRef3, hasTypeRef4, hasTypeRef5, hasTypeRef6);
 
         assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
+    }
+
+    @Test
+    public void testComponentWidths() {
+        assertEquals(decisionTable.getRequiredComponentWidthCount(),
+                     decisionTable.getComponentWidths().size());
+        decisionTable.getComponentWidths().forEach(Assert::assertNull);
     }
 }

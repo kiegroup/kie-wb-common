@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
@@ -33,6 +34,10 @@ public class ExpressionTest {
     @Before
     public void setup() {
         this.expression = spy(new Expression() {
+            @Override
+            public int getRequiredComponentWidthCount() {
+                return 1;
+            }
         });
     }
 
@@ -43,5 +48,12 @@ public class ExpressionTest {
         final List<HasTypeRef> expectedHasTypeRefs = singletonList(expression);
 
         assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
+    }
+
+    @Test
+    public void testComponentWidths() {
+        assertEquals(expression.getRequiredComponentWidthCount(),
+                     expression.getComponentWidths().size());
+        expression.getComponentWidths().forEach(Assert::assertNull);
     }
 }

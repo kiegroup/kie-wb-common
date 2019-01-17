@@ -101,15 +101,21 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                     final int relativeOldIndex = DecisionTableUIModelMapperHelper.getInputEntryIndex(dtable,
                                                                                                      oldIndex);
 
-                    final List<Integer> inputClauseIndexesToMove = columns
+                    final List<Integer> uiColumnIndexesToMove = columns
                             .stream()
                             .map(c -> uiModel.getColumns().indexOf(c))
+                            .collect(Collectors.toList());
+                    final List<Integer> inputClauseIndexesToMove = uiColumnIndexesToMove
+                            .stream()
                             .map(i -> DecisionTableUIModelMapperHelper.getInputEntryIndex(dtable, i))
                             .collect(Collectors.toList());
                     moveClauses(relativeIndex,
                                 relativeOldIndex,
                                 dtable.getInput(),
                                 inputClauseIndexesToMove);
+                    moveComponentWidths(index,
+                                        oldIndex,
+                                        uiColumnIndexesToMove);
 
                     final List<List<UnaryTests>> decisionRulesInputEntries = dtable.getRule()
                             .stream()
@@ -127,15 +133,21 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                                                                                                    index);
                     final int relativeOldIndex = DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable,
                                                                                                       oldIndex);
-                    final List<Integer> outputClauseIndexesToMove = columns
+                    final List<Integer> uiColumnIndexesToMove = columns
                             .stream()
                             .map(c -> uiModel.getColumns().indexOf(c))
+                            .collect(Collectors.toList());
+                    final List<Integer> outputClauseIndexesToMove = uiColumnIndexesToMove
+                            .stream()
                             .map(i -> DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable, i))
                             .collect(Collectors.toList());
                     moveClauses(relativeIndex,
                                 relativeOldIndex,
                                 dtable.getOutput(),
                                 outputClauseIndexesToMove);
+                    moveComponentWidths(index,
+                                        oldIndex,
+                                        uiColumnIndexesToMove);
 
                     final List<List<LiteralExpression>> decisionRulesOutputEntries = dtable.getRule()
                             .stream()
@@ -168,6 +180,25 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                 } else if (relativeIndex > relativeOldIndex) {
                     clauses.addAll(relativeIndex - clausesToMove.size() + 1,
                                    clausesToMove);
+                }
+            }
+
+            private void moveComponentWidths(final int index,
+                                             final int oldIndex,
+                                             final List<Integer> uiColumnIndexes) {
+                final java.util.List<Double> componentWidths = dtable.getComponentWidths();
+                final java.util.List<Double> componentWidthsToMove = uiColumnIndexes
+                        .stream()
+                        .map(componentWidths::get)
+                        .collect(Collectors.toList());
+
+                uiColumnIndexes.forEach(i -> componentWidths.remove(oldIndex));
+                if (index < oldIndex) {
+                    componentWidths.addAll(index,
+                                           componentWidthsToMove);
+                } else if (index > oldIndex) {
+                    componentWidths.addAll(oldIndex + 1,
+                                           componentWidthsToMove);
                 }
             }
 

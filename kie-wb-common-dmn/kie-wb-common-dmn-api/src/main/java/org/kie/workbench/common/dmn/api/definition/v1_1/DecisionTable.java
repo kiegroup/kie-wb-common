@@ -30,6 +30,8 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRef
 @Portable
 public class DecisionTable extends Expression {
 
+    private static final int STATIC_COLUMNS = 2;
+
     private List<InputClause> input;
     private List<OutputClause> output;
     private List<DecisionRule> rule;
@@ -144,6 +146,11 @@ public class DecisionTable extends Expression {
         hasTypeRefs.addAll(getFlatHasTypeRefs(getRule()));
 
         return hasTypeRefs;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return getInput().size() + getOutput().size() + STATIC_COLUMNS;
     }
 
     @Override

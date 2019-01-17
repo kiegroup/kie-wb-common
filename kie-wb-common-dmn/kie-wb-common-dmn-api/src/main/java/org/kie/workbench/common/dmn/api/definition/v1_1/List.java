@@ -29,6 +29,8 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRef
 @Portable
 public class List extends Expression {
 
+    private static final int STATIC_COLUMNS = 1;
+
     private java.util.List<Expression> expression;
 
     public List() {
@@ -63,6 +65,11 @@ public class List extends Expression {
         hasTypeRefs.addAll(getFlatHasTypeRefs(getExpression()));
 
         return hasTypeRefs;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return getExpression().size() + STATIC_COLUMNS;
     }
 
     @Override

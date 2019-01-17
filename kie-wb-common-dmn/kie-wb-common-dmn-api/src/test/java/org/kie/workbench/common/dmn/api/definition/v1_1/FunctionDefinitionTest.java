@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,5 +69,12 @@ public class FunctionDefinitionTest {
         final List<HasTypeRef> expectedHasTypeRefs = asList(functionDefinition, hasTypeRef1, hasTypeRef2, hasTypeRef3, hasTypeRef4);
 
         assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
+    }
+
+    @Test
+    public void testComponentWidths() {
+        assertEquals(functionDefinition.getRequiredComponentWidthCount(),
+                     functionDefinition.getComponentWidths().size());
+        functionDefinition.getComponentWidths().forEach(Assert::assertNull);
     }
 }

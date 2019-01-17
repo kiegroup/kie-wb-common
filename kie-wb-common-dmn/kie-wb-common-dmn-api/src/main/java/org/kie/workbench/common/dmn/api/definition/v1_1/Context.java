@@ -30,6 +30,8 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRef
 @Portable
 public class Context extends Expression {
 
+    private static final int STATIC_COLUMNS = 3;
+
     private List<ContextEntry> contextEntry;
 
     public Context() {
@@ -61,6 +63,11 @@ public class Context extends Expression {
         hasTypeRefs.addAll(getFlatHasTypeRefs(getContextEntry()));
 
         return hasTypeRefs;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return STATIC_COLUMNS;
     }
 
     @Override

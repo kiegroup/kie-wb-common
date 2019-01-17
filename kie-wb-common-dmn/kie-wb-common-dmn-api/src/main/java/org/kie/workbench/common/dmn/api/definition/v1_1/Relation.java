@@ -29,6 +29,8 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRef
 @Portable
 public class Relation extends Expression {
 
+    public static final int STATIC_COLUMNS = 1;
+
     private java.util.List<InformationItem> column;
     private java.util.List<List> row;
 
@@ -75,6 +77,11 @@ public class Relation extends Expression {
         hasTypeRefs.addAll(getFlatHasTypeRefs(getRow()));
 
         return hasTypeRefs;
+    }
+
+    @Override
+    public int getRequiredComponentWidthCount() {
+        return getColumn().size() + STATIC_COLUMNS;
     }
 
     @Override

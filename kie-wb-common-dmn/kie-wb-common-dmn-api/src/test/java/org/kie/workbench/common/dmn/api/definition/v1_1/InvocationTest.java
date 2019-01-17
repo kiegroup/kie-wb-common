@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,5 +67,12 @@ public class InvocationTest {
         final List<HasTypeRef> expectedHasTypeRefs = asList(invocation, hasTypeRef1, hasTypeRef2, hasTypeRef3, hasTypeRef4);
 
         assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
+    }
+
+    @Test
+    public void testComponentWidths() {
+        assertEquals(invocation.getRequiredComponentWidthCount(),
+                     invocation.getComponentWidths().size());
+        invocation.getComponentWidths().forEach(Assert::assertNull);
     }
 }
