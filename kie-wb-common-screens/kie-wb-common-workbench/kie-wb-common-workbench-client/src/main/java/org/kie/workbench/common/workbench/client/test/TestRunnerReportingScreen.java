@@ -129,7 +129,7 @@ public class TestRunnerReportingScreen
         Long runTime = testResultMessage.getRunTime();
         Date runtime = new Date(runTime);
 
-        String milliseconds = DateTimeFormat.getFormat("SSS").format(runtime) + " milliseconds";
+        String milliseconds = (DateTimeFormat.getFormat("SSS").format(runtime) + " milliseconds").replaceFirst("^0+(?!$)", "");
         String seconds = DateTimeFormat.getFormat("s").format(runtime) + " seconds";
         String minutes = DateTimeFormat.getFormat("m").format(runtime) + " minutes";
 
