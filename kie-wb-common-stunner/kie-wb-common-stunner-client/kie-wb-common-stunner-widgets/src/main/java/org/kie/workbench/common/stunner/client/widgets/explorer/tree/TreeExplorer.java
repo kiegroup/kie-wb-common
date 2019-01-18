@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.client.widgets.explorer.tree;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.function.Predicate;
 
 import javax.annotation.PreDestroy;
@@ -183,7 +184,8 @@ public class TreeExplorer implements IsWidget {
 
             if (view.isItemChanged(element.getUUID(),
                                    null != parent ? parent.getUUID() : null,
-                                   getItemName(element))) {
+                                   getItemName(element),
+                                   GraphUtils.getChildIndex(parent, element.getUUID()))) {
 
                 view.removeItem(element.getUUID());
                 addItem(parent,
@@ -266,7 +268,8 @@ public class TreeExplorer implements IsWidget {
                          name,
                          widget,
                          isContainer,
-                         expand);
+                         expand,
+                         GraphUtils.getChildIndex(parent, element.getUUID()));
         } else {
             view.addItem(element.getUUID(),
                          name,
@@ -437,7 +440,8 @@ public class TreeExplorer implements IsWidget {
                      final String name,
                      final IsWidget icon,
                      final boolean isContainer,
-                     final boolean state);
+                     final boolean state,
+                     final OptionalInt index);
 
         View setSelectedItem(final String uuid);
 
@@ -449,7 +453,8 @@ public class TreeExplorer implements IsWidget {
 
         boolean isItemChanged(final String uuid,
                               final String parentUuid,
-                              final String name);
+                              final String name,
+                              final OptionalInt index);
 
         boolean isContainer(final String uuid);
     }
