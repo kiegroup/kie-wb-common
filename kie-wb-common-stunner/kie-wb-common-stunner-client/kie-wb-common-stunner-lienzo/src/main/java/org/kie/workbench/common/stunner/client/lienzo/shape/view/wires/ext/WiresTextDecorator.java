@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
+import com.ait.lienzo.client.core.shape.Line;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.TextBoundsWrap;
 import com.ait.lienzo.client.core.shape.wires.LayoutContainer;
@@ -67,6 +68,11 @@ public class WiresTextDecorator {
     private double width;
     private double height;
 
+    // WiresLayoutContainer lays out content based on the BoundingBox of the content. Therefore, even when the Text
+    // has its Location set to non-zero co-ordinates its BoundingBox does not change. This (almost invisible) Line is
+    // used to ensure the BoundingBox represents the positioning of the WiresTextDecorator
+    private Line textSpacer = new Line().setAlpha(0.1).setListening(false);
+
     public WiresTextDecorator(final Supplier<ViewEventHandlerManager> eventHandlerManager) {
         this.eventHandlerManager = eventHandlerManager;
         initialize();
@@ -103,9 +109,11 @@ public class WiresTextDecorator {
                                                               0,
                                                               1,
                                                               1));
+
         this.text.setWrapper(textWrapper);
         this.currentTextLayout = TEXT_LAYOUT_ALIGN;
         textContainer.add(text);
+        textContainer.add(textSpacer);
         // Ensure path bounds are available on the selection context.
         text.setFillBoundsForSelection(true);
         initializeHandlers();
