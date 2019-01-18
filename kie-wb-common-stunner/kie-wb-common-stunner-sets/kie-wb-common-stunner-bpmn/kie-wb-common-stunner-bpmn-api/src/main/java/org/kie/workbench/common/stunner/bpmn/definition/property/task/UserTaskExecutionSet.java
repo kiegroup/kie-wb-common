@@ -142,11 +142,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     @Property
     @FormField(afterElement = "content")
     @Valid
-    private MultipleInstance multipleInstance;
-
-    @Property
-    @FormField(afterElement = "multipleInstance")
-    @Valid
     private SLADueDate slaDueDate;
 
     public UserTaskExecutionSet() {
@@ -166,7 +161,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                      ""))),
              new Content(""),
-             new MultipleInstance(),
              new SLADueDate(""));
     }
 
@@ -184,7 +178,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
                                 final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
                                 final @MapsTo("onExitAction") OnExitAction onExitAction,
                                 final @MapsTo("content") Content content,
-                                final @MapsTo("multipleInstance") MultipleInstance multipleInstance,
                                 final @MapsTo("slaDueDate") SLADueDate slaDueDate) {
         this.taskName = taskName;
         this.actors = actors;
@@ -200,7 +193,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
         this.content = content;
-        this.multipleInstance = multipleInstance;
         this.slaDueDate = slaDueDate;
     }
 
@@ -316,14 +308,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.content = content;
     }
 
-    public MultipleInstance getMultipleInstance() {
-        return multipleInstance;
-    }
-
-    public void setMultipleInstance(MultipleInstance multipleInstance) {
-        this.multipleInstance = multipleInstance;
-    }
-
     public SLADueDate getSlaDueDate() {
         return slaDueDate;
     }
@@ -348,7 +332,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
                                          Objects.hashCode(onEntryAction),
                                          Objects.hashCode(onExitAction),
                                          Objects.hashCode(content),
-                                         Objects.hashCode(multipleInstance),
                                          Objects.hashCode(slaDueDate));
     }
 
@@ -384,8 +367,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
                                    other.onExitAction) &&
                     Objects.equals(content,
                                    other.content) &&
-                    Objects.equals(multipleInstance,
-                                   other.multipleInstance) &&
                     Objects.equals(slaDueDate,
                                    other.slaDueDate);
         }

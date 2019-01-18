@@ -69,7 +69,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MITrigger;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCompletionCondition;
@@ -95,7 +94,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.kie.workbench.common.stunner.core.util.EqualsAndHashCodeTestUtils.TestCaseBuilder;
 
 public class HashCodeAndEqualityTest {
@@ -1361,7 +1359,6 @@ public class HashCodeAndEqualityTest {
                                                       new OnEntryAction(),
                                                       new OnExitAction(),
                                                       new Content(),
-                                                      new MultipleInstance(),
                                                       new SLADueDate()),
 
                              new UserTaskExecutionSet(new TaskName(),
@@ -1378,7 +1375,6 @@ public class HashCodeAndEqualityTest {
                                                       new OnEntryAction(),
                                                       new OnExitAction(),
                                                       new Content(),
-                                                      new MultipleInstance(),
                                                       new SLADueDate()))
                 .test();
     }

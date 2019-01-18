@@ -124,11 +124,7 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
     }
 
     public String getContent() {
-        return CustomElement.content.of(element).get();
-    }
-
-    public boolean isMultipleInstance() {
-        return CustomElement.multipleInstance.of(element).get();
+        return CustomInput.content.of(task).get();
     }
 
     public String getSLADueDate() {

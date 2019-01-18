@@ -118,7 +118,6 @@ public class TaskConverter {
         p.setOnEntryAction(executionSet.getOnEntryAction());
         p.setOnExitAction(executionSet.getOnExitAction());
         p.setContent(executionSet.getContent().getValue());
-        p.setMultipleInstance(executionSet.getMultipleInstance().getValue());
         p.setSLADueDate(executionSet.getSlaDueDate().getValue());
 
         p.setBounds(n.getContent().getBounds());
