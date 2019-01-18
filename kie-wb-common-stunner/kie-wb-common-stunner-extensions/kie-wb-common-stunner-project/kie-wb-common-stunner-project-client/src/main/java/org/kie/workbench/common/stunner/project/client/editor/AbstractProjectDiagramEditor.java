@@ -403,7 +403,12 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                 .filter(Boolean.TRUE::equals)
                 .ifPresent(enabled -> {
                     final String label = translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION);
-                    addPage(new DocumentationPage(documentationView.initialize(diagram), label));
+                    addPage(new DocumentationPage(documentationView.initialize(diagram),
+                                                  label,
+                                                  //firing the OnDiagramFocusEvent will force the docks to be minimized
+                                                  () -> onDiagramFocusEvent.fire(new OnDiagramFocusEvent()),
+                                                  //check the DocumentationPage is active, the index is 2
+                                                  () -> Objects.equals(2, kieView.getSelectedTabIndex())));
                 });
     }
 

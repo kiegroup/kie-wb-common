@@ -16,19 +16,26 @@
 
 package org.kie.workbench.common.stunner.core.documentation;
 
+import java.util.function.Supplier;
+
 import org.uberfire.client.views.pfly.multipage.PageImpl;
+import org.uberfire.mvp.Command;
 
 public class DocumentationPage extends PageImpl {
 
     private DocumentationView view;
+    private Command onFocus;
 
-    public DocumentationPage(DocumentationView view, String label) {
+    public DocumentationPage(DocumentationView view, String label, Command onFocus, Supplier<Boolean> isSelected) {
         super(view, label);
         this.view = view;
+        this.onFocus = onFocus;
+        view.setIsSelected(isSelected);
     }
 
     @Override
     public void onFocus() {
+        onFocus.execute();
         view.refresh();
     }
 }

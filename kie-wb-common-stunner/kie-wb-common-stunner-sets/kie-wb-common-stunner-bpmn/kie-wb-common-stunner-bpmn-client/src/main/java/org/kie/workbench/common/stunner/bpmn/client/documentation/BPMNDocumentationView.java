@@ -16,7 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.documentation;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,6 +34,7 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.documentation.DefaultDiagramDocumentationView;
 import org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
+import org.kie.workbench.common.stunner.forms.client.event.FormFieldChanged;
 import org.uberfire.client.views.pfly.icon.PatternFlyIconType;
 import org.uberfire.client.views.pfly.widgets.Button;
 
@@ -51,11 +56,19 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
 
     private final ClientTranslationService clientTranslationService;
 
+    private Supplier<Boolean> isSelected;
+
     @Inject
     public BPMNDocumentationView(final BPMNDocumentationService documentationService,
                                  final ClientTranslationService clientTranslationService) {
         this.documentationService = documentationService;
         this.clientTranslationService = clientTranslationService;
+    }
+
+    @Override
+    public BPMNDocumentationView setIsSelected(final Supplier<Boolean> isSelected) {
+        this.isSelected = isSelected;
+        return this;
     }
 
     @Override
@@ -82,6 +95,18 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
         // ready for writing
         doc.open();
         doc.write(content);
+        doc.close();
+
+        //trick part, change the media attribute to all, to load it before printing
+        //otherwise it is printing before loading the style
+        var links = doc.getElementsByTagName("link");
+        for (var i = 0, max = links.length; i < max; i++) {
+            var css = links[i];
+            var media = css.attributes["media"];
+            if (media && media.value === "print") {
+                media.value = "all";
+            }
+        }
 
         //copy the styles from the top window
         if (window.top && window.top.location.href != document.location.href) {
@@ -97,13 +122,16 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
             }
         }
 
-        doc.close();
-
         //printing after all resources are loaded on the new window
         printWindow.onload = function () {
             printWindow.focus();
-            setTimeout(printWindow.print(), 50);
+            //trick to avoid printing before loading the styles
+            setTimeout(function () {
+                printWindow.print();
+                printWindow.close();
+            }, 10);
         };
+
         return true;
     }-*/;
 
@@ -115,6 +143,15 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
     public BPMNDocumentationView refresh() {
         documentationDiv.innerHTML = getDocumentationHTML();
         return this;
+    }
+
+    protected void onFormFieldChanged(@Observes FormFieldChanged formFieldChanged) {
+        Optional.ofNullable(isSelected)
+                .map(Supplier::get)
+                .filter(Boolean.TRUE::equals)
+                .map(focus -> getDiagram()
+                        .map(d -> d.getGraph().getNode(formFieldChanged.getUuid()))
+                ).ifPresent(focus -> refresh());
     }
 
     private String getDocumentationHTML() {

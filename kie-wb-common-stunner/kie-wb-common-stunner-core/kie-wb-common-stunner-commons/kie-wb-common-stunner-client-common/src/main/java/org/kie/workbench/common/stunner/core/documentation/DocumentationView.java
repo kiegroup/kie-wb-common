@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.documentation;
 
+import java.util.function.Supplier;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 
@@ -24,6 +26,8 @@ public interface DocumentationView<D extends Diagram> extends IsWidget {
     DocumentationView<D> initialize(D diagram);
 
     DocumentationView<D> refresh();
+
+    DocumentationView<D> setIsSelected(final Supplier<Boolean> isSelected);
 
     boolean isEnabled();
 }
