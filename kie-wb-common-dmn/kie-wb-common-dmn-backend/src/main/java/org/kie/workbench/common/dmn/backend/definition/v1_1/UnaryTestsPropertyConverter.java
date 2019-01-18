@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.api.definition.v1_1.IsUnaryTests;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -32,10 +33,15 @@ public class UnaryTestsPropertyConverter {
         Id id = new Id(dmn.getId());
         Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         ExpressionLanguage expressionLanguage = ExpressionLanguagePropertyConverter.wbFromDMN(dmn.getExpressionLanguage());
+        ConstraintType constraintTypeField = null;
+        if (!dmn.getAdditionalAttributes().containsKey(ConstraintType.KEY)) {
+            constraintTypeField = ConstraintTypeFieldPropertyConverter.wbFromDMN(dmn.getAdditionalAttributes().get(ConstraintType.KEY));
+        }
         UnaryTests result = new UnaryTests(id,
                                            description,
                                            new Text(dmn.getText()),
-                                           expressionLanguage);
+                                           expressionLanguage,
+                                           constraintTypeField);
         return result;
     }
 
@@ -46,6 +52,12 @@ public class UnaryTestsPropertyConverter {
         org.kie.dmn.model.api.UnaryTests result = new org.kie.dmn.model.v1_2.TUnaryTests();
         result.setId(wb.getId().getValue());
         result.setText(wb.getText().getValue());
+
+        ConstraintType constraint = wb.getConstraintType();
+
+        if (constraint != null) {
+            result.getAdditionalAttributes().put(ConstraintType.KEY, constraint.value());
+        }
 
         return result;
     }

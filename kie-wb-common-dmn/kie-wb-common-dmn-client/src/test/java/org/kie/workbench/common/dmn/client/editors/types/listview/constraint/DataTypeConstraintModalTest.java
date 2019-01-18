@@ -22,19 +22,19 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.ENUMERATION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.EXPRESSION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.RANGE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal.CONSTRAINT_INITIAL_VALUE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal.WIDTH;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.ENUMERATION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.EXPRESSION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.RANGE;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -210,8 +210,8 @@ public class DataTypeConstraintModalTest {
     @Test
     public void testInferComponentTypeWhenItReturnsRange() {
 
-        final Type expectedType = RANGE;
-        final Type actualType = modal.inferComponentType("(1..3]");
+        final ConstraintType expectedType = RANGE;
+        final ConstraintType actualType = modal.inferComponentType("(1..3]");
 
         assertEquals(expectedType, actualType);
     }
@@ -219,8 +219,8 @@ public class DataTypeConstraintModalTest {
     @Test
     public void testInferComponentTypeWhenItReturnsEnumeration() {
 
-        final Type expectedType = ENUMERATION;
-        final Type actualType = modal.inferComponentType("1,2,3");
+        final ConstraintType expectedType = ENUMERATION;
+        final ConstraintType actualType = modal.inferComponentType("1,2,3");
 
         assertEquals(expectedType, actualType);
     }
@@ -228,8 +228,8 @@ public class DataTypeConstraintModalTest {
     @Test
     public void testInferComponentTypeWhenItReturnsExpression() {
 
-        final Type expectedType = EXPRESSION;
-        final Type actualType = modal.inferComponentType("expression");
+        final ConstraintType expectedType = EXPRESSION;
+        final ConstraintType actualType = modal.inferComponentType("expression");
 
         assertEquals(expectedType, actualType);
     }

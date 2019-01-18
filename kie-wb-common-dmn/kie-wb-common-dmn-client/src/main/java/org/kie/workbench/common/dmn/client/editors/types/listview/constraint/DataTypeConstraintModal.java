@@ -23,17 +23,17 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.ENUMERATION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.EXPRESSION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.RANGE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.NONE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.ENUMERATION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.EXPRESSION;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.Type.RANGE;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
@@ -113,7 +113,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
     }
 
     private DataTypeConstraintComponent getComponentByType(final String constraintType) {
-        switch (Type.valueOf(constraintType)) {
+        switch (ConstraintType.valueOf(constraintType)) {
             case ENUMERATION:
                 return getConstraintEnumeration();
             case EXPRESSION:
@@ -138,7 +138,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
     }
 
     // TODO: Instead of inferring the type, we should use a property - https://issues.jboss.org/browse/DROOLS-3517
-    Type inferComponentType(final String constraintValue) {
+    ConstraintType inferComponentType(final String constraintValue) {
 
         final String value = Optional.ofNullable(constraintValue).orElse("");
 

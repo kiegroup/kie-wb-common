@@ -42,9 +42,9 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Bindable
 @PropertySet
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED,
-        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
-        i18n = @I18nSettings(keyPreffix = "org.kie.workbench.common.dmn.api.definition.v1_1.InputClauseUnaryTests"),
-        startElement = "text")
+    defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
+    i18n = @I18nSettings(keyPreffix = "org.kie.workbench.common.dmn.api.definition.v1_1.InputClauseUnaryTests"),
+    startElement = "text")
 public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements IsUnaryTests,
                                                                                DMNPropertySet {
 
@@ -54,15 +54,20 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
     @FormField(afterElement = "description", labelKey = "text")
     protected Text text;
 
+    protected ConstraintType constraintType;
+
     public InputClauseUnaryTests() {
         this(new Id(),
-             new Text());
+             new Text(),
+             null);
     }
 
     public InputClauseUnaryTests(final Id id,
-                                 final Text text) {
+                                 final Text text,
+                                 final ConstraintType constraintType) {
         this.id = id;
         this.text = text;
+        this.constraintType = constraintType;
     }
 
     // -----------------------
@@ -77,6 +82,15 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
     @Override
     public Text getText() {
         return text;
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return constraintType;
+    }
+
+    public void setConstraintTypeField(final ConstraintType constraintTypeField) {
+        this.constraintType = constraintTypeField;
     }
 
     public void setText(final Text value) {
