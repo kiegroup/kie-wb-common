@@ -26,7 +26,7 @@ import org.eclipse.bpmn2.Expression;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
-import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.common.ConditionExpression;
@@ -41,8 +41,8 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     private final DefinitionResolver definitionResolver;
     private String signalRefId = null;
 
-    EventPropertyReader(Event element, BPMNPlane plane, DefinitionResolver definitionResolver, String eventDefinition) {
-        super(element, plane, definitionResolver.getShape(element.getId()));
+    EventPropertyReader(Event element, BPMNDiagram diagram, DefinitionResolver definitionResolver, String eventDefinition) {
+        super(element, diagram, definitionResolver.getShape(element.getId()), definitionResolver.getResolutionFactor());
         this.definitionResolver = definitionResolver;
         this.signalRefId = eventDefinition;
     }

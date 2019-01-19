@@ -17,14 +17,14 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
 import org.eclipse.bpmn2.Gateway;
-import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 
 public class GatewayPropertyReader extends FlowElementPropertyReader {
 
-    public GatewayPropertyReader(Gateway element, BPMNPlane plane, BPMNShape shape) {
-        super(element, plane, shape);
+    public GatewayPropertyReader(Gateway element, BPMNDiagram diagram, BPMNShape shape, double resolutionFactor) {
+        super(element, diagram, shape, resolutionFactor);
     }
 
     public String getDefaultRoute() {
