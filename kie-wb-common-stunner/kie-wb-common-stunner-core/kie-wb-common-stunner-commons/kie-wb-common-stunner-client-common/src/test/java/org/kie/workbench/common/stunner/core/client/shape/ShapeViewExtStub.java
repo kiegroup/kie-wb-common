@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 
 public class ShapeViewExtStub
         extends ShapeViewStub
@@ -74,6 +75,16 @@ public class ShapeViewExtStub
 
     @Override
     public Object setTitlePosition(final Position position) {
+        return this;
+    }
+
+    @Override
+    public Object setTitleXOffsetPosition(final Double xOffset) {
+        return this;
+    }
+
+    @Override
+    public Object setTitleYOffsetPosition(final Double yOffset) {
         return this;
     }
 
@@ -217,12 +228,7 @@ public class ShapeViewExtStub
     }
 
     @Override
-    public Object setDragBounds(double x0, double y0, double x1, double y1) {
-        return this;
-    }
-
-    @Override
-    public Object unsetDragBounds() {
+    public Object setDragBounds(final Bounds bounds) {
         return this;
     }
 }

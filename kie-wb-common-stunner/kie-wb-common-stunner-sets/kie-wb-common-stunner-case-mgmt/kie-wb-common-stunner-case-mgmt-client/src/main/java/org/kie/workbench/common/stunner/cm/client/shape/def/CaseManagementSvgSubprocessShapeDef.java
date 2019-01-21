@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.client.shape.def.BaseDimensionedSha
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGGlyphFactory;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory;
-import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
+import org.kie.workbench.common.stunner.cm.definition.BaseCaseManagementReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.ProcessReusableSubprocess;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
@@ -35,17 +35,15 @@ import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeViewRes
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
 public final class CaseManagementSvgSubprocessShapeDef extends BaseDimensionedShapeDef
-        implements CaseManagementSvgShapeDef<BaseSubprocess> {
+        implements CaseManagementSvgShapeDef<BaseCaseManagementReusableSubprocess> {
 
-    public static final SVGShapeViewResources<BaseSubprocess, CaseManagementSVGViewFactory> VIEW_RESOURCES =
-            new SVGShapeViewResources<BaseSubprocess, CaseManagementSVGViewFactory>()
-                    .put(AdHocSubprocess.class, CaseManagementSVGViewFactory::stage)
+    public static final SVGShapeViewResources<BaseCaseManagementReusableSubprocess, CaseManagementSVGViewFactory> VIEW_RESOURCES =
+            new SVGShapeViewResources<BaseCaseManagementReusableSubprocess, CaseManagementSVGViewFactory>()
                     .put(ProcessReusableSubprocess.class, CaseManagementSVGViewFactory::subprocess)
                     .put(CaseReusableSubprocess.class, CaseManagementSVGViewFactory::subcase);
 
-    public static final Map<Class<? extends BaseSubprocess>, Glyph> GLYPHS =
-            new Maps.Builder<Class<? extends BaseSubprocess>, Glyph>()
-                    .put(AdHocSubprocess.class, CaseManagementSVGGlyphFactory.STAGE_GLYPH)
+    public static final Map<Class<? extends BaseCaseManagementReusableSubprocess>, Glyph> GLYPHS =
+            new Maps.Builder<Class<? extends BaseCaseManagementReusableSubprocess>, Glyph>()
                     .put(ProcessReusableSubprocess.class, CaseManagementSVGGlyphFactory.SUBPROCESS_GLYPH)
                     .put(CaseReusableSubprocess.class, CaseManagementSVGGlyphFactory.SUBCASE_GLYPH).build();
 
@@ -54,31 +52,31 @@ public final class CaseManagementSvgSubprocessShapeDef extends BaseDimensionedSh
     }
 
     @Override
-    public FontHandler<BaseSubprocess, SVGShapeView> newFontHandler() {
+    public FontHandler<BaseCaseManagementReusableSubprocess, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
                 .position(CaseManagementSvgSubprocessShapeDef::getSubprocessTextPosition)
                 .build();
     }
 
     @Override
-    public SizeHandler<BaseSubprocess, SVGShapeView> newSizeHandler() {
+    public SizeHandler<BaseCaseManagementReusableSubprocess, SVGShapeView> newSizeHandler() {
         return newSizeHandlerBuilder()
-                .width(task -> task.getDimensionsSet().getWidth().getValue())
-                .height(task -> task.getDimensionsSet().getHeight().getValue())
-                .minWidth(task -> 50d)
-                .minHeight(task -> 50d)
+                .width(e -> e.getDimensionsSet().getWidth().getValue())
+                .height(e -> e.getDimensionsSet().getHeight().getValue())
+                .minWidth(e -> 50d)
+                .minHeight(e -> 50d)
                 .build();
     }
 
     @Override
-    public SVGShapeView<?> newViewInstance(final CaseManagementSVGViewFactory factory, final BaseSubprocess bean) {
+    public SVGShapeView<?> newViewInstance(final CaseManagementSVGViewFactory factory, final BaseCaseManagementReusableSubprocess bean) {
         return newViewInstance(Optional.ofNullable(bean.getDimensionsSet().getWidth()),
                                Optional.ofNullable(bean.getDimensionsSet().getHeight()),
                                VIEW_RESOURCES.getResource(factory, bean));
     }
 
     @Override
-    public Glyph getGlyph(final Class<? extends BaseSubprocess> type,
+    public Glyph getGlyph(final Class<? extends BaseCaseManagementReusableSubprocess> type,
                           final String defId) {
         return GLYPHS.get(type);
     }

@@ -17,9 +17,11 @@
 package org.kie.workbench.common.stunner.client.widgets.canvas;
 
 import com.ait.lienzo.client.core.shape.Layer;
+import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoLayer;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 
 public abstract class DelegateLienzoPanel<P extends LienzoPanel> implements LienzoPanel {
 
@@ -56,18 +58,23 @@ public abstract class DelegateLienzoPanel<P extends LienzoPanel> implements Lien
     }
 
     @Override
-    public int getWidth() {
-        return getDelegate().getWidth();
+    public int getWidthPx() {
+        return getDelegate().getWidthPx();
     }
 
     @Override
-    public int getHeight() {
-        return getDelegate().getHeight();
+    public int getHeightPx() {
+        return getDelegate().getHeightPx();
     }
 
     @Override
     public void setBackgroundLayer(final Layer layer) {
         getDelegate().setBackgroundLayer(layer);
+    }
+
+    @Override
+    public Bounds getLocationConstraints() {
+        return getDelegate().getLocationConstraints();
     }
 
     @Override
@@ -78,5 +85,10 @@ public abstract class DelegateLienzoPanel<P extends LienzoPanel> implements Lien
     @Override
     public Widget asWidget() {
         return getDelegate().asWidget();
+    }
+
+    @Override
+    public LienzoBoundsPanel getView() {
+        return getDelegate().getView();
     }
 }
