@@ -604,7 +604,7 @@
           </execution>
         </executions>
         <configuration>
-          <arguments>${version.org.kie}</arguments>
+          <arguments>${version.org.kie},${project.basedir}</arguments>
           <mainClass>org.kie.workbench.common.services.backend.compiler.offprocess.generator.ClassPathMavenGenerator</mainClass>
         </configuration>
       </plugin>
