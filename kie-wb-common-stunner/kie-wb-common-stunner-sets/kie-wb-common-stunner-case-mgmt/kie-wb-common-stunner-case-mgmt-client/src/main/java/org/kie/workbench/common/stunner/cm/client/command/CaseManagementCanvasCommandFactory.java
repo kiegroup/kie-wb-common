@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.cm.client.command;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Consumer;
@@ -47,22 +46,6 @@ public class CaseManagementCanvasCommandFactory extends DefaultCanvasCommandFact
                                               final ManagedInstance<ViewTraverseProcessor> viewTraverseProcessors) {
         super(childrenTraverseProcessors,
               viewTraverseProcessors);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static int getChildIndex(final Node parent,
-                                    final Node child) {
-        if (parent != null && child != null) {
-            List<Edge> outEdges = parent.getOutEdges();
-            if (null != outEdges && !outEdges.isEmpty()) {
-                for (int i = 0, n = outEdges.size(); i < n; i++) {
-                    if (child.equals(outEdges.get(i).getTargetNode())) {
-                        return i;
-                    }
-                }
-            }
-        }
-        return -1;
     }
 
     @Override

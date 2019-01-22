@@ -14,31 +14,53 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.cm.client.command;
+package org.kie.workbench.common.stunner.core.command.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.omg.CORBA.Object;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class CaseManagementClearCommandTest extends CaseManagementAbstractCommandTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ReverseCommandTest {
 
-    private CaseManagementClearCommand tested;
+    @Mock
+    private Command command;
+
+    @Mock
+    private Object context;
+
+    private ReverseCommand reverseCommand;
 
     @Before
     public void setUp() throws Exception {
-        super.setup();
+        reverseCommand = new ReverseCommand(command);
+    }
 
-        tested = new CaseManagementClearCommand();
+    @Test
+    public void testAllow() throws Exception {
+        reverseCommand.allow(context);
+
+        verify(command).allow(eq(context));
     }
 
     @Test
     public void testExecute() throws Exception {
-        tested.execute(canvasHandler);
+        reverseCommand.execute(context);
 
-        verify(canvasHandler, times(1)).deregister(eq(rootShape), eq(rootNode), eq(true));
-        verify(canvasHandler, times(1)).register(eq(SHAPE_SET_ID), eq(rootNode));
+        verify(command).undo(eq(context));
+    }
+
+    @Test
+    public void testUndo() throws Exception {
+        reverseCommand.undo(context);
+
+        verify(command).execute(eq(context));
     }
 }

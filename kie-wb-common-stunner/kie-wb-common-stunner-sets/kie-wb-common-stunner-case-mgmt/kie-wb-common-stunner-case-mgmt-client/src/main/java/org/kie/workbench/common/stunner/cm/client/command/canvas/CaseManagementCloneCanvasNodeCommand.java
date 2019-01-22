@@ -22,7 +22,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.command.CloneCanvasNo
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 
-import static org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory.getChildIndex;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.getChildIndex;
 
 public class CaseManagementCloneCanvasNodeCommand extends CloneCanvasNodeCommand {
 

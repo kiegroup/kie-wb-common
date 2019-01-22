@@ -16,7 +16,6 @@
 package org.kie.workbench.common.stunner.cm.client.command;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.ClearCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
@@ -27,20 +26,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class CaseManagementClearCommand extends ClearCommand {
 
-    String rootUUID;
-    Shape rootShape;
-
-    @Override
-    protected AbstractCanvasCommand newCanvasCommand(AbstractCanvasHandler context) {
-        rootUUID = context.getDiagram().getMetadata().getCanvasRootUUID();
-        rootShape = context.getCanvas().getShape(rootUUID);
-
-        return super.newCanvasCommand(context);
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public CommandResult<CanvasViolation> execute(AbstractCanvasHandler context) {
+        final String rootUUID = context.getDiagram().getMetadata().getCanvasRootUUID();
+        final Shape rootShape = context.getCanvas().getShape(rootUUID);
+
         final CommandResult<CanvasViolation> result = super.execute(context);
 
         final Node<View, Edge> node = context.getGraphIndex().getNode(rootUUID);

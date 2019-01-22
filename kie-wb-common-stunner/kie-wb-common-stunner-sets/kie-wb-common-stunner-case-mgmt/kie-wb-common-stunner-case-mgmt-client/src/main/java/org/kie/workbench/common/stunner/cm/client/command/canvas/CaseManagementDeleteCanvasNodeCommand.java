@@ -15,12 +15,11 @@
  */
 package org.kie.workbench.common.stunner.cm.client.command.canvas;
 
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteCanvasNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.Node;
 
-import static org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory.getChildIndex;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.getChildIndex;
 
 public class CaseManagementDeleteCanvasNodeCommand extends DeleteCanvasNodeCommand {
 
@@ -42,10 +41,5 @@ public class CaseManagementDeleteCanvasNodeCommand extends DeleteCanvasNodeComma
     @Override
     protected AbstractCanvasCommand createUndoCommand(Node parent, Node candidate, String ssid) {
         return new CaseManagementAddChildNodeCanvasCommand(parent, candidate, ssid, index);
-    }
-
-    @Override
-    protected void parentApplyElementMutation(AbstractCanvasHandler context) {
-        // no parent applyElementMutation
     }
 }

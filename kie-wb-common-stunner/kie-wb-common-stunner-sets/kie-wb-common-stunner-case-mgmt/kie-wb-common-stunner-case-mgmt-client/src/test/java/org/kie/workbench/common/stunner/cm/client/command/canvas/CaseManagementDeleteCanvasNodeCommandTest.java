@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommandTest;
-import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -85,12 +84,5 @@ public class CaseManagementDeleteCanvasNodeCommandTest extends AbstractCanvasCom
 
         verify(canvasHandler).applyElementMutation(eq(candidate), anyObject());
         verify(canvasHandler, never()).applyElementMutation(eq(parent), anyObject());
-    }
-
-    @Test
-    public void testExecute() {
-        tested.execute(canvasHandler);
-
-        verify(canvasHandler, never()).applyElementMutation(eq(parent), eq(MutationContext.STATIC));
     }
 }
