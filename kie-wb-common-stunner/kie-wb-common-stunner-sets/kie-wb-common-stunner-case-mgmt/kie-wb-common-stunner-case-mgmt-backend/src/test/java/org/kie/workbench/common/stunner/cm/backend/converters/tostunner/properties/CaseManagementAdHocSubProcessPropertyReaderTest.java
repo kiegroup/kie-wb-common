@@ -58,14 +58,14 @@ public class CaseManagementAdHocSubProcessPropertyReaderTest {
         CustomElement.autoStart.of(adHocSubProcess).set(Boolean.TRUE);
 
         tested = new CaseManagementAdHocSubProcessPropertyReader(adHocSubProcess,
-                                                                 definitionResolver.getPlane(),
+                                                                 definitionResolver.getDiagram(),
                                                                  definitionResolver);
 
         assertTrue(tested.isAdHocAutostart());
     }
 
     @Test
-    public void testIisAdHocAutostart_false() throws Exception {
+    public void testIsAdHocAutostart_false() throws Exception {
         String id = UUID.randomUUID().toString();
 
         AdHocSubProcess adHocSubProcess = bpmn2.createAdHocSubProcess();
@@ -73,7 +73,7 @@ public class CaseManagementAdHocSubProcessPropertyReaderTest {
         CustomElement.autoStart.of(adHocSubProcess).set(Boolean.FALSE);
 
         tested = new CaseManagementAdHocSubProcessPropertyReader(adHocSubProcess,
-                                                                 definitionResolver.getPlane(),
+                                                                 definitionResolver.getDiagram(),
                                                                  definitionResolver);
 
         assertFalse(tested.isAdHocAutostart());

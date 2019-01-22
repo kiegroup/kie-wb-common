@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.cm.definition.property.diagram.DiagramSe
 import org.kie.workbench.common.stunner.cm.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -66,7 +66,7 @@ public class CaseManagementRootProcessConverterTest {
         definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
 
         Node node = new NodeImpl("");
-        View<CaseManagementDiagram> content = new ViewImpl<>(new CaseManagementDiagram(), BoundsImpl.build());
+        View<CaseManagementDiagram> content = new ViewImpl<>(new CaseManagementDiagram(), Bounds.create());
         node.setContent(content);
 
         FactoryManager factoryManager = mock(FactoryManager.class);
@@ -89,8 +89,9 @@ public class CaseManagementRootProcessConverterTest {
     public void testCreateDiagramSet() throws Exception {
         assertTrue(DiagramSet.class.isInstance(tested.createDiagramSet(process,
                                                                        new ProcessPropertyReader(process,
-                                                                                                 definitionResolver.getPlane(),
-                                                                                                 definitionResolver.getShape(process.getId())))));
+                                                                                                 definitionResolver.getDiagram(),
+                                                                                                 definitionResolver.getShape(process.getId()),
+                                                                                                 definitionResolver.getResolutionFactor()))));
     }
 
     @Test

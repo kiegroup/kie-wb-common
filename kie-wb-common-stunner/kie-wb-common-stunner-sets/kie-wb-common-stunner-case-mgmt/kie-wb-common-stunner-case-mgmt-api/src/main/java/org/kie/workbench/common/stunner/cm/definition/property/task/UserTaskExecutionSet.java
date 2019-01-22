@@ -34,11 +34,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Prio
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseUserTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
@@ -144,6 +146,19 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
     @Valid
     private OnExitAction onExitAction;
 
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "onExitAction"
+    )
+    @Valid
+    private Content content;
+
+    @Property
+    @FormField(afterElement = "content")
+    @Valid
+    private SLADueDate slaDueDate;
+
     public UserTaskExecutionSet() {
         this(new TaskName("Task"),
              new Actors(),
@@ -159,7 +174,9 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
-                                                                                     ""))));
+                                                                                     ""))),
+             new Content(""),
+             new SLADueDate(""));
     }
 
     public UserTaskExecutionSet(final @MapsTo("taskName") TaskName taskName,
@@ -174,7 +191,9 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
                                 final @MapsTo("createdBy") CreatedBy createdBy,
                                 final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
                                 final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
-                                final @MapsTo("onExitAction") OnExitAction onExitAction) {
+                                final @MapsTo("onExitAction") OnExitAction onExitAction,
+                                final @MapsTo("content") Content content,
+                                final @MapsTo("slaDueDate") SLADueDate slaDueDate) {
         this.taskName = taskName;
         this.actors = actors;
         this.groupid = groupid;
@@ -188,6 +207,8 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
         this.adHocAutostart = adHocAutostart;
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
+        this.content = content;
+        this.slaDueDate = slaDueDate;
     }
 
     @Override
@@ -308,6 +329,24 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
     }
 
     @Override
+    public Content getContent() {
+        return content;
+    }
+
+    public void setContent(Content content) {
+        this.content = content;
+    }
+
+    @Override
+    public SLADueDate getSlaDueDate() {
+        return slaDueDate;
+    }
+
+    public void setSlaDueDate(SLADueDate slaDueDate) {
+        this.slaDueDate = slaDueDate;
+    }
+
+    @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(taskName),
                                          Objects.hashCode(subject),
@@ -321,7 +360,9 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
                                          Objects.hashCode(createdBy),
                                          Objects.hashCode(adHocAutostart),
                                          Objects.hashCode(onEntryAction),
-                                         Objects.hashCode(onExitAction));
+                                         Objects.hashCode(onExitAction),
+                                         Objects.hashCode(content),
+                                         Objects.hashCode(slaDueDate));
     }
 
     @Override
@@ -353,7 +394,11 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
                     Objects.equals(onEntryAction,
                                    other.onEntryAction) &&
                     Objects.equals(onExitAction,
-                                   other.onExitAction);
+                                   other.onExitAction) &&
+                    Objects.equals(content,
+                                   other.content) &&
+                    Objects.equals(slaDueDate,
+                                   other.slaDueDate);
         }
         return false;
     }

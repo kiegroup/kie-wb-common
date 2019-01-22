@@ -23,11 +23,13 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks.
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
@@ -62,6 +64,8 @@ public class CaseManagementTaskConverter extends BaseTaskConverter<UserTask, Use
                                         new CreatedBy(p.getCreatedBy()),
                                         new AdHocAutostart(p.isAdHocAutostart()),
                                         new OnEntryAction(p.getOnEntryAction()),
-                                        new OnExitAction(p.getOnExitAction()));
+                                        new OnExitAction(p.getOnExitAction()),
+                                        new Content(p.getContent()),
+                                        new SLADueDate(p.getSLADueDate()));
     }
 }

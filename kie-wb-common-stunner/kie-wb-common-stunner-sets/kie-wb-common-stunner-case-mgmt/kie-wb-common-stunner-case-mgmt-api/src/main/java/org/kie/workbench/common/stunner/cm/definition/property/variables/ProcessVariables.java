@@ -53,6 +53,7 @@ public class ProcessVariables implements BaseProcessVariables {
         return type;
     }
 
+    @Override
     public String getValue() {
         return value;
     }

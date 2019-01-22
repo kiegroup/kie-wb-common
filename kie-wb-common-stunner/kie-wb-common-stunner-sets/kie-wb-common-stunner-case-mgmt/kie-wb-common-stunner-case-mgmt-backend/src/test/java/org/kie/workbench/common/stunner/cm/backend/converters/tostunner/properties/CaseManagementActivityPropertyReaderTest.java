@@ -89,14 +89,14 @@ public class CaseManagementActivityPropertyReaderTest {
         CustomElement.autoStart.of(callActivity).set(Boolean.TRUE);
 
         tested = new CaseManagementActivityPropertyReader(callActivity,
-                                                          definitionResolver.getPlane(),
+                                                          definitionResolver.getDiagram(),
                                                           definitionResolver);
 
         assertTrue(tested.isAdHocAutostart());
     }
 
     @Test
-    public void testIisAdHocAutostart_false() throws Exception {
+    public void testIsAdHocAutostart_false() throws Exception {
         String id = UUID.randomUUID().toString();
 
         CallActivity callActivity = bpmn2.createCallActivity();
@@ -104,7 +104,7 @@ public class CaseManagementActivityPropertyReaderTest {
         CustomElement.autoStart.of(callActivity).set(Boolean.FALSE);
 
         tested = new CaseManagementActivityPropertyReader(callActivity,
-                                                          definitionResolver.getPlane(),
+                                                          definitionResolver.getDiagram(),
                                                           definitionResolver);
 
         assertFalse(tested.isAdHocAutostart());

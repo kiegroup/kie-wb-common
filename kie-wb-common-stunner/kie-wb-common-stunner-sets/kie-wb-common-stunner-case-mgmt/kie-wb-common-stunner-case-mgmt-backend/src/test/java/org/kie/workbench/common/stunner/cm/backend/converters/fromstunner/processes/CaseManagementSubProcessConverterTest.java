@@ -31,7 +31,7 @@ import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.proper
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
@@ -61,7 +61,7 @@ public class CaseManagementSubProcessConverterTest {
     public void testConvertAdHocSubprocessNode_autostart() throws Exception {
         final AdHocSubprocess definition = new AdHocSubprocess();
         definition.getExecutionSet().setAdHocAutostart(new AdHocAutostart(true));
-        final View<BaseAdHocSubprocess> view = new ViewImpl<>(definition, BoundsImpl.build());
+        final View<BaseAdHocSubprocess> view = new ViewImpl<>(definition, Bounds.create());
         final Node<View<BaseAdHocSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
         node.setContent(view);
 
@@ -74,7 +74,7 @@ public class CaseManagementSubProcessConverterTest {
     public void testConvertAdHocSubprocessNode_notautostart() throws Exception {
         final AdHocSubprocess definition = new AdHocSubprocess();
         definition.getExecutionSet().setAdHocAutostart(new AdHocAutostart(false));
-        final View<BaseAdHocSubprocess> view = new ViewImpl<>(definition, BoundsImpl.build());
+        final View<BaseAdHocSubprocess> view = new ViewImpl<>(definition, Bounds.create());
         final Node<View<BaseAdHocSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
         node.setContent(view);
 

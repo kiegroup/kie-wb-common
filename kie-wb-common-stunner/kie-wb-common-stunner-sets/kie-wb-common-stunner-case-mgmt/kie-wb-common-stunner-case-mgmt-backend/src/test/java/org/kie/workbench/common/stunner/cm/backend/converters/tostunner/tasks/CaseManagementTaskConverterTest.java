@@ -30,7 +30,7 @@ import org.kie.workbench.common.stunner.cm.definition.UserTask;
 import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -60,7 +60,7 @@ public class CaseManagementTaskConverterTest {
         definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
 
         Node node = new NodeImpl("");
-        View<UserTask> content = new ViewImpl<>(new UserTask(), BoundsImpl.build());
+        View<UserTask> content = new ViewImpl<>(new UserTask(), Bounds.create());
         node.setContent(content);
 
         FactoryManager factoryManager = mock(FactoryManager.class);
@@ -81,7 +81,7 @@ public class CaseManagementTaskConverterTest {
     public void testCreateUserTaskExecutionSet() throws Exception {
         assertTrue(UserTaskExecutionSet.class.isInstance(tested.createUserTaskExecutionSet(
                 new UserTaskPropertyReader(bpmn2.createUserTask(),
-                                           definitionResolver.getPlane(),
+                                           definitionResolver.getDiagram(),
                                            definitionResolver))));
     }
 }

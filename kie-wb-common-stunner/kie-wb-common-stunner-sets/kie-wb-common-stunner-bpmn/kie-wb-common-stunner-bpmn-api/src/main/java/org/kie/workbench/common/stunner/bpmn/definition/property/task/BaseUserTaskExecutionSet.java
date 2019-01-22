@@ -49,4 +49,8 @@ public interface BaseUserTaskExecutionSet extends BPMNPropertySet {
     OnEntryAction getOnEntryAction();
 
     OnExitAction getOnExitAction();
+
+    Content getContent();
+
+    SLADueDate getSlaDueDate();
 }

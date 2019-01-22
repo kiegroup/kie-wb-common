@@ -23,6 +23,7 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
+import org.kie.workbench.common.forms.adf.definitions.annotations.SkipFormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
@@ -59,16 +60,13 @@ public class ProcessReusableSubprocessTaskExecutionSet
     protected CalledElement calledElement;
 
     @Property
-    @FormField(
-            readonly = true,
-            afterElement = "calledElement"
-    )
+    @SkipFormField
     @Valid
     protected IsCase isCase;
 
     @Property
     @FormField(
-            afterElement = "isCase"
+            afterElement = "calledElement"
     )
     @Valid
     protected Independent independent;
