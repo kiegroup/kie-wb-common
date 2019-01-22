@@ -18,8 +18,10 @@ package org.kie.workbench.common.screens.server.management.backend.runtime;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -34,6 +36,7 @@ import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
 import org.kie.server.controller.api.model.spec.ContainerSpec;
 import org.kie.server.controller.api.model.spec.ServerTemplate;
 import org.kie.server.controller.api.service.NotificationService;
+import org.kie.server.controller.api.storage.KieServerTemplateStorage;
 import org.kie.server.controller.impl.KieServerInstanceManager;
 import org.kie.workbench.common.screens.server.management.backend.utils.EmbeddedController;
 import org.kie.workbench.common.screens.server.management.model.ContainerRuntimeOperation;
@@ -54,6 +57,11 @@ public class AsyncKieServerInstanceManager extends KieServerInstanceManager {
 
     private ExecutorService executor;
     private NotificationService notificationService;
+
+    @EmbeddedController
+    @Inject
+    private KieServerTemplateStorage templateStorage;
+
     private Event<ContainerUpdateEvent> containerUpdateEvent;
 
     protected void setExecutor(ExecutorService executor) {
@@ -164,6 +172,8 @@ public class AsyncKieServerInstanceManager extends KieServerInstanceManager {
             public void run() {
                 List<Container> containers = AsyncKieServerInstanceManager.super.stopContainer(serverTemplate,
                                                                                                containerSpec);
+                containerSpec.setStatus(isOnline(containers) ? KieContainerStatus.STARTED : KieContainerStatus.STOPPED);
+                templateStorage.update(serverTemplate);
                 notificationService.notify(serverTemplate,
                                            containerSpec,
                                            containers);
@@ -247,12 +257,7 @@ public class AsyncKieServerInstanceManager extends KieServerInstanceManager {
             }
         }
 
-        ContainerRuntimeState containerRuntimeState = ContainerRuntimeState.ONLINE;
-        if (failedServerInstances.size() == containers.size()) {
-            containerRuntimeState = ContainerRuntimeState.OFFLINE;
-        } else if (!failedServerInstances.isEmpty()) {
-            containerRuntimeState = ContainerRuntimeState.PARTIAL_ONLINE;
-        }
+        ContainerRuntimeState containerRuntimeState = getStatus(containers);
 
         ContainerUpdateEvent updateEvent = new ContainerUpdateEvent(
                 serverTemplate,
@@ -263,6 +268,31 @@ public class AsyncKieServerInstanceManager extends KieServerInstanceManager {
         );
 
         containerUpdateEvent.fire(updateEvent);
+    }
+
+
+    protected boolean isOnline(List<Container> containers) {
+        return !ContainerRuntimeState.OFFLINE.equals(getStatus(containers));
+    }
+
+    protected ContainerRuntimeState getStatus(List<Container> containers) {
+        EnumSet<KieContainerStatus> stoppedStatus = EnumSet.of(KieContainerStatus.FAILED, KieContainerStatus.DISPOSING, KieContainerStatus.STOPPED);
+
+        List<ServerInstanceKey> stoppedServerInstances = new ArrayList<ServerInstanceKey>();
+        for (Container container : containers) {
+            if (stoppedStatus.contains(container.getStatus())) {
+                stoppedServerInstances.add(container.getServerInstanceKey());
+            }
+        }
+
+        ContainerRuntimeState containerRuntimeState = ContainerRuntimeState.ONLINE;
+        if (stoppedServerInstances.size() == containers.size()) {
+            containerRuntimeState = ContainerRuntimeState.OFFLINE;
+        } else if (!stoppedServerInstances.isEmpty()) {
+            containerRuntimeState = ContainerRuntimeState.PARTIAL_ONLINE;
+        }
+
+        return containerRuntimeState;
     }
 
     protected boolean hasIssues(Container container) {
