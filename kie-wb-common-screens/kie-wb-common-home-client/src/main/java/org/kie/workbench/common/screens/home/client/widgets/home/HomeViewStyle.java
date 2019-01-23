@@ -24,7 +24,6 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 public class HomeViewStyle {
 
     // FIXME: this class is here only to use errai-ui to process the .less style file that is used in the javascript code.
-    // see kie-wb-common-home-api/src/main/resources/kie-wb-common-home-api
     public class EmptyTemplateProvider implements TemplateProvider {
 
         @Override
