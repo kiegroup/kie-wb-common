@@ -72,12 +72,6 @@
       <artifactId>kie-wb-common-contributors-backend</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-showcase-project-screens</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
 
     <!-- errai-cdi-jboss provides gwt-dev with the proper dependency exclusions and should be first on the classpath -->
     <dependency>
@@ -1487,6 +1481,74 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>not-ts-exporter-build</id>
+      <activation>
+        <property>
+          <name>!ts-exporter-build</name>
+        </property>
+      </activation>
+      <properties>
+        <version.org.webjars.npm.appformer-js-workbench-screens>0.2.0-ALPHA</version.org.webjars.npm.appformer-js-workbench-screens>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack-appformer-js-workbench-screens</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.webjars.npm</groupId>
+                      <artifactId>appformer-js-workbench-screens</artifactId>
+                      <version>${version.org.webjars.npm.appformer-js-workbench-screens}</version>
+                      <type>jar</type>
+                      <overWrite>true</overWrite>
+                      <outputDirectory>${project.build.outputDirectory}/appformer-js-workbench-screens</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                  <overWriteReleases>false</overWriteReleases>
+                  <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-appformer-js-workbench-screens-resources</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.outputDirectory}/org/uberfire/jsbridge/public</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.build.outputDirectory}/appformer-js-workbench-screens/META-INF/resources/webjars/appformer-js-workbench-screens/${version.org.webjars.npm.appformer-js-workbench-screens}/dist</directory>
+                      <includes>
+                        <include>home-perspective-bundle.js</include>
+                        <include>stunner-showcase-home-screen-bundle.js</include>
+                        <include>spaces-screen-bundle.js</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <!-- Fast compiled build including Source maps for easier debugging. -->
     <profile>
       <id>sources</id>
