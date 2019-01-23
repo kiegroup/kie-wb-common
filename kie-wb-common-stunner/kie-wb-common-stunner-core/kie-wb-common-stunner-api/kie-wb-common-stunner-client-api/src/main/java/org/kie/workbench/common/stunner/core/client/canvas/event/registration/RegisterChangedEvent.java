@@ -18,6 +18,6 @@ package org.kie.workbench.common.stunner.core.client.canvas.event.registration;
 
 import org.uberfire.workbench.events.UberFireEvent;
 
-public class CommandRegisteredEvent implements UberFireEvent {
+public class RegisterChangedEvent implements UberFireEvent {
 
 }

@@ -16,13 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.client.command;
 
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -30,7 +29,6 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.mouse.CanvasMouseDownEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.mouse.CanvasMouseUpEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CommandRegisteredEvent;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionOpenedEvent;
 import org.kie.workbench.common.stunner.core.command.Command;
@@ -60,19 +58,17 @@ public class RequestCommandManager extends AbstractSessionCommandManager {
 
     private final SessionManager sessionManager;
     private Stack<Command<AbstractCanvasHandler, CanvasViolation>> commands;
-    private Event<CommandRegisteredEvent> commandRegisteredEvent;
 
     private boolean roolback;
 
     protected RequestCommandManager() {
-        this(null, null);
+        this(null);
     }
 
     @Inject
-    public RequestCommandManager(final SessionManager sessionManager, Event<CommandRegisteredEvent> commandRegisteredEvent) {
+    public RequestCommandManager(final SessionManager sessionManager) {
         this.sessionManager = sessionManager;
         this.roolback = false;
-        this.commandRegisteredEvent = commandRegisteredEvent;
     }
 
     @Override
@@ -220,9 +216,8 @@ public class RequestCommandManager extends AbstractSessionCommandManager {
                 LOGGER.log(Level.FINEST,
                            "Adding commands for current request into registry [size=" + commands.size() + "]");
                 getRegistry().register(new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
-                                               .addCommands(commands.stream().collect(Collectors.toList()))
+                                               .addCommands(new ArrayList<>(commands))
                                                .build());
-                commandRegisteredEvent.fire(new CommandRegisteredEvent());
             }
             LOGGER.log(Level.FINEST,
                        "Current client request completed.");
