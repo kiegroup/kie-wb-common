@@ -16,8 +16,9 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint;
 
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -53,7 +54,9 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     private String constraintValue = CONSTRAINT_INITIAL_VALUE;
 
-    private Consumer<String> onSave;
+    private ConstraintType constraintType;
+
+    private BiConsumer<String, ConstraintType> onSave;
 
     @Inject
     public DataTypeConstraintModal(final View view,
@@ -85,17 +88,30 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     void doSave(final String value) {
         constraintValue = value;
-        getOnSave().accept(value);
+        getOnSave().accept(value, this.constraintType);
         hide();
     }
 
     void load(final String type,
-              final String value) {
-        constraintValue = value;
-        prepareView(type, value);
+              final String value,
+              final ConstraintType constraintType) {
+
+        this.constraintValue = value;
+
+        if (!Objects.isNull(value) && !value.isEmpty() && constraintType == null) {
+            this.constraintType = inferComponentType(value);
+        } else {
+            this.constraintType = constraintType;
+        }
+
+        prepareView(type, value, constraintType);
     }
 
-    void setupComponent(final String constraintType) {
+    void setupComponent(ConstraintType constraintType) {
+        if (constraintType == null) {
+            constraintType = inferComponentType(getConstraintValue());
+        }
+        this.constraintType = constraintType;
         currentComponent = getComponentByType(constraintType);
         currentComponent.setValue(getConstraintValue());
     }
@@ -112,8 +128,8 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return getCurrentComponent().getValue();
     }
 
-    private DataTypeConstraintComponent getComponentByType(final String constraintType) {
-        switch (ConstraintType.valueOf(constraintType)) {
+    private DataTypeConstraintComponent getComponentByType(final ConstraintType constraintType) {
+        switch (constraintType) {
             case ENUMERATION:
                 return getConstraintEnumeration();
             case EXPRESSION:
@@ -126,18 +142,26 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
     }
 
     void prepareView(final String type,
-                     final String constraintValue) {
+                     final String constraintValue,
+                     final ConstraintType constraintType) {
 
         getView().setType(type);
 
         if (!isEmpty(constraintValue)) {
-            getView().loadComponent(inferComponentType(constraintValue).name());
+            getView().loadComponent(constraintType);
         } else {
             getView().setupEmptyContainer();
         }
     }
 
-    // TODO: Instead of inferring the type, we should use a property - https://issues.jboss.org/browse/DROOLS-3517
+    public ConstraintType getConstraintType() {
+        return constraintType;
+    }
+
+    public void setConstraintType(ConstraintType constraintType) {
+        this.constraintType = constraintType;
+    }
+
     ConstraintType inferComponentType(final String constraintValue) {
 
         final String value = Optional.ofNullable(constraintValue).orElse("");
@@ -153,10 +177,10 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     private boolean isEnumeration(final String constraintValue) {
         return !constraintValue.startsWith("(")
-                && !constraintValue.startsWith("[")
-                && !constraintValue.endsWith("]")
-                && !constraintValue.endsWith(")")
-                && constraintValue.contains(",");
+            && !constraintValue.startsWith("[")
+            && !constraintValue.endsWith("]")
+            && !constraintValue.endsWith(")")
+            && constraintValue.contains(",");
     }
 
     private boolean isRange(final String constraintValue) {
@@ -164,7 +188,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return countMatches == 1;
     }
 
-    public void show(final Consumer<String> onSaveConsumer) {
+    public void show(final BiConsumer<String, ConstraintType> onSaveConsumer) {
 
         onSave = onSaveConsumer;
 
@@ -188,7 +212,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return constraintRange;
     }
 
-    Consumer<String> getOnSave() {
+    BiConsumer<String, ConstraintType> getOnSave() {
         return onSave;
     }
 
@@ -202,7 +226,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
         void setupEmptyContainer();
 
-        void loadComponent(final String constraintType);
+        void loadComponent(final ConstraintType constraintType);
 
         void onShow();
     }

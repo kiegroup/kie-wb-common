@@ -21,7 +21,6 @@ import java.util.Objects;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -75,12 +74,11 @@ public class ItemDefinitionUpdateHandler {
         }
 
         if (!Objects.equals(constraint, getText(itemDefinition))) {
-            ConstraintType constraintType = itemDefinition.getAllowedValues().getConstraintType();
             return new UnaryTests(new Id(),
                                   new Description(),
                                   new Text(constraint),
                                   null,
-                                  constraintType);
+                                  dataType.getConstraintType());
         }
 
         return itemDefinition.getAllowedValues();

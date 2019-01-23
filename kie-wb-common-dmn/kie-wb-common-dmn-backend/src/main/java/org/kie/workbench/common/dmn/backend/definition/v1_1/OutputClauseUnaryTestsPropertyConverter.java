@@ -16,7 +16,10 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import javax.xml.namespace.QName;
+
 import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClauseUnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
@@ -28,7 +31,10 @@ public class OutputClauseUnaryTestsPropertyConverter {
             return null;
         }
         final Id id = new Id(dmn.getId());
-        final String constraintString = dmn.getAdditionalAttributes().getOrDefault(ConstraintType.KEY, "");
+        final QName key = new QName(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
+                                    ConstraintType.CONSTRAINT_KEY,
+                                    DMNModelInstrumentedBase.Namespace.KIE.getPrefix());
+        final String constraintString = dmn.getAdditionalAttributes().getOrDefault(key, "");
         final ConstraintType constraint = ConstraintType.fromString(constraintString);
         final OutputClauseUnaryTests result = new OutputClauseUnaryTests(id,
                                                                          new Text(dmn.getText()),

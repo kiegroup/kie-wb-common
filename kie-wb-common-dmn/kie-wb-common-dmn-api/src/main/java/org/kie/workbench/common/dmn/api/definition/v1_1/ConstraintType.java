@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
-import javax.xml.namespace.QName;
-
 public enum ConstraintType {
     ENUMERATION("enumeration"),
     EXPRESSION("expression"),
@@ -25,28 +23,26 @@ public enum ConstraintType {
 
     private final String value;
 
-    public static final QName KEY = new QName(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
-                                              "constraintType",
-                                              DMNModelInstrumentedBase.Namespace.KIE.getPrefix());
+    public static final String CONSTRAINT_KEY = "constraintType";
 
     public static ConstraintType fromString(final String value) {
 
-        if (ENUMERATION.value.equals(value)) {
+        if (ENUMERATION.value.equalsIgnoreCase(value)) {
             return ENUMERATION;
         }
 
-        if (EXPRESSION.value.equals(value)) {
+        if (EXPRESSION.value.equalsIgnoreCase(value)) {
             return EXPRESSION;
         }
 
-        if (RANGE.value.equals(value)) {
+        if (RANGE.value.equalsIgnoreCase(value)) {
             return RANGE;
         }
 
         return null;
     }
 
-    ConstraintType(String v) {
+    ConstraintType(final String v) {
         value = v;
     }
 
