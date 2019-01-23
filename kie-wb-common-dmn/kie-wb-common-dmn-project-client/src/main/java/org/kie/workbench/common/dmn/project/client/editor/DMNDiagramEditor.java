@@ -251,6 +251,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     public void onDataTypeEditModeToggle(final @Observes DataTypeEditModeToggleEvent event) {
+        /* Delaying the 'onDataTypeEditModeToggleCallback' since external events
+         * refresh the menu widget and override this change. */
         setTimeout(getOnDataTypeEditModeToggleCallback(event), 250);
     }
 
