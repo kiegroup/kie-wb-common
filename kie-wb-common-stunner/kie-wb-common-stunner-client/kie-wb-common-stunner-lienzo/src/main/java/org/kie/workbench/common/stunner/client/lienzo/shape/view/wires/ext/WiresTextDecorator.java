@@ -22,7 +22,7 @@ import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Line;
 import com.ait.lienzo.client.core.shape.Text;
-import com.ait.lienzo.client.core.shape.TextTruncateWrapper;
+import com.ait.lienzo.client.core.shape.TextBoundsWrap;
 import com.ait.lienzo.client.core.shape.wires.LayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.shared.core.types.TextAlign;
@@ -63,7 +63,7 @@ public class WiresTextDecorator {
     private ViewHandler<TextClickEvent> textClickEventViewHandler;
     private ViewHandler<TextDoubleClickEvent> textDblClickEventViewHandler;
     private Text text;
-    private TextTruncateWrapper textWrapper;
+    private TextBoundsWrap textWrapper;
     private LayoutContainer.Layout currentTextLayout;
     private double width;
     private double height;
@@ -105,11 +105,11 @@ public class WiresTextDecorator {
                 .setStrokeWidth(TEXT_STROKE_WIDTH)
                 .setTextAlign(TEXT_ALIGN)
                 .setDraggable(false);
-        this.textWrapper = new TextTruncateWrapper(text,
-                                                   new BoundingBox(0,
-                                                                   0,
-                                                                   1,
-                                                                   1));
+        this.textWrapper = new TextBoundsWrap(text,
+                                              new BoundingBox(0,
+                                                              0,
+                                                              1,
+                                                              1));
         this.text.setWrapper(textWrapper);
         this.currentTextLayout = TEXT_LAYOUT_ALIGN;
         textContainer.add(text);
@@ -261,7 +261,7 @@ public class WiresTextDecorator {
         text.setStrokeWidth(strokeWidth);
     }
 
-    public void setTitleStrokeAlpha(double strokeAlpha) {
+    public void setTitleStrokeAlpha(final double strokeAlpha) {
         text.setStrokeAlpha(strokeAlpha);
     }
 

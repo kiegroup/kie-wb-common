@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.shape.Text;
-import com.ait.lienzo.client.core.shape.TextTruncateWrapper;
+import com.ait.lienzo.client.core.shape.TextBoundsWrap;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
@@ -54,7 +54,7 @@ public class WiresTextDecoratorTest {
 
         final WiresTextDecorator decorator = new WiresTextDecorator(eventHandlerManager, bb);
         final Text text = (Text) decorator.getView().asGroup().getChildNodes().get(0);
-        final BoundingBox wrapBoundaries = ((TextTruncateWrapper) text.getWrapper()).getWrapBoundaries();
+        final BoundingBox wrapBoundaries = ((TextBoundsWrap) text.getWrapper()).getWrapBoundaries();
 
         assertEquals(bb.getWidth(), wrapBoundaries.getWidth(), 0.01d);
         assertEquals(bb.getHeight(), wrapBoundaries.getHeight(), 0.01d);
