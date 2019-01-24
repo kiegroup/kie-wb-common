@@ -35,8 +35,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.Tim
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 
 public abstract class EventPropertyReader extends FlowElementPropertyReader {
+
+    // These values are present in the SVG declaration for the event shape.
+    static final double WIDTH = 56d;
+    static final double HEIGHT = 56d;
 
     private final DefinitionResolver definitionResolver;
     private String signalRefId = null;
@@ -52,6 +57,13 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
             return ((SignalEventDefinition) eventDefinitions.get(0)).getSignalRef();
         }
         return null;
+    }
+
+    @Override
+    protected Bounds computeBounds(final org.eclipse.dd.dc.Bounds bounds) {
+        final double x = bounds.getX() * resolutionFactor;
+        final double y = bounds.getY() * resolutionFactor;
+        return Bounds.create(x, y, x + WIDTH, y + HEIGHT);
     }
 
     public String getSignalScope() {

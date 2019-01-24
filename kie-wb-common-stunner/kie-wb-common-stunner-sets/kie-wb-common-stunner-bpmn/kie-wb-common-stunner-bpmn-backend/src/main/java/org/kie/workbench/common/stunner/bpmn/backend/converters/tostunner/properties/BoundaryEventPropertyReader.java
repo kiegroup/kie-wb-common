@@ -38,15 +38,14 @@ public class BoundaryEventPropertyReader extends CatchEventPropertyReader {
     }
 
     @Override
-    public Bounds getBounds() {
-        final org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
+    protected Bounds computeBounds(final org.eclipse.dd.dc.Bounds bounds) {
         final Point2D docker = getDockerInfo();
         final double x = docker.getX() * resolutionFactor;
         final double y = docker.getY() * resolutionFactor;
-        return Bounds.create(x, y, x + (bounds.getWidth() * resolutionFactor), y + (bounds.getHeight() * resolutionFactor));
+        return Bounds.create(x, y, x + WIDTH, y + HEIGHT);
     }
 
-    private Point2D getDockerInfo() {
+    Point2D getDockerInfo() {
         return CustomAttribute.dockerInfo.of(element).get();
     }
 }

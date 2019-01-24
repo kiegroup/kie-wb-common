@@ -18,23 +18,18 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.di.BPMNDiagram;
-import org.eclipse.bpmn2.di.BPMNLabel;
-import org.eclipse.bpmn2.di.BPMNLabelStyle;
 import org.eclipse.bpmn2.di.BPMNShape;
-import org.eclipse.dd.dc.Font;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -78,22 +73,6 @@ public class BasePropertyReaderTest {
         assertEquals(1.4300000309944154d, bounds.getUpperLeft().getY(), 0d);
         assertEquals(65.71500001549721d, bounds.getLowerRight().getX(), 0d);
         assertEquals(355.9010174870491d, bounds.getLowerRight().getY(), 0d);
-    }
-
-    @Test
-    public void testFontSet() {
-        BPMNLabel label = mock(BPMNLabel.class);
-        BPMNLabelStyle labelStyle = mock(BPMNLabelStyle.class);
-        Font font = mock(Font.class);
-        when(shape.getLabel()).thenReturn(label);
-        when(label.getLabelStyle()).thenReturn(labelStyle);
-        when(labelStyle.getFont()).thenReturn(font);
-        when(font.getName()).thenReturn("someFontName");
-        when(font.getSize()).thenReturn(12.5f);
-        FontSet fontSet = tested.getFontSet();
-        assertNotNull(fontSet);
-        assertEquals("someFontName", fontSet.getFontFamily().getValue());
-        assertEquals(8.125d, fontSet.getFontSize().getValue(), 0d);
     }
 
     @Test

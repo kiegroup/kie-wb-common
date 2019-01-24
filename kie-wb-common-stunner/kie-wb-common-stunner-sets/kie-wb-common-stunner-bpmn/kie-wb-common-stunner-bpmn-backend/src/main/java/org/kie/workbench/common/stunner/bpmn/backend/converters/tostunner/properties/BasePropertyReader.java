@@ -22,10 +22,7 @@ import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.di.BPMNDiagram;
-import org.eclipse.bpmn2.di.BPMNLabel;
-import org.eclipse.bpmn2.di.BPMNLabelStyle;
 import org.eclipse.bpmn2.di.BPMNShape;
-import org.eclipse.dd.dc.Font;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
@@ -78,36 +75,7 @@ public class BasePropertyReader {
                                                        .map(Double::parseDouble).orElse(null));
         final FontBorderSize fontBorderSize = new FontBorderSize();
         final FontBorderColor fontBorderColor = new FontBorderColor();
-        final FontSet fontSet = new FontSet(fontFamily, fontColor, fontSize, fontBorderSize, fontBorderColor);
-        return updateFontSetFromShape(fontSet, shape, resolutionFactor);
-    }
-
-    private static FontSet updateFontSetFromShape(final FontSet fontSet,
-                                                  final BPMNShape shape,
-                                                  final double resolutionFactor) {
-        if (null != shape) {
-            final BPMNLabel label = shape.getLabel();
-            if (null != label) {
-                final BPMNLabelStyle labelStyle = label.getLabelStyle();
-                if (null != labelStyle) {
-                    final Font font = labelStyle.getFont();
-                    if (null != font) {
-                        final String name = font.getName();
-                        if (null != name && name.trim().length() > 0) {
-                            fontSet.getFontFamily().setValue(name);
-                        }
-                        final FontSize fontSize = fontSet.getFontSize();
-                        if (null == fontSize.getValue()) {
-                            final float size = font.getSize();
-                            if (size > 0) {
-                                fontSize.setValue(size * resolutionFactor);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return fontSet;
+        return new FontSet(fontFamily, fontColor, fontSize, fontBorderSize, fontBorderColor);
     }
 
     public BackgroundSet getBackgroundSet() {
@@ -147,7 +115,10 @@ public class BasePropertyReader {
         if (shape == null) {
             return Bounds.create();
         }
-        org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
+        return computeBounds(shape.getBounds());
+    }
+
+    protected Bounds computeBounds(final org.eclipse.dd.dc.Bounds bounds) {
         final double x = bounds.getX() * resolutionFactor;
         final double y = bounds.getY() * resolutionFactor;
         final double width = bounds.getWidth() * resolutionFactor;
