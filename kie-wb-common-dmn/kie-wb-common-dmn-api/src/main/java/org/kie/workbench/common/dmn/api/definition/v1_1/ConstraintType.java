@@ -17,36 +17,30 @@
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 public enum ConstraintType {
-    ENUMERATION("enumeration"),
-    EXPRESSION("expression"),
-    RANGE("range");
-
-    private final String value;
+    ENUMERATION,
+    EXPRESSION,
+    RANGE;
 
     public static final String CONSTRAINT_KEY = "constraintType";
 
     public static ConstraintType fromString(final String value) {
 
-        if (ENUMERATION.value.equalsIgnoreCase(value)) {
+        if (ENUMERATION.value().equalsIgnoreCase(value)) {
             return ENUMERATION;
         }
 
-        if (EXPRESSION.value.equalsIgnoreCase(value)) {
+        if (EXPRESSION.value().equalsIgnoreCase(value)) {
             return EXPRESSION;
         }
 
-        if (RANGE.value.equalsIgnoreCase(value)) {
+        if (RANGE.value().equalsIgnoreCase(value)) {
             return RANGE;
         }
 
         return null;
     }
 
-    ConstraintType(final String v) {
-        value = v;
-    }
-
     public String value() {
-        return value;
+        return name().toLowerCase();
     }
 }

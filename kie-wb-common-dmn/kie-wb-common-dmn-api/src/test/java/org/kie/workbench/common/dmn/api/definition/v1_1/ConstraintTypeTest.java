@@ -43,6 +43,11 @@ public class ConstraintTypeTest {
         testFromString(ConstraintType.RANGE,"RANGE");
     }
 
+    @Test
+    public void testUnknownString() {
+        testFromString(null,"unknownvalue");
+    }
+
     private void testFromString(ConstraintType expected, String value) {
         ConstraintType parsed = ConstraintType.fromString(value);
         assertEquals(expected, parsed);

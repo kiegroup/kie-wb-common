@@ -33,6 +33,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.ENUMERATION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.EXPRESSION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.RANGE;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,8 +43,6 @@ public class UnaryTestsPropertyConverterTest {
 
     private static final String ID = "thisId";
     private static final String TEXT = "1,2,3";
-    private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.ENUMERATION;
-    private static final String CONSTRAINT_TYPE_TEXT = "enumeration";
     private static final String DESCRIPTION = "description";
     private static final String EXPRESSION_LANGUAGE = "FEEL";
 
@@ -67,28 +68,60 @@ public class UnaryTestsPropertyConverterTest {
         when(dmnUnary.getDescription()).thenReturn(DESCRIPTION);
         when(dmnUnary.getExpressionLanguage()).thenReturn(EXPRESSION_LANGUAGE);
         when(additionalAttributes.containsKey(CONSTRAINT_KEY)).thenReturn(true);
-        when(additionalAttributes.get(CONSTRAINT_KEY)).thenReturn(CONSTRAINT_TYPE_TEXT);
 
         when(wbUnaryTests.getId()).thenReturn(new Id(ID));
         when(wbUnaryTests.getText()).thenReturn(new Text(TEXT));
-        when(wbUnaryTests.getConstraintType()).thenReturn(CONSTRAINT_TYPE);
     }
 
     @Test
-    public void testWbFromDMN() {
+    public void testWbFromDMNEnumeration(){
+        testWbFromDMN(ENUMERATION);
+    }
+
+    @Test
+    public void testWbFromDMNRange(){
+        testWbFromDMN(RANGE);
+    }
+
+    @Test
+    public void testWbFromDMNExpression(){
+        testWbFromDMN(EXPRESSION);
+    }
+
+
+    @Test
+    public void testDmnFromWBEnumeration(){
+        testDmnFromWB(ENUMERATION);
+    }
+
+    @Test
+    public void testDmnFromWBRange(){
+        testDmnFromWB(RANGE);
+    }
+
+    @Test
+    public void testDmnFromWBExpression(){
+        testDmnFromWB(EXPRESSION);
+    }
+
+    public void testWbFromDMN(final ConstraintType constraintType) {
+        when(additionalAttributes.get(CONSTRAINT_KEY)).thenReturn(constraintType.value());
+
         final UnaryTests unaryTests = UnaryTestsPropertyConverter.wbFromDMN(dmnUnary);
         assertEquals(ID, unaryTests.getId().getValue());
         assertEquals(DESCRIPTION, unaryTests.getDescription().getValue());
         assertEquals(TEXT, unaryTests.getText().getValue());
         assertEquals(EXPRESSION_LANGUAGE, unaryTests.getExpressionLanguage().getValue());
-        assertEquals(CONSTRAINT_TYPE, unaryTests.getConstraintType());
+        assertEquals(constraintType, unaryTests.getConstraintType());
     }
 
-    @Test
-    public void testDmnFromWB() {
-        org.kie.dmn.model.api.UnaryTests unaryTests = UnaryTestsPropertyConverter.dmnFromWB(wbUnaryTests);
+    public void testDmnFromWB(final ConstraintType constraintType) {
+
+        when(wbUnaryTests.getConstraintType()).thenReturn(constraintType);
+
+        final org.kie.dmn.model.api.UnaryTests unaryTests = UnaryTestsPropertyConverter.dmnFromWB(wbUnaryTests);
         assertEquals(ID, unaryTests.getId());
         assertEquals(TEXT, unaryTests.getText());
-        assertEquals(CONSTRAINT_TYPE_TEXT, unaryTests.getAdditionalAttributes().get(CONSTRAINT_KEY));
+        assertEquals(constraintType.value(), unaryTests.getAdditionalAttributes().get(CONSTRAINT_KEY));
     }
 }

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -29,6 +28,7 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.com
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.ENUMERATION;
@@ -98,7 +98,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
         this.constraintValue = value;
 
-        if (!Objects.isNull(value) && !value.isEmpty() && constraintType == null) {
+        if (!StringUtils.isEmpty(value) && constraintType == null) {
             this.constraintType = inferComponentType(value);
         } else {
             this.constraintType = constraintType;

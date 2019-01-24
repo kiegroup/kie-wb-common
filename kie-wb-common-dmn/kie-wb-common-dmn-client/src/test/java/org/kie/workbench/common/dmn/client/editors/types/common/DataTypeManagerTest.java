@@ -125,7 +125,7 @@ public class DataTypeManagerTest {
     }
 
     @Test
-    public void testWithConstraintType(){
+    public void testWithConstraintType() {
 
         final ConstraintType expectedConstraintType = ConstraintType.ENUMERATION;
         final DataType dataType = manager.from(makeDataType("uuid")).withConstraintType(expectedConstraintType.value()).get();

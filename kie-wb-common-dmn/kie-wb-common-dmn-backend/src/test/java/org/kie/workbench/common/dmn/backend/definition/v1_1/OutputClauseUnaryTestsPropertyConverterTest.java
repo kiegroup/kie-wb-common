@@ -37,8 +37,10 @@ public class OutputClauseUnaryTestsPropertyConverterTest {
 
     private static final String ID = "thisId";
     private static final String TEXT = "1,2,3";
-    private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.ENUMERATION;
-    private static final String CONSTRAINT_TYPE_TEXT = "enumeration";
+
+    private static final QName key = new QName(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
+                                               ConstraintType.CONSTRAINT_KEY,
+                                               DMNModelInstrumentedBase.Namespace.KIE.getPrefix());
 
     @Mock
     private org.kie.dmn.model.api.UnaryTests dmnUnary;
@@ -48,19 +50,32 @@ public class OutputClauseUnaryTestsPropertyConverterTest {
 
     @Before
     public void setup() {
-        final QName key = new QName(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
-                                    ConstraintType.CONSTRAINT_KEY,
-                                    DMNModelInstrumentedBase.Namespace.KIE.getPrefix());
+
         when(dmnUnary.getId()).thenReturn(ID);
         when(dmnUnary.getAdditionalAttributes()).thenReturn(additionalAttributes);
         when(dmnUnary.getText()).thenReturn(TEXT);
-        when(additionalAttributes.getOrDefault(key, "")).thenReturn(CONSTRAINT_TYPE_TEXT);
     }
 
     @Test
-    public void testWbFromDMN() {
-        OutputClauseUnaryTests outputClause = OutputClauseUnaryTestsPropertyConverter.wbFromDMN(dmnUnary);
-        assertEquals(outputClause.getConstraintType(), CONSTRAINT_TYPE);
+    public void testWbFromDMNEnumeration() {
+        testWbFromDMN(ConstraintType.ENUMERATION);
+    }
+
+    @Test
+    public void testWbFromDMNExpression() {
+        testWbFromDMN(ConstraintType.EXPRESSION);
+    }
+
+    @Test
+    public void testWbFromDMNRange() {
+        testWbFromDMN(ConstraintType.RANGE);
+    }
+
+    public void testWbFromDMN(final ConstraintType constraintType) {
+        when(additionalAttributes.getOrDefault(key, "")).thenReturn(constraintType.value());
+
+        final OutputClauseUnaryTests outputClause = OutputClauseUnaryTestsPropertyConverter.wbFromDMN(dmnUnary);
+        assertEquals(outputClause.getConstraintType(), constraintType);
         assertEquals(outputClause.getId().getValue(), ID);
         assertEquals(outputClause.getText().getValue(), TEXT);
     }

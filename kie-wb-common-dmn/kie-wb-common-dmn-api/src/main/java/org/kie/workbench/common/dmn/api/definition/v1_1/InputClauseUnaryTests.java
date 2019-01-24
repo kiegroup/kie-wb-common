@@ -54,7 +54,7 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
     @FormField(afterElement = "description", labelKey = "text")
     protected Text text;
 
-    protected ConstraintType constraintType;
+    private ConstraintType constraintType;
 
     public InputClauseUnaryTests() {
         this(new Id(),
