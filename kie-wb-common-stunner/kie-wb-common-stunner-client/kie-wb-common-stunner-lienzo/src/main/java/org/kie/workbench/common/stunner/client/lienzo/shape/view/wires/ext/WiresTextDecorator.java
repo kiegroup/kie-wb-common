@@ -315,7 +315,7 @@ public class WiresTextDecorator {
         return null != text && text.trim().length() > 0;
     }
 
-    private void updateTextBoundaries() {
+    void updateTextBoundaries() {
         setTextBoundaries(new BoundingBox(0,
                                           0,
                                           width,

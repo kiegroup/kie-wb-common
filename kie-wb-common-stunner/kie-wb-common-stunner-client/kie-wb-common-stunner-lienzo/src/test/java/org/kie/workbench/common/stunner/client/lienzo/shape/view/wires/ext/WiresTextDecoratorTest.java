@@ -31,6 +31,10 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -42,6 +46,9 @@ public class WiresTextDecoratorTest {
     @Mock
     private ViewEventHandlerManager manager;
 
+    private final BoundingBox bb = new BoundingBox(new Point2D(0, 0),
+                                                   new Point2D(100, 100));
+
     @Before
     public void setup() {
         when(eventHandlerManager.get()).thenReturn(manager);
@@ -49,8 +56,6 @@ public class WiresTextDecoratorTest {
 
     @Test
     public void ensureThatWrapBoundariesAreSet() {
-        final BoundingBox bb = new BoundingBox(new Point2D(0, 0),
-                                               new Point2D(100, 100));
 
         final WiresTextDecorator decorator = new WiresTextDecorator(eventHandlerManager, bb);
         final Text text = (Text) decorator.getView().asGroup().getChildNodes().get(0);
@@ -60,5 +65,23 @@ public class WiresTextDecoratorTest {
         assertEquals(bb.getHeight(), wrapBoundaries.getHeight(), 0.01d);
         assertNotEquals(wrapBoundaries.getWidth(), 0.0d, 0.01d);
         assertNotEquals(wrapBoundaries.getHeight(), 0.0d, 0.01d);
+    }
+
+    @Test
+    public void ensureThatResizeUpdatesTheNode() {
+        final WiresTextDecorator decorator = mock(WiresTextDecorator.class);
+        doCallRealMethod().when(decorator).resize(anyDouble(), anyDouble());
+
+        decorator.resize(0, 0);
+        verify(decorator).update();
+    }
+
+    @Test
+    public void ensureThatUpdateRefreshTextBoundaries() {
+        final WiresTextDecorator decorator = mock(WiresTextDecorator.class);
+        doCallRealMethod().when(decorator).update();
+
+        decorator.update();
+        verify(decorator).updateTextBoundaries();
     }
 }
