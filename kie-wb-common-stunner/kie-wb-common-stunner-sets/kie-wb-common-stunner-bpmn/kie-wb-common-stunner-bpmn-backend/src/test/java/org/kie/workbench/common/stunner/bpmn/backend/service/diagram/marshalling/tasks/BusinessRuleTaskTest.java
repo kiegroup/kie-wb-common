@@ -67,11 +67,12 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
     private static final String FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID = "CF34C3FA-B9A5-49C9-A63A-988F120EAB9D";
     private static final String FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID = "1D6B0146-E20A-488F-8E27-584009BDC92F";
 
-    private static final String EMPTY_DMN_RULE_LANGUAGE_TASK_ID = "_8D4E338C-5CF7-4FA7-89A2-CA4492C94400";
+    private static final String DMN_RULE_LANGUAGE_TASK_ID = "_10EAF4D5-66E2-49B4-B2A6-EE5DCA14E9C5";
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 70;
 
     private static final String EMPTY_TASK_DATA_INPUT_OUTPUT = "||||";
+    private static final String DMN_TASK_DATA_INPUT_OUTPUT = "|namespace:java.lang.String,decision:java.lang.String,model:java.lang.String|||[din]namespace=Namespace,[din]decision=DecisionName,[din]model=DMNModelName";
     private static final String TASK_SCRIPT_JAVA_LANGUAGE = "java";
     private static final String TASK_SCRIPT_JAVASCRIPT_LANGUAGE = "javascript";
     private static final String TASK_SCRIPT_MVEL_LANGUAGE = "mvel";
@@ -87,10 +88,8 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         this.marshallerType = marshallerType;
     }
 
-    @Ignore("Test is ignored, because new and old marshaler User Task nodes will differ anyway. Because different " +
-            "properties supported by them")
-    @Test
-    public void testMigration() throws Exception {
+    @Ignore("Test is ignored, Business Rule Task has properties that are not supported by the old marshallers.")
+    public void testMigration() {
     }
 
     @Test
@@ -749,7 +748,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         BusinessRuleTask emptyTopLevelTask = getTaskNodeById(diagram,
-                                                             EMPTY_DMN_RULE_LANGUAGE_TASK_ID,
+                                                             DMN_RULE_LANGUAGE_TASK_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(emptyTopLevelTask.getGeneral(), DMN_LANGUAGE_TASK_NAME, EMPTY_VALUE);
@@ -765,7 +764,14 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            IS_NOT_ASYNC,
                                            NOT_AD_HOC_AUTOSTART);
-        assertDataIOSet(emptyTopLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
+
+        if (marshallerType == Marshaller.NEW) {
+            assertDataIOSet(emptyTopLevelTask.getDataIOSet(), EMPTY_TASK_DATA_INPUT_OUTPUT);
+        }
+
+        if (marshallerType == Marshaller.OLD) {
+            assertDataIOSet(emptyTopLevelTask.getDataIOSet(), DMN_TASK_DATA_INPUT_OUTPUT);
+        }
     }
 
     @Test
@@ -818,7 +824,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
 
     @Test
     public void testMarshallDMNRuleLanguageProperties() throws Exception {
-        checkTaskMarshalling(EMPTY_DMN_RULE_LANGUAGE_TASK_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
+        checkTaskMarshalling(DMN_RULE_LANGUAGE_TASK_ID, ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
     @Override
@@ -910,13 +916,11 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
                                                     boolean isAsync,
                                                     boolean adHocAutostart) {
         assertNotNull(executionSet);
+        assertNotNull(executionSet.getRuleLanguage());
         assertNotNull(executionSet.getRuleFlowGroup());
-        if (this.marshallerType == Marshaller.NEW) {
-            assertNotNull(executionSet.getRuleLanguage());
-            assertNotNull(executionSet.getRuleLanguage());
-            assertNotNull(executionSet.getRuleLanguage());
-            assertNotNull(executionSet.getRuleLanguage());
-        }
+        assertNotNull(executionSet.getNamespace());
+        assertNotNull(executionSet.getDmnModelName());
+        assertNotNull(executionSet.getDmnModelName());
         assertNotNull(executionSet.getOnEntryAction());
         assertNotNull(executionSet.getOnExitAction());
         assertNotNull(executionSet.getIsAsync());
@@ -933,13 +937,16 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
         assertNotNull(onEntryScriptTypeValues.get(0));
         assertNotNull(onExitScriptTypeValues.get(0));
 
-        assertEquals(ruleFlowGroup, executionSet.getRuleFlowGroup().getValue());
-        if (this.marshallerType == Marshaller.NEW) {
+        if (marshallerType == Marshaller.NEW) {
             assertEquals(ruleLanguage, executionSet.getRuleLanguage().getValue());
+            assertEquals(ruleFlowGroup, executionSet.getRuleFlowGroup().getValue());
             assertEquals(namespace, executionSet.getNamespace().getValue());
             assertEquals(decisionName, executionSet.getDecisionName().getValue());
             assertEquals(dmnModelName, executionSet.getDmnModelName().getValue());
+        } else if (marshallerType == Marshaller.OLD) {
+            assertEquals(ruleFlowGroup, executionSet.getRuleFlowGroup().getValue());
         }
+
         assertEquals(onEntryActionScriptValue, onEntryScriptTypeValues.get(0).getScript());
         assertEquals(onEntryActionScriptLanguage, onEntryScriptTypeValues.get(0).getLanguage());
         assertEquals(onExitActionScriptValue, onExitScriptTypeValues.get(0).getScript());

@@ -51,7 +51,8 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
 
     @Property
     @FormField(
-            type = ListBoxFieldType.class
+            type = ListBoxFieldType.class,
+            settings = {@FieldParam(name = "addEmptyOption", value = "DRL")}
     )
     @SelectorDataProvider(
             type = SelectorDataProvider.ProviderType.CLIENT,

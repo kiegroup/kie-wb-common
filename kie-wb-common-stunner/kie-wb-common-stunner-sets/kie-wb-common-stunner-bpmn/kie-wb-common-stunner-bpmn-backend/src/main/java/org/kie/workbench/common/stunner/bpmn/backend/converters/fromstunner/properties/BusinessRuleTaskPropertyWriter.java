@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomInput;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
@@ -30,13 +31,26 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleLangua
 
 public class BusinessRuleTaskPropertyWriter extends ActivityPropertyWriter {
 
+    private final BusinessRuleTask task;
+    private final CustomInput<String> namespace;
+    private final CustomInput<String> dmnModelName;
+    private final CustomInput<String> decisionName;
+
     public BusinessRuleTaskPropertyWriter(BusinessRuleTask task, VariableScope variableScope) {
         super(task, variableScope);
+        this.task = task;
+
+        this.namespace = CustomInput.namespace.of(task);
+        this.addItemDefinition(this.namespace.typeDef());
+
+        this.dmnModelName = CustomInput.dmnModelName.of(task);
+        this.addItemDefinition(this.dmnModelName.typeDef());
+
+        this.decisionName = CustomInput.decisionName.of(task);
+        this.addItemDefinition(this.decisionName.typeDef());
     }
 
     public void setImplementation(RuleLanguage ruleLanguage) {
-
-        BusinessRuleTask task = (BusinessRuleTask) activity;
         task.setImplementation(ruleLanguage.getValue());
     }
 
@@ -45,15 +59,15 @@ public class BusinessRuleTaskPropertyWriter extends ActivityPropertyWriter {
     }
 
     public void setNamespace(Namespace namespace) {
-        CustomElement.namespace.of(baseElement).set(namespace.getValue());
-    }
-
-    public void setDecisionName(DecisionName decisionName) {
-        CustomElement.decisionName.of(baseElement).set(decisionName.getValue());
+        this.namespace.set(namespace.getValue());
     }
 
     public void setDmnModelName(DmnModelName dmnModelName) {
-        CustomElement.dmnModelName.of(baseElement).set(dmnModelName.getValue());
+        this.dmnModelName.set(dmnModelName.getValue());
+    }
+
+    public void setDecisionName(DecisionName decisionName) {
+        this.decisionName.set(decisionName.getValue());
     }
 
     public void setOnEntryAction(OnEntryAction onEntryAction) {
