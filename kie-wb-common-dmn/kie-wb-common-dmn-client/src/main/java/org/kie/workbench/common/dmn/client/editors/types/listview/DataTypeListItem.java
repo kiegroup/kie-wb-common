@@ -73,6 +73,8 @@ public class DataTypeListItem {
 
     private boolean oldIsList;
 
+    private ConstraintType oldConstraintType;
+
     @Inject
     public DataTypeListItem(final View view,
                             final DataTypeSelect dataTypeSelectComponent,
@@ -186,6 +188,7 @@ public class DataTypeListItem {
         oldType = getDataType().getType();
         oldConstraint = getDataType().getConstraint();
         oldIsList = getDataType().isList();
+        oldConstraintType = getDataType().getConstraintType();
 
         view.showSaveButton();
         view.showDataTypeNameInput();
@@ -255,7 +258,7 @@ public class DataTypeListItem {
             .withName(getOldName())
             .withType(getOldType())
             .withConstraint(getOldConstraint())
-            .withConstraintType(getConstraintType())
+            .withConstraintType(getOldConstraintType())
             .asList(getOldIsList())
             .get();
     }
@@ -360,6 +363,13 @@ public class DataTypeListItem {
 
     String getOldConstraint() {
         return oldConstraint;
+    }
+
+    String getOldConstraintType(){
+        if (oldConstraintType == null) {
+            return "";
+        }
+        return oldConstraintType.value();
     }
 
     boolean getOldIsList() {

@@ -142,7 +142,7 @@ public class DataTypeConstraintModalView implements DataTypeConstraintModal.View
         final String constraintType = event.target.value;
 
         if (!isEmpty(constraintType)) {
-            ConstraintType constraint = ConstraintType.fromString(constraintType);
+            final ConstraintType constraint = ConstraintType.fromString(constraintType);
             loadComponent(constraint);
             presenter.setConstraintType(constraint);
         }

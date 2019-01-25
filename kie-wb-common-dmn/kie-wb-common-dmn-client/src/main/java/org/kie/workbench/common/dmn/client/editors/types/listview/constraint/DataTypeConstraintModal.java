@@ -147,7 +147,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
         getView().setType(type);
 
-        if (!isEmpty(constraintValue)) {
+        if (!isEmpty(constraintValue) || constraintType != null) {
             getView().loadComponent(constraintType);
         } else {
             getView().setupEmptyContainer();
@@ -158,7 +158,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return constraintType;
     }
 
-    public void setConstraintType(ConstraintType constraintType) {
+    public void setConstraintType(final ConstraintType constraintType) {
         this.constraintType = constraintType;
     }
 
