@@ -571,7 +571,7 @@ public class MigrationDiagramMarshallerTest {
             );
 
             // Check only bounds for nodes that are NOT parsed by using fixed sizes.
-            if (!isEvent(newDefinition) && !isGateway(newDefinition)) {
+            if (!areBoundsFixed(newDefinition)) {
                 Bounds oldBounds = oldContent.getBounds();
                 Bounds newBounds = newContent.getBounds();
 
@@ -617,6 +617,10 @@ public class MigrationDiagramMarshallerTest {
             ExclusiveGateway.class,
             InclusiveGateway.class
     };
+
+    public static boolean areBoundsFixed(final Object def) {
+        return isEvent(def) || isGateway(def);
+    }
 
     private static boolean isEvent(final Object def) {
         return isClassType(EVENTS, def);
