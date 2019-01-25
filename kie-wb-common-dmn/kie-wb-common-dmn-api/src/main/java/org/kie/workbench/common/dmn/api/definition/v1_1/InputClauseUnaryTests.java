@@ -16,16 +16,21 @@
 
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.DMNPropertySet;
+import org.kie.workbench.common.dmn.api.property.dmn.ConstraintTypeProperty;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
+import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
 import org.kie.workbench.common.forms.adf.definitions.annotations.i18n.I18nSettings;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -54,7 +59,15 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
     @FormField(afterElement = "description", labelKey = "text")
     protected Text text;
 
-    private ConstraintType constraintType;
+    @Property
+    @FormField(afterElement = "text",
+        labelKey = "constraintType",
+        type = ListBoxFieldType.class,
+        settings = {@FieldParam(name = "addEmptyOption", value = "expression")})
+    @SelectorDataProvider(
+        type = SelectorDataProvider.ProviderType.CLIENT,
+        className = "org.kie.workbench.common.dmn.api.property.dmn.dataproviders.ConstraintTypeDataProvider")
+    protected ConstraintTypeProperty constraintTypeProperty;
 
     public InputClauseUnaryTests() {
         this(new Id(),
@@ -67,7 +80,11 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
                                  final ConstraintType constraintType) {
         this.id = id;
         this.text = text;
-        this.constraintType = constraintType;
+        String constraintTypeString = "";
+        if (constraintType != null) {
+            constraintTypeString = constraintType.value();
+        }
+        this.constraintTypeProperty = new ConstraintTypeProperty(constraintTypeString);
     }
 
     // -----------------------
@@ -86,11 +103,15 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
 
     @Override
     public ConstraintType getConstraintType() {
-        return constraintType;
+        return ConstraintType.fromString(constraintTypeProperty.getValue());
     }
 
-    public void setConstraintTypeField(final ConstraintType constraintTypeField) {
-        this.constraintType = constraintTypeField;
+    public void setConstraintTypeProperty(final ConstraintTypeProperty constraintTypeProperty) {
+        this.constraintTypeProperty = constraintTypeProperty;
+    }
+
+    public ConstraintTypeProperty getConstraintTypeProperty() {
+        return constraintTypeProperty;
     }
 
     public void setText(final Text value) {
@@ -111,12 +132,18 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
         if (id != null ? !id.equals(that.id) : that.id != null) {
             return false;
         }
+
+        if (!Objects.equals(constraintTypeProperty, that.constraintTypeProperty)) {
+            return false;
+        }
+
         return text != null ? text.equals(that.text) : that.text == null;
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
-                                         text != null ? text.hashCode() : 0);
+                                         text != null ? text.hashCode() : 0,
+                                         constraintTypeProperty != null ? constraintTypeProperty.hashCode() : 0);
     }
 }
