@@ -64,8 +64,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompl
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MITrigger;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
@@ -74,9 +77,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleIn
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataInput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataOutput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Namespace;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleLanguage;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Script;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
@@ -1278,12 +1284,20 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new BusinessRuleTaskExecutionSet(),
                              new BusinessRuleTaskExecutionSet())
 
-                .addTrueCase(new BusinessRuleTaskExecutionSet(new RuleFlowGroup(),
+                .addTrueCase(new BusinessRuleTaskExecutionSet(new RuleLanguage(),
+                                                              new RuleFlowGroup(),
+                                                              new Namespace(),
+                                                              new DecisionName(),
+                                                              new DmnModelName(),
                                                               new OnEntryAction(),
                                                               new OnExitAction(),
                                                               new IsAsync(),
                                                               new AdHocAutostart()),
-                             new BusinessRuleTaskExecutionSet(new RuleFlowGroup(),
+                             new BusinessRuleTaskExecutionSet(new RuleLanguage(),
+                                                              new RuleFlowGroup(),
+                                                              new Namespace(),
+                                                              new DecisionName(),
+                                                              new DmnModelName(),
                                                               new OnEntryAction(),
                                                               new OnExitAction(),
                                                               new IsAsync(),
@@ -1356,7 +1370,9 @@ public class HashCodeAndEqualityTest {
                                                       new CreatedBy(),
                                                       new AdHocAutostart(),
                                                       new OnEntryAction(),
-                                                      new OnExitAction()),
+                                                      new OnExitAction(),
+                                                      new Content(),
+                                                      new SLADueDate()),
 
                              new UserTaskExecutionSet(new TaskName(),
                                                       new Actors(),
@@ -1370,7 +1386,9 @@ public class HashCodeAndEqualityTest {
                                                       new CreatedBy(),
                                                       new AdHocAutostart(),
                                                       new OnEntryAction(),
-                                                      new OnExitAction()))
+                                                      new OnExitAction(),
+                                                      new Content(),
+                                                      new SLADueDate()))
                 .test();
     }
 
