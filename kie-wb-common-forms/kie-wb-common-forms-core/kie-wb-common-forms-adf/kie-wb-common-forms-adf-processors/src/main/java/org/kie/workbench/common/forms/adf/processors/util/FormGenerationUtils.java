@@ -18,7 +18,6 @@ package org.kie.workbench.common.forms.adf.processors.util;
 
 import java.beans.Introspector;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -175,9 +174,9 @@ public class FormGenerationUtils {
             return;
         }
 
-        FormDefinitionFieldData[] aux = elements.stream().filter(formElement -> previous.getName().equals(formElement.getAfterElement())).toArray(size -> new FormDefinitionFieldData[size]);
+        List<FormDefinitionFieldData> aux = elements.stream().filter(formElement -> previous.getName().equals(formElement.getAfterElement())).collect(Collectors.toList());
 
-        elements.removeAll(Arrays.asList(aux));
+        elements.removeAll(aux);
 
         for (FormDefinitionFieldData element : aux) {
             originalList.add(originalList.indexOf(previous) + 1, element);
