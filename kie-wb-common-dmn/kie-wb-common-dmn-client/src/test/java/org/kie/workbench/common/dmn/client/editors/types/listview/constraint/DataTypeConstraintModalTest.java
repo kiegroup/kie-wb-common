@@ -140,7 +140,7 @@ public class DataTypeConstraintModalTest {
         final String constraint = "";
         final String type = "string";
 
-        modal.prepareView(type, constraint, ConstraintType.ENUMERATION);
+        modal.prepareView(type, constraint, null);
 
         verify(view).setType(type);
         verify(view).setupEmptyContainer();
