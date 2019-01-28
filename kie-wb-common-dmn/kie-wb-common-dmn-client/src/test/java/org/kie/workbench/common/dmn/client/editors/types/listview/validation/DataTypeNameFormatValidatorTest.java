@@ -32,6 +32,7 @@ import org.uberfire.mvp.Command;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -80,10 +81,14 @@ public class DataTypeNameFormatValidatorTest {
 
         final DataType dataType = mock(DataType.class);
         final Command onSuccess = mock(Command.class);
+        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+
+        when(nameIsInvalidErrorMessage.getFlashMessage(dataType)).thenReturn(flashMessage);
 
         validator.getCallback(dataType, onSuccess).callback(true);
 
         verify(onSuccess).execute();
+        verify(flashMessageEvent, never()).fire(flashMessage);
     }
 
     @Test
@@ -98,5 +103,6 @@ public class DataTypeNameFormatValidatorTest {
         validator.getCallback(dataType, onSuccess).callback(false);
 
         verify(flashMessageEvent).fire(flashMessage);
+        verify(onSuccess, never()).execute();
     }
 }

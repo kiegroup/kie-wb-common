@@ -23,6 +23,6 @@ public class DMNValidationServiceImpl implements DMNValidationService {
 
     @Override
     public boolean isValidVariableName(final String source) {
-        return FEELParser.checkVariableName(source).isEmpty();
+        return FEELParser.isVariableNameValid(source);
     }
 }
