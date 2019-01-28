@@ -254,7 +254,6 @@ public abstract class BaseGrid<E extends Expression> extends BaseGridWidget impl
                                                                                                    ri,
                                                                                                    ci,
                                                                                                    uiRowIndex);
-
                 editor.bind(this,
                             uiRowIndex,
                             uiColumnIndex);
@@ -262,6 +261,7 @@ public abstract class BaseGrid<E extends Expression> extends BaseGridWidget impl
                                         Optional.empty(),
                                         (int) context.getAbsoluteCellX(),
                                         (int) context.getAbsoluteCellY());
+
                 return true;
             }
         }

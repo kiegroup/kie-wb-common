@@ -19,8 +19,12 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import com.ait.lienzo.client.core.types.Point2D;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionGrid;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
@@ -30,6 +34,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
+import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellEditContext;
 import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.impl.BaseGridColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridWidgetRegistry;
@@ -103,6 +108,19 @@ public class ExpressionEditorColumn extends DMNGridColumn<BaseGrid<? extends Exp
     public void setWidthInternal(final double width) {
         super.setWidth(width);
         updateWidthOfChildren();
+    }
+
+    @Override
+    public void edit(GridCell<Optional<BaseExpressionGrid>> cell, GridBodyCellEditContext context, Consumer<GridCellValue<Optional<BaseExpressionGrid>>> callback) {
+        if (cell.getValue().getValue().isPresent()) {
+            final BaseExpressionGrid cellGrid = cell.getValue().getValue().get();
+            if (cellGrid instanceof LiteralExpressionGrid || cellGrid instanceof UndefinedExpressionGrid) {
+                final Point2D center = new Point2D(cellGrid.getWidth() / 2, cellGrid.getHeight() / 2);
+                cellGrid.startEditingCell(center);
+            }
+        } else {
+            super.edit(cell, context, callback);
+        }
     }
 
     protected void updateWidthOfChildren() {
