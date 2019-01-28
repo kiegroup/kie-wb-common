@@ -35,10 +35,15 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
+import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -142,5 +147,73 @@ public class ContainmentAcceptorControlImplTest {
                      updateChildNodeCommand.getParent());
         assertEquals(candidate,
                      updateChildNodeCommand.getCandidate());
+    }
+
+    @Test
+    public void testIsSameParent() {
+        Node parent = new NodeImpl<>("parentUUID");
+        Node child1 = new NodeImpl<>("child1");
+        setAsChild(parent, child1);
+        Node child2 = new NodeImpl<>("child2");
+        setAsChild(parent, child2);
+        Node[] children = {child1, child2};
+        boolean isSameParent = ContainmentAcceptorControlImpl.areInSameParent(parent, children);
+        assertTrue(isSameParent);
+    }
+
+    @Test
+    public void testIsNotSameParent1() {
+        Node parent = new NodeImpl<>("parentUUID");
+        Node child1 = new NodeImpl<>("child1");
+        Node child2 = new NodeImpl<>("child2");
+        setAsChild(parent, child2);
+        Node[] children = {child1, child2};
+        boolean isSameParent = ContainmentAcceptorControlImpl.areInSameParent(parent, children);
+        assertFalse(isSameParent);
+    }
+
+    @Test
+    public void testIsNotSameParent2() {
+        Node parent = new NodeImpl<>("parentUUID");
+        Node child1 = new NodeImpl<>("child1");
+        setAsChild(parent, child1);
+        Node child2 = new NodeImpl<>("child2");
+        Node[] children = {child1, child2};
+        boolean isSameParent = ContainmentAcceptorControlImpl.areInSameParent(parent, children);
+        assertFalse(isSameParent);
+    }
+
+    @Test
+    public void testIsNotSameParentAll() {
+        Node parent = new NodeImpl<>("parentUUID");
+        Node child1 = new NodeImpl<>("child1");
+        Node child2 = new NodeImpl<>("child2");
+        Node[] children = {child1, child2};
+        boolean isSameParent = ContainmentAcceptorControlImpl.areInSameParent(parent, children);
+        assertFalse(isSameParent);
+    }
+
+    @Test
+    public void testIsNotSameParentNull() {
+        Node parent = new NodeImpl<>("parentUUID");
+        Node child1 = new NodeImpl<>("child1");
+        setAsChild(parent, child1);
+        Node child2 = new NodeImpl<>("child2");
+        setAsChild(parent, child2);
+        Node[] children = {child1, child2};
+        boolean isSameParent = ContainmentAcceptorControlImpl.areInSameParent(null, children);
+        assertFalse(isSameParent);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void setAsChild(final Node parent,
+                                   final Node child) {
+        Child childRel = new Child();
+        Edge childEdge = new EdgeImpl<>("child_" + parent.getUUID() + "_" + child.getUUID());
+        childEdge.setContent(childRel);
+        childEdge.setSourceNode(parent);
+        parent.getOutEdges().add(childEdge);
+        childEdge.setTargetNode(child);
+        child.getInEdges().add(childEdge);
     }
 }

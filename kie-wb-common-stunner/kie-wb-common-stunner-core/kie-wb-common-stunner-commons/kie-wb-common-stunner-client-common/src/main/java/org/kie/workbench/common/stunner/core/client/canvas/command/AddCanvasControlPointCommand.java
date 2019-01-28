@@ -16,67 +16,88 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
-import org.kie.workbench.common.stunner.core.client.command.CanvasViolationImpl;
-import org.kie.workbench.common.stunner.core.client.util.ShapeUtils;
+import org.kie.workbench.common.stunner.core.client.shape.impl.ConnectorShape;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasManageableControlPoints;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
-import org.kie.workbench.common.stunner.core.rule.violations.RuleViolationImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
+
+import static org.kie.workbench.common.stunner.core.client.util.ShapeUtils.getConnectorShape;
+import static org.kie.workbench.common.stunner.core.graph.util.ControlPointValidations.checkAddControlPoint;
 
 public class AddCanvasControlPointCommand extends AbstractCanvasCommand {
 
     private final Edge candidate;
-    private final ControlPoint[] controlPoints;
-    private Boolean allowed;
+    private final ControlPoint controlPoint;
+    private final int index;
 
-    public AddCanvasControlPointCommand(final Edge candidate, final ControlPoint... controlPoints) {
+    public AddCanvasControlPointCommand(final Edge candidate,
+                                        final ControlPoint controlPoint,
+                                        final int index) {
         this.candidate = candidate;
-        this.controlPoints = controlPoints;
+        this.controlPoint = controlPoint;
+        this.index = index;
     }
 
     @Override
-    public CommandResult<CanvasViolation> allow(AbstractCanvasHandler context) {
-        ShapeUtils.hideControlPoints(candidate, context);
-        List<ControlPoint> addedControlPoints = ShapeUtils.addControlPoints(candidate,
-                                                                            context,
-                                                                            this.controlPoints);
-        if (addedControlPoints.stream().map(ControlPoint::getIndex).anyMatch(Objects::isNull)) {
-            return new CanvasCommandResultBuilder()
-                    .setType(CommandResult.Type.ERROR)
-                    .addViolation(new CanvasViolationImpl.Builder().build(new RuleViolationImpl("Control Point out of connector")))
-                    .build();
-        }
-        ShapeUtils.showControlPoints(candidate, context);
-        allowed = Boolean.TRUE;
-        return buildResult();
+    public CommandResult<CanvasViolation> allow(final AbstractCanvasHandler context) {
+        checkAddControlPoint(getViewControlPoints(context, candidate),
+                             controlPoint,
+                             index);
+        return CanvasCommandResultBuilder.SUCCESS;
     }
 
     @Override
-    public CommandResult<CanvasViolation> execute(AbstractCanvasHandler context) {
-        if (Objects.isNull(allowed)) {
-            CommandResult<CanvasViolation> commandResult = allow(context);
-            if (CommandUtils.isError(commandResult)) {
-                return commandResult;
-            }
-        }
-        allowed = null;
-        //in this case, canvas command was executed on #allow method.
+    public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
+        allow(context);
+        final HasManageableControlPoints<?> view = getManageableControlPoints(context, candidate);
+        // Hide control points.
+        view.hideControlPoints();
+        // Add the new control point at the given index.
+        view.addControlPoint(controlPoint, index);
+        // Show control points.
+        view.showControlPoints(HasControlPoints.ControlPointType.POINTS);
         return buildResult();
     }
 
     @Override
     public CommandResult<CanvasViolation> undo(AbstractCanvasHandler context) {
-        return new DeleteCanvasControlPointCommand(candidate, controlPoints).execute(context);
+        return new DeleteCanvasControlPointCommand(candidate, index).execute(context);
     }
 
-    public ControlPoint[] getControlPoints() {
-        return controlPoints;
+    public ControlPoint getControlPoint() {
+        return controlPoint;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public static ControlPoint[] getControlPoints(final Edge edge) {
+        ViewConnector<?> connector = (ViewConnector<?>) edge.getContent();
+        return connector.getControlPoints();
+    }
+
+    public static HasManageableControlPoints<?> getManageableControlPoints(final AbstractCanvasHandler context,
+                                                                           final Edge candidate) {
+        final ConnectorShape shape = getConnectorShape(candidate, context);
+        return (HasManageableControlPoints<?>) shape.getShapeView();
+    }
+
+    public static ControlPoint[] getViewControlPoints(final AbstractCanvasHandler context,
+                                                      final Edge candidate) {
+        return getManageableControlPoints(context, candidate).getManageableControlPoints();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() +
+                " [controlPoint=" + controlPoint + "," +
+                "index=" + index + "]";
     }
 }

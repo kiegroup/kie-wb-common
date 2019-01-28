@@ -18,7 +18,9 @@ package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Default;
@@ -39,6 +41,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
 @Dependent
 @Default
@@ -98,6 +101,9 @@ public class ContainmentAcceptorControlImpl extends AbstractAcceptorControl
         if (parent == null && children.length >= 2) {
             return false;
         }
+        if (areInSameParent(parent, children)) {
+            return true;
+        }
         // Generate the commands and perform the execution.
         final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
                 new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
@@ -121,6 +127,14 @@ public class ContainmentAcceptorControlImpl extends AbstractAcceptorControl
             return success;
         }
         return true;
+    }
+
+    static boolean areInSameParent(final Element parent,
+                                   final Node[] children) {
+        return Stream.of(children)
+                .map(GraphUtils::getParent)
+                .filter(childParent -> !Objects.equals(parent, childParent))
+                .count() == 0;
     }
 
     private final IContainmentAcceptor CONTAINMENT_ACCEPTOR = new IContainmentAcceptor() {

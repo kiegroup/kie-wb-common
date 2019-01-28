@@ -63,9 +63,9 @@ public class SetCanvasConnectionCommand extends AbstractCanvasCommand {
 
     @Override
     public String toString() {
-        return getClass().getName() +
+        return getClass().getSimpleName() +
                 " [candidate=" + getUUID(edge) + "," +
-                " sourceNode=" + getUUID(edge.getSourceNode()) + "," +
-                " targetNode=" + getUUID(edge.getTargetNode()) + "]";
+                "sourceNode=" + getUUID(edge.getSourceNode()) + "," +
+                "targetNode=" + getUUID(edge.getTargetNode()) + "]";
     }
 }

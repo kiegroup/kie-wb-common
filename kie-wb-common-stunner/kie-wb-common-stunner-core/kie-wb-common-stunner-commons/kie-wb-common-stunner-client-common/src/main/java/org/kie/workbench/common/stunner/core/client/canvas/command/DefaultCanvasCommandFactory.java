@@ -234,18 +234,18 @@ public class DefaultCanvasCommandFactory implements CanvasCommandFactory<Abstrac
     }
 
     @Override
-    public CanvasCommand<AbstractCanvasHandler> addControlPoint(Edge candidate, ControlPoint... controlPoints) {
-        return new AddControlPointCommand(candidate, controlPoints);
+    public CanvasCommand<AbstractCanvasHandler> addControlPoint(Edge candidate, ControlPoint controlPoint, int index) {
+        return new AddControlPointCommand(candidate, controlPoint, index);
     }
 
     @Override
-    public CanvasCommand<AbstractCanvasHandler> deleteControlPoint(Edge candidate, ControlPoint... controlPoints) {
-        return new DeleteControlPointCommand(candidate, controlPoints);
+    public CanvasCommand<AbstractCanvasHandler> deleteControlPoint(Edge candidate, int index) {
+        return new DeleteControlPointCommand(candidate, index);
     }
 
     @Override
-    public CanvasCommand<AbstractCanvasHandler> updateControlPointPosition(Edge candidate, ControlPoint controlPoint, Point2D position) {
-        return new UpdateControlPointPositionCommand(candidate, controlPoint, position);
+    public CanvasCommand<AbstractCanvasHandler> updateControlPointPosition(Edge candidate, ControlPoint[] controlPoints) {
+        return new UpdateControlPointPositionCommand(candidate, controlPoints);
     }
 
     protected ChildrenTraverseProcessor newChildrenTraverseProcessor() {

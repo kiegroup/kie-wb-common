@@ -520,10 +520,11 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 connectionContent.setTargetConnection(MagnetConnection.Builder.at(target.getX() - xTarget, target.getY() - yTarget)); // Stunner connection x,y is relative to shape
             }
             if (e.getWaypoint().size() > 2) {
-                List<Point> sublist = e.getWaypoint().subList(1, e.getWaypoint().size() - 1);
-                for (Point p : sublist) {
-                    connectionContent.getControlPoints().add(ControlPoint.build(PointUtils.dmndiPointToPoint2D(p)));
-                }
+                connectionContent.setControlPoints(e.getWaypoint()
+                                                           .subList(1, e.getWaypoint().size() - 1)
+                                                           .stream()
+                                                           .map(p -> ControlPoint.build(PointUtils.dmndiPointToPoint2D(p)))
+                                                           .toArray(ControlPoint[]::new));
             }
         } else {
             // Set the source connection, if any.

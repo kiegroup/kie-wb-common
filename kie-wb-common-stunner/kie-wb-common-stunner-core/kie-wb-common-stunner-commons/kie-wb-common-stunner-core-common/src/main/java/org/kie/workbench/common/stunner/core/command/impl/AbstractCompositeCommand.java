@@ -124,7 +124,7 @@ public abstract class AbstractCompositeCommand<T, V> implements Command<T, V> {
         return this;
     }
 
-    protected boolean isUndoReverse() {
+    public boolean isUndoReverse() {
         return true;
     }
 
@@ -188,7 +188,7 @@ public abstract class AbstractCompositeCommand<T, V> implements Command<T, V> {
     }
 
     protected CommandResult<V> undoMultipleExecutedCommands(final T context,
-                                                          final List<Command<T, V>> commandStack) {
+                                                            final List<Command<T, V>> commandStack) {
         final List<CommandResult<V>> results = new LinkedList<>();
         commandStack.forEach(command -> results.add(doUndo(context,
                                                            command)));
@@ -209,9 +209,9 @@ public abstract class AbstractCompositeCommand<T, V> implements Command<T, V> {
 
     @Override
     public String toString() {
-        String s = "[" + getClass().getName() + "]";
+        String s = "[" + getClass().getSimpleName() + "]";
         for (int x = 0; x < commands.size(); x++) {
-            s += " {(" + x + ") [" + commands.get(x) + "]} ";
+            s += " {(" + x + ")[" + commands.get(x) + "]}\n";
         }
         return s;
     }

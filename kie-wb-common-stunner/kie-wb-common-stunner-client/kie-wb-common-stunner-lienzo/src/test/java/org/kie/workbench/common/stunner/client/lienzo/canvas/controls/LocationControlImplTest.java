@@ -16,9 +16,7 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.MultiPath;
@@ -71,7 +69,6 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
@@ -258,8 +255,6 @@ public class LocationControlImplTest {
         final Edge connectorEdge = mock(Edge.class);
         final com.ait.lienzo.client.core.types.Point2D controlPointLienzo = new com.ait.lienzo.client.core.types.Point2D(100, 100);
         final Point2DArray controlPointsLienzo = new Point2DArray(controlPointLienzo);
-        final ControlPoint controlPoint = ControlPoint.build(new Point2D(0, 0), 0);
-        final List<ControlPoint> controlPoints = Arrays.asList(controlPoint);
         final ViewConnector viewConnector = mock(ViewConnector.class);
         Group parentGroup = mock(Group.class);
         BoundingBox parentBB = new BoundingBox(0, 0, 200, 200);
@@ -288,7 +283,6 @@ public class LocationControlImplTest {
         when(shape.getShapeView()).thenReturn(wiresShape);
         when(graphIndex.getEdge(connectorUUID)).thenReturn(connectorEdge);
         when(connectorEdge.getContent()).thenReturn(viewConnector);
-        when(viewConnector.getControlPoints()).thenReturn(controlPoints);
         when(connectorGroup.getUserData()).thenReturn(new WiresUtils.UserData(connectorUUID, ""));
 
         tested.init(canvasHandler);
