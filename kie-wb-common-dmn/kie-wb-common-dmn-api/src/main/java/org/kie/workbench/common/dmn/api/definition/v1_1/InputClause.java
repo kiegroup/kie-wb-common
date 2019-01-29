@@ -83,6 +83,7 @@ public class InputClause extends DMNElement implements HasTypeRefs,
         this.inputValues = inputValues;
     }
 
+    @Override
     public List<HasTypeRef> getHasTypeRefs() {
         return new ArrayList<>(getNotNullHasTypeRefs(getInputExpression()));
     }

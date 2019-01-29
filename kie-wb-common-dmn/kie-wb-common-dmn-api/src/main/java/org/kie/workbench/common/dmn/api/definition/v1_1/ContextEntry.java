@@ -83,6 +83,7 @@ public class ContextEntry extends DMNModelInstrumentedBase implements HasExpress
                                          expression != null ? expression.hashCode() : 0);
     }
 
+    @Override
     public List<HasTypeRef> getHasTypeRefs() {
 
         final List<HasTypeRef> hasTypeRefs = new ArrayList<>();

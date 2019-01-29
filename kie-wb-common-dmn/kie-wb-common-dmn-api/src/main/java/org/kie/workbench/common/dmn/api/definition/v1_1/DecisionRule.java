@@ -64,6 +64,7 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
         return this.outputEntry;
     }
 
+    @Override
     public List<HasTypeRef> getHasTypeRefs() {
         return new ArrayList<>(getFlatHasTypeRefs(getOutputEntry()));
     }

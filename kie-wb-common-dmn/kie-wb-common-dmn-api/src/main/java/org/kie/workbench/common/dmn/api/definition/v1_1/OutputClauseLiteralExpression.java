@@ -93,6 +93,7 @@ public class OutputClauseLiteralExpression extends DMNModelInstrumentedBase impl
         this.importedValues = importedValues;
     }
 
+    @Override
     public List<HasTypeRef> getHasTypeRefs() {
         return new ArrayList<>(singletonList(this));
     }

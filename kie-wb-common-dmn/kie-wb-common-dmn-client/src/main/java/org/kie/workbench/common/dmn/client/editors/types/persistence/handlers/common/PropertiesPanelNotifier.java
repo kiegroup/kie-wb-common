@@ -17,11 +17,14 @@
 package org.kie.workbench.common.dmn.client.editors.types.persistence.handlers.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
@@ -30,6 +33,8 @@ import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -39,6 +44,7 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 
 import static org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRefHelper.getNotNullHasTypeRefs;
 
+@ApplicationScoped
 public class PropertiesPanelNotifier {
 
     private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
@@ -48,6 +54,12 @@ public class PropertiesPanelNotifier {
     private String oldLocalPart;
 
     private QName newQName;
+
+    /**
+     * Represents the the current element in the Properties Panel.
+     * This value is set by the {@link CanvasSelectionEvent} and the {@link DomainObjectSelectionEvent}
+     **/
+    private String selectedElementUUID = null;
 
     @Inject
     public PropertiesPanelNotifier(final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
@@ -75,6 +87,17 @@ public class PropertiesPanelNotifier {
             notifyVariables(node, definition);
             notifyExpressions(node, definition);
         }
+    }
+
+    void onCanvasSelectionEvent(final @Observes CanvasSelectionEvent event) {
+        final Collection<String> identifiers = event.getIdentifiers();
+        if (identifiers.size() > 0) {
+            setSelectedElementUUID(identifiers.iterator().next());
+        }
+    }
+
+    void onDomainObjectSelectionEvent(final @Observes DomainObjectSelectionEvent event) {
+        setSelectedElementUUID(event.getDomainObject().getDomainObjectUUID());
     }
 
     void notifyExpressions(final Node node,
@@ -115,7 +138,11 @@ public class PropertiesPanelNotifier {
         final ClientSession currentSession = getCurrentSession().orElseThrow(UnsupportedOperationException::new);
         final String uuid = node.getUUID();
 
-        refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(currentSession, uuid));
+        getSelectedElementUUID().ifPresent(selectedElementUUID -> {
+            if (Objects.equals(uuid, selectedElementUUID)) {
+                refreshFormPropertiesEvent.fire(new RefreshFormPropertiesEvent(currentSession, uuid));
+            }
+        });
     }
 
     Object getDefinition(final Node node) {
@@ -140,6 +167,14 @@ public class PropertiesPanelNotifier {
         final Optional<Diagram> diagram = canvasHandler.map(CanvasHandler::getDiagram);
 
         return diagram.map(Diagram::getGraph);
+    }
+
+    void setSelectedElementUUID(final String selectedElementUUID) {
+        this.selectedElementUUID = selectedElementUUID;
+    }
+
+    Optional<String> getSelectedElementUUID() {
+        return Optional.ofNullable(selectedElementUUID);
     }
 
     private Optional<ClientSession> getCurrentSession() {

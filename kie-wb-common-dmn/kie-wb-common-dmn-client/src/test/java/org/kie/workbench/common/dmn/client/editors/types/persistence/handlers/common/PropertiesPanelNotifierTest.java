@@ -31,8 +31,11 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.IsInformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
@@ -88,6 +91,36 @@ public class PropertiesPanelNotifierTest {
 
         verify(notifier).notifyVariables(node1, definition1);
         verify(notifier).notifyExpressions(node2, definition2);
+    }
+
+    @Test
+    public void testOnCanvasSelectionEvent() {
+
+        final CanvasSelectionEvent selectionEvent = mock(CanvasSelectionEvent.class);
+        final String uuid1 = "uuid1";
+        final String uuid2 = "uuid2";
+        final List<String> t = asList(uuid1, uuid2);
+
+        when(selectionEvent.getIdentifiers()).thenReturn(t);
+
+        notifier.onCanvasSelectionEvent(selectionEvent);
+
+        verify(notifier).setSelectedElementUUID(uuid1);
+    }
+
+    @Test
+    public void testOnDomainObjectSelectionEvent() {
+
+        final DomainObjectSelectionEvent selectionEvent = mock(DomainObjectSelectionEvent.class);
+        final DomainObject domainObject = mock(DomainObject.class);
+        final String uuid = "uuid";
+
+        when(selectionEvent.getDomainObject()).thenReturn(domainObject);
+        when(domainObject.getDomainObjectUUID()).thenReturn(uuid);
+
+        notifier.onDomainObjectSelectionEvent(selectionEvent);
+
+        verify(notifier).setSelectedElementUUID(uuid);
     }
 
     @Test
@@ -239,7 +272,7 @@ public class PropertiesPanelNotifierTest {
     }
 
     @Test
-    public void testRefreshFormProperties() {
+    public void testRefreshFormPropertiesWhenPropertiesPanelIsUpdated() {
 
         final Node node = mock(Node.class);
         final ClientSession clientSession = mock(ClientSession.class);
@@ -247,6 +280,7 @@ public class PropertiesPanelNotifierTest {
 
         when(node.getUUID()).thenReturn(uuid);
         when(sessionManager.getCurrentSession()).thenReturn(clientSession);
+        when(notifier.getSelectedElementUUID()).thenReturn(Optional.of(uuid));
 
         notifier.refreshFormProperties(node);
 
@@ -256,5 +290,20 @@ public class PropertiesPanelNotifierTest {
 
         assertEquals(uuid, value.getUuid());
         assertEquals(clientSession, value.getSession());
+    }
+
+    @Test
+    public void testRefreshFormPropertiesWhenPropertiesPanelIsNotUpdated() {
+
+        final Node node = mock(Node.class);
+        final ClientSession clientSession = mock(ClientSession.class);
+
+        when(node.getUUID()).thenReturn("uuid1");
+        when(sessionManager.getCurrentSession()).thenReturn(clientSession);
+        when(notifier.getSelectedElementUUID()).thenReturn(Optional.of("uuid2"));
+
+        notifier.refreshFormProperties(node);
+
+        verify(refreshFormPropertiesEvent, never()).fire(any());
     }
 }
