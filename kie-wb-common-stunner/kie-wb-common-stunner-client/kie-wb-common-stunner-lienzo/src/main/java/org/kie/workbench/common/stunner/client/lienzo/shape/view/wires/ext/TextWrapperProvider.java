@@ -46,9 +46,7 @@ public final class TextWrapperProvider {
                                                                      0,
                                                                      1,
                                                                      1));
-
             default:
-            case BOUNDS:
                 return new TextBoundsWrap(text);
         }
     }
