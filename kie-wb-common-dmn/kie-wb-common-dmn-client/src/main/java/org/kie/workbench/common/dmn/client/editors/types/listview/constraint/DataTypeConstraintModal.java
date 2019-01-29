@@ -83,6 +83,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
     }
 
     void clearAll() {
+        constraintType = null;
         doSave(CONSTRAINT_INITIAL_VALUE);
     }
 
