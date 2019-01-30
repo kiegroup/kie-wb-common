@@ -15,6 +15,8 @@
 
 package org.kie.workbench.common.screens.library.client;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
 
@@ -22,4 +24,12 @@ import org.jboss.errai.ui.shared.api.annotations.Bundle;
 @Bundle("resources/i18n/Library.properties")
 public class LibraryEntryPoint {
 
+    @PostConstruct
+    public void init() {
+        exposeCanCreateSpacesPermission();
+    }
+
+    private void exposeCanCreateSpacesPermission() {
+
+    }
 }
