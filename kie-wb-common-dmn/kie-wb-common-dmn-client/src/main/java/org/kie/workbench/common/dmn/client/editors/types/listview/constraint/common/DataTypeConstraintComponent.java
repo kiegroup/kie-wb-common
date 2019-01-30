@@ -43,10 +43,4 @@ public interface DataTypeConstraintComponent {
             return new Element();
         }
     };
-
-    enum Type {
-        ENUMERATION,
-        EXPRESSION,
-        RANGE
-    }
 }

@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTyp
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.SmallSwitchComponent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.confirmation.DataTypeConfirmation;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraint;
+import org.kie.workbench.common.dmn.client.editors.types.listview.validation.DataTypeNameFormatValidator;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -93,6 +94,9 @@ public class DataTypeListItemTest {
     @Mock
     private EventSourceMock<DataTypeEditModeToggleEvent> editModeToggleEvent;
 
+    @Mock
+    private DataTypeNameFormatValidator nameFormatValidator;
+
     @Captor
     private ArgumentCaptor<DataTypeEditModeToggleEvent> eventArgumentCaptor;
 
@@ -103,7 +107,7 @@ public class DataTypeListItemTest {
     @Before
     public void setup() {
         dataTypeManager = spy(new DataTypeManager(null, null, itemDefinitionStore, null, null, null, null, null));
-        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeListComponent, dataTypeManager, confirmation, editModeToggleEvent));
+        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeListComponent, dataTypeManager, confirmation, nameFormatValidator, editModeToggleEvent));
         listItem.init(dataTypeList);
     }
 
@@ -267,6 +271,7 @@ public class DataTypeListItemTest {
         final String expectedType = "type";
         final String expectedConstraint = "constraint";
         final boolean expectedIsList = true;
+        final String expectedConstraintType = "";
 
         doReturn(dataType).when(listItem).getDataType();
         when(dataType.getName()).thenReturn(expectedName);
@@ -281,6 +286,7 @@ public class DataTypeListItemTest {
         assertEquals(expectedType, listItem.getOldType());
         assertEquals(expectedConstraint, listItem.getOldConstraint());
         assertEquals(expectedIsList, listItem.getOldIsList());
+        assertEquals(expectedConstraintType, listItem.getOldConstraintType());
 
         verify(view).showSaveButton();
         verify(view).showDataTypeNameInput();
@@ -348,7 +354,7 @@ public class DataTypeListItemTest {
         doReturn(dataType).when(listItem).getDataType();
         doReturn(updatedDataType).when(listItem).updateProperties(dataType);
         doReturn(true).when(updatedDataType).isValid();
-        doReturn(doSaveAndCloseCommand).when(listItem).doSaveAndCloseEditMode(updatedDataType);
+        doReturn(doSaveAndCloseCommand).when(listItem).doValidateDataTypeNameAndSave(updatedDataType);
         doReturn(doDisableEditMode).when(listItem).doDisableEditMode();
 
         listItem.saveAndCloseEditMode();
@@ -379,6 +385,19 @@ public class DataTypeListItemTest {
 
         verify(confirmation, never()).ifDataTypeDoesNotHaveLostSubDataTypes(any(), any(), any());
         verify(listItem).discardDataTypeProperties();
+    }
+
+    @Test
+    public void testDoValidateDataTypeNameAndSave() {
+
+        final DataType dataType = spy(makeDataType());
+        final Command saveAndCloseEditMode = mock(Command.class);
+
+        doReturn(saveAndCloseEditMode).when(listItem).doSaveAndCloseEditMode(dataType);
+
+        listItem.doValidateDataTypeNameAndSave(dataType).execute();
+
+        verify(nameFormatValidator).ifIsValid(dataType, saveAndCloseEditMode);
     }
 
     @Test
@@ -447,6 +466,7 @@ public class DataTypeListItemTest {
         final String expectedName = "name";
         final String expectedType = "type";
         final String expectedConstraint = "constraint";
+        final String expectedConstraintType = "enumeration";
         final boolean expectedIsList = true;
 
         doReturn(dataType).when(listItem).getDataType();
@@ -454,6 +474,7 @@ public class DataTypeListItemTest {
         doReturn(expectedType).when(listItem).getOldType();
         doReturn(expectedConstraint).when(listItem).getOldConstraint();
         doReturn(expectedIsList).when(listItem).getOldIsList();
+        doReturn(expectedConstraintType).when(listItem).getOldConstraintType();
 
         listItem.discardDataTypeProperties();
 
@@ -461,6 +482,7 @@ public class DataTypeListItemTest {
         assertEquals(expectedType, dataType.getType());
         assertEquals(expectedConstraint, dataType.getConstraint());
         assertEquals(expectedIsList, dataType.isList());
+        assertEquals(expectedConstraintType, dataType.getConstraintType().value());
     }
 
     @Test

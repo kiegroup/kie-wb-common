@@ -26,20 +26,21 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.client.editors.types.common.errors.NameIsBlankErrorMessage;
+import org.kie.workbench.common.dmn.client.editors.types.common.errors.NameIsDefaultTypeMessage;
+import org.kie.workbench.common.dmn.client.editors.types.common.errors.NameIsNotUniqueErrorMessage;
 import org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessage;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionRecordEngine;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.DataTypeNameValidator;
-import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.NameIsBlankErrorMessage;
-import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.NameIsDefaultTypeMessage;
-import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.NameIsNotUniqueErrorMessage;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -121,6 +122,16 @@ public class DataTypeManagerTest {
 
         dataTypeNameValidator = spy(new DataTypeNameValidator(flashMessageEvent, blankErrorMessage, notUniqueErrorMessage, nameIsDefaultTypeMessage, dataTypeStore));
         manager = spy(new DataTypeManagerFake());
+    }
+
+    @Test
+    public void testWithConstraintType() {
+
+        final ConstraintType expectedConstraintType = ConstraintType.ENUMERATION;
+        final DataType dataType = manager.from(makeDataType("uuid")).withConstraintType(expectedConstraintType.value()).get();
+        final ConstraintType actualConstraintType = dataType.getConstraintType();
+
+        assertEquals(expectedConstraintType, actualConstraintType);
     }
 
     @Test
@@ -573,14 +584,14 @@ public class DataTypeManagerTest {
         final DataType dataType = makeDataType("uuid1");
         final DataType tPerson = makeDataType("uuid2", "tPerson");
         final DataType tCompany1 = makeDataType("uuid3", "tCompany");
-        final DataType tCompany2 = makeDataType("uuid3", "tCompany (2)");
+        final DataType tCompany2 = makeDataType("uuid3", "tCompany - 2");
         final List<DataType> siblings = asList(tPerson, tCompany1, tCompany2);
 
         doReturn(dataType).when(manager).get();
         doReturn(siblings).when(dataTypeNameValidator).siblings(dataType);
 
         final String actualDataTypeName = manager.withDataType(dataType).withUniqueName("tCompany").get().getName();
-        final String expectedDataTypeName = "tCompany (3)";
+        final String expectedDataTypeName = "tCompany - 3";
 
         assertEquals(expectedDataTypeName, actualDataTypeName);
     }

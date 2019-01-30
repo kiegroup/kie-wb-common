@@ -27,12 +27,14 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.SmallSwitchComponent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.confirmation.DataTypeConfirmation;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraint;
+import org.kie.workbench.common.dmn.client.editors.types.listview.validation.DataTypeNameFormatValidator;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
@@ -58,6 +60,8 @@ public class DataTypeListItem {
 
     private final Event<DataTypeEditModeToggleEvent> editModeToggleEvent;
 
+    private final DataTypeNameFormatValidator nameFormatValidator;
+
     private DataType dataType;
 
     private int level;
@@ -72,6 +76,8 @@ public class DataTypeListItem {
 
     private boolean oldIsList;
 
+    private ConstraintType oldConstraintType;
+
     @Inject
     public DataTypeListItem(final View view,
                             final DataTypeSelect dataTypeSelectComponent,
@@ -79,6 +85,7 @@ public class DataTypeListItem {
                             final SmallSwitchComponent dataTypeListComponent,
                             final DataTypeManager dataTypeManager,
                             final DataTypeConfirmation confirmation,
+                            final DataTypeNameFormatValidator nameFormatValidator,
                             final Event<DataTypeEditModeToggleEvent> editModeToggleEvent) {
         this.view = view;
         this.dataTypeSelectComponent = dataTypeSelectComponent;
@@ -86,6 +93,7 @@ public class DataTypeListItem {
         this.dataTypeListComponent = dataTypeListComponent;
         this.dataTypeManager = dataTypeManager;
         this.confirmation = confirmation;
+        this.nameFormatValidator = nameFormatValidator;
         this.editModeToggleEvent = editModeToggleEvent;
     }
 
@@ -185,6 +193,7 @@ public class DataTypeListItem {
         oldType = getDataType().getType();
         oldConstraint = getDataType().getConstraint();
         oldIsList = getDataType().isList();
+        oldConstraintType = getDataType().getConstraintType();
 
         view.showSaveButton();
         view.showDataTypeNameInput();
@@ -211,7 +220,7 @@ public class DataTypeListItem {
         final DataType updatedDataType = updateProperties(getDataType());
 
         if (updatedDataType.isValid()) {
-            confirmation.ifDataTypeDoesNotHaveLostSubDataTypes(updatedDataType, doSaveAndCloseEditMode(updatedDataType), doDisableEditMode());
+            confirmation.ifDataTypeDoesNotHaveLostSubDataTypes(updatedDataType, doValidateDataTypeNameAndSave(updatedDataType), doDisableEditMode());
         } else {
             discardDataTypeProperties();
         }
@@ -221,20 +230,23 @@ public class DataTypeListItem {
         return this::disableEditMode;
     }
 
+    Command doValidateDataTypeNameAndSave(final DataType dataType) {
+        return () -> nameFormatValidator.ifIsValid(dataType, doSaveAndCloseEditMode(dataType));
+    }
+
     Command doSaveAndCloseEditMode(final DataType dataType) {
         return () -> {
-            final List<DataType> updateDataTypes = persist(dataType);
-            dataTypeList.refreshItemsByUpdatedDataTypes(updateDataTypes);
+            dataTypeList.refreshItemsByUpdatedDataTypes(persist(dataType));
             closeEditMode();
         };
     }
 
     List<DataType> persist(final DataType dataType) {
         return dataTypeManager
-                .from(dataType)
-                .withSubDataTypes(dataTypeSelectComponent.getSubDataTypes())
-                .get()
-                .update();
+            .from(dataType)
+            .withSubDataTypes(dataTypeSelectComponent.getSubDataTypes())
+            .get()
+            .update();
     }
 
     void discardNewDataType() {
@@ -250,12 +262,13 @@ public class DataTypeListItem {
 
     DataType discardDataTypeProperties() {
         return dataTypeManager
-                .withDataType(getDataType())
-                .withName(getOldName())
-                .withType(getOldType())
-                .withConstraint(getOldConstraint())
-                .asList(getOldIsList())
-                .get();
+            .withDataType(getDataType())
+            .withName(getOldName())
+            .withType(getOldType())
+            .withConstraint(getOldConstraint())
+            .withConstraintType(getOldConstraintType())
+            .asList(getOldIsList())
+            .get();
     }
 
     void closeEditMode() {
@@ -300,9 +313,9 @@ public class DataTypeListItem {
 
     List<DataType> removeTopLevelDataTypes(final List<DataType> destroyedDataTypes) {
         return destroyedDataTypes.stream()
-                .filter(dataType -> dataType.isTopLevel() && (isDestroyedDataType(dataType) || isAReferenceToDestroyedDataType(dataType)))
-                .peek(dataTypeList::removeItem)
-                .collect(Collectors.toList());
+            .filter(dataType -> dataType.isTopLevel() && (isDestroyedDataType(dataType) || isAReferenceToDestroyedDataType(dataType)))
+            .peek(dataTypeList::removeItem)
+            .collect(Collectors.toList());
     }
 
     private boolean isDestroyedDataType(final DataType dataType) {
@@ -315,12 +328,21 @@ public class DataTypeListItem {
 
     DataType updateProperties(final DataType dataType) {
         return dataTypeManager
-                .from(dataType)
-                .withName(getName())
-                .withType(getType())
-                .withConstraint(getConstraint())
-                .asList(isList())
-                .get();
+            .from(dataType)
+            .withName(getName())
+            .withType(getType())
+            .withConstraint(getConstraint())
+            .withConstraintType(getConstraintType())
+            .asList(isList())
+            .get();
+    }
+
+    private String getConstraintType() {
+        final ConstraintType constraint = dataTypeConstraintComponent.getConstraintType();
+        if (constraint == null) {
+            return "";
+        }
+        return constraint.value();
     }
 
     private String getName() {
@@ -349,6 +371,13 @@ public class DataTypeListItem {
 
     String getOldConstraint() {
         return oldConstraint;
+    }
+
+    String getOldConstraintType(){
+        if (oldConstraintType == null) {
+            return "";
+        }
+        return oldConstraintType.value();
     }
 
     boolean getOldIsList() {
@@ -409,9 +438,9 @@ public class DataTypeListItem {
     String getNewDataTypeHash(final DataType newDataType,
                               final String referenceDataTypeHash) {
         return Stream
-                .of(referenceDataTypeHash, newDataType.getName())
-                .filter(s -> !isEmpty(s))
-                .collect(Collectors.joining("."));
+            .of(referenceDataTypeHash, newDataType.getName())
+            .filter(s -> !isEmpty(s))
+            .collect(Collectors.joining("."));
     }
 
     private DataType newDataType() {

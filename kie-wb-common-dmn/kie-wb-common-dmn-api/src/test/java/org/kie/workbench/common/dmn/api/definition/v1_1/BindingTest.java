@@ -16,20 +16,35 @@
 
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
+import org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRefHelper;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({HasTypeRefHelper.class})
 public class BindingTest {
 
     private Binding binding;
 
     @Before
     public void setup() {
-        this.binding = new Binding();
+        this.binding = spy(new Binding());
     }
 
     @Test
@@ -59,5 +74,28 @@ public class BindingTest {
 
         assertEquals(variable,
                      binding.getVariable());
+    }
+
+    @Test
+    public void testGetHasTypeRefs() {
+
+        final Expression expression = mock(Expression.class);
+        final InformationItem parameter = mock(InformationItem.class);
+        final HasTypeRef hasTypeRef1 = mock(HasTypeRef.class);
+        final HasTypeRef hasTypeRef2 = mock(HasTypeRef.class);
+        final HasTypeRef hasTypeRef3 = mock(HasTypeRef.class);
+        final HasTypeRef hasTypeRef4 = mock(HasTypeRef.class);
+
+        doReturn(expression).when(binding).getExpression();
+        doReturn(parameter).when(binding).getParameter();
+
+        mockStatic(HasTypeRefHelper.class);
+        when(HasTypeRefHelper.getNotNullHasTypeRefs(expression)).thenReturn(asList(hasTypeRef1, hasTypeRef2));
+        when(HasTypeRefHelper.getNotNullHasTypeRefs(parameter)).thenReturn(asList(hasTypeRef3, hasTypeRef4));
+
+        final List<HasTypeRef> actualHasTypeRefs = binding.getHasTypeRefs();
+        final List<HasTypeRef> expectedHasTypeRefs = asList(hasTypeRef1, hasTypeRef2, hasTypeRef3, hasTypeRef4);
+
+        assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
     }
 }

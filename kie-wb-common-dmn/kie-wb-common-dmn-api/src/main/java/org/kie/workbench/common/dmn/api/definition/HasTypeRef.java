@@ -18,7 +18,7 @@ package org.kie.workbench.common.dmn.api.definition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 
-public interface HasTypeRef {
+public interface HasTypeRef extends HasTypeRefs {
 
     QName getTypeRef();
 
