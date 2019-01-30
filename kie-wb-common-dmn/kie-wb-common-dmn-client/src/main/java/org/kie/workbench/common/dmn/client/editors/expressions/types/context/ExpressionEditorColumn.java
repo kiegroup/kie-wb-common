@@ -111,7 +111,9 @@ public class ExpressionEditorColumn extends DMNGridColumn<BaseGrid<? extends Exp
     }
 
     @Override
-    public void edit(GridCell<Optional<BaseExpressionGrid>> cell, GridBodyCellEditContext context, Consumer<GridCellValue<Optional<BaseExpressionGrid>>> callback) {
+    public void edit(final GridCell<Optional<BaseExpressionGrid>> cell,
+                     final GridBodyCellEditContext context,
+                     final Consumer<GridCellValue<Optional<BaseExpressionGrid>>> callback) {
         if (cell.getValue().getValue().isPresent()) {
             final BaseExpressionGrid cellGrid = cell.getValue().getValue().get();
             if (cellGrid instanceof LiteralExpressionGrid || cellGrid instanceof UndefinedExpressionGrid) {

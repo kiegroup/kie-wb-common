@@ -19,9 +19,10 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.assertj.core.api.Assertions;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,10 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.mocks.MockHasDOMElementResourcesHeaderMetaData;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.function.FunctionGrid;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionGrid;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationGrid;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -48,17 +53,30 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
+<<<<<<< HEAD
+=======
+import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellEditContext;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidget;
+>>>>>>> DROOLS-3175: Tests
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer;
 import org.uberfire.mocks.EventSourceMock;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -147,7 +165,7 @@ public class ExpressionEditorColumnTest {
     @Test
     public void testMinimalWidthNoContent() throws Exception {
         gridData.appendColumn(column);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(DEFAULT_WIDTH);
+        assertThat(column.getMinimumWidth()).isEqualTo(DEFAULT_WIDTH);
     }
 
     /**
@@ -164,7 +182,7 @@ public class ExpressionEditorColumnTest {
         mockCells(0, 0, 100d);
         mockCells(1, 0, 150);
         mockCells(2, 0, 125);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(150);
+        assertThat(column.getMinimumWidth()).isEqualTo(150);
     }
 
     /**
@@ -181,7 +199,7 @@ public class ExpressionEditorColumnTest {
         mockCells(0, 0, 100);
         mockCells(1, 0, 50, 60);
         mockCells(2, 0, 105);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(110);
+        assertThat(column.getMinimumWidth()).isEqualTo(110);
     }
 
     /**
@@ -198,7 +216,7 @@ public class ExpressionEditorColumnTest {
         mockCells(0, 0, 100);
         mockCells(1, 0, 50, 60);
         mockCells(2, 0, 50, 60, 10);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(120);
+        assertThat(column.getMinimumWidth()).isEqualTo(120);
     }
 
     /**
@@ -215,7 +233,7 @@ public class ExpressionEditorColumnTest {
         mockCells(0, 0, 99);
         mockCells(1, 0, 30, 30, 30);
         mockCells(2, 0, 49, 50);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(DEFAULT_WIDTH);
+        assertThat(column.getMinimumWidth()).isEqualTo(DEFAULT_WIDTH);
     }
 
     /**
@@ -232,7 +250,7 @@ public class ExpressionEditorColumnTest {
         mockCells(0, 0, 100);
         mockCells(1, 0);
         mockCells(2, 0, 50, 60);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(110);
+        assertThat(column.getMinimumWidth()).isEqualTo(110);
     }
 
     /**
@@ -249,7 +267,7 @@ public class ExpressionEditorColumnTest {
         mockCellsWithPadding(0, 0, PADDING, 100);
         mockCellsWithPadding(1, 0, PADDING, 150);
         mockCellsWithPadding(2, 0, PADDING, 125);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(170);
+        assertThat(column.getMinimumWidth()).isEqualTo(170);
     }
 
     /**
@@ -266,7 +284,7 @@ public class ExpressionEditorColumnTest {
         mockCellsWithPadding(0, 0, PADDING, 100);
         mockCellsWithPadding(1, 0, PADDING, 50, 60);
         mockCellsWithPadding(2, 0, PADDING, 105);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(130);
+        assertThat(column.getMinimumWidth()).isEqualTo(130);
     }
 
     /**
@@ -283,7 +301,7 @@ public class ExpressionEditorColumnTest {
         mockCellsWithPadding(0, 0, PADDING, 100);
         mockCellsWithPadding(1, 0, PADDING, 50, 60);
         mockCellsWithPadding(2, 0, PADDING, 50, 60, 10);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(140);
+        assertThat(column.getMinimumWidth()).isEqualTo(140);
     }
 
     /**
@@ -300,7 +318,7 @@ public class ExpressionEditorColumnTest {
         mockCellsWithPadding(0, 0, PADDING, 99);
         mockCellsWithPadding(1, 0, PADDING, 30, 30, 30);
         mockCellsWithPadding(2, 0, PADDING, 49, 50);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(119);
+        assertThat(column.getMinimumWidth()).isEqualTo(119);
     }
 
     /**
@@ -317,7 +335,7 @@ public class ExpressionEditorColumnTest {
         mockCellsWithPadding(0, 0, PADDING, 100);
         mockCellsWithPadding(1, 0, PADDING);
         mockCellsWithPadding(2, 0, PADDING, 50, 60);
-        Assertions.assertThat(column.getMinimumWidth()).isEqualTo(130);
+        assertThat(column.getMinimumWidth()).isEqualTo(130);
     }
 
     @Test
@@ -330,10 +348,10 @@ public class ExpressionEditorColumnTest {
         mockCells(1, 0, 110);
         mockCells(2, 0, 50, 60);
         column.setWidthInternal(200D);
-        Assertions.assertThat(getColumnWidth(0, 0, 0)).isEqualTo(200D);
-        Assertions.assertThat(getColumnWidth(1, 0, 0)).isEqualTo(200D);
-        Assertions.assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
-        Assertions.assertThat(getColumnWidth(2, 0, 1)).isEqualTo(150D);
+        assertThat(getColumnWidth(0, 0, 0)).isEqualTo(200D);
+        assertThat(getColumnWidth(1, 0, 0)).isEqualTo(200D);
+        assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
+        assertThat(getColumnWidth(2, 0, 1)).isEqualTo(150D);
     }
 
     @Test
@@ -346,9 +364,9 @@ public class ExpressionEditorColumnTest {
         mockCells(1, 0);
         mockCells(2, 0, 50, 60);
         column.setWidthInternal(200D);
-        Assertions.assertThat(getColumnWidth(0, 0, 0)).isEqualTo(200D);
-        Assertions.assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
-        Assertions.assertThat(getColumnWidth(2, 0, 1)).isEqualTo(150D);
+        assertThat(getColumnWidth(0, 0, 0)).isEqualTo(200D);
+        assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
+        assertThat(getColumnWidth(2, 0, 1)).isEqualTo(150D);
     }
 
     @Test
@@ -361,12 +379,12 @@ public class ExpressionEditorColumnTest {
         mockCells(1, 0, 30, 30, 30);
         mockCells(2, 0, 50, 60);
         column.setWidthInternal(80D);
-        Assertions.assertThat(getColumnWidth(0, 0, 0)).isEqualTo(80D);
-        Assertions.assertThat(getColumnWidth(1, 0, 0)).isEqualTo(30D);
-        Assertions.assertThat(getColumnWidth(1, 0, 1)).isEqualTo(30D);
-        Assertions.assertThat(getColumnWidth(1, 0, 2)).isEqualTo(20D);
-        Assertions.assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
-        Assertions.assertThat(getColumnWidth(2, 0, 1)).isEqualTo(30D);
+        assertThat(getColumnWidth(0, 0, 0)).isEqualTo(80D);
+        assertThat(getColumnWidth(1, 0, 0)).isEqualTo(30D);
+        assertThat(getColumnWidth(1, 0, 1)).isEqualTo(30D);
+        assertThat(getColumnWidth(1, 0, 2)).isEqualTo(20D);
+        assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
+        assertThat(getColumnWidth(2, 0, 1)).isEqualTo(30D);
     }
 
     @Test
@@ -377,6 +395,61 @@ public class ExpressionEditorColumnTest {
         column.destroyResources();
 
         verify(mockHeaderMetaData).destroyResources();
+    }
+
+    @Test
+    public void testEditUndefinedExpressionGrid() {
+        testIsEditOfInnerGridCustomized(mock(UndefinedExpressionGrid.class), true);
+    }
+
+    @Test
+    public void testEditLiteralExpressionGrid() {
+        testIsEditOfInnerGridCustomized(mock(LiteralExpressionGrid.class), true);
+    }
+
+    @Test
+    public void testEditContextGrid() {
+        testIsEditOfInnerGridCustomized(mock(ContextGrid.class), false);
+    }
+
+    @Test
+    public void testEditRelationGrid() {
+        testIsEditOfInnerGridCustomized(mock(RelationGrid.class), false);
+    }
+
+    @Test
+    public void testEditFunctionGrid() {
+        testIsEditOfInnerGridCustomized(mock(FunctionGrid.class), false);
+    }
+
+    private void testIsEditOfInnerGridCustomized(final BaseExpressionGrid grid, final boolean isEditCustomized) {
+        final double width = 100.0;
+        final double height = 80.0;
+        doReturn(width).when(grid).getWidth();
+        doReturn(height).when(grid).getHeight();
+
+        final GridCell<Optional<BaseExpressionGrid>> cellMock = mock(GridCell.class);
+        final GridCellValue<Optional<BaseExpressionGrid>> cellValueMock = mock(GridCellValue.class);
+        doReturn(cellValueMock).when(cellMock).getValue();
+        doReturn(Optional.of(grid)).when(cellValueMock).getValue();
+
+        final GridBodyCellEditContext editContextMock = mock(GridBodyCellEditContext.class);
+        final Consumer<GridCellValue<Optional<BaseExpressionGrid>>> gridCellValueConsumerMock = mock(Consumer.class);
+
+        column.edit(cellMock, editContextMock, gridCellValueConsumerMock);
+
+        if (isEditCustomized) {
+            final ArgumentCaptor<Point2D> pointCaptor = ArgumentCaptor.forClass(Point2D.class);
+
+            verify(grid).startEditingCell(pointCaptor.capture());
+
+            final Point2D editLocation = pointCaptor.getValue();
+            assertThat(editLocation)
+                    .hasFieldOrPropertyWithValue("x", width / 2)
+                    .hasFieldOrPropertyWithValue("y", height / 2);
+        } else {
+            verify(grid, never()).startEditingCell(any(Point2D.class));
+        }
     }
 
     private void mockCells(final int rowIndex,
