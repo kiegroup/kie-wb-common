@@ -58,6 +58,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
@@ -324,6 +326,8 @@ public class ClientBPMNDocumentationServiceTest {
                                                          new Actors(),
                                                          new Groupid(TASK_GROUPID),
                                                          new AssignmentsInfo(),
+                                                         new NotificationsInfo(),
+                                                         new ReassignmentsInfo(),
                                                          new IsAsync(true),
                                                          new Skippable(),
                                                          new Priority(TASK_PRIORITY),
