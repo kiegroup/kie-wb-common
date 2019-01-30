@@ -44,16 +44,12 @@ public abstract class AbstractInstallExecutor extends AbstractExecutor {
     }
 
     @Override
-    protected String getStartBuildMessage() {
-        return CONSTANTS.Building();
-    }
-
-    @Override
     protected void start(final BuildExecutionContext context) {
         buildAndInstall(context, getPreferredDeploymentMode());
     }
 
     protected void buildAndInstall(final BuildExecutionContext context, final DeploymentMode mode) {
+        showBuildMessage();
         buildServiceCaller.call((RemoteCallback<BuildResults>) result -> {
 
             if (result.getErrorMessages().isEmpty()) {

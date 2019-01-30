@@ -25,6 +25,8 @@ import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildExe
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.dialog.BuildDialog;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources.CONSTANTS;
+
 public abstract class AbstractExecutor implements Executor {
 
     protected final Caller<BuildService> buildServiceCaller;
@@ -51,16 +53,18 @@ public abstract class AbstractExecutor implements Executor {
 
         validator.validate(context);
 
-        buildDialog.startBuild(getStartBuildMessage());
+        buildDialog.startBuild();
 
         start(context);
+    }
+
+    protected void showBuildMessage() {
+        buildDialog.showBusyIndicator(CONSTANTS.Building());
     }
 
     protected void finish() {
         buildDialog.stopBuild();
     }
-
-    protected abstract String getStartBuildMessage();
 
     protected abstract void start(BuildExecutionContext context);
 }

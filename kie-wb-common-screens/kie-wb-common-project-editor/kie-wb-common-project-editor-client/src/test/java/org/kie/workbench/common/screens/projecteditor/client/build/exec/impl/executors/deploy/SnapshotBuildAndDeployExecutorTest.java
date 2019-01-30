@@ -82,6 +82,11 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
         runner = spy(new SnapshotBuildAndDeployExecutor(buildService, buildResultsEvent, notificationEvent, buildDialog, deploymentPopup, specManagementService, settings));
     }
 
+    @Override
+    protected KieServerMode getPreferredKieServerMode() {
+        return KieServerMode.DEVELOPMENT;
+    }
+
     @Test
     public void testBuildAndDeploySingleServerTemplateStartServer() {
         final ServerTemplate serverTemplate = new ServerTemplate(SERVER_TEMPLATE_ID, SERVER_TEMPLATE_NAME);
@@ -91,7 +96,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -127,7 +133,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
 
@@ -165,7 +172,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
 
@@ -194,7 +202,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -228,7 +237,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verify(conflictingRepositoriesPopup, never()).show();
 
@@ -252,7 +262,9 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
         when(buildServiceMock.buildAndDeploy(any(), any(DeploymentMode.class))).thenReturn(results);
 
         runner.run(context);
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
         verify(buildDialog, atLeastOnce()).stopBuild();
     }
@@ -268,7 +280,7 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
 
         ArgumentCaptor<DeploymentPopup.Driver> driverArgumentCaptor = ArgumentCaptor.forClass(DeploymentPopup.Driver.class);
 
@@ -277,6 +289,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
         DeploymentPopup.Driver driver = driverArgumentCaptor.getValue();
 
         driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
         verifyNotification(ProjectEditorResources.CONSTANTS.DeploySuccessfulAndContainerStarted(), NotificationEvent.NotificationType.SUCCESS);
@@ -309,7 +323,8 @@ public class SnapshotBuildAndDeployExecutorTest extends AbstractBuildAndDeployEx
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
 

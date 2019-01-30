@@ -70,8 +70,9 @@ public class SnapshotBuildAndDeployExecutor extends AbstractBuildAndDeployExecut
 
     @Override
     void buildDeployWithOneServerTemplate(final BuildExecutionContext context, final ServerTemplate serverTemplate) {
-        context.setServerTemplate(serverTemplate);
+        showBuildMessage();
 
+        context.setServerTemplate(serverTemplate);
         Set<String> containers = BuildUtils.extractExistingContainers(serverTemplate);
 
         buildServiceCaller.call((RemoteCallback<BuildResults>) result -> {

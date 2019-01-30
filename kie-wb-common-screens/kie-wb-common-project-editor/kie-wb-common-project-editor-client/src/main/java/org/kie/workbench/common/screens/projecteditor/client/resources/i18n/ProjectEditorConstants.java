@@ -329,7 +329,7 @@ public interface ProjectEditorConstants
 
     String DeployFailed();
 
-    String DeploymentSkippedDueToNoServerTemplateConfigured();
+    String DeploymentSkippedDueToNoServerTemplateConfiguredForMode(String mode);
 
     String DeploySuccessfulButContainerFailedToStart();
 

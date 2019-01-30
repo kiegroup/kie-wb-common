@@ -65,11 +65,6 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
     }
 
     @Override
-    protected String getStartBuildMessage() {
-        return CONSTANTS.Building();
-    }
-
-    @Override
     protected void start(final BuildExecutionContext context) {
         specManagementService.call((ServerTemplateList serverTemplates) -> {
             List<ServerTemplate> templates = getServerTemplates(serverTemplates);
@@ -105,10 +100,11 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
     abstract void buildDeployWithMultipleServerTemplates(BuildExecutionContext context, List<ServerTemplate> serverTemplates);
 
     private void buildDeployWithoutServerTemplate(final BuildExecutionContext context, final DeploymentMode mode) {
+        showBuildMessage();
         buildServiceCaller.call((RemoteCallback<BuildResults>) result -> {
             if (result.getErrorMessages().isEmpty()) {
                 notificationEvent.fire(new NotificationEvent(CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS));
-                notificationEvent.fire(new NotificationEvent(CONSTANTS.DeploymentSkippedDueToNoServerTemplateConfigured(), NotificationEvent.NotificationType.WARNING));
+                notificationEvent.fire(new NotificationEvent(CONSTANTS.DeploymentSkippedDueToNoServerTemplateConfiguredForMode(preferedKieServerMode.name().toLowerCase()), NotificationEvent.NotificationType.WARNING));
             } else {
                 notificationEvent.fire(new NotificationEvent(CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR));
             }
@@ -123,7 +119,6 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
 
     protected void saveContainerSpecAndMaybeStartContainer(final BuildExecutionContext context, final ContainerSpec containerSpec) {
         specManagementService.call(ignore -> {
-
             if (!context.isStartContainer()) {
                 notificationEvent.fire(new NotificationEvent(CONSTANTS.DeploySuccessful(), NotificationEvent.NotificationType.SUCCESS));
                 finish();

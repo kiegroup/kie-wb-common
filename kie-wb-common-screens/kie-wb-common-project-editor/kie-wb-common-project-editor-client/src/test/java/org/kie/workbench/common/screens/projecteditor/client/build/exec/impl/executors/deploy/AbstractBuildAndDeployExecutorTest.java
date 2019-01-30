@@ -24,6 +24,7 @@ import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.junit.Test;
+import org.kie.server.api.model.KieServerMode;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.AbstractExecutorTest;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.mockito.invocation.InvocationOnMock;
@@ -41,13 +42,15 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public abstract class AbstractBuildAndDeployExecutorTest<RUNNER extends AbstractBuildAndDeployExecutor> extends AbstractExecutorTest<RUNNER> {
 
+    protected abstract KieServerMode getPreferredKieServerMode();
+
     @Test
     public void testBuildAndDeployWithoutServerTemplate() {
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
-        verifyNotification(ProjectEditorResources.CONSTANTS.DeploymentSkippedDueToNoServerTemplateConfigured(), NotificationEvent.NotificationType.WARNING);
+        verifyNotification(ProjectEditorResources.CONSTANTS.DeploymentSkippedDueToNoServerTemplateConfiguredForMode(getPreferredKieServerMode().name().toLowerCase()), NotificationEvent.NotificationType.WARNING);
         verify(notificationEvent, times(2)).fire(any(NotificationEvent.class));
         verify(buildDialog, atLeastOnce()).stopBuild();
 
@@ -66,7 +69,7 @@ public abstract class AbstractBuildAndDeployExecutorTest<RUNNER extends Abstract
         when(buildServiceMock.buildAndDeploy(any(), any(DeploymentMode.class))).thenReturn(results);
 
         runner.run(context);
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
         verify(buildDialog, atLeastOnce()).stopBuild();
     }
@@ -90,7 +93,7 @@ public abstract class AbstractBuildAndDeployExecutorTest<RUNNER extends Abstract
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog, times(2)).showBusyIndicator(CONSTANTS.Building());
 
         verify(notificationEvent, times(2)).fire(any(NotificationEvent.class));
         verify(buildDialog, atLeastOnce()).stopBuild();

@@ -68,7 +68,9 @@ public class DefaultInstallExecutorTest extends AbstractInstallExecutorTest<Defa
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verify(buildDialog).hideBusyIndicator();
 

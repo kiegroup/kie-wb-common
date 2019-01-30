@@ -35,11 +35,10 @@ public class BuildDialog {
         return building;
     }
 
-    public void startBuild(String message) {
+    public void startBuild() {
         if (building) {
             throw new IllegalStateException("Build already running");
         }
-        showBusyIndicator(message);
         building = true;
     }
 

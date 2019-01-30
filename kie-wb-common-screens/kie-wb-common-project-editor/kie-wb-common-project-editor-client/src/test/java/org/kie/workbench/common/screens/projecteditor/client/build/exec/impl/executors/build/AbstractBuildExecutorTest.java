@@ -43,12 +43,10 @@ public abstract class AbstractBuildExecutorTest extends AbstractExecutorTest<Bui
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
-
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
-
         verify(buildResultsEvent).fire(any());
-
         verify(buildDialog).stopBuild();
     }
 
@@ -66,12 +64,10 @@ public abstract class AbstractBuildExecutorTest extends AbstractExecutorTest<Bui
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
-
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
-
         verify(buildResultsEvent).fire(any());
-
         verify(buildDialog).stopBuild();
     }
 
@@ -83,12 +79,10 @@ public abstract class AbstractBuildExecutorTest extends AbstractExecutorTest<Bui
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
-
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verify(notificationEvent, never()).fire(any());
-
         verify(buildResultsEvent, never()).fire(any());
-
         verify(buildDialog).stopBuild();
     }
 
@@ -104,7 +98,8 @@ public abstract class AbstractBuildExecutorTest extends AbstractExecutorTest<Bui
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verify(buildServiceMock).build(eq(module));
         verify(buildDialog).stopBuild();
     }
@@ -121,7 +116,8 @@ public abstract class AbstractBuildExecutorTest extends AbstractExecutorTest<Bui
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
         verify(buildServiceMock).build(eq(module));
         verify(buildDialog).stopBuild();
     }

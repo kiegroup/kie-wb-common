@@ -43,12 +43,10 @@ public class BuildExecutor extends AbstractExecutor {
     }
 
     @Override
-    protected String getStartBuildMessage() {
-        return CONSTANTS.Building();
-    }
-
-    @Override
     protected void start(final BuildExecutionContext context) {
+
+        showBuildMessage();
+
         buildServiceCaller.call((RemoteCallback<BuildResults>) result -> {
 
             if (result.getErrorMessages().isEmpty()) {

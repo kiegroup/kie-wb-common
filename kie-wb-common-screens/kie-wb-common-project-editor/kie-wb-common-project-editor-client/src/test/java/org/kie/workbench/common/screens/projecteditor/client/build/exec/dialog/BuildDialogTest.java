@@ -74,13 +74,15 @@ public class BuildDialogTest {
 
         checkStartBuild();
 
-        Assertions.assertThatThrownBy(() -> dialog.startBuild(MESSAGE))
+        Assertions.assertThatThrownBy(() -> dialog.startBuild())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Build already running");
     }
 
     private void checkStartBuild() {
-        dialog.startBuild(MESSAGE);
+        dialog.startBuild();
+
+        dialog.showBusyIndicator(MESSAGE);
 
         verify(view).showBusyIndicator(MESSAGE);
 

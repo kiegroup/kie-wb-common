@@ -63,6 +63,11 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
         runner = spy(new DefaultBuildAndDeployExecutor(buildService, buildResultsEvent, notificationEvent, buildDialog, deploymentPopup, specManagementService, conflictingRepositoriesPopup));
     }
 
+    @Override
+    protected KieServerMode getPreferredKieServerMode() {
+        return KieServerMode.REGULAR;
+    }
+
     @Test
     public void testBuildAndDeploySingleServerTemplate() {
         final ServerTemplate serverTemplate = new ServerTemplate(SERVER_TEMPLATE_ID, SERVER_TEMPLATE_NAME);
@@ -72,7 +77,8 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -105,7 +111,8 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -140,9 +147,27 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
 
-        verify(deploymentPopup).show(any());
+        ArgumentCaptor<DeploymentPopup.Driver> driverArgumentCaptor = ArgumentCaptor.forClass(DeploymentPopup.Driver.class);
+
+        verify(deploymentPopup).show(driverArgumentCaptor.capture());
+
+        DeploymentPopup.Driver driver = driverArgumentCaptor.getValue();
+
+        driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+
+        verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
+        verifyNotification(ProjectEditorResources.CONSTANTS.DeploySuccessfulAndContainerStarted(), NotificationEvent.NotificationType.SUCCESS);
+        verify(notificationEvent, times(2)).fire(any(NotificationEvent.class));
+
+        verify(buildDialog, times(2)).stopBuild();
+
+        driver.cancel();
+
+        verify(buildDialog, times(3)).stopBuild();
     }
 
     @Test
@@ -157,7 +182,8 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verify(conflictingRepositoriesPopup).show();
     }
@@ -175,7 +201,8 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verify(conflictingRepositoriesPopup, never()).show();
 
@@ -194,7 +221,7 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
 
         ArgumentCaptor<DeploymentPopup.Driver> driverArgumentCaptor = ArgumentCaptor.forClass(DeploymentPopup.Driver.class);
 
@@ -203,6 +230,8 @@ public class DefaultBuildAndDeployExecutorTest extends AbstractBuildAndDeployExe
         DeploymentPopup.Driver driver = driverArgumentCaptor.getValue();
 
         driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
         verifyNotification(ProjectEditorResources.CONSTANTS.DeploySuccessfulAndContainerStarted(), NotificationEvent.NotificationType.SUCCESS);

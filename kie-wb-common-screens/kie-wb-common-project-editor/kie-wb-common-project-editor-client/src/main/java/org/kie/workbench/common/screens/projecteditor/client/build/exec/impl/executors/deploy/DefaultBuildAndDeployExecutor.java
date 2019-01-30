@@ -88,6 +88,7 @@ public class DefaultBuildAndDeployExecutor extends AbstractBuildAndDeployExecuto
     }
 
     private void buildAndDeploy(final BuildExecutionContext context, final DeploymentMode deploymentMode) {
+        showBuildMessage();
         buildServiceCaller.call((RemoteCallback<BuildResults>) buildResults -> onBuildDeploySuccess(context, buildResults),
                                 (ErrorCallback<Message>) (message, throwable) -> {
                                     onBuildDeployError(context, throwable);

@@ -84,6 +84,11 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
         runner = spy(new SnapshotRedeployExecutor(buildService, buildResultsEvent, notificationEvent, buildDialog, deploymentPopup, specManagementService, settings));
     }
 
+    @Override
+    protected KieServerMode getPreferredKieServerMode() {
+        return KieServerMode.DEVELOPMENT;
+    }
+
     @Test
     public void testRedeploySingleServerTemplateStartServer() {
         final ServerTemplate serverTemplate = new ServerTemplate(SERVER_TEMPLATE_ID, SERVER_TEMPLATE_NAME);
@@ -93,7 +98,9 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -129,7 +136,9 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
 
@@ -167,7 +176,9 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
 
@@ -196,7 +207,9 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -230,7 +243,9 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verify(conflictingRepositoriesPopup, never()).show();
 
@@ -254,8 +269,13 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
         when(buildServiceMock.buildAndDeploy(any(), any(DeploymentMode.class))).thenReturn(results);
 
         runner.run(context);
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
+
         verify(buildDialog, atLeastOnce()).stopBuild();
     }
 
@@ -271,7 +291,7 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
 
         ArgumentCaptor<DeploymentPopup.Driver> driverArgumentCaptor = ArgumentCaptor.forClass(DeploymentPopup.Driver.class);
 
@@ -280,6 +300,8 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
         DeploymentPopup.Driver driver = driverArgumentCaptor.getValue();
 
         driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
         verifyNotification(ProjectEditorResources.CONSTANTS.DeploySuccessfulAndContainerStarted(), NotificationEvent.NotificationType.SUCCESS);
@@ -312,7 +334,9 @@ public class SnapshotRedeployExecutorTest extends AbstractBuildAndDeployExecutor
 
         runner.run(context);
 
-        verify(buildDialog).startBuild(CONSTANTS.Building());
+        verify(buildDialog).startBuild();
+
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
 
