@@ -47,7 +47,6 @@ import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.EditableHeaderGridWidgetEditCellMouseEventHandler;
@@ -248,16 +247,6 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                                                       sessionCommandManager,
                                                       newCellHasNoValueCommand(),
                                                       newCellHasValueCommand());
-    }
-
-    public TextBoxSingletonDOMElementFactory getBodyTextBoxFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newCellHasNoValueCommand(),
-                                                     newCellHasValueCommand());
     }
 
     protected Function<GridCellTuple, Command> newCellHasNoValueCommand() {

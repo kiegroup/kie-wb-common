@@ -61,7 +61,7 @@ import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverV
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -775,7 +775,7 @@ public class InvocationGridTest {
     public void testBodyFactoryWhenNested() {
         setupGrid(1);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getBodyTextBoxFactory();
+        final TextAreaSingletonDOMElementFactory factory = grid.getBodyTextAreaFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteCellValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetCellValueCommand.class);
     }
@@ -784,7 +784,7 @@ public class InvocationGridTest {
     public void testBodyFactoryWhenNotNested() {
         setupGrid(0);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getBodyTextBoxFactory();
+        final TextAreaSingletonDOMElementFactory factory = grid.getBodyTextAreaFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteCellValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetCellValueCommand.class);
     }
