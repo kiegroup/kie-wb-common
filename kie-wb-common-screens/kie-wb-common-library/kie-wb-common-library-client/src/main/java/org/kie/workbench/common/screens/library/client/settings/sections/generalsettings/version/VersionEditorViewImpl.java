@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.screens.library.client.settings.sections.generalsettings.version;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
@@ -28,12 +32,9 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 @Templated
-public class VersionEditorViewImpl implements VersionEditorView, IsElement {
+public class VersionEditorViewImpl implements VersionEditorView,
+                                              IsElement {
 
     private Presenter presenter;
 

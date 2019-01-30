@@ -17,6 +17,8 @@
 package org.kie.workbench.common.screens.projecteditor.client.build.exec;
 
 public enum BuildType {
-    BUILD, INSTALL,
-    DEPLOY, REDEPLOY
+    BUILD,
+    INSTALL,
+    DEPLOY,
+    REDEPLOY
 }

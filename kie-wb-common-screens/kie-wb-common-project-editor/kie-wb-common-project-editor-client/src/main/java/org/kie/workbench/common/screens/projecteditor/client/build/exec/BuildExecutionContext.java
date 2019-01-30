@@ -18,7 +18,6 @@ package org.kie.workbench.common.screens.projecteditor.client.build.exec;
 
 import org.guvnor.common.services.project.model.Module;
 import org.kie.server.controller.api.model.spec.ServerTemplate;
-import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 
 public class BuildExecutionContext {
 

@@ -89,10 +89,10 @@ public class ProjectMainActionsViewImpl implements ProjectMainActionsView,
     public void setBuildDropDownEnabled(boolean enabled) {
         this.build.disabled = !enabled;
         this.buildCaret.disabled = !enabled;
-        if(enabled) {
-            this.install.classList.remove("disabled");
+        if (enabled) {
+            this.install.classList.remove(DISABLED_CLASS);
         } else {
-            this.install.classList.add("disabled");
+            this.install.classList.add(DISABLED_CLASS);
         }
     }
 
@@ -104,7 +104,7 @@ public class ProjectMainActionsViewImpl implements ProjectMainActionsView,
 
     @Override
     public void setRedeployEnabled(boolean enabled) {
-        if(enabled) {
+        if (enabled) {
             this.redeployLI.classList.remove(DISABLED_CLASS);
         } else {
             this.redeployLI.classList.add(DISABLED_CLASS);
@@ -129,7 +129,7 @@ public class ProjectMainActionsViewImpl implements ProjectMainActionsView,
 
     @EventHandler("redeploy")
     public void onRedeploy(ClickEvent clickEvent) {
-        if(redeployEnabled) {
+        if (redeployEnabled) {
             presenter.triggerRedeploy();
         } else {
             clickEvent.stopPropagation();

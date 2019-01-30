@@ -36,7 +36,7 @@ public class BuildDialog {
     }
 
     public void startBuild(String message) {
-        if(building) {
+        if (building) {
             throw new IllegalStateException("Build already running");
         }
         showBusyIndicator(message);
@@ -49,7 +49,7 @@ public class BuildDialog {
     }
 
     public void showBuildIsAlreadyRunning() {
-        if(building) {
+        if (building) {
             view.showABuildIsAlreadyRunning();
         }
     }

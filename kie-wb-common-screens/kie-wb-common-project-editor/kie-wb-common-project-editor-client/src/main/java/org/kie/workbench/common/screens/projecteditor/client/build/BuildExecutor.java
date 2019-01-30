@@ -16,15 +16,15 @@
 
 package org.kie.workbench.common.screens.projecteditor.client.build;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.Module;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildExecutionContext;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildExecutionManager;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildType;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import static org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildType.BUILD;
 import static org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildType.DEPLOY;
@@ -85,5 +85,4 @@ public class BuildExecutor {
     private GAV projectGAV() {
         return activeModule().getPom().getGav();
     }
-
 }

@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.screens.projecteditor.build.exec;
 
-import org.uberfire.preferences.shared.annotations.Property;
-import org.uberfire.preferences.shared.annotations.WorkbenchPreference;
-import org.uberfire.preferences.shared.bean.BasePreference;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.uberfire.preferences.shared.annotations.Property;
+import org.uberfire.preferences.shared.annotations.WorkbenchPreference;
+import org.uberfire.preferences.shared.bean.BasePreference;
 
 @WorkbenchPreference(identifier = "SnapshotDeploymentSettings")
 public class SnapshotDeploymentSettings implements BasePreference<SnapshotDeploymentSettings> {
@@ -41,7 +41,7 @@ public class SnapshotDeploymentSettings implements BasePreference<SnapshotDeploy
     public void addDeployment(String groupId, String artifactId, String server) {
         Optional<SnapshotDeployment> optional = getDeployment(groupId, artifactId);
 
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             optional.get().setServer(server);
         } else {
             deployments.add(new SnapshotDeployment(groupId, artifactId, server));

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.deploy;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

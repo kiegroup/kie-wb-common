@@ -16,98 +16,77 @@
 
 package org.kie.workbench.common.screens.library.client.screens.project.actions;
 
-import java.util.Optional;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
-import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
-import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
-import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
-import org.kie.workbench.common.screens.library.client.util.LibraryPermissions;
 import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 
 @Dependent
 public class ProjectMainActions implements ProjectMainActionsView.Presenter,
                                            IsElement {
 
-    private final WorkspaceProjectContext workspaceProjectContext;
     private final BuildExecutor buildExecutor;
-    private final LibraryPermissions libraryPermissions;
     private final ProjectMainActionsView view;
 
+    private boolean buildEnabled;
+    private boolean deployEnabled;
+    private boolean redeployEnabled;
+
     @Inject
-    public ProjectMainActions(WorkspaceProjectContext workspaceProjectContext, BuildExecutor buildExecutor, LibraryPermissions libraryPermissions, ProjectMainActionsView view) {
-        this.workspaceProjectContext = workspaceProjectContext;
+    public ProjectMainActions(BuildExecutor buildExecutor, ProjectMainActionsView view) {
         this.buildExecutor = buildExecutor;
-        this.libraryPermissions = libraryPermissions;
         this.view = view;
     }
 
     @PostConstruct
     public void init() {
         view.init(this);
-        view.setBuildDropDownEnabled(userCanBuildProject());
-        view.setBuildAndDeployDropDownEnabled(userCanDeployProject());
-        enableRedeploy(workspaceProjectContext.getActiveWorkspaceProject());
     }
 
-    public void onWorkspaceProjectContextChangeEvent(@Observes WorkspaceProjectContextChangeEvent event) {
-        enableRedeploy(Optional.of(event.getWorkspaceProject()));
+    public void setBuildEnabled(boolean buildEnabled) {
+        this.buildEnabled = buildEnabled;
+        view.setBuildDropDownEnabled(buildEnabled);
     }
 
-    private void enableRedeploy(Optional<WorkspaceProject> optional) {
-        if(optional.isPresent()) {
-            view.setRedeployEnabled(optional.get().getMainModule().getPom().getGav().isSnapshot());
-        } else {
-            view.setRedeployEnabled(false);
-        }
+    public void setDeployEnabled(boolean deployEnabled) {
+        this.deployEnabled = deployEnabled;
+        view.setBuildAndDeployDropDownEnabled(deployEnabled);
+    }
+
+    public void setRedeployEnabled(boolean redeployEnabled) {
+        this.redeployEnabled = redeployEnabled;
+        view.setRedeployEnabled(redeployEnabled);
     }
 
     @Override
     public void triggerBuild() {
-        if (this.userCanBuildProject()) {
+        if (buildEnabled) {
             this.buildExecutor.triggerBuild();
         }
     }
 
     @Override
     public void triggerBuildAndInstall() {
-        if (this.userCanDeployProject()) {
+        if (buildEnabled) {
             this.buildExecutor.triggerBuildAndInstall();
         }
     }
 
     @Override
     public void triggerBuildAndDeploy() {
-        if (this.userCanDeployProject()) {
+        if (deployEnabled) {
             this.buildExecutor.triggerBuildAndDeploy();
         }
     }
 
     @Override
     public void triggerRedeploy() {
-        if (this.userCanDeployProject()) {
-            if(workspaceProjectContext.getActiveModule().get().getPom().getGav().isSnapshot()) {
-                this.buildExecutor.triggerRedeploy();
-            }
+        if (deployEnabled && redeployEnabled) {
+            this.buildExecutor.triggerRedeploy();
         }
-    }
-
-    private boolean userCanDeployProject() {
-        return libraryPermissions.userCanDeployProject(getWorkSpaceProject());
-    }
-
-    private boolean userCanBuildProject() {
-        return libraryPermissions.userCanBuildProject(getWorkSpaceProject());
-    }
-
-    private WorkspaceProject getWorkSpaceProject() {
-        return this.workspaceProjectContext.getActiveWorkspaceProject().get();
     }
 
     @Override

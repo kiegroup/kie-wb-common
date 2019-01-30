@@ -31,6 +31,10 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SpecManagementServiceCDITest {
 
+    private static final String EVALUATION_GAV_1_0 = "org.jbpm:Evaluation:1.0";
+    private static final String EVALUATION_GAV_1_0_2 = "org.jbpm:Evaluation:1.0-2";
+    private static final String EVALUATION_GAV_1_0_3 = "org.jbpm:Evaluation:1.0-3";
+
     private static final String TEMPLATE_ID = "templateId";
     private static final String CONTAINER_ID = "containerId";
 
@@ -54,7 +58,7 @@ public class SpecManagementServiceCDITest {
         assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "111"));
         assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "xxx"));
         assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "aaa:bbb:ccc"));
-        assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "org.jbpm:Evaluation:1.0"));
+        assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, EVALUATION_GAV_1_0));
         assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "org.jbpm:Evaluation:1.0-SNAPSHOT"));
         assertTrue(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "org.jbpm:Evaluation:1.0_demo"));
         assertFalse(specManagementServiceCDI.isContainerIdValid(TEMPLATE_ID, "org.jbpm:Evaluation:1.0/SNAPSHOT"));
@@ -81,12 +85,12 @@ public class SpecManagementServiceCDITest {
     public void testValidContainerIdWhenContainerIdIsValidInTheFirstAttempt() {
         final ServerTemplate template = mock(ServerTemplate.class);
 
-        when(template.getContainerSpec("org.jbpm:Evaluation:1.0")).thenReturn(null);
+        when(template.getContainerSpec(EVALUATION_GAV_1_0)).thenReturn(null);
         doReturn(template).when(specManagementService).getServerTemplate(TEMPLATE_ID);
 
-        final String containerId = specManagementServiceCDI.validContainerId(TEMPLATE_ID, "org.jbpm:Evaluation:1.0");
+        final String containerId = specManagementServiceCDI.validContainerId(TEMPLATE_ID, EVALUATION_GAV_1_0);
 
-        assertEquals(containerId, "org.jbpm:Evaluation:1.0");
+        assertEquals(containerId, EVALUATION_GAV_1_0);
     }
 
     @Test
@@ -94,13 +98,13 @@ public class SpecManagementServiceCDITest {
         final ServerTemplate template = mock(ServerTemplate.class);
         final ContainerSpec containerSpec = mock(ContainerSpec.class);
 
-        when(template.getContainerSpec("org.jbpm:Evaluation:1.0")).thenReturn(containerSpec);
-        when(template.getContainerSpec("org.jbpm:Evaluation:1.0-2")).thenReturn(null);
+        when(template.getContainerSpec(EVALUATION_GAV_1_0)).thenReturn(containerSpec);
+        when(template.getContainerSpec(EVALUATION_GAV_1_0_2)).thenReturn(null);
         doReturn(template).when(specManagementService).getServerTemplate(TEMPLATE_ID);
 
-        final String containerId = specManagementServiceCDI.validContainerId(TEMPLATE_ID, "org.jbpm:Evaluation:1.0");
+        final String containerId = specManagementServiceCDI.validContainerId(TEMPLATE_ID, EVALUATION_GAV_1_0);
 
-        assertEquals(containerId, "org.jbpm:Evaluation:1.0-2");
+        assertEquals(containerId, EVALUATION_GAV_1_0_2);
     }
 
     @Test
@@ -108,14 +112,14 @@ public class SpecManagementServiceCDITest {
         final ServerTemplate template = mock(ServerTemplate.class);
         final ContainerSpec containerSpec = mock(ContainerSpec.class);
 
-        when(template.getContainerSpec("org.jbpm:Evaluation:1.0")).thenReturn(containerSpec);
-        when(template.getContainerSpec("org.jbpm:Evaluation:1.0-2")).thenReturn(containerSpec);
-        when(template.getContainerSpec("org.jbpm:Evaluation:1.0-3")).thenReturn(null);
+        when(template.getContainerSpec(EVALUATION_GAV_1_0)).thenReturn(containerSpec);
+        when(template.getContainerSpec(EVALUATION_GAV_1_0_2)).thenReturn(containerSpec);
+        when(template.getContainerSpec(EVALUATION_GAV_1_0_3)).thenReturn(null);
         doReturn(template).when(specManagementService).getServerTemplate(TEMPLATE_ID);
 
-        final String containerId = specManagementServiceCDI.validContainerId(TEMPLATE_ID, "org.jbpm:Evaluation:1.0");
+        final String containerId = specManagementServiceCDI.validContainerId(TEMPLATE_ID, EVALUATION_GAV_1_0);
 
-        assertEquals(containerId, "org.jbpm:Evaluation:1.0-3");
+        assertEquals(containerId, EVALUATION_GAV_1_0_3);
     }
 
     @Test

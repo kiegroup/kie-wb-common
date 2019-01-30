@@ -36,13 +36,13 @@ import org.kie.workbench.common.screens.library.client.screens.assets.AssetsScre
 import org.kie.workbench.common.screens.library.client.screens.assets.events.UpdatedAssetsEvent;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ContributorsListPresenter;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ProjectContributorsListServiceImpl;
+import org.kie.workbench.common.screens.library.client.screens.project.actions.ProjectMainActions;
 import org.kie.workbench.common.screens.library.client.screens.project.branch.delete.DeleteBranchPopUpScreen;
 import org.kie.workbench.common.screens.library.client.screens.project.delete.DeleteProjectPopUpScreen;
 import org.kie.workbench.common.screens.library.client.screens.project.rename.RenameProjectPopUpScreen;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPermissions;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
-import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
@@ -98,6 +98,8 @@ public class ProjectScreen {
         void showBusyIndicator(String loadingMessage);
 
         void hideBusyIndicator();
+
+        void addMainAction(HTMLElement element);
     }
 
     private final LibraryPlaces libraryPlaces;
@@ -120,6 +122,7 @@ public class ProjectScreen {
     private Promises promises;
     private Event<NotificationEvent> notificationEvent;
     private ProjectContributorsListServiceImpl projectContributorsListService;
+    private ProjectMainActions projectMainActions;
 
     @Inject
     public ProjectScreen(final View view,
@@ -140,7 +143,8 @@ public class ProjectScreen {
                          final ProjectNameValidator projectNameValidator,
                          final Promises promises,
                          final Event<NotificationEvent> notificationEvent,
-                         final ProjectContributorsListServiceImpl projectContributorsListService) {
+                         final ProjectContributorsListServiceImpl projectContributorsListService,
+                         final ProjectMainActions projectMainActions) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
         this.assetsScreen = assetsScreen;
@@ -161,6 +165,7 @@ public class ProjectScreen {
         this.notificationEvent = notificationEvent;
         this.projectContributorsListService = projectContributorsListService;
         this.elemental2DomUtil = new Elemental2DomUtil();
+        this.projectMainActions = projectMainActions;
     }
 
     @PostConstruct
@@ -168,6 +173,7 @@ public class ProjectScreen {
         this.workspaceProject = this.libraryPlaces.getActiveWorkspace();
         this.view.init(this);
         this.view.setTitle(libraryPlaces.getActiveWorkspace().getName());
+        this.view.addMainAction(projectMainActions.getElement());
         this.resolveAssetsCount();
         this.showAssets();
 
@@ -185,6 +191,8 @@ public class ProjectScreen {
         this.view.setDeleteProjectVisible(userCanDeleteProject);
         this.view.setDeleteBranchVisible(userCanDeleteBranch);
 
+        setupMainActions();
+
         this.view.setActionsVisible(userCanUpdateProject || userCanDeleteProject || userCanBuildProject || userCanDeployProject || userCanCreateProjects);
 
         newFileUploader.acceptContext(new Callback<Boolean, Void>() {
@@ -201,6 +209,12 @@ public class ProjectScreen {
 
         contributorsListScreen.setup(projectContributorsListService,
                                      contributorCount -> this.view.setContributorsCount(contributorCount));
+    }
+
+    private void setupMainActions() {
+        projectMainActions.setBuildEnabled(userCanBuildProject());
+        projectMainActions.setDeployEnabled(userCanDeployProject());
+        projectMainActions.setRedeployEnabled(workspaceProject.getMainModule().getPom().getGav().isSnapshot());
     }
 
     @OnMayClose
@@ -224,6 +238,7 @@ public class ProjectScreen {
         if (current.getWorkspaceProject() != null) {
             this.workspaceProject = current.getWorkspaceProject();
             this.view.setTitle(workspaceProject.getName());
+            setupMainActions();
         }
     }
 

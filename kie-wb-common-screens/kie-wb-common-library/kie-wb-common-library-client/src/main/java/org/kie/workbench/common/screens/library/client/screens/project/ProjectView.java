@@ -132,7 +132,7 @@ public class ProjectView implements ProjectScreen.View,
 
     @Inject
     @DataField("main-actions")
-    private ProjectMainActions mainActions;
+    private HTMLDivElement mainActions;
 
     @Override
     public void setAssetsCount(int count) {
@@ -203,6 +203,12 @@ public class ProjectView implements ProjectScreen.View,
     @Override
     public String getReimportSuccessfulMessage() {
         return translationService.getTranslation(LibraryConstants.ReimportSuccessful);
+    }
+
+    @Override
+    public void addMainAction(HTMLElement element) {
+        domUtil.removeAllElementChildren(mainActions);
+        mainActions.appendChild(element);
     }
 
     @Override

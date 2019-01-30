@@ -33,8 +33,8 @@ import org.kie.workbench.common.screens.projecteditor.build.exec.SnapshotDeploym
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildExecutionContext;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildExecutionManager;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.BuildType;
-import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.Executor;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.dialog.BuildDialog;
+import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.Executor;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.build.BuildExecutor;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.deploy.DefaultBuildAndDeployExecutor;
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.deploy.SnapshotBuildAndDeployExecutor;
@@ -111,7 +111,7 @@ public class BuildExecutionManagerImpl implements BuildExecutionManager {
     private void execute(final Map<BuildType, Executor> executionMap, final BuildType buildType, final BuildExecutionContext context) {
         Optional<Executor> optional = Optional.ofNullable(executionMap.get(buildType));
 
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             optional.get().run(context);
         } else {
             throw new IllegalArgumentException("Cannot run " + buildType + " for module " + context.getModule().getPom().getGav().toString());

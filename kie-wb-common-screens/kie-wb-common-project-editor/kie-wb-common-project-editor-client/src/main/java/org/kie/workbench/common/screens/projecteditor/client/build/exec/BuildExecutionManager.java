@@ -19,5 +19,4 @@ package org.kie.workbench.common.screens.projecteditor.client.build.exec;
 public interface BuildExecutionManager {
 
     void execute(BuildType buildType, BuildExecutionContext context);
-
 }

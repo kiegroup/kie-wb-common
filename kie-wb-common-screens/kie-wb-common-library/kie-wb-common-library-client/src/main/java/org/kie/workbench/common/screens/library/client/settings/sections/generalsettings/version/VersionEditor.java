@@ -16,16 +16,17 @@
 
 package org.kie.workbench.common.screens.library.client.settings.sections.generalsettings.version;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.uberfire.mvp.ParameterizedCommand;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 @Dependent
-public class VersionEditor implements VersionEditorView.Presenter, IsElement {
+public class VersionEditor implements VersionEditorView.Presenter,
+                                      IsElement {
 
     public static final String SNAPSHOT = "-SNAPSHOT";
 
@@ -117,7 +118,6 @@ public class VersionEditor implements VersionEditorView.Presenter, IsElement {
             changeVersionCommand.execute(version);
         }
     }
-
 
     private String normalizeVersion(String version) {
         if (isSnapshot(version)) {

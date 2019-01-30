@@ -21,5 +21,4 @@ import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 public interface BuildDialogView extends HasBusyIndicator {
 
     void showABuildIsAlreadyRunning();
-
 }
