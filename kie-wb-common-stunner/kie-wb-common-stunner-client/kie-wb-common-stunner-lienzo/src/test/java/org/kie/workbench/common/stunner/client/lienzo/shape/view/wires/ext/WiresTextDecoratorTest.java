@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.shape.ITextWrapper;
+import com.ait.lienzo.client.core.shape.ITextWrapperWithBoundaries;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.TextBoundsWrap;
 import com.ait.lienzo.client.core.types.BoundingBox;
@@ -36,6 +37,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -49,6 +51,12 @@ public class WiresTextDecoratorTest {
 
     @Mock
     private ViewEventHandlerManager manager;
+
+    @Mock
+    private ITextWrapper textWrapper;
+
+    @Mock
+    private ITextWrapperWithBoundaries textWrapperWithBoundaries;
 
     private final BoundingBox bb = new BoundingBox(new Point2D(0, 0),
                                                    new Point2D(100, 100));
@@ -125,5 +133,16 @@ public class WiresTextDecoratorTest {
 
         verify(decorator).updateTextBoundaries();
         assertEquals(expectedWrapper.getClass(), text.getWrapper().getClass());
+    }
+
+    @Test
+    public void ensureSetWrapBoundariesIsCalled(){
+        final WiresTextDecorator decorator = spy(new WiresTextDecorator(eventHandlerManager, bb));
+        doCallRealMethod().when(decorator).setTextWrapper(any());
+        doReturn(textWrapperWithBoundaries).when(decorator).getTextWrapper(any());
+
+        decorator.setTextWrapper(any());
+
+        verify(textWrapperWithBoundaries).setWrapBoundaries(any());
     }
 }

@@ -270,10 +270,14 @@ public class WiresTextDecorator {
 
     public void setTextWrapper(final TextWrapperStrategy strategy) {
 
-        final ITextWrapper wrapper = TextWrapperProvider.get(strategy, text);
+        final ITextWrapper wrapper = getTextWrapper(strategy);
         this.textWrapper = wrapper;
         text.setWrapper(textWrapper);
         updateTextBoundaries();
+    }
+
+    ITextWrapper getTextWrapper(final TextWrapperStrategy strategy) {
+        return TextWrapperProvider.get(strategy, text);
     }
 
     @SuppressWarnings("unchecked")
