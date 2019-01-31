@@ -44,8 +44,10 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.invocation
 import org.kie.workbench.common.dmn.client.commands.expressions.types.invocation.DeleteParameterBindingCommand;
 import org.kie.workbench.common.dmn.client.commands.general.DeleteCellValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.DeleteHasNameCommand;
+import org.kie.workbench.common.dmn.client.commands.general.DeleteHeaderValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetCellValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
+import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
@@ -62,6 +64,7 @@ import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -769,6 +772,24 @@ public class InvocationGridTest {
         assertThat(redrawCommandCaptor.getAllValues()).hasSize(2);
         redrawCommandCaptor.getAllValues().get(1).execute();
         verify(gridLayer).draw();
+    }
+
+    @Test
+    public void testHeaderFactoryWhenNested() {
+        setupGrid(1);
+
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderTextBoxFactory();
+        assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteHeaderValueCommand.class);
+        assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetHeaderValueCommand.class);
+    }
+
+    @Test
+    public void testHeaderFactoryWhenNotNested() {
+        setupGrid(0);
+
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderTextBoxFactory();
+        assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteHeaderValueCommand.class);
+        assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetHeaderValueCommand.class);
     }
 
     @Test
