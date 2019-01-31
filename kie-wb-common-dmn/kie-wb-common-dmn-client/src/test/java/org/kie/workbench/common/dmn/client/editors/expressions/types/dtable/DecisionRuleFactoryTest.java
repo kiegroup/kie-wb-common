@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputClause;
@@ -57,17 +58,16 @@ public class DecisionRuleFactoryTest {
 
         final List<UnaryTests> inputEntries = rule.getInputEntry();
         assertThat(inputEntries.size()).isEqualTo(2);
-        assertUnaryTestsText(inputEntries.get(0), DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
-        assertUnaryTestsText(inputEntries.get(1), DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
-        assertThat(inputEntries.get(0).getParent()).isEqualTo(rule);
-        assertThat(inputEntries.get(1).getParent()).isEqualTo(rule);
+        assertThat(inputEntries)
+                .allSatisfy(unaryTests -> assertUnaryTestsText(unaryTests, DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT))
+                .allSatisfy(unaryTests -> assertThat(unaryTests.getConstraintType()).isNull())
+                .allSatisfy(unaryTests -> assertThat(unaryTests.getParent()).isEqualTo(rule));
 
         final List<LiteralExpression> outputEntries = rule.getOutputEntry();
         assertThat(outputEntries.size()).isEqualTo(2);
-        assertLiteralExpressionText(outputEntries.get(0), DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
-        assertLiteralExpressionText(outputEntries.get(1), DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
-        assertThat(outputEntries.get(0).getParent()).isEqualTo(rule);
-        assertThat(outputEntries.get(1).getParent()).isEqualTo(rule);
+        assertThat(outputEntries)
+                .allSatisfy(literalExpression -> assertLiteralExpressionText(literalExpression, DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT))
+                .allSatisfy(literalExpression -> assertThat(literalExpression.getParent()).isEqualTo(rule));
 
         assertThat(rule.getDescription().getValue()).isEqualTo(DecisionTableDefaultValueUtilities.RULE_DESCRIPTION);
 
@@ -82,6 +82,8 @@ public class DecisionRuleFactoryTest {
         assertThat(inputEntries.size()).isEqualTo(2);
         inputEntries.get(0).getText().setValue(INPUT_CLAUSE_TEXT_1);
         inputEntries.get(1).getText().setValue(INPUT_CLAUSE_TEXT_2);
+        inputEntries.get(0).setConstraintType(ConstraintType.ENUMERATION);
+        inputEntries.get(1).setConstraintType(ConstraintType.RANGE);
 
         final List<LiteralExpression> outputEntries = rule.getOutputEntry();
         assertThat(outputEntries.size()).isEqualTo(2);
@@ -98,10 +100,11 @@ public class DecisionRuleFactoryTest {
         assertThat(duplicateInputEntries.size()).isEqualTo(2);
         assertUnaryTestsText(duplicateInputEntries.get(0), INPUT_CLAUSE_TEXT_1);
         assertUnaryTestsText(duplicateInputEntries.get(1), INPUT_CLAUSE_TEXT_2);
+        assertThat(duplicateInputEntries.get(0).getConstraintType()).isEqualTo(ConstraintType.ENUMERATION);
+        assertThat(duplicateInputEntries.get(1).getConstraintType()).isEqualTo(ConstraintType.RANGE);
         assertUnaryTestsInstancesAreNotTheSame(inputEntries.get(0), duplicateInputEntries.get(0));
         assertUnaryTestsInstancesAreNotTheSame(inputEntries.get(1), duplicateInputEntries.get(1));
-        assertThat(duplicateInputEntries.get(0).getParent()).isEqualTo(duplicate);
-        assertThat(duplicateInputEntries.get(1).getParent()).isEqualTo(duplicate);
+        assertThat(duplicateInputEntries).allSatisfy(unaryTests -> assertThat(unaryTests.getParent()).isEqualTo(duplicate));
 
         final List<LiteralExpression> duplicateOutputEntries = duplicate.getOutputEntry();
         assertThat(duplicateOutputEntries.size()).isEqualTo(2);
@@ -109,8 +112,7 @@ public class DecisionRuleFactoryTest {
         assertLiteralExpressionText(duplicateOutputEntries.get(1), OUTPUT_CLAUSE_TEXT_2);
         assertLiteralExpressionInstancesAreNotTheSame(outputEntries.get(0), duplicateOutputEntries.get(0));
         assertLiteralExpressionInstancesAreNotTheSame(outputEntries.get(1), duplicateOutputEntries.get(1));
-        assertThat(duplicateOutputEntries.get(0).getParent()).isEqualTo(duplicate);
-        assertThat(duplicateOutputEntries.get(1).getParent()).isEqualTo(duplicate);
+        assertThat(duplicateOutputEntries).allSatisfy(literalExpression -> assertThat(literalExpression.getParent()).isEqualTo(duplicate));
 
         assertThat(duplicate.getDescription().getValue()).isEqualTo(DESCRIPTION_TEXT);
 

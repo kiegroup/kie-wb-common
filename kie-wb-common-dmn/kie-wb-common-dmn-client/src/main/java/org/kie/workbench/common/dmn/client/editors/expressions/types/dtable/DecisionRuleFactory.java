@@ -54,6 +54,7 @@ public class DecisionRuleFactory {
         for (UnaryTests ie : source.getInputEntry()) {
             final UnaryTests ut = new UnaryTests();
             ut.getText().setValue(ie.getText().getValue());
+            ut.setConstraintType(ie.getConstraintType());
             rule.getInputEntry().add(ut);
             ut.setParent(rule);
         }
