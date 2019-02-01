@@ -76,6 +76,10 @@ public class TreeExplorerViewTest {
         this.testedTreeExplorerView = spy(new TreeExplorerView(presenter,
                                                                tree,
                                                                handlerRegistration));
+
+        when(item.getUuid()).thenReturn(ITEM_UUID);
+        when(item.getParentItem()).thenReturn(parentItem);
+        when(parentItem.getUuid()).thenReturn(PARENT_UUID);
     }
 
     @Test
@@ -177,11 +181,20 @@ public class TreeExplorerViewTest {
         assertEquals(NAME, treeItem.getLabel());
     }
 
-    @Test
-    public void isItemNameChanged() {
+    private TreeItem mockOldItem() {
         TreeItem oldItem = mock(TreeItem.class);
         when(tree.getItemByUuid(ITEM_UUID)).thenReturn(oldItem);
+        when(oldItem.getLabel()).thenReturn(NAME);
+        when(oldItem.getParentItem()).thenReturn(parentItem);
+        when(oldItem.getUuid()).thenReturn(ITEM_UUID);
+        return oldItem;
+    }
+
+    @Test
+    public void isItemNameChanged() {
+        TreeItem oldItem = mockOldItem();
         when(oldItem.getLabel()).thenReturn("OLD_ITEM");
+
         boolean isItemChanged = testedTreeExplorerView.isItemChanged(ITEM_UUID,
                                                                      PARENT_UUID,
                                                                      NAME,
@@ -191,13 +204,9 @@ public class TreeExplorerViewTest {
 
     @Test
     public void isItemParentChanged() {
-        TreeItem oldItem = mock(TreeItem.class);
-        when(tree.getItemByUuid(ITEM_UUID)).thenReturn(oldItem);
-        when(oldItem.getLabel()).thenReturn(NAME);
-        when(item.getParentItem()).thenReturn(parentItem);
-        when(oldItem.getParentItem()).thenReturn(parentItem);
-        when(oldItem.getUuid()).thenReturn(ITEM_UUID);
+        mockOldItem();
         when(parentItem.getUuid()).thenReturn("PARENT_CHANGED");
+
         assertTrue(testedTreeExplorerView.isItemChanged(ITEM_UUID,
                                                         PARENT_UUID,
                                                         NAME,
@@ -206,17 +215,12 @@ public class TreeExplorerViewTest {
 
     @Test
     public void isItemIndexChanged() {
-        TreeItem oldItem = mock(TreeItem.class);
-        when(tree.getItemByUuid(ITEM_UUID)).thenReturn(oldItem);
-        when(oldItem.getLabel()).thenReturn(NAME);
-        when(item.getParentItem()).thenReturn(parentItem);
+        TreeItem oldItem = mockOldItem();
         when(item.getUuid()).thenReturn("INDEX_CHANGED");
-        when(oldItem.getParentItem()).thenReturn(parentItem);
-        when(oldItem.getUuid()).thenReturn(ITEM_UUID);
-        when(parentItem.getUuid()).thenReturn(PARENT_UUID);
         when(parentItem.getChildCount()).thenReturn(2);
         when(parentItem.getChild(eq(0))).thenReturn(item);
         when(parentItem.getChild(eq(1))).thenReturn(oldItem);
+
         assertTrue(testedTreeExplorerView.isItemChanged(ITEM_UUID,
                                                         PARENT_UUID,
                                                         NAME,
@@ -233,16 +237,11 @@ public class TreeExplorerViewTest {
 
     @Test
     public void isNotItemChanged() {
-        TreeItem oldItem = mock(TreeItem.class);
-        when(tree.getItemByUuid(ITEM_UUID)).thenReturn(oldItem);
-        when(oldItem.getLabel()).thenReturn(NAME);
-        when(item.getParentItem()).thenReturn(parentItem);
-        when(item.getUuid()).thenReturn(ITEM_UUID);
-        when(oldItem.getParentItem()).thenReturn(parentItem);
-        when(oldItem.getUuid()).thenReturn(ITEM_UUID);
+        mockOldItem();
         when(parentItem.getUuid()).thenReturn(PARENT_UUID);
         when(parentItem.getChildCount()).thenReturn(1);
         when(parentItem.getChild(eq(0))).thenReturn(item);
+
         assertFalse(testedTreeExplorerView.isItemChanged(ITEM_UUID,
                                                          PARENT_UUID,
                                                          NAME,

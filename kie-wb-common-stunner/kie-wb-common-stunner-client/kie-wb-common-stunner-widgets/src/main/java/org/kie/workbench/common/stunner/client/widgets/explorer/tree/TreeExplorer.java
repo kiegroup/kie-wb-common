@@ -220,6 +220,9 @@ public class TreeExplorer implements IsWidget {
                                                       false);
                                           }
                                       });
+                } else {
+                    // highlight the updated item which is not a parent
+                    view.setSelectedItem(element.getUUID());
                 }
             }
         }
