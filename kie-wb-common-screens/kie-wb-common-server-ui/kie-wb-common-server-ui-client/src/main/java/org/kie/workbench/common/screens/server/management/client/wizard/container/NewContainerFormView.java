@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -26,6 +27,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import elemental2.dom.HTMLElement;
 import org.gwtbootstrap3.client.ui.CheckBox;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
@@ -87,6 +89,11 @@ public class NewContainerFormView extends Composite
     @Inject
     @DataField("new-version")
     TextBox version;
+
+    @Inject
+    @Named("span")
+    @DataField("new-version-help")
+    private HTMLElement versionHelp;
 
     @Inject
     @DataField("new-start-container")
@@ -179,6 +186,7 @@ public class NewContainerFormView extends Composite
         groupId.setText("");
         artifactId.setText("");
         version.setText("");
+        versionHelp.textContent = "";
         startContainer.setValue(false);
 
         noErrors();
@@ -318,27 +326,37 @@ public class NewContainerFormView extends Composite
     }
 
     @Override
+    public void errorRegularModeSupportsDoesntSnapshots() {
+        versionHelp.textContent = translationService.getTranslation(Constants.NewContainerFormView_RegularModeSupportsDoesntSnapshots);
+    }
+
+    @Override
+    public void errorDevelopmentModeSupportsSnapshots() {
+        versionHelp.textContent = translationService.getTranslation(Constants.NewContainerFormView_DevelopmentModeSupportsSnapshots);
+    }
+
+    @Override
     public String getInvalidErrorMessage() {
-        return translationService.format(Constants.NewContainerFormView_InvalidErrorMessage);
+        return translationService.getTranslation(Constants.NewContainerFormView_InvalidErrorMessage);
     }
 
     @Override
     public String getNewContainerWizardTitle() {
-        return translationService.format(Constants.NewContainerFormView_NewContainerWizardTitle);
+        return translationService.getTranslation(Constants.NewContainerFormView_NewContainerWizardTitle);
     }
 
     @Override
     public String getNewContainerWizardSaveSuccess() {
-        return translationService.format(Constants.NewContainerFormView_NewContainerWizardSaveSuccess);
+        return translationService.getTranslation(Constants.NewContainerFormView_NewContainerWizardSaveSuccess);
     }
 
     @Override
     public String getNewContainerWizardSaveError() {
-        return translationService.format(Constants.NewContainerFormView_NewContainerWizardSaveError);
+        return translationService.getTranslation(Constants.NewContainerFormView_NewContainerWizardSaveError);
     }
 
     private String getTitleText() {
-        return translationService.format(Constants.NewContainerFormView_TitleText);
+        return translationService.getTranslation(Constants.NewContainerFormView_TitleText);
     }
 
     private String getStartContainerCheckBoxText() {
