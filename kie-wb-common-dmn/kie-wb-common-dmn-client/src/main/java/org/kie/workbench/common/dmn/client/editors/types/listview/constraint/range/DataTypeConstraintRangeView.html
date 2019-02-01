@@ -14,7 +14,39 @@
   ~ limitations under the License.
   -->
 
-<div>
-    <!-- TODO: Range component - https://issues.jboss.org/browse/DROOLS-3019 -->
-    Range component
+<div class="container-fluid" data-field="body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-8">
+                <label for="startValue">
+                    <span data-field="startValueLabel" data-i18n-key="StartValue"></span>
+                </label>
+            </div>
+            <div class="col-md-4">
+                <label for="endValue"><span data-field="endValueLabel" data-i18n-key="EndValue"></span></label>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <input id="startValue" class="input-field" type="text" data-field="start-value"/>
+            </div>
+            <div class="col-md-4 text-center"><span>to</span></div>
+            <div class="col-md-4">
+                <input class="input-field" id="endValue" type="text" data-field="end-value"/>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="col-md-8">
+                <input type="checkbox" data-field="include-start-value"><span data-i18n-key="IncludeStartValue"></span></input>
+            </div>
+            <div class="col-md-4">
+                <input type="checkbox" data-field="include-end-value"><span data-i18n-key="IncludeEndValue"></span></input>
+            </div>
+        </div>
+        <div class="col-md12">
+            <span class="tip" data-i18n-key="ProTip"></span>
+        </div>
+    </div>
 </div>

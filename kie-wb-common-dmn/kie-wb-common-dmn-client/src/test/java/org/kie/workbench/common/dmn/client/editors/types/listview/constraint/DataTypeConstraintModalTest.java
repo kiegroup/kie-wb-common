@@ -73,6 +73,7 @@ public class DataTypeConstraintModalTest {
 
         modal.setup();
 
+        verify(constraintRange).setModal(modal);
         verify(modal).superSetup();
         verify(modal).setWidth(WIDTH);
         verify(view).init(modal);

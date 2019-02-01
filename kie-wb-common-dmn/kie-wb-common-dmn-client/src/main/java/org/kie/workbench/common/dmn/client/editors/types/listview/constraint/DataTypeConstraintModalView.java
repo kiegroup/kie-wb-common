@@ -166,6 +166,16 @@ public class DataTypeConstraintModalView implements DataTypeConstraintModal.View
         setPickerValue(getSelectPicker(), getConstraintType());
     }
 
+    @Override
+    public void enableOKButton() {
+        okButton.classList.remove("disabled");
+    }
+
+    @Override
+    public void disableOkButton() {
+        okButton.classList.add("disabled");
+    }
+
     private String getConstraintType() {
         if (presenter.getConstraintType() == null) {
             return presenter.inferComponentType(presenter.getConstraintValue()).value();
