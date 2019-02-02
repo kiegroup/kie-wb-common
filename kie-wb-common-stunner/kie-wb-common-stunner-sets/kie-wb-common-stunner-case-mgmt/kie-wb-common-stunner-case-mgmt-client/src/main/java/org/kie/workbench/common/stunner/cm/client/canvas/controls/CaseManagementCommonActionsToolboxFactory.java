@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.canvas.controls;
+package org.kie.workbench.common.stunner.cm.client.canvas.controls;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
@@ -22,28 +22,25 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
+import org.kie.workbench.common.stunner.bpmn.client.canvas.controls.AbstractCommonActionsToolboxFactory;
+import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolbox;
 import org.kie.workbench.common.stunner.forms.client.components.toolbox.FormGenerationToolboxAction;
 
-/**
- * Produces same toolbox content and view as the @CommonActionsToolbox but
- * it additionally add the form generation action, if it applies.
- */
 @Dependent
-@BPMN
-public class BPMNCommonActionsToolboxFactory extends AbstractCommonActionsToolboxFactory {
+@CaseManagementEditor
+public class CaseManagementCommonActionsToolboxFactory extends AbstractCommonActionsToolboxFactory {
 
-    protected BPMNCommonActionsToolboxFactory() {
+    protected CaseManagementCommonActionsToolboxFactory() {
         super();
     }
 
     @Inject
-    public BPMNCommonActionsToolboxFactory(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
-                                           final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
-                                           final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views) {
+    public CaseManagementCommonActionsToolboxFactory(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
+                                                     final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
+                                                     final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views) {
         super(commonActionToolbox, generateFormsActions, views);
     }
 

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.forms.jbpm.server.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,8 @@ public class BPMFinderServiceImpl implements BPMFinderService {
 
     private static final Logger logger = LoggerFactory.getLogger(BPMFinderServiceImpl.class);
 
+    private static final String[] BPMN_FILE_EXTENSIONS = {"bpmn2", "bpmn", "bpmn-cm"};
+
     private IOService ioService;
 
     private KieModuleService moduleService;
@@ -94,12 +97,7 @@ public class BPMFinderServiceImpl implements BPMFinderService {
 
         Path rootPath = moduleService.resolveModule(path).getRootPath();
 
-        scannProcessesForType(rootPath,
-                              "bpmn2",
-                              operations);
-        scannProcessesForType(rootPath,
-                              "bpmn",
-                              operations);
+        Arrays.stream(BPMN_FILE_EXTENSIONS).forEach(ext -> scannProcessesForType(rootPath, ext, operations));
 
         return operations.getValue();
     }
@@ -124,15 +122,10 @@ public class BPMFinderServiceImpl implements BPMFinderService {
 
         Path rootPath = moduleService.resolveModule(path).getRootPath();
 
-        scannProcessesForType(rootPath,
-                              "bpmn2",
-                              operations);
-
-        if (!operations.getValue().isPresent()) {
-            scannProcessesForType(rootPath,
-                                  "bpmn",
-                                  operations);
-        }
+        Arrays.stream(BPMN_FILE_EXTENSIONS).filter(ext -> {
+            scannProcessesForType(rootPath, ext, operations);
+            return operations.getValue().isPresent();
+        }).findAny();
 
         return operations.getValue().orElse(null);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.forms.gen;
+package org.kie.workbench.common.stunner.cm.backend.forms.gen;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.backend.BPMNBackendService;
+import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.AbstractFormGenerationModelProvider;
+import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
+import org.kie.workbench.common.stunner.cm.backend.CaseManagementBackendService;
+import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
 @ApplicationScoped
-public class BPMNFormGenerationModelProvider extends AbstractFormGenerationModelProvider {
+@CaseManagementEditor
+public class CaseManagementFormGenerationModelProvider extends AbstractFormGenerationModelProvider {
 
     // CDI proxy.
-    protected BPMNFormGenerationModelProvider() {
+    protected CaseManagementFormGenerationModelProvider() {
         this(null,
              null);
     }
 
     @Inject
-    public BPMNFormGenerationModelProvider(final BPMNBackendService bpmnBackendService,
-                                           final DefinitionUtils definitionUtils) {
-        super(bpmnBackendService, definitionUtils);
+    public CaseManagementFormGenerationModelProvider(final CaseManagementBackendService cmBackendService,
+                                                     final DefinitionUtils definitionUtils) {
+        super(cmBackendService, definitionUtils);
     }
 
     @PostConstruct
@@ -46,6 +49,6 @@ public class BPMNFormGenerationModelProvider extends AbstractFormGenerationModel
 
     @Override
     protected Class<?> getDefinitionSetClass() {
-        return BPMNDefinitionSet.class;
+        return CaseManagementDefinitionSet.class;
     }
 }

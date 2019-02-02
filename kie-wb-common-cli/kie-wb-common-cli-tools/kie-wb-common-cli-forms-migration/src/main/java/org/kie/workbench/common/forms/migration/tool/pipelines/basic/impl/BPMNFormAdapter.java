@@ -69,7 +69,9 @@ public class BPMNFormAdapter extends AbstractFormAdapter {
                 File file = visitedPath.toFile();
 
                 if (file.isFile()) {
-                    if (fileName.endsWith("." + FormsMigrationConstants.BPMN_EXTENSION) || fileName.endsWith("." + FormsMigrationConstants.BPMN2_EXTENSION)) {
+                    if (fileName.endsWith("." + FormsMigrationConstants.BPMN_EXTENSION)
+                            || fileName.endsWith("." + FormsMigrationConstants.BPMN2_EXTENSION)
+                            || fileName.endsWith("." + FormsMigrationConstants.BPMN_CM_EXTENSION)) {
                         try {
                             BPMNProcess process = analyzer.read(migrationContext.getMigrationServicesCDIWrapper().getIOService().newInputStream(visitedPath));
                             if (process != null) {
