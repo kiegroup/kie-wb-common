@@ -105,7 +105,7 @@ public class DataTypeConstraintRangeView implements DataTypeConstraintRange.View
         this.includeEndValue.checked = includeEndValue;
     }
 
-    private Object onKeyDown(Event event) {
+    private Object onKeyDown(final Event event) {
         if (StringUtils.isEmpty(startValue.value) || StringUtils.isEmpty(endValue.value)) {
             presenter.disableOkButton();
         } else {
