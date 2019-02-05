@@ -17,20 +17,27 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DataTypeConstraintRangeViewTest {
+
+    @Mock
+    private DataTypeConstraintModal modal;
+
+    @Mock
+    private Event event;
 
     @Mock
     private HTMLInputElement startValue;
@@ -51,18 +58,18 @@ public class DataTypeConstraintRangeViewTest {
 
     @Before
     public void setup() {
-        view = new DataTypeConstraintRangeView(startValue,
-                                               endValue,
-                                               includeStartValue,
-                                               includeEndValue);
+        view = spy(new DataTypeConstraintRangeView(startValue,
+                                                   endValue,
+                                                   includeStartValue,
+                                                   includeEndValue));
+
+        view.init(presenter);
+        presenter.setModal(modal);
     }
 
     @Test
     public void testInit() {
-        final DataTypeConstraintRangeView mocked = mock(DataTypeConstraintRangeView.class);
-        doCallRealMethod().when(mocked).init(any());
-        mocked.init(presenter);
-        verify(mocked).setupInputFields();
+        verify(view).setupInputFields();
     }
 
     @Test
@@ -127,5 +134,41 @@ public class DataTypeConstraintRangeViewTest {
         view.setIncludeEndValue(expected);
         final boolean actual = includeEndValue.checked;
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testOnKeyUpEmptyValues() {
+        startValue.value = "";
+        endValue.value = "";
+        view.onKeyUp(event);
+        verify(presenter).disableOkButton();
+        verify(presenter, never()).enableOkButton();
+    }
+
+    @Test
+    public void testOnKeyUpNonEmptyValues() {
+        startValue.value = "1";
+        endValue.value = "2";
+        view.onKeyUp(event);
+        verify(presenter).enableOkButton();
+        verify(presenter, never()).disableOkButton();
+    }
+
+    @Test
+    public void testOnKeyUpNonEmptyStartValue() {
+        startValue.value = "123456";
+        endValue.value = "";
+        view.onKeyUp(event);
+        verify(presenter).disableOkButton();
+        verify(presenter, never()).enableOkButton();
+    }
+
+    @Test
+    public void testOnKeyUpNonEmptyEndValue() {
+        startValue.value = "";
+        endValue.value = "123456";
+        view.onKeyUp(event);
+        verify(presenter).disableOkButton();
+        verify(presenter, never()).enableOkButton();
     }
 }

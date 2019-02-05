@@ -61,8 +61,8 @@ public class DataTypeConstraintRangeView implements DataTypeConstraintRange.View
     }
 
     void setupInputFields() {
-        startValue.onkeyup = this::onKeyDown;
-        endValue.onkeyup = this::onKeyDown;
+        startValue.onkeyup = this::onKeyUp;
+        endValue.onkeyup = this::onKeyUp;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DataTypeConstraintRangeView implements DataTypeConstraintRange.View
         this.includeEndValue.checked = includeEndValue;
     }
 
-    private Object onKeyDown(final Event event) {
+    Object onKeyUp(final Event event) {
         if (StringUtils.isEmpty(startValue.value) || StringUtils.isEmpty(endValue.value)) {
             presenter.disableOkButton();
         } else {

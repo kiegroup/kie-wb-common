@@ -252,4 +252,16 @@ public class DataTypeConstraintModalTest {
         verify(modal).superShow();
         verify(view).onShow();
     }
+
+    @Test
+    public void testEnableOkButton() {
+        modal.enableOkButton();
+        verify(view).enableOkButton();
+    }
+
+    @Test
+    public void testDisableOkButton() {
+        modal.disableOkButton();
+        verify(view).disableOkButton();
+    }
 }

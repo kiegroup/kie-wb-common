@@ -24,7 +24,7 @@
                 </label>
             </div>
             <div class="col-md-4">
-               <span class="required-pf">*</span>
+                <span class="required-pf">*</span>
                 <label for="endValue">
                     <span data-field="endValueLabel" data-i18n-key="EndValue"> </span>
                 </label>
@@ -35,7 +35,7 @@
             <div class="col-md-4">
                 <input id="startValue" class="input-field" type="text" data-field="start-value"/>
             </div>
-            <div class="col-md-4 text-center"><span>to</span></div>
+            <div class="col-md-4 text-center"><span data-i18n-key="To"></span></div>
             <div class="col-md-4">
                 <input class="input-field" id="endValue" type="text" data-field="end-value"/>
             </div>
@@ -43,20 +43,18 @@
 
         <div class="col-md-12">
             <div class="col-md-8">
-                <input type="checkbox" data-field="include-start-value"><span data-i18n-key="IncludeStartValue"></span></input>
+                <input type="checkbox" data-field="include-start-value" id="include-start-value"/>
+                <label for="include-start-value" data-i18n-key="IncludeStartValue"></label>
             </div>
             <div class="col-md-4">
-                <input type="checkbox" data-field="include-end-value"><span data-i18n-key="IncludeEndValue"></span></input>
+                <input type="checkbox" data-field="include-end-value" id="include-end-value"/>
+                <label for="include-end-value" data-i18n-key="IncludeEndValue"></label>
             </div>
         </div>
-        <div class="col-md12">
-        <div class="col-md12">
-            <span class="tip" data-i18n-key="RequiredValue"></span>
-        </div>
+        <div class="col-md-12">
             <hr/>
-        <div class="col-md12">
-            <span class="tip" data-i18n-key="ProTip"></span>
+            <div class="tip" data-i18n-key="RequiredValue"></div>
+            <div class="tip" data-i18n-key="ProTip"></div>
         </div>
-            </div>
     </div>
 </div>
