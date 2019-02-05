@@ -40,7 +40,8 @@ import static org.uberfire.client.views.pfly.selectpicker.JQuerySelectPicker.$;
 @Dependent
 public class DataTypeConstraintModalView implements DataTypeConstraintModal.View {
 
-    public static final String DISABLED_CLASS = "disabled";
+    private static final String DISABLED_CLASS = "disabled";
+
     @DataField("header")
     private final HTMLDivElement header;
 
