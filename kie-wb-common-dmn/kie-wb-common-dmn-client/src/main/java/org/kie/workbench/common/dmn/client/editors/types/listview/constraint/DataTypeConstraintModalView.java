@@ -40,6 +40,7 @@ import static org.uberfire.client.views.pfly.selectpicker.JQuerySelectPicker.$;
 @Dependent
 public class DataTypeConstraintModalView implements DataTypeConstraintModal.View {
 
+    public static final String DISABLED_CLASS = "disabled";
     @DataField("header")
     private final HTMLDivElement header;
 
@@ -167,13 +168,13 @@ public class DataTypeConstraintModalView implements DataTypeConstraintModal.View
     }
 
     @Override
-    public void enableOKButton() {
-        okButton.classList.remove("disabled");
+    public void enableOkButton() {
+        okButton.classList.remove(DISABLED_CLASS);
     }
 
     @Override
     public void disableOkButton() {
-        okButton.classList.add("disabled");
+        okButton.classList.add(DISABLED_CLASS);
     }
 
     private String getConstraintType() {

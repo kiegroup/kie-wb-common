@@ -224,7 +224,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
     }
 
     public void enableOkButton() {
-        getView().enableOKButton();
+        getView().enableOkButton();
     }
 
     public void disableOkButton() {
@@ -241,7 +241,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
         void onShow();
 
-        void enableOKButton();
+        void enableOkButton();
 
         void disableOkButton();
     }
