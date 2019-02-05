@@ -39,6 +39,7 @@ import org.uberfire.mocks.EventSourceMock;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -156,8 +157,9 @@ public class DataTypeConstraintEnumerationTest {
 
         doNothing().when(constraintEnumeration).addEnumerationItem();
 
-        constraintEnumeration.getErrorCallback().error(null, null);
+        final boolean callbackResult = constraintEnumeration.getErrorCallback().error(null, null);
 
+        assertFalse(callbackResult);
         verify(parserWarningEvent).fire(any(DataTypeConstraintParserWarningEvent.class));
         verify(constraintEnumeration).setEnumerationItems(emptyList());
         verify(constraintEnumeration).render();

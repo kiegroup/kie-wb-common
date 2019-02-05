@@ -104,7 +104,7 @@ public class DataTypeConstraintEnumeration implements DataTypeConstraintComponen
         return (message, throwable) -> {
             showWarningMessage();
             loadConstraintValues(emptyList());
-            return true;
+            return false;
         };
     }
 
