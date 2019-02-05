@@ -111,7 +111,7 @@ public class DataTypeConstraintRange implements DataTypeConstraintComponent {
         return builder.toString();
     }
 
-    public void disableOkButton() {
+   void disableOkButton() {
         modal.disableOkButton();
     }
 
