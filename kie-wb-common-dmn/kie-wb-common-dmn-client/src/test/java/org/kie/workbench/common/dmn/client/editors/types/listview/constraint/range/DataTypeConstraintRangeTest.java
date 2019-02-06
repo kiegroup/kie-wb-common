@@ -163,6 +163,24 @@ public class DataTypeConstraintRangeTest {
     }
 
     @Test
+    public void testSetValueQuotedStrings() {
+        constraintRange.setValue("[\"123\"..\"456\"]");
+        verify(view).setIncludeStartValue(true);
+        verify(view).setIncludeEndValue(true);
+        verify(view).setStartValue("\"123\"");
+        verify(view).setEndValue("\"456\"");
+    }
+
+    @Test
+    public void testSetValueStringDots() {
+        constraintRange.setValue("[\"Short\"..\"Long...\"]");
+        verify(view).setIncludeStartValue(true);
+        verify(view).setIncludeEndValue(true);
+        verify(view).setStartValue("\"Short\"");
+        verify(view).setEndValue("\"Long...\"");
+    }
+
+    @Test
     public void testGetValueExcludeBoth() {
         when(view.getIncludeStartValue()).thenReturn(false);
         when(view.getStartValue()).thenReturn("1");
@@ -221,4 +239,28 @@ public class DataTypeConstraintRangeTest {
         final String actual = constraintRange.getValue();
         assertEquals(expected, actual);
     }
+    @Test
+    public void testGetValueQuotedStrings() {
+        when(view.getIncludeStartValue()).thenReturn(true);
+        when(view.getStartValue()).thenReturn("\"some_value\"");
+        when(view.getEndValue()).thenReturn("\"other_value\"");
+        when(view.getIncludeEndValue()).thenReturn(true);
+
+        final String expected = "[\"some_value\"..\"other_value\"]";
+        final String actual = constraintRange.getValue();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetValueStringDots() {
+        when(view.getIncludeStartValue()).thenReturn(true);
+        when(view.getStartValue()).thenReturn("\"Short\"");
+        when(view.getEndValue()).thenReturn("\"Long...\"");
+        when(view.getIncludeEndValue()).thenReturn(true);
+
+        final String expected = "[\"Short\"..\"Long...\"]";
+        final String actual = constraintRange.getValue();
+        assertEquals(expected, actual);
+    }
+
 }
