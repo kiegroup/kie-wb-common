@@ -53,4 +53,9 @@ public class SnapshotDeploymentSettings implements BasePreference<SnapshotDeploy
                 .filter(deployment -> deployment.getGroupId().equals(groupId) && deployment.getArtifactId().equals(artifactId))
                 .findAny();
     }
+
+    @Override
+    public SnapshotDeploymentSettings defaultValue(SnapshotDeploymentSettings defaultValue) {
+        return defaultValue;
+    }
 }

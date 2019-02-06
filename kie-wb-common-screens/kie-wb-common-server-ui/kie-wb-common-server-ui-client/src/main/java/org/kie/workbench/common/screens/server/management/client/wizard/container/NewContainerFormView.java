@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -27,7 +26,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
-import elemental2.dom.HTMLElement;
 import org.gwtbootstrap3.client.ui.CheckBox;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
@@ -90,10 +88,8 @@ public class NewContainerFormView extends Composite
     @DataField("new-version")
     TextBox version;
 
-    @Inject
-    @Named("span")
     @DataField("new-version-help")
-    private HTMLElement versionHelp;
+    Element versionHelp = DOM.createSpan();
 
     @Inject
     @DataField("new-start-container")
@@ -186,7 +182,7 @@ public class NewContainerFormView extends Composite
         groupId.setText("");
         artifactId.setText("");
         version.setText("");
-        versionHelp.textContent = "";
+        versionHelp.setInnerText("");
         startContainer.setValue(false);
 
         noErrors();
@@ -327,12 +323,12 @@ public class NewContainerFormView extends Composite
 
     @Override
     public void errorRegularModeSupportsDoesntSnapshots() {
-        versionHelp.textContent = translationService.getTranslation(Constants.NewContainerFormView_RegularModeSupportsDoesntSnapshots);
+        versionHelp.setInnerText(translationService.getTranslation(Constants.NewContainerFormView_RegularModeSupportsDoesntSnapshots));
     }
 
     @Override
     public void errorDevelopmentModeSupportsSnapshots() {
-        versionHelp.textContent = translationService.getTranslation(Constants.NewContainerFormView_DevelopmentModeSupportsSnapshots);
+        versionHelp.setInnerText(translationService.getTranslation(Constants.NewContainerFormView_DevelopmentModeSupportsSnapshots));
     }
 
     @Override
