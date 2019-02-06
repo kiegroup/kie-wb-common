@@ -97,7 +97,7 @@ public class MigrationToolTest {
     }
 
     @BeforeClass
-    public static void runToolAndCloneProjectRepos() throws GitAPIException {
+    public static void runToolAndCloneProjectRepos() throws GitAPIException, InterruptedException {
         originalSecurityManager = System.getSecurityManager();
         System.setSecurityManager(new NoExitSecurityManager());
 
@@ -340,9 +340,13 @@ public class MigrationToolTest {
                 .get(lineWithContent);
     }
 
-    private FormDefinition getFormFromResources(final String formName) throws IOException {
+    private static File getFormFileFromResources(final String formName) {
         final String formLocation = String.format("src/main/resources/bxms/%s/%s.frm", PROJECT_WITH_FORMS, formName);
-        final File form = getFile(SPACE_B, PROJECT_WITH_FORMS, formLocation);
+        return getFile(SPACE_B, PROJECT_WITH_FORMS, formLocation);
+    }
+
+    private FormDefinition getFormFromResources(final String formName) throws IOException {
+        final File form = getFormFileFromResources(formName);
         final String formContent = FileUtils.readFileToString(form, Charset.defaultCharset());
 
         return FORM_SERIALIZER.deserialize(formContent);
@@ -353,7 +357,7 @@ public class MigrationToolTest {
         Main.main(args);
     }
 
-    private static void cloneAllProjectRepos() throws GitAPIException {
+    private static void cloneAllProjectRepos() throws GitAPIException, InterruptedException {
         cloneProjectRepo(SPACE_A, PROJECT_A1);
         cloneProjectRepo(SPACE_B, PROJECT_B1);
         cloneProjectRepo(SPACE_B, PROJECT_B2);
@@ -361,6 +365,19 @@ public class MigrationToolTest {
         cloneProjectRepo(SPACE_B, PROJECT_WITH_FORMS);
         cloneProjectRepo(SPACE_B, PROJECT_WITH_HISTORY_1);
         cloneProjectRepo(SPACE_B, PROJECT_WITH_HISTORY_2);
+        waitForCloningIsCompleted();
+    }
+
+    private static void waitForCloningIsCompleted() throws InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            final File form = getFormFileFromResources("taskWithDifferentIO-taskform");
+
+            if (form.exists()) {
+                break;
+            }
+
+            Thread.sleep(i * 1000);
+        }
     }
 
     private static void cloneProjectRepo(final String spaceName, final String projectName) throws GitAPIException {
