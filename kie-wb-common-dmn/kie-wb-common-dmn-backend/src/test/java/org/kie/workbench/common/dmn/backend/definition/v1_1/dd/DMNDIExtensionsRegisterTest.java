@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 
+import java.util.Optional;
+
 import javax.xml.namespace.QName;
 
 import com.thoughtworks.xstream.XStream;
@@ -23,6 +25,8 @@ import com.thoughtworks.xstream.io.xml.QNameMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.dmn.model.api.DMNModelInstrumentedBase;
+import org.kie.dmn.model.v1_2.TDefinitions;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -33,9 +37,11 @@ import static org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumen
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDIExtensionsRegister.COMPONENTS_WIDTHS_EXTENSION_ALIAS;
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDIExtensionsRegister.COMPONENT_WIDTHS_ALIAS;
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDIExtensionsRegister.COMPONENT_WIDTH_ALIAS;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DMNDIExtensionsRegisterTest {
@@ -73,7 +79,10 @@ public class DMNDIExtensionsRegisterTest {
 
     @Test
     public void testBeforeMarshal() {
-        register.beforeMarshal(mock(Object.class), qmap);
+        final DMNModelInstrumentedBase base = mock(TDefinitions.class);
+        when(base.getPrefixForNamespaceURI(anyString())).thenReturn(Optional.empty());
+
+        register.beforeMarshal(base, qmap);
 
         verify(qmap).registerMapping(qNameCaptor.capture(),
                                      eq(COMPONENTS_WIDTHS_EXTENSION_ALIAS));

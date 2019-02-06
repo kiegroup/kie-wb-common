@@ -20,6 +20,8 @@ import javax.xml.namespace.QName;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import org.kie.dmn.api.marshalling.DMNExtensionRegister;
+import org.kie.dmn.model.v1_2.KieDMNModelInstrumentedBase;
+import org.kie.dmn.model.v1_2.TDefinitions;
 
 import static org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace.KIE;
 
@@ -43,17 +45,22 @@ public class DMNDIExtensionsRegister implements DMNExtensionRegister {
     @Override
     public void beforeMarshal(final Object o,
                               final QNameMap qmap) {
-        qmap.registerMapping(new QName(KIE.getUri(),
-                                       COMPONENTS_WIDTHS_EXTENSION_ALIAS,
-                                       KIE.getPrefix()),
-                             COMPONENTS_WIDTHS_EXTENSION_ALIAS);
-        qmap.registerMapping(new QName(KIE.getUri(),
-                                       COMPONENT_WIDTHS_ALIAS,
-                                       KIE.getPrefix()),
-                             COMPONENT_WIDTHS_ALIAS);
-        qmap.registerMapping(new QName(KIE.getUri(),
-                                       COMPONENT_WIDTH_ALIAS,
-                                       KIE.getPrefix()),
-                             COMPONENT_WIDTH_ALIAS);
+        if (o instanceof TDefinitions) {
+            final TDefinitions tDefinitions = (TDefinitions) o;
+            final String prefix = tDefinitions.getPrefixForNamespaceURI(KieDMNModelInstrumentedBase.URI_KIE).orElse("kie");
+
+            qmap.registerMapping(new QName(KIE.getUri(),
+                                           COMPONENTS_WIDTHS_EXTENSION_ALIAS,
+                                           prefix),
+                                 COMPONENTS_WIDTHS_EXTENSION_ALIAS);
+            qmap.registerMapping(new QName(KIE.getUri(),
+                                           COMPONENT_WIDTHS_ALIAS,
+                                           prefix),
+                                 COMPONENT_WIDTHS_ALIAS);
+            qmap.registerMapping(new QName(KIE.getUri(),
+                                           COMPONENT_WIDTH_ALIAS,
+                                           prefix),
+                                 COMPONENT_WIDTH_ALIAS);
+        }
     }
 }
