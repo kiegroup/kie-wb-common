@@ -24,7 +24,6 @@ import org.guvnor.messageconsole.events.SystemMessage;
 public interface TestRunnerReportingView
         extends IsWidget {
 
-
     interface Presenter {
 
         void onViewAlerts();
@@ -37,6 +36,8 @@ public interface TestRunnerReportingView
     void showSuccess();
 
     void showFailure();
+
+    void resetDonut();
 
     void showSuccessFailureDiagram(final int passed, final int failed);
 

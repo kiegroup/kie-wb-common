@@ -99,8 +99,7 @@ public class TestRunnerReportingScreenTest {
 
     @Test
     public void initFailureDiagram() {
-        verify(view).showSuccessFailureDiagram(1,
-                                               0);
+        verify(view).resetDonut();
     }
 
     @Test

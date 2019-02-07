@@ -57,6 +57,9 @@ public class TestRunnerReportingViewImpl
     private HTMLAnchorElement viewAlerts;
 
     @DataField
+    private HTMLDivElement donutDivContainer;
+
+    @DataField
     private HTMLDivElement donutDiv;
 
     private TestResultDonutPresenter testResultDonutPresenter;
@@ -70,6 +73,7 @@ public class TestRunnerReportingViewImpl
                                        final HTMLDivElement completedAt,
                                        final HTMLDivElement duration,
                                        final HTMLAnchorElement viewAlerts,
+                                       final HTMLDivElement donutDivContainer,
                                        final HTMLDivElement donutDiv,
                                        final TestResultDonutPresenter testResultDonutPresenter,
                                        final TranslationService translationService) {
@@ -80,6 +84,7 @@ public class TestRunnerReportingViewImpl
         this.completedAt = completedAt;
         this.duration = duration;
         this.viewAlerts = viewAlerts;
+        this.donutDivContainer = donutDivContainer;
         this.donutDiv = donutDiv;
         this.testResultDonutPresenter = testResultDonutPresenter;
         this.translationService = translationService;
@@ -98,6 +103,7 @@ public class TestRunnerReportingViewImpl
         this.duration.textContent = "";
         this.completedAt.textContent = "";
         this.scenariosRun.textContent = "";
+        resetDonut();
     }
 
     @Override
@@ -126,8 +132,15 @@ public class TestRunnerReportingViewImpl
         this.duration.textContent = duration;
     }
 
+    @Override
+    public void resetDonut() {
+        donutDivContainer.hidden = true;
+    }
+
+    @Override
     public void showSuccessFailureDiagram(final int passed,
                                           final int failed) {
+        donutDivContainer.hidden = false;
         testResultDonutPresenter.showSuccessFailureDiagram(passed,
                                                            failed);
     }

@@ -61,8 +61,7 @@ public class TestRunnerReportingScreen
         this.publishBatchMessagesEvent = publishBatchMessagesEvent;
         view.setPresenter(this);
 
-        view.showSuccessFailureDiagram(1,
-                                       0);
+        view.resetDonut();
     }
 
     @DefaultPosition
