@@ -48,7 +48,6 @@ public class ContextTest {
 
     @Test
     public void testGetHasTypeRefs() {
-
         final ContextEntry contextEntry1 = mock(ContextEntry.class);
         final ContextEntry contextEntry2 = mock(ContextEntry.class);
         final List<ContextEntry> contextEntry = asList(contextEntry1, contextEntry2);

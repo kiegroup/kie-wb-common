@@ -54,7 +54,6 @@ public class DecisionTableTest {
 
     @Test
     public void testGetHasTypeRefs() {
-
         final List<InputClause> inputClauses = asList(mock(InputClause.class), mock(InputClause.class));
         final List<OutputClause> outputClauses = asList(mock(OutputClause.class), mock(OutputClause.class));
         final List<DecisionRule> decisionRules = asList(mock(DecisionRule.class), mock(DecisionRule.class));

@@ -47,7 +47,7 @@ public class DMNDIExtensionsRegister implements DMNExtensionRegister {
                               final QNameMap qmap) {
         if (o instanceof TDefinitions) {
             final TDefinitions tDefinitions = (TDefinitions) o;
-            final String prefix = tDefinitions.getPrefixForNamespaceURI(KieDMNModelInstrumentedBase.URI_KIE).orElse("kie");
+            final String prefix = tDefinitions.getPrefixForNamespaceURI(KieDMNModelInstrumentedBase.URI_KIE).orElse(KIE.getPrefix());
 
             qmap.registerMapping(new QName(KIE.getUri(),
                                            COMPONENTS_WIDTHS_EXTENSION_ALIAS,

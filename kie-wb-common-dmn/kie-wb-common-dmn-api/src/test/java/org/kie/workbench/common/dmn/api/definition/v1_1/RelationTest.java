@@ -48,7 +48,6 @@ public class RelationTest {
 
     @Test
     public void testGetHasTypeRefs() {
-
         final List<InformationItem> column = asList(mock(InformationItem.class), mock(InformationItem.class));
         final List<org.kie.workbench.common.dmn.api.definition.v1_1.List> row = asList(mock(org.kie.workbench.common.dmn.api.definition.v1_1.List.class), mock(org.kie.workbench.common.dmn.api.definition.v1_1.List.class));
         final HasTypeRef hasTypeRef1 = mock(HasTypeRef.class);

@@ -1873,6 +1873,12 @@ public class DMNMarshallerTest {
                                                 final Expression expression) {
         final Node<View, ?> decisionNode = nodeOfDefinition(unmarshalledGraph.nodes().iterator(), Decision.class);
         final Expression decisionNodeExpression = ((Decision) decisionNode.getContent().getDefinition()).getExpression();
+
+        // The process of marshalling an Expression that has been programmatically instantiated (vs created in the UI)
+        // leads to the _source_ Expression ComponentWidths being initialised. Therefore to ensure a like-for-like equality
+        // comparison ensure the unmarshalled _target_ Expression has had it's ComponentWidths initialised too.
+        decisionNodeExpression.getComponentWidths();
+        ((Context) decisionNodeExpression).getContextEntry().get(0).getExpression().getComponentWidths();
         assertThat(decisionNodeExpression).isEqualTo(expression);
     }
 

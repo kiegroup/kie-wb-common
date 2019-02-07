@@ -48,7 +48,6 @@ public class InvocationTest {
 
     @Test
     public void testGetHasTypeRefs() {
-
         final Expression expression = mock(Expression.class);
         final List<Binding> binding = asList(mock(Binding.class), mock(Binding.class));
         final HasTypeRef hasTypeRef1 = mock(HasTypeRef.class);

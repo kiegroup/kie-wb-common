@@ -18,9 +18,20 @@ package org.kie.workbench.common.dmn.api.definition;
 
 import java.util.List;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
+
 public interface HasComponentWidths {
 
+    /**
+     * Gets a list of the widths of the different components. A component is considered
+     * a column used to visually represent a Boxed {@link Expression} Grid in the editor.
+     * @return
+     */
     List<Double> getComponentWidths();
 
+    /**
+     * Returns the expected number of components to correctly represent an {@link Expression} in the editor.
+     * @return
+     */
     int getRequiredComponentWidthCount();
 }

@@ -20,12 +20,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.v1_1.common.HasTypeRefHelper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HasTypeRefHelper.class})
@@ -35,7 +36,15 @@ public class LiteralExpressionTest {
 
     @Before
     public void setup() {
-        this.literalExpression = spy(new LiteralExpression());
+        this.literalExpression = new LiteralExpression();
+    }
+
+    @Test
+    public void testGetHasTypeRefs() {
+        final java.util.List<HasTypeRef> actualHasTypeRefs = literalExpression.getHasTypeRefs();
+        final java.util.List<HasTypeRef> expectedHasTypeRefs = singletonList(literalExpression);
+
+        assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
     }
 
     @Test

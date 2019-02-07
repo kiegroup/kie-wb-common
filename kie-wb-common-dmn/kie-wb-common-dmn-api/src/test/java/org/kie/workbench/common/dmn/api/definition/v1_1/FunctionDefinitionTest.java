@@ -48,7 +48,6 @@ public class FunctionDefinitionTest {
 
     @Test
     public void testGetHasTypeRefs() {
-
         final Expression expression = mock(Expression.class);
         final InformationItem informationItem1 = mock(InformationItem.class);
         final InformationItem informationItem2 = mock(InformationItem.class);

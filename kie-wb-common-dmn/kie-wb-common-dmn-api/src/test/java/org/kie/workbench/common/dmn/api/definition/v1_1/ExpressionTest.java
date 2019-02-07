@@ -25,7 +25,6 @@ import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
 
 public class ExpressionTest {
 
@@ -33,17 +32,16 @@ public class ExpressionTest {
 
     @Before
     public void setup() {
-        this.expression = spy(new Expression() {
+        this.expression = new Expression() {
             @Override
             public int getRequiredComponentWidthCount() {
                 return 1;
             }
-        });
+        };
     }
 
     @Test
     public void testGetHasTypeRefs() {
-
         final List<HasTypeRef> actualHasTypeRefs = expression.getHasTypeRefs();
         final List<HasTypeRef> expectedHasTypeRefs = singletonList(expression);
 

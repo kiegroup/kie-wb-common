@@ -48,7 +48,6 @@ public class ListTest {
 
     @Test
     public void testGetHasTypeRefs() {
-
         final List<Expression> expression = asList(mock(Expression.class), mock(Expression.class));
         final HasTypeRef hasTypeRef1 = mock(HasTypeRef.class);
         final HasTypeRef hasTypeRef2 = mock(HasTypeRef.class);

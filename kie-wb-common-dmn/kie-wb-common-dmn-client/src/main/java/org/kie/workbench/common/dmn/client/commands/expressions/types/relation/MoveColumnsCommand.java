@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.commands.expressions.types.relation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.List;
@@ -104,8 +105,10 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                                          relativeOldIndex,
                                          relation.getColumn(),
                                          informationItemIndexesToMove);
-                    moveComponentWidths(Relation.STATIC_COLUMNS + relativeIndex,
-                                        Relation.STATIC_COLUMNS + relativeOldIndex);
+                    CommandUtils.moveComponentWidths(Relation.STATIC_COLUMNS + relativeIndex,
+                                                     Relation.STATIC_COLUMNS + relativeOldIndex,
+                                                     relation.getComponentWidths(),
+                                                     Collections.singletonList(oldIndex));
 
                     updateRowsData(relativeIndex,
                                    relativeOldIndex,
@@ -134,19 +137,6 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                 } else if (relativeIndex > relativeOldIndex) {
                     informationItems.addAll(relativeIndex - informationItemsToMove.size() + 1,
                                             informationItemsToMove);
-                }
-            }
-
-            private void moveComponentWidths(final int index,
-                                             final int oldIndex) {
-                final java.util.List<Double> componentWidths = relation.getComponentWidths();
-                final Double componentWidth = componentWidths.remove(oldIndex);
-                if (index < oldIndex) {
-                    componentWidths.add(index,
-                                        componentWidth);
-                } else if (index > oldIndex) {
-                    componentWidths.add(oldIndex + 1,
-                                        componentWidth);
                 }
             }
 

@@ -26,6 +26,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
+import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapperHelper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapperHelper.DecisionTableSection;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
@@ -113,9 +114,10 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                                 relativeOldIndex,
                                 dtable.getInput(),
                                 inputClauseIndexesToMove);
-                    moveComponentWidths(index,
-                                        oldIndex,
-                                        uiColumnIndexesToMove);
+                    CommandUtils.moveComponentWidths(index,
+                                                     oldIndex,
+                                                     dtable.getComponentWidths(),
+                                                     uiColumnIndexesToMove);
 
                     final List<List<UnaryTests>> decisionRulesInputEntries = dtable.getRule()
                             .stream()
@@ -145,9 +147,10 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                                 relativeOldIndex,
                                 dtable.getOutput(),
                                 outputClauseIndexesToMove);
-                    moveComponentWidths(index,
-                                        oldIndex,
-                                        uiColumnIndexesToMove);
+                    CommandUtils.moveComponentWidths(index,
+                                                     oldIndex,
+                                                     dtable.getComponentWidths(),
+                                                     uiColumnIndexesToMove);
 
                     final List<List<LiteralExpression>> decisionRulesOutputEntries = dtable.getRule()
                             .stream()
@@ -180,25 +183,6 @@ public class MoveColumnsCommand extends AbstractCanvasGraphCommand implements Ve
                 } else if (relativeIndex > relativeOldIndex) {
                     clauses.addAll(relativeIndex - clausesToMove.size() + 1,
                                    clausesToMove);
-                }
-            }
-
-            private void moveComponentWidths(final int index,
-                                             final int oldIndex,
-                                             final List<Integer> uiColumnIndexes) {
-                final java.util.List<Double> componentWidths = dtable.getComponentWidths();
-                final java.util.List<Double> componentWidthsToMove = uiColumnIndexes
-                        .stream()
-                        .map(componentWidths::get)
-                        .collect(Collectors.toList());
-
-                uiColumnIndexes.forEach(i -> componentWidths.remove(oldIndex));
-                if (index < oldIndex) {
-                    componentWidths.addAll(index,
-                                           componentWidthsToMove);
-                } else if (index > oldIndex) {
-                    componentWidths.addAll(oldIndex + 1,
-                                           componentWidthsToMove);
                 }
             }
 
