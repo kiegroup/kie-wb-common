@@ -17,10 +17,10 @@ package org.kie.workbench.common.stunner.cm.backend;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -68,15 +68,12 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 @CaseManagementEditor
 public class CaseManagementDirectDiagramMarshaller extends BaseDirectDiagramMarshaller {
 
-    private static final double GAP = 100.0;
+    private static final double GAP = 50.0;
+    private static final double STAGE_GAP = 25.0;
     private static final double ORIGIN_X = 50.0;
     private static final double ORIGIN_Y = 50.0;
     private static final double EVENT_WIDTH = 55.0;
     private static final double EVENT_HEIGHT = 55.0;
-    private static final double STAGE_WIDTH = 275.0;
-    private static final double STAGE_GAP = 50.0;
-    private static final double CHILD_WIDTH = 175.0;
-    private static final double CHILD_HEIGHT = 75.0;
 
     @Inject
     public CaseManagementDirectDiagramMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
@@ -113,7 +110,7 @@ public class CaseManagementDirectDiagramMarshaller extends BaseDirectDiagramMars
             final Node<View, Edge<View, Node<View, Edge<View, Node<View, Edge>>>>> rootNode = (Node) root;
 
             // adjust the position of the elements
-            final int stageCount = adjustNodeBounds(rootNode);
+            final double stageWidth = adjustNodeBounds(rootNode);
 
             // create start event and end event
             final Node startNoneEvent = typedFactoryManager.newNode(UUID.uuid(), StartNoneEvent.class);
@@ -122,7 +119,7 @@ public class CaseManagementDirectDiagramMarshaller extends BaseDirectDiagramMars
             diagram.getGraph().addNode(startNoneEvent);
             createChild(UUID.uuid(), rootNode, startNoneEvent, 0);
 
-            final double endNodeEventX = (ORIGIN_X + EVENT_WIDTH) + (STAGE_WIDTH + GAP) * stageCount + GAP;
+            final double endNodeEventX = (ORIGIN_X + EVENT_WIDTH) + GAP + stageWidth;
             final Node endNoneEvent = typedFactoryManager.newNode(UUID.uuid(), EndNoneEvent.class);
             ((View) endNoneEvent.getContent()).setBounds(
                     Bounds.create(endNodeEventX, ORIGIN_Y, endNodeEventX + EVENT_WIDTH, ORIGIN_Y + EVENT_HEIGHT));
@@ -169,17 +166,30 @@ public class CaseManagementDirectDiagramMarshaller extends BaseDirectDiagramMars
         child.getInEdges().add(edge);
     }
 
-    private int adjustNodeBounds(Node<View, Edge<View, Node<View, Edge<View, Node<View, Edge>>>>> rootNode) {
+    private double adjustNodeBounds(Node<View, Edge<View, Node<View, Edge<View, Node<View, Edge>>>>> rootNode) {
         final List<Node<View, Edge<View, Node<View, Edge>>>> stages = rootNode.getOutEdges().stream().map(Edge::getTargetNode)
                 .filter(n -> AdHocSubprocess.class.isInstance(n.getContent().getDefinition())).collect(Collectors.toList());
 
+        if (stages.isEmpty()) {
+            return 0.0;
+        }
+
+        // calculate stage width
+        final double stageWidth = stages.stream().mapToDouble(stage -> stage.getOutEdges().stream().mapToDouble(
+                edge -> edge.getTargetNode().getContent().getBounds().getWidth() + STAGE_GAP * 2)
+                .max().orElse(stage.getContent().getBounds().getWidth())).max().getAsDouble();
+
         // calculate stage height
-        final OptionalInt maxChildCount = stages.stream().mapToInt(s -> s.getOutEdges().size()).max();
-        final int stageChildCount = maxChildCount.orElse(0);
-        final double stageHeight = (stageChildCount < 1 ? 1 : stageChildCount) * (CHILD_HEIGHT + STAGE_GAP) + STAGE_GAP;
+        final double stageHeight = stages.stream().mapToDouble(
+                stage -> {
+                    final double cHeight = stage.getOutEdges().stream().mapToDouble(
+                            edge -> edge.getTargetNode().getContent().getBounds().getHeight() + STAGE_GAP).sum() + STAGE_GAP;
+                    final double sHeight = stage.getContent().getBounds().getHeight();
+                    return cHeight > sHeight ? cHeight : sHeight;
+                }).max().getAsDouble();
 
         // calculate stage x coordinates
-        final List<Double> stageXs = DoubleStream.iterate(ORIGIN_X + EVENT_WIDTH + GAP, x -> x + STAGE_WIDTH + GAP)
+        final List<Double> stageXs = DoubleStream.iterate(ORIGIN_X + EVENT_WIDTH + GAP, x -> x + stageWidth + GAP)
                 .limit(stages.size()).boxed().collect(Collectors.toList());
 
         IntStream.range(0, stages.size()).forEach(index -> {
@@ -187,21 +197,32 @@ public class CaseManagementDirectDiagramMarshaller extends BaseDirectDiagramMars
             final double x = stageXs.get(index);
 
             // set stage bounds
-            node.getContent().setBounds(Bounds.create(x, ORIGIN_Y, x + STAGE_WIDTH, ORIGIN_Y + stageHeight));
+            node.getContent().setBounds(Bounds.create(x, ORIGIN_Y, x + stageWidth, ORIGIN_Y + stageHeight));
 
             // calculate stage child y coordinates
-            final List<Double> childYs = DoubleStream.iterate(STAGE_GAP, y -> y + CHILD_HEIGHT + STAGE_GAP)
-                    .limit(node.getOutEdges().size()).boxed().collect(Collectors.toList());
+            final List<Double> childYs = new ArrayList<>(node.getOutEdges().size());
+            double heightSum = STAGE_GAP;
+            for (Edge<View, Node<View, Edge>> edge : node.getOutEdges()) {
+                childYs.add(heightSum);
+                heightSum = heightSum + edge.getTargetNode().getContent().getBounds().getHeight() + STAGE_GAP;
+            }
 
             IntStream.range(0, node.getOutEdges().size()).forEach(i -> {
+                final Node<View, Edge> childNode = node.getOutEdges().get(i).getTargetNode();
+
+                final double cx = (stageWidth - childNode.getContent().getBounds().getWidth()) / 2.0;
                 final double cy = childYs.get(i);
+
                 // set stage child bounds
-                node.getOutEdges().get(i).getTargetNode().getContent().setBounds(
-                        Bounds.create(STAGE_GAP, cy, STAGE_GAP + CHILD_WIDTH, cy + CHILD_HEIGHT));
+                childNode.getContent().setBounds(
+                        Bounds.create(cx,
+                                      cy,
+                                      cx + childNode.getContent().getBounds().getWidth(),
+                                      cy + childNode.getContent().getBounds().getHeight()));
             });
         });
 
-        return stages.size();
+        return stages.size() * (stageWidth + GAP);
     }
 
     @Override
