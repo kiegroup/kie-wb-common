@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.cm.project.client.resources.i18n;
+package org.kie.workbench.common.stunner.core.client.canvas.event.registration;
 
-import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
+import org.uberfire.workbench.events.UberFireEvent;
 
-public interface CaseManagementProjectClientConstants {
+public class RegisterChangedEvent implements UberFireEvent {
 
-    @TranslationKey(defaultValue = "")
-    String CaseManagementDiagramResourceTypeShortName = "CaseManagementDiagramResourceType.shortName";
-
-    @TranslationKey(defaultValue = "")
-    String CaseManagementDiagramResourceTypeDescription = "CaseManagementDiagramResourceType.description";
-
-    @TranslationKey(defaultValue = "")
-    String CaseManagementDiagramResourceTypeDownload = "CaseManagementDiagramResourceType.download";
 }
