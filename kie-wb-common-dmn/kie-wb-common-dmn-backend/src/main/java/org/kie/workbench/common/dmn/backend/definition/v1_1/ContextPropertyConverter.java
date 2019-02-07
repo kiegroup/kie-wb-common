@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.kie.dmn.model.api.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
@@ -45,6 +46,11 @@ public class ContextPropertyConverter {
                 ceConverted.setParent(result);
             }
             result.getContextEntry().add(ceConverted);
+        }
+
+        //No need to append a _default_ row if the Context is part of a FunctionDefinition
+        if (dmn.getParent() instanceof FunctionDefinition) {
+            return result;
         }
 
         //The UI requires a ContextEntry for the _default_ result even if none has been defined
