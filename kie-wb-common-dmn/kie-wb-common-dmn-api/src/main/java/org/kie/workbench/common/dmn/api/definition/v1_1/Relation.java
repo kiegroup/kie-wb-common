@@ -104,6 +104,9 @@ public class Relation extends Expression {
         if (typeRef != null ? !typeRef.equals(that.typeRef) : that.typeRef != null) {
             return false;
         }
+        if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
+            return false;
+        }
         if (column != null ? !column.equals(that.column) : that.column != null) {
             return false;
         }
@@ -115,6 +118,7 @@ public class Relation extends Expression {
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
                                          description != null ? description.hashCode() : 0,
                                          typeRef != null ? typeRef.hashCode() : 0,
+                                         componentWidths != null ? componentWidths.hashCode() : 0,
                                          column != null ? column.hashCode() : 0,
                                          row != null ? row.hashCode() : 0);
     }

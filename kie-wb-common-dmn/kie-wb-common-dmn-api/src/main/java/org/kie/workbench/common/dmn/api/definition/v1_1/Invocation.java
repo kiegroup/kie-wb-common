@@ -115,6 +115,9 @@ public class Invocation extends Expression implements HasExpression {
         if (typeRef != null ? !typeRef.equals(that.typeRef) : that.typeRef != null) {
             return false;
         }
+        if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
+            return false;
+        }
         if (expression != null ? !expression.equals(that.expression) : that.expression != null) {
             return false;
         }
@@ -126,6 +129,7 @@ public class Invocation extends Expression implements HasExpression {
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
                                          description != null ? description.hashCode() : 0,
                                          typeRef != null ? typeRef.hashCode() : 0,
+                                         componentWidths != null ? componentWidths.hashCode() : 0,
                                          expression != null ? expression.hashCode() : 0,
                                          binding != null ? binding.hashCode() : 0);
     }

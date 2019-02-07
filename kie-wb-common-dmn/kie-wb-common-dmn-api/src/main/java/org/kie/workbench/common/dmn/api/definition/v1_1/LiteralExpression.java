@@ -170,6 +170,9 @@ public class LiteralExpression extends Expression implements IsLiteralExpression
         if (typeRef != null ? !typeRef.equals(that.typeRef) : that.typeRef != null) {
             return false;
         }
+        if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
+            return false;
+        }
         if (text != null ? !text.equals(that.text) : that.text != null) {
             return false;
         }
@@ -184,6 +187,7 @@ public class LiteralExpression extends Expression implements IsLiteralExpression
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
                                          description != null ? description.hashCode() : 0,
                                          typeRef != null ? typeRef.hashCode() : 0,
+                                         componentWidths != null ? componentWidths.hashCode() : 0,
                                          text != null ? text.hashCode() : 0,
                                          importedValues != null ? importedValues.hashCode() : 0,
                                          expressionLanguage != null ? expressionLanguage.hashCode() : 0);

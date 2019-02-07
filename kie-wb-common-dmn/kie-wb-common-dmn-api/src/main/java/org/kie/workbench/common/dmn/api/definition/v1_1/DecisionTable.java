@@ -173,6 +173,9 @@ public class DecisionTable extends Expression {
         if (typeRef != null ? !typeRef.equals(that.typeRef) : that.typeRef != null) {
             return false;
         }
+        if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
+            return false;
+        }
         if (input != null ? !input.equals(that.input) : that.input != null) {
             return false;
         }
@@ -199,6 +202,7 @@ public class DecisionTable extends Expression {
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
                                          description != null ? description.hashCode() : 0,
                                          typeRef != null ? typeRef.hashCode() : 0,
+                                         componentWidths != null ? componentWidths.hashCode() : 0,
                                          input != null ? input.hashCode() : 0,
                                          output != null ? output.hashCode() : 0,
                                          rule != null ? rule.hashCode() : 0,

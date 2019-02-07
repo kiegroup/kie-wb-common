@@ -90,6 +90,9 @@ public class Context extends Expression {
         if (typeRef != null ? !typeRef.equals(that.typeRef) : that.typeRef != null) {
             return false;
         }
+        if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
+            return false;
+        }
         return contextEntry != null ? contextEntry.equals(that.contextEntry) : that.contextEntry == null;
     }
 
@@ -98,6 +101,7 @@ public class Context extends Expression {
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
                                          description != null ? description.hashCode() : 0,
                                          typeRef != null ? typeRef.hashCode() : 0,
+                                         componentWidths != null ? componentWidths.hashCode() : 0,
                                          contextEntry != null ? contextEntry.hashCode() : 0);
     }
 }
