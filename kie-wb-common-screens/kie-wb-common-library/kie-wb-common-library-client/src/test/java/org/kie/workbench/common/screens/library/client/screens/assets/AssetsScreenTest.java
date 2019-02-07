@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.screens.assets;
 
 import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.hamcrest.CoreMatchers;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +32,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mocks.CallerMock;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AssetsScreenTest {
@@ -94,14 +89,14 @@ public class AssetsScreenTest {
         when(invalidProjectScreen.getView()).thenReturn(invalidProjectView);
         when(invalidProjectView.getElement()).thenReturn(invalidProjectElement);
 
-        this.assetsScreen = new AssetsScreen(view,
-                                             libraryPlaces,
-                                             emptyAssetsScreen,
-                                             populatedAssetsScreen,
-                                             invalidProjectScreen,
-                                             ts,
-                                             busyIndicatorView,
-                                             new CallerMock<>(libraryService));
+        this.assetsScreen = spy(new AssetsScreen(view,
+                                                 libraryPlaces,
+                                                 emptyAssetsScreen,
+                                                 populatedAssetsScreen,
+                                                 invalidProjectScreen,
+                                                 ts,
+                                                 busyIndicatorView,
+                                                 new CallerMock<>(libraryService)));
     }
 
     @Test
@@ -113,6 +108,8 @@ public class AssetsScreenTest {
         verify(populatedAssetsScreen,
                never()).getView();
         verify(view).setContent(emptyAssetsScreen.getView().getElement());
+        assertThat(assetsScreen.isEmpty(),
+                   CoreMatchers.is(true));
     }
 
     @Test
@@ -124,6 +121,8 @@ public class AssetsScreenTest {
         verify(populatedAssetsScreen,
                times(1)).getView();
         verify(view).setContent(populatedAssetsScreen.getView().getElement());
+        assertThat(assetsScreen.isEmpty(),
+                   CoreMatchers.is(false));
     }
 
     @Test
@@ -131,7 +130,8 @@ public class AssetsScreenTest {
         try {
             testShowEmptyScreenAssets();
         } catch (AssertionError ae) {
-            throw new AssertionError("Precondition failed. Could not set empty asset screen.", ae);
+            throw new AssertionError("Precondition failed. Could not set empty asset screen.",
+                                     ae);
         }
 
         HTMLElement emptyElement = emptyAssetsScreen.getView().getElement();
@@ -139,7 +139,8 @@ public class AssetsScreenTest {
         reset(view);
 
         assetsScreen.init();
-        verify(view, never()).setContent(any());
+        verify(view,
+               never()).setContent(any());
     }
 
     @Test
@@ -149,6 +150,23 @@ public class AssetsScreenTest {
 
         assetsScreen.init();
         verify(view).setContent(invalidProjectScreen.getView().getElement());
-        verify(libraryService, never()).hasAssets(any(WorkspaceProject.class));
+        verify(libraryService,
+               never()).hasAssets(any(WorkspaceProject.class));
+    }
+
+    @Test
+    public void testRefreshWhenViewIsEmpty() {
+        doNothing().when(assetsScreen).showAssets();
+        when(assetsScreen.isEmpty()).thenReturn(true);
+        assetsScreen.observeAddAsset(null);
+        verify(assetsScreen).showAssets();
+    }
+
+    @Test
+    public void doNotRefreshWhenViewIsPopulated() {
+        when(assetsScreen.isEmpty()).thenReturn(false);
+        assetsScreen.observeAddAsset(null);
+        verify(assetsScreen,
+               never()).showAssets();
     }
 }
