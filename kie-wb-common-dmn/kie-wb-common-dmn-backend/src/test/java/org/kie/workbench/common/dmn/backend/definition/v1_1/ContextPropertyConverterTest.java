@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.kie.dmn.model.api.DMNModelInstrumentedBase;
 import org.kie.dmn.model.api.Decision;
 import org.kie.dmn.model.api.FunctionDefinition;
+import org.kie.dmn.model.api.FunctionKind;
 import org.kie.dmn.model.v1_2.TContext;
 import org.kie.dmn.model.v1_2.TContextEntry;
 import org.kie.dmn.model.v1_2.TInformationItem;
@@ -46,6 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContextPropertyConverterTest {
@@ -85,6 +87,43 @@ public class ContextPropertyConverterTest {
 
         final Context wb = ContextPropertyConverter.wbFromDMN(dmn, hasComponentWidthsConsumer);
 
+        assertDefaultContextEntry(wb);
+    }
+
+    @Test
+    public void testWBFromDMNWithJavaFunctionDefinitionAsParent() {
+        when(functionDefinition.getKind()).thenReturn(FunctionKind.JAVA);
+
+        final org.kie.dmn.model.api.Context dmn = setupWBFromDMN(functionDefinition);
+
+        final Context wb = ContextPropertyConverter.wbFromDMN(dmn, hasComponentWidthsConsumer);
+
+        assertNoDefaultContextEntry(wb);
+    }
+
+    @Test
+    public void testWBFromDMNWithPMMLFunctionDefinitionAsParent() {
+        when(functionDefinition.getKind()).thenReturn(FunctionKind.PMML);
+
+        final org.kie.dmn.model.api.Context dmn = setupWBFromDMN(functionDefinition);
+
+        final Context wb = ContextPropertyConverter.wbFromDMN(dmn, hasComponentWidthsConsumer);
+
+        assertNoDefaultContextEntry(wb);
+    }
+
+    @Test
+    public void testWBFromDMNWithFEELFunctionDefinitionAsParent() {
+        when(functionDefinition.getKind()).thenReturn(FunctionKind.FEEL);
+
+        final org.kie.dmn.model.api.Context dmn = setupWBFromDMN(functionDefinition);
+
+        final Context wb = ContextPropertyConverter.wbFromDMN(dmn, hasComponentWidthsConsumer);
+
+        assertDefaultContextEntry(wb);
+    }
+
+    private void assertDefaultContextEntry(final Context wb) {
         assertThat(wb).isNotNull();
         assertThat(wb.getContextEntry()).isNotNull();
         assertThat(wb.getContextEntry().size()).isEqualTo(2);
@@ -103,12 +142,7 @@ public class ContextPropertyConverterTest {
         assertThat(hasComponentWidths).isEqualTo(wb.getContextEntry().get(0).getExpression());
     }
 
-    @Test
-    public void testWBFromDMNWithFunctionDefinitionAsParent() {
-        final org.kie.dmn.model.api.Context dmn = setupWBFromDMN(functionDefinition);
-
-        final Context wb = ContextPropertyConverter.wbFromDMN(dmn, hasComponentWidthsConsumer);
-
+    private void assertNoDefaultContextEntry(final Context wb) {
         assertThat(wb).isNotNull();
         assertThat(wb.getContextEntry()).isNotNull();
         assertThat(wb.getContextEntry().size()).isEqualTo(1);
