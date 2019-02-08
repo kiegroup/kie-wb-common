@@ -54,6 +54,11 @@
         #pagecontainer {
             margin-left: 20px;
         }
+
+        .textContent{
+            white-space:pre; /* or pre-wrap if you want wrapping to still work. */
+        }
+
     </style>
 </head>
 <body>
@@ -76,7 +81,7 @@
         {{#general}}
         <p id="processinfocontent">
         <table class="table table-inverse">
-            <tbody>
+            <tbody class="textContent">
             <tr>
                 <td><b>ID</b></td>
                 <td>{{id}}</td>
@@ -226,7 +231,7 @@
                     <th>Property Value</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="textContent">
                 {{#properties}}
                 <tr>
                     <td colspan="2">{{key}}</td>

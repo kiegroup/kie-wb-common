@@ -26,18 +26,23 @@ import javax.inject.Inject;
 
 import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.compensation.ActivityRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
 @Dependent
 public class PropertyDecorators {
 
     private Map<Class<?>, Function<Object, PropertyDecorator>> decorators;
     private final SessionManager sessionManager;
+    private final DefinitionUtils definitionUtils;
 
     @Inject
-    public PropertyDecorators(final SessionManager sessionManager) {
+    public PropertyDecorators(final SessionManager sessionManager, final DefinitionUtils definitionUtils) {
         this.sessionManager = sessionManager;
+        this.definitionUtils = definitionUtils;
     }
 
     @PostConstruct
@@ -46,6 +51,11 @@ public class PropertyDecorators {
                 new Maps.Builder<Class<?>, Function<Object, PropertyDecorator>>()
                         .put(AssignmentsInfo.class,
                              af -> new AssignmentsInfoDecorator((AssignmentsInfo) af, getDiagram()))
+                        .put(DefaultRoute.class,
+                             dr -> new DefaultRouteDecorator((DefaultRoute) dr, () -> sessionManager.getCurrentSession().getCanvasHandler(), definitionUtils))
+                        .put(ActivityRef.class,
+                             dr -> new ActivityRefDecorator((ActivityRef) dr,
+                                                            () -> sessionManager.getCurrentSession().getCanvasHandler().getDiagram(), definitionUtils))
                         .build();
     }
 

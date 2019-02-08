@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.documentation;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,7 +73,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Stan
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.TimeUnit;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.UnitCost;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.WorkingHours;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MITrigger;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Namespace;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariableSerializer;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -261,12 +265,14 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                                            getDefinitionIcon(def),
                                            getElementProperties(def))
                 )
+                .sorted(Comparator.comparing(Element::getTitle))
                 .collect(Collectors.groupingBy(Element::getType))
                 .entrySet()
                 .stream()
                 .map(entry -> ElementTotal.create(entry.getValue(),
                                                   getCategoryName(entry.getKey()),
                                                   getCategoryIcon(entry.getKey())))
+                .sorted(Comparator.comparing(ElementTotal::getType))
                 .collect(Collectors.toList());
 
         return ElementDetails.create(elementsTotals);
@@ -290,7 +296,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
 
     private String getCategoryName(String category) {
         return Optional.ofNullable(translationService.getValue(BPMNCategories.class.getName() + "." + category))
-                .filter(cat -> !cat.trim().isEmpty())
+                .filter(StringUtils::nonEmpty)
                 .orElse(category);
     }
 
@@ -373,7 +379,10 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                          BindableAdapterUtils.getPropertyId(Height.class),
                          BindableAdapterUtils.getPropertyId(Width.class),
                          BindableAdapterUtils.getPropertyId(ProcessVariables.class),
-                         BindableAdapterUtils.getPropertyId(Subject.class),
+                         BindableAdapterUtils.getPropertyId(DmnModelName.class),
+                         BindableAdapterUtils.getPropertyId(DecisionName.class),
+                         BindableAdapterUtils.getPropertyId(Namespace.class),
+                         BindableAdapterUtils.getPropertyId(MITrigger.class),
                          BindableAdapterUtils.getPropertyId(Min.class),
                          BindableAdapterUtils.getPropertyId(Max.class),
                          BindableAdapterUtils.getPropertyId(Mean.class),
