@@ -94,6 +94,8 @@ public class DataTypeConstraintRange implements DataTypeConstraintComponent {
         if (!StringUtils.isEmpty(rangeValue.getStartValue())
                 && !StringUtils.isEmpty(rangeValue.getEndValue())) {
             enableOkButton();
+        } else {
+            disableOkButton();
         }
     }
 

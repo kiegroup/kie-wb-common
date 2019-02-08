@@ -34,6 +34,7 @@ import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -116,6 +117,22 @@ public class DataTypeConstraintRangeTest {
         verify(view).setEndValue("1");
 
         verify(constraintRange).enableOkButton();
+    }
+
+    @Test
+    public void testLoadEmptyConstraintValue() {
+        constraintRange.setModal(modal);
+
+        final RangeValue rangeValue = new RangeValue();
+
+        constraintRange.loadConstraintValue(rangeValue);
+        verify(view).setIncludeStartValue(false);
+        verify(view).setIncludeEndValue(false);
+        verify(view).setStartValue("");
+        verify(view).setEndValue("");
+
+        verify(constraintRange).disableOkButton();
+        verify(constraintRange, never()).enableOkButton();
     }
 
     @Test
