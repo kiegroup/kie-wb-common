@@ -19,7 +19,6 @@ package org.kie.workbench.common.screens.library.client.screens.assets;
 
 import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.hamcrest.CoreMatchers;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mocks.CallerMock;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -108,8 +107,7 @@ public class AssetsScreenTest {
         verify(populatedAssetsScreen,
                never()).getView();
         verify(view).setContent(emptyAssetsScreen.getView().getElement());
-        assertThat(assetsScreen.isEmpty(),
-                   CoreMatchers.is(true));
+        assertTrue(assetsScreen.isEmpty());
     }
 
     @Test
@@ -121,8 +119,7 @@ public class AssetsScreenTest {
         verify(populatedAssetsScreen,
                times(1)).getView();
         verify(view).setContent(populatedAssetsScreen.getView().getElement());
-        assertThat(assetsScreen.isEmpty(),
-                   CoreMatchers.is(false));
+        assertFalse(assetsScreen.isEmpty());
     }
 
     @Test
