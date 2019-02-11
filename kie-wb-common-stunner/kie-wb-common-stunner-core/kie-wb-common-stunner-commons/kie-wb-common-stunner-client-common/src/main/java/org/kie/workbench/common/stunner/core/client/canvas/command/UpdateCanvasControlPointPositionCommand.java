@@ -49,7 +49,6 @@ public class UpdateCanvasControlPointPositionCommand extends AbstractCanvasComma
         oldControlPoints = Stream.of(getControlPoints(edge))
                 .map(ControlPoint::copy)
                 .toArray(ControlPoint[]::new);
-        ;
     }
 
     @Override

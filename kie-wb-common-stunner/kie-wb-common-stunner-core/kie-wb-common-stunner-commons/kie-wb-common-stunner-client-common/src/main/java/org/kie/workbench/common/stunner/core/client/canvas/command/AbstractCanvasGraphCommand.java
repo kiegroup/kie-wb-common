@@ -86,28 +86,14 @@ public abstract class AbstractCanvasGraphCommand
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         CommandResult<CanvasViolation> result = performOperationOnGraph(context, CommandOperation.EXECUTE);
-        boolean revertGraphCommand = false;
-        boolean revertCanvasCommand = false;
         if (canDoNexOperation(result)) {
-            final CommandResult<CanvasViolation> lastResult =
+            final CommandResult<CanvasViolation> canvasResult =
                     performOperationOnCanvas(context, CommandOperation.EXECUTE);
-            if (!canDoNexOperation(lastResult)) {
-                revertGraphCommand = true;
-                revertCanvasCommand = true;
-                result = lastResult;
+            if (!canDoNexOperation(canvasResult)) {
+                performOperationOnGraph(context, CommandOperation.UNDO);
+                return canvasResult;
             }
-        } else {
-            revertGraphCommand = true;
         }
-
-        if (revertGraphCommand) {
-            performOperationOnGraph(context, CommandOperation.UNDO);
-        }
-
-        if (revertCanvasCommand) {
-            performOperationOnCanvas(context, CommandOperation.UNDO);
-        }
-
         return result;
     }
 

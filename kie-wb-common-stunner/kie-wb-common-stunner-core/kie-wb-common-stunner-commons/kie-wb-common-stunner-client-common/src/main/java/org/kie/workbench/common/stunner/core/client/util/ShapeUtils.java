@@ -49,8 +49,8 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.Tree
 public class ShapeUtils {
 
     @SuppressWarnings("unchecked")
-    public static void applyConnections(final Edge<?, ?> edge,
-                                        final CanvasHandler canvasHandler,
+    public static void applyConnections(final Edge<? extends ViewConnector<?>, Node> edge,
+                                        final AbstractCanvasHandler canvasHandler,
                                         final MutationContext mutationContext) {
         final Canvas<?> canvas = canvasHandler.getCanvas();
         final Node sourceNode = edge.getSourceNode();
@@ -62,6 +62,7 @@ public class ShapeUtils {
                                    source != null ? source.getShapeView() : null,
                                    target != null ? target.getShapeView() : null,
                                    mutationContext);
+        updateEdgeConnections(edge, canvasHandler);
     }
 
     public static ConnectorShape getConnectorShape(Edge edge, CanvasHandler canvasHandler) {

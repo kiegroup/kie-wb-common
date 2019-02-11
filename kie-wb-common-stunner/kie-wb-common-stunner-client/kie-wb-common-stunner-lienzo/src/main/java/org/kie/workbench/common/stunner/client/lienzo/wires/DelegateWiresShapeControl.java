@@ -131,8 +131,8 @@ public abstract class DelegateWiresShapeControl implements WiresShapeControl,
     }
 
     @Override
-    public boolean onMoveComplete() {
-        return getDelegate().onMoveComplete();
+    public void onMoveComplete() {
+        getDelegate().onMoveComplete();
     }
 
     @Override

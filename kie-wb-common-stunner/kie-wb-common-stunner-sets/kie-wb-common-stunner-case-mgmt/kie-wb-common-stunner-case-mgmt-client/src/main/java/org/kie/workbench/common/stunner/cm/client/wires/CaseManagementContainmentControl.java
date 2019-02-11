@@ -112,8 +112,8 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
     }
 
     @Override
-    public boolean onMoveComplete() {
-        return containmentControl.onMoveComplete();
+    public void onMoveComplete() {
+        containmentControl.onMoveComplete();
     }
 
     @Override

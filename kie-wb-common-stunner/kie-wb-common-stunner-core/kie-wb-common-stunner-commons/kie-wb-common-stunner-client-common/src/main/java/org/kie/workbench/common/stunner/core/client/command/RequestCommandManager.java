@@ -207,8 +207,12 @@ public class RequestCommandManager extends AbstractSessionCommandManager {
                 commands.forEach(c -> c.undo(canvasHandler));
             } else if (hasCommands) {
                 // If any commands have been aggregated, let's composite them and add into the registry.
+                // Notice the composite command is set to the default "reverse" undo order. So it means
+                // that any component that relies on RequestCommandManager must consider that commands will
+                // be undo in the reverse order. Otherwise, each component should composite the commands to execute
+                // and set the desired undo order in it's state, and finally perform the execution via this command manager.
                 getRegistry().register(new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
-                                               .forward() // PLEASE DO NOT CHANGE THIS!
+                                               .forward() // PLEASE DO NOT CHANGE THIS, see comment above.
                                                .addCommands(new ArrayList<>(commands))
                                                .build());
             }

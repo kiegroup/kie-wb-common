@@ -98,8 +98,8 @@ public abstract class DelegateWiresCompositeControl implements WiresCompositeCon
     }
 
     @Override
-    public boolean onMoveComplete() {
-        return getDelegate().onMoveComplete();
+    public void onMoveComplete() {
+        getDelegate().onMoveComplete();
     }
 
     @Override

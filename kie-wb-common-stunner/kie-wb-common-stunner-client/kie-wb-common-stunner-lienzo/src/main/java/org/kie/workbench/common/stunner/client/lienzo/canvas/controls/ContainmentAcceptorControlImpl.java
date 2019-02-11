@@ -133,8 +133,7 @@ public class ContainmentAcceptorControlImpl extends AbstractAcceptorControl
                                    final Node[] children) {
         return Stream.of(children)
                 .map(GraphUtils::getParent)
-                .filter(childParent -> !Objects.equals(parent, childParent))
-                .count() == 0;
+                .noneMatch(childParent -> !Objects.equals(parent, childParent));
     }
 
     private final IContainmentAcceptor CONTAINMENT_ACCEPTOR = new IContainmentAcceptor() {

@@ -104,15 +104,16 @@ public class WiresConnectorView<T> extends WiresConnector
     @Override
     public ControlPoint[] getManageableControlPoints() {
         final Point2DArray controlPoints = getControlPoints();
-        if (null != controlPoints) {
-            final int size = controlPoints.size() - 2;
-            final ControlPoint[] cps = new ControlPoint[size];
-            for (int i = 1; i <= size; i++) {
-                final com.ait.lienzo.client.core.types.Point2D controlPoint = controlPoints.get(i);
-                cps[i - 1] = ControlPoint.build(controlPoint.getX(),
-                                                controlPoint.getY());
-            }
-            return cps;
+        if (null != controlPoints && controlPoints.size() > 2) {
+            // Notice first and last CP from lienzo's connector are discarded,
+            // as they're considered the Connection's on Stunner side, so not
+            // part of the model's ControlPoint array.
+            return StreamSupport.stream(controlPoints.spliterator(), false)
+                    .limit(controlPoints.size() - 1)
+                    .skip(1)
+                    .map(controlPoint -> ControlPoint.build(controlPoint.getX(),
+                                                            controlPoint.getY()))
+                    .toArray(ControlPoint[]::new);
         }
         return new ControlPoint[0];
     }

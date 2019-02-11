@@ -49,6 +49,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
@@ -416,6 +417,56 @@ public class WiresConnectorViewTest {
                times(1)).setAutoConnection(eq(false));
         verify(tailWiresConnection,
                times(1)).setMagnet(eq(null));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetEmptyControlPoints() {
+        Point2DArray linePoints = new Point2DArray(new Point2D(0, 0),
+                                                   new Point2D(1, 2));
+        when(line.getPoint2DArray()).thenReturn(linePoints);
+        ControlPoint[] controlPoints = tested.getManageableControlPoints();
+        assertNotNull(controlPoints);
+        assertEquals(0, controlPoints.length);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetEmptyControlPoints2() {
+        Point2DArray linePoints = new Point2DArray(new Point2D(0, 0));
+        when(line.getPoint2DArray()).thenReturn(linePoints);
+        ControlPoint[] controlPoints = tested.getManageableControlPoints();
+        assertNotNull(controlPoints);
+        assertEquals(0, controlPoints.length);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetControlPoints() {
+        Point2DArray linePoints = new Point2DArray(new Point2D(0, 0),
+                                                   new Point2D(0.1, 0.2),
+                                                   new Point2D(0.3, 0.4),
+                                                   new Point2D(0.5, 0.6),
+                                                   new Point2D(1, 2));
+        when(line.getPoint2DArray()).thenReturn(linePoints);
+        ControlPoint[] controlPoints = tested.getManageableControlPoints();
+        assertNotNull(controlPoints);
+        assertEquals(3, controlPoints.length);
+        ControlPoint controlPoint0 = controlPoints[0];
+        assertNotNull(controlPoint0);
+        assertNotNull(controlPoint0.getLocation());
+        assertEquals(0.1d, controlPoint0.getLocation().getX(), 0d);
+        assertEquals(0.2d, controlPoint0.getLocation().getY(), 0d);
+        ControlPoint controlPoint1 = controlPoints[1];
+        assertNotNull(controlPoint1);
+        assertNotNull(controlPoint1.getLocation());
+        assertEquals(0.3d, controlPoint1.getLocation().getX(), 0d);
+        assertEquals(0.4d, controlPoint1.getLocation().getY(), 0d);
+        ControlPoint controlPoint2 = controlPoints[2];
+        assertNotNull(controlPoint2);
+        assertNotNull(controlPoint2.getLocation());
+        assertEquals(0.5d, controlPoint2.getLocation().getX(), 0d);
+        assertEquals(0.6d, controlPoint2.getLocation().getY(), 0d);
     }
 
     @Test
