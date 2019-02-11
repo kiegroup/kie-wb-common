@@ -36,4 +36,14 @@ public class ProcessOverview {
         instance.dataTotal = dataTotal;
         return instance;
     }
+
+    @JsOverlay
+    public final General getGeneral() {
+        return general;
+    }
+
+    @JsOverlay
+    public final ProcessVariablesTotal getDataTotal() {
+        return dataTotal;
+    }
 }
