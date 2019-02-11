@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types.shortcuts;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -45,6 +46,7 @@ public class DataTypeListShortcuts {
 
     public void init(final DataTypeList dataTypeList) {
         this.dataTypeList = dataTypeList;
+        this.dataTypeList.registerDataTypeListItemUpdateCallback(getDataTypeListItemConsumer());
     }
 
     void onArrowDown() {
@@ -122,6 +124,10 @@ public class DataTypeListShortcuts {
 
     public void reset() {
         view.reset();
+    }
+
+    Consumer<DataTypeListItem> getDataTypeListItemConsumer() {
+        return dataTypeListItem -> view.highlight(dataTypeListItem.getElement());
     }
 
     public interface View extends HasPresenter<DataTypeListShortcuts> {

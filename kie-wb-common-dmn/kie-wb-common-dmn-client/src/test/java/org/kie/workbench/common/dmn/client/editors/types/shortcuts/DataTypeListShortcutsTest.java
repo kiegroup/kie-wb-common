@@ -18,9 +18,11 @@ package org.kie.workbench.common.dmn.client.editors.types.shortcuts;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +31,11 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListIt
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,8 +52,23 @@ public class DataTypeListShortcutsTest {
 
     @Before
     public void setup() {
-        shortcuts = new DataTypeListShortcuts(view);
+        shortcuts = spy(new DataTypeListShortcuts(view));
         shortcuts.init(dataTypeList);
+    }
+
+    @Test
+    public void testInit() {
+
+        final Consumer<DataTypeListItem> consumer = (e) -> { /* Nothing. */ };
+        doReturn(consumer).when(shortcuts).getDataTypeListItemConsumer();
+
+        shortcuts.init(dataTypeList);
+
+        final DataTypeList actualDataTypeList = shortcuts.getDataTypeList();
+        final DataTypeList expectedDataTypeList = shortcuts.getDataTypeList();
+
+        assertEquals(expectedDataTypeList, actualDataTypeList);
+        verify(expectedDataTypeList).registerDataTypeListItemUpdateCallback(eq(consumer));
     }
 
     @Test
@@ -195,5 +216,18 @@ public class DataTypeListShortcutsTest {
         shortcuts.onCtrlD();
 
         verify(listItem).insertFieldBelow();
+    }
+
+    @Test
+    public void testGetDataTypeListItemConsumer() {
+
+        final DataTypeListItem listItem = mock(DataTypeListItem.class);
+        final HTMLElement htmlElement = mock(HTMLElement.class);
+
+        when(listItem.getElement()).thenReturn(htmlElement);
+
+        shortcuts.getDataTypeListItemConsumer().accept(listItem);
+
+        verify(view).highlight(htmlElement);
     }
 }
