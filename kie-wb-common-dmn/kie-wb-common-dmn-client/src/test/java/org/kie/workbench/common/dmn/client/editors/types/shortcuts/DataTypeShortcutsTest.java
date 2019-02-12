@@ -122,6 +122,7 @@ public class DataTypeShortcutsTest {
 
         shortcuts.clickListener(target);
 
+        verify(listShortcuts).focusIn();
         verify(listShortcuts, never()).reset();
     }
 
@@ -141,6 +142,7 @@ public class DataTypeShortcutsTest {
         shortcuts.clickListener(target);
 
         verify(listShortcuts).reset();
+        verify(listShortcuts, never()).focusIn();
     }
 
     @Test

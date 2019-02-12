@@ -241,7 +241,7 @@ public class DataTypeListItem {
             final String referenceDataTypeHash = dataTypeList.calculateParentHash(dataType);
             dataTypeList.refreshItemsByUpdatedDataTypes(persist(dataType));
             closeEditMode();
-            dataTypeList.fireListItemUpdateCallbacks(getNewDataTypeHash(dataType, referenceDataTypeHash));
+            dataTypeList.fireOnDataTypeListItemUpdateCallback(getNewDataTypeHash(dataType, referenceDataTypeHash));
         };
     }
 
@@ -442,7 +442,7 @@ public class DataTypeListItem {
 
     void enableEditModeAndUpdateCallbacks(final String dataTypeHash) {
         dataTypeList.enableEditMode(dataTypeHash);
-        dataTypeList.fireListItemUpdateCallbacks(dataTypeHash);
+        dataTypeList.fireOnDataTypeListItemUpdateCallback(dataTypeHash);
     }
 
     String getNewDataTypeHash(final DataType newDataType,

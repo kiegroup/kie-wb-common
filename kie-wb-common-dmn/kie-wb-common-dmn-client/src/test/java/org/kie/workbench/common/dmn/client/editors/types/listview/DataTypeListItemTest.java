@@ -422,7 +422,7 @@ public class DataTypeListItemTest {
 
         verify(dataTypeList).refreshItemsByUpdatedDataTypes(updatedDataTypes);
         verify(listItem).closeEditMode();
-        verify(dataTypeList).fireListItemUpdateCallbacks(newDataTypeHash);
+        verify(dataTypeList).fireOnDataTypeListItemUpdateCallback(newDataTypeHash);
     }
 
     @Test
@@ -874,7 +874,7 @@ public class DataTypeListItemTest {
         listItem.enableEditModeAndUpdateCallbacks(dataTypeHash);
 
         verify(dataTypeList).enableEditMode(dataTypeHash);
-        verify(dataTypeList).fireListItemUpdateCallbacks(dataTypeHash);
+        verify(dataTypeList).fireOnDataTypeListItemUpdateCallback(dataTypeHash);
     }
 
     private DataType makeDataType() {

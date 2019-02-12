@@ -76,7 +76,9 @@ public class DataTypeShortcuts {
     }
 
     void clickListener(final Event event) {
-        if (!tabContentContainsTarget(event)) {
+        if (tabContentContainsTarget(event)) {
+            listShortcuts.focusIn();
+        } else {
             listShortcuts.reset();
         }
     }

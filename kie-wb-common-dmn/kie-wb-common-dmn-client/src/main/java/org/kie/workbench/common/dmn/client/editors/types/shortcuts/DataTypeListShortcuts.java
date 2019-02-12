@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.client.editors.types.shortcuts;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -46,7 +45,7 @@ public class DataTypeListShortcuts {
 
     public void init(final DataTypeList dataTypeList) {
         this.dataTypeList = dataTypeList;
-        this.dataTypeList.registerDataTypeListItemUpdateCallback(getDataTypeListItemConsumer());
+        this.dataTypeList.registerDataTypeListItemUpdateCallback(this::onDataTypeListItemUpdate);
     }
 
     void onArrowDown() {
@@ -83,7 +82,7 @@ public class DataTypeListShortcuts {
             getVisibleDataTypeListItems().forEach(DataTypeListItem::disableEditMode);
         }
 
-        view.reset();
+        reset();
     }
 
     void onCtrlBackspace() {
@@ -91,7 +90,7 @@ public class DataTypeListShortcuts {
     }
 
     void onCtrlS() {
-        getFocusedDataTypeListItem().ifPresent(DataTypeListItem::saveAndCloseEditMode);
+        getCurrentDataTypeListItem().ifPresent(DataTypeListItem::saveAndCloseEditMode);
     }
 
     void onCtrlB() {
@@ -118,16 +117,16 @@ public class DataTypeListShortcuts {
         return view.getCurrentDataTypeListItem();
     }
 
-    private Optional<DataTypeListItem> getFocusedDataTypeListItem() {
-        return view.getFocusedDataTypeListItem();
+    void focusIn() {
+        view.focusIn();
     }
 
     public void reset() {
         view.reset();
     }
 
-    Consumer<DataTypeListItem> getDataTypeListItemConsumer() {
-        return dataTypeListItem -> view.highlight(dataTypeListItem.getElement());
+    private void onDataTypeListItemUpdate(final DataTypeListItem dataTypeListItem) {
+        view.highlight(dataTypeListItem.getElement());
     }
 
     public interface View extends HasPresenter<DataTypeListShortcuts> {
@@ -138,8 +137,6 @@ public class DataTypeListShortcuts {
 
         Optional<DataTypeListItem> getCurrentDataTypeListItem();
 
-        Optional<DataTypeListItem> getFocusedDataTypeListItem();
-
         Optional<Element> getFirstDataTypeRow();
 
         Optional<Element> getNextDataTypeRow();
@@ -147,5 +144,7 @@ public class DataTypeListShortcuts {
         Optional<Element> getPrevDataTypeRow();
 
         void highlight(final Element element);
+
+        void focusIn();
     }
 }

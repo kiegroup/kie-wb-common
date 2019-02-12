@@ -49,7 +49,7 @@ public class DataTypeList {
 
     private final DataTypeStackHash dataTypeStackHash;
 
-    private List<Consumer<DataTypeListItem>> dataTypeListItemUpdateCallbacks = new ArrayList<>();
+    private Consumer<DataTypeListItem> onDataTypeListItemUpdate = (e) -> { /* Nothing. */ };
 
     private List<DataTypeListItem> items;
 
@@ -196,7 +196,7 @@ public class DataTypeList {
         view.addSubItem(listItem);
 
         listItem.enableEditMode();
-        fireListItemUpdateCallbacks(listItem);
+        fireOnDataTypeListItemUpdateCallback(listItem);
     }
 
     void insertBelow(final DataType dataType,
@@ -251,16 +251,16 @@ public class DataTypeList {
         findItemByDataTypeHash(dataTypeHash).ifPresent(DataTypeListItem::enableEditMode);
     }
 
-    public void registerDataTypeListItemUpdateCallback(final Consumer<DataTypeListItem> consumer) {
-        dataTypeListItemUpdateCallbacks.add(consumer);
+    public void registerDataTypeListItemUpdateCallback(final Consumer<DataTypeListItem> onDataTypeListItemUpdate) {
+        this.onDataTypeListItemUpdate = onDataTypeListItemUpdate;
     }
 
-    void fireListItemUpdateCallbacks(final String dataTypeHash) {
-        findItemByDataTypeHash(dataTypeHash).ifPresent(this::fireListItemUpdateCallbacks);
+    void fireOnDataTypeListItemUpdateCallback(final String dataTypeHash) {
+        findItemByDataTypeHash(dataTypeHash).ifPresent(this::fireOnDataTypeListItemUpdateCallback);
     }
 
-    private void fireListItemUpdateCallbacks(final DataTypeListItem listItem) {
-        dataTypeListItemUpdateCallbacks.forEach(itemConsumer -> itemConsumer.accept(listItem));
+    private void fireOnDataTypeListItemUpdateCallback(final DataTypeListItem listItem) {
+        onDataTypeListItemUpdate.accept(listItem);
     }
 
     Optional<DataTypeListItem> findItemByDataTypeHash(final String dataTypeHash) {

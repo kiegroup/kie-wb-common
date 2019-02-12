@@ -28,12 +28,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeList;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItem;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -48,6 +48,9 @@ public class DataTypeListShortcutsTest {
     @Mock
     private DataTypeListShortcutsView view;
 
+    @Captor
+    private ArgumentCaptor<Consumer<DataTypeListItem>> onDataTypeListItemUpdateArgumentCaptor;
+
     private DataTypeListShortcuts shortcuts;
 
     @Before
@@ -59,16 +62,20 @@ public class DataTypeListShortcutsTest {
     @Test
     public void testInit() {
 
-        final Consumer<DataTypeListItem> consumer = (e) -> { /* Nothing. */ };
-        doReturn(consumer).when(shortcuts).getDataTypeListItemConsumer();
+        // The 'init' method is being called during the setup.
 
-        shortcuts.init(dataTypeList);
-
+        final DataTypeListItem listItem = mock(DataTypeListItem.class);
+        final HTMLElement htmlElement = mock(HTMLElement.class);
         final DataTypeList actualDataTypeList = shortcuts.getDataTypeList();
         final DataTypeList expectedDataTypeList = shortcuts.getDataTypeList();
 
+        when(listItem.getElement()).thenReturn(htmlElement);
+
         assertEquals(expectedDataTypeList, actualDataTypeList);
-        verify(expectedDataTypeList).registerDataTypeListItemUpdateCallback(eq(consumer));
+        verify(expectedDataTypeList).registerDataTypeListItemUpdateCallback(onDataTypeListItemUpdateArgumentCaptor.capture());
+
+        onDataTypeListItemUpdateArgumentCaptor.getValue().accept(listItem);
+        verify(view).highlight(htmlElement);
     }
 
     @Test
@@ -146,6 +153,7 @@ public class DataTypeListShortcutsTest {
         shortcuts.onEscape();
 
         verify(listItem).disableEditMode();
+        verify(shortcuts).reset();
     }
 
     @Test
@@ -161,6 +169,7 @@ public class DataTypeListShortcutsTest {
 
         verify(listItem1).disableEditMode();
         verify(listItem2).disableEditMode();
+        verify(shortcuts).reset();
     }
 
     @Test
@@ -178,7 +187,7 @@ public class DataTypeListShortcutsTest {
     public void testOnCtrlS() {
 
         final DataTypeListItem listItem = mock(DataTypeListItem.class);
-        when(view.getFocusedDataTypeListItem()).thenReturn(Optional.of(listItem));
+        when(view.getCurrentDataTypeListItem()).thenReturn(Optional.of(listItem));
 
         shortcuts.onCtrlS();
 
@@ -219,15 +228,16 @@ public class DataTypeListShortcutsTest {
     }
 
     @Test
-    public void testGetDataTypeListItemConsumer() {
+    public void testReset() {
+        shortcuts.reset();
 
-        final DataTypeListItem listItem = mock(DataTypeListItem.class);
-        final HTMLElement htmlElement = mock(HTMLElement.class);
+        verify(view).reset();
+    }
 
-        when(listItem.getElement()).thenReturn(htmlElement);
+    @Test
+    public void testFocusIn() {
+        shortcuts.focusIn();
 
-        shortcuts.getDataTypeListItemConsumer().accept(listItem);
-
-        verify(view).highlight(htmlElement);
+        verify(view).focusIn();
     }
 }

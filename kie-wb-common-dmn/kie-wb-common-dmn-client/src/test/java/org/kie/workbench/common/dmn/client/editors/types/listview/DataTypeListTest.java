@@ -564,7 +564,7 @@ public class DataTypeListTest {
         doReturn(Optional.of(listItem)).when(dataTypeList).findItemByDataTypeHash(dataTypeHash);
 
         dataTypeList.registerDataTypeListItemUpdateCallback(listItemConsumer);
-        dataTypeList.fireListItemUpdateCallbacks(dataTypeHash);
+        dataTypeList.fireOnDataTypeListItemUpdateCallback(dataTypeHash);
 
         verify(listItemConsumer).accept(listItem);
     }
