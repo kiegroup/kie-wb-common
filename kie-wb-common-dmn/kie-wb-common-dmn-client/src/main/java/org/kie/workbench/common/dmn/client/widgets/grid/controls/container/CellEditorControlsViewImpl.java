@@ -23,7 +23,6 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -66,6 +65,8 @@ public class CellEditorControlsViewImpl implements CellEditorControlsView {
 
     private Optional<HasCellEditorControls.Editor> activeEditor = Optional.empty();
 
+    private Optional<ElementWrapperWidget<?>> elementWrapperWidget = Optional.empty();
+
     private Presenter presenter;
 
     public CellEditorControlsViewImpl() {
@@ -85,7 +86,8 @@ public class CellEditorControlsViewImpl implements CellEditorControlsView {
     public void setup() {
         this.cellEditorControls.setId(DOM.createUniqueId());
 
-        RootPanel.get().add(ElementWrapperWidget.getWidget(getElement()));
+        this.elementWrapperWidget = Optional.of(ElementWrapperWidget.getWidget(getElement()));
+        this.elementWrapperWidget.ifPresent(w -> RootPanel.get().add(w));
 
         this.body.addEventListener(BrowserEvents.MOUSEDOWN,
                                    hidePopoverHandler,
@@ -97,6 +99,8 @@ public class CellEditorControlsViewImpl implements CellEditorControlsView {
 
     @PreDestroy
     public void destroy() {
+        this.elementWrapperWidget.ifPresent(w -> RootPanel.get().remove(w));
+
         this.body.removeEventListener(BrowserEvents.MOUSEDOWN,
                                       hidePopoverHandler,
                                       false);
@@ -126,7 +130,7 @@ public class CellEditorControlsViewImpl implements CellEditorControlsView {
 
         activeEditor = Optional.of(editor);
 
-        Scheduler.get().scheduleDeferred(() -> editor.show(editorTitle));
+        editor.show(editorTitle);
     }
 
     @Override
