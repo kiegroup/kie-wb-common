@@ -530,12 +530,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             // Set the source connection, if any.
             final Node sourceNode = edge.getSourceNode();
             if (null != sourceNode) {
-                connectionContent.setSourceConnection(MagnetConnection.Builder.forElement(sourceNode));
+                connectionContent.setSourceConnection(MagnetConnection.Builder.atCenter(sourceNode));
             }
             // Set the target connection, if any.
             final Node targetNode = edge.getTargetNode();
             if (null != targetNode) {
-                connectionContent.setTargetConnection(MagnetConnection.Builder.forElement(targetNode));
+                connectionContent.setTargetConnection(MagnetConnection.Builder.atCenter(targetNode));
             }
         }
     }

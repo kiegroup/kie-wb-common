@@ -311,7 +311,7 @@ public class ConnectionAcceptorControlImpl
     @SuppressWarnings("unchecked")
     public static MagnetConnection createConnection(final Element element) {
         return null != element ?
-                MagnetConnection.Builder.forElement(element) :
+                MagnetConnection.Builder.atCenter(element) :
                 null;
     }
 
