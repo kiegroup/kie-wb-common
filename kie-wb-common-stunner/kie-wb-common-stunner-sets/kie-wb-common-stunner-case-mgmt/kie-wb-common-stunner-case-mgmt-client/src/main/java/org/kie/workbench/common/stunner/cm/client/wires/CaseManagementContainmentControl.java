@@ -71,7 +71,6 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
         state.setGhost(Optional.ofNullable(((CaseManagementShapeView) getShape()).getGhost()));
 
         final WiresLayerIndex index = containmentControl.getParentPickerControl().getIndex();
-        index.clear();
         if (state.getGhost().isPresent()) {
             index.exclude(state.getGhost().get());
         }

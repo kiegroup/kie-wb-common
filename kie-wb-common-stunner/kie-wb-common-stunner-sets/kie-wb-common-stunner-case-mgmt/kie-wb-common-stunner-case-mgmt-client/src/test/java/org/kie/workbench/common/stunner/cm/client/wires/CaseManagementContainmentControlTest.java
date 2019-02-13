@@ -146,6 +146,7 @@ public class CaseManagementContainmentControlTest {
         verify(state, times(1)).setOriginalParent(eq(Optional.empty()));
         verify(parent, never()).logicallyReplace(any(CaseManagementShapeView.class),
                                                  any(CaseManagementShapeView.class));
+        verify(index, never()).clear();
     }
 
     @Test
@@ -160,6 +161,7 @@ public class CaseManagementContainmentControlTest {
         verify(state, times(1)).setOriginalParent(eq(Optional.of(parent)));
         verify(parent, times(1)).logicallyReplace(eq(shape),
                                                   eq(ghost));
+        verify(index, never()).clear();
     }
 
     @Test
