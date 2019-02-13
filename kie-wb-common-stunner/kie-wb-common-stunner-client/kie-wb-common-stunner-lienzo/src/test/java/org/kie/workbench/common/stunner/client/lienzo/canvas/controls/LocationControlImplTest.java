@@ -43,12 +43,12 @@ import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresShapeView;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasPanel;
-import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactoryStub;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeViewExtStub;
@@ -169,7 +169,7 @@ public class LocationControlImplTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        this.canvasCommandFactory = new DefaultCanvasCommandFactory(null, null);
+        this.canvasCommandFactory = new CanvasCommandFactoryStub();
 
         this.shapeView = spy(new ShapeViewExtStub(shapeEventHandler,
                                                   hasControlPoints));

@@ -32,6 +32,8 @@ import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.impl.ConnectorShape;
 import org.kie.workbench.common.stunner.core.client.shape.view.BoundingBox;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasDragBounds;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasRadius;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -139,6 +141,24 @@ public class ShapeUtils {
         // Update connector's view.
         connectorIds.forEach(id -> moveShapeToTop(canvasHandler,
                                                   id));
+    }
+
+    public static double getRadiusForBoundingBox(final double width,
+                                                 final double height) {
+        return (width > height ?
+                width / 2 :
+                height / 2);
+    }
+
+    public static void setSizeFromBoundingBox(final ShapeView view,
+                                              final double boundingBoxWidth,
+                                              final double boundingBoxHeight) {
+        if (view instanceof HasSize) {
+            ((HasSize) view).setSize(boundingBoxWidth, boundingBoxHeight);
+        } else if (view instanceof HasRadius) {
+            final double radius = getRadiusForBoundingBox(boundingBoxWidth, boundingBoxHeight);
+            ((HasRadius) view).setRadius(radius);
+        }
     }
 
     /**

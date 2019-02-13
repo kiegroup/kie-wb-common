@@ -19,9 +19,6 @@ package org.kie.workbench.common.stunner.core.client.canvas.command;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
@@ -40,20 +37,13 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ViewTraverseProcessor;
 
-@ApplicationScoped
-public class DefaultCanvasCommandFactory implements CanvasCommandFactory<AbstractCanvasHandler> {
+public abstract class DefaultCanvasCommandFactory implements CanvasCommandFactory<AbstractCanvasHandler> {
 
     private final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessors;
     private final ManagedInstance<ViewTraverseProcessor> viewTraverseProcessors;
 
-    protected DefaultCanvasCommandFactory() {
-        this(null,
-             null);
-    }
-
-    @Inject
-    public DefaultCanvasCommandFactory(final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessors,
-                                       final ManagedInstance<ViewTraverseProcessor> viewTraverseProcessors) {
+    protected DefaultCanvasCommandFactory(final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessors,
+                                          final ManagedInstance<ViewTraverseProcessor> viewTraverseProcessors) {
         this.childrenTraverseProcessors = childrenTraverseProcessors;
         this.viewTraverseProcessors = viewTraverseProcessors;
     }

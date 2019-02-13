@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.BoundingBox;
 import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -98,6 +99,9 @@ public interface CanvasCommandFactory<H extends CanvasHandler> {
 
     CanvasCommand<H> updatePosition(Node<View<?>, Edge> element,
                                     Point2D location);
+
+    CanvasCommand<H> resize(Element<? extends View<?>> element,
+                            BoundingBox boundingBox);
 
     CanvasCommand<H> updatePropertyValue(Element element,
                                          String propertyId,
