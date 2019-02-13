@@ -17,7 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.assignmentsEditor;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwtmockito.GwtMock;
@@ -157,16 +157,17 @@ public class AssignmentListItemWidgetTest {
                                    anyString(),
                                    anyString());
         RegExp regExp = RegExp.compile(regExpCaptor.getValue());
+        assertEquals(true,
+                     regExp.test("a1 -_+-*?'/"));
         assertEquals(false,
-                     regExp.test("a 1"));
-        assertEquals(false,
-                     regExp.test("a@1"));
+                     regExp.test("a1 -_+-*?'/1@"));
         assertEquals(true,
                      regExp.test("a1"));
+
         verify(customDataType,
                times(1)).addKeyDownHandler(any(KeyDownHandler.class));
         verify(name,
-               times(1)).addBlurHandler(any(BlurHandler.class));
+               times(1)).addChangeHandler(any(ChangeHandler.class));
     }
 
     @Test

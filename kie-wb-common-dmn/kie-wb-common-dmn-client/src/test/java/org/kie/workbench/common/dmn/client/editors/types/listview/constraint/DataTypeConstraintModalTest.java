@@ -24,14 +24,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintParserWarningEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.ENUMERATION;
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.EXPRESSION;
+import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.NONE;
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.RANGE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal.CONSTRAINT_INITIAL_VALUE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal.WIDTH;
@@ -39,6 +43,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,6 +78,7 @@ public class DataTypeConstraintModalTest {
 
         modal.setup();
 
+        verify(constraintRange).setModal(modal);
         verify(modal).superSetup();
         verify(modal).setWidth(WIDTH);
         verify(view).init(modal);
@@ -180,7 +186,9 @@ public class DataTypeConstraintModalTest {
 
         modal.setupComponent(type);
 
+        assertEquals(constraintEnumeration, modal.getCurrentComponent());
         verify(constraintEnumeration).setValue(constraint);
+        verify(modal).enableOkButton();
     }
 
     @Test
@@ -193,7 +201,9 @@ public class DataTypeConstraintModalTest {
 
         modal.setupComponent(type);
 
+        assertEquals(constraintExpression, modal.getCurrentComponent());
         verify(constraintExpression).setValue(constraint);
+        verify(modal).enableOkButton();
     }
 
     @Test
@@ -206,7 +216,53 @@ public class DataTypeConstraintModalTest {
 
         modal.setupComponent(type);
 
+        assertEquals(constraintRange, modal.getCurrentComponent());
         verify(constraintRange).setValue(constraint);
+    }
+
+    @Test
+    public void testSetupComponentWhenConstraintTypeIsRangeAndValueIsEmpty() {
+
+        final ConstraintType type = RANGE;
+        final String constraint = "";
+
+        doReturn(constraint).when(modal).getConstraintValue();
+
+        modal.setupComponent(type);
+
+        assertEquals(constraintRange, modal.getCurrentComponent());
+        verify(constraintRange).setValue(constraint);
+        verify(modal, never()).enableOkButton();
+    }
+
+    @Test
+    public void testSetupComponentWhenConstraintTypeIsNone() {
+
+        final ConstraintType type = NONE;
+        final String constraint = "(1..2)";
+
+        doReturn(ENUMERATION).when(modal).inferComponentType(constraint);
+        doReturn(constraint).when(modal).getConstraintValue();
+
+        modal.setupComponent(type);
+
+        assertEquals(constraintEnumeration, modal.getCurrentComponent());
+        verify(constraintEnumeration).setValue(constraint);
+    }
+
+    @Test
+    public void testIsNoneWhenConstraintTypeIsENUMERATION() {
+        assertFalse(modal.isNone(ENUMERATION));
+    }
+
+    @Test
+    public void testIsNoneWhenConstraintTypeIsNONE() {
+        assertTrue(modal.isNone(NONE));
+    }
+
+    @Test
+    public void testIsNoneWhenConstraintTypeIsNull() {
+        assertTrue(modal.isNone(null));
     }
 
     @Test
@@ -250,5 +306,25 @@ public class DataTypeConstraintModalTest {
         assertEquals(expectedOnSave, actualOnSave);
         verify(modal).superShow();
         verify(view).onShow();
+    }
+
+    @Test
+    public void testOnDataTypeConstraintParserWarningEvent() {
+
+        modal.onDataTypeConstraintParserWarningEvent(mock(DataTypeConstraintParserWarningEvent.class));
+
+        verify(view).showConstraintWarningMessage();
+    }
+
+    @Test
+    public void testEnableOkButton() {
+        modal.enableOkButton();
+        verify(view).enableOkButton();
+    }
+
+    @Test
+    public void testDisableOkButton() {
+        modal.disableOkButton();
+        verify(view).disableOkButton();
     }
 }

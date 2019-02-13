@@ -29,6 +29,7 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseDelegatingExpressionGrid;
@@ -38,6 +39,8 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSel
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetCellSelectorMouseEventHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.handlers.DelegatingGridWidgetEditCellMouseEventHandler;
+import org.kie.workbench.common.dmn.client.widgets.grid.handlers.EditableHeaderGridWidgetEditCellMouseEventHandler;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -47,7 +50,6 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -66,7 +68,6 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
     public LiteralExpressionGrid(final GridCellTuple parent,
                                  final Optional<String> nodeUUID,
                                  final HasExpression hasExpression,
-                                 final Optional<LiteralExpression> expression,
                                  final Optional<HasName> hasName,
                                  final DMNGridPanel gridPanel,
                                  final DMNGridLayer gridLayer,
@@ -74,7 +75,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
                                  final DefinitionUtils definitionUtils,
                                  final SessionManager sessionManager,
                                  final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                 final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
+                                 final DefaultCanvasCommandFactory canvasCommandFactory,
                                  final Event<ExpressionEditorChanged> editorSelectedEvent,
                                  final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                  final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
@@ -86,7 +87,6 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
         super(parent,
               nodeUUID,
               hasExpression,
-              expression,
               hasName,
               gridPanel,
               gridLayer,
@@ -112,9 +112,12 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
 
     @Override
     protected List<NodeMouseEventHandler> getNodeMouseClickEventHandlers(final GridSelectionManager selectionManager) {
-        return Collections.singletonList(new DelegatingGridWidgetCellSelectorMouseEventHandler(selectionManager,
-                                                                                               this::getParentInformation,
-                                                                                               () -> nesting));
+        final List<NodeMouseEventHandler> handlers = new ArrayList<>();
+        handlers.add(new DelegatingGridWidgetCellSelectorMouseEventHandler(selectionManager,
+                                                                           this::getParentInformation,
+                                                                           () -> nesting));
+        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler());
+        return handlers;
     }
 
     @Override
@@ -133,7 +136,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
     @Override
     public LiteralExpressionUIModelMapper makeUiModelMapper() {
         return new LiteralExpressionUIModelMapper(this::getModel,
-                                                  () -> expression,
+                                                  getExpression(),
                                                   listSelector);
     }
 
@@ -142,7 +145,6 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
         final List<GridColumn.HeaderMetaData> headerMetaData = new ArrayList<>();
         if (nesting == 0) {
             headerMetaData.add(new LiteralExpressionColumnHeaderMetaData(hasExpression,
-                                                                         expression,
                                                                          hasName,
                                                                          clearDisplayNameConsumer(true),
                                                                          setDisplayNameConsumer(true),
@@ -154,6 +156,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
 
         final GridColumn literalExpressionColumn = new LiteralExpressionColumn(headerMetaData,
                                                                                getBodyTextAreaFactory(),
+                                                                               getAndSetInitialWidth(0, DMNGridColumn.DEFAULT_WIDTH),
                                                                                this);
 
         model.appendColumn(literalExpressionColumn);
@@ -161,7 +164,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
 
     @Override
     protected void initialiseUiModel() {
-        expression.ifPresent(e -> {
+        getExpression().get().ifPresent(e -> {
             model.appendRow(new LiteralExpressionGridRow(getExpressionTextLineHeight(getRenderer().getTheme())));
             uiModelMapper.fromDMNModel(0,
                                        0);
@@ -177,7 +180,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
     @SuppressWarnings("unused")
     public void doAfterSelectionChange(final int uiRowIndex,
                                        final int uiColumnIndex) {
-        getExpression().ifPresent(this::fireDomainObjectSelectionEvent);
+        getExpression().get().ifPresent(this::fireDomainObjectSelectionEvent);
     }
 
     @Override

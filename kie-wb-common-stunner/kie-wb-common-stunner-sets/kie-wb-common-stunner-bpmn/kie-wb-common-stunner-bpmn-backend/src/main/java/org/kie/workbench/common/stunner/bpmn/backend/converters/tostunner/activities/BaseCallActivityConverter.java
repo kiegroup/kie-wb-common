@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.activ
 import org.eclipse.bpmn2.CallActivity;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ActivityPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.CallActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
@@ -26,17 +26,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public abstract class BaseCallActivityConverter <R extends BaseReusableSubprocess> {
+public abstract class BaseCallActivityConverter<R extends BaseReusableSubprocess,
+        E extends BaseReusableSubprocessTaskExecutionSet> {
 
     protected final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
@@ -49,7 +44,7 @@ public abstract class BaseCallActivityConverter <R extends BaseReusableSubproces
 
     @SuppressWarnings("unchecked")
     public BpmnNode convert(CallActivity activity) {
-        ActivityPropertyReader p = propertyReaderFactory.of(activity);
+        CallActivityPropertyReader p = propertyReaderFactory.of(activity);
 
         Node<View<R>, Edge> node = createNode(activity, p);
 
@@ -60,15 +55,7 @@ public abstract class BaseCallActivityConverter <R extends BaseReusableSubproces
                 new Documentation(p.getDocumentation())
         ));
 
-        definition.setExecutionSet(createReusableSubprocessTaskExecutionSet(
-                new CalledElement(activity.getCalledElement()),
-                new Independent(p.isIndependent()),
-                new WaitForCompletion(p.isWaitForCompletion()),
-                new IsAsync(p.isAsync()),
-                new OnEntryAction(p.getOnEntryAction()),
-                new OnExitAction(p.getOnExitAction()),
-                p
-        ));
+        definition.setExecutionSet(createReusableSubprocessTaskExecutionSet(activity, p));
 
         definition.setDataIOSet(new DataIOSet(p.getAssignmentsInfo()));
 
@@ -83,14 +70,8 @@ public abstract class BaseCallActivityConverter <R extends BaseReusableSubproces
         return BpmnNode.of(node);
     }
 
-    protected abstract Node<View<R>, Edge> createNode(CallActivity activity, ActivityPropertyReader p);
+    protected abstract Node<View<R>, Edge> createNode(CallActivity activity, CallActivityPropertyReader p);
 
-    protected abstract BaseReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CalledElement calledElement,
-                                                                                                       Independent independent,
-                                                                                                       WaitForCompletion waitForCompletion,
-                                                                                                       IsAsync isAsync,
-                                                                                                       OnEntryAction onEntryAction,
-                                                                                                       OnExitAction onExitAction,
-                                                                                                       ActivityPropertyReader p);
-
+    protected abstract E createReusableSubprocessTaskExecutionSet(CallActivity activity,
+                                                                  CallActivityPropertyReader p);
 }

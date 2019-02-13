@@ -149,6 +149,9 @@ public class DMNEditorConstants {
     public static final String DecisionTableEditor_DeleteDecisionRule = "DecisionTableEditor.DeleteDecisionRule";
 
     @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_DuplicateDecisionRule = "DecisionTableEditor.DuplicateDecisionRule";
+
+    @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_InsertInputClauseLeft = "DecisionTableEditor.InsertInputClauseLeft";
 
     @TranslationKey(defaultValue = "")
@@ -279,4 +282,7 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DataTypeConstraintExpressionView_Placeholder = "DataTypeConstraintExpressionView.Placeholder";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DataTypeConstraintEnumerationItemView_None = "DataTypeConstraintEnumerationItemView.None";
 }

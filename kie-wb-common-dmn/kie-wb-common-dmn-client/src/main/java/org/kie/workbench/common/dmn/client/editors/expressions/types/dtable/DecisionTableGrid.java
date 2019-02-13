@@ -49,6 +49,7 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.Del
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteOutputClauseCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltinAggregatorCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetHitPolicyCommand;
+import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.commands.general.DeleteHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHasNameCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
@@ -59,10 +60,10 @@ import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverV
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.LiteralExpressionGridRow;
@@ -71,7 +72,6 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -96,7 +96,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     private final HitPolicyPopoverView.Presenter hitPolicyEditor;
     private final NameAndDataTypePopoverView.Presenter headerEditor;
 
-    private final TextBoxSingletonDOMElementFactory textBoxFactory = getBodyTextBoxFactory();
     private final TextAreaSingletonDOMElementFactory textAreaFactory = getBodyTextAreaFactory();
 
     private class ListSelectorItemDefinition {
@@ -117,7 +116,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     public DecisionTableGrid(final GridCellTuple parent,
                              final Optional<String> nodeUUID,
                              final HasExpression hasExpression,
-                             final Optional<DecisionTable> expression,
                              final Optional<HasName> hasName,
                              final DMNGridPanel gridPanel,
                              final DMNGridLayer gridLayer,
@@ -125,7 +123,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                              final DefinitionUtils definitionUtils,
                              final SessionManager sessionManager,
                              final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                             final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
+                             final DefaultCanvasCommandFactory canvasCommandFactory,
                              final Event<ExpressionEditorChanged> editorSelectedEvent,
                              final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                              final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
@@ -138,7 +136,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         super(parent,
               nodeUUID,
               hasExpression,
-              expression,
               hasName,
               gridPanel,
               gridLayer,
@@ -172,31 +169,40 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     @Override
     public DecisionTableUIModelMapper makeUiModelMapper() {
         return new DecisionTableUIModelMapper(this::getModel,
-                                              () -> expression,
+                                              getExpression(),
                                               listSelector);
     }
 
     @Override
     public void initialiseUiColumns() {
-        expression.ifPresent(e -> {
+        int uiColumnIndex = 0;
+        if (getExpression().get().isPresent()) {
+            final DecisionTable e = getExpression().get().get();
             model.appendColumn(new DecisionTableRowNumberColumn(e::getHitPolicy,
                                                                 e::getAggregation,
                                                                 cellEditorControls,
                                                                 hitPolicyEditor,
                                                                 Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EditHitPolicy)),
+                                                                getAndSetInitialWidth(uiColumnIndex++, DecisionTableRowNumberColumn.DEFAULT_WIDTH),
                                                                 this));
-            e.getInput().forEach(ic -> model.appendColumn(makeInputClauseColumn(ic)));
-            e.getOutput().forEach(oc -> model.appendColumn(makeOutputClauseColumn(oc)));
+            for (int index = 0; index < e.getInput().size(); index++) {
+                model.appendColumn(makeInputClauseColumn(uiColumnIndex++, e.getInput().get(index)));
+            }
+            for (int index = 0; index < e.getOutput().size(); index++) {
+                model.appendColumn(makeOutputClauseColumn(uiColumnIndex++, e.getOutput().get(index)));
+            }
             model.appendColumn(new DescriptionColumn(new BaseHeaderMetaData(translationService.format(DMNEditorConstants.DecisionTableEditor_DescriptionColumnHeader),
                                                                             DESCRIPTION_GROUP),
-                                                     textBoxFactory,
+                                                     textAreaFactory,
+                                                     getAndSetInitialWidth(uiColumnIndex, DMNGridColumn.DEFAULT_WIDTH),
                                                      this));
-        });
+        }
 
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> !isSelectionLayer);
     }
 
-    private InputClauseColumn makeInputClauseColumn(final InputClause ic) {
+    private InputClauseColumn makeInputClauseColumn(final int index,
+                                                    final InputClause ic) {
         final InputClauseColumn column = new InputClauseColumn(new InputClauseColumnHeaderMetaData(wrapInputClauseIntoHasName(ic),
                                                                                                    ic::getInputExpression,
                                                                                                    clearDisplayNameConsumer(false),
@@ -206,6 +212,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                                                                    headerEditor,
                                                                                                    Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EditInputClause))),
                                                                textAreaFactory,
+                                                               getAndSetInitialWidth(index, DMNGridColumn.DEFAULT_WIDTH),
                                                                this);
         return column;
     }
@@ -225,9 +232,11 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         };
     }
 
-    private OutputClauseColumn makeOutputClauseColumn(final OutputClause oc) {
+    private OutputClauseColumn makeOutputClauseColumn(final int index,
+                                                      final OutputClause oc) {
         final OutputClauseColumn column = new OutputClauseColumn(outputClauseHeaderMetaData(oc),
                                                                  textAreaFactory,
+                                                                 getAndSetInitialWidth(index, DMNGridColumn.DEFAULT_WIDTH),
                                                                  this);
         return column;
     }
@@ -239,10 +248,9 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     private Supplier<List<GridColumn.HeaderMetaData>> outputClauseHeaderMetaData(final OutputClause oc) {
         return () -> {
             final List<GridColumn.HeaderMetaData> metaData = new ArrayList<>();
-            expression.ifPresent(dtable -> {
+            getExpression().get().ifPresent(dtable -> {
                 if (hasName.isPresent()) {
                     metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(hasExpression,
-                                                                                    expression,
                                                                                     hasName,
                                                                                     clearDisplayNameConsumer(true, oc, dtable),
                                                                                     setDisplayNameConsumer(true, oc, dtable),
@@ -360,7 +368,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
 
     @Override
     public void initialiseUiModel() {
-        expression.ifPresent(e -> {
+        getExpression().get().ifPresent(e -> {
             e.getRule().forEach(r -> {
                 int columnIndex = 0;
                 model.appendRow(makeDecisionTableRow());
@@ -387,7 +395,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         final java.util.List<ListSelectorItem> items = new ArrayList<>();
         final boolean isMultiColumn = SelectionUtils.isMultiColumn(model);
 
-        getExpression().ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             final DecisionTableUIModelMapperHelper.DecisionTableSection section = DecisionTableUIModelMapperHelper.getSection(dtable, uiColumnIndex);
             switch (section) {
                 case INPUT_CLAUSES:
@@ -473,6 +481,13 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                  new ListSelectorItemDefinition(translationService.format(DMNEditorConstants.DecisionTableEditor_DeleteDecisionRule),
                                                 !isMultiRow && dtable.getRule().size() > 1,
                                                 () -> deleteDecisionRule(uiRowIndex)));
+
+        items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.DecisionTableEditor_DuplicateDecisionRule),
+                                             !isMultiRow,
+                                             () -> {
+                                                 cellEditorControls.hide();
+                                                 duplicateDecisionRule(uiRowIndex);
+                                             }));
     }
 
     @Override
@@ -482,15 +497,14 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void addInputClause(final int index) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             final InputClause clause = new InputClause();
-            final InputClauseColumn inputClauseColumn = makeInputClauseColumn(clause);
 
             final CommandResult<CanvasViolation> result = sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                                                                         new AddInputClauseCommand(dtable,
                                                                                                                   clause,
                                                                                                                   model,
-                                                                                                                  inputClauseColumn,
+                                                                                                                  () -> makeInputClauseColumn(index, clause),
                                                                                                                   index,
                                                                                                                   uiModelMapper,
                                                                                                                   () -> resize(BaseExpressionGrid.RESIZE_EXISTING),
@@ -504,7 +518,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void deleteInputClause(final int index) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new DeleteInputClauseCommand(dtable,
                                                                        model,
@@ -516,15 +530,14 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void addOutputClause(final int index) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             final OutputClause clause = new OutputClause();
-            final OutputClauseColumn outputClauseColumn = makeOutputClauseColumn(clause);
 
             final CommandResult<CanvasViolation> result = sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                                                                         new AddOutputClauseCommand(dtable,
                                                                                                                    clause,
                                                                                                                    model,
-                                                                                                                   outputClauseColumn,
+                                                                                                                   () -> makeOutputClauseColumn(index, clause),
                                                                                                                    index,
                                                                                                                    uiModelMapper,
                                                                                                                    () -> resize(BaseExpressionGrid.RESIZE_EXISTING),
@@ -538,7 +551,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void deleteOutputClause(final int index) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new DeleteOutputClauseCommand(dtable,
                                                                         model,
@@ -550,11 +563,12 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void addDecisionRule(final int index) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             final GridRow decisionTableRow = makeDecisionTableRow();
+            final DecisionRule decisionRule = DecisionRuleFactory.makeDecisionRule(dtable);
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new AddDecisionRuleCommand(dtable,
-                                                                     new DecisionRule(),
+                                                                     decisionRule,
                                                                      model,
                                                                      decisionTableRow,
                                                                      index,
@@ -564,7 +578,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void deleteDecisionRule(final int index) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new DeleteDecisionRuleCommand(dtable,
                                                                         model,
@@ -573,20 +587,35 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         });
     }
 
+    void duplicateDecisionRule(final int index) {
+        getExpression().get().ifPresent(dtable -> {
+            final GridRow decisionTableRow = makeDecisionTableRow();
+            final DecisionRule decisionRule = DecisionRuleFactory.duplicateDecisionRule(index, dtable);
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          new AddDecisionRuleCommand(dtable,
+                                                                     decisionRule,
+                                                                     model,
+                                                                     decisionTableRow,
+                                                                     index,
+                                                                     uiModelMapper,
+                                                                     () -> resize(BaseExpressionGrid.RESIZE_EXISTING)));
+        });
+    }
+
     @Override
     public HitPolicy getHitPolicy() {
-        return expression.orElseThrow(() -> new IllegalArgumentException("DecisionTable has not been set.")).getHitPolicy();
+        return getExpression().get().orElseThrow(() -> new IllegalArgumentException("DecisionTable has not been set.")).getHitPolicy();
     }
 
     @Override
     public BuiltinAggregator getBuiltinAggregator() {
-        return expression.orElseThrow(() -> new IllegalArgumentException("DecisionTable has not been set.")).getAggregation();
+        return getExpression().get().orElseThrow(() -> new IllegalArgumentException("DecisionTable has not been set.")).getAggregation();
     }
 
     @Override
     public void setHitPolicy(final HitPolicy hitPolicy,
                              final Command onSuccess) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
             commandBuilder.addCommand(new SetBuiltinAggregatorCommand(dtable,
                                                                       null,
@@ -605,7 +634,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
 
     @Override
     public void setBuiltinAggregator(final BuiltinAggregator aggregator) {
-        expression.ifPresent(dtable -> {
+        getExpression().get().ifPresent(dtable -> {
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new SetBuiltinAggregatorCommand(dtable,
                                                                           aggregator,
@@ -621,8 +650,8 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             return;
         }
 
-        if (expression.isPresent()) {
-            final DecisionTable dtable = expression.get();
+        if (getExpression().get().isPresent()) {
+            final DecisionTable dtable = getExpression().get().get();
             final DecisionTableUIModelMapperHelper.DecisionTableSection section = DecisionTableUIModelMapperHelper.getSection(dtable, uiColumnIndex);
             switch (section) {
                 case INPUT_CLAUSES:
@@ -643,8 +672,8 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     @Override
     public void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
                                              final int uiHeaderColumnIndex) {
-        if (expression.isPresent()) {
-            final DecisionTable dtable = expression.get();
+        if (getExpression().get().isPresent()) {
+            final DecisionTable dtable = getExpression().get().get();
             final DecisionTableUIModelMapperHelper.DecisionTableSection section = DecisionTableUIModelMapperHelper.getSection(dtable, uiHeaderColumnIndex);
             switch (section) {
                 case INPUT_CLAUSES:

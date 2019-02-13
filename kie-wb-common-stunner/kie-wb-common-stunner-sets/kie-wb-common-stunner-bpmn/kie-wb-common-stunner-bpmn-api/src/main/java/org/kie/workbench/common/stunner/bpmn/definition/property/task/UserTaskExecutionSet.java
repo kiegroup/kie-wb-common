@@ -25,8 +25,9 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
+import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
@@ -41,7 +42,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "taskName")
-public class UserTaskExecutionSet implements BPMNPropertySet {
+public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
 
     @Property
     @FormField
@@ -120,7 +121,56 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     private AdHocAutostart adHocAutostart;
 
     @Property
-    @FormField(afterElement = "adHocAutostart",
+    @Valid
+    @FormField(afterElement = "adHocAutostart")
+    private IsMultipleInstance isMultipleInstance;
+
+    @Property
+    @FormField(type = ListBoxFieldType.class, afterElement = "isMultipleInstance")
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.VariablesProvider"
+    )
+    @Valid
+    private MultipleInstanceCollectionInput multipleInstanceCollectionInput;
+
+    @Property
+    @FormField(
+            afterElement = "multipleInstanceCollectionInput"
+    )
+    @Valid
+    private MultipleInstanceDataInput multipleInstanceDataInput;
+
+    @Property
+    @FormField(
+            type = ListBoxFieldType.class,
+            afterElement = "multipleInstanceDataInput"
+    )
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.VariablesProvider"
+    )
+    @Valid
+    private MultipleInstanceCollectionOutput multipleInstanceCollectionOutput;
+
+    @Property
+    @FormField(
+            afterElement = "multipleInstanceCollectionOutput"
+    )
+    @Valid
+    private MultipleInstanceDataOutput multipleInstanceDataOutput;
+
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "multipleInstanceDataOutput",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private MultipleInstanceCompletionCondition multipleInstanceCompletionCondition;
+
+    @Property
+    @FormField(afterElement = "multipleInstanceCompletionCondition",
             settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")})
     @Valid
     private OnEntryAction onEntryAction;
@@ -156,6 +206,12 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
              new Description(""),
              new CreatedBy(),
              new AdHocAutostart(),
+             new IsMultipleInstance(false),
+             new MultipleInstanceCollectionInput(),
+             new MultipleInstanceDataInput(),
+             new MultipleInstanceCollectionOutput(),
+             new MultipleInstanceDataOutput(),
+             new MultipleInstanceCompletionCondition(),
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
@@ -175,6 +231,12 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
                                 final @MapsTo("description") Description description,
                                 final @MapsTo("createdBy") CreatedBy createdBy,
                                 final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
+                                final @MapsTo("isMultipleInstance") IsMultipleInstance isMultipleInstance,
+                                final @MapsTo("multipleInstanceCollectionInput") MultipleInstanceCollectionInput multipleInstanceCollectionInput,
+                                final @MapsTo("multipleInstanceDataInput") MultipleInstanceDataInput multipleInstanceDataInput,
+                                final @MapsTo("multipleInstanceCollectionOutput") MultipleInstanceCollectionOutput multipleInstanceCollectionOutput,
+                                final @MapsTo("multipleInstanceDataOutput") MultipleInstanceDataOutput multipleInstanceDataOutput,
+                                final @MapsTo("multipleInstanceCompletionCondition") MultipleInstanceCompletionCondition multipleInstanceCompletionCondition,
                                 final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
                                 final @MapsTo("onExitAction") OnExitAction onExitAction,
                                 final @MapsTo("content") Content content,
@@ -190,12 +252,19 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.description = description;
         this.createdBy = createdBy;
         this.adHocAutostart = adHocAutostart;
+        this.isMultipleInstance = isMultipleInstance;
+        this.multipleInstanceCollectionInput = multipleInstanceCollectionInput;
+        this.multipleInstanceDataInput = multipleInstanceDataInput;
+        this.multipleInstanceCollectionOutput = multipleInstanceCollectionOutput;
+        this.multipleInstanceDataOutput = multipleInstanceDataOutput;
+        this.multipleInstanceCompletionCondition = multipleInstanceCompletionCondition;
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
         this.content = content;
         this.slaDueDate = slaDueDate;
     }
 
+    @Override
     public TaskName getTaskName() {
         return taskName;
     }
@@ -204,6 +273,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.taskName = taskName;
     }
 
+    @Override
     public Actors getActors() {
         return actors;
     }
@@ -212,6 +282,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.actors = actors;
     }
 
+    @Override
     public Groupid getGroupid() {
         return groupid;
     }
@@ -220,6 +291,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.groupid = groupid;
     }
 
+    @Override
     public AssignmentsInfo getAssignmentsinfo() {
         return assignmentsinfo;
     }
@@ -228,6 +300,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.assignmentsinfo = assignmentsinfo;
     }
 
+    @Override
     public IsAsync getIsAsync() {
         return isAsync;
     }
@@ -236,6 +309,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.isAsync = isAsync;
     }
 
+    @Override
     public Skippable getSkippable() {
         return skippable;
     }
@@ -244,6 +318,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.skippable = skippable;
     }
 
+    @Override
     public Priority getPriority() {
         return priority;
     }
@@ -252,6 +327,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.priority = priority;
     }
 
+    @Override
     public Subject getSubject() {
         return subject;
     }
@@ -260,6 +336,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.subject = subject;
     }
 
+    @Override
     public Description getDescription() {
         return description;
     }
@@ -268,6 +345,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.description = description;
     }
 
+    @Override
     public CreatedBy getCreatedBy() {
         return createdBy;
     }
@@ -276,6 +354,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.createdBy = createdBy;
     }
 
+    @Override
     public AdHocAutostart getAdHocAutostart() {
         return adHocAutostart;
     }
@@ -284,6 +363,55 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.adHocAutostart = adHocAutostart;
     }
 
+    public IsMultipleInstance getIsMultipleInstance() {
+        return isMultipleInstance;
+    }
+
+    public void setIsMultipleInstance(IsMultipleInstance isMultipleInstance) {
+        this.isMultipleInstance = isMultipleInstance;
+    }
+
+    public MultipleInstanceCollectionInput getMultipleInstanceCollectionInput() {
+        return multipleInstanceCollectionInput;
+    }
+
+    public void setMultipleInstanceCollectionInput(MultipleInstanceCollectionInput multipleInstanceCollectionInput) {
+        this.multipleInstanceCollectionInput = multipleInstanceCollectionInput;
+    }
+
+    public MultipleInstanceDataInput getMultipleInstanceDataInput() {
+        return multipleInstanceDataInput;
+    }
+
+    public void setMultipleInstanceDataInput(MultipleInstanceDataInput multipleInstanceDataInput) {
+        this.multipleInstanceDataInput = multipleInstanceDataInput;
+    }
+
+    public MultipleInstanceCollectionOutput getMultipleInstanceCollectionOutput() {
+        return multipleInstanceCollectionOutput;
+    }
+
+    public void setMultipleInstanceCollectionOutput(MultipleInstanceCollectionOutput multipleInstanceCollectionOutput) {
+        this.multipleInstanceCollectionOutput = multipleInstanceCollectionOutput;
+    }
+
+    public MultipleInstanceDataOutput getMultipleInstanceDataOutput() {
+        return multipleInstanceDataOutput;
+    }
+
+    public void setMultipleInstanceDataOutput(MultipleInstanceDataOutput multipleInstanceDataOutput) {
+        this.multipleInstanceDataOutput = multipleInstanceDataOutput;
+    }
+
+    public MultipleInstanceCompletionCondition getMultipleInstanceCompletionCondition() {
+        return multipleInstanceCompletionCondition;
+    }
+
+    public void setMultipleInstanceCompletionCondition(MultipleInstanceCompletionCondition multipleInstanceCompletionCondition) {
+        this.multipleInstanceCompletionCondition = multipleInstanceCompletionCondition;
+    }
+
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
@@ -292,6 +420,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.onEntryAction = onEntryAction;
     }
 
+    @Override
     public OnExitAction getOnExitAction() {
         return onExitAction;
     }
@@ -300,6 +429,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.onExitAction = onExitAction;
     }
 
+    @Override
     public Content getContent() {
         return content;
     }
@@ -308,6 +438,7 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
         this.content = content;
     }
 
+    @Override
     public SLADueDate getSlaDueDate() {
         return slaDueDate;
     }
@@ -329,6 +460,12 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
                                          Objects.hashCode(description),
                                          Objects.hashCode(createdBy),
                                          Objects.hashCode(adHocAutostart),
+                                         Objects.hashCode(isMultipleInstance),
+                                         Objects.hashCode(multipleInstanceCollectionInput),
+                                         Objects.hashCode(multipleInstanceDataInput),
+                                         Objects.hashCode(multipleInstanceCollectionOutput),
+                                         Objects.hashCode(multipleInstanceDataOutput),
+                                         Objects.hashCode(multipleInstanceCompletionCondition),
                                          Objects.hashCode(onEntryAction),
                                          Objects.hashCode(onExitAction),
                                          Objects.hashCode(content),
@@ -337,38 +474,32 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
         if (o instanceof UserTaskExecutionSet) {
             UserTaskExecutionSet other = (UserTaskExecutionSet) o;
-            return Objects.equals(taskName,
-                                  other.taskName) &&
-                    Objects.equals(subject,
-                                   other.subject) &&
-                    Objects.equals(actors,
-                                   other.actors) &&
-                    Objects.equals(groupid,
-                                   other.groupid) &&
-                    Objects.equals(assignmentsinfo,
-                                   other.assignmentsinfo) &&
-                    Objects.equals(isAsync,
-                                   other.isAsync) &&
-                    Objects.equals(skippable,
-                                   other.skippable) &&
-                    Objects.equals(priority,
-                                   other.priority) &&
-                    Objects.equals(description,
-                                   other.description) &&
-                    Objects.equals(createdBy,
-                                   other.createdBy) &&
-                    Objects.equals(adHocAutostart,
-                                   other.adHocAutostart) &&
-                    Objects.equals(onEntryAction,
-                                   other.onEntryAction) &&
-                    Objects.equals(onExitAction,
-                                   other.onExitAction) &&
-                    Objects.equals(content,
-                                   other.content) &&
-                    Objects.equals(slaDueDate,
-                                   other.slaDueDate);
+            return Objects.equals(taskName, other.taskName) &&
+                    Objects.equals(subject, other.subject) &&
+                    Objects.equals(actors, other.actors) &&
+                    Objects.equals(groupid, other.groupid) &&
+                    Objects.equals(assignmentsinfo, other.assignmentsinfo) &&
+                    Objects.equals(isAsync, other.isAsync) &&
+                    Objects.equals(skippable, other.skippable) &&
+                    Objects.equals(priority, other.priority) &&
+                    Objects.equals(description, other.description) &&
+                    Objects.equals(createdBy, other.createdBy) &&
+                    Objects.equals(adHocAutostart, other.adHocAutostart) &&
+                    Objects.equals(isMultipleInstance, other.isMultipleInstance) &&
+                    Objects.equals(multipleInstanceCollectionInput, other.multipleInstanceCollectionInput) &&
+                    Objects.equals(multipleInstanceDataInput, other.multipleInstanceDataInput) &&
+                    Objects.equals(multipleInstanceCollectionOutput, other.multipleInstanceCollectionOutput) &&
+                    Objects.equals(multipleInstanceDataOutput, other.multipleInstanceDataOutput) &&
+                    Objects.equals(multipleInstanceCompletionCondition, other.multipleInstanceCompletionCondition) &&
+                    Objects.equals(onEntryAction, other.onEntryAction) &&
+                    Objects.equals(onExitAction, other.onExitAction) &&
+                    Objects.equals(content, other.content) &&
+                    Objects.equals(slaDueDate, other.slaDueDate);
         }
         return false;
     }

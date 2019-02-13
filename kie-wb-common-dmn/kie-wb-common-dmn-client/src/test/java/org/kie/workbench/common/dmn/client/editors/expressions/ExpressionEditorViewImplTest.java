@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -36,6 +37,7 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
@@ -43,6 +45,7 @@ import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCacheImpl;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.KeyboardOperationEscapeGridCell;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -60,10 +63,17 @@ import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidgetKeyboardHandler;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperation;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationEditCell;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveDown;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveLeft;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveRight;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveUp;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
 import org.uberfire.mocks.EventSourceMock;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -75,6 +85,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,6 +93,10 @@ import static org.mockito.Mockito.when;
 public class ExpressionEditorViewImplTest {
 
     private static final String NODE_UUID = "uuid";
+
+    private static final String UNDEFINED_EXPRESSION_DEFINITION_NAME = "Undefined";
+
+    private static final String LITERAL_EXPRESSION_DEFINITION_NAME = "Literal Expression";
 
     @Mock
     private Anchor returnToDRG;
@@ -118,6 +133,9 @@ public class ExpressionEditorViewImplTest {
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+
+    @Mock
+    private DefaultCanvasCommandFactory canvasCommandFactory;
 
     @Mock
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
@@ -167,6 +185,9 @@ public class ExpressionEditorViewImplTest {
     @Captor
     private ArgumentCaptor<TransformMediator> transformMediatorArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<KeyboardOperation> keyboardOperationArgumentCaptor;
+
     private ExpressionGridCache expressionGridCache;
 
     private DMNGridPanelContainer gridPanelContainer;
@@ -192,7 +213,6 @@ public class ExpressionEditorViewImplTest {
                                                                        any(Optional.class),
                                                                        any(HasExpression.class),
                                                                        any(Optional.class),
-                                                                       any(Optional.class),
                                                                        anyInt());
         doReturn(new BaseGridData()).when(editor).getModel();
 
@@ -203,6 +223,7 @@ public class ExpressionEditorViewImplTest {
                                                      listSelector,
                                                      sessionManager,
                                                      sessionCommandManager,
+                                                     canvasCommandFactory,
                                                      expressionEditorDefinitionsSupplier,
                                                      refreshFormPropertiesEvent,
                                                      domainObjectSelectionEvent));
@@ -213,24 +234,24 @@ public class ExpressionEditorViewImplTest {
         expressionEditorDefinitions.add(undefinedExpressionEditorDefinition);
         expressionEditorDefinitions.add(literalExpressionEditorDefinition);
 
-        doReturn(expressionEditorDefinitions).when(expressionEditorDefinitionsSupplier).get();
-        doReturn(Optional.empty()).when(undefinedExpressionEditorDefinition).getModelClass();
-        doReturn(new BaseGridData()).when(undefinedExpressionEditor).getModel();
-        doReturn(Optional.of(undefinedExpressionEditor)).when(undefinedExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
-                                                                                                             any(Optional.class),
-                                                                                                             any(HasExpression.class),
-                                                                                                             any(Optional.class),
-                                                                                                             any(Optional.class),
-                                                                                                             anyInt());
+        when(expressionEditorDefinitionsSupplier.get()).thenReturn(expressionEditorDefinitions);
+        when(undefinedExpressionEditorDefinition.getModelClass()).thenReturn(Optional.empty());
+        when(undefinedExpressionEditorDefinition.getName()).thenReturn(UNDEFINED_EXPRESSION_DEFINITION_NAME);
+        when(undefinedExpressionEditor.getModel()).thenReturn(new BaseGridData());
+        when(undefinedExpressionEditorDefinition.getEditor(any(GridCellTuple.class),
+                                                           any(Optional.class),
+                                                           any(HasExpression.class),
+                                                           any(Optional.class),
+                                                           anyInt())).thenReturn(Optional.of(undefinedExpressionEditor));
 
-        doReturn(Optional.of(new LiteralExpression())).when(literalExpressionEditorDefinition).getModelClass();
-        doReturn(new BaseGridData()).when(literalExpressionEditor).getModel();
-        doReturn(Optional.of(literalExpressionEditor)).when(literalExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
-                                                                                                         any(Optional.class),
-                                                                                                         any(HasExpression.class),
-                                                                                                         any(Optional.class),
-                                                                                                         any(Optional.class),
-                                                                                                         anyInt());
+        when(literalExpressionEditorDefinition.getModelClass()).thenReturn(Optional.of(new LiteralExpression()));
+        when(literalExpressionEditorDefinition.getName()).thenReturn(LITERAL_EXPRESSION_DEFINITION_NAME);
+        when(literalExpressionEditor.getModel()).thenReturn(new BaseGridData());
+        when(literalExpressionEditorDefinition.getEditor(any(GridCellTuple.class),
+                                                         any(Optional.class),
+                                                         any(HasExpression.class),
+                                                         any(Optional.class),
+                                                         anyInt())).thenReturn(Optional.of(literalExpressionEditor));
 
         doAnswer((i) -> i.getArguments()[1]).when(translationService).format(anyString(), anyObject());
         doAnswer((i) -> i.getArguments()[0]).when(translationService).getTranslation(anyString());
@@ -260,6 +281,16 @@ public class ExpressionEditorViewImplTest {
         verify(gridPanel).add(gridLayer);
         verify(gridPanelContainer).clear();
         verify(gridPanelContainer).setWidget(gridPanel);
+
+        verify(view, times(6)).addKeyboardOperation(any(BaseGridWidgetKeyboardHandler.class),
+                                                    keyboardOperationArgumentCaptor.capture());
+        final List<KeyboardOperation> operations = keyboardOperationArgumentCaptor.getAllValues();
+        assertThat(operations.get(0)).isInstanceOf(KeyboardOperationEditCell.class);
+        assertThat(operations.get(1)).isInstanceOf(KeyboardOperationEscapeGridCell.class);
+        assertThat(operations.get(2)).isInstanceOf(KeyboardOperationMoveLeft.class);
+        assertThat(operations.get(3)).isInstanceOf(KeyboardOperationMoveRight.class);
+        assertThat(operations.get(4)).isInstanceOf(KeyboardOperationMoveUp.class);
+        assertThat(operations.get(5)).isInstanceOf(KeyboardOperationMoveDown.class);
     }
 
     @Test
@@ -329,7 +360,7 @@ public class ExpressionEditorViewImplTest {
                            hasExpression,
                            hasName);
 
-        verify(expressionType).setTextContent(eq(LiteralExpression.class.getSimpleName()));
+        verify(expressionType).setTextContent(eq(LITERAL_EXPRESSION_DEFINITION_NAME));
     }
 
     @Test

@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.validation.Dat
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
@@ -129,6 +130,7 @@ public class DataTypeListItem {
 
     void setupConstraintComponent() {
         dataTypeConstraintComponent.init(this);
+        refreshConstraintComponent();
     }
 
     void setupSelectComponent() {
@@ -243,10 +245,10 @@ public class DataTypeListItem {
 
     List<DataType> persist(final DataType dataType) {
         return dataTypeManager
-            .from(dataType)
-            .withSubDataTypes(dataTypeSelectComponent.getSubDataTypes())
-            .get()
-            .update();
+                .from(dataType)
+                .withSubDataTypes(dataTypeSelectComponent.getSubDataTypes())
+                .get()
+                .update();
     }
 
     void discardNewDataType() {
@@ -257,18 +259,19 @@ public class DataTypeListItem {
 
         setupListComponent();
         setupSelectComponent();
+        setupConstraintComponent();
         refreshSubItems(oldDataType.getSubDataTypes());
     }
 
     DataType discardDataTypeProperties() {
         return dataTypeManager
-            .withDataType(getDataType())
-            .withName(getOldName())
-            .withType(getOldType())
-            .withConstraint(getOldConstraint())
-            .withConstraintType(getOldConstraintType())
-            .asList(getOldIsList())
-            .get();
+                .withDataType(getDataType())
+                .withName(getOldName())
+                .withType(getOldType())
+                .withConstraint(getOldConstraint())
+                .withConstraintType(getOldConstraintType())
+                .asList(getOldIsList())
+                .get();
     }
 
     void closeEditMode() {
@@ -313,9 +316,9 @@ public class DataTypeListItem {
 
     List<DataType> removeTopLevelDataTypes(final List<DataType> destroyedDataTypes) {
         return destroyedDataTypes.stream()
-            .filter(dataType -> dataType.isTopLevel() && (isDestroyedDataType(dataType) || isAReferenceToDestroyedDataType(dataType)))
-            .peek(dataTypeList::removeItem)
-            .collect(Collectors.toList());
+                .filter(dataType -> dataType.isTopLevel() && (isDestroyedDataType(dataType) || isAReferenceToDestroyedDataType(dataType)))
+                .peek(dataTypeList::removeItem)
+                .collect(Collectors.toList());
     }
 
     private boolean isDestroyedDataType(final DataType dataType) {
@@ -328,13 +331,13 @@ public class DataTypeListItem {
 
     DataType updateProperties(final DataType dataType) {
         return dataTypeManager
-            .from(dataType)
-            .withName(getName())
-            .withType(getType())
-            .withConstraint(getConstraint())
-            .withConstraintType(getConstraintType())
-            .asList(isList())
-            .get();
+                .from(dataType)
+                .withName(getName())
+                .withType(getType())
+                .withConstraint(getConstraint())
+                .withConstraintType(getConstraintType())
+                .asList(isList())
+                .get();
     }
 
     private String getConstraintType() {
@@ -373,7 +376,7 @@ public class DataTypeListItem {
         return oldConstraint;
     }
 
-    String getOldConstraintType(){
+    String getOldConstraintType() {
         if (oldConstraintType == null) {
             return "";
         }
@@ -438,13 +441,29 @@ public class DataTypeListItem {
     String getNewDataTypeHash(final DataType newDataType,
                               final String referenceDataTypeHash) {
         return Stream
-            .of(referenceDataTypeHash, newDataType.getName())
-            .filter(s -> !isEmpty(s))
-            .collect(Collectors.joining("."));
+                .of(referenceDataTypeHash, newDataType.getName())
+                .filter(s -> !isEmpty(s))
+                .collect(Collectors.joining("."));
     }
 
     private DataType newDataType() {
         return dataTypeManager.fromNew().get();
+    }
+
+    void refreshConstraintComponent() {
+        if (isBooleanType() || isStructureType()) {
+            dataTypeConstraintComponent.disable();
+        } else {
+            dataTypeConstraintComponent.enable();
+        }
+    }
+
+    private boolean isBooleanType() {
+        return Objects.equals(BOOLEAN.getName(), getType());
+    }
+
+    private boolean isStructureType() {
+        return Objects.equals(dataTypeManager.structure(), getType());
     }
 
     public interface View extends UberElemental<DataTypeListItem> {

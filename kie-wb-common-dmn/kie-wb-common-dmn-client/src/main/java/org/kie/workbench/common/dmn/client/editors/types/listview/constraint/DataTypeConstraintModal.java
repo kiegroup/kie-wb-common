@@ -16,15 +16,18 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintParserWarningEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.expression.DataTypeConstraintExpression;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.range.DataTypeConstraintRange;
@@ -34,7 +37,6 @@ import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2M
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.ENUMERATION;
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.EXPRESSION;
 import static org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType.RANGE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.DataTypeConstraintComponent.NONE;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
@@ -50,11 +52,11 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     private final DataTypeConstraintRange constraintRange;
 
-    private DataTypeConstraintComponent currentComponent = NONE;
+    private DataTypeConstraintComponent currentComponent = DataTypeConstraintComponent.NONE;
 
     private String constraintValue = CONSTRAINT_INITIAL_VALUE;
 
-    private ConstraintType constraintType;
+    private ConstraintType constraintType = ConstraintType.NONE;
 
     private BiConsumer<String, ConstraintType> onSave;
 
@@ -75,6 +77,8 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         superSetup();
         setWidth(WIDTH);
 
+        this.constraintRange.setModal(this);
+
         getView().init(this);
     }
 
@@ -89,7 +93,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     void doSave(final String value) {
         constraintValue = value;
-        getOnSave().accept(value, this.constraintType);
+        getOnSave().accept(value, constraintType);
         hide();
     }
 
@@ -99,7 +103,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
         this.constraintValue = value;
 
-        if (!StringUtils.isEmpty(value) && constraintType == null) {
+        if (!StringUtils.isEmpty(value) && isNone(constraintType)) {
             this.constraintType = inferComponentType(value);
         } else {
             this.constraintType = constraintType;
@@ -108,13 +112,14 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         prepareView(type, value, constraintType);
     }
 
-    void setupComponent(ConstraintType constraintType) {
-        if (constraintType == null) {
-            constraintType = inferComponentType(getConstraintValue());
-        }
-        this.constraintType = constraintType;
+    void setupComponent(final ConstraintType type) {
+        constraintType = isNone(type) ? inferComponentType(getConstraintValue()) : type;
         currentComponent = getComponentByType(constraintType);
         currentComponent.setValue(getConstraintValue());
+
+        if (constraintType != RANGE) {
+            enableOkButton();
+        }
     }
 
     String getConstraintValue() {
@@ -123,6 +128,10 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     DataTypeConstraintComponent getCurrentComponent() {
         return currentComponent;
+    }
+
+    boolean isNone(final ConstraintType type) {
+        return type == null || Objects.equals(type, ConstraintType.NONE);
     }
 
     private String getComponentConstraintValue() {
@@ -148,7 +157,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
         getView().setType(type);
 
-        if (!isEmpty(constraintValue) || constraintType != null) {
+        if (!isEmpty(constraintValue) || !isNone(constraintType)) {
             getView().loadComponent(constraintType);
         } else {
             getView().setupEmptyContainer();
@@ -159,7 +168,7 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         return constraintType;
     }
 
-    public void setConstraintType(final ConstraintType constraintType) {
+    void setConstraintType(final ConstraintType constraintType) {
         this.constraintType = constraintType;
     }
 
@@ -178,10 +187,10 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     private boolean isEnumeration(final String constraintValue) {
         return !constraintValue.startsWith("(")
-            && !constraintValue.startsWith("[")
-            && !constraintValue.endsWith("]")
-            && !constraintValue.endsWith(")")
-            && constraintValue.contains(",");
+                && !constraintValue.startsWith("[")
+                && !constraintValue.endsWith("]")
+                && !constraintValue.endsWith(")")
+                && constraintValue.contains(",");
     }
 
     private boolean isRange(final String constraintValue) {
@@ -199,6 +208,10 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
 
     void superShow() {
         super.show();
+    }
+
+    void onDataTypeConstraintParserWarningEvent(final @Observes DataTypeConstraintParserWarningEvent e) {
+        getView().showConstraintWarningMessage();
     }
 
     private DataTypeConstraintEnumeration getConstraintEnumeration() {
@@ -221,6 +234,14 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         super.setWidth(width);
     }
 
+    public void enableOkButton() {
+        getView().enableOkButton();
+    }
+
+    public void disableOkButton() {
+        getView().disableOkButton();
+    }
+
     public interface View extends Elemental2Modal.View<DataTypeConstraintModal> {
 
         void setType(final String type);
@@ -230,5 +251,11 @@ public class DataTypeConstraintModal extends Elemental2Modal<DataTypeConstraintM
         void loadComponent(final ConstraintType constraintType);
 
         void onShow();
+
+        void showConstraintWarningMessage();
+
+        void enableOkButton();
+
+        void disableOkButton();
     }
 }
