@@ -41,8 +41,13 @@ public final class LayoutHelper {
     }
 
     public void applyLayout(final Diagram diagram) {
+        applyLayout(diagram, false);
+    }
+
+    public void applyLayout(final Diagram diagram,
+                            final boolean overrideCurrentLayout) {
         final Graph<?, Node> graph = diagram.getGraph();
-        if (graph != null && !this.layoutService.hasLayoutInformation(graph)) {
+        if (graph != null && (overrideCurrentLayout || !this.layoutService.hasLayoutInformation(graph))) {
             final Layout layout = this.layoutService.createLayout(graph);
             this.layoutExecutor.applyLayout(layout, graph);
 

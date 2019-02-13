@@ -35,6 +35,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -121,6 +123,24 @@ public class LayoutHelperTest {
 
         isCloseToZero(bounds.getLowerRight());
         isCloseToZero(bounds.getUpperLeft());
+    }
+
+    @Test
+    public void applyLayoutDoNotOverrideExistingLayout() {
+        when(layoutService.hasLayoutInformation(graph)).thenReturn(true);
+        final LayoutHelper helper = new LayoutHelper(layoutService, layoutExecutor);
+        helper.applyLayout(diagram, false);
+
+        verify(layoutExecutor, never()).applyLayout(any(), any());
+    }
+
+    @Test
+    public void applyLayoutOverrideExistingLayout() {
+        when(layoutService.hasLayoutInformation(graph)).thenReturn(true);
+        final LayoutHelper helper = new LayoutHelper(layoutService, layoutExecutor);
+        helper.applyLayout(diagram, true);
+
+        verify(layoutExecutor).applyLayout(any(), any());
     }
 
     private static void isCloseToZero(final Bound bound) {
