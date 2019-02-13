@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
@@ -33,6 +32,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateCanvasControlPointPositionCommandTest extends AbstractCanvasControlPointCommandTest {
@@ -80,12 +80,21 @@ public class UpdateCanvasControlPointPositionCommandTest extends AbstractCanvasC
 
     @Test
     public void execute() {
+        checkExecution(true);
+    }
+
+    @Test
+    public void executeWhenCPsNotVisible() {
+        checkExecution(false);
+    }
+
+    private void checkExecution(boolean areControlPointsVisible) {
+        when(connectorView.areControlsVisible()).thenReturn(areControlPointsVisible);
         tested = new UpdateCanvasControlPointPositionCommand(edge, newControlPoints);
         CommandResult<CanvasViolation> result = tested.execute(canvasHandler);
         assertFalse(CommandUtils.isError(result));
-        verify(connectorView, times(1)).hideControlPoints();
+        checkControlPointsVisibilitySwitch(areControlPointsVisible);
         verify(connectorView, times(1)).updateControlPoints(eq(newControlPoints));
-        verify(connectorView, times(1)).showControlPoints(eq(HasControlPoints.ControlPointType.POINTS));
         verify(connectorView, never()).addControlPoint(any(ControlPoint.class), anyInt());
         verify(connectorView, never()).deleteControlPoint(anyInt());
     }

@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.function.Consumer;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -55,13 +57,9 @@ public class AddCanvasControlPointCommand extends AbstractCanvasCommand {
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         allow(context);
-        final HasManageableControlPoints<?> view = getManageableControlPoints(context, candidate);
-        // Hide control points.
-        view.hideControlPoints();
-        // Add the new control point at the given index.
-        view.addControlPoint(controlPoint, index);
-        // Show control points.
-        view.showControlPoints(HasControlPoints.ControlPointType.POINTS);
+        consumeControlPoints(context,
+                             candidate,
+                             view -> view.addControlPoint(controlPoint, index));
         return buildResult();
     }
 
@@ -81,6 +79,20 @@ public class AddCanvasControlPointCommand extends AbstractCanvasCommand {
     public static ControlPoint[] getControlPoints(final Edge edge) {
         ViewConnector<?> connector = (ViewConnector<?>) edge.getContent();
         return connector.getControlPoints();
+    }
+
+    public static void consumeControlPoints(final AbstractCanvasHandler context,
+                                            final Edge edge,
+                                            final Consumer<HasManageableControlPoints> consumer) {
+        final HasManageableControlPoints<?> view = getManageableControlPoints(context, edge);
+        final boolean visible = view.areControlsVisible();
+        if (visible) {
+            view.hideControlPoints();
+        }
+        consumer.accept(view);
+        if (visible) {
+            view.showControlPoints(HasControlPoints.ControlPointType.POINTS);
+        }
     }
 
     public static HasManageableControlPoints<?> getManageableControlPoints(final AbstractCanvasHandler context,

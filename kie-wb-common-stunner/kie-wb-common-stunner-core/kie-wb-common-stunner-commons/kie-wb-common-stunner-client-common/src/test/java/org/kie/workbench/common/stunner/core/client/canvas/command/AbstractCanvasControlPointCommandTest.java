@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.canvas.command;
 import org.junit.Before;
 import org.kie.workbench.common.stunner.core.client.shape.ConnectorViewStub;
 import org.kie.workbench.common.stunner.core.client.shape.impl.ConnectorShape;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
@@ -28,8 +29,13 @@ import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.mockito.Mock;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractCanvasControlPointCommandTest extends AbstractCanvasCommandTest {
@@ -67,5 +73,16 @@ public abstract class AbstractCanvasControlPointCommandTest extends AbstractCanv
         controlPoints = new ControlPoint[]{controlPoint1, controlPoint2, controlPoint3};
         viewConnector.setControlPoints(controlPoints);
         when(connectorView.getManageableControlPoints()).thenReturn(controlPoints);
+        when(connectorView.areControlsVisible()).thenReturn(true);
+    }
+
+    protected void checkControlPointsVisibilitySwitch(boolean areControlPointsVisible) {
+        if (areControlPointsVisible) {
+            verify(connectorView, times(1)).hideControlPoints();
+            verify(connectorView, times(1)).showControlPoints(eq(HasControlPoints.ControlPointType.POINTS));
+        } else {
+            verify(connectorView, never()).hideControlPoints();
+            verify(connectorView, never()).showControlPoints(any(HasControlPoints.ControlPointType.class));
+        }
     }
 }

@@ -19,14 +19,12 @@ package org.kie.workbench.common.stunner.core.client.canvas.command;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasManageableControlPoints;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.util.ControlPointValidations;
 
-import static org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasControlPointCommand.getManageableControlPoints;
+import static org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasControlPointCommand.consumeControlPoints;
 import static org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasControlPointCommand.getViewControlPoints;
 
 public class DeleteCanvasControlPointCommand extends AbstractCanvasCommand {
@@ -50,14 +48,12 @@ public class DeleteCanvasControlPointCommand extends AbstractCanvasCommand {
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         allow(context);
-        final HasManageableControlPoints<?> view = getManageableControlPoints(context, candidate);
-        this.deletedControlPoint = view.getManageableControlPoints()[index];
-        // Hide control points.
-        view.hideControlPoints();
-        // Delete the control point at the given index.
-        view.deleteControlPoint(index);
-        // Show control points.
-        view.showControlPoints(HasControlPoints.ControlPointType.POINTS);
+        consumeControlPoints(context,
+                             candidate,
+                             view -> {
+                                 this.deletedControlPoint = view.getManageableControlPoints()[index];
+                                 view.deleteControlPoint(index);
+                             });
         return buildResult();
     }
 

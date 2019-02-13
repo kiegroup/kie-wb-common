@@ -22,15 +22,13 @@ import java.util.stream.Stream;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasManageableControlPoints;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.util.ControlPointValidations;
 
+import static org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasControlPointCommand.consumeControlPoints;
 import static org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasControlPointCommand.getControlPoints;
-import static org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasControlPointCommand.getManageableControlPoints;
 
 /**
  * Update a given {@link ControlPoint} position on Canvas.
@@ -61,13 +59,9 @@ public class UpdateCanvasControlPointPositionCommand extends AbstractCanvasComma
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         allow(context);
-        final HasManageableControlPoints<?> view = getManageableControlPoints(context, edge);
-        // Hide control points.
-        view.hideControlPoints();
-        // Delete the control point at the given index.
-        view.updateControlPoints(controlPoints);
-        // Show control points.
-        view.showControlPoints(HasControlPoints.ControlPointType.POINTS);
+        consumeControlPoints(context,
+                             edge,
+                             view -> view.updateControlPoints(controlPoints));
         return buildResult();
     }
 
