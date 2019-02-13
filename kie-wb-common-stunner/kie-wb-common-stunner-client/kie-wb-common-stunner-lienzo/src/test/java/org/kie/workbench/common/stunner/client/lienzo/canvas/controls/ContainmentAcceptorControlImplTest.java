@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvasView;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateChildNodeCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasHighlight;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
@@ -62,6 +63,8 @@ public class ContainmentAcceptorControlImplTest {
     private CanvasCommandManager<AbstractCanvasHandler> commandManager;
     @Mock
     private AbstractCanvasHandler canvasHandler;
+    @Mock
+    private CanvasHighlight highlight;
     @Mock
     private WiresCanvas canvas;
     @Mock
@@ -102,7 +105,8 @@ public class ContainmentAcceptorControlImplTest {
                                   eq(updateChildNodeCommand))).thenReturn(result);
         when(commandManager.execute(eq(canvasHandler),
                                     eq(updateChildNodeCommand))).thenReturn(result);
-        this.tested = new ContainmentAcceptorControlImpl(canvasCommandFactory);
+        this.tested = new ContainmentAcceptorControlImpl(canvasCommandFactory,
+                                                         canvasHandler1 -> highlight);
         this.tested.setCommandManagerProvider(() -> commandManager);
     }
 
@@ -132,6 +136,7 @@ public class ContainmentAcceptorControlImplTest {
                      updateChildNodeCommand.getParent());
         assertEquals(candidate,
                      updateChildNodeCommand.getCandidate());
+        verify(highlight, times(1)).unhighLight();
     }
 
     @Test
@@ -147,6 +152,7 @@ public class ContainmentAcceptorControlImplTest {
                      updateChildNodeCommand.getParent());
         assertEquals(candidate,
                      updateChildNodeCommand.getCandidate());
+        verify(highlight, times(1)).unhighLight();
     }
 
     @Test
