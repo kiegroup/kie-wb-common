@@ -16,9 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common;
 
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -26,6 +24,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 
+import static org.kie.workbench.common.dmn.client.editors.types.common.BuiltInTypeUtils.findBuiltInTypeByName;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.ConstraintPlaceholderHelper_SampleDefault;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.ConstraintPlaceholderHelper_SentenceDefault;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
@@ -73,13 +72,6 @@ public class ConstraintPlaceholderHelper {
 
     private String capitalize(final String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    private Optional<BuiltInType> findBuiltInTypeByName(final String name) {
-        return Stream
-                .of(BuiltInType.values())
-                .filter(builtInType -> Arrays.asList(builtInType.getNames()).contains(name))
-                .findAny();
     }
 
     private String defaultSentence() {
