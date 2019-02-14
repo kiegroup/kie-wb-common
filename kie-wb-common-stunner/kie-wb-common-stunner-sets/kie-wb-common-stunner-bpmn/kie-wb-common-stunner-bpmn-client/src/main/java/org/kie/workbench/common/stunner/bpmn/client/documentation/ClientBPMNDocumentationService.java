@@ -75,7 +75,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Unit
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.WorkingHours;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.MITrigger;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Namespace;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariableSerializer;
@@ -382,7 +382,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                          BindableAdapterUtils.getPropertyId(DmnModelName.class),
                          BindableAdapterUtils.getPropertyId(DecisionName.class),
                          BindableAdapterUtils.getPropertyId(Namespace.class),
-                         BindableAdapterUtils.getPropertyId(MITrigger.class),
+                         BindableAdapterUtils.getPropertyId(IsMultipleInstance.class),
                          BindableAdapterUtils.getPropertyId(Min.class),
                          BindableAdapterUtils.getPropertyId(Max.class),
                          BindableAdapterUtils.getPropertyId(Mean.class),
