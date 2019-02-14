@@ -61,7 +61,7 @@ public class UpdateCanvasElementPositionCommand extends AbstractCanvasCommand {
         }
         context.updateElementPosition(element, MutationContext.STATIC);
         moveConnectorsToTop(context);
-        return buildResult();
+        return allowResult;
     }
 
     @SuppressWarnings("unchecked")
