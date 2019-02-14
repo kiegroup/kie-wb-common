@@ -80,6 +80,20 @@ public class DecisionNavigatorPresenterTest {
     }
 
     @Test
+    public void testGetDiagram(){
+
+        final CanvasHandler handler = mock(CanvasHandler.class);
+        doNothing().when(presenter).refreshTreeView();
+        final Diagram expectedDiagram = mock(Diagram.class);
+        doReturn(expectedDiagram).when(handler).getDiagram();
+        presenter.setHandler(handler);
+
+        final Diagram actual = presenter.getDiagram();
+
+        assertEquals(expectedDiagram, actual);
+    }
+
+    @Test
     public void testSetup() {
 
         presenter.setup();

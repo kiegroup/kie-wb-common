@@ -60,8 +60,6 @@ public class DecisionNavigatorPresenter {
 
     private final TranslationService translationService;
 
-    private Diagram diagram;
-
     private CanvasHandler handler;
 
     @Inject
@@ -105,11 +103,7 @@ public class DecisionNavigatorPresenter {
     }
 
     public Diagram getDiagram() {
-        return diagram;
-    }
-
-    public void setDiagram(final Diagram diagram) {
-        this.diagram = diagram;
+        return handler.getDiagram();
     }
 
     public CanvasHandler getHandler() {
