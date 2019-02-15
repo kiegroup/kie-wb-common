@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.converters.customproperties;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ElementDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.elements.MetadataTypeDefinition;
+import org.kie.workbench.common.stunner.cm.backend.converters.customproperties.elements.CaseManagementBooleanElement;
 
 public class CaseManagementCustomElement {
 
-    public static final ElementDefinition<Boolean> isCase = new CaseManagementBooleanElement("case", Boolean.FALSE);
+    public static final MetadataTypeDefinition<Boolean> isCase = new CaseManagementBooleanElement("case", Boolean.FALSE);
 }
 
 

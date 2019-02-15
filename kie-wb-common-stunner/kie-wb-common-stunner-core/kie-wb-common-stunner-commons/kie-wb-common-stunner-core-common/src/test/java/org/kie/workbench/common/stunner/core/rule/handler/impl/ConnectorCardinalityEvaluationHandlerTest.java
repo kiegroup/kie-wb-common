@@ -156,7 +156,7 @@ public class ConnectorCardinalityEvaluationHandlerTest extends AbstractGraphRule
         RuleViolations violations = tested.evaluate(RULE_IN_MAX_1,
                                                     context);
         assertNotNull(violations);
-        assertTrue(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
+        assertTrue(violations.violations(Violation.ViolationType.WARNING).iterator().hasNext());
     }
 
     @Test
