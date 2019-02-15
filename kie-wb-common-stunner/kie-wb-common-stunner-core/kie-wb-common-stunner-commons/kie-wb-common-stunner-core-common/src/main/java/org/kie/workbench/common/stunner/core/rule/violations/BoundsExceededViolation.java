@@ -32,8 +32,8 @@ public class BoundsExceededViolation extends AbstractRuleViolation {
     }
 
     @Override
-    public Type getViolationType() {
-        return Type.WARNING;
+    public ViolationType getViolationType() {
+        return ViolationType.WARNING;
     }
 
     @Override
