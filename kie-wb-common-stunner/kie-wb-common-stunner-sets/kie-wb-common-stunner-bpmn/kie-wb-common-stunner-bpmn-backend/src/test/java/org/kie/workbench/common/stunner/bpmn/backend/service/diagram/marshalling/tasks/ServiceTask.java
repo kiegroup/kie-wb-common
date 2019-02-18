@@ -44,7 +44,7 @@ public abstract class ServiceTask<T extends BaseServiceTask> extends Task<T> {
     }
 
     ServiceTask(Marshaller marshallerType) {
-        super(marshallerType);
+        super(marshallerType, marshallers());
     }
 
     @Ignore("Test is ignored, because does not make sense, since there is only new Marhsaller tested.")

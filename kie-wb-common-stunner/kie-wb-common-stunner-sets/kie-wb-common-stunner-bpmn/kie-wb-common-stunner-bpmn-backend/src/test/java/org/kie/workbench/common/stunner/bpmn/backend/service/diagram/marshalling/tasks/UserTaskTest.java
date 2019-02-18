@@ -88,7 +88,7 @@ public class UserTaskTest extends Task<UserTask> {
     private final Marshaller _marshallerType;
 
     public UserTaskTest(Marshaller marshallerType) {
-        super(marshallerType);
+        super(marshallerType, marshallers());
         this._marshallerType = marshallerType;
     }
 

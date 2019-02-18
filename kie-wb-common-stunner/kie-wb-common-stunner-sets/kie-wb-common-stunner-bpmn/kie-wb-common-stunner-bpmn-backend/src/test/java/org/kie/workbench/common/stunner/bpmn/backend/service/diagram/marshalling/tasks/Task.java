@@ -64,14 +64,22 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
 
     private Marshaller currentMarshaller;
 
-    Task(Marshaller marshallerType) {
+    Task(Marshaller marshallerType, List<Object[]> marshallers) {
         super.init();
 
         currentMarshaller = marshallerType;
 
         if (this.getClass() != clazz) {
-            marshallDiagramWithNewMarshaller();
-            marshallDiagramWithOldMarshaller();
+            for (Object[] o : marshallers) {
+                if (o.length > 0) {
+                    if (o[0] == NEW) {
+                        marshallDiagramWithNewMarshaller();
+                    }
+                    if (o[0] == OLD) {
+                        marshallDiagramWithOldMarshaller();
+                    }
+                }
+            }
             clazz = this.getClass();
         }
     }

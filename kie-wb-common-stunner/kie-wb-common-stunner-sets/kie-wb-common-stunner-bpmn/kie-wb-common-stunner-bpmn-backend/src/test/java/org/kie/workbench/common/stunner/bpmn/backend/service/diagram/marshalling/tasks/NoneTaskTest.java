@@ -45,7 +45,7 @@ public class NoneTaskTest extends Task<NoneTask> {
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 36;
 
     public NoneTaskTest(Marshaller marshallerType) {
-        super(marshallerType);
+        super(marshallerType, marshallers());
     }
 
     @Test

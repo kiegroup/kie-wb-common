@@ -68,7 +68,7 @@ public class ScriptTaskTest extends Task<ScriptTask> {
     private static final boolean IS_NOT_ASYNC = false;
 
     public ScriptTaskTest(Marshaller marshallerType) {
-        super(marshallerType);
+        super(marshallerType, marshallers());
     }
 
     @Test

@@ -81,7 +81,7 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
     private final Marshaller marshallerType;
 
     public BusinessRuleTaskTest(Marshaller marshallerType) {
-        super(marshallerType);
+        super(marshallerType, marshallers());
         this.marshallerType = marshallerType;
     }
 
