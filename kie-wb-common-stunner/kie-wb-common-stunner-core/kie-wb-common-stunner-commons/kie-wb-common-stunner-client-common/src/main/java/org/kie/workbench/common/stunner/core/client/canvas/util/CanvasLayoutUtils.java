@@ -222,6 +222,8 @@ public class CanvasLayoutUtils {
                                                    newNodeHeight,
                                                    parentNode);
 
+                nodeAtPositionSize = null != nodeAtPositionSize ? nodeAtPositionSize : new double[]{0, 0};
+
                 if (checkParent) {
                     final Node targetNodeNewPos = graphBoundsIndexer.getAt(newPositionUL.getX(),
                                                                            newPositionUL.getY(),
@@ -232,13 +234,7 @@ public class CanvasLayoutUtils {
                         offset.setY(offset.getY() + PADDING_Y);
                     }
                 } else {
-
-                    if (nodeAtPositionSize == null) {
-                        nodeAtPositionSize = new double[]{0.0d};
-                        offset.setY(offset.getY() + PADDING_Y);
-                    } else {
-                        offset.setY(offset.getY() + nodeAtPositionSize[1] + PADDING_Y);
-                    }
+                    offset.setY(offset.getY() + nodeAtPositionSize[1] + PADDING_Y);
                 }
                 newPositionUL = getNextPositionWithOffset(rootNodeCoordinates,
                                                           offset);
