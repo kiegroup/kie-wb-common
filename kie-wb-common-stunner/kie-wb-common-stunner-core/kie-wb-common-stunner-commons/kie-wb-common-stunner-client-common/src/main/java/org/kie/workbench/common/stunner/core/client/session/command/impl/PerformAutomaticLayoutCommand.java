@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
@@ -28,6 +29,7 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 
 @Dependent
+@Default
 public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<EditorSession> {
 
     private final LayoutService layoutService;
