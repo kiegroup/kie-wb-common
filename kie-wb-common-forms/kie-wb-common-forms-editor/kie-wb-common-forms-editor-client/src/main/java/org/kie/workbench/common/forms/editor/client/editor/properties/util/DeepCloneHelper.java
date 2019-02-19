@@ -65,12 +65,19 @@ public class DeepCloneHelper {
         proxy.set(propertyName, value);
     }
 
-    private static <T> List<BindableProxy<T>> doDeepCloneList(List<T> values) {
+    private static <T> List<Object> doDeepCloneList(List<T> values) {
         return values.stream()
-                .map(DeepCloneHelper::doDeepClone)
+                .map(DeepCloneHelper::doDeepCloneListValue)
                 .collect(Collectors.toList());
     }
 
+    private static <T> Object doDeepCloneListValue(T instance) {
+        if( isProxy(instance.getClass())) {
+            return doDeepClone(instance);
+        }
+        return instance;
+    }
+    
 
     private static boolean isProxy(Class clazz) {
         try {
