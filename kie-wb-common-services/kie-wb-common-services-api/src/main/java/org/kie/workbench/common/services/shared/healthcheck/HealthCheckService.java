@@ -18,7 +18,7 @@ public class HealthCheckService {
     @GET
     @PermitAll
     @Produces(TEXT_PLAIN)
-    @Path("/readiness")
+    @Path("/ready")
     public Response isReady() {
         return getHealthCheckResponse();
     }
@@ -26,7 +26,7 @@ public class HealthCheckService {
     @GET
     @PermitAll
     @Produces(TEXT_PLAIN)
-    @Path("/healthcheck")
+    @Path("/healthy")
     public Response isHealthy() {
         return getHealthCheckResponse();
     }
