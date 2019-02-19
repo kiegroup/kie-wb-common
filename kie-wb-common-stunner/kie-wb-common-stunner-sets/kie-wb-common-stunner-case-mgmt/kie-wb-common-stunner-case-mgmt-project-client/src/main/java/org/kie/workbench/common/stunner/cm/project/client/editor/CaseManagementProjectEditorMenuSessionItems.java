@@ -20,13 +20,13 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.bpmn.project.client.editor.ExtendedProjectEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.bpmn.project.client.editor.AbstractProcessProjectEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 
 @Dependent
 @Typed(CaseManagementProjectEditorMenuSessionItems.class)
-public class CaseManagementProjectEditorMenuSessionItems extends ExtendedProjectEditorMenuSessionItems<CaseManagementProjectDiagramEditorMenuItemsBuilder> {
+public class CaseManagementProjectEditorMenuSessionItems extends AbstractProcessProjectEditorMenuSessionItems<CaseManagementProjectDiagramEditorMenuItemsBuilder> {
 
     @Inject
     public CaseManagementProjectEditorMenuSessionItems(final CaseManagementProjectDiagramEditorMenuItemsBuilder itemsBuilder,

@@ -63,7 +63,7 @@ public class BPMFinderServiceImpl implements BPMFinderService {
 
     private static final Logger logger = LoggerFactory.getLogger(BPMFinderServiceImpl.class);
 
-    private static final String[] BPMN_FILE_EXTENSIONS = {"bpmn2", "bpmn", "bpmn-cm"};
+    static final String[] BPMN_FILE_EXTENSIONS = {"bpmn2", "bpmn", "bpmn-cm"};
 
     private IOService ioService;
 

@@ -16,16 +16,27 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.forms.gen;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.eclipse.bpmn2.Definitions;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNBackendService;
+import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.FormGenerationModelProviderHelper;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelProvider;
 
 @ApplicationScoped
-public class BPMNFormGenerationModelProvider extends AbstractFormGenerationModelProvider {
+public class BPMNFormGenerationModelProvider
+        implements FormGenerationModelProvider<Definitions> {
+
+    private BPMNBackendService bpmnBackendService;
+    private final DefinitionUtils definitionUtils;
+    private String definitionSetId;
 
     // CDI proxy.
     protected BPMNFormGenerationModelProvider() {
@@ -36,16 +47,22 @@ public class BPMNFormGenerationModelProvider extends AbstractFormGenerationModel
     @Inject
     public BPMNFormGenerationModelProvider(final BPMNBackendService bpmnBackendService,
                                            final DefinitionUtils definitionUtils) {
-        super(bpmnBackendService, definitionUtils);
+        this.bpmnBackendService = bpmnBackendService;
+        this.definitionUtils = definitionUtils;
     }
 
     @PostConstruct
     public void init() {
-        super.init();
+        this.definitionSetId = definitionUtils.getDefinitionSetId(BPMNDefinitionSet.class);
     }
 
     @Override
-    protected Class<?> getDefinitionSetClass() {
-        return BPMNDefinitionSet.class;
+    public boolean accepts(final Diagram diagram) {
+        return this.definitionSetId.equals(diagram.getMetadata().getDefinitionSetId());
+    }
+
+    @Override
+    public Definitions generate(final Diagram diagram) throws IOException {
+        return FormGenerationModelProviderHelper.generate(bpmnBackendService, diagram);
     }
 }

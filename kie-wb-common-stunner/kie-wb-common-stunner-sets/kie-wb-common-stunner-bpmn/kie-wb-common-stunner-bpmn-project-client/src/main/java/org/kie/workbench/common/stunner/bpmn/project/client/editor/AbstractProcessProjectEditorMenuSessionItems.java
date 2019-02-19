@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.client.editor;
 
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
@@ -37,12 +38,12 @@ import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuItem;
 
-public abstract class ExtendedProjectEditorMenuSessionItems<B extends AbstractProjectDiagramEditorMenuItemsBuilder>
+public abstract class AbstractProcessProjectEditorMenuSessionItems<B extends AbstractProjectDiagramEditorMenuItemsBuilder>
         extends AbstractProjectEditorMenuSessionItems<B> {
 
-    private MenuItem formsItem;
+    MenuItem formsItem;
 
-    public ExtendedProjectEditorMenuSessionItems(B itemsBuilder, EditorSessionCommands sessionCommands) {
+    public AbstractProcessProjectEditorMenuSessionItems(B itemsBuilder, EditorSessionCommands sessionCommands) {
         super(itemsBuilder, sessionCommands);
     }
 
@@ -75,38 +76,36 @@ public abstract class ExtendedProjectEditorMenuSessionItems<B extends AbstractPr
             setPull(Pull.RIGHT);
         }};
 
-        menu.add(new AnchorListItem(getTranslationService().getValue(getEditorGenerateProcessFormPropertyKey())) {{
-            setIcon(IconType.LIST_ALT);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(getTranslationService().getValue(getEditorGenerateProcessFormPropertyKey()));
-            addClickHandler(event -> generateProcessForm.execute());
-        }});
-        menu.add(new AnchorListItem(getTranslationService().getValue(getEditorGenerateAllFormsPropertyKey())) {{
-            setIcon(IconType.LIST_ALT);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(getTranslationService().getValue(getEditorGenerateAllFormsPropertyKey()));
-            addClickHandler(event -> generateAllForms.execute());
-        }});
-        menu.add(new AnchorListItem(getTranslationService().getValue(getEditorGenerateSelectionFormsPropertyKey())) {{
-            setIcon(IconType.LIST_ALT);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(getTranslationService().getValue(getEditorGenerateSelectionFormsPropertyKey()));
-            addClickHandler(event -> generateSelectedForms.execute());
-        }});
+        menu.add(createAnchorListItem(getEditorGenerateProcessFormPropertyKey(), event -> generateProcessForm.execute()));
+        menu.add(createAnchorListItem(getEditorGenerateAllFormsPropertyKey(), event -> generateAllForms.execute()));
+        menu.add(createAnchorListItem(getEditorGenerateSelectionFormsPropertyKey(), event -> generateSelectedForms.execute()));
 
-        final Button button = new Button() {{
-            setToggleCaret(true);
-            setDataToggle(Toggle.DROPDOWN);
-            setIcon(IconType.LIST_ALT);
-            setSize(ButtonSize.SMALL);
-            setTitle(getTranslationService().getValue(getEditorFormGenerationTitlePropertyKey()));
-        }};
+        final Button button = createButton(getEditorFormGenerationTitlePropertyKey());
         final IsWidget group = MenuUtils.buildHasEnabledWidget(new ButtonGroup() {{
                                                                    add(button);
                                                                    add(menu);
                                                                }},
                                                                button);
         return MenuUtils.buildItem(group);
+    }
+
+    protected AnchorListItem createAnchorListItem(final String titlePropertyKey, final ClickHandler clickHandler) {
+        return new AnchorListItem(getTranslationService().getValue(titlePropertyKey)) {{
+            setIcon(IconType.LIST_ALT);
+            setIconPosition(IconPosition.LEFT);
+            setTitle(getTranslationService().getValue(titlePropertyKey));
+            addClickHandler(clickHandler);
+        }};
+    }
+
+    protected Button createButton(final String titlePropertyKey) {
+        return new Button() {{
+            setToggleCaret(true);
+            setDataToggle(Toggle.DROPDOWN);
+            setIcon(IconType.LIST_ALT);
+            setSize(ButtonSize.SMALL);
+            setTitle(getTranslationService().getValue(titlePropertyKey));
+        }};
     }
 
     protected abstract String getEditorGenerateProcessFormPropertyKey();
@@ -127,12 +126,12 @@ public abstract class ExtendedProjectEditorMenuSessionItems<B extends AbstractPr
 
             @Override
             public void onError(final ClientRuntimeError error) {
-                ExtendedProjectEditorMenuSessionItems.this.onError(error.getMessage());
+                AbstractProcessProjectEditorMenuSessionItems.this.onError(error.getMessage());
             }
         });
     }
 
-    private ExtendedEditorSessionCommands getExtendedCommands() {
-        return (ExtendedEditorSessionCommands) getCommands();
+    private AbstractProcessEditorSessionCommands getExtendedCommands() {
+        return (AbstractProcessEditorSessionCommands) getCommands();
     }
 }

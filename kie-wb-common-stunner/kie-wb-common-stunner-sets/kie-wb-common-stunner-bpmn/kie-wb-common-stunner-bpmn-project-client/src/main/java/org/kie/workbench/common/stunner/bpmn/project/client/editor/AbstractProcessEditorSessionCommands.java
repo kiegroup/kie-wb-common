@@ -24,9 +24,9 @@ import org.kie.workbench.common.stunner.forms.client.session.command.GeneratePro
 import org.kie.workbench.common.stunner.forms.client.session.command.GenerateSelectedFormsSessionCommand;
 import org.kie.workbench.common.stunner.project.client.session.EditorSessionCommands;
 
-public abstract class ExtendedEditorSessionCommands extends EditorSessionCommands {
+public abstract class AbstractProcessEditorSessionCommands extends EditorSessionCommands {
 
-    public ExtendedEditorSessionCommands(ManagedClientSessionCommands commands) {
+    public AbstractProcessEditorSessionCommands(ManagedClientSessionCommands commands) {
         super(commands);
     }
 

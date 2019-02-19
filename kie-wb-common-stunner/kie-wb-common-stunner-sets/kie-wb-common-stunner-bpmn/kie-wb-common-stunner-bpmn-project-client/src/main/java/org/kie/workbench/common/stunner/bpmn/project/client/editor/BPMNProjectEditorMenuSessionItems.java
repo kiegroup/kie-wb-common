@@ -30,7 +30,7 @@ import org.uberfire.workbench.model.menu.MenuItem;
 
 @Dependent
 @Typed(BPMNProjectEditorMenuSessionItems.class)
-public class BPMNProjectEditorMenuSessionItems extends ExtendedProjectEditorMenuSessionItems<BPMNProjectDiagramEditorMenuItemsBuilder> {
+public class BPMNProjectEditorMenuSessionItems extends AbstractProcessProjectEditorMenuSessionItems<BPMNProjectDiagramEditorMenuItemsBuilder> {
 
     private Command onMigrate;
     private MenuItem migrateMenuItem;

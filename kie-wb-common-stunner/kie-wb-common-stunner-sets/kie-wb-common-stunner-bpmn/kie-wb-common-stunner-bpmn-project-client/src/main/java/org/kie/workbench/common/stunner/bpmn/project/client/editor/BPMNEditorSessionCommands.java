@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.ManagedClien
 
 @Dependent
 @Typed(BPMNEditorSessionCommands.class)
-public class BPMNEditorSessionCommands extends ExtendedEditorSessionCommands {
+public class BPMNEditorSessionCommands extends AbstractProcessEditorSessionCommands {
 
     @Inject
     public BPMNEditorSessionCommands(final ManagedClientSessionCommands commands) {

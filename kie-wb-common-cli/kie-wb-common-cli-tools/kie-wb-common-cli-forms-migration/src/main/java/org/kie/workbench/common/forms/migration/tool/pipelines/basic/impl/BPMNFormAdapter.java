@@ -68,25 +68,27 @@ public class BPMNFormAdapter extends AbstractFormAdapter {
                 String fileName = visitedVFSPath.getFileName();
                 File file = visitedPath.toFile();
 
-                if (file.isFile()) {
-                    if (fileName.endsWith("." + FormsMigrationConstants.BPMN_EXTENSION)
-                            || fileName.endsWith("." + FormsMigrationConstants.BPMN2_EXTENSION)
-                            || fileName.endsWith("." + FormsMigrationConstants.BPMN_CM_EXTENSION)) {
-                        try {
-                            BPMNProcess process = analyzer.read(migrationContext.getMigrationServicesCDIWrapper().getIOService().newInputStream(visitedPath));
-                            if (process != null) {
-                                workspaceBPMNFormModels.addAll(process.getFormModels());
-                            } else {
-                                migrationContext.getSystem().console().format(FormsMigrationConstants.BPMN_PARSING_ERROR, FormsMigrationConstants.WARNING, fileName);
-                            }
-                        } catch (Exception ex) {
+                if (file.isFile() && isBPMNFile(fileName)) {
+                    try {
+                        BPMNProcess process = analyzer.read(migrationContext.getMigrationServicesCDIWrapper().getIOService().newInputStream(visitedPath));
+                        if (process != null) {
+                            workspaceBPMNFormModels.addAll(process.getFormModels());
+                        } else {
                             migrationContext.getSystem().console().format(FormsMigrationConstants.BPMN_PARSING_ERROR, FormsMigrationConstants.WARNING, fileName);
                         }
+                    } catch (Exception ex) {
+                        migrationContext.getSystem().console().format(FormsMigrationConstants.BPMN_PARSING_ERROR, FormsMigrationConstants.WARNING, fileName);
                     }
                 }
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    static boolean isBPMNFile(final String fileName) {
+        return fileName.endsWith("." + FormsMigrationConstants.BPMN_EXTENSION)
+                || fileName.endsWith("." + FormsMigrationConstants.BPMN2_EXTENSION)
+                || fileName.endsWith("." + FormsMigrationConstants.BPMN_CM_EXTENSION);
     }
 
     @Override

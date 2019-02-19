@@ -19,13 +19,13 @@ package org.kie.workbench.common.stunner.cm.project.client.editor;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.bpmn.project.client.editor.ExtendedEditorSessionCommands;
+import org.kie.workbench.common.stunner.bpmn.project.client.editor.AbstractProcessEditorSessionCommands;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.session.command.ManagedClientSessionCommands;
 
 @Dependent
 @CaseManagementEditor
-public class CaseManagementEditorSessionCommands extends ExtendedEditorSessionCommands {
+public class CaseManagementEditorSessionCommands extends AbstractProcessEditorSessionCommands {
 
     @Inject
     public CaseManagementEditorSessionCommands(final ManagedClientSessionCommands commands) {

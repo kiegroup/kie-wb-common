@@ -16,39 +16,53 @@
 
 package org.kie.workbench.common.stunner.cm.backend.forms.gen;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.AbstractFormGenerationModelProvider;
+import org.eclipse.bpmn2.Definitions;
+import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.FormGenerationModelProviderHelper;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.CaseManagementBackendService;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelProvider;
 
 @ApplicationScoped
 @CaseManagementEditor
-public class CaseManagementFormGenerationModelProvider extends AbstractFormGenerationModelProvider {
+public class CaseManagementFormGenerationModelProvider implements FormGenerationModelProvider<Definitions> {
+
+    private CaseManagementBackendService cmBackendService;
+    private final DefinitionUtils definitionUtils;
+    private String definitionSetId;
 
     // CDI proxy.
     protected CaseManagementFormGenerationModelProvider() {
-        this(null,
-             null);
+        this(null, null);
     }
 
     @Inject
     public CaseManagementFormGenerationModelProvider(final CaseManagementBackendService cmBackendService,
                                                      final DefinitionUtils definitionUtils) {
-        super(cmBackendService, definitionUtils);
+        this.cmBackendService = cmBackendService;
+        this.definitionUtils = definitionUtils;
     }
 
     @PostConstruct
     public void init() {
-        super.init();
+        this.definitionSetId = definitionUtils.getDefinitionSetId(CaseManagementDefinitionSet.class);
     }
 
     @Override
-    protected Class<?> getDefinitionSetClass() {
-        return CaseManagementDefinitionSet.class;
+    public boolean accepts(final Diagram diagram) {
+        return this.definitionSetId.equals(diagram.getMetadata().getDefinitionSetId());
+    }
+
+    @Override
+    public Definitions generate(Diagram diagram) throws IOException {
+        return FormGenerationModelProviderHelper.generate(cmBackendService, diagram);
     }
 }
