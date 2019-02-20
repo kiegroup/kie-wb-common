@@ -32,7 +32,7 @@ public class PerformAutomaticLayoutToolbarCommand extends AbstractToolbarCommand
 
     @Inject
     public PerformAutomaticLayoutToolbarCommand(final DefinitionUtils definitionUtils,
-                                                ManagedInstance<PerformAutomaticLayoutCommand> commands,
+                                                final ManagedInstance<PerformAutomaticLayoutCommand> commands,
                                                 ClientTranslationService translationService) {
         super(definitionUtils, commands, translationService);
     }
