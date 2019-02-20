@@ -31,9 +31,9 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 public class PerformAutomaticLayoutToolbarCommand extends AbstractToolbarCommand<EditorSession, PerformAutomaticLayoutCommand> {
 
     @Inject
-    public PerformAutomaticLayoutToolbarCommand(DefinitionUtils definitionUtils,
-                                                ManagedInstance<PerformAutomaticLayoutCommand> commands,
-                                                ClientTranslationService translationService) {
+    public PerformAutomaticLayoutToolbarCommand(final DefinitionUtils definitionUtils,
+                                                final ManagedInstance<PerformAutomaticLayoutCommand> commands,
+                                                final ClientTranslationService translationService) {
         super(definitionUtils, commands, translationService);
     }
 
