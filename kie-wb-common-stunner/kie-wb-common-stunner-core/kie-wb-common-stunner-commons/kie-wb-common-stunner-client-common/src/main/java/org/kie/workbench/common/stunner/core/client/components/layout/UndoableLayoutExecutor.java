@@ -63,4 +63,12 @@ public class UndoableLayoutExecutor implements LayoutExecutor {
         }
         return commandBuilder.build();
     }
+
+    public AbstractCanvasHandler getCanvasHandler() {
+        return canvasHandler;
+    }
+
+    public CanvasCommandManager<AbstractCanvasHandler> getCommandManager() {
+        return commandManager;
+    }
 }

@@ -20,6 +20,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.project.client.session.DMNEditorSessionCommands;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.mockito.Mock;
 import org.uberfire.workbench.model.menu.MenuItem;
@@ -53,5 +54,25 @@ public class DMNProjectEditorMenuSessionItemsTest {
         menuItems.populateMenu(fileMenuBuilder);
 
         verify(menuItems).addPerformAutomaticLayout(any());
+    }
+
+    @Test
+    public void testEnableMenu() {
+        testMenu(true);
+    }
+
+    @Test
+    public void testDisableMenu() {
+        testMenu(false);
+    }
+
+    private void testMenu(final boolean enabled) {
+
+        final DMNProjectEditorMenuSessionItems menuItems = spy(new DMNProjectEditorMenuSessionItems(builder, sessionCommands));
+        doNothing().when(menuItems).superSetEnabled(enabled);
+
+        menuItems.setEnabled(enabled);
+
+        verify(menuItems).setItemEnabled(PerformAutomaticLayoutCommand.class, enabled);
     }
 }

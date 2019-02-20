@@ -26,6 +26,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.project.client.session.DMNEditorSessionCommands;
 import org.kie.workbench.common.stunner.client.widgets.menu.MenuUtils;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
@@ -48,12 +49,13 @@ public class DMNProjectEditorMenuSessionItems extends AbstractProjectEditorMenuS
         addPerformAutomaticLayout(menu);
     }
 
-    void superPopulateMenu(final FileMenuBuilder menu){
+    void superPopulateMenu(final FileMenuBuilder menu) {
         super.populateMenu(menu);
     }
 
     void addPerformAutomaticLayout(final FileMenuBuilder menu) {
         final MenuItem performAutomaticLayoutMenuItem = newPerformAutomaticLayout();
+        addMenuItem(PerformAutomaticLayoutCommand.class, performAutomaticLayoutMenuItem);
         menu.addNewTopLevelMenu(performAutomaticLayoutMenuItem);
     }
 
@@ -65,5 +67,15 @@ public class DMNProjectEditorMenuSessionItems extends AbstractProjectEditorMenuS
             addClickHandler(clickEvent -> ((DMNEditorSessionCommands) getCommands()).getPerformAutomaticLayoutCommand().execute());
         }});
         return MenuUtils.buildItem(buttonWrapper);
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
+        superSetEnabled(enabled);
+        setItemEnabled(PerformAutomaticLayoutCommand.class, enabled);
+    }
+
+    void superSetEnabled(final boolean enabled) {
+        super.setEnabled(enabled);
     }
 }

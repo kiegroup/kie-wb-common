@@ -48,20 +48,20 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
     @Override
     public <V> void execute(final Callback<V> callback) {
         final Diagram diagram = getDiagram();
-        final UndoableLayoutExecutor executor = getExecutor();
-        final LayoutHelper layoutHelper = new LayoutHelper(layoutService, executor);
+        final UndoableLayoutExecutor executor = makeExecutor();
+        final LayoutHelper layoutHelper = makeLayoutHelper(executor);
 
         layoutHelper.applyLayout(diagram, true);
 
         callback.onSuccess();
     }
 
-    UndoableLayoutExecutor getExecutor() {
-        final UndoableLayoutExecutor executor = new UndoableLayoutExecutor(
-                getCanvasHandler(),
-                getSession().getCommandManager());
+    LayoutHelper makeLayoutHelper(final UndoableLayoutExecutor executor) {
+        return new LayoutHelper(layoutService, executor);
+    }
 
-        return executor;
+    UndoableLayoutExecutor makeExecutor() {
+        return new UndoableLayoutExecutor(getCanvasHandler(), getSession().getCommandManager());
     }
 
     Diagram getDiagram() {

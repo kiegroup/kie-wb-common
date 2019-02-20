@@ -60,4 +60,12 @@ public final class LayoutHelper {
             }
         }
     }
+
+    public LayoutService getLayoutService() {
+        return this.layoutService;
+    }
+
+    public LayoutExecutor getExecutor() {
+        return this.layoutExecutor;
+    }
 }
