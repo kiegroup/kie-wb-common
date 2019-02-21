@@ -31,10 +31,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,14 +70,14 @@ public class UndoableLayoutExecutorTest {
     public void setup() {
         initMocks(this);
 
-        doReturn(2).when(fakeList).size();
-        doReturn(fakeList).when(layout).getNodePositions();
-        doReturn("id").when(v1).getId();
-        doReturn("id").when(v2).getId();
-        doReturn(v1).when(fakeList).get(0);
-        doReturn(v2).when(fakeList).get(1);
+        when(fakeList.size()).thenReturn(2);
+        when(layout.getNodePositions()).thenReturn(fakeList);
+        when(v1.getId()).thenReturn("id");
+        when(v2.getId()).thenReturn("id");
+        when(fakeList.get(0)).thenReturn(v1);
+        when(fakeList.get(1)).thenReturn(v2);
 
-        doReturn(node).when(graph).getNode(any());
+        when(graph.getNode(any())).thenReturn(node);
 
         executor = spy(new UndoableLayoutExecutor(canvasHandler, commandManager));
     }
