@@ -20,6 +20,9 @@ import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -44,8 +47,54 @@ public class NoneTaskTest extends Task<NoneTask> {
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 36;
 
+    private static Diagram<Graph, Metadata> oldDiagram;
+    private static Diagram<Graph, Metadata> oldRoundTripDiagram;
+
+    private static Diagram<Graph, Metadata> newDiagram;
+    private static Diagram<Graph, Metadata> newRoundTripDiagram;
+
     public NoneTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType, marshallers());
+    }
+
+    @Override
+    synchronized Diagram<Graph, Metadata> getOldDiagram() {
+        return oldDiagram;
+    }
+
+    @Override
+    void setOldDiagram(Diagram<Graph, Metadata> diagram) {
+        oldDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getOldRoundTripDiagram() {
+        return oldRoundTripDiagram;
+    }
+
+    @Override
+    void setOldRoundTripDiagram(Diagram<Graph, Metadata> diagram) {
+        oldRoundTripDiagram = diagram;
+    }
+
+    @Override
+    synchronized Diagram<Graph, Metadata> getNewDiagram() {
+        return newDiagram;
+    }
+
+    @Override
+    void setNewDiagram(Diagram<Graph, Metadata> diagram) {
+        newDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getNewRoundTripDiagram() {
+        return newRoundTripDiagram;
+    }
+
+    @Override
+    void setNewRoundTripDiagram(Diagram<Graph, Metadata> diagram) {
+        newRoundTripDiagram = diagram;
     }
 
     @Test

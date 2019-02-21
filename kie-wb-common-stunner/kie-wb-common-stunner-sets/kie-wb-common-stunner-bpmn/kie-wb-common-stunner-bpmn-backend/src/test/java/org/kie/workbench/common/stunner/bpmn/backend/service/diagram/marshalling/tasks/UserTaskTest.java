@@ -87,6 +87,12 @@ public class UserTaskTest extends Task<UserTask> {
 
     private final Marshaller _marshallerType;
 
+    private static Diagram<Graph, Metadata> oldDiagram;
+    private static Diagram<Graph, Metadata> oldRoundTripDiagram;
+
+    private static Diagram<Graph, Metadata> newDiagram;
+    private static Diagram<Graph, Metadata> newRoundTripDiagram;
+
     public UserTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType, marshallers());
         this._marshallerType = marshallerType;
@@ -106,6 +112,46 @@ public class UserTaskTest extends Task<UserTask> {
         ProcessVariables processVariables = processData.getProcessVariables();
         DeclarationList declarationList = DeclarationList.fromString(processVariables.getValue());
         assertTrue(declarationList.getDeclarations().isEmpty());
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getOldDiagram() {
+        return oldDiagram;
+    }
+
+    @Override
+    void setOldDiagram(Diagram<Graph, Metadata> diagram) {
+        oldDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getOldRoundTripDiagram() {
+        return oldRoundTripDiagram;
+    }
+
+    @Override
+    void setOldRoundTripDiagram(Diagram<Graph, Metadata> diagram) {
+        oldRoundTripDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getNewDiagram() {
+        return newDiagram;
+    }
+
+    @Override
+    void setNewDiagram(Diagram<Graph, Metadata> diagram) {
+        newDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getNewRoundTripDiagram() {
+        return newRoundTripDiagram;
+    }
+
+    @Override
+    void setNewRoundTripDiagram(Diagram<Graph, Metadata> diagram) {
+        newRoundTripDiagram = diagram;
     }
 
     @Ignore("Test is ignored, because new and old marshaller User Task nodes will differ anyway. Because different " +

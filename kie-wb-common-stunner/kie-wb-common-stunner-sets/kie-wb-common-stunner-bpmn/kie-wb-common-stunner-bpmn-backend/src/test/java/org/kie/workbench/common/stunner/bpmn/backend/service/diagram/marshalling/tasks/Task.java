@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,7 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     static final int TWO_INCOME_EDGES = 2;
     static final boolean HAS_OUTCOME_EDGE = true;
     static final boolean HAS_NO_OUTCOME_EDGE = false;
+    static ReentrantLock lock = new ReentrantLock();
 
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
@@ -54,13 +56,21 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         });
     }
 
-    private static Diagram<Graph, Metadata> oldDiagram;
-    private static Diagram<Graph, Metadata> oldRoundTripDiagram;
+    abstract Diagram<Graph, Metadata> getOldDiagram();
 
-    private static Diagram<Graph, Metadata> newDiagram;
-    private static Diagram<Graph, Metadata> newRoundTripDiagram;
+    abstract void setOldDiagram(Diagram<Graph, Metadata> diagram);
 
-    private static Class clazz = null;
+    abstract Diagram<Graph, Metadata> getOldRoundTripDiagram();
+
+    abstract void setOldRoundTripDiagram(Diagram<Graph, Metadata> diagram);
+
+    abstract Diagram<Graph, Metadata> getNewDiagram();
+
+    abstract void setNewDiagram(Diagram<Graph, Metadata> diagram);
+
+    abstract Diagram<Graph, Metadata> getNewRoundTripDiagram();
+
+    abstract void setNewRoundTripDiagram(Diagram<Graph, Metadata> diagram);
 
     private Marshaller currentMarshaller;
 
@@ -68,7 +78,12 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
 
         currentMarshaller = marshallerType;
 
-        if (this.getClass() != clazz) {
+        setUpMarshallers(marshallers);
+    }
+
+    private void setUpMarshallers(List<Object[]> marshallers) throws Exception {
+        lock.lock();
+        if (getNewDiagram() == null && getOldDiagram() == null) {
             super.init();
             for (Object[] o : marshallers) {
                 if (o.length > 0) {
@@ -80,18 +95,18 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
                     }
                 }
             }
-            clazz = this.getClass();
         }
+        lock.unlock();
     }
 
     private void marshallDiagramWithNewMarshaller() throws Exception {
-        newDiagram = unmarshall(newMarshaller, getBpmnTaskFilePath());
-        newRoundTripDiagram = unmarshall(newMarshaller, getStream(newMarshaller.marshall(newDiagram)));
+        setNewDiagram(unmarshall(newMarshaller, getBpmnTaskFilePath()));
+        setNewRoundTripDiagram(unmarshall(newMarshaller, getStream(newMarshaller.marshall(getNewDiagram()))));
     }
 
     private void marshallDiagramWithOldMarshaller() throws Exception {
-        oldDiagram = unmarshall(oldMarshaller, getBpmnTaskFilePath());
-        oldRoundTripDiagram = unmarshall(oldMarshaller, getStream(oldMarshaller.marshall(oldDiagram)));
+        setOldDiagram(unmarshall(oldMarshaller, getBpmnTaskFilePath()));
+        setOldRoundTripDiagram(unmarshall(oldMarshaller, getStream(oldMarshaller.marshall(getOldDiagram()))));
     }
 
     @Test
@@ -100,7 +115,7 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertDiagramEquals(oldDiagram, newDiagram, getBpmnTaskFilePath());
+        assertDiagramEquals(getOldDiagram(), getNewDiagram(), getBpmnTaskFilePath());
     }
 
     @Test
@@ -192,9 +207,9 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     public Diagram<Graph, Metadata> getDiagram() {
         switch (currentMarshaller) {
             case OLD:
-                return oldDiagram;
+                return getOldDiagram();
             case NEW:
-                return newDiagram;
+                return getNewDiagram();
             default:
                 throw new IllegalArgumentException("Unexpected value, Marshaller can be NEW or OLD.");
         }
@@ -203,9 +218,9 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     public Diagram<Graph, Metadata> getRoundTripDiagram() {
         switch (currentMarshaller) {
             case OLD:
-                return oldRoundTripDiagram;
+                return getOldRoundTripDiagram();
             case NEW:
-                return newRoundTripDiagram;
+                return getNewRoundTripDiagram();
             default:
                 throw new IllegalArgumentException("Unexpected value, Marshaller can be NEW or OLD.");
         }

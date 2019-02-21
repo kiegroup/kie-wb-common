@@ -26,6 +26,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSe
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -79,10 +82,55 @@ public class BusinessRuleTaskTest extends Task<BusinessRuleTask> {
     private static final boolean NOT_AD_HOC_AUTOSTART = false;
 
     private final Marshaller marshallerType;
+    private static Diagram<Graph, Metadata> oldDiagram;
+    private static Diagram<Graph, Metadata> oldRoundTripDiagram;
+
+    private static Diagram<Graph, Metadata> newDiagram;
+    private static Diagram<Graph, Metadata> newRoundTripDiagram;
 
     public BusinessRuleTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType, marshallers());
         this.marshallerType = marshallerType;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getOldDiagram() {
+        return oldDiagram;
+    }
+
+    @Override
+    void setOldDiagram(Diagram<Graph, Metadata> diagram) {
+        oldDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getOldRoundTripDiagram() {
+        return oldRoundTripDiagram;
+    }
+
+    @Override
+    void setOldRoundTripDiagram(Diagram<Graph, Metadata> diagram) {
+        oldRoundTripDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getNewDiagram() {
+        return newDiagram;
+    }
+
+    @Override
+    void setNewDiagram(Diagram<Graph, Metadata> diagram) {
+        newDiagram = diagram;
+    }
+
+    @Override
+    Diagram<Graph, Metadata> getNewRoundTripDiagram() {
+        return newRoundTripDiagram;
+    }
+
+    @Override
+    void setNewRoundTripDiagram(Diagram<Graph, Metadata> diagram) {
+        newRoundTripDiagram = diagram;
     }
 
     @Ignore("Test is ignored, Business Rule Task has properties that are not supported by the old marshallers.")
