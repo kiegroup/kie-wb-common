@@ -66,7 +66,7 @@ public class LogServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.ba
     private static final boolean AD_HOC_AUTOSTART = true;
     private static final boolean NOT_AD_HOC_AUTOSTART = false;
 
-    public LogServiceTaskTest(Marshaller marshallerType) {
+    public LogServiceTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType);
     }
 

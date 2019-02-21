@@ -43,7 +43,7 @@ public abstract class ServiceTask<T extends BaseServiceTask> extends Task<T> {
         });
     }
 
-    ServiceTask(Marshaller marshallerType) {
+    ServiceTask(Marshaller marshallerType) throws Exception {
         super(marshallerType, marshallers());
     }
 
@@ -53,13 +53,13 @@ public abstract class ServiceTask<T extends BaseServiceTask> extends Task<T> {
     public void testMigration() {
     }
 
-    protected void assertServiceTaskExecutionSet(ServiceTaskExecutionSet executionSet,
-                                                 String onEntryActionScriptValue,
-                                                 String onEntryActionScriptLanguage,
-                                                 String onExitActionScriptValue,
-                                                 String onExitActionScriptLanguage,
-                                                 boolean isAsync,
-                                                 boolean adHocAutostart) {
+    void assertServiceTaskExecutionSet(ServiceTaskExecutionSet executionSet,
+                                       String onEntryActionScriptValue,
+                                       String onEntryActionScriptLanguage,
+                                       String onExitActionScriptValue,
+                                       String onExitActionScriptLanguage,
+                                       boolean isAsync,
+                                       boolean adHocAutostart) {
         assertNotNull(executionSet);
         assertNotNull(executionSet.getOnEntryAction());
         assertNotNull(executionSet.getOnExitAction());

@@ -128,30 +128,30 @@ public abstract class BPMNDiagramMarshallerBase {
     private static final String BPMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
 
     @Mock
-    private static DefinitionManager definitionManager;
+    private DefinitionManager definitionManager;
     @Mock
-    private static AdapterManager adapterManager;
+    private AdapterManager adapterManager;
     @Mock
-    private static AdapterRegistry adapterRegistry;
+    private AdapterRegistry adapterRegistry;
     @Mock
-    private static RuleManager rulesManager;
+    private RuleManager rulesManager;
     @Mock
-    private static CloneManager cloneManager;
+    private CloneManager cloneManager;
     @Mock
-    private static FactoryManager applicationFactoryManager;
+    private FactoryManager applicationFactoryManager;
     @Spy
-    protected static GraphCommandManager commandManager =
+    protected GraphCommandManager commandManager =
             new GraphCommandManagerImpl(null, null, null);
 
-    private static EdgeFactory<Object> connectionEdgeFactory;
-    private static NodeFactory<Object> viewNodeFactory;
-    private static GraphFactory bpmnGraphFactory;
-    private static TestScopeModelFactory testScopeModelFactory;
-    private static TaskTypeMorphDefinition taskMorphDefinition;
+    private EdgeFactory<Object> connectionEdgeFactory;
+    private NodeFactory<Object> viewNodeFactory;
+    private GraphFactory bpmnGraphFactory;
+    private TestScopeModelFactory testScopeModelFactory;
+    private TaskTypeMorphDefinition taskMorphDefinition;
 
-    protected static BPMNDiagramMarshaller oldMarshaller;
-    protected static BPMNDirectDiagramMarshaller newMarshaller;
-    protected static WorkItemDefinitionMockRegistry workItemDefinitionMockRegistry;
+    protected BPMNDiagramMarshaller oldMarshaller;
+    protected BPMNDirectDiagramMarshaller newMarshaller;
+    protected WorkItemDefinitionMockRegistry workItemDefinitionMockRegistry;
 
     @SuppressWarnings("unchecked")
     protected void init() {
@@ -350,7 +350,7 @@ public abstract class BPMNDiagramMarshallerBase {
     }
 
     @SuppressWarnings("unchecked")
-    private static void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
+    private void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
         when(adapterRegistry.getDefinitionSetAdapter(any(Class.class))).thenReturn(definitionSetAdapter);
         when(adapterRegistry.getDefinitionAdapter(any(Class.class))).thenReturn(definitionAdapter);
         when(adapterRegistry.getPropertySetAdapter(any(Class.class))).thenReturn(propertySetAdapter);
@@ -358,19 +358,19 @@ public abstract class BPMNDiagramMarshallerBase {
     }
 
     @SuppressWarnings("unchecked")
-    private static void mockAdapterManager(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
+    private void mockAdapterManager(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
         when(adapterManager.forDefinitionSet()).thenReturn(definitionSetAdapter);
         when(adapterManager.forDefinition()).thenReturn(definitionAdapter);
         when(adapterManager.forPropertySet()).thenReturn(propertySetAdapter);
         when(adapterManager.forProperty()).thenReturn(propertyAdapter);
     }
 
-    protected static void assertDiagram(Diagram<Graph, Metadata> diagram, int nodesSize) {
+    protected void assertDiagram(Diagram<Graph, Metadata> diagram, int nodesSize) {
         assertEquals(nodesSize, getNodes(diagram).size());
     }
 
     @SuppressWarnings("unchecked")
-    protected static List<Node> getNodes(Diagram<Graph, Metadata> diagram) {
+    protected List<Node> getNodes(Diagram<Graph, Metadata> diagram) {
         Graph graph = diagram.getGraph();
         assertNotNull(graph);
         Iterator<Node> nodesIterable = graph.nodes().iterator();
@@ -379,24 +379,24 @@ public abstract class BPMNDiagramMarshallerBase {
         return nodes;
     }
 
-    protected static Diagram<Graph, Metadata> unmarshall(DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller, String fileName) throws Exception {
+    protected Diagram<Graph, Metadata> unmarshall(DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller, String fileName) throws Exception {
         return Unmarshalling.unmarshall(marshaller, fileName);
     }
 
-    protected static Diagram<Graph, Metadata> unmarshall(DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller, InputStream is) throws Exception {
+    protected Diagram<Graph, Metadata> unmarshall(DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller, InputStream is) throws Exception {
         return Unmarshalling.unmarshall(marshaller, is);
     }
 
-    protected static Definitions convertToDefinitions(Diagram<Graph, Metadata> d) {
+    protected Definitions convertToDefinitions(Diagram<Graph, Metadata> d) {
         return new DefinitionsConverter(d.getGraph())
                 .toDefinitions();
     }
 
-    protected static InputStream getStream(String data) {
+    protected InputStream getStream(String data) {
         return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+    private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         Map<String, Node<View, ?>> oldNodes = asNodeMap(oldDiagram.getGraph().nodes());
         Map<String, Node<View, ?>> newNodes = asNodeMap(newDiagram.getGraph().nodes());
 
@@ -431,7 +431,7 @@ public abstract class BPMNDiagramMarshallerBase {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Node<View, ?>> asNodeMap(Iterable nodes) {
+    private Map<String, Node<View, ?>> asNodeMap(Iterable nodes) {
         Map<String, Node<View, ?>> oldNodes = new HashMap<>();
         nodes.forEach(n -> {
             Node n1 = (Node) n;
@@ -440,13 +440,13 @@ public abstract class BPMNDiagramMarshallerBase {
         return oldNodes;
     }
 
-    protected static void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+    protected void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         assertNodeEquals(oldDiagram, newDiagram, fileName);
         assertEdgeEquals(oldDiagram, newDiagram, fileName);
     }
 
     @SuppressWarnings("unchecked")
-    private static void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 
@@ -501,7 +501,7 @@ public abstract class BPMNDiagramMarshallerBase {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<Edge> asEdgeSet(Iterable nodes) {
+    private Set<Edge> asEdgeSet(Iterable nodes) {
         Set<Edge> oldEdges = new HashSet<>();
         nodes.forEach(n -> {
             oldEdges.addAll(((Node<?, Edge>) n).getOutEdges());

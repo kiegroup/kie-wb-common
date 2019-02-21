@@ -65,7 +65,7 @@ public class RestServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.b
     private static final boolean AD_HOC_AUTOSTART = true;
     private static final boolean NOT_AD_HOC_AUTOSTART = false;
 
-    public RestServiceTaskTest(Marshaller marshallerType) {
+    public RestServiceTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType);
     }
 

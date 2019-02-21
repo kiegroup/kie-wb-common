@@ -54,22 +54,22 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         });
     }
 
-    private static Diagram<Graph, Metadata> old_diagram;
-    private static Diagram<Graph, Metadata> old_roundTripDiagram;
+    private static Diagram<Graph, Metadata> oldDiagram;
+    private static Diagram<Graph, Metadata> oldRoundTripDiagram;
 
-    private static Diagram<Graph, Metadata> new_diagram;
-    private static Diagram<Graph, Metadata> new_roundTripDiagram;
+    private static Diagram<Graph, Metadata> newDiagram;
+    private static Diagram<Graph, Metadata> newRoundTripDiagram;
 
     private static Class clazz = null;
 
     private Marshaller currentMarshaller;
 
-    Task(Marshaller marshallerType, List<Object[]> marshallers) {
-        super.init();
+    Task(Marshaller marshallerType, List<Object[]> marshallers) throws Exception {
 
         currentMarshaller = marshallerType;
 
         if (this.getClass() != clazz) {
+            super.init();
             for (Object[] o : marshallers) {
                 if (o.length > 0) {
                     if (o[0] == NEW) {
@@ -84,22 +84,14 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         }
     }
 
-    private void marshallDiagramWithNewMarshaller() {
-        try {
-            new_diagram = unmarshall(newMarshaller, getBpmnTaskFilePath());
-            new_roundTripDiagram = unmarshall(newMarshaller, getStream(newMarshaller.marshall(new_diagram)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void marshallDiagramWithNewMarshaller() throws Exception {
+        newDiagram = unmarshall(newMarshaller, getBpmnTaskFilePath());
+        newRoundTripDiagram = unmarshall(newMarshaller, getStream(newMarshaller.marshall(newDiagram)));
     }
 
-    private void marshallDiagramWithOldMarshaller() {
-        try {
-            old_diagram = unmarshall(oldMarshaller, getBpmnTaskFilePath());
-            old_roundTripDiagram = unmarshall(oldMarshaller, getStream(oldMarshaller.marshall(old_diagram)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void marshallDiagramWithOldMarshaller() throws Exception {
+        oldDiagram = unmarshall(oldMarshaller, getBpmnTaskFilePath());
+        oldRoundTripDiagram = unmarshall(oldMarshaller, getStream(oldMarshaller.marshall(oldDiagram)));
     }
 
     @Test
@@ -108,7 +100,7 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertDiagramEquals(old_diagram, new_diagram, getBpmnTaskFilePath());
+        assertDiagramEquals(oldDiagram, newDiagram, getBpmnTaskFilePath());
     }
 
     @Test
@@ -200,9 +192,9 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     public Diagram<Graph, Metadata> getDiagram() {
         switch (currentMarshaller) {
             case OLD:
-                return old_diagram;
+                return oldDiagram;
             case NEW:
-                return new_diagram;
+                return newDiagram;
             default:
                 throw new IllegalArgumentException("Unexpected value, Marshaller can be NEW or OLD.");
         }
@@ -211,9 +203,9 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     public Diagram<Graph, Metadata> getRoundTripDiagram() {
         switch (currentMarshaller) {
             case OLD:
-                return old_roundTripDiagram;
+                return oldRoundTripDiagram;
             case NEW:
-                return new_roundTripDiagram;
+                return newRoundTripDiagram;
             default:
                 throw new IllegalArgumentException("Unexpected value, Marshaller can be NEW or OLD.");
         }
@@ -268,7 +260,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         return getTaskType().cast(node.getContent().getDefinition());
     }
 
-    @SuppressWarnings("unchecked")
     void checkTaskMarshalling(String nodeID, int amountOfIncomeEdges, boolean hasOutcomeEdge) {
         Diagram<Graph, Metadata> initialDiagram = getDiagram();
 

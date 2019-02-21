@@ -87,7 +87,7 @@ public class UserTaskTest extends Task<UserTask> {
 
     private final Marshaller _marshallerType;
 
-    public UserTaskTest(Marshaller marshallerType) {
+    public UserTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType, marshallers());
         this._marshallerType = marshallerType;
     }
@@ -95,6 +95,7 @@ public class UserTaskTest extends Task<UserTask> {
     @Test
     @SuppressWarnings("unchecked")
     public void RHBA607() throws Exception {
+        super.init();
         final String BPMN_USER_TASK_PROPERTIES_FILE_PATH =
                 "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/userTaskProperties.bpmn";
         final String DIAGRAM_ID = "_pfJ-8O50EeiVSc03Fghuww";

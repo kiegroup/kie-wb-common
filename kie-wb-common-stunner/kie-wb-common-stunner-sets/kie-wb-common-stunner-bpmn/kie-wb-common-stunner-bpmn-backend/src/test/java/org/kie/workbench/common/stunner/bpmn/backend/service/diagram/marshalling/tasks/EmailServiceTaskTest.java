@@ -66,7 +66,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
     private static final boolean AD_HOC_AUTOSTART = true;
     private static final boolean NOT_AD_HOC_AUTOSTART = false;
 
-    public EmailServiceTaskTest(Marshaller marshallerType) {
+    public EmailServiceTaskTest(Marshaller marshallerType) throws Exception {
         super(marshallerType);
     }
 
