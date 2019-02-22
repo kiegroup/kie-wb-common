@@ -9,6 +9,9 @@ import org.uberfire.security.authz.AuthorizationManager;
 
 import static org.uberfire.workbench.model.ActivityResourceType.PERSPECTIVE;
 
+/**
+ * Exposes HomeModelAuthorizationManager API in JavaScript
+ */
 @ApplicationScoped
 public class HomeModelAuthorizationManager {
 

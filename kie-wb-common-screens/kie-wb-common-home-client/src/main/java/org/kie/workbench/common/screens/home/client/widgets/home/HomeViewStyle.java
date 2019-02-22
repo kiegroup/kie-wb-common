@@ -23,7 +23,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated(stylesheet = "home-view-style.less", provider = HomeViewStyle.EmptyTemplateProvider.class)
 public class HomeViewStyle {
 
-    // FIXME: this class is here only to use errai-ui to process the .less style file that is used in the javascript code.
+    // This class is here only to use errai-ui to process the .less style file that is used in the AppFormer.js components code.
     public class EmptyTemplateProvider implements TemplateProvider {
 
         @Override
