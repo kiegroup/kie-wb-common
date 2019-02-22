@@ -29,7 +29,7 @@ public class DeepCloneHelper {
         if(instance == null) {
             return null;
         }
-
+        
         return doDeepClone(instance).deepUnwrap();
     }
 
@@ -65,14 +65,14 @@ public class DeepCloneHelper {
         proxy.set(propertyName, value);
     }
 
-    private static <T> List<Object> doDeepCloneList(List<T> values) {
+    protected static <T> List<Object> doDeepCloneList(List<T> values) {
         return values.stream()
                 .map(DeepCloneHelper::doDeepCloneListValue)
                 .collect(Collectors.toList());
     }
 
     private static <T> Object doDeepCloneListValue(T instance) {
-        if( isProxy(instance.getClass())) {
+        if (isProxy(instance.getClass())) {
             return doDeepClone(instance);
         }
         return instance;
