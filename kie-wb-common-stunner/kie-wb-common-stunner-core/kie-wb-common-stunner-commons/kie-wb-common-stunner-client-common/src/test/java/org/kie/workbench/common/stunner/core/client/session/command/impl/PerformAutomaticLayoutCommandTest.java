@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
+import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.components.layout.UndoableLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
@@ -33,9 +33,9 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class PerformAutomaticLayoutCommandTest {
@@ -53,7 +53,7 @@ public class PerformAutomaticLayoutCommandTest {
     private EditorSession editorSession;
 
     @Mock
-    private CanvasCommandManager<AbstractCanvasHandler> commandManager;
+    private SessionCommandManager<AbstractCanvasHandler> commandManager;
 
     @Mock
     private Diagram diagram;
@@ -62,7 +62,7 @@ public class PerformAutomaticLayoutCommandTest {
 
     @Before
     public void setup() {
-        command = spy(new PerformAutomaticLayoutCommand(service) {
+        command = spy(new PerformAutomaticLayoutCommand(service, commandManager) {
 
             protected AbstractCanvasHandler getCanvasHandler() {
                 return canvasHandler;
@@ -76,8 +76,6 @@ public class PerformAutomaticLayoutCommandTest {
 
     @Test
     public void testMakeExecutor() {
-
-        when(editorSession.getCommandManager()).thenReturn(commandManager);
 
         final UndoableLayoutExecutor executor = command.makeExecutor();
 
@@ -99,6 +97,7 @@ public class PerformAutomaticLayoutCommandTest {
 
         verify(layoutHelper).applyLayout(diagram, true);
         verify(callback).onSuccess();
+        verify(command).executeLock();
     }
 
     @Test

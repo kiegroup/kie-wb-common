@@ -20,9 +20,12 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.components.layout.UndoableLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -33,11 +36,14 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutServi
 public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<EditorSession> {
 
     private final LayoutService layoutService;
+    private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Inject
-    public PerformAutomaticLayoutCommand(final LayoutService layoutService) {
+    public PerformAutomaticLayoutCommand(final LayoutService layoutService,
+                                         final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
         super(true);
         this.layoutService = layoutService;
+        this.sessionCommandManager = sessionCommandManager;
     }
 
     @Override
@@ -47,11 +53,14 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
 
     @Override
     public <V> void execute(final Callback<V> callback) {
+
         final Diagram diagram = getDiagram();
         final UndoableLayoutExecutor executor = makeExecutor();
         final LayoutHelper layoutHelper = makeLayoutHelper(executor);
 
         layoutHelper.applyLayout(diagram, true);
+
+        executeLock();
 
         callback.onSuccess();
     }
@@ -61,10 +70,20 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
     }
 
     UndoableLayoutExecutor makeExecutor() {
-        return new UndoableLayoutExecutor(getCanvasHandler(), getSession().getCommandManager());
+        return new UndoableLayoutExecutor(getCanvasHandler(), sessionCommandManager);
     }
 
     Diagram getDiagram() {
         return getSession().getCanvasHandler().getDiagram();
     }
+
+    void executeLock(){
+        lock();
+    }
+
+    public native static void lock() /*-{
+        if (typeof $wnd.acquireLock !== "undefined") {
+            $wnd.acquireLock();
+        }
+    }-*/;
 }
