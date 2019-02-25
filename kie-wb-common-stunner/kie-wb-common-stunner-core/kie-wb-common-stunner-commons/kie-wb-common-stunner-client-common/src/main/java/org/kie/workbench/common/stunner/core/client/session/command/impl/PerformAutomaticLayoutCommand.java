@@ -29,21 +29,21 @@ import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 
 @Dependent
 @Default
 public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<EditorSession> {
 
-    private final LayoutService layoutService;
+    private final LayoutHelper layoutHelper;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Inject
-    public PerformAutomaticLayoutCommand(final LayoutService layoutService,
+    public PerformAutomaticLayoutCommand(final LayoutHelper layoutHelper,
                                          final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
         super(true);
-        this.layoutService = layoutService;
+
         this.sessionCommandManager = sessionCommandManager;
+        this.layoutHelper = layoutHelper;
     }
 
     @Override
@@ -56,17 +56,12 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
 
         final Diagram diagram = getDiagram();
         final UndoableLayoutExecutor executor = makeExecutor();
-        final LayoutHelper layoutHelper = makeLayoutHelper(executor);
 
-        layoutHelper.applyLayout(diagram, true);
+        layoutHelper.applyLayout(diagram, executor, true);
 
         executeLock();
 
         callback.onSuccess();
-    }
-
-    LayoutHelper makeLayoutHelper(final UndoableLayoutExecutor executor) {
-        return new LayoutHelper(layoutService, executor);
     }
 
     UndoableLayoutExecutor makeExecutor() {
@@ -77,7 +72,7 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
         return getSession().getCanvasHandler().getDiagram();
     }
 
-    void executeLock(){
+    void executeLock() {
         lock();
     }
 

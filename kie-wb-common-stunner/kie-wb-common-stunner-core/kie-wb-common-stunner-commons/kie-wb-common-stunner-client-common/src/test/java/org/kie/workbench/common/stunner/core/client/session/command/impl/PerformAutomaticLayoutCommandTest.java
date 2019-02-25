@@ -32,8 +32,6 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -58,11 +56,17 @@ public class PerformAutomaticLayoutCommandTest {
     @Mock
     private Diagram diagram;
 
+    @Mock
+    private UndoableLayoutExecutor executor;
+
     private PerformAutomaticLayoutCommand command;
+
+    private LayoutHelper layoutHelper;
 
     @Before
     public void setup() {
-        command = spy(new PerformAutomaticLayoutCommand(service, commandManager) {
+        layoutHelper = spy(new LayoutHelper(service));
+        command = spy(new PerformAutomaticLayoutCommand(layoutHelper, commandManager) {
 
             protected AbstractCanvasHandler getCanvasHandler() {
                 return canvasHandler;
@@ -86,27 +90,13 @@ public class PerformAutomaticLayoutCommandTest {
     @Test
     public void testExecute() {
 
-        final UndoableLayoutExecutor executor = mock(UndoableLayoutExecutor.class);
-        final LayoutHelper layoutHelper = mock(LayoutHelper.class);
-
         doReturn(diagram).when(command).getDiagram();
         doReturn(executor).when(command).makeExecutor();
-        doReturn(layoutHelper).when(command).makeLayoutHelper(executor);
 
         command.execute(callback);
 
-        verify(layoutHelper).applyLayout(diagram, true);
+        verify(layoutHelper).applyLayout(diagram, executor, true);
         verify(callback).onSuccess();
         verify(command).executeLock();
-    }
-
-    @Test
-    public void testMakeLayoutHelper() {
-
-        final UndoableLayoutExecutor executor = command.makeExecutor();
-        final LayoutHelper layoutHelper = command.makeLayoutHelper(executor);
-
-        assertEquals(service, layoutHelper.getLayoutService());
-        assertEquals(executor, layoutHelper.getExecutor());
     }
 }

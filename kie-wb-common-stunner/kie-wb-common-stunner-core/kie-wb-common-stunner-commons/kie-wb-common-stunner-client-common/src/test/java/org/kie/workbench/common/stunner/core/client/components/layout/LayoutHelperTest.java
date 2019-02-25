@@ -115,8 +115,8 @@ public class LayoutHelperTest {
     @Test
     public void applyLayout() {
 
-        final LayoutHelper helper = new LayoutHelper(layoutService, layoutExecutor);
-        helper.applyLayout(diagram);
+        final LayoutHelper helper = new LayoutHelper(layoutService);
+        helper.applyLayout(diagram, layoutExecutor);
         verify(rootNodeContent).setBounds(argumentCaptor.capture());
 
         final Bounds bounds = argumentCaptor.getValue();
@@ -128,8 +128,8 @@ public class LayoutHelperTest {
     @Test
     public void applyLayoutDoNotOverrideExistingLayout() {
         when(layoutService.hasLayoutInformation(graph)).thenReturn(true);
-        final LayoutHelper helper = new LayoutHelper(layoutService, layoutExecutor);
-        helper.applyLayout(diagram, false);
+        final LayoutHelper helper = new LayoutHelper(layoutService);
+        helper.applyLayout(diagram, layoutExecutor,false);
 
         verify(layoutExecutor, never()).applyLayout(any(), any());
     }
@@ -137,8 +137,8 @@ public class LayoutHelperTest {
     @Test
     public void applyLayoutOverrideExistingLayout() {
         when(layoutService.hasLayoutInformation(graph)).thenReturn(true);
-        final LayoutHelper helper = new LayoutHelper(layoutService, layoutExecutor);
-        helper.applyLayout(diagram, true);
+        final LayoutHelper helper = new LayoutHelper(layoutService);
+        helper.applyLayout(diagram, layoutExecutor,true);
 
         verify(layoutExecutor).applyLayout(any(), any());
     }
