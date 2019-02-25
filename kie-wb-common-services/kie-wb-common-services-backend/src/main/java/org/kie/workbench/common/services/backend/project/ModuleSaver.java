@@ -150,7 +150,8 @@ public class ModuleSaver {
             projectImportsService.saveProjectImports(simpleModuleInstance.getImportsPath());
 
             //Create Module configuration - project package names White List
-            packageNameWhiteListService.createModuleWhiteList(simpleModuleInstance.getPackageNamesWhiteListPath());
+            packageNameWhiteListService.createModuleWhiteList(simpleModuleInstance.getPackageNamesWhiteListPath(), 
+                                                                                                  defaultPackageNamesWhiteListEntry());
 
             //Create Module configuration - Repositories
             moduleRepositoriesService.create(simpleModuleInstance.getRepositoriesPath());
@@ -195,6 +196,10 @@ public class ModuleSaver {
 
         private Package getDefaultPackage() {
             return resourceResolver.resolvePackage(Paths.convert(Paths.convert(moduleRoot).resolve(MAIN_RESOURCES_PATH)));
+        }
+        
+        public String defaultPackageNamesWhiteListEntry() {
+            return String.join(".", pom.getGav().getGroupId(), "**");
         }
     }
 }

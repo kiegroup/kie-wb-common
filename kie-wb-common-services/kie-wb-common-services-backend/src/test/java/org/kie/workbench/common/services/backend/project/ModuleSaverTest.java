@@ -82,6 +82,8 @@ public class ModuleSaverTest
     private KieResourceResolver resourceResolver;
     @Mock
     private Event<NewPackageEvent> newPackageEvent;
+    @Mock
+    PackageNameWhiteListService packageNameWhiteListService;
 
     private ModuleSaver saver;
     private SimpleFileSystemProvider fs;
@@ -124,7 +126,7 @@ public class ModuleSaverTest
                                 resourceResolver,
                                 mock(ProjectImportsService.class),
                                 mock(ModuleRepositoriesService.class),
-                                mock(PackageNameWhiteListService.class),
+                                packageNameWhiteListService,
                                 mock(CommentedOptionFactory.class),
                                 new SessionInfo() {
                                     @Override
@@ -253,6 +255,22 @@ public class ModuleSaverTest
 
         assertEquals(sanitizedPkgStructure,
                      ((NewPackageEvent) eventCaptor.getValue()).getPackage().getRelativeCaption());
+    }
+    
+    @Test
+    public void packageNameWhiteListDefaultValueTest() throws IOException {
+        final POM pom = new POM();
+        String defaultPackageNameWhiteListEntry = GROUP_ID + ".**";
+
+        pom.setName(PROJECT_NAME);
+        pom.getGav().setGroupId(GROUP_ID);
+        pom.getGav().setArtifactId(ARTIFACT_ID);
+        pom.getGav().setVersion(VERSION);
+
+        runProjecCreationTest(pom);
+        
+        verify(packageNameWhiteListService).createModuleWhiteList(any(), eq(defaultPackageNameWhiteListEntry));
+        
     }
 
     protected void runProjecCreationTest(final POM pom) throws IOException {
