@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.client.canvas.controls.util;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +52,9 @@ public class ActionsToolboxHelperTest {
     private FormGenerationToolboxAction generateFormsAction;
 
     @Mock
+    private ManagedInstance<FormGenerationToolboxAction> generationToolboxActions;
+
+    @Mock
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
@@ -65,6 +69,8 @@ public class ActionsToolboxHelperTest {
     @Mock
     private View view;
 
+    private ActionsToolboxHelper tested;
+
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
@@ -72,6 +78,10 @@ public class ActionsToolboxHelperTest {
 
         when(element.asNode()).thenReturn(node);
         when(element.getContent()).thenReturn(view);
+
+        when(generationToolboxActions.get()).thenReturn(generateFormsAction);
+
+        tested = new ActionsToolboxHelper(commonActionToolbox, generationToolboxActions);
     }
 
     @Test
@@ -80,7 +90,7 @@ public class ActionsToolboxHelperTest {
         when(view.getDefinition()).thenReturn(mock(BaseUserTask.class));
 
         final Collection<ToolboxAction<AbstractCanvasHandler>> results =
-                ActionsToolboxHelper.getActions(commonActionToolbox, generateFormsAction, canvasHandler, element);
+                tested.getActions(canvasHandler, element);
 
         assertEquals(2, results.size());
         assertTrue(results.contains(generateFormsAction));
@@ -93,7 +103,7 @@ public class ActionsToolboxHelperTest {
         when(view.getDefinition()).thenReturn(mock(BaseTask.class));
 
         final Collection<ToolboxAction<AbstractCanvasHandler>> results =
-                ActionsToolboxHelper.getActions(commonActionToolbox, generateFormsAction, canvasHandler, element);
+                tested.getActions(canvasHandler, element);
 
         assertEquals(1, results.size());
         assertFalse(results.contains(generateFormsAction));

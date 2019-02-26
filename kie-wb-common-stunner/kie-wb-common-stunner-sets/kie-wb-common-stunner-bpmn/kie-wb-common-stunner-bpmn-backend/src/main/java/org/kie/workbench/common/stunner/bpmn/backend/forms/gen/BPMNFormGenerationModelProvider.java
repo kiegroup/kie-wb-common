@@ -24,8 +24,7 @@ import javax.inject.Inject;
 
 import org.eclipse.bpmn2.Definitions;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.backend.BPMNBackendService;
-import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.FormGenerationModelProviderHelper;
+import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.BPMNFormGenerationModelProviderHelper;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelProvider;
@@ -34,9 +33,9 @@ import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelPro
 public class BPMNFormGenerationModelProvider
         implements FormGenerationModelProvider<Definitions> {
 
-    private BPMNBackendService bpmnBackendService;
     private final DefinitionUtils definitionUtils;
     private String definitionSetId;
+    private BPMNFormGenerationModelProviderHelper formGenerationModelProviderHelper;
 
     // CDI proxy.
     protected BPMNFormGenerationModelProvider() {
@@ -45,10 +44,10 @@ public class BPMNFormGenerationModelProvider
     }
 
     @Inject
-    public BPMNFormGenerationModelProvider(final BPMNBackendService bpmnBackendService,
-                                           final DefinitionUtils definitionUtils) {
-        this.bpmnBackendService = bpmnBackendService;
+    public BPMNFormGenerationModelProvider(final DefinitionUtils definitionUtils,
+                                           final BPMNFormGenerationModelProviderHelper formGenerationModelProviderHelper) {
         this.definitionUtils = definitionUtils;
+        this.formGenerationModelProviderHelper = formGenerationModelProviderHelper;
     }
 
     @PostConstruct
@@ -63,6 +62,6 @@ public class BPMNFormGenerationModelProvider
 
     @Override
     public Definitions generate(final Diagram diagram) throws IOException {
-        return FormGenerationModelProviderHelper.generate(bpmnBackendService, diagram);
+        return formGenerationModelProviderHelper.generate(diagram);
     }
 }

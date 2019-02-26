@@ -20,24 +20,39 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Any;
+import javax.inject.Inject;
+
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.ContextUtils;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
+import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolbox;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.forms.client.components.toolbox.FormGenerationToolboxAction;
 
+@Dependent
 public class ActionsToolboxHelper {
 
+    private final ActionsToolboxFactory commonActionToolbox;
+    private final ManagedInstance<FormGenerationToolboxAction> generateFormsActions;
+
+    @Inject
+    public ActionsToolboxHelper(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
+                                final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions) {
+        this.commonActionToolbox = commonActionToolbox;
+        this.generateFormsActions = generateFormsActions;
+    }
+
     @SuppressWarnings("all")
-    public static Collection<ToolboxAction<AbstractCanvasHandler>> getActions(final ActionsToolboxFactory commonActionToolbox,
-                                                                              final FormGenerationToolboxAction generateFormsAction,
-                                                                              final AbstractCanvasHandler canvasHandler,
-                                                                              final Element<?> e) {
+    public Collection<ToolboxAction<AbstractCanvasHandler>> getActions(final AbstractCanvasHandler canvasHandler,
+                                                                       final Element<?> e) {
         final List<ToolboxAction<AbstractCanvasHandler>> actions = new LinkedList<>();
         actions.addAll(commonActionToolbox.getActions(canvasHandler, e));
         if (ContextUtils.isFormGenerationSupported(e)) {
-            actions.add(generateFormsAction);
+            actions.add(generateFormsActions.get());
         }
         return actions;
     }

@@ -28,7 +28,6 @@ import org.kie.workbench.common.stunner.bpmn.client.canvas.controls.util.Actions
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.AbstractActionsToolboxFactory;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolbox;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
@@ -43,23 +42,23 @@ import org.kie.workbench.common.stunner.forms.client.components.toolbox.FormGene
 @BPMN
 public class BPMNCommonActionsToolboxFactory extends AbstractActionsToolboxFactory {
 
-    private final ActionsToolboxFactory commonActionToolbox;
     private final ManagedInstance<FormGenerationToolboxAction> generateFormsActions;
     private final ManagedInstance<ActionsToolboxView> views;
+    private final ActionsToolboxHelper actionsToolboxHelper;
 
     protected BPMNCommonActionsToolboxFactory() {
-        this.commonActionToolbox = null;
         this.generateFormsActions = null;
         this.views = null;
+        this.actionsToolboxHelper = null;
     }
 
     @Inject
-    public BPMNCommonActionsToolboxFactory(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
-                                           final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
-                                           final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views) {
-        this.commonActionToolbox = commonActionToolbox;
+    public BPMNCommonActionsToolboxFactory(final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
+                                           final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views,
+                                           final ActionsToolboxHelper actionsToolboxHelper) {
         this.generateFormsActions = generateFormsActions;
         this.views = views;
+        this.actionsToolboxHelper = actionsToolboxHelper;
     }
 
     @Override
@@ -70,7 +69,7 @@ public class BPMNCommonActionsToolboxFactory extends AbstractActionsToolboxFacto
     @Override
     public Collection<ToolboxAction<AbstractCanvasHandler>> getActions(final AbstractCanvasHandler canvasHandler,
                                                                        final Element<?> e) {
-        return ActionsToolboxHelper.getActions(commonActionToolbox, generateFormsActions.get(), canvasHandler, e);
+        return actionsToolboxHelper.getActions(canvasHandler, e);
     }
 
     @PreDestroy

@@ -27,8 +27,14 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 
 public class FormGenerationModelProviderHelper {
 
+    private AbstractDefinitionSetService backendService;
+
+    public FormGenerationModelProviderHelper(final AbstractDefinitionSetService backendService) {
+        this.backendService = backendService;
+    }
+
     @SuppressWarnings("unchecked")
-    public static Definitions generate(final AbstractDefinitionSetService backendService, final Diagram diagram) throws IOException {
+    public Definitions generate(final Diagram diagram) throws IOException {
         DiagramMarshaller diagramMarshaller = backendService.getDiagramMarshaller();
         if (diagramMarshaller instanceof BaseDiagramMarshaller) {
             return (Definitions) ((BaseDiagramMarshaller) diagramMarshaller).marshallToBpmn2Resource(diagram).getContents().get(0);

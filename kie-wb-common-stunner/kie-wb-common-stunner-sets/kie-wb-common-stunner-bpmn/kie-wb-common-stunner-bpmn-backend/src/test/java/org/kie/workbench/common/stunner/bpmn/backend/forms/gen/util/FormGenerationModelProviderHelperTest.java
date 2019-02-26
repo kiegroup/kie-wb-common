@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util;
 
 import org.eclipse.emf.common.util.EList;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.BaseDiagramMarshaller;
@@ -48,6 +49,13 @@ public class FormGenerationModelProviderHelperTest {
     @Mock
     private Diagram diagram;
 
+    private FormGenerationModelProviderHelper tested;
+
+    @Before
+    public void setUp() {
+        tested = new FormGenerationModelProviderHelper(backendService);
+    }
+
     @Test
     @SuppressWarnings("unchecked")
     public void testGenerate_oldMasharller() throws Exception {
@@ -57,7 +65,7 @@ public class FormGenerationModelProviderHelperTest {
         when(resource.getContents()).thenReturn(mock(EList.class));
         when(oldMarshaller.marshallToBpmn2Resource(eq(diagram))).thenReturn(resource);
 
-        FormGenerationModelProviderHelper.generate(backendService, diagram);
+        tested.generate(diagram);
 
         verify(oldMarshaller, times(1)).marshallToBpmn2Resource(eq(diagram));
     }
@@ -67,7 +75,7 @@ public class FormGenerationModelProviderHelperTest {
     public void testGenerate_newMasharller() throws Exception {
         when(backendService.getDiagramMarshaller()).thenReturn(newMarshaller);
 
-        FormGenerationModelProviderHelper.generate(backendService, diagram);
+        tested.generate(diagram);
 
         verify(newMarshaller, times(1)).marshallToBpmn2Definitions(eq(diagram));
     }

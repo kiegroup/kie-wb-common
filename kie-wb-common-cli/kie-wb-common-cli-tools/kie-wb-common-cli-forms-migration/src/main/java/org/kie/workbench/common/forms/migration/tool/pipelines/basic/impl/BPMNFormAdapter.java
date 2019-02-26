@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.kie.api.io.ResourceType;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMFormModel;
 import org.kie.workbench.common.forms.migration.legacy.model.DataHolder;
 import org.kie.workbench.common.forms.migration.legacy.model.Field;
@@ -86,9 +87,7 @@ public class BPMNFormAdapter extends AbstractFormAdapter {
     }
 
     static boolean isBPMNFile(final String fileName) {
-        return fileName.endsWith("." + FormsMigrationConstants.BPMN_EXTENSION)
-                || fileName.endsWith("." + FormsMigrationConstants.BPMN2_EXTENSION)
-                || fileName.endsWith("." + FormsMigrationConstants.BPMN_CM_EXTENSION);
+        return ResourceType.getResourceType("BPMN2").matchesExtension(fileName);
     }
 
     @Override

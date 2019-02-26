@@ -28,7 +28,6 @@ import org.kie.workbench.common.stunner.bpmn.client.canvas.controls.util.Actions
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.AbstractActionsToolboxFactory;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolbox;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
@@ -39,23 +38,23 @@ import org.kie.workbench.common.stunner.forms.client.components.toolbox.FormGene
 @CaseManagementEditor
 public class CaseManagementCommonActionsToolboxFactory extends AbstractActionsToolboxFactory {
 
-    private final ActionsToolboxFactory commonActionToolbox;
     private final ManagedInstance<FormGenerationToolboxAction> generateFormsActions;
     private final ManagedInstance<ActionsToolboxView> views;
+    private final ActionsToolboxHelper actionsToolboxHelper;
 
     protected CaseManagementCommonActionsToolboxFactory() {
-        this.commonActionToolbox = null;
         this.generateFormsActions = null;
         this.views = null;
+        this.actionsToolboxHelper = null;
     }
 
     @Inject
-    public CaseManagementCommonActionsToolboxFactory(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
-                                                     final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
-                                                     final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views) {
-        this.commonActionToolbox = commonActionToolbox;
+    public CaseManagementCommonActionsToolboxFactory(final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
+                                                     final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views,
+                                                     final ActionsToolboxHelper actionsToolboxHelper) {
         this.generateFormsActions = generateFormsActions;
         this.views = views;
+        this.actionsToolboxHelper = actionsToolboxHelper;
     }
 
     @Override
@@ -71,6 +70,6 @@ public class CaseManagementCommonActionsToolboxFactory extends AbstractActionsTo
 
     @Override
     public Collection<ToolboxAction<AbstractCanvasHandler>> getActions(AbstractCanvasHandler canvasHandler, Element<?> element) {
-        return ActionsToolboxHelper.getActions(commonActionToolbox, generateFormsActions.get(), canvasHandler, element);
+        return actionsToolboxHelper.getActions(canvasHandler, element);
     }
 }

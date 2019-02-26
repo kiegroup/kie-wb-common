@@ -17,12 +17,12 @@ package org.kie.workbench.common.forms.jbpm.server.service.impl;
 
 import java.io.FileInputStream;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.api.io.ResourceType;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMProcessModel;
 import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.shared.project.KieModule;
@@ -160,7 +160,7 @@ public class BPMFinderServiceImplTest {
             }
         });
 
-        Arrays.stream(BPMFinderServiceImpl.BPMN_FILE_EXTENSIONS)
+        ResourceType.getResourceType("BPMN2").getAllExtensions().stream()
                 .forEach(ext -> verify(finderService, times(1))
                         .scannProcessesForType(any(org.uberfire.backend.vfs.Path.class),
                                                eq(ext),
@@ -210,6 +210,6 @@ public class BPMFinderServiceImplTest {
                                                                 any(BPMFinderServiceImpl.GenerationConfig.class));
         final List<String> extValues = extCaptor.getAllValues();
         assertFalse(extValues.isEmpty());
-        assertTrue(Arrays.asList(BPMFinderServiceImpl.BPMN_FILE_EXTENSIONS).containsAll(extValues));
+        assertTrue(ResourceType.getResourceType("BPMN2").getAllExtensions().containsAll(extValues));
     }
 }

@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.CaseManagementBackendService;
 import org.kie.workbench.common.stunner.cm.backend.CaseManagementDiagramMarshaller;
 import org.kie.workbench.common.stunner.cm.backend.CaseManagementDirectDiagramMarshaller;
+import org.kie.workbench.common.stunner.cm.backend.forms.gen.util.CaseManagementFormGenerationModelProviderHelper;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -69,13 +70,16 @@ public class CaseManagementFormGenerationModelProviderTest {
 
     private CaseManagementFormGenerationModelProvider tested;
 
+    private CaseManagementFormGenerationModelProviderHelper formGenerationModelProviderHelper;
+
     @Before
     public void setUp() throws Exception {
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getDefinitionSetId()).thenReturn(ID);
         when(definitionUtils.getDefinitionSetId(eq(CaseManagementDefinitionSet.class))).thenReturn(ID);
 
-        tested = new CaseManagementFormGenerationModelProvider(cmBackendService, definitionUtils);
+        formGenerationModelProviderHelper = new CaseManagementFormGenerationModelProviderHelper(cmBackendService);
+        tested = new CaseManagementFormGenerationModelProvider(definitionUtils, formGenerationModelProviderHelper);
         tested.init();
         verify(definitionUtils).getDefinitionSetId(eq(CaseManagementDefinitionSet.class));
     }

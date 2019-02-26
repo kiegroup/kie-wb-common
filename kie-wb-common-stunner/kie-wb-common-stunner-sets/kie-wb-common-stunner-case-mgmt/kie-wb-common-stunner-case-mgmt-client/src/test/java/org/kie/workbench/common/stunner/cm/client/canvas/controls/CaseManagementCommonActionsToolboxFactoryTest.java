@@ -24,6 +24,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.client.canvas.controls.util.ActionsToolboxHelper;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
@@ -73,13 +74,16 @@ public class CaseManagementCommonActionsToolboxFactoryTest {
 
     private Node element;
 
+    private ActionsToolboxHelper actionsToolboxHelper;
+
     @Before
     public void setUp() throws Exception {
         element = new NodeImpl<>("node1");
         when(commonActionToolbox.getActions(eq(canvasHandler), eq(element))).thenReturn(Collections.singletonList(action1));
         generateFormsActions = spy(new ManagedInstanceStub<>(formGenerationToolboxAction));
         views = spy(new ManagedInstanceStub<>(view));
-        tested = new CaseManagementCommonActionsToolboxFactory(commonActionToolbox, generateFormsActions, views);
+        actionsToolboxHelper = new ActionsToolboxHelper(commonActionToolbox, generateFormsActions);
+        tested = new CaseManagementCommonActionsToolboxFactory(generateFormsActions, views, actionsToolboxHelper);
     }
 
     @Test

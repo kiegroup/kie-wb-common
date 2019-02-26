@@ -17,7 +17,6 @@
 package org.kie.workbench.common.forms.jbpm.server.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +43,7 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.util.DroolsResourceFactoryImpl;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.kie.api.io.ResourceType;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMProcessModel;
 import org.kie.workbench.common.forms.jbpm.model.authoring.process.BusinessProcessFormModel;
 import org.kie.workbench.common.forms.jbpm.model.authoring.task.TaskFormModel;
@@ -62,8 +62,6 @@ import org.uberfire.io.IOService;
 public class BPMFinderServiceImpl implements BPMFinderService {
 
     private static final Logger logger = LoggerFactory.getLogger(BPMFinderServiceImpl.class);
-
-    static final String[] BPMN_FILE_EXTENSIONS = {"bpmn2", "bpmn", "bpmn-cm"};
 
     private IOService ioService;
 
@@ -97,7 +95,7 @@ public class BPMFinderServiceImpl implements BPMFinderService {
 
         Path rootPath = moduleService.resolveModule(path).getRootPath();
 
-        Arrays.stream(BPMN_FILE_EXTENSIONS).forEach(ext -> scannProcessesForType(rootPath, ext, operations));
+        ResourceType.getResourceType("BPMN2").getAllExtensions().stream().forEach(ext -> scannProcessesForType(rootPath, ext, operations));
 
         return operations.getValue();
     }
@@ -122,10 +120,11 @@ public class BPMFinderServiceImpl implements BPMFinderService {
 
         Path rootPath = moduleService.resolveModule(path).getRootPath();
 
-        Arrays.stream(BPMN_FILE_EXTENSIONS).filter(ext -> {
-            scannProcessesForType(rootPath, ext, operations);
-            return operations.getValue().isPresent();
-        }).findAny();
+        ResourceType.getResourceType("BPMN2").getAllExtensions().stream()
+                .filter(ext -> {
+                    scannProcessesForType(rootPath, ext, operations);
+                    return operations.getValue().isPresent();
+                }).findAny();
 
         return operations.getValue().orElse(null);
     }

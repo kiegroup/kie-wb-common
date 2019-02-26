@@ -23,9 +23,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.eclipse.bpmn2.Definitions;
-import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.FormGenerationModelProviderHelper;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
-import org.kie.workbench.common.stunner.cm.backend.CaseManagementBackendService;
+import org.kie.workbench.common.stunner.cm.backend.forms.gen.util.CaseManagementFormGenerationModelProviderHelper;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -35,9 +34,9 @@ import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelPro
 @CaseManagementEditor
 public class CaseManagementFormGenerationModelProvider implements FormGenerationModelProvider<Definitions> {
 
-    private CaseManagementBackendService cmBackendService;
     private final DefinitionUtils definitionUtils;
     private String definitionSetId;
+    private CaseManagementFormGenerationModelProviderHelper formGenerationModelProviderHelper;
 
     // CDI proxy.
     protected CaseManagementFormGenerationModelProvider() {
@@ -45,10 +44,10 @@ public class CaseManagementFormGenerationModelProvider implements FormGeneration
     }
 
     @Inject
-    public CaseManagementFormGenerationModelProvider(final CaseManagementBackendService cmBackendService,
-                                                     final DefinitionUtils definitionUtils) {
-        this.cmBackendService = cmBackendService;
+    public CaseManagementFormGenerationModelProvider(final DefinitionUtils definitionUtils,
+                                                     final CaseManagementFormGenerationModelProviderHelper formGenerationModelProviderHelper) {
         this.definitionUtils = definitionUtils;
+        this.formGenerationModelProviderHelper = formGenerationModelProviderHelper;
     }
 
     @PostConstruct
@@ -63,6 +62,6 @@ public class CaseManagementFormGenerationModelProvider implements FormGeneration
 
     @Override
     public Definitions generate(Diagram diagram) throws IOException {
-        return FormGenerationModelProviderHelper.generate(cmBackendService, diagram);
+        return formGenerationModelProviderHelper.generate(diagram);
     }
 }
