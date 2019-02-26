@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.client.util.Locker;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 
 @Dependent
@@ -36,14 +37,17 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
 
     private final LayoutHelper layoutHelper;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+    private final Locker locker;
 
     @Inject
     public PerformAutomaticLayoutCommand(final LayoutHelper layoutHelper,
-                                         final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
+                                         final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                         final Locker locker) {
         super(true);
 
         this.sessionCommandManager = sessionCommandManager;
         this.layoutHelper = layoutHelper;
+        this.locker = locker;
     }
 
     @Override
@@ -73,12 +77,6 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
     }
 
     void executeLock() {
-        lock();
+        locker.lock();
     }
-
-    public native static void lock() /*-{
-        if (typeof $wnd.acquireLock !== "undefined") {
-            $wnd.acquireLock();
-        }
-    }-*/;
 }

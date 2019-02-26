@@ -26,6 +26,7 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.UndoableLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.client.util.Locker;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.mockito.Mock;
@@ -59,6 +60,9 @@ public class PerformAutomaticLayoutCommandTest {
     @Mock
     private UndoableLayoutExecutor executor;
 
+    @Mock
+    private Locker locker;
+
     private PerformAutomaticLayoutCommand command;
 
     private LayoutHelper layoutHelper;
@@ -66,7 +70,7 @@ public class PerformAutomaticLayoutCommandTest {
     @Before
     public void setup() {
         layoutHelper = spy(new LayoutHelper(service));
-        command = spy(new PerformAutomaticLayoutCommand(layoutHelper, commandManager) {
+        command = spy(new PerformAutomaticLayoutCommand(layoutHelper, commandManager, locker) {
 
             protected AbstractCanvasHandler getCanvasHandler() {
                 return canvasHandler;
