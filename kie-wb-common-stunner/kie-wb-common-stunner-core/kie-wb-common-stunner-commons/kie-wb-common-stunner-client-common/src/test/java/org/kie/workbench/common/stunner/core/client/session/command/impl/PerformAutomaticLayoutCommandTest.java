@@ -26,10 +26,11 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.UndoableLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
-import org.kie.workbench.common.stunner.core.client.util.Locker;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.LayoutService;
 import org.mockito.Mock;
+import org.uberfire.client.mvp.LockRequiredEvent;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -61,7 +62,7 @@ public class PerformAutomaticLayoutCommandTest {
     private UndoableLayoutExecutor executor;
 
     @Mock
-    private Locker locker;
+    private EventSourceMock<LockRequiredEvent> locker;
 
     private PerformAutomaticLayoutCommand command;
 

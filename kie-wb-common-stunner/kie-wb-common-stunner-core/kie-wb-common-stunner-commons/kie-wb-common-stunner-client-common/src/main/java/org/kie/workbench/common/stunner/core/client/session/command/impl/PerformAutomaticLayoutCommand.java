@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
@@ -28,8 +29,8 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
-import org.kie.workbench.common.stunner.core.client.util.Locker;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.uberfire.client.mvp.LockRequiredEvent;
 
 @Dependent
 @Default
@@ -37,12 +38,12 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
 
     private final LayoutHelper layoutHelper;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final Locker locker;
+    private final Event<LockRequiredEvent> locker;
 
     @Inject
     public PerformAutomaticLayoutCommand(final LayoutHelper layoutHelper,
                                          final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                         final Locker locker) {
+                                         final Event<LockRequiredEvent> locker) {
         super(true);
 
         this.sessionCommandManager = sessionCommandManager;
@@ -77,6 +78,6 @@ public class PerformAutomaticLayoutCommand extends AbstractClientSessionCommand<
     }
 
     void executeLock() {
-        locker.lock();
+        locker.fire(new LockRequiredEvent());
     }
 }
