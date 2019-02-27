@@ -30,6 +30,7 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.mocks.MockHasDOMElementResourcesHeaderMetaData;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -48,6 +49,8 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
@@ -367,6 +370,32 @@ public class ExpressionEditorColumnTest {
         assertThat(getColumnWidth(1, 0, 2)).isEqualTo(20D);
         assertThat(getColumnWidth(2, 0, 0)).isEqualTo(50D);
         assertThat(getColumnWidth(2, 0, 1)).isEqualTo(30D);
+    }
+
+    @Test
+    public void testEditNestedUndefinedExpressionGrid() {
+        final GridCell<Optional<BaseExpressionGrid<? extends Expression, ? extends GridData, ? extends BaseUIModelMapper>>> cell = mock(GridCell.class);
+        final GridCellValue<Optional<BaseExpressionGrid<? extends Expression, ? extends GridData, ? extends BaseUIModelMapper>>> cellValue = mock(GridCellValue.class);
+        final UndefinedExpressionGrid undefinedExpressionGrid = mock(UndefinedExpressionGrid.class);
+        when(cell.getValue()).thenReturn(cellValue);
+        when(cellValue.getValue()).thenReturn(Optional.of(undefinedExpressionGrid));
+
+        column.edit(cell, null, null);
+
+        verify(undefinedExpressionGrid).startEditingCell(0, 0);
+    }
+
+    @Test
+    public void testEditNestedNotUndefinedExpressionGrid() {
+        final GridCell<Optional<BaseExpressionGrid<? extends Expression, ? extends GridData, ? extends BaseUIModelMapper>>> cell = mock(GridCell.class);
+        final GridCellValue<Optional<BaseExpressionGrid<? extends Expression, ? extends GridData, ? extends BaseUIModelMapper>>> cellValue = mock(GridCellValue.class);
+        final ContextGrid contextGrid = mock(ContextGrid.class);
+        when(cell.getValue()).thenReturn(cellValue);
+        when(cellValue.getValue()).thenReturn(Optional.of(contextGrid));
+
+        column.edit(cell, null, null);
+
+        verify(contextGrid).selectFirstCell();
     }
 
     @Test
