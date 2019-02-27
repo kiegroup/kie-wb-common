@@ -53,15 +53,13 @@ public abstract class EditablePopupHeaderMetaData<G, E extends HasCellEditorCont
     public void edit(final GridBodyCellEditContext context) {
         final int uiRowIndex = context.getRowIndex();
         final int uiColumnIndex = context.getColumnIndex();
-        final double cellWidth = context.getCellWidth();
-        final double cellHeight = context.getCellHeight();
         final double absoluteCellX = context.getAbsoluteCellX();
         final double absoluteCellY = context.getAbsoluteCellY();
 
         editor.bind(getPresenter(),
                     uiRowIndex,
                     uiColumnIndex);
-        final double[] dxy = {absoluteCellX + cellWidth / 2, absoluteCellY + cellHeight / 2};
+        final double[] dxy = {absoluteCellX, absoluteCellY};
         final Optional<Point2D> rx = context.getRelativeLocation();
         rx.ifPresent(r -> {
             dxy[0] = r.getX();
