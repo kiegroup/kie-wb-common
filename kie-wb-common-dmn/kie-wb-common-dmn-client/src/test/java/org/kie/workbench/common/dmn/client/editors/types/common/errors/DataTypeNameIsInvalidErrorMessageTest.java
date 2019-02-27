@@ -24,13 +24,13 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsNotUniqueErrorMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsNotUniqueErrorMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsInvalidErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsInvalidErrorMessage_StrongMessage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class NameIsNotUniqueErrorMessageTest {
+public class DataTypeNameIsInvalidErrorMessageTest {
 
     @Mock
     private TranslationService translationService;
@@ -39,12 +39,10 @@ public class NameIsNotUniqueErrorMessageTest {
     public void testGetStrongMessage() {
 
         final DataType dataType = mock(DataType.class);
-        final String dataTypeName = "name";
         final String expectedErrorMessage = "*Expected strong message.*";
-        final NameIsNotUniqueErrorMessage errorMessage = new NameIsNotUniqueErrorMessage(translationService);
+        final DataTypeNameIsInvalidErrorMessage errorMessage = new DataTypeNameIsInvalidErrorMessage(translationService);
 
-        when(dataType.getName()).thenReturn(dataTypeName);
-        when(translationService.format(NameIsNotUniqueErrorMessage_StrongMessage, dataTypeName)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsInvalidErrorMessage_StrongMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getStrongMessage(dataType);
 
@@ -55,9 +53,9 @@ public class NameIsNotUniqueErrorMessageTest {
     public void testGetRegularMessage() {
 
         final String expectedErrorMessage = "Expected regular message.";
-        final NameIsNotUniqueErrorMessage errorMessage = new NameIsNotUniqueErrorMessage(translationService);
+        final DataTypeNameIsInvalidErrorMessage errorMessage = new DataTypeNameIsInvalidErrorMessage(translationService);
 
-        when(translationService.format(NameIsNotUniqueErrorMessage_RegularMessage)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsInvalidErrorMessage_RegularMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getRegularMessage();
 

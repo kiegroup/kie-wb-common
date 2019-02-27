@@ -22,24 +22,24 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsInvalidErrorMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsInvalidErrorMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsBlankErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsBlankErrorMessage_StrongMessage;
 
 @Dependent
-public class NameIsInvalidErrorMessage extends ErrorMessage {
+public class DataTypeNameIsBlankErrorMessage extends ErrorMessage {
 
     @Inject
-    public NameIsInvalidErrorMessage(final TranslationService translationService) {
+    public DataTypeNameIsBlankErrorMessage(final TranslationService translationService) {
         super(translationService);
     }
 
     @Override
     String getStrongMessage(final DataType dataType) {
-        return translationService.format(NameIsInvalidErrorMessage_StrongMessage);
+        return translationService.format(DataTypeNameIsBlankErrorMessage_StrongMessage);
     }
 
     @Override
     String getRegularMessage() {
-        return translationService.format(NameIsInvalidErrorMessage_RegularMessage);
+        return translationService.format(DataTypeNameIsBlankErrorMessage_RegularMessage);
     }
 }

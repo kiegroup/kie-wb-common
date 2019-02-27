@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.messages;
+package org.kie.workbench.common.dmn.client.editors.common.messages;
 
 import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -35,12 +35,12 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-@ApplicationScoped
-public class DataTypeFlashMessagesView implements DataTypeFlashMessages.View {
+@Dependent
+public class FlashMessagesView implements FlashMessages.View {
 
-    static final String ERROR_CSS_CLASS = "kie-data-types-error-element";
+    static final String ERROR_CSS_CLASS = "kie-flash-message-error-element";
 
-    static final String WARNING_CSS_CLASS = "kie-data-types-warning-element";
+    static final String WARNING_CSS_CLASS = "kie-flash-message-warning-element";
 
     static final String OPENED_CONTAINER_CSS_CLASS = "opened";
 
@@ -68,17 +68,17 @@ public class DataTypeFlashMessagesView implements DataTypeFlashMessages.View {
     @DataField("cancel-warning-button")
     private final HTMLButtonElement cancelWarningButton;
 
-    private DataTypeFlashMessages presenter;
+    private FlashMessages presenter;
 
     @Inject
-    public DataTypeFlashMessagesView(final HTMLDivElement errorContainer,
-                                     final HTMLDivElement warningContainer,
-                                     final @Named("strong") HTMLElement strongErrorMessage,
-                                     final @Named("span") HTMLElement regularErrorMessage,
-                                     final @Named("strong") HTMLElement strongWarningMessage,
-                                     final @Named("span") HTMLElement regularWarningMessage,
-                                     final HTMLButtonElement okWarningButton,
-                                     final HTMLButtonElement cancelWarningButton) {
+    public FlashMessagesView(final HTMLDivElement errorContainer,
+                             final HTMLDivElement warningContainer,
+                             final @Named("strong") HTMLElement strongErrorMessage,
+                             final @Named("span") HTMLElement regularErrorMessage,
+                             final @Named("strong") HTMLElement strongWarningMessage,
+                             final @Named("span") HTMLElement regularWarningMessage,
+                             final HTMLButtonElement okWarningButton,
+                             final HTMLButtonElement cancelWarningButton) {
         this.errorContainer = errorContainer;
         this.warningContainer = warningContainer;
         this.strongErrorMessage = strongErrorMessage;
@@ -90,7 +90,7 @@ public class DataTypeFlashMessagesView implements DataTypeFlashMessages.View {
     }
 
     @Override
-    public void init(final DataTypeFlashMessages presenter) {
+    public void init(final FlashMessages presenter) {
         this.presenter = presenter;
     }
 
@@ -126,7 +126,6 @@ public class DataTypeFlashMessagesView implements DataTypeFlashMessages.View {
 
     @Override
     public void showErrorHighlight(final String errorElementSelector) {
-
         querySelector(errorElementSelector).ifPresent(element -> {
 
             enableErrorHighlight(element);
@@ -142,8 +141,13 @@ public class DataTypeFlashMessagesView implements DataTypeFlashMessages.View {
         querySelector(warningElementSelector).ifPresent(this::enableWarningHighlight);
     }
 
+    @Override
+    public boolean isElementPresent(final String elementSelector) {
+        return querySelector(elementSelector).isPresent();
+    }
+
     private Optional<Element> querySelector(final String selector) {
-        return Optional.ofNullable(getElement().parentNode.querySelector(selector));
+        return Optional.ofNullable(getElement().parentNode).map(node -> node.querySelector(selector));
     }
 
     @Override

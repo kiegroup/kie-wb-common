@@ -22,24 +22,24 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsNotUniqueErrorMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsNotUniqueErrorMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsInvalidErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsInvalidErrorMessage_StrongMessage;
 
 @Dependent
-public class NameIsNotUniqueErrorMessage extends ErrorMessage {
+public class DataTypeNameIsInvalidErrorMessage extends ErrorMessage {
 
     @Inject
-    public NameIsNotUniqueErrorMessage(final TranslationService translationService) {
+    public DataTypeNameIsInvalidErrorMessage(final TranslationService translationService) {
         super(translationService);
     }
 
     @Override
     String getStrongMessage(final DataType dataType) {
-        return translationService.format(NameIsNotUniqueErrorMessage_StrongMessage, dataType.getName());
+        return translationService.format(DataTypeNameIsInvalidErrorMessage_StrongMessage);
     }
 
     @Override
     String getRegularMessage() {
-        return translationService.format(NameIsNotUniqueErrorMessage_RegularMessage);
+        return translationService.format(DataTypeNameIsInvalidErrorMessage_RegularMessage);
     }
 }

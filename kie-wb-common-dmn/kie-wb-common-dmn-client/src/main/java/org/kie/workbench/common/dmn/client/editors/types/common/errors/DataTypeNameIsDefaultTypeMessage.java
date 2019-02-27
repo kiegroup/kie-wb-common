@@ -22,24 +22,24 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsDefaultTypeMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsDefaultTypeMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsDefaultTypeMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsDefaultTypeMessage_StrongMessage;
 
 @Dependent
-public class NameIsDefaultTypeMessage extends ErrorMessage {
+public class DataTypeNameIsDefaultTypeMessage extends ErrorMessage {
 
     @Inject
-    public NameIsDefaultTypeMessage(final TranslationService translationService) {
+    public DataTypeNameIsDefaultTypeMessage(final TranslationService translationService) {
         super(translationService);
     }
 
     @Override
     String getStrongMessage(final DataType dataType) {
-        return translationService.format(NameIsDefaultTypeMessage_StrongMessage);
+        return translationService.format(DataTypeNameIsDefaultTypeMessage_StrongMessage);
     }
 
     @Override
     String getRegularMessage() {
-        return translationService.format(NameIsDefaultTypeMessage_RegularMessage);
+        return translationService.format(DataTypeNameIsDefaultTypeMessage_RegularMessage);
     }
 }

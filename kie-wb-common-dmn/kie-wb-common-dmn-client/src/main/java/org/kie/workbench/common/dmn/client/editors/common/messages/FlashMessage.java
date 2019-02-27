@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.messages;
+package org.kie.workbench.common.dmn.client.editors.common.messages;
 
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.UberFireEvent;
 
-public class DataTypeFlashMessage implements UberFireEvent {
+public class FlashMessage implements UberFireEvent {
 
     private final String strongMessage;
 
@@ -27,31 +27,31 @@ public class DataTypeFlashMessage implements UberFireEvent {
 
     private final Type type;
 
-    private final String errorElementSelector;
+    private final String elementSelector;
 
     private final Command onSuccess;
 
     private final Command onError;
 
-    public DataTypeFlashMessage(final Type type,
-                                final String strongMessage,
-                                final String regularMessage,
-                                final String errorElementSelector,
-                                final Command onSuccess,
-                                final Command onError) {
+    public FlashMessage(final Type type,
+                        final String strongMessage,
+                        final String regularMessage,
+                        final String elementSelector,
+                        final Command onSuccess,
+                        final Command onError) {
         this.type = type;
         this.strongMessage = strongMessage;
         this.regularMessage = regularMessage;
-        this.errorElementSelector = errorElementSelector;
+        this.elementSelector = elementSelector;
         this.onSuccess = onSuccess;
         this.onError = onError;
     }
 
-    public DataTypeFlashMessage(final Type type,
-                                final String strongMessage,
-                                final String regularMessage,
-                                final String errorElementSelector) {
-        this(type, strongMessage, regularMessage, errorElementSelector, () -> { /* Nothing. */ }, () -> { /* Nothing. */ });
+    public FlashMessage(final Type type,
+                        final String strongMessage,
+                        final String regularMessage,
+                        final String elementSelector) {
+        this(type, strongMessage, regularMessage, elementSelector, () -> { /* Nothing. */ }, () -> { /* Nothing. */ });
     }
 
     public String getStrongMessage() {
@@ -66,8 +66,8 @@ public class DataTypeFlashMessage implements UberFireEvent {
         return type;
     }
 
-    public String getErrorElementSelector() {
-        return errorElementSelector;
+    public String getElementSelector() {
+        return elementSelector;
     }
 
     public Command getOnSuccess() {

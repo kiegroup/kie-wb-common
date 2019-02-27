@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.messages;
+package org.kie.workbench.common.dmn.client.editors.common.messages;
 
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -28,8 +28,8 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
-@ApplicationScoped
-public class DataTypeFlashMessages {
+@Dependent
+public class FlashMessages {
 
     private final View view;
 
@@ -38,12 +38,12 @@ public class DataTypeFlashMessages {
     private Command warningErrorCallback;
 
     @Inject
-    public DataTypeFlashMessages(final View view) {
+    public FlashMessages(final View view) {
         this.view = view;
     }
 
     @PostConstruct
-    void setup() {
+    void init() {
         view.init(this);
     }
 
@@ -51,13 +51,16 @@ public class DataTypeFlashMessages {
         return view.getElement();
     }
 
-    public void onNameIsBlankErrorMessage(final @Observes DataTypeFlashMessage flashMessage) {
-        registerFlashMessageCallback(flashMessage);
-        showFlashMessage(flashMessage);
-        highlightDataField(flashMessage);
+    public void onFlashMessageEvent(final @Observes FlashMessage flashMessage) {
+        final boolean isElementPresent = view.isElementPresent(flashMessage.getElementSelector());
+        if (isElementPresent) {
+            registerFlashMessageCallback(flashMessage);
+            showFlashMessage(flashMessage);
+            highlighElement(flashMessage);
+        }
     }
 
-    void showFlashMessage(final DataTypeFlashMessage flashMessage) {
+    void showFlashMessage(final FlashMessage flashMessage) {
         switch (flashMessage.getType()) {
             case ERROR:
                 view.showErrorMessage(flashMessage.getStrongMessage(), flashMessage.getRegularMessage());
@@ -68,18 +71,18 @@ public class DataTypeFlashMessages {
         }
     }
 
-    void highlightDataField(final DataTypeFlashMessage flashMessage) {
+    void highlighElement(final FlashMessage flashMessage) {
         switch (flashMessage.getType()) {
             case ERROR:
-                view.showErrorHighlight(flashMessage.getErrorElementSelector());
+                view.showErrorHighlight(flashMessage.getElementSelector());
                 break;
             case WARNING:
-                view.showWarningHighlight(flashMessage.getErrorElementSelector());
+                view.showWarningHighlight(flashMessage.getElementSelector());
                 break;
         }
     }
 
-    void registerFlashMessageCallback(final DataTypeFlashMessage flashMessage) {
+    void registerFlashMessageCallback(final FlashMessage flashMessage) {
         switch (flashMessage.getType()) {
             case ERROR:
                 // 'Error' FlashMessage does not have callbacks.
@@ -112,7 +115,7 @@ public class DataTypeFlashMessages {
         view.hideWarningContainer();
     }
 
-    public interface View extends UberElemental<DataTypeFlashMessages>,
+    public interface View extends UberElemental<FlashMessages>,
                                   IsElement {
 
         void showErrorMessage(final String strongMessage, final String regularMessage);
@@ -122,6 +125,8 @@ public class DataTypeFlashMessages {
         void showErrorHighlight(final String errorElementSelector);
 
         void showWarningHighlight(final String warningElementSelector);
+
+        boolean isElementPresent(final String elementSelector);
 
         void hideWarningContainer();
 

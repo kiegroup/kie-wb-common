@@ -24,13 +24,13 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsInvalidErrorMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsInvalidErrorMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsBlankErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsBlankErrorMessage_StrongMessage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class NameIsInvalidErrorMessageTest {
+public class DataTypeNameIsBlankErrorMessageTest {
 
     @Mock
     private TranslationService translationService;
@@ -40,9 +40,9 @@ public class NameIsInvalidErrorMessageTest {
 
         final DataType dataType = mock(DataType.class);
         final String expectedErrorMessage = "*Expected strong message.*";
-        final NameIsInvalidErrorMessage errorMessage = new NameIsInvalidErrorMessage(translationService);
+        final DataTypeNameIsBlankErrorMessage errorMessage = new DataTypeNameIsBlankErrorMessage(translationService);
 
-        when(translationService.format(NameIsInvalidErrorMessage_StrongMessage)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsBlankErrorMessage_StrongMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getStrongMessage(dataType);
 
@@ -53,9 +53,9 @@ public class NameIsInvalidErrorMessageTest {
     public void testGetRegularMessage() {
 
         final String expectedErrorMessage = "Expected regular message.";
-        final NameIsInvalidErrorMessage errorMessage = new NameIsInvalidErrorMessage(translationService);
+        final DataTypeNameIsBlankErrorMessage errorMessage = new DataTypeNameIsBlankErrorMessage(translationService);
 
-        when(translationService.format(NameIsInvalidErrorMessage_RegularMessage)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsBlankErrorMessage_RegularMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getRegularMessage();
 

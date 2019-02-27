@@ -24,13 +24,13 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsBlankErrorMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsBlankErrorMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsNotUniqueErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsNotUniqueErrorMessage_StrongMessage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class NameIsBlankErrorMessageTest {
+public class DataTypeNameIsNotUniqueErrorMessageTest {
 
     @Mock
     private TranslationService translationService;
@@ -39,10 +39,12 @@ public class NameIsBlankErrorMessageTest {
     public void testGetStrongMessage() {
 
         final DataType dataType = mock(DataType.class);
+        final String dataTypeName = "name";
         final String expectedErrorMessage = "*Expected strong message.*";
-        final NameIsBlankErrorMessage errorMessage = new NameIsBlankErrorMessage(translationService);
+        final DataTypeNameIsNotUniqueErrorMessage errorMessage = new DataTypeNameIsNotUniqueErrorMessage(translationService);
 
-        when(translationService.format(NameIsBlankErrorMessage_StrongMessage)).thenReturn(expectedErrorMessage);
+        when(dataType.getName()).thenReturn(dataTypeName);
+        when(translationService.format(DataTypeNameIsNotUniqueErrorMessage_StrongMessage, dataTypeName)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getStrongMessage(dataType);
 
@@ -53,9 +55,9 @@ public class NameIsBlankErrorMessageTest {
     public void testGetRegularMessage() {
 
         final String expectedErrorMessage = "Expected regular message.";
-        final NameIsBlankErrorMessage errorMessage = new NameIsBlankErrorMessage(translationService);
+        final DataTypeNameIsNotUniqueErrorMessage errorMessage = new DataTypeNameIsNotUniqueErrorMessage(translationService);
 
-        when(translationService.format(NameIsBlankErrorMessage_RegularMessage)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsNotUniqueErrorMessage_RegularMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getRegularMessage();
 

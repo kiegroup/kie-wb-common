@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.messages;
+package org.kie.workbench.common.dmn.client.editors.common.messages;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -31,12 +31,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessagesView.ERROR_CSS_CLASS;
-import static org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessagesView.OPENED_CONTAINER_CSS_CLASS;
-import static org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessagesView.WARNING_CSS_CLASS;
+import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessagesView.ERROR_CSS_CLASS;
+import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessagesView.OPENED_CONTAINER_CSS_CLASS;
+import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessagesView.WARNING_CSS_CLASS;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.eq;
@@ -50,7 +51,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class DataTypeFlashMessagesViewTest {
+public class FlashMessagesViewTest {
 
     @Mock
     private HTMLDivElement errorContainer;
@@ -77,13 +78,13 @@ public class DataTypeFlashMessagesViewTest {
     private HTMLButtonElement cancelButton;
 
     @Mock
-    private DataTypeFlashMessages presenter;
+    private FlashMessages presenter;
 
-    private DataTypeFlashMessagesView view;
+    private FlashMessagesView view;
 
     @Before
     public void setup() {
-        view = spy(new DataTypeFlashMessagesView(errorContainer, warningContainer, strongErrorMessage, regularErrorMessage, strongWarningMessage, regularWarningMessage, okButton, cancelButton));
+        view = Mockito.spy(new FlashMessagesView(errorContainer, warningContainer, strongErrorMessage, regularErrorMessage, strongWarningMessage, regularWarningMessage, okButton, cancelButton));
         view.init(presenter);
     }
 

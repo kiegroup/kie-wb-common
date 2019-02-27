@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.messages;
+package org.kie.workbench.common.dmn.client.editors.common.messages;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.HTMLElement;
@@ -22,30 +22,36 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessage.Type.ERROR;
-import static org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessage.Type.WARNING;
+import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type.ERROR;
+import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type.WARNING;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class DataTypeFlashMessagesTest {
+public class FlashMessagesTest {
 
     @Mock
-    private DataTypeFlashMessagesView view;
+    private FlashMessagesView view;
 
-    private DataTypeFlashMessages dataTypeFlashMessages;
+    private FlashMessages flashMessages;
 
     @Before
     public void setup() {
-        dataTypeFlashMessages = spy(new DataTypeFlashMessages(view));
+        flashMessages = Mockito.spy(new FlashMessages(view));
+    }
+
+    @Test
+    public void testInit() {
+        flashMessages.init();
+        verify(view).init(flashMessages);
     }
 
     @Test
@@ -55,31 +61,53 @@ public class DataTypeFlashMessagesTest {
 
         when(view.getElement()).thenReturn(expectedHTMLElement);
 
-        final HTMLElement actualHTMLElement = dataTypeFlashMessages.getElement();
+        final HTMLElement actualHTMLElement = flashMessages.getElement();
 
         assertEquals(expectedHTMLElement, actualHTMLElement);
     }
 
     @Test
-    public void testOnNameIsBlankErrorMessage() {
+    public void testOnFlashMessageEventWhenElementIsPresent() {
 
-        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
+        final String selector = "selector";
 
-        doNothing().when(dataTypeFlashMessages).registerFlashMessageCallback(flashMessage);
-        doNothing().when(dataTypeFlashMessages).showFlashMessage(flashMessage);
-        doNothing().when(dataTypeFlashMessages).highlightDataField(flashMessage);
+        doNothing().when(flashMessages).registerFlashMessageCallback(flashMessage);
+        doNothing().when(flashMessages).showFlashMessage(flashMessage);
+        doNothing().when(flashMessages).highlighElement(flashMessage);
+        when(flashMessage.getElementSelector()).thenReturn(selector);
+        when(view.isElementPresent(selector)).thenReturn(true);
 
-        dataTypeFlashMessages.onNameIsBlankErrorMessage(flashMessage);
+        flashMessages.onFlashMessageEvent(flashMessage);
 
-        verify(dataTypeFlashMessages).registerFlashMessageCallback(flashMessage);
-        verify(dataTypeFlashMessages).showFlashMessage(flashMessage);
-        verify(dataTypeFlashMessages).highlightDataField(flashMessage);
+        verify(flashMessages).registerFlashMessageCallback(flashMessage);
+        verify(flashMessages).showFlashMessage(flashMessage);
+        verify(flashMessages).highlighElement(flashMessage);
+    }
+
+    @Test
+    public void testOnFlashMessageEventWhenElementIsNotPresent() {
+
+        final FlashMessage flashMessage = mock(FlashMessage.class);
+        final String selector = "selector";
+
+        doNothing().when(flashMessages).registerFlashMessageCallback(flashMessage);
+        doNothing().when(flashMessages).showFlashMessage(flashMessage);
+        doNothing().when(flashMessages).highlighElement(flashMessage);
+        when(flashMessage.getElementSelector()).thenReturn(selector);
+        when(view.isElementPresent(selector)).thenReturn(false);
+
+        flashMessages.onFlashMessageEvent(flashMessage);
+
+        verify(flashMessages, never()).registerFlashMessageCallback(flashMessage);
+        verify(flashMessages, never()).showFlashMessage(flashMessage);
+        verify(flashMessages, never()).highlighElement(flashMessage);
     }
 
     @Test
     public void testShowFlashMessageWhenItsAnErrorMessage() {
 
-        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
         final String strongMessage = "*message*";
         final String regularMessage = "message";
 
@@ -87,7 +115,7 @@ public class DataTypeFlashMessagesTest {
         when(flashMessage.getStrongMessage()).thenReturn(strongMessage);
         when(flashMessage.getRegularMessage()).thenReturn(regularMessage);
 
-        dataTypeFlashMessages.showFlashMessage(flashMessage);
+        flashMessages.showFlashMessage(flashMessage);
 
         verify(view).showErrorMessage(strongMessage, regularMessage);
         verify(view, never()).showWarningMessage(anyString(), anyString());
@@ -96,7 +124,7 @@ public class DataTypeFlashMessagesTest {
     @Test
     public void testShowFlashMessageWhenItsAWarningMessage() {
 
-        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
         final String strongMessage = "*message*";
         final String regularMessage = "message";
 
@@ -104,37 +132,37 @@ public class DataTypeFlashMessagesTest {
         when(flashMessage.getStrongMessage()).thenReturn(strongMessage);
         when(flashMessage.getRegularMessage()).thenReturn(regularMessage);
 
-        dataTypeFlashMessages.showFlashMessage(flashMessage);
+        flashMessages.showFlashMessage(flashMessage);
 
         verify(view).showWarningMessage(strongMessage, regularMessage);
         verify(view, never()).showErrorMessage(anyString(), anyString());
     }
 
     @Test
-    public void testHighlightDataFieldWhenItsAnErrorMessage() {
+    public void testHighlightElementWhenItsAnErrorMessage() {
 
-        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
         final String elementSelector = "elementSelector";
 
         when(flashMessage.getType()).thenReturn(ERROR);
-        when(flashMessage.getErrorElementSelector()).thenReturn(elementSelector);
+        when(flashMessage.getElementSelector()).thenReturn(elementSelector);
 
-        dataTypeFlashMessages.highlightDataField(flashMessage);
+        flashMessages.highlighElement(flashMessage);
 
         verify(view).showErrorHighlight(elementSelector);
         verify(view, never()).showWarningHighlight(anyString());
     }
 
     @Test
-    public void testHighlightDataFieldWhenItsAWarningMessage() {
+    public void testHighlightElementWhenItsAWarningMessage() {
 
-        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
         final String elementSelector = "elementSelector";
 
         when(flashMessage.getType()).thenReturn(WARNING);
-        when(flashMessage.getErrorElementSelector()).thenReturn(elementSelector);
+        when(flashMessage.getElementSelector()).thenReturn(elementSelector);
 
-        dataTypeFlashMessages.highlightDataField(flashMessage);
+        flashMessages.highlighElement(flashMessage);
 
         verify(view).showWarningHighlight(elementSelector);
         verify(view, never()).showErrorHighlight(anyString());
@@ -143,7 +171,7 @@ public class DataTypeFlashMessagesTest {
     @Test
     public void testRegisterFlashMessageCallback() {
 
-        final DataTypeFlashMessage flashMessage = mock(DataTypeFlashMessage.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
         final Command onSuccess = mock(Command.class);
         final Command onError = mock(Command.class);
 
@@ -151,9 +179,9 @@ public class DataTypeFlashMessagesTest {
         when(flashMessage.getOnError()).thenReturn(onError);
         when(flashMessage.getType()).thenReturn(WARNING);
 
-        dataTypeFlashMessages.registerFlashMessageCallback(flashMessage);
-        dataTypeFlashMessages.executeSuccessWarningCallback();
-        dataTypeFlashMessages.executeErrorWarningCallback();
+        flashMessages.registerFlashMessageCallback(flashMessage);
+        flashMessages.executeSuccessWarningCallback();
+        flashMessages.executeErrorWarningCallback();
 
         verify(onSuccess).execute();
         verify(onError).execute();
@@ -162,7 +190,7 @@ public class DataTypeFlashMessagesTest {
     @Test
     public void testHideMessages() {
 
-        dataTypeFlashMessages.hideMessages();
+        flashMessages.hideMessages();
 
         verify(view).hideErrorContainer();
         verify(view).hideWarningContainer();

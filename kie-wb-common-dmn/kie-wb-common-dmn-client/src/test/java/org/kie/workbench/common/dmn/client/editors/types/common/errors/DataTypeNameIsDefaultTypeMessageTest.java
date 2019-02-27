@@ -24,13 +24,13 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsDefaultTypeMessage_RegularMessage;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.NameIsDefaultTypeMessage_StrongMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsDefaultTypeMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeNameIsDefaultTypeMessage_StrongMessage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class NameIsDefaultTypeMessageTest {
+public class DataTypeNameIsDefaultTypeMessageTest {
 
     @Mock
     private TranslationService translationService;
@@ -40,9 +40,9 @@ public class NameIsDefaultTypeMessageTest {
 
         final DataType dataType = mock(DataType.class);
         final String expectedErrorMessage = "*Expected strong message.*";
-        final NameIsDefaultTypeMessage errorMessage = new NameIsDefaultTypeMessage(translationService);
+        final DataTypeNameIsDefaultTypeMessage errorMessage = new DataTypeNameIsDefaultTypeMessage(translationService);
 
-        when(translationService.format(NameIsDefaultTypeMessage_StrongMessage)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsDefaultTypeMessage_StrongMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getStrongMessage(dataType);
 
@@ -53,9 +53,9 @@ public class NameIsDefaultTypeMessageTest {
     public void testGetRegularMessage() {
 
         final String expectedErrorMessage = "Expected regular message.";
-        final NameIsDefaultTypeMessage errorMessage = new NameIsDefaultTypeMessage(translationService);
+        final DataTypeNameIsDefaultTypeMessage errorMessage = new DataTypeNameIsDefaultTypeMessage(translationService);
 
-        when(translationService.format(NameIsDefaultTypeMessage_RegularMessage)).thenReturn(expectedErrorMessage);
+        when(translationService.format(DataTypeNameIsDefaultTypeMessage_RegularMessage)).thenReturn(expectedErrorMessage);
 
         final String actualErrorMessage = errorMessage.getRegularMessage();
 
