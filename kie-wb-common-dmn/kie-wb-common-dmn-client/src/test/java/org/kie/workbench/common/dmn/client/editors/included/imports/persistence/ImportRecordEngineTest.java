@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.persistence;
+package org.kie.workbench.common.dmn.client.editors.included.imports.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +27,9 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
-import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
-import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsIndex;
-import org.kie.workbench.common.dmn.client.editors.included.messages.IncludedModelErrorMessageFactory;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsIndex;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.included.imports.messages.IncludedModelErrorMessageFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
 public class ImportRecordEngineTest {
 
     @Mock
-    private IncludedModelsPageState pageState;
+    private IncludedModelsPageStateProviderImpl stateProvider;
 
     @Mock
     private IncludedModelsIndex includedModelsIndex;
@@ -65,7 +65,7 @@ public class ImportRecordEngineTest {
 
     @Before
     public void setup() {
-        recordEngine = spy(new ImportRecordEngine(pageState, includedModelsIndex, messageFactory, flashMessageEvent));
+        recordEngine = spy(new ImportRecordEngine(stateProvider, includedModelsIndex, messageFactory, flashMessageEvent));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class ImportRecordEngineTest {
         final List<Import> actualImports = new ArrayList<>(asList(import1, import2));
 
         when(includedModelsIndex.getImport(record)).thenReturn(import2);
-        when(pageState.getImports()).thenReturn(actualImports);
+        when(stateProvider.getImports()).thenReturn(actualImports);
 
         final List<IncludedModel> actualResult = recordEngine.destroy(record);
         final List<IncludedModel> expectedResult = singletonList(record);
@@ -142,7 +142,7 @@ public class ImportRecordEngineTest {
         when(import1.getName()).thenReturn(name1);
         when(import2.getName()).thenReturn(name2);
         when(includedModelsIndex.getImport(record)).thenReturn(import2);
-        when(pageState.getImports()).thenReturn(imports);
+        when(stateProvider.getImports()).thenReturn(imports);
         when(messageFactory.getNameIsNotUniqueFlashMessage(record)).thenReturn(flashMessage);
 
         final boolean valid = recordEngine.isValid(record);
@@ -168,7 +168,7 @@ public class ImportRecordEngineTest {
         when(import1.getName()).thenReturn(name1);
         when(import2.getName()).thenReturn(name2);
         when(includedModelsIndex.getImport(record)).thenReturn(import2);
-        when(pageState.getImports()).thenReturn(imports);
+        when(stateProvider.getImports()).thenReturn(imports);
         when(messageFactory.getNameIsNotUniqueFlashMessage(record)).thenReturn(flashMessage);
 
         final boolean valid = recordEngine.isValid(record);
@@ -194,7 +194,7 @@ public class ImportRecordEngineTest {
         when(import1.getName()).thenReturn(name1);
         when(import2.getName()).thenReturn(name2);
         when(includedModelsIndex.getImport(record)).thenReturn(import2);
-        when(pageState.getImports()).thenReturn(imports);
+        when(stateProvider.getImports()).thenReturn(imports);
         when(messageFactory.getNameIsNotUniqueFlashMessage(record)).thenReturn(flashMessage);
 
         final boolean valid = recordEngine.isValid(record);

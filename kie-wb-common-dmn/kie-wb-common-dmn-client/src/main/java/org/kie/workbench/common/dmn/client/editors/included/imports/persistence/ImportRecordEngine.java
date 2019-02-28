@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.persistence;
+package org.kie.workbench.common.dmn.client.editors.included.imports.persistence;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,15 +27,15 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.common.persistence.RecordEngine;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
-import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
-import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsIndex;
-import org.kie.workbench.common.dmn.client.editors.included.messages.IncludedModelErrorMessageFactory;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsIndex;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.included.imports.messages.IncludedModelErrorMessageFactory;
 
 import static java.util.Collections.singletonList;
 
 public class ImportRecordEngine implements RecordEngine<IncludedModel> {
 
-    private final IncludedModelsPageState pageState;
+    private final IncludedModelsPageStateProviderImpl stateProvider;
 
     private final IncludedModelsIndex includedModelsIndex;
 
@@ -44,11 +44,11 @@ public class ImportRecordEngine implements RecordEngine<IncludedModel> {
     private final Event<FlashMessage> flashMessageEvent;
 
     @Inject
-    public ImportRecordEngine(final IncludedModelsPageState pageState,
+    public ImportRecordEngine(final IncludedModelsPageStateProviderImpl stateProvider,
                               final IncludedModelsIndex includedModelsIndex,
                               final IncludedModelErrorMessageFactory messageFactory,
                               final Event<FlashMessage> flashMessageEvent) {
-        this.pageState = pageState;
+        this.stateProvider = stateProvider;
         this.includedModelsIndex = includedModelsIndex;
         this.messageFactory = messageFactory;
         this.flashMessageEvent = flashMessageEvent;
@@ -65,7 +65,7 @@ public class ImportRecordEngine implements RecordEngine<IncludedModel> {
 
     @Override
     public List<IncludedModel> destroy(final IncludedModel record) {
-        pageState.getImports().remove(getImport(record));
+        stateProvider.getImports().remove(getImport(record));
         return singletonList(record);
     }
 
@@ -85,7 +85,7 @@ public class ImportRecordEngine implements RecordEngine<IncludedModel> {
     }
 
     private boolean isUnique(final IncludedModel record) {
-        return pageState
+        return stateProvider
                 .getImports()
                 .stream()
                 .noneMatch(anImport -> !sameImport(record, anImport) && sameName(record, anImport));

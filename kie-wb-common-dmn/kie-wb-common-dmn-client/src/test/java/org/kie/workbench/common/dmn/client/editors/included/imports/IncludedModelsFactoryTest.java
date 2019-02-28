@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.common;
+package org.kie.workbench.common.dmn.client.editors.included.imports;
 
 import java.util.List;
 
@@ -24,8 +24,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
-import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
-import org.kie.workbench.common.dmn.client.editors.included.persistence.ImportRecordEngine;
+import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -46,16 +45,13 @@ public class IncludedModelsFactoryTest {
     private ImportRecordEngine recordEngine;
 
     @Mock
-    private IncludedModelsPageState pageState;
-
-    @Mock
     private IncludedModelsIndex includedModelsIndex;
 
     private IncludedModelsFactory factory;
 
     @Before
     public void setup() {
-        factory = new IncludedModelsFactory(recordEngine, pageState, includedModelsIndex);
+        factory = new IncludedModelsFactory(recordEngine, includedModelsIndex);
     }
 
     @Test
@@ -79,11 +75,10 @@ public class IncludedModelsFactoryTest {
         when(import2.getName()).thenReturn(nameMock2);
         when(import1.getNamespace()).thenReturn(path1);
         when(import2.getNamespace()).thenReturn(path2);
-        when(pageState.getImports()).thenReturn(imports);
         mockStatic(UUID.class);
         when(UUID.uuid()).thenReturn(uuid1, uuid2);
 
-        final List<IncludedModel> includedModels = factory.makeIncludedModels();
+        final List<IncludedModel> includedModels = factory.makeIncludedModels(imports);
         final IncludedModel includedModel1 = includedModels.get(0);
         final IncludedModel includedModel2 = includedModels.get(1);
 

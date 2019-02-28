@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.common;
+package org.kie.workbench.common.dmn.client.editors.included.imports;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +24,7 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
-import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
-import org.kie.workbench.common.dmn.client.editors.included.persistence.ImportRecordEngine;
+import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
 
 import static org.uberfire.commons.uuid.UUID.uuid;
 
@@ -34,24 +33,18 @@ public class IncludedModelsFactory {
 
     private final ImportRecordEngine recordEngine;
 
-    private final IncludedModelsPageState pageState;
-
     private final IncludedModelsIndex includedModelsIndex;
 
     @Inject
     public IncludedModelsFactory(final ImportRecordEngine recordEngine,
-                                 final IncludedModelsPageState pageState,
                                  final IncludedModelsIndex includedModelsIndex) {
         this.recordEngine = recordEngine;
-        this.pageState = pageState;
         this.includedModelsIndex = includedModelsIndex;
     }
 
-    public List<IncludedModel> makeIncludedModels() {
-
-        getIncludedModelsIndex().clear();
-
-        return getImports()
+    List<IncludedModel> makeIncludedModels(final List<Import> imports) {
+        includedModelsIndex.clear();
+        return imports
                 .stream()
                 .map(this::makeIncludedModel)
                 .collect(Collectors.toList());
@@ -67,13 +60,9 @@ public class IncludedModelsFactory {
         includedModel.setDataTypesCount(getDataTypesCount());
         includedModel.setDrgElementsCount(getDrgElementsCount());
 
-        getIncludedModelsIndex().index(includedModel, anImport);
+        includedModelsIndex.index(includedModel, anImport);
 
         return includedModel;
-    }
-
-    private List<Import> getImports() {
-        return pageState.getImports();
     }
 
     private String getName(final Import anImport) {
@@ -93,9 +82,5 @@ public class IncludedModelsFactory {
     private int getDrgElementsCount() {
         // TODO
         return 99;
-    }
-
-    private IncludedModelsIndex getIncludedModelsIndex() {
-        return includedModelsIndex;
     }
 }

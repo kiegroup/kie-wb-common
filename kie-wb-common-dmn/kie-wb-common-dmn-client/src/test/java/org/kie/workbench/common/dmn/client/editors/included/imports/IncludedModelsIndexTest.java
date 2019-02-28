@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.common;
+package org.kie.workbench.common.dmn.client.editors.included.imports;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
