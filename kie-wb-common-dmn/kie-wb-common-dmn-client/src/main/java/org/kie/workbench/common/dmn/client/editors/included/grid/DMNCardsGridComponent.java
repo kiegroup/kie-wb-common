@@ -26,7 +26,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent;
 import org.kie.workbench.common.dmn.client.editors.common.cards.CardsGridComponent;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
-import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsFactory;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 
 public class DMNCardsGridComponent {
 
@@ -34,15 +34,15 @@ public class DMNCardsGridComponent {
 
     private final CardsGridComponent cardsGridComponent;
 
-    private final IncludedModelsFactory factory;
+    private final IncludedModelsPageState pageState;
 
     @Inject
     public DMNCardsGridComponent(final ManagedInstance<DMNCardComponent> dmnCardComponent,
                                  final CardsGridComponent cardsGridComponent,
-                                 final IncludedModelsFactory factory) {
+                                 final IncludedModelsPageState pageState) {
         this.dmnCardComponent = dmnCardComponent;
         this.cardsGridComponent = cardsGridComponent;
-        this.factory = factory;
+        this.pageState = pageState;
     }
 
     public void refresh() {
@@ -64,6 +64,6 @@ public class DMNCardsGridComponent {
     }
 
     private List<IncludedModel> makeIncludedModels() {
-        return factory.makeIncludedModels();
+        return pageState.generateIncludedModels();
     }
 }

@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.common.cards.CardsGridComponent;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
-import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsFactory;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
@@ -45,13 +45,13 @@ public class DMNCardsGridComponentTest {
     private CardsGridComponent cardsGridComponent;
 
     @Mock
-    private IncludedModelsFactory factory;
+    private IncludedModelsPageState pageState;
 
     private DMNCardsGridComponent grid;
 
     @Before
     public void setup() {
-        grid = new DMNCardsGridComponent(dmnCardComponent, cardsGridComponent, factory);
+        grid = new DMNCardsGridComponent(dmnCardComponent, cardsGridComponent, pageState);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class DMNCardsGridComponentTest {
         final DMNCardComponent card2 = mock(DMNCardComponent.class);
         final List<IncludedModel> includedModels = asList(includedModel1, includedModel2);
 
-        when(factory.makeIncludedModels()).thenReturn(includedModels);
+        when(pageState.generateIncludedModels()).thenReturn(includedModels);
         when(dmnCardComponent.get()).thenReturn(card1, card2);
 
         grid.refresh();

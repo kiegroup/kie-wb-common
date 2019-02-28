@@ -30,6 +30,7 @@ import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpression
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -99,6 +100,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final DataTypesPage dataTypesPage;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
     private final IncludedModelsPage includedModelsPage;
+    private final IncludedModelsPageStateProviderImpl importsPageProvider;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -126,7 +128,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final LayoutHelper layoutHelper,
                             final DataTypesPage dataTypesPage,
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
-                            final IncludedModelsPage includedModelsPage) {
+                            final IncludedModelsPage includedModelsPage,
+                            final IncludedModelsPageStateProviderImpl importsPageProvider) {
         super(view,
               documentationView,
               placeManager,
@@ -153,6 +156,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.dataTypesPage = dataTypesPage;
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
         this.includedModelsPage = includedModelsPage;
+        this.importsPageProvider = importsPageProvider;
     }
 
     @OnStartup
@@ -207,7 +211,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
             decisionNavigatorDock.setupCanvasHandler(c);
             decisionNavigatorDock.open();
             dataTypesPage.reload();
-            includedModelsPage.setup(c.getDiagram());
+            includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
         });
     }
 

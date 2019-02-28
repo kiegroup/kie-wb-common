@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.included.grid;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -82,20 +83,22 @@ public class DMNCardComponent implements CardComponent {
     }
 
     @Override
-    public boolean onTitleChanged(final String newName) {
+    public Function<String, Boolean> onTitleChanged() {
+        return newName -> {
 
-        final String oldName = getIncludedModel().getName();
+            final String oldName = getIncludedModel().getName();
 
-        getIncludedModel().setName(newName);
+            getIncludedModel().setName(newName);
 
-        if (getIncludedModel().isValid()) {
-            getIncludedModel().update();
-            getGrid().refresh();
-            return true;
-        } else {
-            getIncludedModel().setName(oldName);
-            return false;
-        }
+            if (getIncludedModel().isValid()) {
+                getIncludedModel().update();
+                getGrid().refresh();
+                return true;
+            } else {
+                getIncludedModel().setName(oldName);
+                return false;
+            }
+        };
     }
 
     private String getTruncatedPath() {

@@ -25,6 +25,7 @@ import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpression
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -107,6 +108,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private IncludedModelsPage includedModelsPage;
 
     @Mock
+    private IncludedModelsPageStateProviderImpl importsPageProvider;
+
+    @Mock
     private MultiPageEditor multiPage;
 
     private DMNDiagramEditor diagramEditor;
@@ -162,7 +166,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  layoutHelper,
                                                  dataTypesPage,
                                                  layoutExecutor,
-                                                 includedModelsPage) {
+                                                 includedModelsPage,
+                                                 importsPageProvider) {
             {
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = DMNDiagramEditorTest.this.workbenchContext;
@@ -221,6 +226,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
         when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(importsPageProvider.withDiagram(diagram)).thenReturn(importsPageProvider);
 
         open();
 
@@ -231,7 +237,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(expressionEditor).setToolbarStateHandler(any(ProjectToolbarStateHandler.class));
         verify(dataTypesPage).reload();
         verify(layoutHelper).applyLayout(diagram, layoutExecutor);
-        verify(includedModelsPage).setup(diagram);
+        verify(includedModelsPage).setup(importsPageProvider);
     }
 
     @Test

@@ -23,7 +23,7 @@ import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessages;
 import org.kie.workbench.common.dmn.client.editors.common.page.DMNPage;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsPageStateProvider;
 
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelsPage_Title;
 
@@ -60,8 +60,8 @@ public class IncludedModelsPage extends DMNPage {
         getFlashMessages().hideMessages();
     }
 
-    public void setup(final Diagram diagram) {
-        getPageState().setDiagram(diagram);
+    public void setup(final IncludedModelsPageStateProvider stateProvider) {
+        getPageState().init(stateProvider);
         getIncludedModelsPresenter().refresh();
     }
 

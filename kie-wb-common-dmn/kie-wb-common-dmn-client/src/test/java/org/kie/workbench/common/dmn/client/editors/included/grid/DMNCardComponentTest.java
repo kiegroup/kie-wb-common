@@ -154,7 +154,7 @@ public class DMNCardComponentTest {
         doReturn(includedModel).when(dmnCard).getIncludedModel();
         doReturn(grid).when(dmnCard).getGrid();
 
-        final boolean titleChanged = dmnCard.onTitleChanged(newName);
+        final boolean titleChanged = dmnCard.onTitleChanged().apply(newName);
 
         assertEquals(newName, includedModel.getName());
         assertTrue(titleChanged);
@@ -175,7 +175,7 @@ public class DMNCardComponentTest {
         doReturn(includedModel).when(dmnCard).getIncludedModel();
         doReturn(grid).when(dmnCard).getGrid();
 
-        final boolean titleChanged = dmnCard.onTitleChanged(newName);
+        final boolean titleChanged = dmnCard.onTitleChanged().apply(newName);
 
         assertEquals(oldName, includedModel.getName());
         assertFalse(titleChanged);

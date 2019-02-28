@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpression
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
@@ -116,6 +117,7 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
     private final KieEditorWrapperView kieView;
     private final DataTypesPage dataTypesPage;
     private final IncludedModelsPage includedModelsPage;
+    private final IncludedModelsPageStateProviderImpl importsPageProvider;
 
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
@@ -139,7 +141,8 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
                                       final KieEditorWrapperView kieView,
                                       final DataTypesPage dataTypesPage,
                                       final OpenDiagramLayoutExecutor layoutExecutor,
-                                      final IncludedModelsPage includedModelsPage) {
+                                      final IncludedModelsPage includedModelsPage,
+                                      final IncludedModelsPageStateProviderImpl importsPageProvider) {
         this.definitionManager = definitionManager;
         this.clientFactoryServices = clientFactoryServices;
         this.diagramService = diagramService;
@@ -158,6 +161,7 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
         this.dataTypesPage = dataTypesPage;
         this.layoutExecutor = layoutExecutor;
         this.includedModelsPage = includedModelsPage;
+        this.importsPageProvider = importsPageProvider;
     }
 
     @PostConstruct
@@ -359,7 +363,7 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
                           expressionEditor.setToolbarStateHandler(toolbarStateHandler);
                           dataTypesPage.reload();
                           dataTypesPage.enableShortcuts();
-                          includedModelsPage.setup(diagram);
+                          includedModelsPage.setup(importsPageProvider.withDiagram(diagram));
                           setupCanvasHandler(presenter.getInstance());
                           openDock();
                           callback.execute();

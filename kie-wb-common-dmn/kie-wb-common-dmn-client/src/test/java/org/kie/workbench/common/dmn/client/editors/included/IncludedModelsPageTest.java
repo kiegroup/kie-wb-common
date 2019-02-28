@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessages;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsPageStateProvider;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
@@ -91,11 +91,11 @@ public class IncludedModelsPageTest {
     @Test
     public void testSetup() {
 
-        final Diagram diagram = mock(Diagram.class);
+        final IncludedModelsPageStateProvider stateProvider = mock(IncludedModelsPageStateProvider.class);
 
-        page.setup(diagram);
+        page.setup(stateProvider);
 
-        verify(pageState).setDiagram(diagram);
+        verify(pageState).init(stateProvider);
         verify(includedModelsPresenter).refresh();
     }
 }

@@ -20,43 +20,27 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsPageStateProvider;
 
 import static java.util.Collections.emptyList;
 
 @ApplicationScoped
 public class IncludedModelsPageState {
 
-    private final DMNGraphUtils dmnGraphUtils;
+    private IncludedModelsPageStateProvider pageProvider;
 
-    private Diagram diagram;
-
-    @Inject
-    public IncludedModelsPageState(final DMNGraphUtils dmnGraphUtils) {
-        this.dmnGraphUtils = dmnGraphUtils;
+    public void init(final IncludedModelsPageStateProvider pageProvider) {
+        this.pageProvider = pageProvider;
     }
 
-    public void setDiagram(final Diagram diagram) {
-        this.diagram = diagram;
-    }
-
-    public List<Import> getImports() {
-        return getDiagram()
-                .map(this::getImports)
+    public List<IncludedModel> generateIncludedModels() {
+        return getPageProvider()
+                .map(IncludedModelsPageStateProvider::generateIncludedModels)
                 .orElse(emptyList());
     }
 
-    private List<Import> getImports(final Diagram diagram) {
-        return dmnGraphUtils
-                .getDefinitions(diagram)
-                .getImport();
-    }
-
-    private Optional<Diagram> getDiagram() {
-        return Optional.ofNullable(diagram);
+    private Optional<IncludedModelsPageStateProvider> getPageProvider() {
+        return Optional.ofNullable(pageProvider);
     }
 }

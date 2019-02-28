@@ -22,11 +22,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.mockito.Mock;
+import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsPageStateProvider;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -37,41 +33,35 @@ import static org.mockito.Mockito.when;
 @RunWith(GwtMockitoTestRunner.class)
 public class IncludedModelsPageStateTest {
 
-    @Mock
-    private DMNGraphUtils dmnGraphUtils;
-
-    private IncludedModelsPageState pageState;
+    private IncludedModelsPageState state;
 
     @Before
     public void setup() {
-        pageState = new IncludedModelsPageState(dmnGraphUtils);
+        state = new IncludedModelsPageState();
     }
 
     @Test
-    public void testGetImportsWhenDiagramIsPresent() {
+    public void testGenerateIncludedModelsWhenPageProviderIsPresent() {
 
-        final Diagram diagram = mock(Diagram.class);
-        final Definitions definitions = mock(Definitions.class);
-        final List<Import> expectedImports = asList(mock(Import.class), mock(Import.class));
+        state.init(null);
 
-        pageState.setDiagram(diagram);
+        final List<IncludedModel> actualIncludedModels = state.generateIncludedModels();
+        final List<IncludedModel> expectedIncludedModels = emptyList();
 
-        when(dmnGraphUtils.getDefinitions(diagram)).thenReturn(definitions);
-        when(definitions.getImport()).thenReturn(expectedImports);
-
-        final List<Import> actualImports = pageState.getImports();
-
-        assertEquals(expectedImports, actualImports);
+        assertEquals(expectedIncludedModels, actualIncludedModels);
     }
 
     @Test
-    public void testGetImportsWhenDiagramIsNotPresent() {
+    public void testGenerateIncludedModelsWhenPageProviderIsNotPresent() {
 
-        pageState.setDiagram(null);
+        final IncludedModelsPageStateProvider pageProvider = mock(IncludedModelsPageStateProvider.class);
+        final List<IncludedModel> expectedIncludedModels = asList(mock(IncludedModel.class), mock(IncludedModel.class));
 
-        final List<Import> actualImports = pageState.getImports();
-        final List<Import> expectedImports = emptyList();
+        when(pageProvider.generateIncludedModels()).thenReturn(expectedIncludedModels);
+        state.init(pageProvider);
 
-        assertEquals(expectedImports, actualImports);
+        final List<IncludedModel> actualIncludedModels = state.generateIncludedModels();
+
+        assertEquals(actualIncludedModels, expectedIncludedModels);
     }
 }
