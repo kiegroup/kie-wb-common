@@ -240,6 +240,7 @@ public abstract class BaseGrid<E extends Expression> extends BaseGridWidget impl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean showContextMenuForCell(final int uiRowIndex, final int uiColumnIndex) {
         final GridCell<?> cell = model.getCell(uiRowIndex, uiColumnIndex);
         if (cell instanceof DMNGridCell<?>) {
@@ -254,13 +255,17 @@ public abstract class BaseGrid<E extends Expression> extends BaseGridWidget impl
                                                                                                    ri,
                                                                                                    ci,
                                                                                                    uiRowIndex);
+
+                final double cellWidth = context.getCellWidth();
+                final double cellHeight = context.getCellHeight();
+
                 editor.bind(this,
                             uiRowIndex,
                             uiColumnIndex);
                 cellEditorControls.show(editor,
                                         Optional.empty(),
-                                        (int) context.getAbsoluteCellX(),
-                                        (int) context.getAbsoluteCellY());
+                                        (int) (context.getAbsoluteCellX() + cellWidth / 2),
+                                        (int) (context.getAbsoluteCellY() + cellHeight / 2));
 
                 return true;
             }

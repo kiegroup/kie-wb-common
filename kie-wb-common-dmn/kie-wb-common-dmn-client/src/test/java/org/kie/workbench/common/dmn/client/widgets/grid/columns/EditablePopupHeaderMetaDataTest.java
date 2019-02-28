@@ -146,8 +146,8 @@ public class EditablePopupHeaderMetaDataTest {
                             eq(COLUMN_INDEX));
         verify(cellEditorControls).show(eq(editor),
                                         eq(EDITOR_TITLE),
-                                        eq((int) (ABSOLUTE_CELL_X)),
-                                        eq((int) (ABSOLUTE_CELL_Y)));
+                                        eq((int) (ABSOLUTE_CELL_X + CELL_WIDTH / 2)),
+                                        eq((int) (ABSOLUTE_CELL_Y + CELL_HEIGHT / 2)));
     }
 
     @Test
