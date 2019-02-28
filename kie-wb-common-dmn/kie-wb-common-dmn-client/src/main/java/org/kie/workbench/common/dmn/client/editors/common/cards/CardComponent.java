@@ -16,10 +16,14 @@
 
 package org.kie.workbench.common.dmn.client.editors.common.cards;
 
+import java.util.function.Function;
+
 import com.google.gwt.dom.client.Style.HasCssName;
 import elemental2.dom.HTMLElement;
 
 public interface CardComponent {
+
+    Function<String, Boolean> DEFAULT_FUNCTION = newTitle -> true;
 
     HasCssName getIcon();
 
@@ -32,12 +36,10 @@ public interface CardComponent {
     }
 
     /**
-     * This method is invoked when the card title is changing.
-     * @param newTitle represents the new title
-     * @return <code>true</code> when the new title must be applied,
-     * otherwise <code>false</code> and the new title must be discarded.
+     * This function is invoked when the card title is changing.
+     * It must return <code>true</code> for applying the new title, or <code>false</code> for dismissing it.
      */
-    default boolean onTitleChanged(final String newTitle) {
-        return true;
+    default Function<String, Boolean> onTitleChanged() {
+        return DEFAULT_FUNCTION;
     }
 }

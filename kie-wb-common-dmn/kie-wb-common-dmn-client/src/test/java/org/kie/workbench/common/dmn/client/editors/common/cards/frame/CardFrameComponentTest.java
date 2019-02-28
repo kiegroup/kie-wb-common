@@ -27,6 +27,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -95,6 +97,7 @@ public class CardFrameComponentTest {
 
         cardFrame.refreshView();
 
+        verify(view).setupToggleTitle(true);
         verify(view).setUUID(uuid);
         verify(view).setIcon(iconCSSClass);
         verify(view).setTitle(title);
@@ -111,7 +114,7 @@ public class CardFrameComponentTest {
         doReturn(card).when(cardFrame).getCard();
         doNothing().when(cardFrame).refreshView();
         when(view.getTitle()).thenReturn(title);
-        when(card.onTitleChanged(title)).thenReturn(true);
+        when(card.onTitleChanged()).thenReturn(newTitle -> true);
 
         cardFrame.changeTitle();
 
@@ -126,10 +129,32 @@ public class CardFrameComponentTest {
 
         doReturn(card).when(cardFrame).getCard();
         when(view.getTitle()).thenReturn(title);
-        when(card.onTitleChanged(title)).thenReturn(false);
+        when(card.onTitleChanged()).thenReturn(newTitle -> false);
 
         cardFrame.changeTitle();
 
         verify(cardFrame, never()).refreshView();
+    }
+
+    @Test
+    public void testIsToggleTitleEnabledWhenItsEnabled() {
+
+        final CardComponent card = mock(CardComponent.class);
+
+        when(card.onTitleChanged()).thenReturn(newTitle -> true);
+        doReturn(card).when(cardFrame).getCard();
+
+        assertTrue(cardFrame.isToggleTitleEnabled());
+    }
+
+    @Test
+    public void testIsToggleTitleEnabledWhenItsNotEnabled() {
+
+        final CardComponent card = mock(CardComponent.class);
+
+        when(card.onTitleChanged()).thenReturn(CardComponent.DEFAULT_FUNCTION);
+        doReturn(card).when(cardFrame).getCard();
+
+        assertFalse(cardFrame.isToggleTitleEnabled());
     }
 }

@@ -162,6 +162,12 @@ public class CardFrameComponentView implements CardFrameComponent.View {
         titleInput.focus();
     }
 
+    @Override
+    public void setupToggleTitle(final boolean enabled) {
+        final String readOnlyCSSClass = "read-only";
+        titleText.classList.toggle(readOnlyCSSClass, !enabled);
+    }
+
     private boolean isEscape(final KeyDownEvent event) {
         return event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE;
     }

@@ -24,6 +24,8 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent;
 import org.uberfire.client.mvp.UberElemental;
 
+import static org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent.DEFAULT_FUNCTION;
+
 public class CardFrameComponent {
 
     private final View view;
@@ -50,6 +52,7 @@ public class CardFrameComponent {
     }
 
     public void refreshView() {
+        getView().setupToggleTitle(isToggleTitleEnabled());
         getView().setUUID(getCard().getUUID());
         getView().setIcon(getCard().getIcon().getCssName());
         getView().setTitle(getCard().getTitle());
@@ -57,10 +60,14 @@ public class CardFrameComponent {
         getView().enableReadOnlyMode();
     }
 
-    public void changeTitle() {
-        if (getCard().onTitleChanged(getView().getTitle())) {
+    void changeTitle() {
+        if (getCard().onTitleChanged().apply(getView().getTitle())) {
             refreshView();
         }
+    }
+
+    boolean isToggleTitleEnabled() {
+        return getCard().onTitleChanged() != DEFAULT_FUNCTION;
     }
 
     public View getView() {
@@ -87,5 +94,7 @@ public class CardFrameComponent {
         void enableReadOnlyMode();
 
         void enableEditMode();
+
+        void setupToggleTitle(final boolean enabled);
     }
 }
