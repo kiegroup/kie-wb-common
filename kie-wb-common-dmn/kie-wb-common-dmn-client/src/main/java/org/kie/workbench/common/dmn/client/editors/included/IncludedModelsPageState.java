@@ -25,6 +25,9 @@ import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModel
 
 import static java.util.Collections.emptyList;
 
+/**
+ * Represents the state (the data) in the {@link IncludedModelsPage}.
+ */
 @ApplicationScoped
 public class IncludedModelsPageState {
 

@@ -24,12 +24,16 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsPageStateProvider;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 
 import static java.util.Collections.emptyList;
 
+/**
+ * Provides data for the {@link IncludedModelsPage} class, considering the {@link Import} context.
+ */
 @ApplicationScoped
 public class IncludedModelsPageStateProviderImpl implements IncludedModelsPageStateProvider {
 
