@@ -26,22 +26,22 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.com
 @Dependent
 public class TypedValueComponentSelector {
 
-    private final GenericSelector genericSelectors;
-    private final DateSelector dateSelectors;
+    private final GenericSelector genericSelector;
+    private final DateSelector dateSelector;
 
     @Inject
-    public TypedValueComponentSelector(final GenericSelector genericSelectors,
-                                       final DateSelector dateSelectors) {
-        this.genericSelectors = genericSelectors;
-        this.dateSelectors = dateSelectors;
+    public TypedValueComponentSelector(final GenericSelector genericSelector,
+                                       final DateSelector dateSelector) {
+        this.genericSelector = genericSelector;
+        this.dateSelector = dateSelector;
     }
 
     public TypedValueSelector makeSelectorForType(final String type) {
 
-        if (type == BuiltInType.DATE.getName()) {
-            return dateSelectors;
+        if (BuiltInType.DATE.getName().equals(type)) {
+            return dateSelector;
         }
 
-        return genericSelectors;
+        return genericSelector;
     }
 }
