@@ -23,6 +23,8 @@ import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
 
 import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type.ERROR;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsBlankErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsBlankErrorMessage_StrongMessage;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsNotUniqueErrorMessage_RegularMessage;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsNotUniqueErrorMessage_StrongMessage;
 import static org.kie.workbench.common.widgets.client.cards.frame.CardFrameComponentView.CARD_UUID_ATTR;
@@ -37,18 +39,25 @@ public class IncludedModelErrorMessageFactory {
     }
 
     public FlashMessage getNameIsNotUniqueFlashMessage(final IncludedModel includedModel) {
-        return new FlashMessage(ERROR, getStrongMessage(includedModel), getRegularMessage(), getErrorElementSelector(includedModel));
+        return new FlashMessage(ERROR,
+                                translate(IncludedModelNameIsNotUniqueErrorMessage_StrongMessage, includedModel.getName()),
+                                translate(IncludedModelNameIsNotUniqueErrorMessage_RegularMessage),
+                                getErrorElementSelector(includedModel));
+    }
+
+    public FlashMessage getNameIsBlankFlashMessage(final IncludedModel includedModel) {
+        return new FlashMessage(ERROR,
+                                translate(IncludedModelNameIsBlankErrorMessage_StrongMessage),
+                                translate(IncludedModelNameIsBlankErrorMessage_RegularMessage),
+                                getErrorElementSelector(includedModel));
     }
 
     private String getErrorElementSelector(final IncludedModel includedModel) {
         return "[" + CARD_UUID_ATTR + "=\"" + includedModel.getUUID() + "\"] [data-field=\"title-input\"]";
     }
 
-    private String getStrongMessage(final IncludedModel includedModel) {
-        return translationService.format(IncludedModelNameIsNotUniqueErrorMessage_StrongMessage, includedModel.getName());
-    }
-
-    private String getRegularMessage() {
-        return translationService.format(IncludedModelNameIsNotUniqueErrorMessage_RegularMessage);
+    private String translate(final String key,
+                             final Object... args) {
+        return translationService.format(key, args);
     }
 }

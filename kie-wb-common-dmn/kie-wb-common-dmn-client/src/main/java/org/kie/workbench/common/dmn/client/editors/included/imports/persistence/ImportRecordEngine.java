@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedMode
 import org.kie.workbench.common.dmn.client.editors.included.imports.messages.IncludedModelErrorMessageFactory;
 
 import static java.util.Collections.singletonList;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 public class ImportRecordEngine implements RecordEngine<IncludedModel> {
 
@@ -77,18 +78,29 @@ public class ImportRecordEngine implements RecordEngine<IncludedModel> {
 
     @Override
     public boolean isValid(final IncludedModel record) {
-        final boolean isUnique = isUnique(record);
-        if (!isUnique) {
+
+        if (!isUniqueName(record)) {
             flashMessageEvent.fire(messageFactory.getNameIsNotUniqueFlashMessage(record));
+            return false;
         }
-        return isUnique;
+
+        if (isBlankName(record)) {
+            flashMessageEvent.fire(messageFactory.getNameIsBlankFlashMessage(record));
+            return false;
+        }
+
+        return true;
     }
 
-    private boolean isUnique(final IncludedModel record) {
+    private boolean isUniqueName(final IncludedModel record) {
         return stateProvider
                 .getImports()
                 .stream()
                 .noneMatch(anImport -> !sameImport(record, anImport) && sameName(record, anImport));
+    }
+
+    private boolean isBlankName(final IncludedModel record) {
+        return isEmpty(record.getName());
     }
 
     private boolean sameName(final IncludedModel record, final Import anImport) {

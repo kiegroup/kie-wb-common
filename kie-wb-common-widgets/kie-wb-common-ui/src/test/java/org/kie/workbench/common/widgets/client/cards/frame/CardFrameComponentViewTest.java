@@ -104,8 +104,9 @@ public class CardFrameComponentViewTest {
 
     @Test
     public void testOnInputCloseButtonClick() {
+        titleInput.value = "something";
         cardFrameView.onInputCloseButtonClick(mock(ClickEvent.class));
-        verify(presenter).refreshView();
+        assertEquals("", titleInput.value);
     }
 
     @Test

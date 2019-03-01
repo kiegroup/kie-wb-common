@@ -303,4 +303,10 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String IncludedModelNameIsNotUniqueErrorMessage_RegularMessage = "IncludedModelNameIsNotUniqueErrorMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelNameIsBlankErrorMessage_StrongMessage = "IncludedModelNameIsBlankErrorMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelNameIsBlankErrorMessage_RegularMessage = "IncludedModelNameIsBlankErrorMessage.RegularMessage";
 }

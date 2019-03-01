@@ -178,6 +178,28 @@ public class ImportRecordEngineTest {
     }
 
     @Test
+    public void testIsValidWhenNameIsBlank() {
+
+        final IncludedModel record = mock(IncludedModel.class);
+        final Import anImport = mock(Import.class);
+        final Name name = mock(Name.class);
+        final FlashMessage flashMessage = mock(FlashMessage.class);
+        final List<Import> imports = new ArrayList<>(singletonList(anImport));
+
+        when(name.getValue()).thenReturn("file");
+        when(record.getName()).thenReturn("");
+        when(anImport.getName()).thenReturn(name);
+        when(includedModelsIndex.getImport(record)).thenReturn(anImport);
+        when(stateProvider.getImports()).thenReturn(imports);
+        when(messageFactory.getNameIsBlankFlashMessage(record)).thenReturn(flashMessage);
+
+        final boolean valid = recordEngine.isValid(record);
+
+        assertFalse(valid);
+        verify(flashMessageEvent).fire(flashMessage);
+    }
+
+    @Test
     public void testIsValidWhenNameIsUnchanged() {
 
         final IncludedModel record = mock(IncludedModel.class);

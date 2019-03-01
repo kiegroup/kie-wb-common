@@ -28,6 +28,8 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type;
 import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type.ERROR;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsBlankErrorMessage_RegularMessage;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsBlankErrorMessage_StrongMessage;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsNotUniqueErrorMessage_RegularMessage;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsNotUniqueErrorMessage_StrongMessage;
 import static org.mockito.Mockito.mock;
@@ -61,6 +63,27 @@ public class IncludedModelErrorMessageFactoryTest {
         when(translationService.format(IncludedModelNameIsNotUniqueErrorMessage_RegularMessage)).thenReturn(expectedRegularMessage);
 
         final FlashMessage flashMessage = factory.getNameIsNotUniqueFlashMessage(includedModel);
+
+        assertEquals(expectedType, flashMessage.getType());
+        assertEquals(expectedStrongMessage, flashMessage.getStrongMessage());
+        assertEquals(expectedRegularMessage, flashMessage.getRegularMessage());
+        assertEquals(expectedElementSelector, flashMessage.getElementSelector());
+    }
+
+    @Test
+    public void testGetNameIsBlankFlashMessage() {
+
+        final IncludedModel includedModel = mock(IncludedModel.class);
+        final Type expectedType = ERROR;
+        final String expectedStrongMessage = "StrongMessage";
+        final String expectedRegularMessage = "RegularMessage";
+        final String expectedElementSelector = "[data-card-uuid=\"1234\"] [data-field=\"title-input\"]";
+
+        when(includedModel.getUUID()).thenReturn("1234");
+        when(translationService.format(IncludedModelNameIsBlankErrorMessage_StrongMessage)).thenReturn(expectedStrongMessage);
+        when(translationService.format(IncludedModelNameIsBlankErrorMessage_RegularMessage)).thenReturn(expectedRegularMessage);
+
+        final FlashMessage flashMessage = factory.getNameIsBlankFlashMessage(includedModel);
 
         assertEquals(expectedType, flashMessage.getType());
         assertEquals(expectedStrongMessage, flashMessage.getStrongMessage());

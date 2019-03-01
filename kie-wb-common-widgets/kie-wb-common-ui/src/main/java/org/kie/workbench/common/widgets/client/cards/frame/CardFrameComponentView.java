@@ -108,7 +108,7 @@ public class CardFrameComponentView implements CardFrameComponent.View {
 
     @EventHandler("input-close-button")
     public void onInputCloseButtonClick(final ClickEvent e) {
-        presenter.refreshView();
+        titleInput.value = "";
     }
 
     @EventHandler("title-input")
