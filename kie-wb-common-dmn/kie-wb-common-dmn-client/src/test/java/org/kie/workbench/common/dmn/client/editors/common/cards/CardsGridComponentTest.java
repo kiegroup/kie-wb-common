@@ -29,9 +29,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -75,8 +77,29 @@ public class CardsGridComponentTest {
 
         verify(frame1).initialize(card1);
         verify(frame2).initialize(card2);
+        verify(view).clearGrid();
         verify(view).appendCard(htmlElement1);
         verify(view).appendCard(htmlElement2);
+    }
+
+    @Test
+    public void testSetupCardsWhenCardsListIsEmpty() {
+
+        final HTMLElement emptyStateElement = mock(HTMLElement.class);
+
+        cardsGrid.setEmptyState(emptyStateElement);
+        cardsGrid.setupCards(emptyList());
+
+        verify(view).clearGrid();
+        verify(view).appendCard(emptyStateElement);
+    }
+
+    @Test
+    public void testSetupCardsWhenCardsListIsEmptyAndEmptyStateElementIsNotPresent() {
+        cardsGrid.setupCards(emptyList());
+
+        verify(view).clearGrid();
+        verifyNoMoreInteractions(view);
     }
 
     @Test

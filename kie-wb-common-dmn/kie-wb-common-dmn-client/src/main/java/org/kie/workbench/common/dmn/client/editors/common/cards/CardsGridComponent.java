@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.common.cards;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -33,6 +34,8 @@ public class CardsGridComponent {
 
     private final ManagedInstance<CardFrameComponent> frames;
 
+    private HTMLElement emptyStateElement;
+
     @Inject
     public CardsGridComponent(final View view,
                               final ManagedInstance<CardFrameComponent> frames) {
@@ -48,6 +51,21 @@ public class CardsGridComponent {
     public void setupCards(final List<CardComponent> cards) {
         view.clearGrid();
         cards.forEach(this::appendCard);
+        setupEmptyState(cards.isEmpty());
+    }
+
+    public void setEmptyState(final HTMLElement emptyStateElement) {
+        this.emptyStateElement = emptyStateElement;
+    }
+
+    private void setupEmptyState(final boolean isEmptyStateEnabled) {
+        if (isEmptyStateEnabled && getEmptyStateElement().isPresent()) {
+            view.appendCard(getEmptyStateElement().get());
+        }
+    }
+
+    private Optional<HTMLElement> getEmptyStateElement() {
+        return Optional.ofNullable(emptyStateElement);
     }
 
     private void appendCard(final CardComponent card) {

@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-[data-i18n-prefix="CardsGridComponentView."] {
-  height: 100%;
+[data-i18n-prefix="DMNCardsEmptyStateView."] {
+  height: ~"calc(100% - 100px)";
+  width: 100%;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 
-  .row {
-    &.row-cards-pf {
-      padding: 20px 20px 5px;
-      margin-right: 0;
-
-      &.container-cards-pf {
-        margin-top: 0;
-        height: 100%;
-      }
-    }
+  i {
+    color: #999999;
+    font-size: 5em;
   }
 }

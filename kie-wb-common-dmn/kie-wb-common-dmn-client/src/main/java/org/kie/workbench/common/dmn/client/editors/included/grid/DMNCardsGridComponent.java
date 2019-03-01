@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.editors.included.grid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -27,6 +28,7 @@ import org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent;
 import org.kie.workbench.common.dmn.client.editors.common.cards.CardsGridComponent;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
+import org.kie.workbench.common.dmn.client.editors.included.grid.empty.DMNCardsEmptyStateView;
 
 public class DMNCardsGridComponent {
 
@@ -36,17 +38,26 @@ public class DMNCardsGridComponent {
 
     private final IncludedModelsPageState pageState;
 
+    private final DMNCardsEmptyStateView emptyStateView;
+
     @Inject
     public DMNCardsGridComponent(final ManagedInstance<DMNCardComponent> dmnCardComponent,
                                  final CardsGridComponent cardsGridComponent,
-                                 final IncludedModelsPageState pageState) {
+                                 final IncludedModelsPageState pageState,
+                                 final DMNCardsEmptyStateView emptyStateView) {
         this.dmnCardComponent = dmnCardComponent;
         this.cardsGridComponent = cardsGridComponent;
         this.pageState = pageState;
+        this.emptyStateView = emptyStateView;
+    }
+
+    @PostConstruct
+    public void init() {
+        cardsGridComponent.setEmptyState(emptyStateView.getElement());
     }
 
     public void refresh() {
-        cardsGridComponent.setupCards(dmnCards(makeIncludedModels()));
+        cardsGridComponent.setupCards(dmnCards(generateIncludedModels()));
     }
 
     public HTMLElement getElement() {
@@ -63,7 +74,7 @@ public class DMNCardsGridComponent {
         return card;
     }
 
-    private List<IncludedModel> makeIncludedModels() {
+    private List<IncludedModel> generateIncludedModels() {
         return pageState.generateIncludedModels();
     }
 }

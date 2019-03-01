@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-[data-i18n-prefix="CardsGridComponentView."] {
-  height: 100%;
+package org.kie.workbench.common.dmn.client.editors.included.grid.empty;
 
-  .row {
-    &.row-cards-pf {
-      padding: 20px 20px 5px;
-      margin-right: 0;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-      &.container-cards-pf {
-        margin-top: 0;
-        height: 100%;
-      }
-    }
-  }
+@Templated
+public class DMNCardsEmptyStateView implements IsElement {
+    // Empty: supporting 'DMNCardsEmptyStateView.html'
 }

@@ -43,7 +43,7 @@ public class IncludedModelsFactory {
     }
 
     List<IncludedModel> makeIncludedModels(final List<Import> imports) {
-        includedModelsIndex.clear();
+        getIncludedModelsIndex().clear();
         return imports
                 .stream()
                 .map(this::makeIncludedModel)
@@ -52,7 +52,7 @@ public class IncludedModelsFactory {
 
     private IncludedModel makeIncludedModel(final Import anImport) {
 
-        final IncludedModel includedModel = new IncludedModel(recordEngine);
+        final IncludedModel includedModel = new IncludedModel(getRecordEngine());
 
         includedModel.setUuid(uuid());
         includedModel.setName(getName(anImport));
@@ -60,9 +60,17 @@ public class IncludedModelsFactory {
         includedModel.setDataTypesCount(getDataTypesCount());
         includedModel.setDrgElementsCount(getDrgElementsCount());
 
-        includedModelsIndex.index(includedModel, anImport);
+        getIncludedModelsIndex().index(includedModel, anImport);
 
         return includedModel;
+    }
+
+    public IncludedModelsIndex getIncludedModelsIndex() {
+        return includedModelsIndex;
+    }
+
+    public ImportRecordEngine getRecordEngine() {
+        return recordEngine;
     }
 
     private String getName(final Import anImport) {
@@ -70,17 +78,17 @@ public class IncludedModelsFactory {
     }
 
     private String getPath(final Import anImport) {
-        // TODO
+        // TODO: The 'namespace' is temporary - https://issues.jboss.org/browse/DROOLS-3722
         return anImport.getNamespace();
     }
 
     private int getDataTypesCount() {
-        // TODO
+        // TODO: The '99' value is temporary - https://issues.jboss.org/browse/DROOLS-3720
         return 99;
     }
 
     private int getDrgElementsCount() {
-        // TODO
+        // TODO: The '99' value is temporary - https://issues.jboss.org/browse/DROOLS-3721
         return 99;
     }
 }
