@@ -25,8 +25,8 @@ import javax.inject.Inject;
 import com.google.gwt.dom.client.Style.HasCssName;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
+import org.kie.workbench.common.widgets.client.cards.CardComponent;
 import org.uberfire.client.mvp.UberElemental;
 
 import static org.gwtbootstrap3.client.ui.constants.IconType.DOWNLOAD;

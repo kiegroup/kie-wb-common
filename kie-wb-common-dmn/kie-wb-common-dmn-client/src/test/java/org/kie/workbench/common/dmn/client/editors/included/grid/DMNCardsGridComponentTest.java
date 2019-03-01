@@ -24,10 +24,10 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.editors.common.cards.CardsGridComponent;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 import org.kie.workbench.common.dmn.client.editors.included.grid.empty.DMNCardsEmptyStateView;
+import org.kie.workbench.common.widgets.client.cards.CardsGridComponent;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;

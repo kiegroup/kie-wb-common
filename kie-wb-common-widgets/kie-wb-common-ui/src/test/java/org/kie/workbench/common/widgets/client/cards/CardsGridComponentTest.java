@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.common.cards;
+package org.kie.workbench.common.widgets.client.cards;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.editors.common.cards.frame.CardFrameComponent;
+import org.kie.workbench.common.widgets.client.cards.frame.CardFrameComponent;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 

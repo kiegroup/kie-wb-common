@@ -22,10 +22,10 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
 
-import static org.kie.workbench.common.dmn.client.editors.common.cards.frame.CardFrameComponentView.CARD_UUID_ATTR;
 import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type.ERROR;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsNotUniqueErrorMessage_RegularMessage;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.IncludedModelNameIsNotUniqueErrorMessage_StrongMessage;
+import static org.kie.workbench.common.widgets.client.cards.frame.CardFrameComponentView.CARD_UUID_ATTR;
 
 public class IncludedModelErrorMessageFactory {
 

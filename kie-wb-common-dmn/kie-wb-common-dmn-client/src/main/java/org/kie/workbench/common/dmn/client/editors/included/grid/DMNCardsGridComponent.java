@@ -24,11 +24,11 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent;
-import org.kie.workbench.common.dmn.client.editors.common.cards.CardsGridComponent;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 import org.kie.workbench.common.dmn.client.editors.included.grid.empty.DMNCardsEmptyStateView;
+import org.kie.workbench.common.widgets.client.cards.CardComponent;
+import org.kie.workbench.common.widgets.client.cards.CardsGridComponent;
 
 public class DMNCardsGridComponent {
 

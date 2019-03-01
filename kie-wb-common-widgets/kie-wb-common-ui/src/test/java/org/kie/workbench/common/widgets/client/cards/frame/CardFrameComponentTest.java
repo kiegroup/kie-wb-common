@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.common.cards.frame;
+package org.kie.workbench.common.widgets.client.cards.frame;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -22,7 +22,7 @@ import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.editors.common.cards.CardComponent;
+import org.kie.workbench.common.widgets.client.cards.CardComponent;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
