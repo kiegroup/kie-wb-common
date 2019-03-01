@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.widgets.client.cards;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,19 +29,23 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.widgets.client.cards.frame.CardFrameComponent;
 import org.uberfire.client.mvp.UberElemental;
 
+import static java.util.stream.Collectors.toList;
+
 public class CardsGridComponent {
 
     private final View view;
 
-    private final ManagedInstance<CardFrameComponent> frames;
+    private final ManagedInstance<CardFrameComponent> cardFrameInstances;
 
     private HTMLElement emptyStateElement;
 
+    private List<CardFrameComponent> cardFrames = new ArrayList<>();
+
     @Inject
     public CardsGridComponent(final View view,
-                              final ManagedInstance<CardFrameComponent> frames) {
+                              final ManagedInstance<CardFrameComponent> cardFrameInstances) {
         this.view = view;
-        this.frames = frames;
+        this.cardFrameInstances = cardFrameInstances;
     }
 
     @PostConstruct
@@ -49,13 +54,25 @@ public class CardsGridComponent {
     }
 
     public void setupCards(final List<CardComponent> cards) {
-        view.clearGrid();
-        cards.forEach(this::appendCard);
-        setupEmptyState(cards.isEmpty());
+
+        setCardFrames(asFrames(cards));
+
+        getView().clearGrid();
+        asElements(getCardFrames()).forEach(getView()::appendCard);
+
+        setupEmptyState(getCardFrames().isEmpty());
     }
 
     public void setEmptyState(final HTMLElement emptyStateElement) {
         this.emptyStateElement = emptyStateElement;
+    }
+
+    private List<HTMLElement> asElements(final List<CardFrameComponent> cards) {
+        return cards.stream().map(CardFrameComponent::getElement).collect(toList());
+    }
+
+    private List<CardFrameComponent> asFrames(final List<CardComponent> cards) {
+        return cards.stream().map(this::makeFrame).collect(toList());
     }
 
     private void setupEmptyState(final boolean isEmptyStateEnabled) {
@@ -64,17 +81,29 @@ public class CardsGridComponent {
         }
     }
 
+    public void enableReadOnlyModeForAllCards() {
+        getCardFrames().forEach(CardFrameComponent::enableReadOnlyMode);
+    }
+
+    List<CardFrameComponent> getCardFrames() {
+        return cardFrames;
+    }
+
+    void setCardFrames(final List<CardFrameComponent> cardFrames) {
+        this.cardFrames = cardFrames;
+    }
+
+    View getView() {
+        return view;
+    }
+
     private Optional<HTMLElement> getEmptyStateElement() {
         return Optional.ofNullable(emptyStateElement);
     }
 
-    private void appendCard(final CardComponent card) {
-        view.appendCard(makeFrame(card).getElement());
-    }
-
     private CardFrameComponent makeFrame(final CardComponent card) {
-        final CardFrameComponent frame = frames.get();
-        frame.initialize(card);
+        final CardFrameComponent frame = cardFrameInstances.get();
+        frame.initialize(this, card);
         return frame;
     }
 

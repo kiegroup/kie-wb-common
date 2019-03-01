@@ -26,12 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.widgets.client.cards.frame.CardFrameComponent;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -49,7 +50,7 @@ public class CardsGridComponentTest {
 
     @Before
     public void setup() {
-        cardsGrid = Mockito.spy(new CardsGridComponent(view, frames));
+        cardsGrid = spy(new CardsGridComponent(view, frames));
     }
 
     @Test
@@ -75,8 +76,9 @@ public class CardsGridComponentTest {
 
         cardsGrid.setupCards(cards);
 
-        verify(frame1).initialize(card1);
-        verify(frame2).initialize(card2);
+        verify(cardsGrid).setCardFrames(asList(frame1, frame2));
+        verify(frame1).initialize(cardsGrid, card1);
+        verify(frame2).initialize(cardsGrid, card2);
         verify(view).clearGrid();
         verify(view).appendCard(htmlElement1);
         verify(view).appendCard(htmlElement2);
@@ -100,6 +102,21 @@ public class CardsGridComponentTest {
 
         verify(view).clearGrid();
         verifyNoMoreInteractions(view);
+    }
+
+    @Test
+    public void testEnableReadOnlyModeForAllCards() {
+
+        final CardFrameComponent frame1 = mock(CardFrameComponent.class);
+        final CardFrameComponent frame2 = mock(CardFrameComponent.class);
+        final List<CardFrameComponent> cardFrames = asList(frame1, frame2);
+
+        doReturn(cardFrames).when(cardsGrid).getCardFrames();
+
+        cardsGrid.enableReadOnlyModeForAllCards();
+
+        verify(frame1).enableReadOnlyMode();
+        verify(frame2).enableReadOnlyMode();
     }
 
     @Test

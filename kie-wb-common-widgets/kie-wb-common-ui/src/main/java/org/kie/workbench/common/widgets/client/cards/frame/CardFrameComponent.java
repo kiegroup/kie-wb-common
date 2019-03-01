@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.widgets.client.cards.CardComponent;
+import org.kie.workbench.common.widgets.client.cards.CardsGridComponent;
 import org.uberfire.client.mvp.UberElemental;
 
 import static org.kie.workbench.common.widgets.client.cards.CardComponent.DEFAULT_FUNCTION;
@@ -31,6 +32,8 @@ public class CardFrameComponent {
     private final View view;
 
     private CardComponent card;
+
+    private CardsGridComponent grid;
 
     @Inject
     public CardFrameComponent(final View view) {
@@ -42,7 +45,9 @@ public class CardFrameComponent {
         getView().init(this);
     }
 
-    public void initialize(final CardComponent card) {
+    public void initialize(final CardsGridComponent grid,
+                           final CardComponent card) {
+        this.grid = grid;
         this.card = card;
         refreshView();
     }
@@ -70,12 +75,25 @@ public class CardFrameComponent {
         return getCard().onTitleChanged() != DEFAULT_FUNCTION;
     }
 
+    public void enableEditMode() {
+        getGrid().enableReadOnlyModeForAllCards();
+        getView().enableEditMode();
+    }
+
+    public void enableReadOnlyMode() {
+        refreshView();
+    }
+
     public View getView() {
         return view;
     }
 
     CardComponent getCard() {
         return card;
+    }
+
+    CardsGridComponent getGrid() {
+        return grid;
     }
 
     public interface View extends UberElemental<CardFrameComponent>,

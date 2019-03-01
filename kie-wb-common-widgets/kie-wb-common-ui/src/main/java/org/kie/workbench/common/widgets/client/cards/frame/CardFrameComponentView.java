@@ -93,7 +93,7 @@ public class CardFrameComponentView implements CardFrameComponent.View {
 
     @EventHandler("title-text")
     public void onTitleTextClick(final ClickEvent e) {
-        enableEditMode();
+        presenter.enableEditMode();
     }
 
     @EventHandler("ok-button")

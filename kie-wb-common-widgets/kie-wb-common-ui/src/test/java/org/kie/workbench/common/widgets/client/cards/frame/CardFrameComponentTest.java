@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.widgets.client.cards.CardComponent;
+import org.kie.workbench.common.widgets.client.cards.CardsGridComponent;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,6 +33,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,11 +43,14 @@ public class CardFrameComponentTest {
     @Mock
     private CardFrameComponent.View view;
 
+    @Mock
+    private CardsGridComponent grid;
+
     private CardFrameComponent cardFrame;
 
     @Before
     public void setup() {
-        cardFrame = Mockito.spy(new CardFrameComponent(view));
+        cardFrame = spy(new CardFrameComponent(view));
     }
 
     @Test
@@ -61,7 +65,7 @@ public class CardFrameComponentTest {
         final CardComponent card = mock(CardComponent.class);
         doNothing().when(cardFrame).refreshView();
 
-        cardFrame.initialize(card);
+        cardFrame.initialize(grid, card);
 
         assertEquals(card, cardFrame.getCard());
         verify(cardFrame).refreshView();
@@ -156,5 +160,25 @@ public class CardFrameComponentTest {
         doReturn(card).when(cardFrame).getCard();
 
         assertFalse(cardFrame.isToggleTitleEnabled());
+    }
+
+    @Test
+    public void testEnableEditMode() {
+
+        doReturn(grid).when(cardFrame).getGrid();
+
+        cardFrame.enableEditMode();
+
+        verify(grid).enableReadOnlyModeForAllCards();
+        verify(view).enableEditMode();
+    }
+
+    @Test
+    public void testEnableReadOnlyMode() {
+        doNothing().when(cardFrame).refreshView();
+
+        cardFrame.enableReadOnlyMode();
+
+        verify(cardFrame).refreshView();
     }
 }

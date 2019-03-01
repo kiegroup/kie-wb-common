@@ -87,7 +87,7 @@ public class CardFrameComponentViewTest {
     public void testOnTitleTextClick() {
         doNothing().when(cardFrameView).enableEditMode();
         cardFrameView.onTitleTextClick(mock(ClickEvent.class));
-        verify(cardFrameView).enableEditMode();
+        verify(presenter).enableEditMode();
     }
 
     @Test
