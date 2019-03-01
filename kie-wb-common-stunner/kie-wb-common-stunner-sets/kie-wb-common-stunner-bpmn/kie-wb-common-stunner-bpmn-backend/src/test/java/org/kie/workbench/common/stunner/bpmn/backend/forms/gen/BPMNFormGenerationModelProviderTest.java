@@ -26,6 +26,7 @@ import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNBackendService;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.BPMNFormGenerationModelProviderHelper;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -69,13 +70,15 @@ public class BPMNFormGenerationModelProviderTest {
 
     private BPMNFormGenerationModelProvider tested;
 
+    private BPMNFormGenerationModelProviderHelper formGenerationModelProviderHelper;
+
     @Before
     public void init() {
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getDefinitionSetId()).thenReturn(ID);
         when(definitionUtils.getDefinitionSetId(eq(BPMNDefinitionSet.class))).thenReturn(ID);
-        tested = new BPMNFormGenerationModelProvider(bpmnBackendService,
-                                                     definitionUtils);
+        formGenerationModelProviderHelper = new BPMNFormGenerationModelProviderHelper(bpmnBackendService);
+        tested = new BPMNFormGenerationModelProvider(definitionUtils, formGenerationModelProviderHelper);
         tested.init();
         verify(definitionUtils).getDefinitionSetId(eq(BPMNDefinitionSet.class));
     }
