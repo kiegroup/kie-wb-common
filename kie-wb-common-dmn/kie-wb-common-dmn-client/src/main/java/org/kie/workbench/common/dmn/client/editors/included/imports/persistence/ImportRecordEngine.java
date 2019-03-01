@@ -71,7 +71,7 @@ public class ImportRecordEngine implements RecordEngine<IncludedModel> {
 
     @Override
     public List<IncludedModel> create(final IncludedModel record) {
-        // TODO
+        // TODO: https://issues.jboss.org/browse/DROOLS-3719
         return singletonList(record);
     }
 
