@@ -51,8 +51,12 @@ public class DateSelectorTest {
     @Test
     public void testGetValue() {
 
-        dateSelector.getValue();
-        verify(view).getValue();
+        final String expectedValue = "value";
+        when(view.getValue()).thenReturn(expectedValue);
+
+        final String actualValue = dateSelector.getValue();
+
+        assertEquals(expectedValue, actualValue);
     }
 
     @Test
@@ -64,7 +68,7 @@ public class DateSelectorTest {
     }
 
     @Test
-    public void setPlaceholder() {
+    public void testSetPlaceholder() {
 
         final String placeholder = "placeholder";
         dateSelector.setPlaceholder(placeholder);
@@ -72,7 +76,7 @@ public class DateSelectorTest {
     }
 
     @Test
-    public void getElement() {
+    public void testGetElement() {
 
         final HTMLElement expected = mock(HTMLElement.class);
         when(view.getElement()).thenReturn(expected);
@@ -83,7 +87,7 @@ public class DateSelectorTest {
     }
 
     @Test
-    public void onValueChanged() {
+    public void testOnValueChanged() {
 
         final Consumer onValueChanged = mock(Consumer.class);
         dateSelector.onValueChanged(onValueChanged);
@@ -92,7 +96,7 @@ public class DateSelectorTest {
     }
 
     @Test
-    public void onValueInputBlur() {
+    public void testOnValueInputBlur() {
 
         final Consumer onValueInputBlur = mock(Consumer.class);
         dateSelector.onValueInputBlur(onValueInputBlur);
@@ -101,7 +105,7 @@ public class DateSelectorTest {
     }
 
     @Test
-    public void select() {
+    public void testSelect() {
 
         dateSelector.select();
         verify(view).select();

@@ -32,7 +32,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateControl.$;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.JQueryDatepicker.$;
 
 @Templated
 @Dependent

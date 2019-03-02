@@ -25,12 +25,12 @@ import jsinterop.annotations.JsType;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
 @JsType(isNative = true, namespace = JsPackage.GLOBAL)
-public abstract class DateControl {
+public abstract class JQueryDatepicker {
 
     @JsMethod(namespace = GLOBAL)
-    public native static DateControl $(final Element selector);
+    public native static JQueryDatepicker $(final Element selector);
 
-    public native DateControl datepicker(final JavaScriptObject properties);
+    public native JQueryDatepicker datepicker(final JavaScriptObject properties);
 
     public native void datepicker(final String function, final String value);
 }

@@ -76,7 +76,7 @@ public class GenericSelectorViewTest {
     }
 
     @Test
-    public void select() {
+    public void testSelect() {
 
         selectorView.select();
 
@@ -84,7 +84,7 @@ public class GenericSelectorViewTest {
     }
 
     @Test
-    public void onGenericInputBlur() {
+    public void testOnGenericInputBlur() {
 
         final Consumer consumer = mock(Consumer.class);
         final BlurEvent blurEvent = mock(BlurEvent.class);
