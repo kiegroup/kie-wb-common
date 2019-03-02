@@ -65,7 +65,6 @@ public class DataTypeSelectView implements DataTypeSelect.View {
     private DataTypeSelect presenter;
 
     private String value;
-    private String rawValue;
 
     @Inject
     public DataTypeSelectView(final HTMLDivElement typeText,
