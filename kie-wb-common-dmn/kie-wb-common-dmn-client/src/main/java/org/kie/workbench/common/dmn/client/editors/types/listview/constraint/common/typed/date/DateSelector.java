@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import elemental2.dom.Element;
+import elemental2.dom.Event;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueSelector;
 import org.uberfire.client.mvp.UberElemental;
@@ -63,7 +64,7 @@ public class DateSelector implements TypedValueSelector {
     }
 
     @Override
-    public void onValueChanged(final Consumer<Object> onValueChanged) {
+    public void onValueChanged(final Consumer<Event> onValueChanged) {
         view.onValueChanged(onValueChanged);
     }
 
@@ -91,7 +92,7 @@ public class DateSelector implements TypedValueSelector {
 
         void setPlaceholder(final String placeholder);
 
-        void onValueChanged(final Consumer<Object> onValueChanged);
+        void onValueChanged(final Consumer<Event> onValueChanged);
 
         void select();
 

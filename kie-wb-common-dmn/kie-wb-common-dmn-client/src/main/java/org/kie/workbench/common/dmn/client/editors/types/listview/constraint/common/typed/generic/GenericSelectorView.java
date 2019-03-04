@@ -22,6 +22,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.BlurEvent;
+import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -59,7 +60,7 @@ public class GenericSelectorView implements GenericSelector.View {
     }
 
     @Override
-    public void onValueChanged(final Consumer<Object> onValueChanged) {
+    public void onValueChanged(final Consumer<Event> onValueChanged) {
         input.onkeyup = null;
         input.onkeyup = event -> {
             onValueChanged.accept(event);

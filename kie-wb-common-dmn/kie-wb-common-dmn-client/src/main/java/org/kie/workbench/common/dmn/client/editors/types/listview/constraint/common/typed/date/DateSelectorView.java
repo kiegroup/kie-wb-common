@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -89,9 +90,9 @@ public class DateSelectorView implements DateSelector.View {
     }
 
     @Override
-    public void onValueChanged(final Consumer<Object> onValueChanged) {
+    public void onValueChanged(final Consumer<Event> onValueChanged) {
         dateInput.onchange = null;
-        dateInput.onchange = event -> {
+        dateInput.onchange = (Event event) -> {
             onValueChanged.accept(event);
             return this;
         };

@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import elemental2.dom.Element;
+import elemental2.dom.Event;
 
 public interface TypedValueSelector {
 
@@ -31,7 +32,7 @@ public interface TypedValueSelector {
 
     Element getElement();
 
-    void onValueChanged(final Consumer<Object> onValueChanged);
+    void onValueChanged(final Consumer<Event> onValueChanged);
 
     void onValueInputBlur(final Consumer<BlurEvent> blurEvent);
 
