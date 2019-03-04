@@ -91,7 +91,6 @@ public class DateSelectorView implements DateSelector.View {
 
     @Override
     public void onValueChanged(final Consumer<Event> onValueChanged) {
-        dateInput.onchange = null;
         dateInput.onchange = (Event event) -> {
             onValueChanged.accept(event);
             return this;
@@ -107,7 +106,7 @@ public class DateSelectorView implements DateSelector.View {
     public void onDateInputBlur(final BlurEvent blurEvent) {
 
         final Object target = getEventTarget(blurEvent);
-        if (this.onValueInputBlur != null && !Objects.isNull(target)) {
+        if (!Objects.isNull(onValueInputBlur) && !Objects.isNull(target)) {
             onValueInputBlur.accept(blurEvent);
         }
     }

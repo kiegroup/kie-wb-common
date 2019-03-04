@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date;
 
+import java.util.Date;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
@@ -34,7 +36,7 @@ public class DateValueFormatter {
         final String dateString = removePrefixAndSuffix(rawValue);
 
         try {
-            final java.util.Date date = RAW_FORMAT.parse(dateString);
+            final Date date = RAW_FORMAT.parse(dateString);
             return DISPLAY_FORMAT.format(date);
         } catch (final IllegalArgumentException exception) {
             return "";
@@ -51,7 +53,7 @@ public class DateValueFormatter {
 
     String toRaw(final String displayValue) {
         try {
-            final java.util.Date date = DISPLAY_FORMAT.parse(displayValue);
+            final Date date = DISPLAY_FORMAT.parse(displayValue);
             return addPrefixAndSuffix(RAW_FORMAT.format(date));
         } catch (final IllegalArgumentException exception) {
             return "";

@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed;
 
+import java.util.Objects;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -38,7 +40,7 @@ public class TypedValueComponentSelector {
 
     public TypedValueSelector makeSelectorForType(final String type) {
 
-        if (BuiltInType.DATE.getName().equals(type)) {
+        if (Objects.equals(BuiltInType.DATE.getName(), type)) {
             return dateSelector;
         }
 

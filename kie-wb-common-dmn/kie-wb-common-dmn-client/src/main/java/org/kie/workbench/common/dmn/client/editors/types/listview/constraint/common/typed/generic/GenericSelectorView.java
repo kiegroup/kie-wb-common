@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.generic;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.enterprise.context.Dependent;
@@ -61,7 +62,6 @@ public class GenericSelectorView implements GenericSelector.View {
 
     @Override
     public void onValueChanged(final Consumer<Event> onValueChanged) {
-        input.onkeyup = null;
         input.onkeyup = event -> {
             onValueChanged.accept(event);
             return this;
@@ -86,7 +86,7 @@ public class GenericSelectorView implements GenericSelector.View {
     @EventHandler("generic-input")
     public void onGenericInputBlur(final BlurEvent blurEvent) {
 
-        if (this.onValueInputBlur != null) {
+        if (!Objects.isNull(onValueInputBlur)) {
             onValueInputBlur.accept(blurEvent);
         }
     }
