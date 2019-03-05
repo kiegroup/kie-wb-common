@@ -408,7 +408,7 @@ public class BuilderTest
         final List<BuildMessage> errorMessages = buildResults.getErrorMessages();
         assertEquals(1,
                      errorMessages.size());
-        assertTrue(errorMessages.get(0).getText().contains(" Error compiling FEEL expression"));
+        assertTrue(errorMessages.get(0).getText().contains("Error compiling FEEL expression"));
     }
 
     private PackageNameWhiteListService getPackageNameWhiteListService() {
