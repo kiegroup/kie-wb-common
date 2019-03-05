@@ -114,6 +114,8 @@ public class DataTypeConstraintEnumerationItemTest {
         verify(view).focusValueInput();
         verify(view).enableHighlight();
         verify(view).showSaveButton();
+        verify(view).showClearButton();
+        verify(view).hideDeleteButton();
     }
 
     @Test
@@ -136,6 +138,8 @@ public class DataTypeConstraintEnumerationItemTest {
         verify(view).showValueText();
         verify(view).disableHighlight();
         verify(view).hideSaveButton();
+        verify(view).hideClearButton();
+        verify(view).showDeleteButton();
     }
 
     @Test

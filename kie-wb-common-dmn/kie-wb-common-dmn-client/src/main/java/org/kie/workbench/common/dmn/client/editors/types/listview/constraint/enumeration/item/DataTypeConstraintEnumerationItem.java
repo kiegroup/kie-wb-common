@@ -79,12 +79,16 @@ public class DataTypeConstraintEnumerationItem {
         view.focusValueInput();
         view.enableHighlight();
         view.showSaveButton();
+        view.showClearButton();
+        view.hideDeleteButton();
     }
 
     public void disableEditMode() {
         view.showValueText();
         view.disableHighlight();
         view.hideSaveButton();
+        view.hideClearButton();
+        view.showDeleteButton();
     }
 
     public void save(final String value) {
@@ -187,5 +191,13 @@ public class DataTypeConstraintEnumerationItem {
         void setPlaceholder(final String placeholder);
 
         void setComponentSelector(final String type);
+
+        void showClearButton();
+
+        void hideDeleteButton();
+
+        void hideClearButton();
+
+        void showDeleteButton();
     }
 }
