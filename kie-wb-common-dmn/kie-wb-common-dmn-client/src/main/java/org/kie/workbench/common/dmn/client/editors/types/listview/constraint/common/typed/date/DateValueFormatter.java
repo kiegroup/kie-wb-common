@@ -44,7 +44,7 @@ public class DateValueFormatter {
     }
 
     String removePrefixAndSuffix(final String rawValue) {
-        return rawValue.replace(PREFIX, "").replace(SUFFIX, "");
+        return rawValue.replace(PREFIX, "").replace(SUFFIX, "").trim();
     }
 
     String addPrefixAndSuffix(final String value) {

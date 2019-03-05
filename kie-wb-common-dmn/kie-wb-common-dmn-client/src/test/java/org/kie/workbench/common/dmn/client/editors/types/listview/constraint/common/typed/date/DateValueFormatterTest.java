@@ -89,6 +89,18 @@ public class DateValueFormatterTest {
     }
 
     @Test
+    public void testRemovePrefixAndSuffixWithSpaces() {
+
+        final String date = "   2019-12-25   ";
+        final String expected = "2019-12-25";
+        final String input = addPrefixAndSuffix(date);
+
+        final String actual = dateValueFormatter.removePrefixAndSuffix(input);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testAddPrefixAndSuffix() {
 
         final String input = "2019-12-25";
