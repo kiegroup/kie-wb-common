@@ -29,16 +29,16 @@ public class OutputClauseLiteralExpressionPropertyConverter {
         if (dmn == null) {
             return null;
         }
-        Id id = new Id(dmn.getId());
-        Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
-        Text text = new Text(dmn.getText());
-        ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
-        OutputClauseLiteralExpression result = new OutputClauseLiteralExpression(id,
-                                                                                 description,
-                                                                                 typeRef,
-                                                                                 text,
-                                                                                 importedValues);
+        final Id id = new Id(dmn.getId());
+        final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final Text text = new Text(dmn.getText());
+        final ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
+        final OutputClauseLiteralExpression result = new OutputClauseLiteralExpression(id,
+                                                                                       description,
+                                                                                       typeRef,
+                                                                                       text,
+                                                                                       importedValues);
         if (importedValues != null) {
             importedValues.setParent(result);
         }
