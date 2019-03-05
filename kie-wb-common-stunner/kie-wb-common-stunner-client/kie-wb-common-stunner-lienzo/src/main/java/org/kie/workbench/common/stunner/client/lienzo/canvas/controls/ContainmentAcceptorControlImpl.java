@@ -51,31 +51,25 @@ public class ContainmentAcceptorControlImpl extends AbstractAcceptorControl
         implements ContainmentAcceptorControl<AbstractCanvasHandler> {
 
     private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
-    private final Function<AbstractCanvasHandler, CanvasHighlight> highlightFactory;
-    private CanvasHighlight canvasHighlight;
+    private final CanvasHighlight canvasHighlight;
 
     @Inject
-    public ContainmentAcceptorControlImpl(final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory) {
-        this(canvasCommandFactory, CanvasHighlight::new);
-    }
-
-    ContainmentAcceptorControlImpl(final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                                   final Function<AbstractCanvasHandler, CanvasHighlight> highlightFactory) {
+    public ContainmentAcceptorControlImpl(final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
+                                          final CanvasHighlight canvasHighlight) {
         this.canvasCommandFactory = canvasCommandFactory;
-        this.highlightFactory = highlightFactory;
+        this.canvasHighlight = canvasHighlight;
     }
 
     @Override
     protected void onInit(final WiresCanvas canvas) {
         canvas.getWiresManager().setContainmentAcceptor(CONTAINMENT_ACCEPTOR);
-        this.canvasHighlight = highlightFactory.apply(getCanvasHandler());
+        this.canvasHighlight.setCanvasHandler(getCanvasHandler());
     }
 
     @Override
     protected void onDestroy(final WiresCanvas canvas) {
         canvas.getWiresManager().setContainmentAcceptor(IContainmentAcceptor.NONE);
         this.canvasHighlight.destroy();
-        this.canvasHighlight = null;
     }
 
     @Override
@@ -122,7 +116,7 @@ public class ContainmentAcceptorControlImpl extends AbstractAcceptorControl
             }
         }
 
-        if (success) {
+        if (!highlights || success) {
             canvasHighlight.unhighLight();
         }
         return success;

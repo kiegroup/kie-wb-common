@@ -397,7 +397,6 @@ public class CaseManagementCanvasHandlerTest {
         when(index.getNode(eq(uuid))).thenReturn(node);
 
         this.handler = new CaseManagementCanvasHandler(clientDefinitionManager,
-                                                       clientFactoryServices,
                                                        ruleManager,
                                                        graphUtils,
                                                        indexBuilder,

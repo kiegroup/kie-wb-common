@@ -109,13 +109,14 @@ public class ContainmentAcceptorControlImplTest {
         when(commandManager.execute(eq(canvasHandler),
                                     eq(updateChildrenCommand))).thenReturn(result);
         this.tested = new ContainmentAcceptorControlImpl(canvasCommandFactory,
-                                                         canvasHandler1 -> highlight);
+                                                         highlight);
         this.tested.setCommandManagerProvider(() -> commandManager);
     }
 
     @Test
     public void testEnable() {
         tested.init(canvasHandler);
+        verify(highlight, times(1)).setCanvasHandler(eq(canvasHandler));
         assertEquals(canvasHandler,
                      tested.getCanvasHandler());
         verify(wiresManager,
