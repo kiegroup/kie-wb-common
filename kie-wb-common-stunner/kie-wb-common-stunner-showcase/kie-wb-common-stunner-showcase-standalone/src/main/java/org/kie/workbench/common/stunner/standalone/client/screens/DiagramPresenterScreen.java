@@ -33,6 +33,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.standalone.client.services.StunnerClientDiagramServices;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -60,7 +61,7 @@ public class DiagramPresenterScreen {
     public static final String DIAGRAM_NAME = "evaluation2";
 
     @Inject
-    private ShowcaseDiagramService diagramService;
+    private StunnerClientDiagramServices diagramService;
 
     @Inject
     private ManagedInstance<DiagramViewer<Diagram, AbstractCanvasHandler>> diagramViewers;

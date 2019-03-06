@@ -24,6 +24,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.logging.client.LogConfiguration;
+import org.kie.workbench.common.stunner.submarine.client.screens.DiagramEditorExplorerScreen;
+import org.kie.workbench.common.stunner.submarine.client.screens.DiagramEditorPropertiesScreen;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDockReadyEvent;
@@ -64,7 +66,7 @@ public class ProjectDiagramWorkbenchDocks {
             log(Level.INFO,
                 "Show docks");
             uberfireDocks.show(POSITION,
-                                 perspectiveId);
+                               perspectiveId);
             this.enabled = true;
         }
     }
@@ -75,7 +77,7 @@ public class ProjectDiagramWorkbenchDocks {
                 "Hide docks");
             // TODO: Ask to walter - uberfireDocks.disable( POSITION, perspectiveId );
             uberfireDocks.hide(POSITION,
-                                  perspectiveId);
+                               perspectiveId);
             this.enabled = false;
         }
     }
@@ -126,7 +128,7 @@ public class ProjectDiagramWorkbenchDocks {
     private UberfireDock createPropertiesDock(final String perspectiveId) {
         return new UberfireDock(POSITION,
                                 "PENCIL_SQUARE_O",
-                                new DefaultPlaceRequest(ProjectDiagramPropertiesScreen.SCREEN_ID),
+                                new DefaultPlaceRequest(DiagramEditorPropertiesScreen.SCREEN_ID),
                                 perspectiveId)
                 .withSize(450)
                 .withLabel("Properties");
@@ -135,7 +137,7 @@ public class ProjectDiagramWorkbenchDocks {
     private UberfireDock createExplorerDock(final String perspectiveId) {
         return new UberfireDock(POSITION,
                                 "EYE",
-                                new DefaultPlaceRequest(ProjectDiagramExplorerScreen.SCREEN_ID),
+                                new DefaultPlaceRequest(DiagramEditorExplorerScreen.SCREEN_ID),
                                 perspectiveId)
                 .withSize(450)
                 .withLabel("Explore");

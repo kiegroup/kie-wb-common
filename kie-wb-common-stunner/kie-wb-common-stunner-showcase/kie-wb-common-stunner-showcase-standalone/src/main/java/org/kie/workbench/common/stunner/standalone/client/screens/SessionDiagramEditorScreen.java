@@ -54,6 +54,11 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
+import org.kie.workbench.common.stunner.standalone.client.perspectives.AuthoringPerspective;
+import org.kie.workbench.common.stunner.standalone.client.services.StunnerClientDiagramServices;
+import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
+import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -75,7 +80,7 @@ import org.uberfire.workbench.model.menu.Menus;
 @Dependent
 @DiagramEditor
 @WorkbenchScreen(identifier = SessionDiagramEditorScreen.SCREEN_ID)
-public class SessionDiagramEditorScreen {
+public class SessionDiagramEditorScreen implements MultiPageEditorContainerView.Presenter {
 
     private static Logger LOGGER = Logger.getLogger(SessionDiagramEditorScreen.class.getName());
 
@@ -83,12 +88,15 @@ public class SessionDiagramEditorScreen {
 
     private final DefinitionManager definitionManager;
     private final ClientFactoryService clientFactoryServices;
-    private final ShowcaseDiagramService diagramService;
+    private final StunnerClientDiagramServices diagramService;
     private final SessionEditorPresenter<EditorSession> presenter;
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final MenuDevCommandsBuilder menuDevCommandsBuilder;
-    private final ScreenPanelView screenPanelView;
+    private final ScreenPanelView baseEditorView;
     private final ScreenErrorView screenErrorView;
+    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+    private final DiagramEditorPropertiesDock diagramPropertiesDock;
+    private final MultiPageEditorContainerView multiPageEditorContainerView;
 
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
@@ -97,25 +105,35 @@ public class SessionDiagramEditorScreen {
     @Inject
     public SessionDiagramEditorScreen(final DefinitionManager definitionManager,
                                       final ClientFactoryService clientFactoryServices,
-                                      final ShowcaseDiagramService diagramService,
+                                      final StunnerClientDiagramServices diagramService,
                                       final SessionEditorPresenter<EditorSession> presenter,
                                       final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
                                       final MenuDevCommandsBuilder menuDevCommandsBuilder,
-                                      final ScreenPanelView screenPanelView,
-                                      final ScreenErrorView screenErrorView) {
+                                      final ScreenPanelView baseEditorView,
+                                      final ScreenErrorView screenErrorView,
+                                      final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
+                                      final DiagramEditorPropertiesDock diagramPropertiesDock,
+                                      final MultiPageEditorContainerView multiPageEditorContainerView) {
         this.definitionManager = definitionManager;
         this.clientFactoryServices = clientFactoryServices;
         this.diagramService = diagramService;
         this.presenter = presenter;
         this.changeTitleNotificationEvent = changeTitleNotificationEvent;
         this.menuDevCommandsBuilder = menuDevCommandsBuilder;
-        this.screenPanelView = screenPanelView;
+        this.baseEditorView = baseEditorView;
         this.screenErrorView = screenErrorView;
+        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
+        this.diagramPropertiesDock = diagramPropertiesDock;
+        this.multiPageEditorContainerView = multiPageEditorContainerView;
     }
 
     @PostConstruct
     @SuppressWarnings("unchecked")
     public void init() {
+        diagramPreviewAndExplorerDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+        diagramPropertiesDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+
+        multiPageEditorContainerView.init(this);
     }
 
     @OnStartup
@@ -240,13 +258,43 @@ public class SessionDiagramEditorScreen {
 
     private void open(final Diagram diagram,
                       final Command callback) {
-        screenPanelView.setWidget(presenter.getView());
+        baseEditorView.setWidget(presenter.getView());
         presenter
                 .withToolbar(true)
                 .withPalette(true)
                 .displayNotifications(type -> true)
                 .open(diagram,
-                      new ScreenPresenterCallback(callback));
+                      new SessionPresenter.SessionPresenterCallback<Diagram>() {
+                          @Override
+                          public void afterSessionOpened() {
+
+                          }
+
+                          @Override
+                          public void afterCanvasInitialized() {
+
+                          }
+
+                          @Override
+                          public void onSuccess() {
+                              BusyPopup.close();
+
+                              //See TabPanelWithDropdowns.resizeTabContent().. TabContent must be set after the TabPanel
+                              //has been added to the DOM and hence the TabBar content/height can be calculated.
+                              multiPageEditorContainerView.clear();
+                              multiPageEditorContainerView.setEditorWidget(baseEditorView.asWidget());
+
+                              openDock();
+                              callback.execute();
+                          }
+
+                          @Override
+                          public void onError(final ClientRuntimeError error) {
+                              BusyPopup.close();
+
+                              showError(error);
+                          }
+                      });
     }
 
     private Metadata buildMetadata(final String defSetId,
@@ -298,6 +346,21 @@ public class SessionDiagramEditorScreen {
 
     @OnClose
     public void onClose() {
+        destroyDock();
+        destroySession();
+    }
+
+    void openDock() {
+        diagramPreviewAndExplorerDock.open();
+        diagramPropertiesDock.open();
+    }
+
+    void destroyDock() {
+        diagramPreviewAndExplorerDock.close();
+        diagramPropertiesDock.close();
+    }
+
+    void destroySession() {
         presenter.destroy();
     }
 
@@ -313,7 +376,7 @@ public class SessionDiagramEditorScreen {
 
     @WorkbenchPartView
     public IsWidget getWidget() {
-        return screenPanelView.asWidget();
+        return multiPageEditorContainerView.asWidget();
     }
 
     @WorkbenchContextId
@@ -321,35 +384,14 @@ public class SessionDiagramEditorScreen {
         return "sessionDiagramEditorScreenContext";
     }
 
-    private final class ScreenPresenterCallback implements SessionPresenter.SessionPresenterCallback<Diagram> {
+    @Override
+    public void onEditTabSelected() {
 
-        private final Command callback;
+    }
 
-        private ScreenPresenterCallback(final Command callback) {
-            this.callback = callback;
-        }
+    @Override
+    public void onEditTabUnselected() {
 
-        @Override
-        public void afterSessionOpened() {
-
-        }
-
-        @Override
-        public void afterCanvasInitialized() {
-
-        }
-
-        @Override
-        public void onSuccess() {
-            BusyPopup.close();
-            callback.execute();
-        }
-
-        @Override
-        public void onError(final ClientRuntimeError error) {
-            showError(error);
-            callback.execute();
-        }
     }
 
     private void updateTitle(final String title) {
@@ -373,7 +415,7 @@ public class SessionDiagramEditorScreen {
 
     private void showError(final ClientRuntimeError error) {
         screenErrorView.showError(error);
-        screenPanelView.setWidget(screenErrorView.asWidget());
+        baseEditorView.setWidget(screenErrorView.asWidget());
         log(Level.SEVERE,
             error.toString());
         BusyPopup.close();

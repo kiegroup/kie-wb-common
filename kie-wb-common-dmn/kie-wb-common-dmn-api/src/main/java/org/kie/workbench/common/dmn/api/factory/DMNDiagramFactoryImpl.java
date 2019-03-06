@@ -18,16 +18,16 @@ package org.kie.workbench.common.dmn.api.factory;
 import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
-import org.kie.workbench.common.stunner.core.diagram.AbstractDiagram;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
+import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
 
 @Dependent
 public class DMNDiagramFactoryImpl
-        extends AbstractDMNDiagramFactory<Metadata, Diagram<Graph, Metadata>>
+        extends AbstractDMNDiagramFactory<SubmarineMetadata, SubmarineDiagram>
         implements DMNDiagramFactory {
 
     @Override
@@ -37,16 +37,16 @@ public class DMNDiagramFactoryImpl
 
     @Override
     public Class<? extends Metadata> getMetadataType() {
-        return Metadata.class;
+        return SubmarineMetadata.class;
     }
 
     @Override
-    public Diagram<Graph, Metadata> doBuild(final String name,
-                                            final Metadata metadata,
-                                            final Graph<DefinitionSet, ?> graph) {
-        final AbstractDiagram<Graph, Metadata> result = new DiagramImpl(name,
-                                                                        metadata);
-        result.setGraph(graph);
+    public SubmarineDiagram doBuild(final String name,
+                                    final SubmarineMetadata metadata,
+                                    final Graph<DefinitionSet, ?> graph) {
+        final SubmarineDiagram result = new SubmarineDiagramImpl(name,
+                                                                 graph,
+                                                                 metadata);
         return result;
     }
 }

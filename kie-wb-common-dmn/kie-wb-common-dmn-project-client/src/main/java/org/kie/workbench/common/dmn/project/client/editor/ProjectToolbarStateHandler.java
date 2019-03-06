@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteS
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchGridSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
-import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 
 public class ProjectToolbarStateHandler implements ToolbarStateHandler {
 
@@ -45,10 +45,10 @@ public class ProjectToolbarStateHandler implements ToolbarStateHandler {
 
     private final Map<Class<? extends ClientSessionCommand>, Boolean> commandStates = new HashMap<>();
 
-    private final AbstractProjectEditorMenuSessionItems projectEditorMenuSessionItems;
+    private final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems;
 
     @SuppressWarnings("unchecked")
-    public ProjectToolbarStateHandler(final AbstractProjectEditorMenuSessionItems projectEditorMenuSessionItems) {
+    public ProjectToolbarStateHandler(final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems) {
         this.projectEditorMenuSessionItems = projectEditorMenuSessionItems;
 
         Arrays.asList(COMMAND_CLASSES).forEach(clazz -> commandStates.put(clazz, false));

@@ -39,6 +39,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.event.OnSessionErrorEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.standalone.client.services.StunnerClientDiagramServices;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -69,7 +70,7 @@ public class SessionDiagramViewerScreen {
 
     public static final String SCREEN_ID = "SessionDiagramViewerScreen";
 
-    private final ShowcaseDiagramService diagramLoader;
+    private final StunnerClientDiagramServices diagramLoader;
     private final SessionViewerPresenter<ViewerSession> presenter;
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final MenuDevCommandsBuilder menuDevCommandsBuilder;
@@ -81,7 +82,7 @@ public class SessionDiagramViewerScreen {
     private Menus menu = null;
 
     @Inject
-    public SessionDiagramViewerScreen(final ShowcaseDiagramService diagramLoader,
+    public SessionDiagramViewerScreen(final StunnerClientDiagramServices diagramLoader,
                                       final SessionViewerPresenter<ViewerSession> presenter,
                                       final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
                                       final MenuDevCommandsBuilder menuDevCommandsBuilder,

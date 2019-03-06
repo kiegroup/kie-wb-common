@@ -28,13 +28,13 @@ import org.kie.workbench.common.dmn.project.client.session.DMNEditorSessionComma
 import org.kie.workbench.common.stunner.client.widgets.menu.MenuUtils;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
-import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.workbench.model.menu.MenuItem;
 
 @Dependent
 @Typed(DMNProjectEditorMenuSessionItems.class)
-public class DMNProjectEditorMenuSessionItems extends AbstractProjectEditorMenuSessionItems<DMNProjectDiagramEditorMenuItemsBuilder> {
+public class DMNProjectEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<DMNProjectDiagramEditorMenuItemsBuilder> {
 
     @Inject
     public DMNProjectEditorMenuSessionItems(final DMNProjectDiagramEditorMenuItemsBuilder itemsBuilder,
