@@ -25,6 +25,8 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -165,10 +167,39 @@ public class YearsMonthsValueConverterTest {
         testToDisplayValue(value, expected);
     }
 
+    @Test
+    public void testToDisplayYearsAndMonthsEmtpy() {
+
+        final String expected = "";
+        final YearsMonthsValue value = new YearsMonthsValue();
+        value.setYears("");
+        value.setMonths("");
+
+        testToDisplayValue(value, expected);
+    }
+
     public void testToDisplayValue(final YearsMonthsValue yearsMonthsValue,
                                    final String expected) {
 
         final String actual = converter.toDisplayValue(yearsMonthsValue);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testToDisplayValueFromDmnValue() {
+
+        final String dmnValue = "string";
+        final String expected = "converted";
+        final YearsMonthsValue yearsMonthsValue = mock(YearsMonthsValue.class);
+
+        doReturn(yearsMonthsValue).when(converter).fromDMNString(dmnValue);
+        doReturn(expected).when(converter).toDisplayValue(yearsMonthsValue);
+
+        final String actual = converter.toDisplayValue(dmnValue);
+
+        verify(converter).toDisplayValue(yearsMonthsValue);
+        verify(converter).fromDMNString(dmnValue);
 
         assertEquals(expected, actual);
     }

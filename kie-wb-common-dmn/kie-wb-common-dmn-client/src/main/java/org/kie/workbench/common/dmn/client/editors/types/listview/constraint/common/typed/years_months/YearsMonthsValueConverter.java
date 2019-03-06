@@ -143,8 +143,10 @@ public class YearsMonthsValueConverter {
             displayValue = years + " " + yearsString + ", " + months + " " + monthsString;
         } else if (hasYears) {
             displayValue = years + " " + translationService.getValue(YEARS_ABBREVIATED_TRANSLATION_KEY);
-        } else {
+        } else if (hasMonths) {
             displayValue = months + " " + translationService.getValue(MONTHS_ABBREVIATED_TRANSLATION_KEY);
+        } else {
+            displayValue = "";
         }
 
         return displayValue;

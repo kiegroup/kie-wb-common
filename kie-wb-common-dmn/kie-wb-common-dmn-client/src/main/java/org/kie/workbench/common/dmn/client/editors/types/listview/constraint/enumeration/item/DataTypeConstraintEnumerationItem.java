@@ -28,7 +28,6 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.com
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.uberfire.client.mvp.UberElemental;
 
-import static java.util.Collections.swap;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
@@ -104,44 +103,6 @@ public class DataTypeConstraintEnumerationItem {
     void discardEditMode() {
         setValue(getOldValue());
         disableEditMode();
-    }
-
-    void moveUp() {
-        moveEnumerationItem(-1);
-    }
-
-    void moveDown() {
-        moveEnumerationItem(1);
-    }
-
-    void moveEnumerationItem(final int reference) {
-
-        final int oldIndex = getCurrentIndex();
-        final int newIndex = getNewIndex(reference);
-
-        swap(getEnumerationItems(), oldIndex, newIndex);
-        refreshEnumerationList();
-    }
-
-    private int getNewIndex(final int reference) {
-
-        final int oldIndex = getCurrentIndex();
-        final int newIndex = oldIndex + reference;
-        final int modifier;
-
-        if (newIndex < 0) {
-            modifier = getEnumerationItems().size();
-        } else if (newIndex == getEnumerationItems().size()) {
-            modifier = -getEnumerationItems().size();
-        } else {
-            modifier = 0;
-        }
-
-        return newIndex + modifier;
-    }
-
-    private int getCurrentIndex() {
-        return getEnumerationItems().indexOf(this);
     }
 
     List<DataTypeConstraintEnumerationItem> getEnumerationItems() {

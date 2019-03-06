@@ -343,6 +343,15 @@ public class DataTypeConstraintEnumerationItemViewTest {
     }
 
     @Test
+    public void testOnClearFieldAnchorClick(){
+
+        view.onClearFieldAnchorClick(mock(ClickEvent.class));
+
+        verify(presenter).setValue("");
+        verify(typedValueSelector).select();
+    }
+
+    @Test
     public void testSetComponentSelector() {
 
         final HTMLElement element = mock(HTMLElement.class);

@@ -148,6 +148,7 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
     @EventHandler("clear-field-anchor")
     public void onClearFieldAnchorClick(final ClickEvent e) {
         presenter.setValue("");
+        typedValueSelector.select();
     }
 
     public void onValueInputBlur(final BlurEvent blurEvent) {
