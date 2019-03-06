@@ -24,10 +24,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
@@ -37,6 +34,8 @@ import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -51,7 +50,7 @@ public class DMNDiagramFactoryImplTest {
     private static final String EXISTING_NAME = "existing-name";
 
     @Mock
-    private Metadata metadata;
+    private SubmarineMetadata metadata;
 
     @Mock
     private Bounds bounds;
@@ -77,7 +76,7 @@ public class DMNDiagramFactoryImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testDefaultNameSpaces() {
-        final Diagram<Graph, Metadata> diagram = factory.build(NAME, metadata, graph);
+        final SubmarineDiagram diagram = factory.build(NAME, metadata, graph);
 
         //We can safely get the first object on the iterator as we know the graph only contains one node
         final Node<View, Edge> root = (Node<View, Edge>) diagram.getGraph().nodes().iterator().next();
@@ -118,7 +117,7 @@ public class DMNDiagramFactoryImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testModelName() {
-        final Diagram<Graph, Metadata> diagram = factory.build(NAME, metadata, graph);
+        final SubmarineDiagram diagram = factory.build(NAME, metadata, graph);
 
         //We can safely get the first object on the iterator as we know the graph only contains one node
         final Node<View, Edge> root = (Node<View, Edge>) diagram.getGraph().nodes().iterator().next();
@@ -137,7 +136,7 @@ public class DMNDiagramFactoryImplTest {
         final Definitions existingDMNDefinitions = existingDMNDiagram.getDefinitions();
         existingDMNDefinitions.getName().setValue(EXISTING_NAME);
 
-        final Diagram<Graph, Metadata> newDiagram = factory.build(NAME, metadata, graph);
+        final SubmarineDiagram newDiagram = factory.build(NAME, metadata, graph);
         final Node<View, Edge> newRoot = (Node<View, Edge>) newDiagram.getGraph().nodes().iterator().next();
         final DMNDiagram newDMNDiagram = (DMNDiagram) newRoot.getContent().getDefinition();
         final Definitions newDMNDefinitions = newDMNDiagram.getDefinitions();

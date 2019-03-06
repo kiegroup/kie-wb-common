@@ -36,8 +36,8 @@ import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
-import org.kie.workbench.common.stunner.project.diagram.impl.ProjectDiagramImpl;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
+import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -61,7 +61,7 @@ public class DMNGraphUtilsTest {
     private CanvasHandler canvasHandler;
 
     @Mock
-    private ProjectMetadata metadata;
+    private SubmarineMetadata metadata;
 
     @Mock
     private Bounds bounds;
@@ -74,7 +74,7 @@ public class DMNGraphUtilsTest {
     public void setup() {
         this.utils = new DMNGraphUtils(sessionManager);
         this.graph = new GraphImpl<>(UUID.uuid(), new GraphNodeStoreImpl());
-        final ProjectDiagramImpl diagram = new ProjectDiagramImpl(NAME, graph, metadata);
+        final SubmarineDiagramImpl diagram = new SubmarineDiagramImpl(NAME, graph, metadata);
         when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);

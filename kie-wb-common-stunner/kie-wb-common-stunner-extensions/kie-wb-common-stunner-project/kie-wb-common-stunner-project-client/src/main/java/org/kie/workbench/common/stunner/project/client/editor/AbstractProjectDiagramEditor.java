@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.project.client.editor;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -27,13 +25,9 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.logging.client.LogConfiguration;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ProvidesResize;
-import com.google.gwt.user.client.ui.RequiresResize;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -46,43 +40,36 @@ import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationServic
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.event.OnSessionErrorEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
-import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
-import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.core.util.HashUtil;
-import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
-import org.kie.workbench.common.stunner.core.validation.Violation;
-import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientConstants;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
-import org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource;
-import org.kie.workbench.common.stunner.project.editor.impl.ProjectDiagramResourceImpl;
+import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramResource;
+import org.kie.workbench.common.stunner.project.diagram.editor.impl.ProjectDiagramResourceImpl;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorCore;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.submarine.client.editor.DiagramEditorCore;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.metadata.client.KieEditor;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorView;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.mvp.UberView;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
-import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.editor.commons.service.support.SupportsSaveAndRename;
 import org.uberfire.ext.widgets.common.client.ace.AceEditorMode;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
@@ -95,147 +82,80 @@ import org.uberfire.workbench.model.menu.Menus;
 
 import static org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientConstants.DIAGRAM_PARSING_ERROR;
 
-public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType> extends KieEditor<ProjectDiagramResource> {
+public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType> extends KieEditor<ProjectDiagramResource> implements DiagramEditorCore<ProjectMetadata, ProjectDiagram> {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractProjectDiagramEditor.class.getName());
-    private static final String TITLE_FORMAT_TEMPLATE = "#title.#suffix - #type";
-    private final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances;
-    private final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances;
-    private final DiagramClientErrorHandler diagramClientErrorHandler;
-    private final ClientTranslationService translationService;
-    private final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller;
-    private final TextEditorView xmlEditorView;
-    protected ClientProjectDiagramService projectDiagramServices;
-    protected ProjectDiagramEditorProxy editorProxy = ProjectDiagramEditorProxy.NULL_EDITOR;
-    private ErrorPopupPresenter errorPopupPresenter;
-    private Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
-    private R resourceType;
-    private AbstractProjectEditorMenuSessionItems<?> menuSessionItems;
-    private ProjectMessagesListener projectMessagesListener;
-    private Event<OnDiagramFocusEvent> onDiagramFocusEvent;
-    private Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
-    private Optional<SessionEditorPresenter<EditorSession>> editorSessionPresenter = Optional.empty();
-    private Optional<SessionViewerPresenter<ViewerSession>> viewerSessionPresenter = Optional.empty();
-    private String title = "Project Diagram Editor";
-    private boolean menuBarInitialzed = false;
-    private DocumentationView documentationView;
 
-    @Inject
-    public AbstractProjectDiagramEditor(final View view,
-                                        final DocumentationView documentationView,
-                                        final PlaceManager placeManager,
-                                        final ErrorPopupPresenter errorPopupPresenter,
-                                        final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
-                                        final SavePopUpPresenter savePopUpPresenter,
-                                        final R resourceType,
-                                        final ClientProjectDiagramService projectDiagramServices,
+    private static final String TITLE_FORMAT_TEMPLATE = "#title.#suffix - #type";
+
+    public interface View extends AbstractDiagramEditorCore.View,
+                                  KieEditorView {
+
+    }
+
+    private final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems;
+    private final Event<OnDiagramFocusEvent> onDiagramFocusEvent;
+    private final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
+    private final ClientTranslationService translationService;
+    private final DocumentationView documentationView;
+    private final R resourceType;
+    private final ProjectMessagesListener projectMessagesListener;
+    private final ClientProjectDiagramService projectDiagramServices;
+    private final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller;
+
+    private String title = "Project Diagram Editor";
+
+    private boolean menuBarInitialized = false;
+
+    public class ProjectDiagramEditorCore extends AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> {
+
+        public ProjectDiagramEditorCore(final AbstractProjectDiagramEditor.View baseEditorView,
+                                        final TextEditorView xmlEditorView,
+                                        final Event<NotificationEvent> notificationEvent,
                                         final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
                                         final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                        final AbstractProjectEditorMenuSessionItems<?> menuSessionItems,
-                                        final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
-                                        final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
-                                        final ProjectMessagesListener projectMessagesListener,
+                                        final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                        final ErrorPopupPresenter errorPopupPresenter,
                                         final DiagramClientErrorHandler diagramClientErrorHandler,
-                                        final ClientTranslationService translationService,
-                                        final TextEditorView xmlEditorView,
-                                        final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller) {
-        super(view);
-        this.documentationView = documentationView;
-        this.placeManager = placeManager;
-        this.errorPopupPresenter = errorPopupPresenter;
-        this.changeTitleNotificationEvent = changeTitleNotificationEvent;
-        this.savePopUpPresenter = savePopUpPresenter;
-        this.resourceType = resourceType;
-        this.projectDiagramServices = projectDiagramServices;
-        this.editorSessionPresenterInstances = editorSessionPresenterInstances;
-        this.viewerSessionPresenterInstances = viewerSessionPresenterInstances;
-        this.menuSessionItems = menuSessionItems;
-        this.projectMessagesListener = projectMessagesListener;
-        this.diagramClientErrorHandler = diagramClientErrorHandler;
-        this.onDiagramFocusEvent = onDiagramFocusEvent;
-        this.onDiagramLostFocusEvent = onDiagramLostFocusEvent;
-        this.translationService = translationService;
-        this.xmlEditorView = xmlEditorView;
-        this.projectDiagramResourceServiceCaller = projectDiagramResourceServiceCaller;
-    }
-
-    @PostConstruct
-    @SuppressWarnings("unchecked")
-    public void init() {
-        title = translationService.getValue(StunnerProjectClientConstants.DIAGRAM_EDITOR_DEFAULT_TITLE);
-        getView().init(this);
-        projectMessagesListener.enable();
-        menuSessionItems
-                .setLoadingStarts(this::showLoadingViews)
-                .setLoadingCompleted(this::hideLoadingViews)
-                .setErrorConsumer(this::showError);
-    }
-
-    protected void doStartUp(final ObservablePath path,
-                             final PlaceRequest place) {
-        init(path,
-             place,
-             resourceType);
-    }
-
-    @Override
-    protected void loadContent() {
-        destroySession();
-        projectDiagramServices.getByPath(versionRecordManager.getCurrentPath(),
-                                         new ServiceCallback<ProjectDiagram>() {
-                                             @Override
-                                             public void onSuccess(final ProjectDiagram item) {
-                                                 open(item);
-                                             }
-
-                                             @Override
-                                             public void onError(final ClientRuntimeError error) {
-                                                 onLoadError(error);
-                                             }
-                                         });
-    }
-
-    @SuppressWarnings("unchecked")
-    public void open(final ProjectDiagram diagram) {
-        editorProxy = makeStunnerEditorProxy();
-        showLoadingViews();
-
-        //Open applicable SessionPresenter
-        if (!isReadOnly()) {
-            openSession(diagram);
-        } else {
-            openReadOnlySession(diagram);
+                                        final ClientTranslationService translationService) {
+            super(baseEditorView,
+                  xmlEditorView,
+                  notificationEvent,
+                  editorSessionPresenterInstances,
+                  viewerSessionPresenterInstances,
+                  menuSessionItems,
+                  errorPopupPresenter,
+                  diagramClientErrorHandler,
+                  translationService);
         }
-    }
 
-    @SuppressWarnings("unchecked")
-    protected ProjectDiagramEditorProxy makeStunnerEditorProxy() {
-        final ProjectDiagramEditorProxy proxy = new ProjectDiagramEditorProxy();
-        proxy.setContentSupplier(() -> new ProjectDiagramResourceImpl(getDiagram()));
-        proxy.setSaveAfterValidationConsumer((continueSaveOnceValid) -> {
-            menuSessionItems
-                    .getCommands()
-                    .getValidateSessionCommand()
-                    .execute(new ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>>() {
-                        @Override
-                        public void onSuccess() {
-                            continueSaveOnceValid.execute();
-                        }
+        @Override
+        protected boolean isReadOnly() {
+            return AbstractProjectDiagramEditor.this.isReadOnly();
+        }
 
-                        @Override
-                        public void onError(final Collection<DiagramElementViolation<RuleViolation>> violations) {
-                            final Violation.Type maxSeverity = ValidationUtils.getMaxSeverity(violations);
-                            if (maxSeverity.equals(Violation.Type.ERROR)) {
-                                onValidationFailed(violations);
-                            } else {
-                                // Allow saving when only warnings founds.
-                                continueSaveOnceValid.execute();
-                            }
-                        }
-                    });
-        });
-        proxy.setSaveAfterUserConfirmationConsumer((commitMessage) -> {
-            // Perform update operation remote call.
+        @Override
+        protected ProjectDiagramResourceImpl makeDiagramResourceImpl(final ProjectDiagram diagram) {
+            return new ProjectDiagramResourceImpl(diagram);
+        }
+
+        @Override
+        protected ProjectDiagramResourceImpl makeDiagramResourceImpl(final String xml) {
+            return new ProjectDiagramResourceImpl(xml);
+        }
+
+        @Override
+        protected ProjectDiagramEditorProxy<ProjectDiagramResource> makeEditorProxy() {
+            return new ProjectDiagramEditorProxy<>();
+        }
+
+        @Override
+        public void initialiseKieEditorForSession(final ProjectDiagram diagram) {
+            AbstractProjectDiagramEditor.this.initialiseKieEditorForSession(diagram);
+        }
+
+        @Override
+        protected void saveOrUpdate(final String commitMessage) {
             final ObservablePath diagramPath = versionRecordManager.getCurrentPath();
             projectDiagramServices.saveOrUpdate(diagramPath,
                                                 getDiagram(),
@@ -254,43 +174,13 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                                         onSaveError(error);
                                                     }
                                                 });
-        });
-        proxy.setShowNoChangesSinceLastSaveMessageConsumer((message) -> getSessionPresenter().getView().showMessage(message));
-        proxy.setHashCodeSupplier(() -> {
-            if (null == getDiagram()) {
-                return 0;
-            }
-            int hash = getDiagram().hashCode();
-            if (null == getCanvasHandler() ||
-                    null == getCanvasHandler().getCanvas() ||
-                    null == getCanvasHandler().getCanvas().getShapes()) {
-                return hash;
-            }
-            Collection<Shape> collectionOfShapes = getCanvasHandler().getCanvas().getShapes();
-            ArrayList<Shape> shapes = new ArrayList<>();
-            shapes.addAll(collectionOfShapes);
-            shapes.sort((a, b) -> (a.getShapeView().getShapeX() == b.getShapeView().getShapeX()) ?
-                    (int) Math.round(a.getShapeView().getShapeY() - b.getShapeView().getShapeY()) :
-                    (int) Math.round(a.getShapeView().getShapeX() - b.getShapeView().getShapeX()));
-            for (Shape shape : shapes) {
-                hash = HashUtil.combineHashCodes(hash,
-                                                 Double.hashCode(shape.getShapeView().getShapeX()),
-                                                 Double.hashCode(shape.getShapeView().getShapeY()));
-            }
-            return hash;
-        });
+        }
 
-        return proxy;
-    }
-
-    protected ProjectDiagramEditorProxy makeXmlEditorProxy() {
-        final ProjectDiagramEditorProxy proxy = new ProjectDiagramEditorProxy();
-        proxy.setContentSupplier(() -> new ProjectDiagramResourceImpl(xmlEditorView.getContent()));
-        proxy.setSaveAfterValidationConsumer(Command::execute);
-        proxy.setSaveAfterUserConfirmationConsumer((commitMessage) -> {
+        @Override
+        protected void saveAsXML(final String commitMessage) {
             final ObservablePath diagramPath = versionRecordManager.getCurrentPath();
             projectDiagramServices.saveAsXml(diagramPath,
-                                             xmlEditorView.getContent(),
+                                             getXMLEditorView().getContent(),
                                              metadata,
                                              commitMessage,
                                              new ServiceCallback<String>() {
@@ -306,122 +196,149 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                                      onSaveError(error);
                                                  }
                                              });
-        });
-        proxy.setShowNoChangesSinceLastSaveMessageConsumer((message) -> notification.fire(new NotificationEvent(message)));
-        proxy.setHashCodeSupplier(() -> xmlEditorView.getContent().hashCode());
-        return proxy;
+        }
+
+        @Override
+        public String getEditorIdentifier() {
+            return AbstractProjectDiagramEditor.this.getEditorIdentifier();
+        }
+
+        @Override
+        public void onLoadError(final ClientRuntimeError error) {
+            final Throwable e = error.getThrowable();
+            if (e instanceof DiagramParsingException) {
+                final DiagramParsingException dpe = (DiagramParsingException) e;
+                final Metadata metadata = dpe.getMetadata();
+                final String xml = dpe.getXml();
+
+                setOriginalHash(xml.hashCode());
+                updateTitle(metadata.getTitle());
+                resetEditorPages(((ProjectMetadata) metadata).getOverview());
+                menuSessionItems.setEnabled(false);
+
+                getXMLEditorView().setReadOnly(isReadOnly);
+                getXMLEditorView().setContent(xml, AceEditorMode.XML);
+                getView().setWidget(getXMLEditorView().asWidget());
+                setEditorProxy(makeXmlEditorProxy());
+                hideLoadingViews();
+                notification.fire(new NotificationEvent(translationService.getValue(DIAGRAM_PARSING_ERROR, Objects.toString(e.getMessage(), "")),
+                                                        NotificationEvent.NotificationType.ERROR));
+
+                Scheduler.get().scheduleDeferred(getXMLEditorView()::onResize);
+            } else {
+                setEditorProxy(makeEditorProxy());
+                showError(error);
+
+                //close editor in case of error when opening the editor
+                placeManager.forceClosePlace(new PathPlaceRequest(versionRecordManager.getCurrentPath(),
+                                                                  getEditorIdentifier()));
+            }
+        }
+    }
+
+    private final AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> editor;
+
+    public AbstractProjectDiagramEditor(final AbstractProjectDiagramEditor.View view,
+                                        final TextEditorView xmlEditorView,
+                                        final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                        final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                        final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
+                                        final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
+                                        final Event<NotificationEvent> notificationEvent,
+                                        final ErrorPopupPresenter errorPopupPresenter,
+                                        final DiagramClientErrorHandler diagramClientErrorHandler,
+                                        final DocumentationView documentationView,
+                                        final R resourceType,
+                                        final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                        final ProjectMessagesListener projectMessagesListener,
+                                        final ClientTranslationService translationService,
+                                        final ClientProjectDiagramService projectDiagramServices,
+                                        final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller) {
+        super(view);
+
+        this.menuSessionItems = menuSessionItems;
+        this.onDiagramFocusEvent = onDiagramFocusEvent;
+        this.onDiagramLostFocusEvent = onDiagramLostFocusEvent;
+        this.translationService = translationService;
+        this.documentationView = documentationView;
+        this.resourceType = resourceType;
+        this.projectMessagesListener = projectMessagesListener;
+        this.projectDiagramServices = projectDiagramServices;
+        this.projectDiagramResourceServiceCaller = projectDiagramResourceServiceCaller;
+
+        this.editor = makeCore(view,
+                               xmlEditorView,
+                               notificationEvent,
+                               editorSessionPresenterInstances,
+                               viewerSessionPresenterInstances,
+                               menuSessionItems,
+                               errorPopupPresenter,
+                               diagramClientErrorHandler,
+                               translationService);
+    }
+
+    protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> makeCore(final AbstractProjectDiagramEditor.View view,
+                                                                                                                                                                    final TextEditorView xmlEditorView,
+                                                                                                                                                                    final Event<NotificationEvent> notificationEvent,
+                                                                                                                                                                    final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                                                                                                                                                    final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                                                                                                                                                    final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                                                                                                                                                    final ErrorPopupPresenter errorPopupPresenter,
+                                                                                                                                                                    final DiagramClientErrorHandler diagramClientErrorHandler,
+                                                                                                                                                                    final ClientTranslationService translationService) {
+        return new ProjectDiagramEditorCore(view,
+                                            xmlEditorView,
+                                            notificationEvent,
+                                            editorSessionPresenterInstances,
+                                            viewerSessionPresenterInstances,
+                                            menuSessionItems,
+                                            errorPopupPresenter,
+                                            diagramClientErrorHandler,
+                                            translationService);
+    }
+
+    @PostConstruct
+    @SuppressWarnings("unchecked")
+    public void init() {
+        title = translationService.getValue(StunnerProjectClientConstants.DIAGRAM_EDITOR_DEFAULT_TITLE);
+        projectMessagesListener.enable();
+        menuSessionItems
+                .setLoadingStarts(this::showLoadingViews)
+                .setLoadingCompleted(this::hideLoadingViews)
+                .setErrorConsumer(editor::showError);
+    }
+
+    protected void doStartUp(final ObservablePath path,
+                             final PlaceRequest place) {
+        init(path,
+             place,
+             resourceType);
+    }
+
+    @Override
+    protected void loadContent() {
+        editor.destroySession();
+        projectDiagramServices.getByPath(versionRecordManager.getCurrentPath(),
+                                         new ServiceCallback<ProjectDiagram>() {
+                                             @Override
+                                             public void onSuccess(final ProjectDiagram item) {
+                                                 editor.open(item);
+                                             }
+
+                                             @Override
+                                             public void onError(final ClientRuntimeError error) {
+                                                 editor.onLoadError(error);
+                                             }
+                                         });
     }
 
     protected boolean isReadOnly() {
         return isReadOnly;
     }
 
-    protected void openSession(final ProjectDiagram diagram) {
-        editorSessionPresenter = Optional.of(newSessionEditorPresenter());
-        editorSessionPresenter.get()
-                .open(diagram,
-                      new SessionPresenter.SessionPresenterCallback<Diagram>() {
-                          @Override
-                          public void afterSessionOpened() {
-
-                          }
-
-                          @Override
-                          public void afterCanvasInitialized() {
-
-                          }
-
-                          @Override
-                          public void onSuccess() {
-                              initialiseKieEditorForSession(diagram);
-                              menuSessionItems.bind(getSession());
-                          }
-
-                          @Override
-                          public void onError(final ClientRuntimeError error) {
-                              onLoadError(error);
-                          }
-                      });
-    }
-
-    protected void openReadOnlySession(final ProjectDiagram diagram) {
-        viewerSessionPresenter = Optional.of(newSessionViewerPresenter());
-        viewerSessionPresenter.get()
-                .open(diagram,
-                      new SessionPresenter.SessionPresenterCallback<Diagram>() {
-                          @Override
-                          public void afterSessionOpened() {
-
-                          }
-
-                          @Override
-                          public void afterCanvasInitialized() {
-
-                          }
-
-                          @Override
-                          public void onSuccess() {
-                              initialiseKieEditorForSession(diagram);
-                              menuSessionItems.bind(getSession());
-                          }
-
-                          @Override
-                          public void onError(final ClientRuntimeError error) {
-                              onLoadError(error);
-                          }
-                      });
-    }
-
-    protected void initialiseKieEditorForSession(final ProjectDiagram diagram) {
-        resetEditorPages(diagram.getMetadata().getOverview());
-        updateTitle(diagram.getMetadata().getTitle());
-        addDocumentationPage(diagram);
-        setOriginalHash(getCurrentDiagramHash());
-        hideLoadingViews();
-        onDiagramLoad();
-    }
-
-    private void addDocumentationPage(ProjectDiagram diagram) {
-        Optional.ofNullable(documentationView.isEnabled())
-                .filter(Boolean.TRUE::equals)
-                .ifPresent(enabled -> {
-                    final String label = translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION);
-                    addPage(new DocumentationPage(documentationView.initialize(diagram),
-                                                  label,
-                                                  //firing the OnDiagramFocusEvent will force the docks to be minimized
-                                                  () -> onDiagramFocusEvent.fire(new OnDiagramFocusEvent()),
-                                                  //check the DocumentationPage is active, the index is 2
-                                                  () -> Objects.equals(2, kieView.getSelectedTabIndex())));
-                });
-    }
-
-    protected void onDiagramLoad() {
-        /* Override this method to trigger some action after a Diagram is loaded. */
-    }
-
-    protected SessionEditorPresenter<EditorSession> newSessionEditorPresenter() {
-        final SessionEditorPresenter<EditorSession> presenter =
-                (SessionEditorPresenter<EditorSession>) editorSessionPresenterInstances.get()
-                        .withToolbar(false)
-                        .withPalette(true)
-                        .displayNotifications(type -> true);
-        getView().setWidget(presenter.getView());
-        return presenter;
-    }
-
-    protected SessionViewerPresenter<ViewerSession> newSessionViewerPresenter() {
-        final SessionViewerPresenter<ViewerSession> presenter =
-                (SessionViewerPresenter<ViewerSession>) viewerSessionPresenterInstances.get()
-                        .withToolbar(false)
-                        .withPalette(false)
-                        .displayNotifications(type -> true);
-        getView().setWidget(presenter.getView());
-        return presenter;
-    }
-
     @Override
     protected void onValidate(final Command finished) {
-        onValidationSuccess();
+        log(Level.INFO, "Validation SUCCESS.");
         hideLoadingViews();
         finished.execute();
     }
@@ -441,7 +358,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     protected void doSave(final Command continueSaveOnceValid) {
-        editorProxy.saveAfterValidation(continueSaveOnceValid);
+        editor.getEditorProxy().saveAfterValidation(continueSaveOnceValid);
     }
 
     /**
@@ -457,7 +374,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     protected void doSave(final String commitMessage) {
-        editorProxy.saveAfterUserConfirmation(commitMessage);
+        editor.getEditorProxy().saveAfterUserConfirmation(commitMessage);
     }
 
     @Override
@@ -481,8 +398,12 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     @Override
+    //Override visibility from KieEditor to allow inner class ProjectDiagramEditorCore access
+    public abstract String getEditorIdentifier();
+
+    @Override
     protected void makeMenuBar() {
-        if (!menuBarInitialzed) {
+        if (!menuBarInitialized) {
             menuSessionItems.populateMenu(fileMenuBuilder);
             makeAdditionalStunnerMenus(fileMenuBuilder);
             if (canUpdateProject()) {
@@ -500,7 +421,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
             fileMenuBuilder
                     .addNewTopLevelMenu(versionRecordManager.buildMenu())
                     .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
-            menuBarInitialzed = true;
+            menuBarInitialized = true;
         }
     }
 
@@ -516,37 +437,21 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     @Override
     protected Supplier<ProjectDiagramResource> getContentSupplier() {
-        return () -> getEditorProxy().getContentSupplier().get();
-    }
-
-    protected ProjectDiagramEditorProxy getEditorProxy() {
-        return editorProxy;
+        return editor.getEditorProxy().getContentSupplier();
     }
 
     @Override
     protected Integer getCurrentContentHash() {
-        return getCurrentDiagramHash();
+        return editor.getCurrentDiagramHash();
     }
 
     protected void doOpen() {
     }
 
-    protected void doFocus() {
-        if (null != getSessionPresenter()) {
-            getSessionPresenter().focus();
-        }
-    }
-
-    protected void doLostFocus() {
-        if (null != getSessionPresenter()) {
-            getSessionPresenter().lostFocus();
-        }
-    }
-
     protected void doClose() {
         menuItems.clear();
         menuSessionItems.destroy();
-        destroySession();
+        editor.destroySession();
     }
 
     protected void showLoadingViews() {
@@ -561,6 +466,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         getView().hideBusyIndicator();
     }
 
+    @SuppressWarnings("unused")
     void onSessionErrorEvent(final @Observes OnSessionErrorEvent errorEvent) {
         if (isSameSession(errorEvent.getSession())) {
             executeWithConfirm(translationService.getValue(StunnerProjectClientConstants.ON_ERROR_CONFIRM_UNDO_LAST_ACTION,
@@ -573,6 +479,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         return null != other && null != getSession() && other.equals(getSession());
     }
 
+    @Override
     public String getTitleText() {
         return title;
     }
@@ -594,33 +501,15 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         } else {
             final String message = CommonConstants.INSTANCE.NoChangesSinceLastSave();
             log(Level.INFO, message);
-            doShowNoChangesSinceLastSaveMessage(message);
+            editor.doShowNoChangesSinceLastSaveMessage(message);
         }
-    }
-
-    protected void doShowNoChangesSinceLastSaveMessage(final String message) {
-        editorProxy.showNoChangesSinceLastSaveMessage(message);
-    }
-
-    protected void destroySession() {
-        //Release existing SessionPresenter
-        editorSessionPresenter.ifPresent(session -> {
-            session.destroy();
-            editorSessionPresenter = Optional.empty();
-        });
-        viewerSessionPresenter.ifPresent(session -> {
-            session.destroy();
-            viewerSessionPresenter = Optional.empty();
-        });
-        editorSessionPresenterInstances.destroyAll();
-        viewerSessionPresenterInstances.destroyAll();
     }
 
     protected void updateTitle(final String title) {
         // Change editor's title.
         this.title = formatTitle(title);
-        changeTitleNotificationEvent.fire(new ChangeTitleWidgetEvent(this.place,
-                                                                     this.title));
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(this.place,
+                                                                this.title));
     }
 
     /**
@@ -643,20 +532,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     private ClientSession getSession() {
-        return null != getSessionPresenter() ? getSessionPresenter().getInstance() : null;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected int getCurrentDiagramHash() {
-        return editorProxy.getEditorHashCode();
-    }
-
-    protected CanvasHandler getCanvasHandler() {
-        return null != getSession() ? getSession().getCanvasHandler() : null;
-    }
-
-    protected ProjectDiagram getDiagram() {
-        return null != getCanvasHandler() ? (ProjectDiagram) getCanvasHandler().getDiagram() : null;
+        return null != editor.getSessionPresenter() ? editor.getSessionPresenter().getInstance() : null;
     }
 
     private void executeWithConfirm(final String message,
@@ -673,122 +549,112 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         popup.show();
     }
 
-    protected View getView() {
-        return (View) baseView;
+    protected AbstractProjectDiagramEditor.View getView() {
+        return (AbstractProjectDiagramEditor.View) baseView;
     }
 
     protected void onSaveSuccess() {
         final String message = translationService.getValue(StunnerProjectClientConstants.DIAGRAM_SAVE_SUCCESSFUL);
         log(Level.INFO,
             message);
-        getSessionPresenter().getView().showMessage(message);
+        editor.getSessionPresenter().getView().showMessage(message);
+        setOriginalHash(editor.getCurrentDiagramHash());
+    }
+
+    @Override
+    public void open(final ProjectDiagram diagram) {
+        editor.open(diagram);
+    }
+
+    @Override
+    public void initialiseKieEditorForSession(final ProjectDiagram diagram) {
+        resetEditorPages(diagram.getMetadata().getOverview());
+        updateTitle(diagram.getMetadata().getTitle());
+        addDocumentationPage(diagram);
         setOriginalHash(getCurrentDiagramHash());
-    }
-
-    protected void onSaveError(final ClientRuntimeError error) {
-        showError(error);
-    }
-
-    private void onValidationSuccess() {
-        log(Level.INFO,
-            "Validation SUCCESS.");
-    }
-
-    protected void onValidationFailed(final Collection<DiagramElementViolation<RuleViolation>> violations) {
-        log(Level.WARNING,
-            "Validation FAILED [violations=" + violations.toString() + "]");
         hideLoadingViews();
+        onDiagramLoad();
     }
 
-    protected void onLoadError(final ClientRuntimeError error) {
-        final Throwable e = error.getThrowable();
-        if (e instanceof DiagramParsingException) {
-            final DiagramParsingException dpe = (DiagramParsingException) e;
-            final Metadata metadata = dpe.getMetadata();
-            final String xml = dpe.getXml();
-
-            setOriginalHash(xml.hashCode());
-            updateTitle(metadata.getTitle());
-            resetEditorPages(((ProjectMetadata) metadata).getOverview());
-            menuSessionItems.setEnabled(false);
-
-            xmlEditorView.setReadOnly(isReadOnly);
-            xmlEditorView.setContent(xml, AceEditorMode.XML);
-            getView().setWidget(xmlEditorView.asWidget());
-            editorProxy = makeXmlEditorProxy();
-            hideLoadingViews();
-            notification.fire(new NotificationEvent(translationService.getValue(DIAGRAM_PARSING_ERROR, Objects.toString(e.getMessage(), "")),
-                                                    NotificationEvent.NotificationType.ERROR));
-
-            Scheduler.get().scheduleDeferred(xmlEditorView::onResize);
-        } else {
-            editorProxy = ProjectDiagramEditorProxy.NULL_EDITOR;
-            showError(error);
-
-            //close editor in case of error when opening the editor
-            placeManager.forceClosePlace(new PathPlaceRequest(versionRecordManager.getCurrentPath(),
-                                                              getEditorIdentifier()));
-        }
+    @SuppressWarnings("unchecked")
+    protected void addDocumentationPage(final ProjectDiagram diagram) {
+        Optional.ofNullable(documentationView.isEnabled())
+                .filter(Boolean.TRUE::equals)
+                .ifPresent(enabled -> {
+                    final String label = translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION);
+                    addPage(new DocumentationPage(documentationView.initialize(diagram),
+                                                  label,
+                                                  //firing the OnDiagramFocusEvent will force the docks to be minimized
+                                                  () -> onDiagramFocusEvent.fire(new OnDiagramFocusEvent()),
+                                                  //check the DocumentationPage is active, the index is 2
+                                                  () -> Objects.equals(2, kieView.getSelectedTabIndex())));
+                });
     }
 
-    protected void showError(final ClientRuntimeError error) {
-        diagramClientErrorHandler.handleError(error, this::showError);
-        log(Level.SEVERE, error.toString());
+    protected void onDiagramLoad() {
+        /* Override this method to trigger some action after a Diagram is loaded. */
     }
 
-    protected void showError(final String message) {
-        errorPopupPresenter.showMessage(message);
-        hideLoadingViews();
+    @Override
+    public SessionEditorPresenter<EditorSession> newSessionEditorPresenter() {
+        return editor.newSessionEditorPresenter();
+    }
+
+    @Override
+    public SessionViewerPresenter<ViewerSession> newSessionViewerPresenter() {
+        return editor.newSessionViewerPresenter();
+    }
+
+    @Override
+    public int getCurrentDiagramHash() {
+        return editor.getCurrentDiagramHash();
+    }
+
+    @Override
+    public CanvasHandler getCanvasHandler() {
+        return editor.getCanvasHandler();
+    }
+
+    @Override
+    public void onSaveError(final ClientRuntimeError error) {
+        editor.onSaveError(error);
+    }
+
+    @Override
+    public SessionPresenter<? extends ClientSession, ?, Diagram> getSessionPresenter() {
+        return editor.getSessionPresenter();
+    }
+
+    @Override
+    public void doFocus() {
+        editor.doFocus();
+    }
+
+    @Override
+    public void doLostFocus() {
+        editor.doLostFocus();
     }
 
     protected void log(final Level level,
                        final String message) {
         if (LogConfiguration.loggingIsEnabled()) {
-            LOGGER.log(level,
-                       message);
+            LOGGER.log(level, message);
         }
     }
 
     protected boolean hasUnsavedChanges() {
-        return getCurrentDiagramHash() != originalHash;
+        return editor.getCurrentDiagramHash() != originalHash;
     }
 
     protected ClientTranslationService getTranslationService() {
         return translationService;
     }
 
+    @SuppressWarnings("unused")
     protected void makeAdditionalStunnerMenus(final FileMenuBuilder fileMenuBuilder) {
     }
 
-    public SessionPresenter<? extends ClientSession, ?, Diagram> getSessionPresenter() {
-        if (editorSessionPresenter.isPresent()) {
-            return editorSessionPresenter.get();
-        } else if (viewerSessionPresenter.isPresent()) {
-            return viewerSessionPresenter.get();
-        }
-        return null;
-    }
-
-    public AbstractProjectEditorMenuSessionItems getMenuSessionItems() {
+    public AbstractDiagramEditorMenuSessionItems getMenuSessionItems() {
         return menuSessionItems;
-    }
-
-    //For Unit Testing
-    protected void setEditorSessionPresenter(final SessionEditorPresenter<EditorSession> presenter) {
-        this.editorSessionPresenter = Optional.ofNullable(presenter);
-    }
-
-    //For Unit Testing
-    protected void setReadOnlySessionPresenter(final SessionViewerPresenter<ViewerSession> presenter) {
-        this.viewerSessionPresenter = Optional.ofNullable(presenter);
-    }
-
-    public interface View extends UberView<AbstractProjectDiagramEditor>,
-                                  KieEditorView,
-                                  RequiresResize,
-                                  ProvidesResize,
-                                  IsWidget {
-
-        void setWidget(IsWidget widget);
     }
 }

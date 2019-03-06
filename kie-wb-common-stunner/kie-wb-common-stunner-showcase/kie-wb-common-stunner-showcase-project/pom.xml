@@ -26,7 +26,6 @@
     <version>7.21.0-SNAPSHOT</version>
   </parent>
 
-
   <artifactId>kie-wb-common-stunner-showcase-project</artifactId>
   <packaging>war</packaging>
 
@@ -729,6 +728,23 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-submarine-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-submarine-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench</groupId>
+      <artifactId>kie-wb-common-submarine-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Case Management -->
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
@@ -1373,6 +1389,9 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-project-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-project-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-submarine-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-submarine-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench:kie-wb-common-submarine-client</compileSourcesArtifact>
 
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-case-mgmt-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-case-mgmt-client</compileSourcesArtifact>

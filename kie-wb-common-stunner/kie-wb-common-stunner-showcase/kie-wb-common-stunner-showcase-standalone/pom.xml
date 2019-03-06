@@ -482,10 +482,15 @@
     </dependency>
 
     <!-- KIE WB Common Screens. -->
-
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-backend</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.widgets</groupId>
+      <artifactId>kie-wb-common-ui</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Stunner. -->
@@ -618,6 +623,24 @@
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-forms-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Submarine -->
+    <dependency>
+      <groupId>org.kie.workbench</groupId>
+      <artifactId>kie-wb-common-submarine-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-submarine-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-submarine-client</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -909,10 +932,10 @@
 
           <compileSourcesArtifacts>
 
+            <!-- KIE Soup -->
+            <compileSourcesArtifact>org.kie.soup:kie-soup-commons</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.soup:kie-soup-project-datamodel-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.soup:kie-soup-project-datamodel-commons</compileSourcesArtifact>
-
-            <compileSourcesArtifact>org.kie.soup:kie-soup-commons</compileSourcesArtifact>
 
             <!-- UberFire, Errai & Drools. -->
             <compileSourcesArtifact>org.uberfire:uberfire-commons</compileSourcesArtifact>
@@ -937,12 +960,18 @@
             <compileSourcesArtifact>org.uberfire:uberfire-services-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-workingset-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-workingset-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.jboss.errai:errai-data-binding</compileSourcesArtifact>
-            <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-datamodel-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-data-modeller-core</compileSourcesArtifact>
-
+            <compileSourcesArtifact>org.uberfire:uberfire-message-console-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-message-console-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-ssh-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-ssh-client</compileSourcesArtifact>
+
+            <compileSourcesArtifact>org.jboss.errai:errai-data-binding</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.widgets:kie-wb-common-ui</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.profile:kie-wb-common-profile-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-datamodel-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-data-modeller-core</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-services-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench:kie-wb-common-submarine-client</compileSourcesArtifact>
 
             <!-- UberFire extensions -->
             <compileSourcesArtifact>org.uberfire:uberfire-social-activities-api</compileSourcesArtifact>
@@ -1006,6 +1035,8 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-case-mgmt-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-submarine-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-submarine-client</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
         </configuration>

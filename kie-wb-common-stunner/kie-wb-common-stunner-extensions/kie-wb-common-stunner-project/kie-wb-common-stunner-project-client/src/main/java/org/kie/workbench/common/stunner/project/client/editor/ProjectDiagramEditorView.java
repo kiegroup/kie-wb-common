@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kie.workbench.common.stunner.project.client.editor;
 
 import javax.annotation.PreDestroy;
@@ -36,8 +35,6 @@ public class ProjectDiagramEditorView
     @DataField
     private ResizeFlowPanel editorPanel;
 
-    private AbstractProjectDiagramEditor presenter;
-
     protected ProjectDiagramEditorView() {
         //CDI proxy
     }
@@ -45,11 +42,6 @@ public class ProjectDiagramEditorView
     @Inject
     public ProjectDiagramEditorView(final ResizeFlowPanel editorPanel) {
         this.editorPanel = editorPanel;
-    }
-
-    @Override
-    public void init(final AbstractProjectDiagramEditor presenter) {
-        this.presenter = presenter;
     }
 
     @Override
@@ -73,6 +65,5 @@ public class ProjectDiagramEditorView
     public void destroy() {
         editorPanel.clear();
         editorPanel.removeFromParent();
-        presenter = null;
     }
 }

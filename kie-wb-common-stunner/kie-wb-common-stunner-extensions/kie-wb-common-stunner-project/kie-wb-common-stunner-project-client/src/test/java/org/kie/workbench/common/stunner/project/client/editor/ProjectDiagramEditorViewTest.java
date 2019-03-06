@@ -23,6 +23,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.submarine.client.editor.DiagramEditorView;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
 import static org.mockito.Matchers.eq;
@@ -42,13 +43,13 @@ public class ProjectDiagramEditorViewTest {
 
     private ResizeFlowPanel editorPanel;
 
-    private ProjectDiagramEditorView tested;
+    private DiagramEditorView tested;
 
     @Before
     public void setup() throws Exception {
         this.parent = GWT.create(SimplePanel.class);
         this.editorPanel = GWT.create(ResizeFlowPanel.class);
-        this.tested = spy(new ProjectDiagramEditorView(editorPanel));
+        this.tested = spy(new DiagramEditorView(editorPanel));
         when(tested.getParent()).thenReturn(parent);
         when(parent.getOffsetWidth()).thenReturn(WIDTH);
         when(parent.getOffsetHeight()).thenReturn(HEIGHT);

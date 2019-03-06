@@ -75,7 +75,6 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
                        final Package projectPkg,
                        final Optional<String> projectType,
                        final ServiceCallback<Path> callback) {
-
         diagramServiceCaller.call((RemoteCallback<Path>) callback::onSuccess,
                                   (message, throwable) -> {
                                       callback.onError(createOnErrorHandler(throwable, name, projectPkg));
@@ -124,15 +123,14 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
 
     private ClientRuntimeError createOnErrorHandler(final Throwable throwable,
                                                     final String name,
-                                                    final Package projectPkg){
-      String FileAlreadyExistsExceptionClassName = "org.uberfire.java.nio.file.FileAlreadyExistsException";
-      if(throwable.getClass().getCanonicalName().equals(FileAlreadyExistsExceptionClassName)){
-          String message = translationService.getValue(StunnerProjectClientMessages.BUSINESS_PROCESS_ALREADY_EXISTS,
-                                                 projectPkg.getPackageName()+"."+name);
-          return new ClientRuntimeError(message, throwable);
-      }else{
-          return new ClientRuntimeError(throwable);
-      }
+                                                    final Package projectPkg) {
+        String FileAlreadyExistsExceptionClassName = "org.uberfire.java.nio.file.FileAlreadyExistsException";
+        if (throwable.getClass().getCanonicalName().equals(FileAlreadyExistsExceptionClassName)) {
+            String message = translationService.getValue(StunnerProjectClientMessages.BUSINESS_PROCESS_ALREADY_EXISTS,
+                                                         projectPkg.getPackageName() + "." + name);
+            return new ClientRuntimeError(message, throwable);
+        } else {
+            return new ClientRuntimeError(throwable);
+        }
     }
-
 }

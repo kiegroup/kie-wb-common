@@ -23,6 +23,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -40,6 +42,7 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.Sessio
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
@@ -53,29 +56,29 @@ import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.preferences.StunnerDiagramEditorPreferences;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientConstants;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
-import org.kie.workbench.common.stunner.project.client.session.EditorSessionCommands;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
-import org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource;
-import org.kie.workbench.common.stunner.project.editor.impl.ProjectDiagramResourceImpl;
+import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramResource;
+import org.kie.workbench.common.stunner.project.diagram.editor.impl.ProjectDiagramResourceImpl;
+import org.kie.workbench.common.stunner.project.diagram.impl.ProjectDiagramImpl;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
-import org.kie.workbench.common.stunner.project.service.ProjectDiagramService;
+import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
 import org.kie.workbench.common.widgets.client.docks.DefaultEditorDock;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilderImpl;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateValidator;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -104,11 +107,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource.Type.PROJECT_DIAGRAM;
-import static org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource.Type.XML_DIAGRAM;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
@@ -125,6 +125,8 @@ import static org.mockito.Mockito.when;
 public class AbstractProjectDiagramEditorTest {
 
     private static final String TITLE = "title";
+
+    private static final String VIEWER_SESSION_XML = "xml";
 
     @Mock
     protected PerspectiveManager perspectiveManagerMock;
@@ -148,9 +150,6 @@ public class AbstractProjectDiagramEditorTest {
     protected SavePopUpPresenter savePopUpPresenter;
 
     @Mock
-    protected EventSourceMock<NotificationEvent> notification;
-
-    @Mock
     protected ClientProjectDiagramService clientProjectDiagramService;
 
     @Mock
@@ -162,7 +161,10 @@ public class AbstractProjectDiagramEditorTest {
     protected ManagedInstance<SessionViewerPresenter<ViewerSession>> sessionViewerPresenters;
 
     @Mock
-    protected AbstractProjectEditorMenuSessionItems projectMenuSessionItems;
+    protected AbstractCanvasHandler canvasHandler;
+
+    @Mock
+    protected AbstractDiagramEditorMenuSessionItems projectMenuSessionItems;
 
     @Mock
     protected EventSourceMock<OnDiagramFocusEvent> onDiagramFocusEvent;
@@ -171,10 +173,15 @@ public class AbstractProjectDiagramEditorTest {
     protected EventSourceMock<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
 
     @Mock
-    protected BasicFileMenuBuilder menuBuilder;
+    protected EventSourceMock<NotificationEvent> notificationEvent;
 
     @Mock
     protected VersionRecordManager versionRecordManager;
+
+    @Mock
+    @SuppressWarnings("unused")
+    //This is injected into FileMenuBuilderImpl by the @InjectMocks annotation
+    protected BasicFileMenuBuilder menuBuilder;
 
     @Spy
     @InjectMocks
@@ -185,44 +192,61 @@ public class AbstractProjectDiagramEditorTest {
 
     @Mock
     protected WorkspaceProjectContext workbenchContext;
+
     @Mock
     protected ProjectMessagesListener projectMessagesListener;
+
     protected ClientResourceType resourceType;
+
     @Mock
     protected DiagramClientErrorHandler diagramClientErrorHandler;
+
     @Mock
     protected ClientTranslationService translationService;
+
     @Mock
     protected AlertsButtonMenuItemBuilder alertsButtonMenuItemBuilder;
+
     @Mock
     protected SessionPresenter.View sessionPresenterView;
+
     @Mock
     protected EditorSession editorSession;
+
     @Mock
     protected ViewerSession viewerSession;
+
     @Mock
     protected ObservablePath filePath;
+
     @Mock
     protected KieEditorWrapperView kieView;
+
     @Mock
     protected OverviewWidgetPresenter overviewWidget;
+
     @Mock
     protected TextEditorView xmlEditorView;
+
     @Mock
     protected Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller;
-    @Mock
-    protected StunnerDiagramEditorPreferences diagramEditorPreferences;
-    @Mock
-    protected Caller<ProjectDiagramService> diagramServiceCaller;
-    protected AbstractProjectDiagramEditor<ClientResourceTypeMock> presenter;
+
     @Mock
     protected DefaultEditorDock defaultEditorDock;
-    @Captor
-    private ArgumentCaptor<Consumer<EditorSession>> clientSessionConsumerCaptor;
-    @Captor
-    private ArgumentCaptor<SessionPresenter.SessionPresenterCallback> clientSessionPresenterCallbackCaptor;
+
     @Mock
     private DocumentationView viewDocumentation;
+
+    @Mock
+    protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> presenterCore;
+
+    protected boolean isReadOnly = false;
+
+    abstract class ClientResourceTypeMock implements ClientResourceType {
+
+    }
+
+    protected AbstractProjectDiagramEditor<ClientResourceTypeMock> presenter;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -234,6 +258,9 @@ public class AbstractProjectDiagramEditorTest {
         when(sessionEditorPresenter.withPalette(anyBoolean())).thenReturn(sessionEditorPresenter);
         when(sessionEditorPresenter.displayNotifications(any(Predicate.class))).thenReturn(sessionEditorPresenter);
         when(sessionEditorPresenter.getView()).thenReturn(sessionPresenterView);
+        when(sessionEditorPresenter.getSession()).thenReturn(Optional.of(editorSession));
+        when(editorSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
         doAnswer(invocation -> {
             Diagram diagram1 = (Diagram) invocation.getArguments()[0];
             SessionPresenter.SessionPresenterCallback callback = (SessionPresenter.SessionPresenterCallback) invocation.getArguments()[1];
@@ -248,6 +275,10 @@ public class AbstractProjectDiagramEditorTest {
         when(sessionViewerPresenter.withPalette(anyBoolean())).thenReturn(sessionViewerPresenter);
         when(sessionViewerPresenter.displayNotifications(any(Predicate.class))).thenReturn(sessionViewerPresenter);
         when(sessionViewerPresenter.getView()).thenReturn(sessionPresenterView);
+        when(sessionViewerPresenter.getSession()).thenReturn(Optional.of(viewerSession));
+        when(viewerSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(xmlEditorView.getContent()).thenReturn(VIEWER_SESSION_XML);
         doAnswer(invocation -> {
             Diagram diagram1 = (Diagram) invocation.getArguments()[0];
             SessionPresenter.SessionPresenterCallback callback = (SessionPresenter.SessionPresenterCallback) invocation.getArguments()[1];
@@ -261,6 +292,7 @@ public class AbstractProjectDiagramEditorTest {
         when(getMenuSessionItems().setErrorConsumer(any(Consumer.class))).thenReturn(getMenuSessionItems());
         when(getMenuSessionItems().setLoadingCompleted(any(Command.class))).thenReturn(getMenuSessionItems());
         when(getMenuSessionItems().setLoadingStarts(any(Command.class))).thenReturn(getMenuSessionItems());
+
         resourceType = mockResourceType();
         presenter = createDiagramEditor();
         presenter.init();
@@ -277,30 +309,29 @@ public class AbstractProjectDiagramEditorTest {
         return resourceType;
     }
 
-    protected AbstractProjectEditorMenuSessionItems getMenuSessionItems() {
+    protected AbstractDiagramEditorMenuSessionItems getMenuSessionItems() {
         return projectMenuSessionItems;
     }
 
     @SuppressWarnings("unchecked")
     protected AbstractProjectDiagramEditor createDiagramEditor() {
         return spy(new AbstractProjectDiagramEditor<ClientResourceTypeMock>(view,
-                                                                            viewDocumentation,
-                                                                            placeManager,
-                                                                            errorPopupPresenter,
-                                                                            changeTitleNotificationEvent,
-                                                                            savePopUpPresenter,
-                                                                            (ClientResourceTypeMock) getResourceType(),
-                                                                            clientProjectDiagramService,
+                                                                            xmlEditorView,
                                                                             sessionEditorPresenters,
                                                                             sessionViewerPresenters,
-                                                                            getMenuSessionItems(),
                                                                             onDiagramFocusEvent,
                                                                             onDiagramLostFocusEvent,
-                                                                            projectMessagesListener,
+                                                                            notificationEvent,
+                                                                            errorPopupPresenter,
                                                                             diagramClientErrorHandler,
+                                                                            viewDocumentation,
+                                                                            (ClientResourceTypeMock) getResourceType(),
+                                                                            getMenuSessionItems(),
+                                                                            projectMessagesListener,
                                                                             translationService,
-                                                                            xmlEditorView,
+                                                                            clientProjectDiagramService,
                                                                             projectDiagramResourceServiceCaller) {
+
             {
                 docks = AbstractProjectDiagramEditorTest.this.defaultEditorDock;
                 perspectiveManager = AbstractProjectDiagramEditorTest.this.perspectiveManagerMock;
@@ -311,12 +342,42 @@ public class AbstractProjectDiagramEditorTest {
                 alertsButtonMenuItemBuilder = AbstractProjectDiagramEditorTest.this.alertsButtonMenuItemBuilder;
                 kieView = AbstractProjectDiagramEditorTest.this.kieView;
                 overviewWidget = AbstractProjectDiagramEditorTest.this.overviewWidget;
-                notification = AbstractProjectDiagramEditorTest.this.notification;
+                notification = AbstractProjectDiagramEditorTest.this.notificationEvent;
+                placeManager = AbstractProjectDiagramEditorTest.this.placeManager;
+                changeTitleNotification = AbstractProjectDiagramEditorTest.this.changeTitleNotificationEvent;
+                savePopUpPresenter = AbstractProjectDiagramEditorTest.this.savePopUpPresenter;
             }
 
             @Override
-            protected String getEditorIdentifier() {
+            protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> makeCore(final AbstractProjectDiagramEditor.View view,
+                                                                                                                                                                            final TextEditorView xmlEditorView,
+                                                                                                                                                                            final Event<NotificationEvent> notificationEvent,
+                                                                                                                                                                            final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                                                                                                                                                            final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                                                                                                                                                            final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                                                                                                                                                            final ErrorPopupPresenter errorPopupPresenter,
+                                                                                                                                                                            final DiagramClientErrorHandler diagramClientErrorHandler,
+                                                                                                                                                                            final ClientTranslationService translationService) {
+                presenterCore = spy(super.makeCore(view,
+                                                   xmlEditorView,
+                                                   notificationEvent,
+                                                   editorSessionPresenterInstances,
+                                                   viewerSessionPresenterInstances,
+                                                   menuSessionItems,
+                                                   errorPopupPresenter,
+                                                   diagramClientErrorHandler,
+                                                   translationService));
+                return presenterCore;
+            }
+
+            @Override
+            public String getEditorIdentifier() {
                 return null;
+            }
+
+            @Override
+            protected boolean isReadOnly() {
+                return AbstractProjectDiagramEditorTest.this.isReadOnly;
             }
         });
     }
@@ -386,7 +447,8 @@ public class AbstractProjectDiagramEditorTest {
         verify(sessionEditorPresenter).open(eq(diagram),
                                             any(SessionPresenter.SessionPresenterCallback.class));
 
-        verify(presenter).setOriginalHash(anyInt());
+        assertEquals(diagram.hashCode(),
+                     presenter.getCurrentDiagramHash());
         verify(view).hideBusyIndicator();
 
         //Verify Overview widget was setup. It'd be nice to just verify(presenter).resetEditorPages(..) but it is protected
@@ -396,15 +458,13 @@ public class AbstractProjectDiagramEditorTest {
         verify(kieView).addMainEditorPage(eq(view));
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
-
-        verify(presenter).onDiagramLoad();
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testCloseEditor() {
         SessionPresenter sessionPresenter = mock(SessionPresenter.class);
-        presenter.setEditorSessionPresenter(sessionEditorPresenter);
+        presenterCore.setEditorSessionPresenter(sessionEditorPresenter);
         presenter.doClose();
         verify(getMenuSessionItems(), times(1)).destroy();
         verify(sessionEditorPresenter, times(1)).destroy();
@@ -414,11 +474,13 @@ public class AbstractProjectDiagramEditorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testOpenReadOnly() {
-        when(presenter.isReadOnly()).thenReturn(true);
+        this.isReadOnly = true;
+
         Overview overview = open();
 
         verify(view).showLoading();
-        verify(presenter).setOriginalHash(anyInt());
+        assertEquals(diagram.hashCode(),
+                     presenter.getCurrentDiagramHash());
 
         verify(view).setWidget(eq(sessionPresenterView));
         verify(sessionViewerPresenter).withToolbar(eq(false));
@@ -433,10 +495,8 @@ public class AbstractProjectDiagramEditorTest {
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
 
-        verify(presenter).onDiagramLoad();
-
         assertEquals(sessionViewerPresenter,
-                     presenter.getSessionPresenter());
+                     presenterCore.getSessionPresenter());
     }
 
     @Test
@@ -445,7 +505,8 @@ public class AbstractProjectDiagramEditorTest {
         final String xml = "xml";
         final Overview overview = openInvalidBPMNFile(xml);
 
-        verify(presenter).setOriginalHash(eq(xml.hashCode()));
+        assertEquals(VIEWER_SESSION_XML.hashCode(),
+                     presenter.getCurrentDiagramHash());
         verify(view).setWidget(any(IsWidget.class));
         verify(view).hideBusyIndicator();
 
@@ -460,7 +521,7 @@ public class AbstractProjectDiagramEditorTest {
         verify(getMenuSessionItems()).setEnabled(eq(false));
         verify(xmlEditorView).setReadOnly(eq(false));
         verify(xmlEditorView).setContent(eq(xml), eq(AceEditorMode.XML));
-        verify(presenter).makeXmlEditorProxy();
+        verify(presenterCore).makeXmlEditorProxy();
     }
 
     @SuppressWarnings("unchecked")
@@ -486,7 +547,7 @@ public class AbstractProjectDiagramEditorTest {
 
         presenter.loadContent();
 
-        verify(presenter).destroySession();
+        verify(presenterCore).destroySession();
 
         return overview;
     }
@@ -509,6 +570,7 @@ public class AbstractProjectDiagramEditorTest {
     public void testIsDirty() {
         open();
 
+        presenter.setOriginalHash(presenter.getCurrentDiagramHash());
         assertFalse(presenter.isDirty(presenter.getCurrentDiagramHash()));
         presenter.setOriginalHash(~~(presenter.getCurrentDiagramHash() + 1));
         assertTrue(presenter.isDirty(presenter.getCurrentDiagramHash()));
@@ -518,6 +580,7 @@ public class AbstractProjectDiagramEditorTest {
     public void testHasChanges() {
         open();
 
+        presenter.setOriginalHash(presenter.getCurrentDiagramHash());
         assertFalse(presenter.hasUnsavedChanges());
         presenter.setOriginalHash(~~(presenter.getCurrentDiagramHash() + 1));
         assertTrue(presenter.hasUnsavedChanges());
@@ -534,7 +597,7 @@ public class AbstractProjectDiagramEditorTest {
 
         serviceCallback.onError(cre);
 
-        verify(presenter).onSaveError(eq(cre));
+        verify(presenterCore).onSaveError(eq(cre));
         final ArgumentCaptor<Consumer> consumerCaptor = ArgumentCaptor.forClass(Consumer.class);
         verify(diagramClientErrorHandler).handleError(eq(cre), consumerCaptor.capture());
 
@@ -549,7 +612,7 @@ public class AbstractProjectDiagramEditorTest {
         final String commitMessage = "message";
         final Overview overview = open();
         final Metadata metadata = overview.getMetadata();
-        doReturn(diagram).when(presenter).getDiagram();
+        doReturn(diagram).when(presenterCore).getDiagram();
         EditorSessionCommands editorSessionCommands = mock(EditorSessionCommands.class);
         when(getMenuSessionItems().getCommands()).thenReturn(editorSessionCommands);
         ValidateSessionCommand validateSessionCommand = mock(ValidateSessionCommand.class);
@@ -604,7 +667,7 @@ public class AbstractProjectDiagramEditorTest {
     @SuppressWarnings("unchecked")
     public void testStunnerSave_ValidationUnsuccessful() {
         assertBasicStunnerSaveOperation(false);
-        verify(presenter).onValidationFailed(any(Collection.class));
+        verify(presenterCore).onValidationFailed(any(Collection.class));
         verify(view, atLeastOnce()).hideBusyIndicator();
     }
 
@@ -619,7 +682,7 @@ public class AbstractProjectDiagramEditorTest {
         final Path path = versionRecordManager.getCurrentPath();
         verify(versionRecordManager).reloadVersions(eq(path));
         ArgumentCaptor<NotificationEvent> notificationEventCaptor = ArgumentCaptor.forClass(NotificationEvent.class);
-        verify(notification, times(2)).fire(notificationEventCaptor.capture());
+        verify(notificationEvent, times(2)).fire(notificationEventCaptor.capture());
 
         final NotificationEvent notificationEvent = notificationEventCaptor.getValue();
         assertEquals("ItemSavedSuccessfully",
@@ -630,8 +693,7 @@ public class AbstractProjectDiagramEditorTest {
 
     @Test
     public void testProxyContentSupplierWhenXmlEditorIsMade() {
-
-        final ProjectDiagramEditorProxy editorProxy = presenter.makeXmlEditorProxy();
+        final ProjectDiagramEditorProxy<ProjectDiagramResource> editorProxy = presenterCore.makeXmlEditorProxy();
         final Supplier<ProjectDiagramResource> contentSupplier = editorProxy.getContentSupplier();
         final String content = "<xml>";
 
@@ -641,29 +703,27 @@ public class AbstractProjectDiagramEditorTest {
 
         assertEquals(Optional.empty(), resource.projectDiagram());
         assertEquals(Optional.of(content), resource.xmlDiagram());
-        assertEquals(XML_DIAGRAM, resource.getType());
+        assertEquals(DiagramType.XML_DIAGRAM, resource.getType());
     }
 
     @Test
     public void testProxyContentSupplierWhenStunnerEditorIsMade() {
-
-        final ProjectDiagramEditorProxy editorProxy = presenter.makeStunnerEditorProxy();
+        final ProjectDiagramEditorProxy<ProjectDiagramResource> editorProxy = presenterCore.makeStunnerEditorProxy();
         final Supplier<ProjectDiagramResource> contentSupplier = editorProxy.getContentSupplier();
-        final ProjectDiagram diagram = mock(ProjectDiagram.class);
+        final ProjectDiagramImpl diagram = mock(ProjectDiagramImpl.class);
 
-        doReturn(diagram).when(presenter).getDiagram();
+        doReturn(diagram).when(presenterCore).getDiagram();
 
         final ProjectDiagramResource resource = contentSupplier.get();
 
         assertEquals(Optional.of(diagram), resource.projectDiagram());
         assertEquals(Optional.empty(), resource.xmlDiagram());
-        assertEquals(PROJECT_DIAGRAM, resource.getType());
+        assertEquals(DiagramType.PROJECT_DIAGRAM, resource.getType());
     }
 
     @Test
     public void testProxyContentSupplierWhenNoEditorIsMade() {
-
-        final Supplier<ProjectDiagramResource> contentSupplier = presenter.editorProxy.getContentSupplier();
+        final Supplier<ProjectDiagramResource> contentSupplier = presenterCore.getEditorProxy().getContentSupplier();
         final ProjectDiagramResource resource = contentSupplier.get();
 
         assertNotNull(contentSupplier);
@@ -672,9 +732,7 @@ public class AbstractProjectDiagramEditorTest {
 
     @Test
     public void testGetSaveAndRenameServiceCaller() {
-
         final Caller<ProjectDiagramResourceService> expectedCaller = this.projectDiagramResourceServiceCaller;
-
         final Caller<? extends SupportsSaveAndRename<ProjectDiagramResource, Metadata>> actualCaller = presenter.getSaveAndRenameServiceCaller();
 
         assertEquals(expectedCaller, actualCaller);
@@ -682,12 +740,11 @@ public class AbstractProjectDiagramEditorTest {
 
     @Test
     public void testGetContentSupplier() {
-
-        final ProjectDiagram expectedProjectDiagram = mock(ProjectDiagram.class);
+        final ProjectDiagramImpl expectedProjectDiagram = mock(ProjectDiagramImpl.class);
         final ProjectDiagramEditorProxy editorProxy = mock(ProjectDiagramEditorProxy.class);
-        final ProjectDiagramResource expectedResource = new ProjectDiagramResourceImpl(expectedProjectDiagram);
+        final ProjectDiagramResourceImpl expectedResource = new ProjectDiagramResourceImpl(expectedProjectDiagram);
 
-        doReturn(editorProxy).when(presenter).getEditorProxy();
+        doReturn(editorProxy).when(presenterCore).getEditorProxy();
 
         when(editorProxy.getContentSupplier()).thenReturn(() -> expectedResource);
 
@@ -698,10 +755,9 @@ public class AbstractProjectDiagramEditorTest {
 
     @Test
     public void testGetCurrentContentHash() {
-
         final Integer expectedContentHash = 42;
 
-        doReturn(expectedContentHash).when(presenter).getCurrentDiagramHash();
+        doReturn(expectedContentHash).when(presenterCore).getCurrentDiagramHash();
 
         final Integer actualContentHash = presenter.getCurrentContentHash();
 
@@ -754,7 +810,7 @@ public class AbstractProjectDiagramEditorTest {
 
         serviceCallback.onError(cre);
 
-        verify(presenter).onSaveError(eq(cre));
+        verify(presenterCore).onSaveError(eq(cre));
         final ArgumentCaptor<Consumer> consumerCaptor = ArgumentCaptor.forClass(Consumer.class);
         verify(diagramClientErrorHandler).handleError(eq(cre), consumerCaptor.capture());
 
@@ -793,9 +849,5 @@ public class AbstractProjectDiagramEditorTest {
 
         verify(onDiagramFocusEvent).fire(any());
         verify(defaultEditorDock).show();
-    }
-
-    abstract class ClientResourceTypeMock implements ClientResourceType {
-
     }
 }

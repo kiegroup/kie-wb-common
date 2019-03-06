@@ -24,8 +24,10 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.screens.DiagramEditorExplorerScreen;
+import org.kie.workbench.common.stunner.submarine.client.screens.DiagramEditorPropertiesScreen;
 import org.kie.workbench.common.widgets.client.docks.AbstractWorkbenchDocksHandler;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.workbench.docks.UberfireDock;
@@ -43,11 +45,11 @@ public class StunnerDocksHandler extends AbstractWorkbenchDocksHandler {
 
         result.add(new UberfireDock(UberfireDockPosition.EAST,
                                     "PENCIL_SQUARE_O",
-                                    new DefaultPlaceRequest("ProjectDiagramPropertiesScreen"),
+                                    new DefaultPlaceRequest(DiagramEditorPropertiesScreen.SCREEN_ID),
                                     perspectiveIdentifier).withSize(450).withLabel(constants.DocksStunnerPropertiesTitle()));
         result.add(new UberfireDock(UberfireDockPosition.EAST,
                                     "EYE",
-                                    new DefaultPlaceRequest("ProjectDiagramExplorerScreen"),
+                                    new DefaultPlaceRequest(DiagramEditorExplorerScreen.SCREEN_ID),
                                     perspectiveIdentifier).withSize(450).withLabel(constants.DocksStunnerExplorerTitle()));
         return result;
     }

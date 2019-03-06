@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramLoseFocusEvent;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 

@@ -22,11 +22,11 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.client.widgets.popups.PopupUtil;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
-import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorMenuItemsBuilder;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuItemsBuilder;
 
 @Dependent
 @Typed(BPMNProjectDiagramEditorMenuItemsBuilder.class)
-public class BPMNProjectDiagramEditorMenuItemsBuilder extends AbstractProjectDiagramEditorMenuItemsBuilder {
+public class BPMNProjectDiagramEditorMenuItemsBuilder extends AbstractDiagramEditorMenuItemsBuilder {
 
     @SuppressWarnings("unused")
     public BPMNProjectDiagramEditorMenuItemsBuilder() {

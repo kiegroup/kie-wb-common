@@ -18,29 +18,46 @@ package org.kie.workbench.common.stunner.bpmn.project.client.editor;
 
 import java.util.logging.Level;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.project.client.resources.BPMNClientConstants;
 import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramResourceType;
 import org.kie.workbench.common.stunner.client.widgets.popups.PopupUtil;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
+import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorCore;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
-import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.project.client.editor.ProjectDiagramEditorProxy;
+import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
+import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
+import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramResource;
+import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.views.pfly.widgets.Button;
 import org.uberfire.client.views.pfly.widgets.InlineNotification;
+import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
+import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -59,7 +76,6 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private static final String MIGRATE_ACTION_WARNING = "MIGRATE_ACTION_WARNING";
     private static final String MIGRATE_ACTION = "MIGRATE_ACTION";
     private static final String MIGRATE_CONFIRM_ACTION = "MIGRATE_CONFIRM_ACTION";
-    private static final String COMMIT_MESSAGE = "COMMIT_MESSAGE";
 
     @Mock
     private EventSourceMock<BPMNMigrateDiagramEvent> migrateDiagramEvent;
@@ -111,7 +127,7 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     }
 
     @Override
-    protected AbstractProjectEditorMenuSessionItems getMenuSessionItems() {
+    protected AbstractDiagramEditorMenuSessionItems getMenuSessionItems() {
         return bpmnMenuSessionItems;
     }
 
@@ -127,25 +143,23 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Override
     protected AbstractProjectDiagramEditor createDiagramEditor() {
         diagramEditor = spy(new BPMNDiagramEditor(view,
-                                                  documentationView,
-                                                  placeManager,
-                                                  errorPopupPresenter,
-                                                  changeTitleNotificationEvent,
-                                                  savePopUpPresenter,
-                                                  (BPMNDiagramResourceType) getResourceType(),
-                                                  clientProjectDiagramService,
+                                                  xmlEditorView,
                                                   sessionEditorPresenters,
                                                   sessionViewerPresenters,
-                                                  bpmnMenuSessionItems,
                                                   onDiagramFocusEvent,
                                                   onDiagramLostFocusEvent,
-                                                  projectMessagesListener,
+                                                  notificationEvent,
+                                                  errorPopupPresenter,
                                                   diagramClientErrorHandler,
+                                                  documentationView,
+                                                  (BPMNDiagramResourceType) getResourceType(),
+                                                  bpmnMenuSessionItems,
+                                                  projectMessagesListener,
                                                   translationService,
+                                                  clientProjectDiagramService,
                                                   projectDiagramResourceServiceCaller,
                                                   migrateDiagramEvent,
-                                                  popupUtil,
-                                                  xmlEditorView) {
+                                                  popupUtil) {
             {
                 docks = defaultEditorDock;
                 perspectiveManager = perspectiveManagerMock;
@@ -157,7 +171,37 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                 place = BPMNDiagramEditorTest.this.currentPlace;
                 kieView = BPMNDiagramEditorTest.this.kieView;
                 overviewWidget = BPMNDiagramEditorTest.this.overviewWidget;
-                notification = BPMNDiagramEditorTest.this.notification;
+                notification = BPMNDiagramEditorTest.this.notificationEvent;
+                placeManager = BPMNDiagramEditorTest.this.placeManager;
+                changeTitleNotification = BPMNDiagramEditorTest.this.changeTitleNotificationEvent;
+                savePopUpPresenter = BPMNDiagramEditorTest.this.savePopUpPresenter;
+            }
+
+            @Override
+            protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> makeCore(final AbstractProjectDiagramEditor.View view,
+                                                                                                                                                                            final TextEditorView xmlEditorView,
+                                                                                                                                                                            final Event<NotificationEvent> notificationEvent,
+                                                                                                                                                                            final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                                                                                                                                                            final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                                                                                                                                                            final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                                                                                                                                                            final ErrorPopupPresenter errorPopupPresenter,
+                                                                                                                                                                            final DiagramClientErrorHandler diagramClientErrorHandler,
+                                                                                                                                                                            final ClientTranslationService translationService) {
+                presenterCore = spy(super.makeCore(view,
+                                                   xmlEditorView,
+                                                   notificationEvent,
+                                                   editorSessionPresenterInstances,
+                                                   viewerSessionPresenterInstances,
+                                                   menuSessionItems,
+                                                   errorPopupPresenter,
+                                                   diagramClientErrorHandler,
+                                                   translationService));
+                return presenterCore;
+            }
+
+            @Override
+            protected boolean isReadOnly() {
+                return BPMNDiagramEditorTest.this.isReadOnly;
             }
 
             @Override

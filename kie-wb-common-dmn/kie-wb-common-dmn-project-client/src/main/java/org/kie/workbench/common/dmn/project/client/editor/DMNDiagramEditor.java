@@ -54,12 +54,12 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchEditor;
@@ -67,10 +67,7 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
-import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.lifecycle.OnClose;
@@ -80,6 +77,7 @@ import org.uberfire.lifecycle.OnMayClose;
 import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static elemental2.dom.DomGlobal.setTimeout;
@@ -90,71 +88,70 @@ import static elemental2.dom.DomGlobal.setTimeout;
 public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramResourceType> {
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
+
     private static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
     private final DecisionNavigatorDock decisionNavigatorDock;
+
     private final LayoutHelper layoutHelper;
-    private final DataTypesPage dataTypesPage;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
+    private final DataTypesPage dataTypesPage;
     private final IncludedModelsPage includedModelsPage;
     private final IncludedModelsPageStateProviderImpl importsPageProvider;
 
     @Inject
     public DMNDiagramEditor(final View view,
-                            final DocumentationView documentationView,
-                            final PlaceManager placeManager,
-                            final ErrorPopupPresenter errorPopupPresenter,
-                            final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
-                            final SavePopUpPresenter savePopUpPresenter,
-                            final DMNDiagramResourceType resourceType,
-                            final ClientProjectDiagramService projectDiagramServices,
+                            final TextEditorView xmlEditorView,
                             final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
                             final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                            final DMNProjectEditorMenuSessionItems menuSessionItems,
                             final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
                             final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
-                            final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
-                            final ProjectMessagesListener projectMessagesListener,
+                            final Event<NotificationEvent> notificationEvent,
+                            final ErrorPopupPresenter errorPopupPresenter,
                             final DiagramClientErrorHandler diagramClientErrorHandler,
+                            final DocumentationView documentationView,
+                            final DMNDiagramResourceType resourceType,
+                            final DMNProjectEditorMenuSessionItems menuSessionItems,
+                            final ProjectMessagesListener projectMessagesListener,
                             final ClientTranslationService translationService,
-                            final TextEditorView xmlEditorView,
+                            final ClientProjectDiagramService projectDiagramServices,
                             final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller,
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                            final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
                             final LayoutHelper layoutHelper,
-                            final DataTypesPage dataTypesPage,
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
+                            final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider) {
         super(view,
-              documentationView,
-              placeManager,
-              errorPopupPresenter,
-              changeTitleNotificationEvent,
-              savePopUpPresenter,
-              resourceType,
-              projectDiagramServices,
+              xmlEditorView,
               editorSessionPresenterInstances,
               viewerSessionPresenterInstances,
-              menuSessionItems,
               onDiagramFocusEvent,
               onDiagramLostFocusEvent,
-              projectMessagesListener,
+              notificationEvent,
+              errorPopupPresenter,
               diagramClientErrorHandler,
+              documentationView,
+              resourceType,
+              menuSessionItems,
+              projectMessagesListener,
               translationService,
-              xmlEditorView,
+              projectDiagramServices,
               projectDiagramResourceServiceCaller);
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.decisionNavigatorDock = decisionNavigatorDock;
         this.layoutHelper = layoutHelper;
-        this.dataTypesPage = dataTypesPage;
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
+        this.dataTypesPage = dataTypesPage;
         this.includedModelsPage = includedModelsPage;
         this.importsPageProvider = importsPageProvider;
     }
@@ -167,7 +164,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     @Override
-    protected void initialiseKieEditorForSession(final ProjectDiagram diagram) {
+    public void initialiseKieEditorForSession(final ProjectDiagram diagram) {
         superInitialiseKieEditorForSession(diagram);
 
         kieView.getMultiPage().addPage(dataTypesPage);
@@ -215,7 +212,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     @Override
-    protected void onDiagramLoad() {
+    public void onDiagramLoad() {
         final Optional<CanvasHandler> canvasHandler = Optional.ofNullable(getCanvasHandler());
 
         canvasHandler.ifPresent(c -> {
@@ -271,7 +268,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     @Override
-    protected String getEditorIdentifier() {
+    public String getEditorIdentifier() {
         return EDITOR_ID;
     }
 
