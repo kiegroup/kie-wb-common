@@ -83,7 +83,7 @@ public class YearsMonthsValueConverter {
         return toDMNString(value);
     }
 
-    String toDMNString(final YearsMonthsValue yearsMonthsValue) {
+    private String toDMNString(final YearsMonthsValue yearsMonthsValue) {
 
         matchSigns(yearsMonthsValue);
 
