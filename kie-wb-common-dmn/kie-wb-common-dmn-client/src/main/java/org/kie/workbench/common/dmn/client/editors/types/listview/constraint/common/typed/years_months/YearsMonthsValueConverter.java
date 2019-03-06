@@ -64,7 +64,7 @@ public class YearsMonthsValueConverter {
         return yearsMonthsValue;
     }
 
-    String getMonths(final String monthString) {
+    private String getMonths(final String monthString) {
         final String[] months = monthString.split(MONTHS);
         if (months.length > 0) {
             return months[0];
