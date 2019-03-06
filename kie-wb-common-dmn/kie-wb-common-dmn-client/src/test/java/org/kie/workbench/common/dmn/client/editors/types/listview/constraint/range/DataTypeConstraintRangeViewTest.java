@@ -33,6 +33,7 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -205,12 +206,27 @@ public class DataTypeConstraintRangeViewTest {
     @Test
     public void testSetPlaceholders() {
 
-        final String attribute = "placeholder";
         final String value = "value";
 
         view.setPlaceholders(value);
 
         verify(startValueComponent).setPlaceholder(value);
         verify(endValueComponent).setPlaceholder(value);
+    }
+
+    @Test
+    public void testSetComponentSelector() {
+
+        final String type = "type";
+
+        view.setComponentSelector(type);
+
+        verify(startValueComponentSelector).makeSelectorForType(type);
+        verify(startValueContainer, times(2)).appendChild(startValueElement); // One time is in setup()
+
+        verify(endValueComponentSelector).makeSelectorForType(type);
+        verify(endValueContainer, times(2)).appendChild(endValueElement); // One time is in setup()
+
+        verify(view, times(2)).setupInputFields(); // One time is in setup()
     }
 }

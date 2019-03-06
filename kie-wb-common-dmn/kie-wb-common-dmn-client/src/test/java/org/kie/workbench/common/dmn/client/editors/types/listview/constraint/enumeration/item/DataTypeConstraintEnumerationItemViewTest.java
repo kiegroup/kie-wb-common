@@ -321,4 +321,18 @@ public class DataTypeConstraintEnumerationItemViewTest {
 
         verify(typedValueSelector).setPlaceholder(value);
     }
+
+    @Test
+    public void testSetComponentSelector() {
+
+        final HTMLElement element = mock(HTMLElement.class);
+        final String type = "type";
+
+        doReturn(element).when(typedValueSelector).getElement();
+
+        view.setComponentSelector(type);
+
+        verify(componentSelector).makeSelectorForType(type);
+        verify(valueInput).appendChild(element);
+    }
 }
