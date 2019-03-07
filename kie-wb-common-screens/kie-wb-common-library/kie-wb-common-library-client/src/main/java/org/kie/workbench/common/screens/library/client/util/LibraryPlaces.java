@@ -42,6 +42,7 @@ import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.messageconsole.client.console.MessageConsoleScreen;
 import org.guvnor.structure.events.AfterDeleteOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
@@ -76,6 +77,7 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.PlaceStatus;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
 import org.uberfire.client.workbench.events.PlaceMaximizedEvent;
 import org.uberfire.client.workbench.events.PlaceMinimizedEvent;
@@ -173,6 +175,12 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private Caller<RepositoryService> repositoryService;
 
+    @Inject
+    private Caller<OrganizationalUnitService> organizationalUnitService;
+
+    @Inject
+    private Promises promises;
+
     private boolean docksReady = false;
 
     private boolean docksHidden = true;
@@ -251,13 +259,19 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private static LibraryPlaces self;
 
-    public static void nativeGoToLibrary() {
-        self.goToLibrary();
+    public static void nativeGoToSpace(final String spaceName) {
+        self.promises.promisify(self.organizationalUnitService, s -> {
+            return s.getOrganizationalUnit(spaceName);
+        }).then(space -> {
+            self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
+            self.goToLibrary();
+            return self.promises.resolve();
+        });
     }
 
     public native void expose() /*-{
         $wnd.AppFormer.LibraryPlaces = {
-            goToLibrary: @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToLibrary()
+            goToSpace: @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToSpace(Ljava/lang/String;)
         }
     }-*/;
 
