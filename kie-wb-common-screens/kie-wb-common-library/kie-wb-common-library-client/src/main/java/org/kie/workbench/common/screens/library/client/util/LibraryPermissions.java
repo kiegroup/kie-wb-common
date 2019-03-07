@@ -17,6 +17,9 @@
 package org.kie.workbench.common.screens.library.client.util;
 
 import java.util.Collection;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
@@ -27,6 +30,7 @@ import org.guvnor.structure.contributors.ContributorType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.jboss.errai.security.shared.api.identity.User;
 
+@ApplicationScoped
 public class LibraryPermissions {
 
     private User user;
@@ -42,7 +46,25 @@ public class LibraryPermissions {
         this.user = user;
         this.organizationalUnitController = organizationalUnitController;
         this.projectController = projectController;
+        self = this;
     }
+
+    @PostConstruct
+    public void init() {
+        expose();
+    }
+
+    private static LibraryPermissions self;
+
+    public static boolean nativeUserCanCreateOrganizationalUnit() {
+        return self.userCanCreateOrganizationalUnit();
+    }
+
+    public native void expose() /*-{
+        $wnd.AppFormer.LibraryPermissions = {
+            canCreateSpace: @org.kie.workbench.common.screens.library.client.util.LibraryPermissions::nativeUserCanCreateOrganizationalUnit()
+        }
+    }-*/;
 
     public boolean userCanReadOrganizationalUnits() {
         return organizationalUnitController.canReadOrgUnits();
