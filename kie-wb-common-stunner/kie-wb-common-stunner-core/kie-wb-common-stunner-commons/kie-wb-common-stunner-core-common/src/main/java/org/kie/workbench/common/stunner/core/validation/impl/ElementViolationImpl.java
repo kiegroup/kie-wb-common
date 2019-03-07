@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.core.validation.ModelBeanViolation;
+import org.kie.workbench.common.stunner.core.validation.Violation;
 
 @Portable
 public final class ElementViolationImpl
@@ -38,13 +39,13 @@ public final class ElementViolationImpl
     private final Collection<RuleViolation> graphViolations;
     private final Collection<ModelBeanViolation> modelViolations;
     private final Collection<DomainViolation> domainViolations;
-    private final ViolationType type;
+    private final Type type;
 
     ElementViolationImpl(final @MapsTo("uuid") String uuid,
                          final @MapsTo("graphViolations") Collection<RuleViolation> graphViolations,
                          final @MapsTo("modelViolations") Collection<ModelBeanViolation> modelViolations,
                          final @MapsTo("domainViolations") Collection<DomainViolation> domainViolations,
-                         final @MapsTo("type") ViolationType type) {
+                         final @MapsTo("type") Type type) {
         this.uuid = uuid;
         this.graphViolations = graphViolations;
         this.modelViolations = modelViolations;
@@ -73,7 +74,7 @@ public final class ElementViolationImpl
     }
 
     @Override
-    public ViolationType getViolationType() {
+    public Type getViolationType() {
         return type;
     }
 
@@ -84,7 +85,7 @@ public final class ElementViolationImpl
         private Collection<RuleViolation> graphViolations = Collections.emptyList();
         private Collection<ModelBeanViolation> modelViolations = Collections.emptyList();
         private Collection<DomainViolation> domainViolations = Collections.emptyList();
-        private ViolationType type;
+        private Violation.Type type;
 
         public Builder setUuid(String uuid) {
             this.uuid = uuid;
@@ -106,7 +107,7 @@ public final class ElementViolationImpl
             return this;
         }
 
-        public Builder setType(ViolationType type) {
+        public Builder setType(Violation.Type type) {
             this.type = type;
             return this;
         }

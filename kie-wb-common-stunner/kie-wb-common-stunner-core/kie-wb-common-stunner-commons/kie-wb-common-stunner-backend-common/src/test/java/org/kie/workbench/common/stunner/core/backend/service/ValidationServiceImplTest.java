@@ -96,7 +96,7 @@ public class ValidationServiceImplTest {
         when(metadata.getDefinitionSetId()).thenReturn(DEF_SET_ID);
         when(diagram.getGraph()).thenReturn(graph);
         when(graph.getUUID()).thenReturn(GRAPH_UUID);
-        when(domainViolation.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
+        when(domainViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
         validationService = new ValidationServiceImpl(validators);
     }
 

@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramValidator;
-import org.kie.workbench.common.stunner.core.validation.Violation;
 
 @Dependent
 public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
@@ -120,7 +119,7 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
     }
 
     private boolean hasViolations(final RuleViolation violation) {
-        return Violation.ViolationType.ERROR.equals(violation.getViolationType()) ||
-                Violation.ViolationType.WARNING.equals(violation.getViolationType());
+        return RuleViolation.Type.ERROR.equals(violation.getViolationType()) ||
+                RuleViolation.Type.WARNING.equals(violation.getViolationType());
     }
 }

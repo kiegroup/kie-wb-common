@@ -31,7 +31,7 @@ public class CardinalityMinRuleViolation extends AbstractRuleViolation {
     public CardinalityMinRuleViolation(final @MapsTo("candidate") String candidate,
                                        final @MapsTo("restrictedOccurrences") Integer restrictedOccurrences,
                                        final @MapsTo("currentOccurrences") Integer currentOccurrences,
-                                       final @MapsTo("type") ViolationType type) {
+                                       final @MapsTo("type") Type type) {
         super(type);
         this.candidate = candidate;
         this.restrictedOccurrences = restrictedOccurrences;

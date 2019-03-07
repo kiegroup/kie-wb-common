@@ -53,12 +53,12 @@ import org.kie.workbench.common.stunner.core.graph.processing.index.bounds.Graph
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleSet;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
 import org.kie.workbench.common.stunner.core.rule.context.CardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.context.impl.RuleContextBuilder;
 import org.kie.workbench.common.stunner.core.rule.violations.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.core.validation.Violation;
 
 public abstract class AbstractElementBuilderControl extends AbstractCanvasHandlerControl<AbstractCanvasHandler>
         implements ElementBuilderControl<AbstractCanvasHandler> {
@@ -355,7 +355,7 @@ public abstract class AbstractElementBuilderControl extends AbstractCanvasHandle
     }
 
     protected boolean isValid(final RuleViolations violations) {
-        return !violations.violations(Violation.ViolationType.ERROR).iterator().hasNext();
+        return !violations.violations(RuleViolation.Type.ERROR).iterator().hasNext();
     }
 
     protected String getShapeSetId() {

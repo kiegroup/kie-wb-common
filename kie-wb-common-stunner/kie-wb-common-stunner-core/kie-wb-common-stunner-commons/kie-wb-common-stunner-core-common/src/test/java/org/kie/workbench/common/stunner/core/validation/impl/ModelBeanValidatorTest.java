@@ -90,7 +90,7 @@ public class ModelBeanValidatorTest {
         assertNotNull(violations);
         assertFalse(violations.isEmpty());
         final ModelBeanViolation modelBeanViolation = violations.iterator().next();
-        assertEquals(Violation.ViolationType.WARNING,
+        assertEquals(Violation.Type.WARNING,
                      modelBeanViolation.getViolationType());
         assertEquals(violation.getMessage(),
                      modelBeanViolation.getMessage());

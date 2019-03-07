@@ -155,7 +155,7 @@ public class AbstractGraphDefinitionTypesTest {
     }
 
     protected void assertViolations(RuleViolations violations, boolean assertSuccess) {
-        final boolean condition = violations.violations(Violation.ViolationType.ERROR).iterator().hasNext();
+        final boolean condition = violations.violations(Violation.Type.ERROR).iterator().hasNext();
         if (assertSuccess) {
             assertFalse(condition);
         } else {

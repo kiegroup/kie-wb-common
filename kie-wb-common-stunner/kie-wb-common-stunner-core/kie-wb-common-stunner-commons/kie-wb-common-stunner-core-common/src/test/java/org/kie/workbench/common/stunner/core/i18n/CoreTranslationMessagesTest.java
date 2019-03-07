@@ -79,7 +79,7 @@ public class CoreTranslationMessagesTest {
     @Test
     public void testRuleValidationMessage() {
         final RuleViolation ruleViolation = mock(RuleViolation.class);
-        when(ruleViolation.getViolationType()).thenReturn(Violation.ViolationType.WARNING);
+        when(ruleViolation.getViolationType()).thenReturn(Violation.Type.WARNING);
         when(translationService.getViolationMessage(eq(ruleViolation))).thenReturn("rv1");
         final String message = CoreTranslationMessages.getRuleValidationMessage(translationService,
                                                                                 ruleViolation);
@@ -92,10 +92,10 @@ public class CoreTranslationMessagesTest {
 
         final RuleViolation ruleViolation = mock(RuleViolation.class);
         final CanvasViolation canvasViolation = mock(CanvasViolation.class);
-        when(canvasViolation.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
+        when(canvasViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
         when(canvasViolation.getRuleViolation()).thenReturn(ruleViolation);
-        when(ruleViolation.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
-        when(ruleViolation.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
+        when(ruleViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
+        when(ruleViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
         final Iterable<CanvasViolation> violations = Collections.singletonList(canvasViolation);
         when(translationService.getValue(eq("aKey"))).thenReturn("aValue");
         when(translationService.getViolationMessage(eq(canvasViolation))).thenReturn("cv1");
@@ -123,7 +123,7 @@ public class CoreTranslationMessagesTest {
         when(diagramViolation.getUUID()).thenReturn("uuid1");
         when(diagramViolation.getModelViolations()).thenReturn(Collections.singletonList(beanViolation));
         when(diagramViolation.getGraphViolations()).thenReturn(Collections.singletonList(ruleViolation));
-        when(ruleViolation.getViolationType()).thenReturn(Violation.ViolationType.WARNING);
+        when(ruleViolation.getViolationType()).thenReturn(Violation.Type.WARNING);
         when(translationService.getViolationMessage(eq(ruleViolation))).thenReturn("rv1");
         when(translationService.getValue(eq("aKey"))).thenReturn("aValue");
         String message = CoreTranslationMessages.getDiagramValidationsErrorMessage(translationService,

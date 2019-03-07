@@ -36,7 +36,7 @@ public class EdgeCardinalityMinRuleViolation extends AbstractRuleViolation {
                                            final @MapsTo("restrictedOccurrences") Integer restrictedOccurrences,
                                            final @MapsTo("currentOccurrences") Integer currentOccurrences,
                                            final @MapsTo("direction") EdgeCardinalityContext.Direction direction,
-                                           final @MapsTo("type") ViolationType type) {
+                                           final @MapsTo("type") Type type) {
         super(type);
         this.node = node;
         this.edge = edge;

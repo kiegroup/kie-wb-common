@@ -21,10 +21,10 @@ import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
 import org.kie.workbench.common.stunner.core.rule.context.NodeContainmentContext;
 import org.kie.workbench.common.stunner.core.rule.impl.CanContain;
-import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -86,7 +86,7 @@ public class NodeContainmentEvaluationHandlerTest extends AbstractGraphRuleHandl
         final RuleViolations violations = tested.evaluate(RULE,
                                                           context);
         assertNotNull(violations);
-        assertFalse(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
+        assertFalse(violations.violations(RuleViolation.Type.ERROR).iterator().hasNext());
     }
 
     @Test
@@ -96,6 +96,6 @@ public class NodeContainmentEvaluationHandlerTest extends AbstractGraphRuleHandl
         final RuleViolations violations = tested.evaluate(RULE_INVALID,
                                                           context);
         assertNotNull(violations);
-        assertTrue(violations.violations(Violation.ViolationType.ERROR).iterator().hasNext());
+        assertTrue(violations.violations(RuleViolation.Type.ERROR).iterator().hasNext());
     }
 }

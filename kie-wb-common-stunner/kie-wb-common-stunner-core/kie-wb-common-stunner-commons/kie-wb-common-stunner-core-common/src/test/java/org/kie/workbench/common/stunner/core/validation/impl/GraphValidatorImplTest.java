@@ -242,7 +242,7 @@ public class GraphValidatorImplTest {
 
     private void assertNoError(final Collection<RuleViolation> violations) {
         assertFalse(violations.stream()
-                            .filter(v -> Violation.ViolationType.ERROR.equals(v.getViolationType()))
+                            .filter(v -> Violation.Type.ERROR.equals(v.getViolationType()))
                             .findAny()
                             .isPresent());
     }

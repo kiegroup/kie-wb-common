@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.propert
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.stunner.bpmn.definition.property.type.AssigneeTypePortable;
+import org.kie.workbench.common.stunner.bpmn.definition.property.type.AssigneeType;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
 @ApplicationScoped
@@ -26,7 +26,7 @@ public class AssigneeTypeSerializer implements Bpmn2OryxPropertySerializer<Strin
 
     @Override
     public boolean accepts(final PropertyType type) {
-        return AssigneeTypePortable.name.equals(type.getName());
+        return AssigneeType.name.equals(type.getName());
     }
 
     @Override

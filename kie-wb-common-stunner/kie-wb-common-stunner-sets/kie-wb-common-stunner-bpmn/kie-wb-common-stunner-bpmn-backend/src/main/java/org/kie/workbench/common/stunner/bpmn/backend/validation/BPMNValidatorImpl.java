@@ -97,7 +97,7 @@ public class BPMNValidatorImpl implements BPMNValidator {
                     .map(process -> RuleFlowProcessValidator.getInstance().validateProcess(process))
                     .flatMap(processValidationErrors -> Stream.of(processValidationErrors))
                     .filter(Objects::nonNull)
-                    .map(error -> new BPMNViolation(error.getMessage(), Violation.ViolationType.WARNING))
+                    .map(error -> new BPMNViolation(error.getMessage(), Violation.Type.WARNING))
                     .collect(Collectors.toSet());
         } catch (SAXException | IOException e) {
             LOG.error("Error parsing process", e);
@@ -109,7 +109,7 @@ public class BPMNValidatorImpl implements BPMNValidator {
     }
 
     private List<BPMNViolation> getBpmnViolationsFromException(Supplier<String> message) {
-        return Arrays.asList(new BPMNViolation(message.get(), Violation.ViolationType.WARNING));
+        return Arrays.asList(new BPMNViolation(message.get(), Violation.Type.WARNING));
     }
 
     private List<Process> parseProcess(String serializedProcess) throws SAXException, IOException {

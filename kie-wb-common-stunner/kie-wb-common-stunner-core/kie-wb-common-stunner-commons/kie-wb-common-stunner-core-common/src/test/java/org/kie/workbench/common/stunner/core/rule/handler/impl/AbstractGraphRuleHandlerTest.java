@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
-import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -157,18 +156,18 @@ public abstract class AbstractGraphRuleHandlerTest {
     protected RuleViolations mockNoViolations() {
         RuleViolations violations = mock(RuleViolations.class);
         List<RuleViolation> result = new ArrayList<>(0);
-        when(violations.violations(eq(Violation.ViolationType.ERROR))).thenReturn(result);
+        when(violations.violations(eq(RuleViolation.Type.ERROR))).thenReturn(result);
         return violations;
     }
 
     protected RuleViolations mockWithViolations() {
         RuleViolation v1 = mock(RuleViolation.class);
-        when(v1.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
+        when(v1.getViolationType()).thenReturn(RuleViolation.Type.ERROR);
         RuleViolations violations = mock(RuleViolations.class);
         List<RuleViolation> result = new ArrayList<RuleViolation>(1) {{
             add(v1);
         }};
-        when(violations.violations(eq(Violation.ViolationType.ERROR))).thenReturn(result);
+        when(violations.violations(eq(RuleViolation.Type.ERROR))).thenReturn(result);
         return violations;
     }
 }

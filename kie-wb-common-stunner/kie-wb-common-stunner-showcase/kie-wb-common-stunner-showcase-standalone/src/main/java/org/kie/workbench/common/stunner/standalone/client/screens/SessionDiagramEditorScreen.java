@@ -184,8 +184,8 @@ public class SessionDiagramEditorScreen {
                         log(Level.WARNING,
                             "Validation failed [violations=" + violations.toString() + "].");
                         // Allow saving when only warnings founds.
-                        final Violation.ViolationType maxSeverity = ValidationUtils.getMaxSeverity(violations);
-                        if (!maxSeverity.equals(Violation.ViolationType.ERROR)) {
+                        final Violation.Type maxSeverity = ValidationUtils.getMaxSeverity(violations);
+                        if (!maxSeverity.equals(Violation.Type.ERROR)) {
                             save.execute();
                         }
                     }

@@ -29,7 +29,7 @@ public class ElementViolationImplBuilder {
     private Collection<RuleViolation> graphViolations;
     private Collection<ModelBeanViolation> modelViolations;
     private Collection<DomainViolation> domainViolations;
-    private Violation.ViolationType type;
+    private Violation.Type type;
 
     public ElementViolationImplBuilder setUuid(String uuid) {
         this.uuid = uuid;
@@ -51,7 +51,7 @@ public class ElementViolationImplBuilder {
         return this;
     }
 
-    public ElementViolationImplBuilder setType(Violation.ViolationType type) {
+    public ElementViolationImplBuilder setType(Violation.Type type) {
         this.type = type;
         return this;
     }

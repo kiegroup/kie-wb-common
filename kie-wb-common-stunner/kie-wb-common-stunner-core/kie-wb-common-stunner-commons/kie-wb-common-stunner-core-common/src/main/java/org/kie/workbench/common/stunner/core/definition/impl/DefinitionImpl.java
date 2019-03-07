@@ -23,7 +23,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.soup.commons.validation.PortablePreconditions;
 
 @Portable
-public class DefinitionImplPortable {
+public class DefinitionImpl {
 
     private final String id;
     private final PropertyImpl nameProperty;
@@ -34,14 +34,14 @@ public class DefinitionImplPortable {
     private final Set<Object> propertySets;
     private final Set<Object> properties;
 
-    public DefinitionImplPortable(final @MapsTo("id") String id,
-                                  final @MapsTo("category") String category,
-                                  final @MapsTo("title") String title,
-                                  final @MapsTo("description") String description,
-                                  final @MapsTo("labels") Set<String> labels,
-                                  final @MapsTo("propertySets") Set<Object> propertySets,
-                                  final @MapsTo("nameProperty") PropertyImpl nameProperty,
-                                  final @MapsTo("properties") Set<Object> properties) {
+    public DefinitionImpl(final @MapsTo("id") String id,
+                          final @MapsTo("category") String category,
+                          final @MapsTo("title") String title,
+                          final @MapsTo("description") String description,
+                          final @MapsTo("labels") Set<String> labels,
+                          final @MapsTo("propertySets") Set<Object> propertySets,
+                          final @MapsTo("nameProperty") PropertyImpl nameProperty,
+                          final @MapsTo("properties") Set<Object> properties) {
         this.category = PortablePreconditions.checkNotNull("category",
                                                            category);
         this.nameProperty = PortablePreconditions.checkNotNull("nameProperty",

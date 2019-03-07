@@ -44,9 +44,9 @@ public class DefaultRuleViolationsTest {
 
     @Before
     public void setup() throws Exception {
-        when(violationErr.getViolationType()).thenReturn(Violation.ViolationType.ERROR);
-        when(violationWarn.getViolationType()).thenReturn(Violation.ViolationType.WARNING);
-        when(violationInfo.getViolationType()).thenReturn(Violation.ViolationType.INFO);
+        when(violationErr.getViolationType()).thenReturn(Violation.Type.ERROR);
+        when(violationWarn.getViolationType()).thenReturn(Violation.Type.WARNING);
+        when(violationInfo.getViolationType()).thenReturn(Violation.Type.INFO);
     }
 
     @Test
@@ -58,15 +58,15 @@ public class DefaultRuleViolationsTest {
                         .addViolation(violationErr);
         assertNotNull(violations);
         assertFalse(violations.isEmpty());
-        final Iterable<RuleViolation> errViolations = violations.violations(Violation.ViolationType.ERROR);
+        final Iterable<RuleViolation> errViolations = violations.violations(Violation.Type.ERROR);
         assertNotNull(errViolations);
         assertEquals(violationErr,
                      errViolations.iterator().next());
-        final Iterable<RuleViolation> warnViolations = violations.violations(Violation.ViolationType.WARNING);
+        final Iterable<RuleViolation> warnViolations = violations.violations(Violation.Type.WARNING);
         assertNotNull(warnViolations);
         assertEquals(violationWarn,
                      warnViolations.iterator().next());
-        final Iterable<RuleViolation> infoViolations = violations.violations(Violation.ViolationType.INFO);
+        final Iterable<RuleViolation> infoViolations = violations.violations(Violation.Type.INFO);
         assertNotNull(infoViolations);
         assertEquals(violationInfo,
                      infoViolations.iterator().next());

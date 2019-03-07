@@ -19,8 +19,8 @@ package org.kie.workbench.common.stunner.core.client.command;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.violations.RuleViolationImpl;
-import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -45,7 +45,7 @@ public class CanvasViolationImplTest {
     public void testBuild() {
         final CanvasViolation canvasViolation = CanvasViolationImpl.Builder.build(ruleViolation);
         assertNotNull(canvasViolation);
-        assertEquals(Violation.ViolationType.ERROR,
+        assertEquals(RuleViolation.Type.ERROR,
                      canvasViolation.getViolationType());
         assertEquals(MESSAGE,
                      canvasViolation.getArguments().get()[0]);

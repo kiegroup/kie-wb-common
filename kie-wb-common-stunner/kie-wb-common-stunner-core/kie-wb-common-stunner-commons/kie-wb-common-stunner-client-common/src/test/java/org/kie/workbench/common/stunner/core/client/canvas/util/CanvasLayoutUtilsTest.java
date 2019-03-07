@@ -286,9 +286,9 @@ public class CanvasLayoutUtilsTest {
         when(ruleManager.evaluate(eq(ruleSet),
                                   any(RuleEvaluationContext.class))).thenReturn(ruleViolations);
 
-        when(ruleViolations.violations(Violation.ViolationType.ERROR)).thenReturn(ruleViolationIterable);
-        when(ruleViolations.violations(Violation.ViolationType.ERROR).iterator()).thenReturn(ruleViolationIterator);
-        when(ruleViolations.violations(Violation.ViolationType.ERROR).iterator().hasNext()).thenReturn(true);
+        when(ruleViolations.violations(Violation.Type.ERROR)).thenReturn(ruleViolationIterable);
+        when(ruleViolations.violations(Violation.Type.ERROR).iterator()).thenReturn(ruleViolationIterator);
+        when(ruleViolations.violations(Violation.Type.ERROR).iterator().hasNext()).thenReturn(true);
 
         this.graphTestHandler = new TestingGraphMockHandler();
         graphInstance = TestingGraphInstanceBuilder.newGraph1(graphTestHandler);
@@ -336,9 +336,9 @@ public class CanvasLayoutUtilsTest {
         when(ruleManager.evaluate(eq(ruleSet),
                                   any(RuleEvaluationContext.class))).thenReturn(ruleViolations);
 
-        when(ruleViolations.violations(Violation.ViolationType.ERROR)).thenReturn(ruleViolationIterable);
-        when(ruleViolations.violations(Violation.ViolationType.ERROR).iterator()).thenReturn(ruleViolationIterator);
-        when(ruleViolations.violations(Violation.ViolationType.ERROR).iterator().hasNext()).thenReturn(false);
+        when(ruleViolations.violations(Violation.Type.ERROR)).thenReturn(ruleViolationIterable);
+        when(ruleViolations.violations(Violation.Type.ERROR).iterator()).thenReturn(ruleViolationIterator);
+        when(ruleViolations.violations(Violation.Type.ERROR).iterator().hasNext()).thenReturn(false);
         this.graphTestHandlerParent = new TestingGraphMockHandler();
         graphInstanceParent = TestingGraphInstanceBuilder.newGraph2(graphTestHandlerParent);
 
@@ -376,9 +376,9 @@ public class CanvasLayoutUtilsTest {
         when(ruleManager.evaluate(eq(ruleSet),
                                   any(RuleEvaluationContext.class))).thenReturn(ruleViolations);
 
-        when(ruleViolations.violations(Violation.ViolationType.ERROR)).thenReturn(ruleViolationIterable);
-        when(ruleViolations.violations(Violation.ViolationType.ERROR).iterator()).thenReturn(ruleViolationIterator);
-        when(ruleViolations.violations(Violation.ViolationType.ERROR).iterator().hasNext()).thenReturn(true);
+        when(ruleViolations.violations(Violation.Type.ERROR)).thenReturn(ruleViolationIterable);
+        when(ruleViolations.violations(Violation.Type.ERROR).iterator()).thenReturn(ruleViolationIterator);
+        when(ruleViolations.violations(Violation.Type.ERROR).iterator().hasNext()).thenReturn(true);
 
         this.graphTestHandler = new TestingGraphMockHandler();
         graphInstance = TestingGraphInstanceBuilder.newGraph1(graphTestHandler);
