@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.generic.GenericSelector;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.years_months.YearsMonthsSelector;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.years.months.YearsMonthsSelector;
 
 @Dependent
 public class TypedValueComponentSelector {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.years_months;
+package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.years.months;
 
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
@@ -25,12 +25,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +51,7 @@ public class YearsMonthsSelectorViewTest {
     @Before
     public void testSetup() {
 
-        view = spy(new YearsMonthsSelectorView(yearInput, monthInput, converter));
+        view = Mockito.spy(new YearsMonthsSelectorView(yearInput, monthInput, converter));
     }
 
     @Test

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.years_months;
+package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.years.months;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
