@@ -404,7 +404,8 @@ public class AbstractProjectDiagramEditorTest {
         verify(overviewWidget).setContent(eq(overview),
                                           eq(filePath));
         verify(kieView).clear();
-        verify(kieView).addMainEditorPage(eq(view));
+        verify(kieView).addMainEditorPage(eq(view),
+                                          eq(mainEditorTitle()));
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
 
@@ -441,7 +442,8 @@ public class AbstractProjectDiagramEditorTest {
         verify(overviewWidget).setContent(eq(overview),
                                           eq(filePath));
         verify(kieView).clear();
-        verify(kieView).addMainEditorPage(eq(view));
+        verify(kieView).addMainEditorPage(eq(view),
+                                          eq(mainEditorTitle()));
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
 
@@ -465,7 +467,8 @@ public class AbstractProjectDiagramEditorTest {
         verify(overviewWidget).setContent(eq(overview),
                                           eq(filePath));
         verify(kieView).clear();
-        verify(kieView).addMainEditorPage(eq(view));
+        verify(kieView).addMainEditorPage(eq(view),
+                                          eq(mainEditorTitle()));
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
 
@@ -473,6 +476,10 @@ public class AbstractProjectDiagramEditorTest {
         verify(xmlEditorView).setReadOnly(eq(false));
         verify(xmlEditorView).setContent(eq(xml), eq(AceEditorMode.XML));
         verify(presenter).makeXmlEditorProxy();
+    }
+
+    protected Optional<String> mainEditorTitle() {
+        return Optional.empty();
     }
 
     @SuppressWarnings("unchecked")

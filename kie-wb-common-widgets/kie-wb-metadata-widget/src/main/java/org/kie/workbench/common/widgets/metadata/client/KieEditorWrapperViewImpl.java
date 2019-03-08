@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.Command;
@@ -28,7 +30,6 @@ import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPre
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorImpl;
 import org.uberfire.client.views.pfly.multipage.PageImpl;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
-import org.uberfire.ext.editor.commons.client.BaseEditorView;
 
 public class KieEditorWrapperViewImpl
         extends MultiPageEditorImpl
@@ -55,8 +56,13 @@ public class KieEditorWrapperViewImpl
 
     @Override
     public void addMainEditorPage(IsWidget baseView) {
+        this.addMainEditorPage(baseView, Optional.empty());
+    }
+
+    @Override
+    public void addMainEditorPage(IsWidget baseView, Optional<String> title) {
         addPage(new PageImpl(baseView,
-                             CommonConstants.INSTANCE.EditTabTitle()) {
+                             title.orElse(CommonConstants.INSTANCE.EditTabTitle())) {
             @Override
             public void onFocus() {
                 presenter.onEditTabSelected();

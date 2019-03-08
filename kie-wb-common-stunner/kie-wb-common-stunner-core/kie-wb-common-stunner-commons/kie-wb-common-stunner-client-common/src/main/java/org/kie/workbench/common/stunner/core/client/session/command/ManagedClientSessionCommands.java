@@ -101,6 +101,10 @@ public class ManagedClientSessionCommands {
         sessionCommands.destroyAll();
     }
 
+    public void destroyCommands() {
+        commands.forEach(command -> InstanceUtils.destroy(sessionCommands, command, ClientSessionCommand::destroy));
+    }
+
     private void clearCommands() {
         commands.forEach(ClientSessionCommand::destroy);
         commands.clear();
