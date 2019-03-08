@@ -233,6 +233,26 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String BPMN_ARIS_LANES_2 = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/ARIS_LANES_2.bpmn";
     private static final String BPMN_ARIS_LANES_3 = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/ARIS_LANES_3.bpmn";
 
+    private static final String BPMN_ARIS_COLLAPSED_1 = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/SimpleCollapsed1-colapsado.bpmn";
+    private static final String BPMN_ARIS_PROCESO_NORMAL = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/ProcesoNormal.bpmn";
+    private static final String BPMN_ARIS_TWO_SUBPROCESSES_COLLAPSED = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/TwoCollapsedSubprocesses-collapsed.bpmn";
+    private static final String BPMN_ARIS_SUBPROCESSES_WITH_EDGES_INSIDE_COLLAPSED = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/TestSubprocessWithEdgesInside-collapsed.bpmn";
+
+    private static final String BPMN_ARIS_SUBPROCESSES_WITH_EDGES_INSIDE_COLLAPSED2 = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/EdgesInside1 (14).bpmn";
+
+    private static final String BPMN_ARIS_SUBPROCESSES_WITH_NestedSubprocessesCollapsed = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/NestedSubprocesesCollapsed.bpmn";
+
+    private static final String BPMN_ARIS_SIMPLE_NESTED_SUBPROCESES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/BasicNestedSubprocess.bpmn";
+
+    private static final String BPMN_ARIS_MultipleCollapsedSubprocessesAtFirstLevel = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/MultipleCollapsedSubprocessesAtFirstLevel.bpmn";
+
+
+    private static final String BPMN_ARIS_SECOND_APPROACH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/SecondApproach1.bpmn";
+
+    private static final String BPMN_ARIS_LANES_IMPORT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/CollapsedWidhLanes.bpmn";
+
+    private static final String BPMN_ARIS_BOUNDARY_EVENTS_IMPORT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/CollapsedWithBoundaryEvents.bpmn";
+
     private static final String NEW_LINE = System.lineSeparator();
 
     @Mock
@@ -3458,6 +3478,21 @@ public class BPMNDirectDiagramMarshallerTest {
         assertExpectedLane(diagram, "ID-4345241e-35dd-11e9-21c1-02b28450efee", "LaneA3.1", bpmnDiagramNode, "ID-69882527-35df-11e9-21c1-02b28450efee");
         //LaneA3.2 contains Task6
         assertExpectedLane(diagram, "ID-4345241b-35dd-11e9-21c1-02b28450efee", "LaneA3.2", bpmnDiagramNode, "ID-69882524-35df-11e9-21c1-02b28450efee");
+    }
+
+    @Test
+    public void testImport1Collapsed() throws Exception {
+        //Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ARIS_COLLAPSED_1);
+//        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ARIS_PROCESO_NORMAL);
+        //Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ARIS_SIMPLE_NESTED_SUBPROCESES);
+//        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ARIS_SECOND_APPROACH);
+
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ARIS_BOUNDARY_EVENTS_IMPORT);
+
+        int i = 0;
+
+        double a;
+        double b;
     }
 
     @SuppressWarnings("unchecked")
