@@ -68,18 +68,25 @@ public class DataTypeConstraintTest {
         final DataTypeListItem expectedListItem = mock(DataTypeListItem.class);
         final DataType datatype = mock(DataType.class);
         final String expectedConstraint = "constraint";
+        final ConstraintType expectedType = mock(ConstraintType.class);
 
         when(expectedListItem.getDataType()).thenReturn(datatype);
         when(datatype.getConstraint()).thenReturn(expectedConstraint);
+        when(datatype.getConstraintType()).thenReturn(expectedType);
 
         dataTypeConstraint.init(expectedListItem);
 
         final DataTypeListItem actualListItem = dataTypeConstraint.getListItem();
         final String actualConstraint = dataTypeConstraint.getValue();
+        final ConstraintType actualType = dataTypeConstraint.getConstraintType();
 
+        assertEquals(expectedType, actualType);
         assertEquals(expectedListItem, actualListItem);
         assertEquals(expectedConstraint, actualConstraint);
         verify(dataTypeConstraint).refreshView();
+
+        verify(datatype).getConstraintType();
+        verify(datatype).getConstraintType();
     }
 
     @Test

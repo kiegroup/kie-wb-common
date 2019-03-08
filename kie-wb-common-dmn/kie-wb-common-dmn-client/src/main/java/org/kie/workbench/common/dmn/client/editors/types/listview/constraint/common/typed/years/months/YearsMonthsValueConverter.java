@@ -112,7 +112,7 @@ public class YearsMonthsValueConverter {
     void matchSigns(final YearsMonthsValue value) {
 
         int yearsValue = 0;
-        int monthsValue = 1;
+        int monthsValue = 0;
 
         if (!StringUtils.isEmpty(value.getYears())) {
             yearsValue = Integer.parseInt(value.getYears());

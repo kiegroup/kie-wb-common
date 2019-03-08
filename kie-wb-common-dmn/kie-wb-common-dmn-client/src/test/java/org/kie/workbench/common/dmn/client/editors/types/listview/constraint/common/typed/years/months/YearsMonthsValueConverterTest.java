@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
@@ -250,6 +251,12 @@ public class YearsMonthsValueConverterTest {
         testMatchSigns("2", "1", 2, 1);
     }
 
+    @Test
+    public void testMathSignsOnlyYear() {
+
+        testMatchSigns("-1", "", -1, 0);
+    }
+
     private void testMatchSigns(final String inputYear,
                                 final String inputMonth,
                                 final int expectedYear,
@@ -262,7 +269,12 @@ public class YearsMonthsValueConverterTest {
         converter.matchSigns(value);
 
         final int years = Integer.parseInt(value.getYears());
-        final int months = Integer.parseInt(value.getMonths());
+        final int months;
+        if (StringUtils.isEmpty(value.getMonths())) {
+            months = 0;
+        } else {
+            months = Integer.parseInt(value.getMonths());
+        }
 
         assertEquals(expectedYear, years);
         assertEquals(expectedMonth, months);
