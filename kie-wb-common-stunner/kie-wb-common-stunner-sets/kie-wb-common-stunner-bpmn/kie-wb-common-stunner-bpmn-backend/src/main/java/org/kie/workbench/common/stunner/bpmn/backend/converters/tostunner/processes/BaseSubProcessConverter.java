@@ -180,7 +180,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 
-        return BpmnNode.of(node);
+        return BpmnNode.of(node).with(p);
     }
 
     private BpmnNode convertEventSubprocessNode(SubProcess subProcess) {

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<semantic:definitions xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_ID-3b6254a1-41a5-11e9-0d3a-064ad835cf6c" name="TestImport1" targetNamespace="http://www.softwareag.com/aris/bpmn2" exporter="ARIS" exporterVersion="10.0.0.1285557">
+    <semantic:process name="TestImport1" id="Process_ID-3b6254a1-41a5-11e9-0d3a-064ad835cf6c">
+        <semantic:startEvent name="Start event" id="ID-406f3530-41a5-11e9-0d3a-064ad835cf6c">
+            <semantic:outgoing>ID-406f3534-41a5-11e9-0d3a-064ad835cf6c</semantic:outgoing>
+        </semantic:startEvent>
+        <semantic:userTask name="Task1" id="ID-406f3532-41a5-11e9-0d3a-064ad835cf6c">
+            <semantic:incoming>ID-406f3534-41a5-11e9-0d3a-064ad835cf6c</semantic:incoming>
+            <semantic:outgoing>ID-406f3537-41a5-11e9-0d3a-064ad835cf6c</semantic:outgoing>
+        </semantic:userTask>
+        <semantic:subProcess name="TestImport1-Subprocess" id="ID-406f3535-41a5-11e9-0d3a-064ad835cf6c">
+            <semantic:incoming>ID-406f3537-41a5-11e9-0d3a-064ad835cf6c</semantic:incoming>
+            <semantic:outgoing>ID-406f353a-41a5-11e9-0d3a-064ad835cf6c</semantic:outgoing>
+            <semantic:userTask name="TaskInternal1" id="ID-406f353e-41a5-11e9-0d3a-064ad835cf6c"/>
+            <semantic:userTask name="TaskInternal2" id="ID-406f3541-41a5-11e9-0d3a-064ad835cf6c"/>
+        </semantic:subProcess>
+        <semantic:userTask name="Task2" id="ID-406f3538-41a5-11e9-0d3a-064ad835cf6c">
+            <semantic:incoming>ID-406f353a-41a5-11e9-0d3a-064ad835cf6c</semantic:incoming>
+            <semantic:outgoing>ID-406f353d-41a5-11e9-0d3a-064ad835cf6c</semantic:outgoing>
+        </semantic:userTask>
+        <semantic:endEvent name="End event" id="ID-406f353b-41a5-11e9-0d3a-064ad835cf6c">
+            <semantic:incoming>ID-406f353d-41a5-11e9-0d3a-064ad835cf6c</semantic:incoming>
+        </semantic:endEvent>
+        <semantic:sequenceFlow sourceRef="ID-406f3530-41a5-11e9-0d3a-064ad835cf6c" targetRef="ID-406f3532-41a5-11e9-0d3a-064ad835cf6c" id="ID-406f3534-41a5-11e9-0d3a-064ad835cf6c"/>
+        <semantic:sequenceFlow sourceRef="ID-406f3532-41a5-11e9-0d3a-064ad835cf6c" targetRef="ID-406f3535-41a5-11e9-0d3a-064ad835cf6c" id="ID-406f3537-41a5-11e9-0d3a-064ad835cf6c"/>
+        <semantic:sequenceFlow sourceRef="ID-406f3535-41a5-11e9-0d3a-064ad835cf6c" targetRef="ID-406f3538-41a5-11e9-0d3a-064ad835cf6c" id="ID-406f353a-41a5-11e9-0d3a-064ad835cf6c"/>
+        <semantic:sequenceFlow sourceRef="ID-406f3538-41a5-11e9-0d3a-064ad835cf6c" targetRef="ID-406f353b-41a5-11e9-0d3a-064ad835cf6c" id="ID-406f353d-41a5-11e9-0d3a-064ad835cf6c"/>
+    </semantic:process>
+    <bpmndi:BPMNDiagram name="TestImport1" resolution="72.0" id="ID-3b6254a1-41a5-11e9-0d3a-064ad835cf6c">
+        <bpmndi:BPMNPlane bpmnElement="Process_ID-3b6254a1-41a5-11e9-0d3a-064ad835cf6c" id="Plane_ID-3b6254a1-41a5-11e9-0d3a-064ad835cf6c">
+            <bpmndi:BPMNShape bpmnElement="ID-406f3530-41a5-11e9-0d3a-064ad835cf6c" id="Shape_ID-406f3530-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="67.75" y="138.61" width="34.58" height="34.58"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="63.21" y="176.03" width="43.65" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="ID-406f3532-41a5-11e9-0d3a-064ad835cf6c" id="Shape_ID-406f3532-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="146.27" y="124.72" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="186.8" y="157.61" width="23.24" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="ID-406f3534-41a5-11e9-0d3a-064ad835cf6c" id="Edge_ID-406f3534-41a5-11e9-0d3a-064ad835cf6c">
+                <di:waypoint x="102.33" y="155.91"/>
+                <di:waypoint x="146.27" y="155.91"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape bpmnElement="ID-406f3535-41a5-11e9-0d3a-064ad835cf6c" isExpanded="true" id="Shape_ID-406f3535-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="294.52" y="109.13" width="156.47" height="178.58"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="323.15" y="192.19" width="99.5" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="ID-406f3537-41a5-11e9-0d3a-064ad835cf6c" id="Edge_ID-406f3537-41a5-11e9-0d3a-064ad835cf6c">
+                <di:waypoint x="250.58" y="155.91"/>
+                <di:waypoint x="272.41" y="155.91"/>
+                <di:waypoint x="272.41" y="198.43"/>
+                <di:waypoint x="294.52" y="198.43"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape bpmnElement="ID-406f3538-41a5-11e9-0d3a-064ad835cf6c" id="Shape_ID-406f3538-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="320.6" y="337.32" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="363.97" y="375.87" width="23.24" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="ID-406f353a-41a5-11e9-0d3a-064ad835cf6c" id="Edge_ID-406f353a-41a5-11e9-0d3a-064ad835cf6c">
+                <di:waypoint x="372.76" y="287.72"/>
+                <di:waypoint x="372.76" y="337.32"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape bpmnElement="ID-406f353b-41a5-11e9-0d3a-064ad835cf6c" id="Shape_ID-406f353b-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="356.31" y="465.45" width="32.88" height="32.88"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="352.63" y="501.17" width="40.25" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="ID-406f353d-41a5-11e9-0d3a-064ad835cf6c" id="Edge_ID-406f353d-41a5-11e9-0d3a-064ad835cf6c">
+                <di:waypoint x="372.76" y="399.69"/>
+                <di:waypoint x="372.76" y="465.45"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNShape bpmnElement="ID-406f353e-41a5-11e9-0d3a-064ad835cf6c" id="Shape_ID-406f353e-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="320.6" y="138.9" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="345.54" y="171.78" width="54.43" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="ID-406f3541-41a5-11e9-0d3a-064ad835cf6c" id="Shape_ID-406f3541-41a5-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="320.6" y="216.28" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="345.54" y="249.17" width="54.43" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+        </bpmndi:BPMNPlane>
+        <bpmndi:BPMNLabelStyle id="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+            <dc:Font name="Arial" size="8.0" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+        </bpmndi:BPMNLabelStyle>
+    </bpmndi:BPMNDiagram>
+</semantic:definitions>

@@ -70,6 +70,11 @@ public abstract class BasePropertyWriter {
         shape.setBounds(bounds);
     }
 
+    public void setBounds(Bounds rect, boolean expanded) {
+        setBounds(rect);
+        shape.setIsExpanded(expanded);
+    }
+
     public BaseElement getElement() {
         return baseElement;
     }

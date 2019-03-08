@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<semantic:definitions xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_ID-5d067f40-43d6-11e9-0d3a-064ad835cf6c" name="SimpleCollapsed1" targetNamespace="http://www.softwareag.com/aris/bpmn2" exporter="ARIS" exporterVersion="10.0.0.1285557">
+    <semantic:process name="SimpleCollapsed1" id="Process_ID-5d067f40-43d6-11e9-0d3a-064ad835cf6c">
+        <semantic:userTask name="Task1" id="ID-66d83ae0-43d6-11e9-0d3a-064ad835cf6c">
+            <semantic:outgoing>ID-66d83ae7-43d6-11e9-0d3a-064ad835cf6c</semantic:outgoing>
+        </semantic:userTask>
+        <semantic:subProcess name="Subprocess" id="ID-66d83ae2-43d6-11e9-0d3a-064ad835cf6c">
+            <semantic:incoming>ID-66d83ae7-43d6-11e9-0d3a-064ad835cf6c</semantic:incoming>
+            <semantic:userTask name="Task2" id="ID-66d83ae4-43d6-11e9-0d3a-064ad835cf6c"/>
+            <semantic:userTask name="Task3" id="ID-b5add9d0-43d7-11e9-0d3a-064ad835cf6c"/>
+        </semantic:subProcess>
+        <semantic:sequenceFlow sourceRef="ID-66d83ae0-43d6-11e9-0d3a-064ad835cf6c" targetRef="ID-66d83ae2-43d6-11e9-0d3a-064ad835cf6c" id="ID-66d83ae7-43d6-11e9-0d3a-064ad835cf6c"/>
+    </semantic:process>
+    <bpmndi:BPMNDiagram name="SimpleCollapsed1" resolution="72.0" id="ID-5d067f40-43d6-11e9-0d3a-064ad835cf6c">
+        <bpmndi:BPMNPlane bpmnElement="Process_ID-5d067f40-43d6-11e9-0d3a-064ad835cf6c" id="Plane_ID-5d067f40-43d6-11e9-0d3a-064ad835cf6c">
+            <bpmndi:BPMNShape bpmnElement="ID-66d83ae0-43d6-11e9-0d3a-064ad835cf6c" id="Shape_ID-66d83ae0-43d6-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="75.4" y="39.69" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="115.94" y="72.57" width="23.24" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="ID-66d83ae2-43d6-11e9-0d3a-064ad835cf6c" isExpanded="false" id="Shape_ID-66d83ae2-43d6-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="273.83" y="209.76" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="302.46" y="226.77" width="47.06" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="ID-66d83ae7-43d6-11e9-0d3a-064ad835cf6c" id="Edge_ID-66d83ae7-43d6-11e9-0d3a-064ad835cf6c">
+                <di:waypoint x="179.72" y="70.87"/>
+                <di:waypoint x="325.98" y="70.87"/>
+                <di:waypoint x="325.98" y="209.76"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+        <bpmndi:BPMNLabelStyle id="ArisFontStyleSheet_0_d7b815f4-04df-4971-8f01-03fe21c67159">
+            <dc:Font name="Arial" size="8.0" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+        </bpmndi:BPMNLabelStyle>
+    </bpmndi:BPMNDiagram>
+    <bpmndi:BPMNDiagram name="Subprocess(1)" resolution="72.0" id="ID-cf7897c0-43d6-11e9-0d3a-064ad835cf6c">
+        <bpmndi:BPMNPlane bpmnElement="ID-66d83ae2-43d6-11e9-0d3a-064ad835cf6c" id="Plane_ID-cf7897c0-43d6-11e9-0d3a-064ad835cf6c">
+            <bpmndi:BPMNShape bpmnElement="ID-66d83ae4-43d6-11e9-0d3a-064ad835cf6c" id="Shape_ID-66d83ae4-43d6-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="14.17" y="14.17" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_1_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="54.71" y="47.06" width="23.24" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="ID-b5add9d0-43d7-11e9-0d3a-064ad835cf6c" id="Shape_ID-b5add9d0-43d7-11e9-0d3a-064ad835cf6c">
+                <dc:Bounds x="14.17" y="105.73" width="104.31" height="62.36"/>
+                <bpmndi:BPMNLabel labelStyle="ArisFontStyleSheet_1_d7b815f4-04df-4971-8f01-03fe21c67159">
+                    <dc:Bounds x="54.71" y="138.61" width="23.24" height="12.47"/>
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+        </bpmndi:BPMNPlane>
+        <bpmndi:BPMNLabelStyle id="ArisFontStyleSheet_1_d7b815f4-04df-4971-8f01-03fe21c67159">
+            <dc:Font name="Arial" size="8.0" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+        </bpmndi:BPMNLabelStyle>
+    </bpmndi:BPMNDiagram>
+</semantic:definitions>
