@@ -26,6 +26,7 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.Node;
 import elemental2.dom.NodeList;
 import elemental2.dom.Text;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -492,11 +493,17 @@ public class DataTypeListItemViewTest {
         doReturn(type).when(view).getType();
         when(select.getElement()).thenReturn(htmlElement);
 
-        type.innerHTML = "previous content";
+        final Element element = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        doReturn(element).when(list).getAt(0);
+        list.length = 1;
+        element.parentNode = type;
+
+        type.childNodes = list;
 
         view.setupSelectComponent(select);
 
-        assertFalse(type.innerHTML.contains("previous content"));
+        verify(type).removeChild(element);
         verify(type).appendChild(htmlElement);
     }
 
@@ -508,11 +515,18 @@ public class DataTypeListItemViewTest {
 
         doReturn(constraint).when(view).getConstraintContainer();
         when(constraintComponent.getElement()).thenReturn(htmlElement);
-        constraint.innerHTML = "previous content";
+
+        final Element element = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        doReturn(element).when(list).getAt(0);
+        list.length = 1;
+        element.parentNode = constraint;
+
+        constraint.childNodes = list;
 
         view.setupConstraintComponent(constraintComponent);
 
-        assertFalse(constraint.innerHTML.contains("previous content"));
+        verify(constraint).removeChild(element);
         verify(constraint).appendChild(htmlElement);
     }
 
@@ -526,11 +540,18 @@ public class DataTypeListItemViewTest {
         when(switchComponent.getElement()).thenReturn(htmlElement);
         doReturn(listTextNode).when(view).listTextNode();
         doReturn(listContainer).when(view).getListContainer();
-        listContainer.innerHTML = "previous content";
+
+        final Element element = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        doReturn(element).when(list).getAt(0);
+        list.length = 1;
+        element.parentNode = listContainer;
+
+        listContainer.childNodes = list;
 
         view.setupListComponent(switchComponent);
 
-        assertFalse(listContainer.innerHTML.contains("previous content"));
+        verify(listContainer).removeChild(element);
         verify(listContainer).appendChild(listTextNode);
         verify(listContainer).appendChild(htmlElement);
     }

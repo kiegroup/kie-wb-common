@@ -29,6 +29,8 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLOptGroupElement;
 import elemental2.dom.HTMLOptionElement;
 import elemental2.dom.HTMLSelectElement;
+import elemental2.dom.Node;
+import elemental2.dom.NodeList;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +48,6 @@ import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerEvent;
 import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerTarget;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.HIDDEN_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeSelectView_CustomTitle;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeSelectView_DefaultTitle;
@@ -138,11 +139,17 @@ public class DataTypeSelectViewTest {
         doReturn(groupElementCustom).when(view).makeOptionGroup(eq("Default"), eq(defaultDataTypes), any());
         doReturn(groupElementDefault).when(view).makeOptionGroup(eq("Custom"), eq(customDataTypes), any());
 
-        typeSelect.innerHTML = "previousContent";
+        final Element element = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        doReturn(element).when(list).getAt(0);
+        list.length = 1;
+        element.parentNode = typeSelect;
+
+        typeSelect.childNodes = list;
 
         view.setupDropdownItems();
 
-        assertFalse(typeSelect.innerHTML.contains("previousContent"));
+        verify(typeSelect).removeChild(element);
         verify(typeSelect).appendChild(groupElementCustom);
         verify(typeSelect).appendChild(groupElementDefault);
     }

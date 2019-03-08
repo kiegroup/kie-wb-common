@@ -21,13 +21,16 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.Node;
+import elemental2.dom.NodeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -58,9 +61,18 @@ public class DataTypeConstraintEnumerationViewTest {
 
     @Test
     public void testClear() {
-        items.innerHTML = "something";
+
+        final Element element = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        doReturn(element).when(list).getAt(0);
+        list.length = 1;
+        element.parentNode = items;
+
+        items.childNodes = list;
         view.clear();
-        assertTrue(items.innerHTML.isEmpty());
+
+
+        verify(items).removeChild(element);
     }
 
     @Test

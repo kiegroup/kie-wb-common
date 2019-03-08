@@ -25,6 +25,8 @@ import elemental2.dom.DOMTokenList;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.Node;
+import elemental2.dom.NodeList;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -201,16 +203,20 @@ public class DataTypesPageTest {
         final HTMLElement flashMessagesElement = mock(HTMLElement.class);
         final HTMLElement treeListElement = mock(HTMLElement.class);
 
-        pageView.innerHTML = "something";
+        final Element element = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        doReturn(element).when(list).getAt(0);
+        list.length = 1;
+        element.parentNode = pageView;
+
+        pageView.childNodes = list;
+
         when(flashMessages.getElement()).thenReturn(flashMessagesElement);
         when(treeList.getElement()).thenReturn(treeListElement);
 
         page.refreshPageView();
 
-        final String actual = pageView.innerHTML;
-        final String expected = "";
-
-        assertEquals(expected, actual);
+        verify(pageView).removeChild(element);
         verify(pageView).appendChild(flashMessagesElement);
         verify(pageView).appendChild(treeListElement);
     }

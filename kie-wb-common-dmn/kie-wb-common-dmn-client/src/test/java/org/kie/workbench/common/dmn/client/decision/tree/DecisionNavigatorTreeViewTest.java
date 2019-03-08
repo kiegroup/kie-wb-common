@@ -28,6 +28,7 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLUListElement;
 import elemental2.dom.Node;
+import elemental2.dom.NodeList;
 import elemental2.dom.Text;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
@@ -88,11 +89,17 @@ public class DecisionNavigatorTreeViewTest {
     @Test
     public void testClean() {
 
-        items.innerHTML = "123";
+        final Element currentElement = mock(Element.class);
+        final NodeList<Node> list = spy(new NodeList<>());
+        list.length = 1;
+        items.childNodes =  list;
+        currentElement.parentNode = items;
+
+        when(list.getAt(0)).thenReturn(currentElement);
 
         treeView.clean();
 
-        assertEquals("", items.innerHTML);
+        verify(items).removeChild(currentElement);
     }
 
     @Test
