@@ -16,13 +16,14 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
+import java.util.Optional;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
 import org.uberfire.client.workbench.widgets.multipage.Page;
-import org.uberfire.ext.editor.commons.client.BaseEditorView;
 
 public interface KieEditorWrapperView
         extends IsWidget {
@@ -41,6 +42,8 @@ public interface KieEditorWrapperView
     void setPresenter(KieEditorWrapperPresenter presenter);
 
     void addMainEditorPage(IsWidget baseView);
+
+    void addMainEditorPage(IsWidget baseView, Optional<String> title);
 
     MultiPageEditor getMultiPage();
 

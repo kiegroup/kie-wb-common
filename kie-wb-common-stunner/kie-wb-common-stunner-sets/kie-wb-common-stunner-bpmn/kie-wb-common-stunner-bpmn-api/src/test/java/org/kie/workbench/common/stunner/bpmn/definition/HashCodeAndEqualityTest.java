@@ -62,16 +62,19 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueD
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompletionCondition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
@@ -83,6 +86,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleIn
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Namespace;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Script;
@@ -93,6 +97,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
@@ -1270,12 +1275,51 @@ public class HashCodeAndEqualityTest {
 
                 .addTrueCase(new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(),
                                                                  new AdHocOrdering(),
+                                                                 new AdHocAutostart(),
                                                                  new OnEntryAction(),
                                                                  new OnExitAction()),
                              new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(),
                                                                  new AdHocOrdering(),
+                                                                 new AdHocAutostart(),
                                                                  new OnEntryAction(),
                                                                  new OnExitAction()))
+                .test();
+    }
+
+    @Test
+    public void testReusableSubprocessTaskExecutionSetEqualsAndHashCode() {
+        TestCaseBuilder.newTestCase()
+                .addTrueCase(new ReusableSubprocessTaskExecutionSet(),
+                             new ReusableSubprocessTaskExecutionSet())
+
+                .addTrueCase(new ReusableSubprocessTaskExecutionSet(new CalledElement(),
+                                                                    new IsCase(),
+                                                                    new Independent(),
+                                                                    new WaitForCompletion(),
+                                                                    new IsAsync(),
+                                                                    new AdHocAutostart(),
+                                                                    new IsMultipleInstance(),
+                                                                    new MultipleInstanceCollectionInput(),
+                                                                    new MultipleInstanceDataInput(),
+                                                                    new MultipleInstanceCollectionOutput(),
+                                                                    new MultipleInstanceDataOutput(),
+                                                                    new MultipleInstanceCompletionCondition(),
+                                                                    new OnEntryAction(),
+                                                                    new OnExitAction()),
+                             new ReusableSubprocessTaskExecutionSet(new CalledElement(),
+                                                                    new IsCase(),
+                                                                    new Independent(),
+                                                                    new WaitForCompletion(),
+                                                                    new IsAsync(),
+                                                                    new AdHocAutostart(),
+                                                                    new IsMultipleInstance(),
+                                                                    new MultipleInstanceCollectionInput(),
+                                                                    new MultipleInstanceDataInput(),
+                                                                    new MultipleInstanceCollectionOutput(),
+                                                                    new MultipleInstanceDataOutput(),
+                                                                    new MultipleInstanceCompletionCondition(),
+                                                                    new OnEntryAction(),
+                                                                    new OnExitAction()))
                 .test();
     }
 

@@ -282,7 +282,8 @@ public abstract class KieEditor<T>
 
         kieView.clear();
 
-        kieView.addMainEditorPage(baseView);
+        kieView.addMainEditorPage(baseView,
+                                  getMainEditorPageTitle());
 
         kieView.addOverviewPage(overviewWidget,
                                 () -> overviewWidget.refresh(versionRecordManager.getVersion()));
@@ -521,6 +522,10 @@ public abstract class KieEditor<T>
 
     @Override
     public void onEditTabUnselected() {
+    }
+
+    protected Optional<String> getMainEditorPageTitle() {
+        return Optional.empty();
     }
 
     //Handler for MayClose requests
