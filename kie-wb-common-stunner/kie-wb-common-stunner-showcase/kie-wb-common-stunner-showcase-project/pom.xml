@@ -1542,7 +1542,7 @@
                   <outputDirectory>${project.build.outputDirectory}/org/uberfire/jsbridge/public</outputDirectory>
                   <resources>
                     <resource>
-                      <directory>${project.build.directory}/screens.kie-wb-common-library-spaces-screen/META-INF/resources/webjars/kie-wb-common-library-spaces-screen/${project.version}</directory>
+                      <directory>${project.build.directory}/kie-wb-common-library-spaces-screen/META-INF/resources/webjars/kie-wb-common-library-spaces-screen/${project.version}</directory>
                       <includes>
                         <include>spaces-screen-bundle.js</include>
                       </includes>

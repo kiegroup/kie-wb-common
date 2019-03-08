@@ -66,7 +66,6 @@ export class NewSpacePopup extends React.Component<Props, State> {
     const validGroupId = Promise.resolve(true)
       .then(() => Service.fetchIsValidGroupIdName(newSpace.groupId))
       .then(isValidGroupId => {
-        console.info(isValidGroupId);
         if (!isValidGroupId) {
           this.addErrorMessage(AppFormer.translate("InvalidSpaceName", []));
           return Promise.reject();
