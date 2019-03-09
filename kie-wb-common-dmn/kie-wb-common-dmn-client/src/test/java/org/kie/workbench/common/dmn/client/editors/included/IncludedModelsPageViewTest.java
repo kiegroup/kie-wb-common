@@ -48,16 +48,16 @@ public class IncludedModelsPageViewTest {
         final HTMLElement gridHTMLElement = mock(HTMLElement.class);
         final Element currentElement = mock(Element.class);
 
-        gridHTMLElement.firstChild = currentElement;
+        grid.firstChild = currentElement;
 
-        when(gridHTMLElement.removeChild(currentElement)).then(a -> {
-            gridHTMLElement.firstChild = null;
+        when(grid.removeChild(currentElement)).then(a -> {
+            grid.firstChild = null;
             return currentElement;
         });
 
         view.setGrid(gridHTMLElement);
 
-        verify(gridHTMLElement).removeChild(currentElement);
+        verify(grid).removeChild(currentElement);
         verify(grid).appendChild(gridHTMLElement);
     }
 }

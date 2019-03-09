@@ -44,7 +44,7 @@ public class IncludedModelsPageView implements IncludedModelsPagePresenter.View 
 
     @Override
     public void setGrid(final HTMLElement grid) {
-        RemoveHelper.removeChildren(grid);
+        RemoveHelper.removeChildren(this.grid);
         this.grid.appendChild(grid);
     }
 }
