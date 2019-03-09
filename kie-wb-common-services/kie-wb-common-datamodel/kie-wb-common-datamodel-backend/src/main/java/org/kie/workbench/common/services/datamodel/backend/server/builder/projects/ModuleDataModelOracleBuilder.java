@@ -55,6 +55,20 @@ public final class ModuleDataModelOracleBuilder {
     }
 
     //Used by tests
+    public SimpleFactBuilder addFact(final String factType) {
+        return addFact(factType,
+                       false);
+    }
+
+    //Used by tests
+    public SimpleFactBuilder addFact(final String factType,
+                                     final boolean isEvent) {
+        return addFact(factType,
+                       isEvent,
+                       TypeSource.JAVA_PROJECT);
+    }
+
+    //Used by tests
     public SimpleFactBuilder addFact(final String factType,
                                      final boolean isEvent,
                                      final TypeSource typeSource) {
@@ -65,6 +79,20 @@ public final class ModuleDataModelOracleBuilder {
         factTypeBuilders.put(factType,
                              builder);
         return builder;
+    }
+
+    //Used by tests
+    public ModuleDataModelOracleBuilder addClass(final Class clazz) throws IOException {
+        return addClass(clazz,
+                        false);
+    }
+
+    //Used by tests
+    public ModuleDataModelOracleBuilder addClass(final Class clazz,
+                                                 final boolean isEvent) throws IOException {
+        return addClass(clazz,
+                        isEvent,
+                        type -> TypeSource.JAVA_PROJECT);
     }
 
     public ModuleDataModelOracleBuilder addClass(final Class clazz,
