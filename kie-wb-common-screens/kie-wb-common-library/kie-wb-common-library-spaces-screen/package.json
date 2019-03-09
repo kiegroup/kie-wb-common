@@ -13,7 +13,7 @@
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx,js,jsx}'",
     "test": "jest --silent",
     "init": "yarn install",
-    "build": "yarn run lint && npm test && webpack --mode production"
+    "build": "yarn run lint && yarn test && webpack --mode production"
   },
   "babel": {
     "presets": [
