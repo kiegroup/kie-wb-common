@@ -84,9 +84,6 @@ public class DataTypeConstraintTest {
         assertEquals(expectedListItem, actualListItem);
         assertEquals(expectedConstraint, actualConstraint);
         verify(dataTypeConstraint).refreshView();
-
-        verify(datatype).getConstraintType();
-        verify(datatype).getConstraintType();
     }
 
     @Test

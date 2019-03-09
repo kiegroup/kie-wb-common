@@ -169,7 +169,7 @@ public class YearsMonthsValueConverterTest {
     }
 
     @Test
-    public void testToDisplayYearsAndMonthsEmtpy() {
+    public void testToDisplayYearsAndMonthsEmpty() {
 
         final String expected = "";
         final YearsMonthsValue value = new YearsMonthsValue();
