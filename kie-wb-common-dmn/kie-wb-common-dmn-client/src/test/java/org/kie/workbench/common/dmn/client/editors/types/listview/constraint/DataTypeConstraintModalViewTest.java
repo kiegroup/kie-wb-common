@@ -24,7 +24,6 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.Node;
-import elemental2.dom.NodeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -199,12 +198,11 @@ public class DataTypeConstraintModalViewTest {
     public void testSetupEmptyContainer() {
 
         final Element element = mock(Element.class);
-        final NodeList<Node> list = spy(new NodeList<>());
-        doReturn(element).when(list).getAt(0);
-        list.length = 1;
-        element.parentNode = componentContainer;
-
-        componentContainer.childNodes = list;
+        componentContainer.firstChild = element;
+        when(componentContainer.removeChild(element)).then(a -> {
+            componentContainer.firstChild = null;
+            return element;
+        });
 
         view.setupEmptyContainer();
 
@@ -218,17 +216,16 @@ public class DataTypeConstraintModalViewTest {
         final ConstraintType constraintType = ENUMERATION;
         final DataTypeConstraintComponent constrainComponent = mock(DataTypeConstraintComponent.class);
         final Element element = mock(Element.class);
+        final Element previous = mock(Element.class);
 
+        componentContainer.firstChild = previous;
         when(presenter.getCurrentComponent()).thenReturn(constrainComponent);
         when(constrainComponent.getElement()).thenReturn(element);
 
-        final Element previous = mock(Element.class);
-        final NodeList<Node> list = spy(new NodeList<>());
-        doReturn(previous).when(list).getAt(0);
-        list.length = 1;
-        previous.parentNode = componentContainer;
-
-        componentContainer.childNodes = list;
+        when(componentContainer.removeChild(previous)).then(a -> {
+            componentContainer.firstChild = null;
+            return element;
+        });
 
         view.loadComponent(constraintType);
 

@@ -29,8 +29,6 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLOptGroupElement;
 import elemental2.dom.HTMLOptionElement;
 import elemental2.dom.HTMLSelectElement;
-import elemental2.dom.Node;
-import elemental2.dom.NodeList;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -131,6 +129,7 @@ public class DataTypeSelectViewTest {
         final HTMLOptGroupElement groupElementDefault = mock(HTMLOptGroupElement.class);
         final List<DataType> defaultDataTypes = new ArrayList<>();
         final List<DataType> customDataTypes = new ArrayList<>();
+        final Element element = mock(Element.class);
 
         when(translationService.format(DataTypeSelectView_DefaultTitle)).thenReturn("Default");
         when(translationService.format(DataTypeSelectView_CustomTitle)).thenReturn("Custom");
@@ -138,14 +137,12 @@ public class DataTypeSelectViewTest {
         when(presenter.getCustomDataTypes()).thenReturn(customDataTypes);
         doReturn(groupElementCustom).when(view).makeOptionGroup(eq("Default"), eq(defaultDataTypes), any());
         doReturn(groupElementDefault).when(view).makeOptionGroup(eq("Custom"), eq(customDataTypes), any());
+        typeSelect.firstChild = element;
 
-        final Element element = mock(Element.class);
-        final NodeList<Node> list = spy(new NodeList<>());
-        doReturn(element).when(list).getAt(0);
-        list.length = 1;
-        element.parentNode = typeSelect;
-
-        typeSelect.childNodes = list;
+        when(typeSelect.removeChild(element)).then(a -> {
+            typeSelect.firstChild = null;
+            return element;
+        });
 
         view.setupDropdownItems();
 

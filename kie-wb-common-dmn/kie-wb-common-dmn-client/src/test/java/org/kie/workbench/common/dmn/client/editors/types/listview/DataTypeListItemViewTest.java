@@ -21,12 +21,10 @@ import elemental2.dom.DOMTokenList;
 import elemental2.dom.Element;
 import elemental2.dom.Element.OnclickCallbackFn;
 import elemental2.dom.Event;
-import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import elemental2.dom.Node;
 import elemental2.dom.NodeList;
 import elemental2.dom.Text;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -71,9 +69,6 @@ public class DataTypeListItemViewTest {
     private HTMLElement nameText;
 
     @Mock
-    private HTMLElement constraintText;
-
-    @Mock
     private HTMLInputElement nameInput;
 
     @Mock
@@ -89,9 +84,6 @@ public class DataTypeListItemViewTest {
     private HTMLDivElement listYes;
 
     @Mock
-    private HTMLDivElement constraintContainer;
-
-    @Mock
     private HTMLButtonElement editButton;
 
     @Mock
@@ -105,21 +97,6 @@ public class DataTypeListItemViewTest {
 
     @Mock
     private HTMLElement dataTypeListElement;
-
-    @Mock
-    private HTMLAnchorElement removeButton;
-
-    @Mock
-    private HTMLAnchorElement insertFieldAbove;
-
-    @Mock
-    private HTMLAnchorElement insertFieldBelow;
-
-    @Mock
-    private HTMLAnchorElement insertNestedField;
-
-    @Mock
-    private HTMLDivElement kebabMenu;
 
     @Mock
     private TranslationService translationService;
@@ -489,17 +466,17 @@ public class DataTypeListItemViewTest {
 
         final DataTypeSelect select = mock(DataTypeSelect.class);
         final HTMLElement htmlElement = mock(HTMLElement.class);
+        final Element element = mock(Element.class);
+
+        type.firstChild = element;
 
         doReturn(type).when(view).getType();
         when(select.getElement()).thenReturn(htmlElement);
 
-        final Element element = mock(Element.class);
-        final NodeList<Node> list = spy(new NodeList<>());
-        doReturn(element).when(list).getAt(0);
-        list.length = 1;
-        element.parentNode = type;
-
-        type.childNodes = list;
+        when(type.removeChild(element)).then(a -> {
+            type.firstChild = null;
+            return element;
+        });
 
         view.setupSelectComponent(select);
 
@@ -512,17 +489,16 @@ public class DataTypeListItemViewTest {
 
         final DataTypeConstraint constraintComponent = mock(DataTypeConstraint.class);
         final HTMLElement htmlElement = mock(HTMLElement.class);
+        final Element element = mock(Element.class);
 
+        constraint.firstChild = element;
         doReturn(constraint).when(view).getConstraintContainer();
         when(constraintComponent.getElement()).thenReturn(htmlElement);
 
-        final Element element = mock(Element.class);
-        final NodeList<Node> list = spy(new NodeList<>());
-        doReturn(element).when(list).getAt(0);
-        list.length = 1;
-        element.parentNode = constraint;
-
-        constraint.childNodes = list;
+        when(constraint.removeChild(element)).then(a -> {
+            constraint.firstChild = null;
+            return element;
+        });
 
         view.setupConstraintComponent(constraintComponent);
 
@@ -536,18 +512,17 @@ public class DataTypeListItemViewTest {
         final SmallSwitchComponent switchComponent = mock(SmallSwitchComponent.class);
         final HTMLElement htmlElement = mock(HTMLElement.class);
         final Text listTextNode = mock(Text.class);
+        final Element element = mock(Element.class);
 
+        listContainer.firstChild = element;
         when(switchComponent.getElement()).thenReturn(htmlElement);
         doReturn(listTextNode).when(view).listTextNode();
         doReturn(listContainer).when(view).getListContainer();
 
-        final Element element = mock(Element.class);
-        final NodeList<Node> list = spy(new NodeList<>());
-        doReturn(element).when(list).getAt(0);
-        list.length = 1;
-        element.parentNode = listContainer;
-
-        listContainer.childNodes = list;
+        when(listContainer.removeChild(element)).then(a -> {
+            listContainer.firstChild = null;
+            return element;
+        });
 
         view.setupListComponent(switchComponent);
 

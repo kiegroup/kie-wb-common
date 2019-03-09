@@ -17,16 +17,12 @@
 package org.kie.workbench.common.dmn.client.editors.common;
 
 import elemental2.dom.Element;
-import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
 
 public class RemoveHelper {
 
     public static void removeChildren(final Element element) {
-        if (element == null || element.childNodes == null) {
-            return;
-        }
-        for (int i = 0; i < element.childNodes.length; i++) {
-            ElementHelper.remove(element.childNodes.getAt(i));
+        while (element.firstChild != null) {
+            element.removeChild(element.firstChild);
         }
     }
 }
