@@ -31,6 +31,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManagerStackStore;
@@ -143,7 +144,7 @@ public class DataTypesPage extends PageImpl {
     }
 
     void refreshPageView() {
-        pageView.innerHTML = "";
+        RemoveHelper.removeChildren(pageView);
         pageView.appendChild(flashMessages.getElement());
         pageView.appendChild(treeList.getElement());
     }

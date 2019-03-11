@@ -200,17 +200,20 @@ public class DataTypesPageTest {
 
         final HTMLElement flashMessagesElement = mock(HTMLElement.class);
         final HTMLElement treeListElement = mock(HTMLElement.class);
+        final Element element = mock(Element.class);
+        pageView.firstChild = element;
 
-        pageView.innerHTML = "something";
+        when(pageView.removeChild(element)).then(a -> {
+            pageView.firstChild = null;
+            return element;
+        });
+
         when(flashMessages.getElement()).thenReturn(flashMessagesElement);
         when(treeList.getElement()).thenReturn(treeListElement);
 
         page.refreshPageView();
 
-        final String actual = pageView.innerHTML;
-        final String expected = "";
-
-        assertEquals(expected, actual);
+        verify(pageView).removeChild(element);
         verify(pageView).appendChild(flashMessagesElement);
         verify(pageView).appendChild(treeListElement);
     }
