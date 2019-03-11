@@ -18,6 +18,7 @@ import * as React from "react";
 import * as AppFormer from "appformer-js";
 import * as Service from "./service";
 import { NewSpacePopup } from "./NewSpacePopup";
+import { LoadingPopup } from "./LoadingPopup";
 
 interface Props {
   exposing: (self: () => SpacesScreen) => void;
@@ -26,20 +27,23 @@ interface Props {
 interface State {
   spaces: Service.Space[];
   newSpacePopupOpen: boolean;
+  loading: boolean;
 }
 
 export class SpacesScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { spaces: [], newSpacePopupOpen: false };
+    this.state = { spaces: [], newSpacePopupOpen: false, loading: false };
     this.props.exposing(() => this);
   }
 
   private goToSpace(space: Service.Space) {
-    Service.updateLibraryPreference({
-      projectExplorerExpanded: false,
-      lastOpenedOrganizationalUnit: space.name
-    }).then(() => {
+    this.showLoadingPopupWhile(
+      Service.updateLibraryPreference({
+        projectExplorerExpanded: false,
+        lastOpenedOrganizationalUnit: space.name
+      })
+    ).then(() => {
       (AppFormer as any).LibraryPlaces.goToSpace(space.name);
     });
   }
@@ -59,21 +63,41 @@ export class SpacesScreen extends React.Component<Props, State> {
   }
 
   public refreshSpaces() {
-    Service.fetchSpaces().then(spaces => {
-      this.setState({ spaces: spaces as Service.Space[] });
-    });
+    this.showLoadingPopupWhile(Service.fetchSpaces()).then(spaces =>
+      this.setState({ spaces: spaces as Service.Space[] })
+    );
   }
 
   public componentDidMount() {
     this.refreshSpaces();
   }
 
+  private showLoadingPopupWhile<T>(promise: Promise<T>): Promise<T> {
+    this.setState({ loading: true }, () =>
+      promise
+        .then(() => {
+          this.setState({ loading: false });
+        })
+        .catch(e => {
+          this.setState({ loading: false });
+        })
+    );
+
+    return promise;
+  }
+
   public render() {
     return (
       <>
-        {this.state.newSpacePopupOpen && <NewSpacePopup onClose={() => this.closeNewSpacePopup()} />}
+        {this.state.loading && <LoadingPopup />}
 
-        {this.state.spaces.length <= 0 && <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()} />}
+        {this.state.newSpacePopupOpen && (
+          <NewSpacePopup onClose={() => this.closeNewSpacePopup()} />
+        )}
+
+        {this.state.spaces.length <= 0 && (
+          <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()} />
+        )}
 
         {this.state.spaces.length > 0 && (
           <div className={"library container-fluid"}>
@@ -83,9 +107,15 @@ export class SpacesScreen extends React.Component<Props, State> {
                   <div className={"toolbar-data-title-kie"}>Spaces</div>
                   <div className={"btn-group toolbar-btn-group-kie"}>
                     {this.canCreateSpace() && (
-                      <button className={"btn btn-primary"} onClick={() => this.openNewSpacePopup()}>
+                      <button
+                        className={"btn btn-primary"}
+                        onClick={() => this.openNewSpacePopup()}
+                      >
                         {AppFormer.translate("CreateOrganizationalUnit", [
-                          AppFormer.translate("OrganizationalUnitDefaultAliasInSingular", [])
+                          AppFormer.translate(
+                            "OrganizationalUnitDefaultAliasInSingular",
+                            []
+                          )
                         ])}
                       </button>
                     )}
@@ -95,7 +125,11 @@ export class SpacesScreen extends React.Component<Props, State> {
               <div className={"container-fluid container-cards-pf"}>
                 <div className={"row row-cards-pf"}>
                   {this.state.spaces.map(space => (
-                    <Tile key={space.name} space={space} onSelect={() => this.goToSpace(space)} />
+                    <Tile
+                      key={space.name}
+                      space={space}
+                      onSelect={() => this.goToSpace(space)}
+                    />
                   ))}
                 </div>
               </div>
@@ -122,9 +156,15 @@ function EmptySpacesScreen(props: { onAddSpace: () => void }) {
           ])}
         </p>
         <div className={"blank-slate-pf-main-action"}>
-          <button className={"btn btn-primary btn-lg"} onClick={() => props.onAddSpace()}>
+          <button
+            className={"btn btn-primary btn-lg"}
+            onClick={() => props.onAddSpace()}
+          >
             {AppFormer.translate("CreateOrganizationalUnit", [
-              AppFormer.translate("OrganizationalUnitDefaultAliasInSingular", [])
+              AppFormer.translate(
+                "OrganizationalUnitDefaultAliasInSingular",
+                []
+              )
             ])}
           </button>
         </div>
@@ -138,16 +178,24 @@ function Tile(props: { space: Service.Space; onSelect: () => void }) {
     <>
       <div className={"col-xs-12 col-sm-6 col-md-4 col-lg-3"}>
         <div
-          className={"card-pf card-pf-view card-pf-view-select card-pf-view-single-select"}
+          className={
+            "card-pf card-pf-view card-pf-view-select card-pf-view-single-select"
+          }
           onClick={() => props.onSelect()}
         >
           <div className={"card-pf-body"}>
             <div>
               <h2 className={"card-pf-title"}> {props.space.name} </h2>
-              <h5>{AppFormer.translate("NumberOfContributors", [props.space.contributors!.length.toString()])}</h5>
+              <h5>
+                {AppFormer.translate("NumberOfContributors", [
+                  props.space.contributors!.length.toString()
+                ])}
+              </h5>
             </div>
             <div className={"right"}>
-              <span className={"card-pf-icon-circle"}>{props.space.repositories!.length}</span>
+              <span className={"card-pf-icon-circle"}>
+                {props.space.repositories!.length}
+              </span>
             </div>
           </div>
         </div>
