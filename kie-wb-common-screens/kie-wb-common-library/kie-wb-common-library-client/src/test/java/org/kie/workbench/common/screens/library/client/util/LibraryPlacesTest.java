@@ -243,6 +243,7 @@ public class LibraryPlacesTest {
                 return windowParameters;
             }
         });
+        doNothing().when(libraryPlaces).expose();
         libraryPlaces.setup();
 
         libraryPlaces.init(mock(LibraryPerspective.class));
