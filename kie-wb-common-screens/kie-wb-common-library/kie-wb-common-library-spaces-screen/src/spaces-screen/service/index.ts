@@ -5,19 +5,29 @@ export interface Space {
 }
 
 export function fetchIsValidGroupIdName(groupId: string): Promise<boolean> {
-  return fetch(`rest/spacesScreen/spaces/validGroupId?groupId=${groupId}`).then(r => r.json());
+  return fetch(`rest/spacesScreen/spaces/validGroupId?groupId=${groupId}`, {
+    credentials: "same-origin"
+  }).then(r => r.json());
 }
 
 export function fetchIsDuplicatedSpaceName(name: string): Promise<boolean> {
-  return fetch(`rest/spacesScreen/spaces/${name}`).then(response => response.status === 200);
+  return fetch(`rest/spacesScreen/spaces/${name}`, {
+    credentials: "same-origin"
+  }).then(response => response.status === 200);
 }
 
 export function fetchSpaces(): Promise<Space[]> {
-  return fetch("rest/spacesScreen/spaces").then(response => response.json());
+  return fetch("rest/spacesScreen/spaces", { credentials: "same-origin" }).then(
+    response => response.json()
+  );
 }
 
-export function createSpace(newSpace: { name: string; groupId: string }): Promise<Response> {
+export function createSpace(newSpace: {
+  name: string;
+  groupId: string;
+}): Promise<Response> {
   return fetch("rest/spacesScreen/spaces", {
+    credentials: "same-origin",
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newSpace)
@@ -29,6 +39,7 @@ export function updateLibraryPreference(preference: {
   lastOpenedOrganizationalUnit: string;
 }): Promise<Response> {
   return fetch("rest/spacesScreen/libraryPreference", {
+    credentials: "same-origin",
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(preference)

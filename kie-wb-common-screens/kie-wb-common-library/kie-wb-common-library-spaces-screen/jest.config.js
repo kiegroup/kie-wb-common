@@ -14,32 +14,25 @@
  *  limitations under the License.
  */
 
-const parentConfig = {
-    defaults: {
-        reporters: [ "default", "jest-junit" ],
-        moduleDirectories: ["node_modules", "src"],
-        moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
-        testRegex: "/__tests__/.*\\.test\\.(jsx?|tsx?)$",
-        transform: {
-            "^.+\\.jsx?$": "babel-jest",
-            "^.+\\.tsx?$": "ts-jest"
-        }
+module.exports = {
+  globals: {
+    "ts-jest": {
+      diagnostics: {
+        pathRegex: ".*.test.tsx?$"
+      }
     }
+  },
+  setupFiles: ["<rootDir>/jest/jest-env-setup.js"],
+  moduleDirectories: ["node_modules", "src"],
+  moduleNameMapper: {
+    "appformer-js": "<rootDir>/target/appformer-js/appformer.js"
+  },
+  moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
+  testRegex: "/__tests__/.*\\.test\\.(jsx?|tsx?)$",
+  transform: {
+    "^.+\\.jsx?$": "babel-jest",
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  reporters: ["default", "jest-junit"],
+  snapshotSerializers: ["<rootDir>/node_modules/enzyme-to-json/serializer"]
 };
-
-parentConfig.defaults.setupFiles = ["./test-env/jest-env-setup.js"];
-parentConfig.defaults.snapshotSerializers = ["<rootDir>/node_modules/enzyme-to-json/serializer"];
-
-if (!parentConfig.defaults.globals) {
-    parentConfig.defaults.globals = {}
-}
-
-if (!parentConfig.defaults.globals['ts-jest']) {
-    parentConfig.defaults.globals['ts-jest'] = {};
-}
-
-parentConfig.defaults.globals['ts-jest'].diagnostics = {
-    pathRegex: ".*.test.tsx?$"
-};
-
-module.exports = parentConfig.defaults;

@@ -48,7 +48,7 @@ export class SpacesScreen extends React.Component<Props, State> {
     });
   }
 
-  private canCreateSpace() {
+  public canCreateSpace() {
     return (AppFormer as any).LibraryPermissions.canCreateSpace();
   }
 
@@ -141,7 +141,7 @@ export class SpacesScreen extends React.Component<Props, State> {
   }
 }
 
-function EmptySpacesScreen(props: { onAddSpace: () => void }) {
+export function EmptySpacesScreen(props: { onAddSpace: () => void }) {
   return (
     <div className={"library"}>
       <div className={"col-sm-12 blank-slate-pf"}>
@@ -173,7 +173,7 @@ function EmptySpacesScreen(props: { onAddSpace: () => void }) {
   );
 }
 
-function Tile(props: { space: Service.Space; onSelect: () => void }) {
+export function Tile(props: { space: Service.Space; onSelect: () => void }) {
   return (
     <>
       <div className={"col-xs-12 col-sm-6 col-md-4 col-lg-3"}>

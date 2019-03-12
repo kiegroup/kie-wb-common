@@ -14,10 +14,10 @@
  *  limitations under the License.
  */
 
-import { MutationObserver } from './polyfills/mutation-observer';
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+import * as AppFormer from "appformer-js";
 
 configure({ adapter: new Adapter() });
 
-Object.defineProperty(window, 'MutationObserver', { value: MutationObserver });
+AppFormer.translate = jest.fn((k) => k);
