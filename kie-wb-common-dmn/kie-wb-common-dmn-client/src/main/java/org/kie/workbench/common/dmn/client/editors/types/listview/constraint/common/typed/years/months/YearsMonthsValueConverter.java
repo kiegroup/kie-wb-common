@@ -42,7 +42,7 @@ public class YearsMonthsValueConverter {
         this.translationService = translationService;
     }
 
-    YearsMonthsValue fromDMNString(final String dmnString) {
+    public YearsMonthsValue fromDMNString(final String dmnString) {
 
         final YearsMonthsValue yearsMonthsValue = new YearsMonthsValue();
         final String value = removePrefixAndSuffix(dmnString);
@@ -73,8 +73,8 @@ public class YearsMonthsValueConverter {
         return "";
     }
 
-    String toDMNString(final String years,
-                       final String months) {
+    public String toDMNString(final String years,
+                              final String months) {
 
         final YearsMonthsValue value = new YearsMonthsValue();
         value.setYears(years);
@@ -103,7 +103,7 @@ public class YearsMonthsValueConverter {
         }
     }
 
-    String toDisplayValue(final String dmnValue) {
+    public String toDisplayValue(final String dmnValue) {
 
         final YearsMonthsValue yearsMonthsValue = fromDMNString(dmnValue);
         return toDisplayValue(yearsMonthsValue);

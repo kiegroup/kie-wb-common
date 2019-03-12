@@ -26,7 +26,6 @@ import elemental2.dom.Element;
 import elemental2.dom.Event;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueSelector;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateSelectorView;
 import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
@@ -44,12 +43,14 @@ public class YearsMonthsSelector implements TypedValueSelector {
 
     @Override
     public String getValue() {
-        return view.getValue();
+        final YearsMonthsValue value = view.getValue();
+        return converter.toDMNString(value.getYears(), value.getMonths());
     }
 
     @Override
     public void setValue(final String value) {
-        view.setValue(value);
+        final YearsMonthsValue yearsMonths = converter.fromDMNString(value);
+        view.setValue(yearsMonths);
     }
 
     @Override
@@ -82,12 +83,12 @@ public class YearsMonthsSelector implements TypedValueSelector {
         return converter.toDisplayValue(rawValue);
     }
 
-    public interface View extends UberElemental<DateSelectorView>,
+    public interface View extends UberElemental<YearsMonthsSelectorView>,
                                   IsElement {
 
-        String getValue();
+        YearsMonthsValue getValue();
 
-        void setValue(final String value);
+        void setValue(final YearsMonthsValue value);
 
         void setPlaceHolder(final String placeholder);
 

@@ -62,15 +62,15 @@ public class YearsMonthsSelectorViewTest {
         yearInput.value = inputYear;
         monthInput.value = inputMonth;
 
-        view.getValue();
+        final YearsMonthsValue value = view.getValue();
 
-        verify(converter).toDMNString(inputYear, inputMonth);
+        assertEquals(inputYear, value.getYears());
+        assertEquals(inputMonth, value.getMonths());
     }
 
     @Test
     public void testSetValue() {
 
-        final String inputValue = "inputValue";
         final String months = "months";
         final String years = "years";
         final YearsMonthsValue yearsMonthsValue = mock(YearsMonthsValue.class);
@@ -78,11 +78,7 @@ public class YearsMonthsSelectorViewTest {
         when(yearsMonthsValue.getMonths()).thenReturn(months);
         when(yearsMonthsValue.getYears()).thenReturn(years);
 
-        when(converter.fromDMNString(inputValue)).thenReturn(yearsMonthsValue);
-
-        view.setValue(inputValue);
-
-        verify(converter).fromDMNString(inputValue);
+        view.setValue(yearsMonthsValue);
 
         assertEquals(years, yearInput.value);
         assertEquals(months, monthInput.value);

@@ -50,8 +50,13 @@ public class YearsMonthsSelectorTest {
     @Test
     public void testGetValue() {
 
-        final String expected = "value";
-        when(view.getValue()).thenReturn(expected);
+        final String expected = "duration(\"P2Y1M\")";
+        final YearsMonthsValue value = mock(YearsMonthsValue.class);
+        when(value.getYears()).thenReturn("2");
+        when(value.getMonths()).thenReturn("1");
+
+        when(converter.toDMNString("2", "1")).thenReturn(expected);
+        when(view.getValue()).thenReturn(value);
 
         final String actual = selector.getValue();
 
@@ -62,9 +67,13 @@ public class YearsMonthsSelectorTest {
     @Test
     public void testSetValue() {
 
-        final String value = "value";
+        final String dmnString = "duration(\"P2Y1M\")";
+        final YearsMonthsValue value = mock(YearsMonthsValue.class);
+        when(value.getYears()).thenReturn("2");
+        when(value.getMonths()).thenReturn("1");
+        when(converter.fromDMNString(dmnString)).thenReturn(value);
 
-        selector.setValue(value);
+        selector.setValue(dmnString);
 
         verify(view).setValue(value);
     }

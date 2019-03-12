@@ -28,13 +28,12 @@ import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateSelectorView;
 
 @Templated
 @Dependent
 public class YearsMonthsSelectorView implements YearsMonthsSelector.View {
 
-    private DateSelectorView presenter;
+    private YearsMonthsSelectorView presenter;
 
     @DataField("years-input")
     private final HTMLInputElement yearInput;
@@ -56,21 +55,22 @@ public class YearsMonthsSelectorView implements YearsMonthsSelector.View {
     }
 
     @Override
-    public void init(final DateSelectorView presenter) {
+    public void init(final YearsMonthsSelectorView presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public String getValue() {
-        return converter.toDMNString(yearInput.value, monthInput.value);
+    public YearsMonthsValue getValue() {
+        final YearsMonthsValue value = new YearsMonthsValue();
+        value.setMonths(monthInput.value);
+        value.setYears(yearInput.value);
+        return value;
     }
 
     @Override
-    public void setValue(final String value) {
-
-        final YearsMonthsValue yearsMonths = converter.fromDMNString(value);
-        yearInput.value = yearsMonths.getYears();
-        monthInput.value = yearsMonths.getMonths();
+    public void setValue(final YearsMonthsValue value) {
+        yearInput.value = value.getYears();
+        monthInput.value = value.getMonths();
     }
 
     @Override
