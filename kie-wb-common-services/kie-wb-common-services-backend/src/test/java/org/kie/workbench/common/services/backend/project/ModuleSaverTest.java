@@ -42,6 +42,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.services.backend.project.ModuleSaver.NewModuleCreator;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
@@ -270,6 +271,24 @@ public class ModuleSaverTest
         runProjecCreationTest(pom);
         
         verify(packageNameWhiteListService).createModuleWhiteList(any(), eq(defaultPackageNameWhiteListEntry));
+        
+    }
+    
+    @Test
+    public void newModuleCreatorDefaultPackageTest() throws IOException {
+        final POM pom = new POM();
+        String defaultPackageNameWhiteListEntry = GROUP_ID + ".**";
+
+        pom.setName(PROJECT_NAME);
+        pom.getGav().setGroupId(GROUP_ID);
+        pom.getGav().setArtifactId(ARTIFACT_ID);
+        pom.getGav().setVersion(VERSION);
+
+        runProjecCreationTest(pom);
+        
+        NewModuleCreator newModuleCreator = saver.createNewModuleCreator(null, pom);
+        
+        assertEquals(defaultPackageNameWhiteListEntry, newModuleCreator.defaultPackageNamesWhiteListEntry());
         
     }
 

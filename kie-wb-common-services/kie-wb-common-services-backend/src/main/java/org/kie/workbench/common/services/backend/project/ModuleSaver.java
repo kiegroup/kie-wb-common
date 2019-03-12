@@ -90,8 +90,7 @@ public class ModuleSaver {
             ioService.startBatch(Paths.convert(repositoryRoot).getFileSystem(),
                                  commentedOptionFactory.makeCommentedOption("New module [" + pom.getName() + "]"));
 
-            KieModule kieModule = new NewModuleCreator(pom,
-                                                       repositoryRoot).create();
+            KieModule kieModule = createNewModuleCreator(repositoryRoot, pom).create();
 
             newModuleEvent.fire(new NewModuleEvent(kieModule,
                                                    safeSessionInfo.getId(),
@@ -104,7 +103,11 @@ public class ModuleSaver {
         }
     }
 
-    private class NewModuleCreator {
+    public NewModuleCreator createNewModuleCreator(final Path repositoryRoot, final POM pom) {
+        return new NewModuleCreator(pom,repositoryRoot);
+    }
+
+    protected class NewModuleCreator {
 
         private final Path moduleRoot;
         private final POM pom;
@@ -198,7 +201,7 @@ public class ModuleSaver {
             return resourceResolver.resolvePackage(Paths.convert(Paths.convert(moduleRoot).resolve(MAIN_RESOURCES_PATH)));
         }
         
-        private String defaultPackageNamesWhiteListEntry() {
+        public String defaultPackageNamesWhiteListEntry() {
             return String.join(".", pom.getGav().getGroupId(), "**");
         }
     }
