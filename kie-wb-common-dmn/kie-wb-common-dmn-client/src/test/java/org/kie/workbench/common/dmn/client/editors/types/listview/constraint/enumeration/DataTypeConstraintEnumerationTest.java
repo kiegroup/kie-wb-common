@@ -233,4 +233,27 @@ public class DataTypeConstraintEnumerationTest {
         verify(expectedItem).setDataTypeConstraintEnumeration(constraintEnumeration);
         assertEquals(expectedItem, actualItem);
     }
+
+    @Test
+    public void testGetValueOrdered() {
+
+        final DataTypeConstraintEnumerationItem item1 = mock(DataTypeConstraintEnumerationItem.class);
+        final DataTypeConstraintEnumerationItem item2 = mock(DataTypeConstraintEnumerationItem.class);
+        final DataTypeConstraintEnumerationItem item3 = mock(DataTypeConstraintEnumerationItem.class);
+
+        when(item1.getValue()).thenReturn("123");
+        when(item2.getValue()).thenReturn("456");
+        when(item3.getValue()).thenReturn("789");
+
+        when(item3.getOrder()).thenReturn(0);
+        when(item2.getOrder()).thenReturn(1);
+        when(item1.getOrder()).thenReturn(2);
+
+        doReturn(asList(item1, item2, item3)).when(constraintEnumeration).getEnumerationItems();
+
+        final String actualValue = constraintEnumeration.getValue();
+        final String expectedValue = "789, 456, 123";
+
+        assertEquals(expectedValue, actualValue);
+    }
 }

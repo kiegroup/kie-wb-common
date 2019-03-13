@@ -364,4 +364,34 @@ public class DataTypeConstraintEnumerationItemViewTest {
         verify(componentSelector).makeSelectorForType(type);
         verify(valueInput).appendChild(element);
     }
+
+    @Test
+    public void testGetOrder(){
+
+        final String dataPositionKey = "data-position";
+        final HTMLElement element = mock(HTMLElement.class);
+        final int expected = 1;
+
+        when(element.getAttribute(dataPositionKey)).thenReturn(String.valueOf(expected));
+        doReturn(element).when(view).getElement();
+
+        final int actual = view.getOrder();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetOrderEmptyString(){
+
+        final String dataPositionKey = "data-position";
+        final HTMLElement element = mock(HTMLElement.class);
+        final int expected = 0;
+
+        when(element.getAttribute(dataPositionKey)).thenReturn("");
+        doReturn(element).when(view).getElement();
+
+        final int actual = view.getOrder();
+
+        assertEquals(expected, actual);
+    }
 }

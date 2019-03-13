@@ -34,6 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueComponentSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueSelector;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.show;
@@ -199,6 +200,17 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
     @Override
     public void showDeleteButton() {
         show(removeAnchor);
+    }
+
+    @Override
+    public int getOrder() {
+
+        final String dataPosition = getElement().getAttribute("data-position");
+        if (StringUtils.isEmpty(dataPosition)) {
+            return 0;
+        } else {
+            return Integer.valueOf(dataPosition);
+        }
     }
 
     private void setText(final String value) {

@@ -38,13 +38,21 @@ public class DataTypeConstraintEnumerationView implements DataTypeConstraintEnum
     @DataField("add-icon")
     private final HTMLAnchorElement addIcon;
 
+    @DataField("add-button-container")
+    private final HTMLDivElement addButtonContainer;
+
+    private final DragAndDropHelper dragAndDrop;
+
     private DataTypeConstraintEnumeration presenter;
 
     @Inject
     public DataTypeConstraintEnumerationView(final HTMLDivElement items,
-                                             final HTMLAnchorElement addIcon) {
+                                             final HTMLAnchorElement addIcon,
+                                             final HTMLDivElement addButtonContainer) {
         this.items = items;
         this.addIcon = addIcon;
+        this.addButtonContainer = addButtonContainer;
+        this.dragAndDrop = new DragAndDropHelper(items, addButtonContainer);
     }
 
     @Override
@@ -64,6 +72,13 @@ public class DataTypeConstraintEnumerationView implements DataTypeConstraintEnum
 
     @Override
     public void addItem(final Element enumerationItem) {
+
+        enumerationItem.setAttribute("data-position", items.childNodes.length);
         items.appendChild(enumerationItem);
+        getDragAndDropHelper().refreshItemsPosition();
+    }
+
+    DragAndDropHelper getDragAndDropHelper() {
+        return dragAndDrop;
     }
 }
