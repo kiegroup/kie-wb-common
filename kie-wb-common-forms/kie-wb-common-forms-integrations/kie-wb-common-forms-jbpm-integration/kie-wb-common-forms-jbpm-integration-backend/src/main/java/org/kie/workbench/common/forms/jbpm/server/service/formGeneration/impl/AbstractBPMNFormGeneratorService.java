@@ -294,7 +294,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         final FormDefinition form = new FormDefinition(formModel);
 
         form.setId(UIDGenerator.generateUID());
-        form.setName(formModel.getName());
+        form.setName(generateNestedFormName(formModel.getType()));
 
         formModel.getProperties().forEach(property -> {
             form.getFields().add(fieldManager.getDefinitionByModelProperty(property));
@@ -311,6 +311,10 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         context.getContextForms().put(modelType, form);
 
         return form;
+    }
+
+    public static String generateNestedFormName(String className) {
+        return className.replaceAll("\\.", "_");
     }
 
     protected abstract boolean supportsEmptyNestedForms();

@@ -91,13 +91,9 @@ public abstract class AbstractGetModelsTest {
     }
 
     protected java.nio.file.Path copyResource(String resourcePath, String newName) throws IOException {
-        try {
-            final java.nio.file.Path sourcePath = getNioPath(resourcePath);
-            final java.nio.file.Path targetPath = sourcePath.resolveSibling(newName);
-            return Files.copy(sourcePath, targetPath);
-        } finally {
-            //clearCache();
-        }
+        final java.nio.file.Path sourcePath = getNioPath(resourcePath);
+        final java.nio.file.Path targetPath = sourcePath.resolveSibling(newName);
+        return Files.copy(sourcePath, targetPath);
     }
 
     protected java.nio.file.Path renameResource(String resourcePath, String newName) throws IOException {

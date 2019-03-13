@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -79,14 +80,14 @@ public class BPMFinderServiceImpl implements BPMFinderService {
     @Override
     public List<JBPMProcessModel> getAvailableProcessModels(final Path path) {
 
-        return findModels(path, definitions -> true);
+        return findModels(path, definitions -> true)
+                .collect(Collectors.toList());
     }
 
     @Override
     public JBPMProcessModel getModelForProcess(final String processId, final Path path) {
 
         return findModels(path, definitions -> matchProcessId(definitions, processId))
-                .stream()
                 .findFirst()
                 .orElse(null);
     }
@@ -105,7 +106,7 @@ public class BPMFinderServiceImpl implements BPMFinderService {
         return process.getId().equals(processId);
     }
 
-    private List<JBPMProcessModel> findModels(final Path path, final Predicate<Definitions> filter) {
+    private Stream<JBPMProcessModel> findModels(final Path path, final Predicate<Definitions> filter) {
 
         Path rootPath = moduleService.resolveModule(path).getRootPath();
 
@@ -113,8 +114,7 @@ public class BPMFinderServiceImpl implements BPMFinderService {
                 .stream()
                 .filter(Objects::nonNull)
                 .map(VFSScanner.ScanResult::getResource)
-                .map(definitions -> parseToModel(definitions, path))
-                .collect(Collectors.toList());
+                .map(definitions -> parseToModel(definitions, path));
     }
 
     private JBPMProcessModel parseToModel(final Definitions definitions, final Path path) {

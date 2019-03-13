@@ -46,7 +46,7 @@ public class VFSScanner<TYPE> {
     }
 
     public static <TYPE> Collection<ScanResult<TYPE>> scan(IOService ioService, Path rootPath, Collection<String> extensions, Function<InputStream, TYPE> converter) {
-        return scan(ioService, rootPath, extensions, converter, resouce -> true);
+        return scan(ioService, rootPath, extensions, converter, resource -> true);
     }
 
     public static <TYPE> Collection<ScanResult<TYPE>> scan(IOService ioService, Path rootPath, Collection<String> extensions, Function<InputStream, TYPE> converter, Predicate<TYPE> filter) {

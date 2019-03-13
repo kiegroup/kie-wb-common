@@ -40,6 +40,7 @@ import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
+import org.uberfire.java.nio.fs.jgit.JGitFileSystemProviderConfiguration;
 
 public abstract class AbstractModuleFormFinderServiceImplTest {
 
@@ -74,8 +75,8 @@ public abstract class AbstractModuleFormFinderServiceImplTest {
 
         repoFile = Files.createTempDir();
 
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+        System.setProperty(JGitFileSystemProviderConfiguration.GIT_DAEMON_ENABLED, "false");
+        System.setProperty(JGitFileSystemProviderConfiguration.GIT_SSH_ENABLED, "false");
         System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
         System.setProperty(ArtifactRepositoryService.ORG_GUVNOR_M2REPO_DIR_PROPERTY, repoFile.getAbsolutePath());
 
@@ -125,8 +126,8 @@ public abstract class AbstractModuleFormFinderServiceImplTest {
 
         FileUtils.deleteQuietly(repoFile);
 
-        System.clearProperty("org.uberfire.nio.git.daemon.enabled");
-        System.clearProperty("org.uberfire.nio.git.ssh.enabled");
+        System.clearProperty(JGitFileSystemProviderConfiguration.GIT_DAEMON_ENABLED);
+        System.clearProperty(JGitFileSystemProviderConfiguration.GIT_SSH_ENABLED);
         System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
         System.clearProperty(ArtifactRepositoryService.ORG_GUVNOR_M2REPO_DIR_PROPERTY);
     }

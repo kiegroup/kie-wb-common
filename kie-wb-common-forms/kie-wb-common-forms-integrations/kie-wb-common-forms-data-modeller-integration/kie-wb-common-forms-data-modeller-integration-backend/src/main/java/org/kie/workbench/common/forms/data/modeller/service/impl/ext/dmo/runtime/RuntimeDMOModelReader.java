@@ -103,7 +103,7 @@ public class RuntimeDMOModelReader implements ModelReader {
 
             return oracle;
         } catch (IOException ex) {
-
+            logger.warn("Couldn't inspect model {} due to: {}", typeName, ex);
         }
         return null;
     }

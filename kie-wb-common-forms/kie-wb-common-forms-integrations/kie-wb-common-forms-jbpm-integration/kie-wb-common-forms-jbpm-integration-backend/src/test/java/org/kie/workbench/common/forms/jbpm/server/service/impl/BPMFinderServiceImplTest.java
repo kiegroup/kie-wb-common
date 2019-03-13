@@ -33,6 +33,7 @@ import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystemProvider;
+import org.uberfire.java.nio.fs.jgit.JGitFileSystemProviderConfiguration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -74,8 +75,8 @@ public class BPMFinderServiceImplTest {
     @BeforeClass
     public static void setUp() throws Exception {
 
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+        System.setProperty(JGitFileSystemProviderConfiguration.GIT_DAEMON_ENABLED, "false");
+        System.setProperty(JGitFileSystemProviderConfiguration.GIT_SSH_ENABLED, "false");
         System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
 
         weldContainer = new Weld().initialize();
@@ -174,8 +175,8 @@ public class BPMFinderServiceImplTest {
             weldContainer.shutdown();
         }
 
-        System.clearProperty("org.uberfire.nio.git.daemon.enabled");
-        System.clearProperty("org.uberfire.nio.git.ssh.enabled");
+        System.clearProperty(JGitFileSystemProviderConfiguration.GIT_DAEMON_ENABLED);
+        System.clearProperty(JGitFileSystemProviderConfiguration.GIT_SSH_ENABLED);
         System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
         System.clearProperty(ArtifactRepositoryService.ORG_GUVNOR_M2REPO_DIR_PROPERTY);
     }

@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.datamodel.backend.server.cache;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.kie.scanner.KieModuleMetaData;
@@ -162,9 +163,9 @@ public class ModuleDataModelOracleBuilderProvider {
 
             int index = type.lastIndexOf(".");
 
-            if(index != -1) {
+            if (index != -1) {
                 pkg = type.substring(0, index);
-                type = type.substring(index +1);
+                type = type.substring(index + 1);
             }
 
             final Class clazz = kieModuleMetaData.getClass(pkg, type);

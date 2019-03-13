@@ -90,6 +90,7 @@ import org.uberfire.java.nio.base.options.CommentedOption;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kie.workbench.common.forms.jbpm.model.authoring.document.type.DocumentFieldType.DOCUMENT_TYPE;
+import static org.kie.workbench.common.forms.jbpm.server.service.formGeneration.impl.AbstractBPMNFormGeneratorService.generateNestedFormName;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -406,11 +407,11 @@ public class FormGenerationIntegrationTest {
         assertThat(nestedForms.size()).as("Unexpected number of nested forms").isEqualTo(2);
 
         final FormDefinition dataObjectForm = Iterables.getOnlyElement(nestedForms.stream()
-                                                                               .filter(f -> f.getName().equals("FormGenerationTest_DataObject"))
+                                                                               .filter(f -> f.getName().equals(generateNestedFormName(FormGenerationTest_DataObject.class.getName())))
                                                                                .collect(Collectors.toList()));
 
         final FormDefinition nestedDataObjectForm = Iterables.getOnlyElement(nestedForms.stream()
-                                                                                     .filter(f -> f.getName().equals("FormGenerationTest_NestedObject"))
+                                                                                     .filter(f -> f.getName().equals(generateNestedFormName(FormGenerationTest_NestedObject.class.getName())))
                                                                                      .collect(Collectors.toList()));
 
         final String dataObjectFormID = dataObjectForm.getId();

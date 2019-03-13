@@ -167,6 +167,7 @@ public class GetProcessModelsTest extends AbstractGetModelsTest {
     private void copyProcess(String oldName, String newName) throws IOException {
         copyResource(getProcessPath(oldName), newName + ".bpmn2");
         changeProcessId(newName, "src.order", "src." + newName);
+        clearCache();
     }
 
     private void deleteProcess(String process) throws IOException, URISyntaxException {
