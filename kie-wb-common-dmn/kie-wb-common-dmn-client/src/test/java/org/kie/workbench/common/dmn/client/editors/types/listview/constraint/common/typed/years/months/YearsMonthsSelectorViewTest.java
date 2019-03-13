@@ -43,15 +43,12 @@ public class YearsMonthsSelectorViewTest {
     @Mock
     private HTMLInputElement monthInput;
 
-    @Mock
-    private YearsMonthsValueConverter converter;
-
     private YearsMonthsSelectorView view;
 
     @Before
     public void testSetup() {
 
-        view = Mockito.spy(new YearsMonthsSelectorView(yearInput, monthInput, converter));
+        view = Mockito.spy(new YearsMonthsSelectorView(yearInput, monthInput));
     }
 
     @Test

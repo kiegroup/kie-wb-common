@@ -41,17 +41,13 @@ public class YearsMonthsSelectorView implements YearsMonthsSelector.View {
     @DataField("months-input")
     private final HTMLInputElement monthInput;
 
-    private final YearsMonthsValueConverter converter;
-
     private Consumer<BlurEvent> onValueInputBlur;
 
     @Inject
     public YearsMonthsSelectorView(final HTMLInputElement yearInput,
-                                   final HTMLInputElement monthInput,
-                                   final YearsMonthsValueConverter converter) {
+                                   final HTMLInputElement monthInput) {
         this.yearInput = yearInput;
         this.monthInput = monthInput;
-        this.converter = converter;
     }
 
     @Override
