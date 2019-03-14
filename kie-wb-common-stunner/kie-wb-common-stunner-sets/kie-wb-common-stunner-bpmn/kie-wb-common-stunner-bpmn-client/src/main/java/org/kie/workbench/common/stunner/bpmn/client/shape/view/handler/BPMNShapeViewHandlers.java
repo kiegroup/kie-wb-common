@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.shape.view.handler;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
+import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Orientation;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.ReferencePosition;
@@ -41,6 +42,8 @@ public class BPMNShapeViewHandlers {
                     .fontColor(bean -> bean.getFontSet().getFontColor().getValue())
                     .fontSize(bean -> bean.getFontSet().getFontSize().getValue())
                     .strokeColor(bean -> bean.getFontSet().getFontBorderColor().getValue())
+                    .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
+                    .textWrapperStrategy( bean  -> TextWrapperStrategy.TRUNCATE);
                     .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
                     .verticalAlignment(bean -> VerticalAlignment.MIDDLE)
                     .horizontalAlignment(bean -> HorizontalAlignment.CENTER)
