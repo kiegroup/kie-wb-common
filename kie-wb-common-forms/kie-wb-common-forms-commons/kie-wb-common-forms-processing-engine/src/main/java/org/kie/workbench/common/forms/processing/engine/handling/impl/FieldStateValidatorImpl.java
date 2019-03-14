@@ -93,9 +93,13 @@ public class FieldStateValidatorImpl implements FieldStateValidator {
 
         for(CustomFieldValidator validator : field.getCustomValidators()) {
             ValidationResult result = validator.validate(value);
-            if(!result.getStatus().isValid()) {
-                field.showError(result.getMessage());
-                return false;
+            if(result.getStatus().hasMessage()) {
+                if(!result.getStatus().isValid()) {
+                    field.showError(result.getMessage());
+                    return false;
+                } else {
+                    field.showWarning(result.getMessage());
+                }
             }
         }
 
