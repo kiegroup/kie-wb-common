@@ -49,6 +49,8 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
 
     static final String NONE_CSS_CLASS = "none";
 
+    public static final String DATA_POSITION = "data-position";
+
     private final TypedValueComponentSelector componentSelector;
 
     private TypedValueSelector typedValueSelector;
@@ -205,7 +207,7 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
     @Override
     public int getOrder() {
 
-        final String dataPosition = getElement().getAttribute("data-position");
+        final String dataPosition = getElement().getAttribute(DATA_POSITION);
         if (StringUtils.isEmpty(dataPosition)) {
             return 0;
         } else {

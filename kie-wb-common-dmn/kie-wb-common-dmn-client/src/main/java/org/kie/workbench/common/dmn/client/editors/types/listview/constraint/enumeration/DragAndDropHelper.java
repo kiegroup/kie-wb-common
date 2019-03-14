@@ -25,6 +25,8 @@ import elemental2.dom.MouseEvent;
 import elemental2.dom.NodeList;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
+
 class DragAndDropHelper {
 
     private final HTMLElement dragArea;
@@ -44,7 +46,7 @@ class DragAndDropHelper {
         init();
     }
 
-    void init() {
+    private void init() {
         dragArea.onmousedown = this::onDragAreaMouseDown;
         dragArea.onmouseup = this::onDragAreaMouseUp;
         dragArea.onmousemove = this::onDragAreaMouseMove;
@@ -70,11 +72,11 @@ class DragAndDropHelper {
     }
 
     int position(final Element element) {
-        return Integer.valueOf(element.getAttribute("data-position"));
+        return Integer.valueOf(element.getAttribute(DATA_POSITION));
     }
 
     Element findElementByPosition(final int position) {
-        return dragArea.querySelector("[data-position=\"" + position + "\"]");
+        return dragArea.querySelector("[" + DATA_POSITION + "=\"" + position + "\"]");
     }
 
     void swapElements(final Element element, final Element element2) {
@@ -86,8 +88,8 @@ class DragAndDropHelper {
         final int pos1 = position(element);
         final int pos2 = position(element2);
 
-        element.setAttribute("data-position", pos2);
-        element2.setAttribute("data-position", pos1);
+        element.setAttribute(DATA_POSITION, pos2);
+        element2.setAttribute(DATA_POSITION, pos1);
 
         refreshItemsPosition();
     }

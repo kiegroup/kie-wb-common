@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -75,9 +76,9 @@ public class DragAndDropHelperTest {
         doReturn(element2).when(draggableItems).getAt(1);
         doReturn(element3).when(draggableItems).getAt(2);
 
-        when(element1.getAttribute("data-position")).thenReturn("0");
-        when(element2.getAttribute("data-position")).thenReturn("1");
-        when(element3.getAttribute("data-position")).thenReturn("2");
+        when(element1.getAttribute(DATA_POSITION)).thenReturn("0");
+        when(element2.getAttribute(DATA_POSITION)).thenReturn("1");
+        when(element3.getAttribute(DATA_POSITION)).thenReturn("2");
 
         draggableItems.length = 3;
 
@@ -97,7 +98,7 @@ public class DragAndDropHelperTest {
         final HTMLElement element = mock(HTMLElement.class);
         final int expected = 1;
 
-        when(element.getAttribute("data-position")).thenReturn(String.valueOf(expected));
+        when(element.getAttribute(DATA_POSITION)).thenReturn(String.valueOf(expected));
 
         final int actual = helper.position(element);
 
@@ -111,7 +112,7 @@ public class DragAndDropHelperTest {
 
         helper.findElementByPosition(position);
 
-        verify(dragArea).querySelector("[data-position=\"" + position + "\"]");
+        verify(dragArea).querySelector("[" + DATA_POSITION + "=\"" + position + "\"]");
     }
 
     @Test
@@ -126,8 +127,8 @@ public class DragAndDropHelperTest {
 
         helper.swapElements(a, b);
 
-        verify(a).setAttribute("data-position", 1);
-        verify(b).setAttribute("data-position", 2);
+        verify(a).setAttribute(DATA_POSITION, 1);
+        verify(b).setAttribute(DATA_POSITION, 2);
     }
 
     @Test

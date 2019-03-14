@@ -28,6 +28,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
+
 @Templated
 @Dependent
 public class DataTypeConstraintEnumerationView implements DataTypeConstraintEnumeration.View {
@@ -73,7 +75,7 @@ public class DataTypeConstraintEnumerationView implements DataTypeConstraintEnum
     @Override
     public void addItem(final Element enumerationItem) {
 
-        enumerationItem.setAttribute("data-position", items.childNodes.length);
+        enumerationItem.setAttribute(DATA_POSITION, items.childNodes.length);
         items.appendChild(enumerationItem);
         getDragAndDropHelper().refreshItemsPosition();
     }

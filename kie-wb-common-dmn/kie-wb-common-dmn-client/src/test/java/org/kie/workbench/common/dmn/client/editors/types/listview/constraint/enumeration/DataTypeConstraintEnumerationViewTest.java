@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -89,5 +90,6 @@ public class DataTypeConstraintEnumerationViewTest {
 
         verify(items).appendChild(enumerationItem);
         verify(helper).refreshItemsPosition();
+        verify(enumerationItem).setAttribute(DATA_POSITION, 0);
     }
 }

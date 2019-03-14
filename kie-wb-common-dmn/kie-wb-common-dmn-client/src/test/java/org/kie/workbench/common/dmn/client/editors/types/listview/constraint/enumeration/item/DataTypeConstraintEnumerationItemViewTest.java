@@ -36,6 +36,7 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.HIDDEN_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItem.NULL;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.HIGHLIGHTED_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.NONE_CSS_CLASS;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeConstraintEnumerationItemView_None;
@@ -343,7 +344,7 @@ public class DataTypeConstraintEnumerationItemViewTest {
     }
 
     @Test
-    public void testOnClearFieldAnchorClick(){
+    public void testOnClearFieldAnchorClick() {
 
         view.onClearFieldAnchorClick(mock(ClickEvent.class));
 
@@ -366,13 +367,12 @@ public class DataTypeConstraintEnumerationItemViewTest {
     }
 
     @Test
-    public void testGetOrder(){
+    public void testGetOrder() {
 
-        final String dataPositionKey = "data-position";
         final HTMLElement element = mock(HTMLElement.class);
         final int expected = 1;
 
-        when(element.getAttribute(dataPositionKey)).thenReturn(String.valueOf(expected));
+        when(element.getAttribute(DATA_POSITION)).thenReturn(String.valueOf(expected));
         doReturn(element).when(view).getElement();
 
         final int actual = view.getOrder();
@@ -381,13 +381,12 @@ public class DataTypeConstraintEnumerationItemViewTest {
     }
 
     @Test
-    public void testGetOrderEmptyString(){
+    public void testGetOrderEmptyString() {
 
-        final String dataPositionKey = "data-position";
         final HTMLElement element = mock(HTMLElement.class);
         final int expected = 0;
 
-        when(element.getAttribute(dataPositionKey)).thenReturn("");
+        when(element.getAttribute(DATA_POSITION)).thenReturn("");
         doReturn(element).when(view).getElement();
 
         final int actual = view.getOrder();
