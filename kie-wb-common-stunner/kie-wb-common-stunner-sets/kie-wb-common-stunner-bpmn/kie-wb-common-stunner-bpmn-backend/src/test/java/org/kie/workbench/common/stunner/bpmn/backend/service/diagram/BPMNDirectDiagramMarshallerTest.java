@@ -1464,9 +1464,8 @@ public class BPMNDirectDiagramMarshallerTest {
                      javascriptScriptTask.getExecutionSet().getScript().getValue().getLanguage());
         assertEquals("true",
                      javascriptScriptTask.getExecutionSet().getIsAsync().getValue().toString());
-
         assertEquals("true",
-                     javascriptScriptTask.getExecutionSet().getIsAsync().getValue().toString());
+                     javascriptScriptTask.getExecutionSet().getAdHocAutostart().getValue().toString());
 
         assertNotNull(javaScriptTask);
         assertNotNull(javaScriptTask.getExecutionSet());
@@ -1491,9 +1490,8 @@ public class BPMNDirectDiagramMarshallerTest {
                      javaScriptTask.getExecutionSet().getScript().getValue().getLanguage());
         assertEquals("true",
                      javaScriptTask.getExecutionSet().getIsAsync().getValue().toString());
-
-        assertEquals("true",
-                     javaScriptTask.getExecutionSet().getIsAsync().getValue().toString());
+        assertEquals("false",
+                     javaScriptTask.getExecutionSet().getAdHocAutostart().getValue().toString());
     }
 
     @Test
@@ -2996,6 +2994,7 @@ public class BPMNDirectDiagramMarshallerTest {
                                            " ").replaceAll("( )+",
                                                            " ");
         assertTrue(flatResult.contains("<drools:metaData name=\"customAsync\"> <drools:metaValue><![CDATA[true]]></drools:metaValue>"));
+        assertTrue(flatResult.contains("<drools:metaData name=\"customAutoStart\"> <drools:metaValue><![CDATA[true]]></drools:metaValue>"));
     }
 
     @Test
