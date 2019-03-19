@@ -6,12 +6,12 @@
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
     <artifactId>kie-wb-common-library</artifactId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.20.0-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
   <artifactId>kie-wb-common-library-spaces-screen</artifactId>
-  <version>7.19.0-SNAPSHOT</version>
+  <version>7.20.0-SNAPSHOT</version>
   <name>Kie Workbench - Common - Library - Spaces Screen</name>
   <description>Kie Workbench - Common - Library - Spaces Screen</description>
 
