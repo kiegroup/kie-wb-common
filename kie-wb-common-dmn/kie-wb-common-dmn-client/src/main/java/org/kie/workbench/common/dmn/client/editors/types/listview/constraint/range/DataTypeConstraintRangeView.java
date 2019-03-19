@@ -19,11 +19,11 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.ra
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.Event;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueComponentSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueSelector;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
@@ -75,8 +75,8 @@ public class DataTypeConstraintRangeView implements DataTypeConstraintRange.View
     }
 
     void setupInputFields() {
-        startValueComponent.onValueChanged(this::onValueChanged);
-        endValueComponent.onValueChanged(this::onValueChanged);
+        startValueComponent.setOnInputChangeCallback(this::onValueChanged);
+        endValueComponent.setOnInputChangeCallback(this::onValueChanged);
     }
 
     @Override
@@ -128,17 +128,17 @@ public class DataTypeConstraintRangeView implements DataTypeConstraintRange.View
     @Override
     public void setComponentSelector(final String type) {
         startValueComponent = this.startValueComponentSelector.makeSelectorForType(type);
-        startValueContainer.innerHTML = "";
+        RemoveHelper.removeChildren(startValueContainer);
         startValueContainer.appendChild(startValueComponent.getElement());
 
         endValueComponent = this.endValueComponentSelector.makeSelectorForType(type);
-        endValueContainer.innerHTML = "";
+        RemoveHelper.removeChildren(endValueContainer);
         endValueContainer.appendChild(endValueComponent.getElement());
 
         setupInputFields();
     }
 
-    void onValueChanged(final Event event) {
+    void onValueChanged(final Object event) {
         if (StringUtils.isEmpty(startValueComponent.getValue()) || StringUtils.isEmpty(endValueComponent.getValue())) {
             presenter.disableOkButton();
         } else {

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.included;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.junit.Before;
@@ -24,9 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class IncludedModelsPageViewTest {
@@ -45,12 +46,18 @@ public class IncludedModelsPageViewTest {
     public void testSetGrid() {
 
         final HTMLElement gridHTMLElement = mock(HTMLElement.class);
+        final Element currentElement = mock(Element.class);
 
-        grid.innerHTML = "something";
+        grid.firstChild = currentElement;
+
+        when(grid.removeChild(currentElement)).then(a -> {
+            grid.firstChild = null;
+            return currentElement;
+        });
 
         view.setGrid(gridHTMLElement);
 
-        assertEquals("", grid.innerHTML);
+        verify(grid).removeChild(currentElement);
         verify(grid).appendChild(gridHTMLElement);
     }
 }
