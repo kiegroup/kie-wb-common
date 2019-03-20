@@ -138,12 +138,16 @@ public class DataTypeConstraintEnumeration implements DataTypeConstraintComponen
 
     public void render() {
         view.clear();
-        getEnumerationItems().forEach(enumerationItem -> view.addItem(enumerationItem.getElement()));
+        getEnumerationItems().stream()
+            .sorted(Comparator.comparingInt(DataTypeConstraintEnumerationItem::getOrder))
+            .forEach(enumerationItem -> view.addItem(enumerationItem.getElement()));
     }
 
     void addEnumerationItem() {
 
         final DataTypeConstraintEnumerationItem enumerationItem = makeEnumerationItem("");
+
+        enumerationItem.setOrder(getEnumerationItems().size());
 
         getEnumerationItems().add(enumerationItem);
 

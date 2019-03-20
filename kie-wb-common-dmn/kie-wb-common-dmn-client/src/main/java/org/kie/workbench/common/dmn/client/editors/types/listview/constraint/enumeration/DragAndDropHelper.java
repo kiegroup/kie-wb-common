@@ -37,6 +37,8 @@ class DragAndDropHelper {
 
     static final int ITEM_HEIGHT = 40;
     static final String DRAGGABLE_ITEM_CLASS = ".draggable";
+    static final String TOP = "top";
+    static final String PX = "px";
 
     public DragAndDropHelper(final HTMLElement dragArea,
                              final HTMLElement addButtonContainer) {
@@ -135,8 +137,8 @@ class DragAndDropHelper {
 
     int getTop(final HTMLElement element) {
 
-        final String topString = element.style.getPropertyValue("top")
-                                     .replace("px", "");
+        final String topString = element.style.getPropertyValue(TOP)
+                                     .replace(PX, "");
 
         if (StringUtils.isEmpty(topString)) {
             return 0;
@@ -146,7 +148,7 @@ class DragAndDropHelper {
 
     void setTop(final HTMLElement element,
                 final int top) {
-        element.style.setProperty("top", top + "px");
+        element.style.setProperty(TOP, top + PX);
     }
 
     Object onDragAreaMouseMove(final Event e) {

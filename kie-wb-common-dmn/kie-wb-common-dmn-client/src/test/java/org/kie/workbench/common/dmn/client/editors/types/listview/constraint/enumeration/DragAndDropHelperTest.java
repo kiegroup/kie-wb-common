@@ -29,6 +29,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DragAndDropHelper.PX;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DragAndDropHelper.TOP;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -71,7 +73,7 @@ public class DragAndDropHelperTest {
         element2.style = element2Style;
         element3.style = element3Style;
 
-        final NodeList<Element> draggableItems = spy(new NodeList<Element>());
+        final NodeList<Element> draggableItems = spy(new NodeList<>());
         doReturn(element1).when(draggableItems).getAt(0);
         doReturn(element2).when(draggableItems).getAt(1);
         doReturn(element3).when(draggableItems).getAt(2);
@@ -86,10 +88,10 @@ public class DragAndDropHelperTest {
 
         helper.refreshItemsPosition();
 
-        verify(element1Style).setProperty("top", "0px");
-        verify(element2Style).setProperty("top", DragAndDropHelper.ITEM_HEIGHT + "px");
-        verify(element3Style).setProperty("top", 2 * DragAndDropHelper.ITEM_HEIGHT + "px");
-        verify(addButtonContainerStyle).setProperty("top", 3 * DragAndDropHelper.ITEM_HEIGHT + "px");
+        verify(element1Style).setProperty(TOP, "0" + PX);
+        verify(element2Style).setProperty(TOP, DragAndDropHelper.ITEM_HEIGHT + PX);
+        verify(element3Style).setProperty(TOP, 2 * DragAndDropHelper.ITEM_HEIGHT + PX);
+        verify(addButtonContainerStyle).setProperty(TOP, 3 * DragAndDropHelper.ITEM_HEIGHT + PX);
     }
 
     @Test
@@ -181,7 +183,7 @@ public class DragAndDropHelperTest {
 
         element.style = style;
 
-        when(style.getPropertyValue("top")).thenReturn("123px");
+        when(style.getPropertyValue(TOP)).thenReturn("123" + PX);
 
         final int actual = helper.getTop(element);
 
@@ -199,7 +201,7 @@ public class DragAndDropHelperTest {
 
         helper.setTop(element, expected);
 
-        verify(style).setProperty("top", expected + "px");
+        verify(style).setProperty(TOP, expected + PX);
     }
 
     @Test

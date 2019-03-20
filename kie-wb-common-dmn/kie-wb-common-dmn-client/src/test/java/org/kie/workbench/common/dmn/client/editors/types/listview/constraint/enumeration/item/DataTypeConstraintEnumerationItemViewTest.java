@@ -393,4 +393,17 @@ public class DataTypeConstraintEnumerationItemViewTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void testSetOrder(){
+
+        final HTMLElement element = mock(HTMLElement.class);
+
+        doReturn(element).when(view).getElement();
+
+        view.setOrder(1);
+
+        verify(element).setAttribute(DATA_POSITION, 1);
+
+    }
 }

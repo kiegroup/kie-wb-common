@@ -215,6 +215,11 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
         }
     }
 
+    @Override
+    public void setOrder(final int order) {
+        getElement().setAttribute(DATA_POSITION, order);
+    }
+
     private void setText(final String value) {
         if (isNULL(value)) {
             valueText.classList.add(NONE_CSS_CLASS);
