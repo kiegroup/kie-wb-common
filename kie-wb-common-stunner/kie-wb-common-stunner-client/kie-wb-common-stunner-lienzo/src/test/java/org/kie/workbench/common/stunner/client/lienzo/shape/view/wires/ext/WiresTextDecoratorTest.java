@@ -128,6 +128,11 @@ public class WiresTextDecoratorTest {
         testSetTextWrapperStrategy(TextWrapperStrategy.TRUNCATE);
     }
 
+    @Test
+    public void testSetTextWrapperTruncateWithLineBreak() {
+        testSetTextWrapperStrategy(TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
+    }
+
     private void testSetTextWrapperStrategy(final TextWrapperStrategy wrapperStrategy) {
         final WiresTextDecorator decorator = spy(new WiresTextDecorator(eventHandlerManager, shape));
         final Text text = (Text) decorator.getView().asGroup().getChildNodes().get(0);

@@ -96,6 +96,11 @@ public class WiresShapeViewExtTest {
         testSetTextWrapperStrategy(TextWrapperStrategy.TRUNCATE);
     }
 
+    @Test
+    public void testSetTextWrapperTruncateWithLineBreak() {
+        testSetTextWrapperStrategy(TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
+    }
+
     private void testSetTextWrapperStrategy(final TextWrapperStrategy wrapperStrategy) {
         tested.setTextWrapper(wrapperStrategy);
         verify(textDecorator).setTextWrapper(wrapperStrategy);
