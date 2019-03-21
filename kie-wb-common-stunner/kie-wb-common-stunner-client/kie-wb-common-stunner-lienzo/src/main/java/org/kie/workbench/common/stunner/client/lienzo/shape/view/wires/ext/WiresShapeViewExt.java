@@ -194,16 +194,16 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     }
 
     @Override
-    public T setTitleStrokeAlpha(final double strokeAlpha){
+    public T setTitleStrokeAlpha(final double strokeAlpha) {
         textViewDecorator.setTitleStrokeAlpha(strokeAlpha);
         return cast();
     }
 
     @Override
-    public T setTextWrapper(final TextWrapperStrategy wrapperStrategy){
+    public T setTextWrapper(final TextWrapperStrategy wrapperStrategy) {
         textViewDecorator.setTextWrapper(wrapperStrategy);
         labelContainerLayout.ifPresent(LabelContainerLayout::execute);
-        return(cast());
+        return (cast());
     }
 
     @Override

@@ -360,7 +360,6 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         deregisterHandler(textDblClickEventViewHandler);
         eventHandlerManager.get().destroy();
         textWrapper = null;
-
     }
 
     private void deregisterHandler(final ViewHandler<?> handler) {
@@ -374,8 +373,6 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         return null != text && text.trim().length() > 0;
     }
 
-
-
     void setTextBoundaries(BoundingBox boundaries) {
         //update position
         shape.getLabelContainerLayout().ifPresent(LabelContainerLayout::execute);
@@ -385,8 +382,9 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         }
 
         //update wrapping boundaries
-        ((ITextWrapperWithBoundaries) textWrapper).setWrapBoundaries(() -> shape.getLabelContainerLayout()
-                .map(labelContainerLayout -> labelContainerLayout.getMaxSize(text))
-                .orElse(boundaries));
+        ((ITextWrapperWithBoundaries) textWrapper)
+                .setWrapBoundaries(shape.getLabelContainerLayout()
+                                           .map(labelContainerLayout -> labelContainerLayout.getMaxSize(text))
+                                           .orElse(boundaries));
     }
 }
