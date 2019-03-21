@@ -67,10 +67,11 @@ public class DayTimeValueConverterTest {
     public void testToDMNString() {
 
         final DayTimeValue value = new DayTimeValue(2, 4, 8, 16);
-        final String expected = "P2DT4H8M16S";
+        final String momentISOString = "P2DT4H8M16S";
+        final String expected = "duration(\"P2DT4H8M16S\")";
 
         when(momentDuration.duration(javaScriptObject.capture())).thenReturn(momentDuration);
-        when(momentDuration.toISOString()).thenReturn(expected);
+        when(momentDuration.toISOString()).thenReturn(momentISOString);
 
         final String actual = converter.toDMNString(value);
 
@@ -104,7 +105,7 @@ public class DayTimeValueConverterTest {
     @Test
     public void testToDisplayValueWithSingularStrings() {
 
-        final String rawValue = "P2DT4H8M16S";
+        final String rawValue = "duration(\"P2DT4H8M16S\")";
         final DayTimeValue value = new DayTimeValue(1, 1, 1, 1);
         doReturn(value).when(converter).fromDMNString(rawValue);
         when(translationService.format(DayTimeValueConverter_Day)).thenReturn("day");
@@ -121,7 +122,7 @@ public class DayTimeValueConverterTest {
     @Test
     public void testToDisplayValueWithPluralStrings() {
 
-        final String rawValue = "P2DT4H8M16S";
+        final String rawValue = "duration(\"P2DT4H8M16S\")";
         final DayTimeValue value = new DayTimeValue(2, 4, 8, 16);
         doReturn(value).when(converter).fromDMNString(rawValue);
         when(translationService.format(DayTimeValueConverter_Days)).thenReturn("days");

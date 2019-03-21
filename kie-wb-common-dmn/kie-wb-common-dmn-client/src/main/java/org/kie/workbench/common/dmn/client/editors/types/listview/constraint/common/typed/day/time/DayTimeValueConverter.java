@@ -27,6 +27,8 @@ import com.google.gwt.json.client.JSONObject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.uberfire.client.views.pfly.widgets.MomentDurationObject;
 
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.DurationHelper.addPrefixAndSuffix;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.DurationHelper.removePrefixAndSuffix;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DayTimeValueConverter_Day;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DayTimeValueConverter_Days;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DayTimeValueConverter_Hour;
@@ -53,11 +55,11 @@ public class DayTimeValueConverter {
                                                            value.getMinutes(),
                                                            value.getSeconds());
 
-        return moment.duration(properties).toISOString();
+        return addPrefixAndSuffix(moment.duration(properties).toISOString());
     }
 
     DayTimeValue fromDMNString(final String dmnString) {
-        final MomentDurationObject duration = moment.duration(dmnString);
+        final MomentDurationObject duration = moment.duration(removePrefixAndSuffix(dmnString));
         return new DayTimeValue(duration.days(),
                                 duration.hours(),
                                 duration.minutes(),

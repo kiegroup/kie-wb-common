@@ -24,7 +24,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.MinMaxValueHelper.OLD_ATTR;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.MinMaxValueHelper.isValidValue;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.MinMaxValueHelper.setupMinMaxHandlers;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -142,5 +144,17 @@ public class MinMaxValueHelperTest {
 
         assertEquals(result, true);
         assertEquals(actualValue, oldValue);
+    }
+
+    @Test
+    public void testIsValidValueWhenWithoutMaxValue() {
+        input.min = "0";
+        assertTrue(isValidValue(input, 0));
+    }
+
+    @Test
+    public void testIsValidValueWhenWithoutMinValue() {
+        input.max = "0";
+        assertTrue(isValidValue(input, 0));
     }
 }

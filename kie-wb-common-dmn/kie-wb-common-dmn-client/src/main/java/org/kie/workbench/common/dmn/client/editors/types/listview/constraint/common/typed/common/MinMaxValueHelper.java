@@ -47,7 +47,7 @@ public class MinMaxValueHelper {
         return true;
     }
 
-    static boolean onKeyUp(final HTMLInputElement input) {
+    private static boolean onKeyUp(final HTMLInputElement input) {
 
         final String oldValue = getOldAttribute(input);
         final int newValue = toInt(input.value);
@@ -63,8 +63,8 @@ public class MinMaxValueHelper {
         return onKeyUp(input);
     }
 
-    private static boolean isValidValue(final HTMLInputElement input,
-                                        final int inputValue) {
+    static boolean isValidValue(final HTMLInputElement input,
+                                final int inputValue) {
 
         final int max = toInt(input.max, MAX_VALUE);
         final int min = toInt(input.min, MIN_VALUE);
