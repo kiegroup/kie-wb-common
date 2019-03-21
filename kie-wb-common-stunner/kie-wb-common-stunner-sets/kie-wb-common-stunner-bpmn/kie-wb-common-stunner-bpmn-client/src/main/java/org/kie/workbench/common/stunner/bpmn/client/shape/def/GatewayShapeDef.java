@@ -25,6 +25,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
+import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
+import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeViewResources;
@@ -72,5 +75,13 @@ public class GatewayShapeDef
     public Glyph getGlyph(final Class<? extends BaseGateway> type,
                           final String defId) {
         return GLYPHS.get(type);
+    }
+
+    @Override
+    public FontHandler<BaseGateway, SVGShapeView> newFontHandler() {
+        return newFontHandlerBuilder()
+                .position(bean -> HasTitle.Position.BOTTOM)
+                .textWrapperStrategy(bean -> TextWrapperStrategy.LINE_BREAK)
+                .build();
     }
 }

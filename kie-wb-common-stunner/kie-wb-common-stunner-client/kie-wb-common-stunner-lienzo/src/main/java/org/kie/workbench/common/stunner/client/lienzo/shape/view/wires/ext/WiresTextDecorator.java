@@ -348,7 +348,7 @@ public class WiresTextDecorator {
             case LEFT:
                 if (null != boundaries) {
                     textWrapperWithBoundaries.setWrapBoundaries(new BoundingBox(boundaries.getMinY(),
-                                                                                boundaries.getMaxX(),
+                                                                                boundaries.getMinX(),
                                                                                 boundaries.getMaxY(),
                                                                                 boundaries.getMaxX()));
                 }
@@ -357,7 +357,7 @@ public class WiresTextDecorator {
             case RIGHT:
                 if (null != boundaries) {
                     textWrapperWithBoundaries.setWrapBoundaries(new BoundingBox(boundaries.getMinY(),
-                                                                                boundaries.getMaxX(),
+                                                                                boundaries.getMinX(),
                                                                                 boundaries.getMaxY(),
                                                                                 boundaries.getMaxX()));
                 }

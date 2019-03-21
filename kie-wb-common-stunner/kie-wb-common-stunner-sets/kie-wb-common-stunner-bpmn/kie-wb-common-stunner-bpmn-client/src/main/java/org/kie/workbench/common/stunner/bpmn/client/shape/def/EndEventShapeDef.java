@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
@@ -76,7 +77,8 @@ public class EndEventShapeDef
     @Override
     public FontHandler<BaseEndEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .position(event -> HasTitle.Position.BOTTOM)
+                .position(bean -> HasTitle.Position.BOTTOM)
+                .textWrapperStrategy(bean -> TextWrapperStrategy.LINE_BREAK)
                 .build();
     }
 

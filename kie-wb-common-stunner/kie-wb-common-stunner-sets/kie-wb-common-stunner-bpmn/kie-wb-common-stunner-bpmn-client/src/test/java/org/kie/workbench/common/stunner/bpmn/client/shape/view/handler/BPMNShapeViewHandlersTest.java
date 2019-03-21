@@ -56,6 +56,6 @@ public class BPMNShapeViewHandlersTest {
     public void testFontHandler() {
         fontHandler.handle(task, text);
         verify(text).setTextWrapper(wrapper.capture());
-        assertEquals(wrapper.getValue(), TextWrapperStrategy.TRUNCATE);
+        assertEquals(wrapper.getValue(), TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
     }
 }

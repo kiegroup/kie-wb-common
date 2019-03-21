@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEv
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
+import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.CompositeShapeViewHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
@@ -80,7 +81,8 @@ public class CatchingIntermediateEventShapeDef
     @Override
     public FontHandler<BaseCatchingIntermediateEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .position(event -> HasTitle.Position.BOTTOM)
+                .position(bean -> HasTitle.Position.BOTTOM)
+                .textWrapperStrategy(bean -> TextWrapperStrategy.LINE_BREAK)
                 .build();
     }
 

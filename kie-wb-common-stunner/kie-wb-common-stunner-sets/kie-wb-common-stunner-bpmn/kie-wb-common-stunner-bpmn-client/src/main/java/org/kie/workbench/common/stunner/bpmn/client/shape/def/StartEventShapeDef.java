@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
+import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.CompositeShapeViewHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
@@ -84,7 +85,8 @@ public class StartEventShapeDef
     @Override
     public FontHandler<BaseStartEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .position(event -> HasTitle.Position.BOTTOM)
+                .position(bean -> HasTitle.Position.BOTTOM)
+                .textWrapperStrategy(bean -> TextWrapperStrategy.LINE_BREAK)
                 .build();
     }
 

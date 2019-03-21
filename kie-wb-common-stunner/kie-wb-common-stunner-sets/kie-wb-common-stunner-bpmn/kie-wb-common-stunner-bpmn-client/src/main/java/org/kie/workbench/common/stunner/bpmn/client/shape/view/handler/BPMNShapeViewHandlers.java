@@ -36,7 +36,7 @@ public class BPMNShapeViewHandlers {
                     .fontSize(bean -> bean.getFontSet().getFontSize().getValue())
                     .strokeColor(bean -> bean.getFontSet().getFontBorderColor().getValue())
                     .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
-                    .textWrapperStrategy( bean  -> TextWrapperStrategy.TRUNCATE);
+                    .textWrapperStrategy(bean -> TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
         }
     }
 
