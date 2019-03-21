@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 
+import java.util.Map;
 import java.util.Optional;
 
 import com.ait.lienzo.client.core.shape.AbstractDirectionalMultiPointShape;
@@ -130,8 +131,20 @@ public class WiresConnectorViewExt<T>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T setTitlePosition(final Position position) {
+    public T setMargins(final Map<Enum, Double> margins) {
+        // Do not apply here...
+        return cast();
+    }
+
+    @Override
+    public T setTitlePosition(final VerticalAlignment verticalAlignment, final HorizontalAlignment horizontalAlignment,
+                              final ReferencePosition referencePosition, final Orientation orientation) {
+        // Do not apply here...
+        return cast();
+    }
+
+    @Override
+    public T setTextSizeConstraints(final SizeConstraints sizeConstraints) {
         // Do not apply here...
         return cast();
     }

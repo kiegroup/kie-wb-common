@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,6 @@ public class FontHandlerTest {
         verify(view).setTitleFontSize(eq(10.5d));
         verify(view).setTitleAlpha(eq(0.7d));
         verify(view).setTitleRotation(eq(180d));
-        verify(view).setTitlePosition(eq(HasTitle.Position.TOP));
         verify(view).setTitleXOffsetPosition(eq(X_OFFSET));
         verify(view).setTitleYOffsetPosition(eq(Y_OFFSET));
         verify(view).setTextWrapper(TextWrapperStrategy.NO_WRAP);
@@ -107,7 +106,6 @@ public class FontHandlerTest {
         verify(view, never()).setTitleFontSize(anyDouble());
         verify(view, never()).setTitleAlpha(anyDouble());
         verify(view, never()).setTitleRotation(anyDouble());
-        verify(view, never()).setTitlePosition(any(HasTitle.Position.class));
         verify(view, never()).setTitleXOffsetPosition(anyDouble());
         verify(view, never()).setTitleYOffsetPosition(anyDouble());
         verify(view, never()).setTextWrapper(any());

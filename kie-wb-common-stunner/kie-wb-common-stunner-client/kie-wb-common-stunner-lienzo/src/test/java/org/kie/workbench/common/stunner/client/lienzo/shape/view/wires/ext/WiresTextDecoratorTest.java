@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.shape.ITextWrapper;
 import com.ait.lienzo.client.core.shape.ITextWrapperWithBoundaries;
+import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.TextBoundsWrap;
 import com.ait.lienzo.client.core.types.BoundingBox;
@@ -58,15 +59,23 @@ public class WiresTextDecoratorTest {
     private final BoundingBox bb = new BoundingBox(new Point2D(0, 0),
                                                    new Point2D(100, 100));
 
+    @Mock
+    private WiresShapeViewExt shape;
+
+    @Mock
+    private MultiPath path;
+
     @Before
     public void setup() {
         when(eventHandlerManager.get()).thenReturn(manager);
+        when(shape.getPath()).thenReturn(path);
+        when(path.getBoundingBox()).thenReturn(bb);
     }
 
     @Test
     public void ensureThatWrapBoundariesAreSet() {
 
-        final WiresTextDecorator decorator = new WiresTextDecorator(eventHandlerManager, bb);
+        final WiresTextDecorator decorator = new WiresTextDecorator(eventHandlerManager, shape);
         final Text text = (Text) decorator.getView().asGroup().getChildNodes().get(0);
         final BoundingBox wrapBoundaries = ((TextBoundsWrap) text.getWrapper()).getWrapBoundaries();
 
@@ -79,9 +88,9 @@ public class WiresTextDecoratorTest {
     @Test
     public void ensureThatResizeUpdatesTheNode() {
         final WiresTextDecorator decorator = mock(WiresTextDecorator.class);
-        doCallRealMethod().when(decorator).resize(anyDouble(), anyDouble());
+        doCallRealMethod().when(decorator).setTextBoundaries(anyDouble(), anyDouble());
 
-        decorator.resize(0, 0);
+        decorator.setTextBoundaries(0, 0);
         verify(decorator).update();
     }
 
@@ -91,7 +100,7 @@ public class WiresTextDecoratorTest {
         doCallRealMethod().when(decorator).update();
 
         decorator.update();
-        verify(decorator).updateTextBoundaries();
+        verify(decorator).setTextBoundaries(any(BoundingBox.class));
     }
 
     @Test
@@ -120,7 +129,7 @@ public class WiresTextDecoratorTest {
     }
 
     private void testSetTextWrapperStrategy(final TextWrapperStrategy wrapperStrategy) {
-        final WiresTextDecorator decorator = spy(new WiresTextDecorator(eventHandlerManager, bb));
+        final WiresTextDecorator decorator = spy(new WiresTextDecorator(eventHandlerManager, shape));
         final Text text = (Text) decorator.getView().asGroup().getChildNodes().get(0);
         final ITextWrapper expectedWrapper = TextWrapperProvider.get(wrapperStrategy, text);
 
@@ -128,13 +137,13 @@ public class WiresTextDecoratorTest {
 
         decorator.setTextWrapper(wrapperStrategy);
 
-        verify(decorator).updateTextBoundaries();
+        verify(decorator).setTextBoundaries(any(BoundingBox.class));
         assertEquals(expectedWrapper.getClass(), text.getWrapper().getClass());
     }
 
     @Test
     public void ensureSetWrapBoundariesIsCalled(){
-        final WiresTextDecorator decorator = spy(new WiresTextDecorator(eventHandlerManager, bb));
+        final WiresTextDecorator decorator = spy(new WiresTextDecorator(eventHandlerManager, shape));
         doCallRealMethod().when(decorator).setTextWrapper(any());
         doReturn(textWrapperWithBoundaries).when(decorator).getTextWrapper(any());
 
