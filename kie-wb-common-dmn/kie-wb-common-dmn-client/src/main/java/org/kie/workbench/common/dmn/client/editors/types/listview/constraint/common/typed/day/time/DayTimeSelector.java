@@ -44,7 +44,8 @@ public class DayTimeSelector implements TypedValueSelector {
 
     @Override
     public String getValue() {
-        return converter.toDMNString(view.getValue());
+        final DayTimeValue value = view.getValue();
+        return value.isEmpty() ? "" : converter.toDMNString(value);
     }
 
     @Override

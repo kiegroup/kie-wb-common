@@ -58,6 +58,20 @@ public class DayTimeSelectorTest {
         final String expected = "dmnString";
         when(view.getValue()).thenReturn(value);
         when(converter.toDMNString(value)).thenReturn(expected);
+        when(value.isEmpty()).thenReturn(false);
+
+        final String actual = dayTimeSelector.getValue();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetValueWhenValueIsEmpty() {
+
+        final DayTimeValue value = mock(DayTimeValue.class);
+        final String expected = "";
+        when(view.getValue()).thenReturn(value);
+        when(value.isEmpty()).thenReturn(true);
 
         final String actual = dayTimeSelector.getValue();
 

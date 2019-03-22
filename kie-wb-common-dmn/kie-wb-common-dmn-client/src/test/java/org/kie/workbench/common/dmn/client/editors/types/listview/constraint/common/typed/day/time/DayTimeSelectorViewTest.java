@@ -33,6 +33,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time.DayTimeValue.NONE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -121,6 +122,22 @@ public class DayTimeSelectorViewTest {
         assertEquals(value.getHours(), new Integer(4));
         assertEquals(value.getMinutes(), new Integer(8));
         assertEquals(value.getSeconds(), new Integer(16));
+    }
+
+    @Test
+    public void testGetValueWhenValuesAreBlank() {
+
+        daysInput.value = "";
+        hoursInput.value = "";
+        minutesInput.value = "";
+        secondsInput.value = "";
+
+        final DayTimeValue value = view.getValue();
+
+        assertEquals(value.getDays(), NONE);
+        assertEquals(value.getHours(), NONE);
+        assertEquals(value.getMinutes(), NONE);
+        assertEquals(value.getSeconds(), NONE);
     }
 
     @Test

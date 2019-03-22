@@ -16,26 +16,29 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 class DayTimeValue {
 
-    private static final int NONE = 0;
+    static final Integer NONE = null;
 
-    private int days;
+    private Integer days;
 
-    private int hours;
+    private Integer hours;
 
-    private int minutes;
+    private Integer minutes;
 
-    private int seconds;
+    private Integer seconds;
 
     DayTimeValue() {
         this(NONE, NONE, NONE, NONE);
     }
 
-    DayTimeValue(final int days,
-                 final int hours,
-                 final int minutes,
-                 final int seconds) {
+    DayTimeValue(final Integer days,
+                 final Integer hours,
+                 final Integer minutes,
+                 final Integer seconds) {
         this.days = days;
         this.hours = hours;
         this.minutes = minutes;
@@ -58,19 +61,31 @@ class DayTimeValue {
         return seconds;
     }
 
-    void setDays(final int days) {
+    void setDays(final Integer days) {
         this.days = days;
     }
 
-    void setHours(final int hours) {
+    void setHours(final Integer hours) {
         this.hours = hours;
     }
 
-    void setMinutes(final int minutes) {
+    void setMinutes(final Integer minutes) {
         this.minutes = minutes;
     }
 
-    void setSeconds(final int seconds) {
+    void setSeconds(final Integer seconds) {
         this.seconds = seconds;
+    }
+
+    boolean isEmpty() {
+        return dayTimeValues().allMatch(this::isNone);
+    }
+
+    private Stream<Integer> dayTimeValues() {
+        return Stream.of(days, hours, minutes, seconds);
+    }
+
+    private boolean isNone(final Integer value) {
+        return Objects.equals(value, NONE);
     }
 }

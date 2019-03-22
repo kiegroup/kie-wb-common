@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -32,7 +33,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.MinMaxValueHelper.setupMinMaxHandlers;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.MinMaxValueHelper.toInt;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.common.MinMaxValueHelper.toInteger;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time.DayTimeValue.NONE;
 
 @Templated
 public class DayTimeSelectorView implements DayTimeSelector.View {
@@ -88,10 +90,10 @@ public class DayTimeSelectorView implements DayTimeSelector.View {
     @Override
     public DayTimeValue getValue() {
         final DayTimeValue value = new DayTimeValue();
-        value.setDays(toInt(daysInput.value));
-        value.setHours(toInt(hoursInput.value));
-        value.setMinutes(toInt(minutesInput.value));
-        value.setSeconds(toInt(secondsInput.value));
+        value.setDays(toInteger(daysInput.value, NONE));
+        value.setHours(toInteger(hoursInput.value, NONE));
+        value.setMinutes(toInteger(minutesInput.value, NONE));
+        value.setSeconds(toInteger(secondsInput.value, NONE));
         return value;
     }
 
@@ -168,6 +170,6 @@ public class DayTimeSelectorView implements DayTimeSelector.View {
     }
 
     private String toDisplay(final Integer value) {
-        return value == 0 ? "" : value.toString();
+        return Objects.isNull(value) || Objects.equals(value, 0) ? "" : value.toString();
     }
 }

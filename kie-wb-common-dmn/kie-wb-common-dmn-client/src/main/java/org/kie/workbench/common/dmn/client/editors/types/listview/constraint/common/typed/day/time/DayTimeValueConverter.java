@@ -16,14 +16,17 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.uberfire.client.views.pfly.widgets.MomentDurationObject;
 
@@ -80,10 +83,10 @@ public class DayTimeValueConverter {
                 .collect(Collectors.joining(", "));
     }
 
-    private JavaScriptObject makeProperties(final int days,
-                                            final int hours,
-                                            final int minutes,
-                                            final int seconds) {
+    private JavaScriptObject makeProperties(final Integer days,
+                                            final Integer hours,
+                                            final Integer minutes,
+                                            final Integer seconds) {
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("days", number(days));
         jsonObject.put("hours", number(hours));
@@ -92,8 +95,8 @@ public class DayTimeValueConverter {
         return jsonObject.getJavaScriptObject();
     }
 
-    private JSONNumber number(final double value) {
-        return new JSONNumber(value);
+    JSONValue number(final Integer value) {
+        return Objects.isNull(value) ? JSONNull.getInstance() : new JSONNumber(value);
     }
 
     private String pluralize(final int value,

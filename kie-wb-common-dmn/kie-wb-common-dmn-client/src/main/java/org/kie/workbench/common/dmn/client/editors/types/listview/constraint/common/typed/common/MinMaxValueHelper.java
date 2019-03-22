@@ -40,7 +40,7 @@ public class MinMaxValueHelper {
 
         final String inputValue = input.value;
 
-        if (isValidValue(input, toInt(inputValue))) {
+        if (isValidValue(input, toNonNullInt(inputValue))) {
             setOldAttribute(input, inputValue);
         }
 
@@ -50,7 +50,7 @@ public class MinMaxValueHelper {
     private static boolean onKeyUp(final HTMLInputElement input) {
 
         final String oldValue = getOldAttribute(input);
-        final int newValue = toInt(input.value);
+        final int newValue = toNonNullInt(input.value);
 
         if (!isValidValue(input, newValue)) {
             input.value = oldValue;
@@ -66,8 +66,8 @@ public class MinMaxValueHelper {
     static boolean isValidValue(final HTMLInputElement input,
                                 final int inputValue) {
 
-        final int max = toInt(input.max, MAX_VALUE);
-        final int min = toInt(input.min, MIN_VALUE);
+        final int max = toInteger(input.max, MAX_VALUE);
+        final int min = toInteger(input.min, MIN_VALUE);
 
         return inputValue >= min && inputValue <= max;
     }
@@ -81,16 +81,16 @@ public class MinMaxValueHelper {
         input.setAttribute(OLD_ATTR, value);
     }
 
-    public static int toInt(final String value) {
-        return toInt(value, 0);
-    }
-
-    private static int toInt(final String value,
-                             final int defaultValue) {
+    public static Integer toInteger(final String value,
+                                    final Integer defaultValue) {
         try {
             return parseInt(value);
         } catch (final NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    private static int toNonNullInt(final String value) {
+        return toInteger(value, 0);
     }
 }

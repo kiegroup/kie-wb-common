@@ -17,6 +17,9 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.json.client.JSONNull;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -132,6 +135,24 @@ public class DayTimeValueConverterTest {
 
         final String actual = converter.toDisplayValue(rawValue);
         final String expected = "2 days, 4 hours, 8 minutes, 16 seconds";
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testNumber() {
+
+        final JSONValue actual = converter.number(1);
+        final JSONValue expected = new JSONNumber(1);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testNumberWithNullValues() {
+
+        final JSONValue actual = converter.number(null);
+        final JSONValue expected = JSONNull.getInstance();
 
         assertEquals(expected, actual);
     }
