@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.ReferencePosition;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.SizeConstraints.SizeType;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Size.SizeType;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.VerticalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.CompositeShapeViewHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
@@ -91,7 +91,8 @@ public class StartEventShapeDef
                 .verticalAlignment(bean -> VerticalAlignment.BOTTOM)
                 .horizontalAlignment(bean -> HorizontalAlignment.CENTER)
                 .referencePosition(bean -> ReferencePosition.OUTSIDE)
-                .textSizeConstraints(bean -> new HasTitle.SizeConstraints(400, 100, SizeType.PERCENTAGE))
+                .textSizeConstraints(bean -> new HasTitle.Size(400, 100, SizeType.PERCENTAGE))
+                .margin(VerticalAlignment.BOTTOM, 5d)
                 .build();
     }
 

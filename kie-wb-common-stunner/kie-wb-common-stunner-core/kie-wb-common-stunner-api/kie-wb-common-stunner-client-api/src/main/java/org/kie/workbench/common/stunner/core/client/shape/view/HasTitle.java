@@ -52,7 +52,7 @@ public interface HasTitle<T> {
         VERTICAL
     }
 
-    class SizeConstraints {
+    class Size {
 
         public enum SizeType {
             PERCENTAGE,
@@ -63,7 +63,7 @@ public interface HasTitle<T> {
         private double width;
         private SizeType type;
 
-        public SizeConstraints(final double width, final double height, final SizeType type) {
+        public Size(final double width, final double height, final SizeType type) {
             this.width = width;
             this.height = height;
             this.type = type;
@@ -82,7 +82,7 @@ public interface HasTitle<T> {
         }
     }
 
-    T setTextSizeConstraints(final SizeConstraints sizeConstraints);
+    T setTextSizeConstraints(final Size sizeConstraints);
 
     T setTitlePosition(final VerticalAlignment verticalAlignment,
                        final HorizontalAlignment horizontalAlignment,

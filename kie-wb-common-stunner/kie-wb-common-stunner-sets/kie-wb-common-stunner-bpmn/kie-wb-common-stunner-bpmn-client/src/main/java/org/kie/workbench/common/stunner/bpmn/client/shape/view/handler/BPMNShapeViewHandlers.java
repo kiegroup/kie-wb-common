@@ -21,8 +21,8 @@ import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Orientation;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.ReferencePosition;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.SizeConstraints;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.SizeConstraints.SizeType;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Size;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Size.SizeType;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.VerticalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
@@ -46,7 +46,7 @@ public class BPMNShapeViewHandlers {
                     .horizontalAlignment(bean -> HorizontalAlignment.CENTER)
                     .referencePosition(bean -> ReferencePosition.INSIDE)
                     .orientation(bean -> Orientation.HORIZONTAL)
-                    .textSizeConstraints(bean -> new SizeConstraints(100, 100, SizeType.PERCENTAGE))
+                    .textSizeConstraints(bean -> new Size(100, 100, SizeType.PERCENTAGE))
                     .textWrapperStrategy(bean -> TextWrapperStrategy.TRUNCATE);
         }
     }

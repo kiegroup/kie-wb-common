@@ -26,7 +26,7 @@ import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Horizont
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Orientation;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Position;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.ReferencePosition;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.SizeConstraints;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Size;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.VerticalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeViewHandler;
@@ -57,7 +57,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
     private Function<W, HasTitle.HorizontalAlignment> horizontalAlignmentProvider;
     private Function<W, HasTitle.ReferencePosition> referencePositionProvider;
     private Function<W, HasTitle.Orientation> orientationProvider;
-    private final Function<W, SizeConstraints> sizeConstraintsProvider;
+    private final Function<W, Size> sizeConstraintsProvider;
     private final Map<Enum, Double> margins;
 
     FontHandler(final Function<W, Double> alphaProvider, final Function<W, String> fontFamilyProvider,
@@ -71,7 +71,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                 final Function<W, HorizontalAlignment> horizontalAlignmentProvider,
                 final Function<W, ReferencePosition> referencePositionProvider,
                 final Function<W, Orientation> orientationProvider,
-                final Function<W, SizeConstraints> sizeConstraintsProvider,
+                final Function<W, Size> sizeConstraintsProvider,
                 final Map<Enum, Double> margins) {
         this.alphaProvider = alphaProvider;
         this.fontFamilyProvider = fontFamilyProvider;
@@ -110,7 +110,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             final Double positionYOffset = positionYOffsetProvider.apply(element);
             final Double rotation = rotationProvider.apply(element);
             final TextWrapperStrategy wrapperStrategy = textWrapperStrategyProvider.apply(element);
-            final SizeConstraints sizeConstraints = sizeConstraintsProvider.apply(element);
+            final Size sizeConstraints = sizeConstraintsProvider.apply(element);
             final VerticalAlignment verticalAlignment = verticalAlignmentProvider.apply(element);
             final HorizontalAlignment horizontalAlignment = horizontalAlignmentProvider.apply(element);
             final ReferencePosition referencePosition = referencePositionProvider.apply(element);
@@ -197,7 +197,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
         private Function<W, HasTitle.HorizontalAlignment> horizontalAlignmentProvider;
         private Function<W, HasTitle.ReferencePosition> referencePositionProvider;
         private Function<W, HasTitle.Orientation> orientationProvider;
-        private Function<W, HasTitle.SizeConstraints> sizeConstraintsProvider;
+        private Function<W, Size> sizeConstraintsProvider;
         private final Map<Enum, Double> margins = new HashMap<>();
 
         public Builder() {
@@ -300,7 +300,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             return this;
         }
 
-        public Builder<W, V> textSizeConstraints(Function<W, SizeConstraints> provider) {
+        public Builder<W, V> textSizeConstraints(Function<W, Size> provider) {
             this.sizeConstraintsProvider = provider;
             return this;
         }

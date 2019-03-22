@@ -88,10 +88,6 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         setTextViewDecorator(new WiresTextDecorator(() -> eventHandlerManager, this));
     }
 
-    protected ViewEventHandlerManager getEventHandlerManager() {
-        return this.eventHandlerManager;
-    }
-
     void setTextViewDecorator(final WiresTextDecorator textViewDecorator) {
         this.textViewDecorator = textViewDecorator;
     }
@@ -128,7 +124,7 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     }
 
     @Override
-    public T setTextSizeConstraints(final SizeConstraints sizeConstraints) {
+    public T setTextSizeConstraints(final Size sizeConstraints) {
         textViewDecorator.setTextSizeConstraints(sizeConstraints);
         return cast();
     }

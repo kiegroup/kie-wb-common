@@ -32,6 +32,7 @@ import com.ait.lienzo.client.core.shape.wires.layout.direction.DirectionLayout;
 import com.ait.lienzo.client.core.shape.wires.layout.direction.DirectionLayout.Direction;
 import com.ait.lienzo.client.core.shape.wires.layout.label.LabelContainerLayout;
 import com.ait.lienzo.client.core.shape.wires.layout.label.LabelLayout;
+import com.ait.lienzo.client.core.shape.wires.layout.size.SizeConstraints;
 import com.ait.lienzo.client.core.shape.wires.layout.size.SizeConstraints.Type;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.shared.core.types.TextAlign;
@@ -63,7 +64,7 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
     private static final double TEXT_FONT_SIZE = 10d;
     private static final String TEXT_FILL_COLOR = "#000000";
     private static final String TEXT_STROKE_COLOR = "#000000";
-    private static final double TEXT_STROKE_WIDTH = 0.5d;
+    private static final double TEXT_STROKE_WIDTH = 0;
     private static final TextAlign TEXT_ALIGN = TextAlign.CENTER;
 
     private final Supplier<ViewEventHandlerManager> eventHandlerManager;
@@ -74,7 +75,7 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
     private Text text;
     private ITextWrapper textWrapper;
     private LabelLayout labelLayout;
-    private Optional<SizeConstraints> sizeConstraints = Optional.empty();
+    private Optional<Size> sizeConstraints = Optional.empty();
     private Map<Enum, Double> margins = Collections.emptyMap();
     private WiresShapeViewExt<WiresShapeViewExt> shape;
 
@@ -326,21 +327,24 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
                 .verticalAlignment(convertEnum(verticalAlignment, DirectionLayout.VerticalAlignment.class))
                 .orientation(convertEnum(orientation, DirectionLayout.Orientation.class))
                 .referencePosition(convertEnum(referencePosition, DirectionLayout.ReferencePosition.class))
-                .margins(margins.entrySet().stream().map(e ->
-                                                                 new SimpleEntry<>(Optional
-                                                                                           .<Direction>ofNullable(convertEnum(e.getKey(), DirectionLayout.VerticalAlignment.class))
-                                                                                           .orElse(convertEnum(e.getKey(), DirectionLayout.HorizontalAlignment.class)),
-                                                                                   e.getValue())).collect(Collectors.toMap(Entry::getKey, Entry::getValue)))
+                .margins(margins.entrySet()
+                                 .stream()
+                                 .map(e -> new SimpleEntry<>(
+                                         Optional.<Direction>ofNullable(convertEnum(e.getKey(), DirectionLayout.VerticalAlignment.class))
+                                                 .orElse(convertEnum(e.getKey(),
+                                                                     DirectionLayout.HorizontalAlignment.class)),
+                                         e.getValue()))
+                                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue)))
                 .sizeConstraints(sizeConstraints
-                                         .map(s -> new com.ait.lienzo.client.core.shape.wires.layout.size.SizeConstraints(s.getWidth(),
-                                                                                                                          s.getHeight(), convertEnum(s.getType(), Type.class)))
+                                         .map(s -> new SizeConstraints(s.getWidth(), s.getHeight(),
+                                                                       convertEnum(s.getType(), Type.class)))
                                          .orElse(getDefaultSizeConstraints()))
                 .build();
         return this;
     }
 
     @Override
-    public WiresTextDecorator setTextSizeConstraints(final SizeConstraints sizeConstraints) {
+    public WiresTextDecorator setTextSizeConstraints(final Size sizeConstraints) {
         this.sizeConstraints = Optional.ofNullable(sizeConstraints);
         return this;
     }
@@ -360,6 +364,11 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         deregisterHandler(textDblClickEventViewHandler);
         eventHandlerManager.get().destroy();
         textWrapper = null;
+        labelLayout = null;
+        sizeConstraints = null;
+        margins.clear();
+        margins = null;
+        shape = null;
     }
 
     private void deregisterHandler(final ViewHandler<?> handler) {
@@ -376,15 +385,13 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
     void setTextBoundaries(BoundingBox boundaries) {
         //update position
         shape.getLabelContainerLayout().ifPresent(LabelContainerLayout::execute);
-
-        if (!(textWrapper instanceof ITextWrapperWithBoundaries)) {
-            return;
-        }
-
-        //update wrapping boundaries
-        ((ITextWrapperWithBoundaries) textWrapper)
-                .setWrapBoundaries(shape.getLabelContainerLayout()
-                                           .map(labelContainerLayout -> labelContainerLayout.getMaxSize(text))
-                                           .orElse(boundaries));
+        //update text wrapper boundaries
+        Optional.ofNullable(textWrapper)
+                .filter(wrapper -> wrapper instanceof ITextWrapperWithBoundaries)
+                .map(wrapper -> (ITextWrapperWithBoundaries) wrapper)
+                .ifPresent(wrapper -> wrapper
+                        .setWrapBoundaries(shape.getLabelContainerLayout()
+                                                   .map(layout -> layout.getMaxSize(text))
+                                                   .orElse(boundaries)));
     }
 }
