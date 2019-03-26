@@ -42,13 +42,12 @@ public class BPMNShapeViewHandlers {
                     .fontSize(bean -> bean.getFontSet().getFontSize().getValue())
                     .strokeColor(bean -> bean.getFontSet().getFontBorderColor().getValue())
                     .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
-                    .textWrapperStrategy(bean -> TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK)
-                    .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
                     .verticalAlignment(bean -> VerticalAlignment.MIDDLE)
                     .horizontalAlignment(bean -> HorizontalAlignment.CENTER)
                     .referencePosition(bean -> ReferencePosition.INSIDE)
                     .orientation(bean -> Orientation.HORIZONTAL)
-                    .textSizeConstraints(bean -> new Size(100, 100, SizeType.PERCENTAGE));
+                    .textSizeConstraints(bean -> new Size(100, 100, SizeType.PERCENTAGE))
+                    .textWrapperStrategy(bean -> TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
         }
     }
 

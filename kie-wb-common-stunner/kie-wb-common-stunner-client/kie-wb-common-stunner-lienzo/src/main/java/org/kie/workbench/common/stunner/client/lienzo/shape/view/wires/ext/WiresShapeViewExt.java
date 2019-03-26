@@ -378,7 +378,8 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     }
 
     private void addTextAsChild() {
-        labelContainerLayout = Optional.of(this.addLabel(textViewDecorator.getView(), textViewDecorator.getLabelLayout()));
+        labelContainerLayout = Optional.of(this.addLabel(textViewDecorator.getView(),
+                                                         textViewDecorator.getLabelLayout()));
         // Ensure text element is listening for events.
         textViewDecorator.getView().setListening(true);
     }

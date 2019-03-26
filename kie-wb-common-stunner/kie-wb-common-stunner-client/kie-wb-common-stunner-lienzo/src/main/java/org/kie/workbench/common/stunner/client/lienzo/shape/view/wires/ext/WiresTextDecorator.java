@@ -377,8 +377,6 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
     }
 
     void setTextBoundaries(BoundingBox boundaries) {
-        //update position
-        shape.getLabelContainerLayout().ifPresent(LabelContainerLayout::execute);
         //update text wrapper boundaries
         Optional.ofNullable(textWrapper)
                 .filter(wrapper -> wrapper instanceof ITextWrapperWithBoundaries)
@@ -387,5 +385,8 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
                         .setWrapBoundaries(shape.getLabelContainerLayout()
                                                    .map(layout -> layout.getMaxSize(text))
                                                    .orElse(boundaries)));
+
+        //update position
+        shape.getLabelContainerLayout().ifPresent(LabelContainerLayout::execute);
     }
 }

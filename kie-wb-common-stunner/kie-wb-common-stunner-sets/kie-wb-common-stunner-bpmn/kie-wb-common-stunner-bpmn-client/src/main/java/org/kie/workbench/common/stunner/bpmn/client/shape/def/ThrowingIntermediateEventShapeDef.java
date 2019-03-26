@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensation
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
@@ -52,8 +53,11 @@ public class ThrowingIntermediateEventShapeDef
     @Override
     public FontHandler<BaseThrowingIntermediateEvent, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                //.position(event -> HasTitle.Position.BOTTOM)
-                .positionYOffset(bean -> bean.getDimensionsSet().getRadius().getValue())
+                .verticalAlignment(bean -> HasTitle.VerticalAlignment.BOTTOM)
+                .horizontalAlignment(bean -> HasTitle.HorizontalAlignment.CENTER)
+                .referencePosition(bean -> HasTitle.ReferencePosition.OUTSIDE)
+                .textSizeConstraints(bean -> new HasTitle.Size(400, 100, HasTitle.Size.SizeType.PERCENTAGE))
+                .margin(HasTitle.VerticalAlignment.BOTTOM, 5d)
                 .build();
     }
 
