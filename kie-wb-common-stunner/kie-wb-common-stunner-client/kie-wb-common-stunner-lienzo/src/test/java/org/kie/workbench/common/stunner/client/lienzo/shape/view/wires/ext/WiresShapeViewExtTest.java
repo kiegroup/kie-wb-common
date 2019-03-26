@@ -23,23 +23,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
-import org.mockito.Mock;
 
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
-public class WiresShapeViewExtTest {
+public class WiresShapeViewExtTest extends AbstractWiresShapeViewText {
 
     private static ViewEventType[] viewEventTypes = {};
     private final static MultiPath PATH = new MultiPath();
-
-    @Mock
-    private WiresTextDecorator textDecorator;
 
     private WiresShapeViewExt<WiresShapeViewExt> tested;
 
     @Before
     public void setup() throws Exception {
+        super.setUp();
         this.tested = new WiresShapeViewExt<>(viewEventTypes,
                                               PATH);
         this.tested.setTextViewDecorator(textDecorator);

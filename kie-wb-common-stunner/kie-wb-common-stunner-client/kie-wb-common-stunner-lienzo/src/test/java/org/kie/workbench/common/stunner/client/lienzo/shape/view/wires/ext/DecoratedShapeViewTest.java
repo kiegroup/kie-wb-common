@@ -23,12 +23,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresScalableContainer;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
-import org.mockito.Mock;
 
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
-public class DecoratedShapeViewTest {
+public class DecoratedShapeViewTest extends AbstractWiresShapeViewText {
 
     private static ViewEventType[] viewEventTypes = {};
     private final static MultiPath PATH = new MultiPath();
@@ -36,15 +35,13 @@ public class DecoratedShapeViewTest {
     private final double width = 5;
     private final double height = 5;
 
-    @Mock
-    private WiresTextDecorator textDecorator;
-
     private WiresScalableContainer container;
 
     private DecoratedShapeView<WiresShapeViewExt> tested;
 
     @Before
     public void setup() throws Exception {
+        super.setUp();
         container = new WiresScalableContainer();
         this.tested = new DecoratedShapeView<>(viewEventTypes,
                                                container,

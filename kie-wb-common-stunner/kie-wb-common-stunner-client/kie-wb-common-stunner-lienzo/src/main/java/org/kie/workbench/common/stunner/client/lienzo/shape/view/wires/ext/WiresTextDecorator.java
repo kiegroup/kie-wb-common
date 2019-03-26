@@ -203,14 +203,6 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         return this;
     }
 
-    public void setTitleXOffsetPosition(final double xOffset) {
-        this.text.setX(xOffset);
-    }
-
-    public void setTitleYOffsetPosition(final double yOffset) {
-        this.text.setY(yOffset);
-    }
-
     @SuppressWarnings("unchecked")
     public WiresTextDecorator setTitleRotation(final double degrees) {
         text.setRotationDegrees(degrees);
@@ -269,11 +261,13 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
 
     @Override
     public WiresTextDecorator setTitleXOffsetPosition(final Double xOffset) {
+        this.text.setX(xOffset);
         return this;
     }
 
     @Override
     public WiresTextDecorator setTitleYOffsetPosition(final Double yOffset) {
+        this.text.setY(yOffset);
         return this;
     }
 
