@@ -88,6 +88,10 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         setTextViewDecorator(new WiresTextDecorator(() -> eventHandlerManager, this));
     }
 
+    protected ViewEventHandlerManager getEventHandlerManager() {
+        return this.eventHandlerManager;
+    }
+
     void setTextViewDecorator(final WiresTextDecorator textViewDecorator) {
         this.textViewDecorator = textViewDecorator;
     }

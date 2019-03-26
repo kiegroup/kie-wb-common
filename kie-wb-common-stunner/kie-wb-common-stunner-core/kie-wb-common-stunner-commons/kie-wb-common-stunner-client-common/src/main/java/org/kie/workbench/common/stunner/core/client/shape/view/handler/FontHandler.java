@@ -18,7 +18,10 @@ package org.kie.workbench.common.stunner.core.client.shape.view.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
@@ -176,7 +179,9 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             }
         }
 
-        hasTitle.setTitlePosition(verticalAlignment, horizontalAlignment, referencePosition, currentOrientation);
+        if(Stream.of(verticalAlignment, horizontalAlignment, referencePosition, currentOrientation).allMatch(Objects::nonNull)) {
+            hasTitle.setTitlePosition(verticalAlignment, horizontalAlignment, referencePosition, currentOrientation);
+        }
     }
 
     public static class Builder<W, V extends ShapeView> {
