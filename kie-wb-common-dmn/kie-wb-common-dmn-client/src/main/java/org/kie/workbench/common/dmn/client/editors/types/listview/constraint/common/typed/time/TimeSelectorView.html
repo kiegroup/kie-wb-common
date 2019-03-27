@@ -19,7 +19,10 @@
     <button data-field="toggle-timezone-button" class="btn-toggle-timezone">
         <i class="fa fa-globe toggle-icon" data-field="toggle-timezone-icon"></i>
     </button>
-    <div style="width: 160px; display: inline">
-        <select class="form-control" id="timeZoneSelector" data-field="time-zone-selector"></select>
+    <div class="selector-container">
+        <select data-container="body" class="selectpicker" data-show-subtext="true" data-live-search="true" id="timeZoneSelector"
+                data-field="time-zone-selector">
+            <option data-field="time-zone-select-option"></option>
+        </select>
     </div>
 </div>

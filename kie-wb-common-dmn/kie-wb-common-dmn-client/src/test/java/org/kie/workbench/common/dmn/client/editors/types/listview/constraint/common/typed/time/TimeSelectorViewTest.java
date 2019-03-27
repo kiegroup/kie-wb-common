@@ -26,8 +26,8 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import org.gwtbootstrap3.extras.select.client.ui.Option;
-import org.gwtbootstrap3.extras.select.client.ui.Select;
+import elemental2.dom.HTMLOptionElement;
+import elemental2.dom.HTMLSelectElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +39,7 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.com
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.mockito.Mock;
 
+import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.TimeSelectorView.NONE_TRANSLATION_KEY;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.TimeSelectorView.NONE_VALUE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.TimeSelectorView.OFFSET_CLASS_ICON;
@@ -48,7 +49,6 @@ import static org.kie.workbench.common.dmn.client.editors.types.listview.constra
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimeValue.TimeZoneMode.TIMEZONE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -70,7 +70,10 @@ public class TimeSelectorViewTest {
     private HTMLInputElement timeInput;
 
     @Mock
-    private Select timeZoneSelector;
+    private HTMLSelectElement timeZoneSelector;
+
+    @Mock
+    private HTMLOptionElement typeSelectOption;
 
     @Mock
     private TimePicker picker;
@@ -90,6 +93,9 @@ public class TimeSelectorViewTest {
     @Mock
     private DOMTokenList toggleTimeZoneIconClassList;
 
+    @Mock
+    private HTMLElement element;
+
     private TimeSelectorView view;
 
     @Before
@@ -103,19 +109,22 @@ public class TimeSelectorViewTest {
                                         formatter,
                                         toggleTimeZoneIcon,
                                         toggleTimeZoneButton,
-                                        translationService)
+                                        translationService,
+                                        timeZoneSelector,
+                                        typeSelectOption)
         );
 
-        doReturn(timeZoneSelector).when(view).getTimeZoneSelector();
+        doReturn(element).when(view).getElement();
         doReturn(onValueInputBlur).when(view).getOnValueInputBlur();
+        doReturn(timeZoneSelector).when(view).getSelectPicker();
     }
 
     @Test
     public void testPopulateTimeZoneSelectorWithIds() {
 
-        final Option noneOption = mock(Option.class);
-        final Option tz1Option = mock(Option.class);
-        final Option tz2Option = mock(Option.class);
+        final HTMLOptionElement noneOption = mock(HTMLOptionElement.class);
+        final HTMLOptionElement tz1Option = mock(HTMLOptionElement.class);
+        final HTMLOptionElement tz2Option = mock(HTMLOptionElement.class);
         final List<DMNSimpleTimeZone> timeZones = mock(List.class);
         final DMNSimpleTimeZone tz1 = mock(DMNSimpleTimeZone.class);
         final DMNSimpleTimeZone tz2 = mock(DMNSimpleTimeZone.class);
@@ -129,21 +138,21 @@ public class TimeSelectorViewTest {
         doReturn(tz2Option).when(view).createOptionWithId(tz2);
         doReturn(timeZones).when(view).getTimeZones();
         doReturn(noneOption).when(view).createNoneOption();
+        doNothing().when(view).timeZoneSelectorRefresh();
 
         view.populateTimeZoneSelectorWithIds();
 
-        verify(timeZoneSelector).clear();
-        verify(timeZoneSelector).add(noneOption);
-        verify(timeZoneSelector).add(tz1Option);
-        verify(timeZoneSelector).add(tz2Option);
-        verify(timeZoneSelector).refresh();
+        verify(timeZoneSelector).appendChild(noneOption);
+        verify(timeZoneSelector).appendChild(tz1Option);
+        verify(timeZoneSelector).appendChild(tz2Option);
+        verify(view).timeZoneSelectorRefresh();
     }
 
     @Test
     public void testCreateOptionWithId() {
 
         final String optionId = "some id";
-        final Option option = mock(Option.class);
+        final HTMLOptionElement option = new HTMLOptionElement();
         final DMNSimpleTimeZone tz = new DMNSimpleTimeZone();
         tz.setId(optionId);
 
@@ -151,30 +160,30 @@ public class TimeSelectorViewTest {
 
         view.createOptionWithId(tz);
 
-        verify(option).setValue(optionId);
-        verify(option).setText(optionId);
+        assertEquals(optionId, option.value);
+        assertEquals(optionId, option.text);
     }
 
     @Test
     public void testCreateNoneOption() {
 
-        final Option noneOption = mock(Option.class);
+        final HTMLOptionElement noneOption = new HTMLOptionElement();
         final String text = "text";
         when(translationService.getValue(NONE_TRANSLATION_KEY)).thenReturn(text);
         doReturn(noneOption).when(view).getNewOption();
 
         view.createNoneOption();
 
-        verify(noneOption).setValue(NONE_VALUE);
-        verify(noneOption).setText(text);
+        assertEquals(NONE_VALUE, noneOption.value);
+        assertEquals(text, noneOption.text);
     }
 
     @Test
     public void testPopulateTimeZoneSelectorWithOffSets() {
 
-        final Option noneOption = mock(Option.class);
-        final Option option0 = mock(Option.class);
-        final Option option1 = mock(Option.class);
+        final HTMLOptionElement noneOption = mock(HTMLOptionElement.class);
+        final HTMLOptionElement option0 = mock(HTMLOptionElement.class);
+        final HTMLOptionElement option1 = mock(HTMLOptionElement.class);
 
         final String os0 = "+01:00";
         final String os1 = "-03:00";
@@ -186,30 +195,29 @@ public class TimeSelectorViewTest {
         doReturn(noneOption).when(view).createNoneOption();
         doReturn(option0).when(view).createOptionWithOffset(os0);
         doReturn(option1).when(view).createOptionWithOffset(os1);
+        doNothing().when(view).timeZoneSelectorRefresh();
 
         when(timeZoneProvider.getTimeZonesOffsets()).thenReturn(offsets);
 
         view.populateTimeZoneSelectorWithOffSets();
 
-        verify(timeZoneSelector).clear();
-        verify(timeZoneSelector).add(noneOption);
-        verify(timeZoneSelector).add(option0);
-        verify(timeZoneSelector).add(option1);
-        verify(timeZoneSelector).refresh();
+        verify(timeZoneSelector).appendChild(noneOption);
+        verify(timeZoneSelector).appendChild(option0);
+        verify(timeZoneSelector).appendChild(option1);
     }
 
     @Test
     public void testCreateOptionWithOffset() {
 
         final String offset = "offset";
-        final Option option = mock(Option.class);
+        final HTMLOptionElement option = new HTMLOptionElement();
 
         doReturn(option).when(view).getNewOption();
 
         view.createOptionWithOffset(offset);
 
-        verify(option).setValue(offset);
-        verify(option).setText(offset);
+        assertEquals(offset, option.value);
+        assertEquals(offset, option.text);
     }
 
     @Test
@@ -217,13 +225,11 @@ public class TimeSelectorViewTest {
 
         final String time = "10:20:00";
         final String selectedValue = "selected-value";
-        final Option selectedItem = mock(Option.class);
 
         when(picker.getValue()).thenReturn(time);
-        when(timeZoneSelector.getSelectedItem()).thenReturn(selectedItem);
-        when(selectedItem.getValue()).thenReturn(selectedValue);
+        when(view.getTimeZoneSelectedValue()).thenReturn(selectedValue);
 
-        when(formatter.buildRawValue(anyString(), anyString())).thenReturn("");
+        when(formatter.buildRawValue(time, selectedValue)).thenReturn("");
 
         view.getValue();
 
@@ -234,13 +240,11 @@ public class TimeSelectorViewTest {
     public void testGetValueWithNoneTimeZone() {
 
         final String time = "10:20:00";
-        final Option selectedItem = mock(Option.class);
 
         when(picker.getValue()).thenReturn(time);
-        when(timeZoneSelector.getSelectedItem()).thenReturn(selectedItem);
-        when(selectedItem.getValue()).thenReturn(NONE_VALUE);
+        when(view.getTimeZoneSelectedValue()).thenReturn(NONE_VALUE);
 
-        when(formatter.buildRawValue(anyString(), anyString())).thenReturn("");
+        when(formatter.buildRawValue(time, "")).thenReturn("");
 
         view.getValue();
 
@@ -253,9 +257,9 @@ public class TimeSelectorViewTest {
         final String time = "10:20:00";
 
         when(picker.getValue()).thenReturn(time);
-        when(timeZoneSelector.getSelectedItem()).thenReturn(null);
+        when(view.getTimeZoneSelectedValue()).thenReturn(null);
 
-        when(formatter.buildRawValue(anyString(), anyString())).thenReturn("");
+        when(formatter.buildRawValue(time, "")).thenReturn("");
 
         view.getValue();
 
@@ -305,7 +309,7 @@ public class TimeSelectorViewTest {
 
         verify(view, never()).setIsOffsetMode(anyBoolean());
         verify(view, never()).refreshTimeZoneOffsetMode(timeValue);
-        verify(timeZoneSelector).setValue("");
+        verify(view).setPickerValue("");
     }
 
     @Test
@@ -321,7 +325,7 @@ public class TimeSelectorViewTest {
 
         verify(view).refreshToggleTimeZoneIcon();
         verify(view).reloadTimeZoneSelector();
-        verify(timeZoneSelector).setValue(tzValue);
+        verify(view).setPickerValue(tzValue);
     }
 
     @Test
@@ -374,6 +378,9 @@ public class TimeSelectorViewTest {
     @Test
     public void testReloadTimeZoneSelectorIsOffsetMode() {
 
+        final HTMLOptionElement none = mock(HTMLOptionElement.class);
+
+        doReturn(none).when(view).createNoneOption();
         doReturn(true).when(view).getIsOffsetMode();
 
         view.reloadTimeZoneSelector();
@@ -385,6 +392,9 @@ public class TimeSelectorViewTest {
     @Test
     public void testReloadTimeZoneSelectorIsNotOffsetMode() {
 
+        final HTMLOptionElement none = mock(HTMLOptionElement.class);
+
+        doReturn(none).when(view).createNoneOption();
         doReturn(false).when(view).getIsOffsetMode();
 
         view.reloadTimeZoneSelector();

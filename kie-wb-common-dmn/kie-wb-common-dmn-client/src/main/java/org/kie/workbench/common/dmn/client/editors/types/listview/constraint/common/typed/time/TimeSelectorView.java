@@ -26,7 +26,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
@@ -34,17 +33,21 @@ import elemental2.dom.Event;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import org.gwtbootstrap3.extras.select.client.ui.Option;
-import org.gwtbootstrap3.extras.select.client.ui.Select;
+import elemental2.dom.HTMLOptionElement;
+import elemental2.dom.HTMLSelectElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.editors.types.DMNSimpleTimeZone;
+import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimePicker;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimeValue;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimeValueFormatter;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimeZoneProvider;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerEvent;
+
+import static org.uberfire.client.views.pfly.selectpicker.JQuerySelectPicker.$;
 
 @Templated
 @Dependent
@@ -59,12 +62,13 @@ public class TimeSelectorView implements TimeSelector.View {
     @DataField("time-input")
     private HTMLInputElement timeInput;
 
-    @DataField
-    private Select timeZoneSelector;
+    @DataField("time-zone-selector")
+    private final HTMLSelectElement timeZoneSelector;
+
+    @DataField("time-zone-select-option")
+    private final HTMLOptionElement typeSelectOption;
 
     static final String NONE_TRANSLATION_KEY = "TimeSelectorView.None";
-    static final String SELECT_TIMEZONE_TRANSLATION_KEY = "TimeSelectorView.SelectTimeZone";
-    static final String SELECT_UTC_OFFSET_TRANSLATION_KEY = "TimeSelectorView.SelectUTCOffset";
     static final String TIMEZONE_CLASS_ICON = "fa-globe";
     static final String OFFSET_CLASS_ICON = "fa-clock-o";
     static final String NONE_VALUE = "None";
@@ -77,6 +81,7 @@ public class TimeSelectorView implements TimeSelector.View {
     private TimeSelectorView presenter;
     private Consumer<BlurEvent> onValueInputBlur;
     private boolean isOffsetMode;
+    private String timeZoneSelectedValue;
 
     @Inject
     public TimeSelectorView(final HTMLInputElement timeInput,
@@ -85,7 +90,9 @@ public class TimeSelectorView implements TimeSelector.View {
                             final TimeValueFormatter formatter,
                             final @Named("i") HTMLElement toggleTimeZoneIcon,
                             final HTMLButtonElement toggleTimeZoneButton,
-                            final ClientTranslationService translationService) {
+                            final ClientTranslationService translationService,
+                            final HTMLSelectElement timeZoneSelector,
+                            final HTMLOptionElement typeSelectOption) {
         this.timeInput = timeInput;
         this.picker = picker;
         this.timeZoneProvider = timeZoneProvider;
@@ -94,13 +101,33 @@ public class TimeSelectorView implements TimeSelector.View {
         this.toggleTimeZoneButton = toggleTimeZoneButton;
         this.timeZones = new ArrayList<>();
         this.translationService = translationService;
+        this.typeSelectOption = typeSelectOption;
 
         this.isOffsetMode = false;
-        this.timeZoneSelector = GWT.create(Select.class);
-        this.timeZoneSelector.setShowTick(true);
-        this.timeZoneSelector.setLiveSearch(true);
-        this.timeZoneSelector.getElement().setAttribute("data-container", "body");
-        this.timeZoneSelector.refresh();
+        this.timeZoneSelector = timeZoneSelector;
+        this.timeZoneSelector.setAttribute("data-container", "body");
+    }
+
+    void timeZoneSelectorRefresh() {
+        triggerPickerAction(getSelectPicker(), "refresh");
+        showSelectPicker();
+    }
+
+    void showSelectPicker() {
+        triggerPickerAction(getSelectPicker(), "show");
+    }
+
+    Element getSelectPicker() {
+        return getElement().querySelector("[data-field=\"time-zone-selector\"]");
+    }
+
+    void triggerPickerAction(final Element element,
+                             final String method) {
+        $(element).selectpicker(method);
+    }
+
+    String getTimeZoneSelectedValue() {
+        return timeZoneSelectedValue;
     }
 
     @PostConstruct
@@ -113,6 +140,7 @@ public class TimeSelectorView implements TimeSelector.View {
 
         this.timeZones.clear();
         this.timeZones.addAll(timeZones);
+        setupOnChangeHandler(getSelectPicker());
         populateTimeZoneSelectorWithIds();
     }
 
@@ -124,85 +152,99 @@ public class TimeSelectorView implements TimeSelector.View {
         return timeZones;
     }
 
-    Select getTimeZoneSelector() {
-        return timeZoneSelector;
-    }
-
     void populateTimeZoneSelectorWithIds() {
 
-        final Select selector = getTimeZoneSelector();
-        selector.clear();
-        selector.add(createNoneOption());
+        RemoveHelper.removeChildren(timeZoneSelector);
+
+        timeZoneSelector.appendChild(createNoneOption());
 
         for (int i = 0; i < getTimeZones().size(); i++) {
             final DMNSimpleTimeZone timeZone = getTimeZones().get(i);
-            final Option option = createOptionWithId(timeZone);
-            selector.add(option);
+            final HTMLOptionElement option = createOptionWithId(timeZone);
+            timeZoneSelector.appendChild(option);
         }
 
-        final String title = translationService.getValue(SELECT_TIMEZONE_TRANSLATION_KEY);
-        selector.setTitle(title);
-        selector.setLiveSearchPlaceholder(title);
-        selector.refresh();
+        setPickerValue(getSelectPicker(), getTimeZoneSelectedValue());
+        timeZoneSelectorRefresh();
     }
 
-    Option createOptionWithId(final DMNSimpleTimeZone timeZone) {
+    HTMLOptionElement createOptionWithId(final DMNSimpleTimeZone timeZone) {
 
         final String timeZoneId = timeZone.getId();
-        final Option option = getNewOption();
-        option.setValue(timeZoneId);
-        option.setText(timeZoneId);
+        final HTMLOptionElement option = getNewOption();
+        option.value = timeZoneId;
+        option.text = timeZoneId;
         return option;
-    }
-
-    Option getNewOption() {
-        return GWT.create(Option.class);
-    }
-
-    Option createNoneOption() {
-
-        final Option none = getNewOption();
-        none.setText(translationService.getValue(NONE_TRANSLATION_KEY));
-        none.setValue(NONE_VALUE);
-        return none;
     }
 
     void populateTimeZoneSelectorWithOffSets() {
 
         final List<String> offSets = timeZoneProvider.getTimeZonesOffsets();
-        final Select selector = getTimeZoneSelector();
-        selector.clear();
-        selector.add(createNoneOption());
+        RemoveHelper.removeChildren(timeZoneSelector);
+
+        timeZoneSelector.appendChild(createNoneOption());
 
         for (int i = 0; i < offSets.size(); i++) {
 
-            final Option option = createOptionWithOffset(offSets.get(i));
-            selector.add(option);
+            final HTMLOptionElement option = createOptionWithOffset(offSets.get(i));
+            timeZoneSelector.appendChild(option);
         }
 
-        selector.setTitle(translationService.getValue(SELECT_UTC_OFFSET_TRANSLATION_KEY));
-        selector.setLiveSearchPlaceholder(translationService.getValue(SELECT_UTC_OFFSET_TRANSLATION_KEY));
-        selector.refresh();
+        setPickerValue(getSelectPicker(), getTimeZoneSelectedValue());
+        timeZoneSelectorRefresh();
     }
 
-    Option createOptionWithOffset(final String timeZoneOffSet) {
+    HTMLOptionElement createOptionWithOffset(final String timeZoneOffSet) {
 
-        final Option option = getNewOption();
-        option.setValue(timeZoneOffSet);
-        option.setText(timeZoneOffSet);
+        final HTMLOptionElement option = getNewOption();
+        option.value = timeZoneOffSet;
+        option.text = timeZoneOffSet;
         return option;
+    }
+
+    HTMLOptionElement getNewOption() {
+        // This is a workaround for an issue on Errai (ERRAI-1114) related to 'ManagedInstance' + 'HTMLOptionElement'.
+        return (HTMLOptionElement) typeSelectOption.cloneNode(false);
+    }
+
+    HTMLOptionElement createNoneOption() {
+
+        final HTMLOptionElement none = getNewOption();
+        none.text = translationService.getValue(NONE_TRANSLATION_KEY);
+        none.value = NONE_VALUE;
+        return none;
+    }
+
+    void setPickerValue(final Element element,
+                        final String value) {
+        $(element).selectpicker("val", value);
+    }
+
+    void setupOnChangeHandler(final Element element) {
+        $(element).on("hidden.bs.select", this::onSelectChange);
+    }
+
+    public void onSelectChange(final JQuerySelectPickerEvent event) {
+
+        final String newValue = event.target.value;
+
+        if (!Objects.equals(newValue, getValue())) {
+            setPickerValue(newValue);
+        }
+    }
+
+    void setPickerValue(final String value) {
+        setPickerValue(getSelectPicker(), value);
+        this.timeZoneSelectedValue = value;
     }
 
     @Override
     public String getValue() {
 
         final String time = picker.getValue();
-        final Option selectedItem = getTimeZoneSelector().getSelectedItem();
-
         final String timeZoneValue;
-        if (!Objects.isNull(selectedItem)) {
-            final String selectedValue = selectedItem.getValue();
-            timeZoneValue = NONE_VALUE.equals(selectedValue) ? "" : selectedValue;
+        if (!Objects.isNull(getTimeZoneSelectedValue())) {
+            timeZoneValue = NONE_VALUE.equals(getTimeZoneSelectedValue()) ? "" : getTimeZoneSelectedValue();
         } else {
             timeZoneValue = "";
         }
@@ -228,7 +270,7 @@ public class TimeSelectorView implements TimeSelector.View {
                 break;
 
             case NONE:
-                getTimeZoneSelector().setValue("");
+                setPickerValue("");
                 break;
         }
     }
@@ -240,7 +282,7 @@ public class TimeSelectorView implements TimeSelector.View {
     void refreshTimeZoneOffsetMode(final TimeValue timeValue) {
         refreshToggleTimeZoneIcon();
         reloadTimeZoneSelector();
-        getTimeZoneSelector().setValue(timeValue.getTimeZoneValue());
+        setPickerValue(timeValue.getTimeZoneValue());
     }
 
     @Override
