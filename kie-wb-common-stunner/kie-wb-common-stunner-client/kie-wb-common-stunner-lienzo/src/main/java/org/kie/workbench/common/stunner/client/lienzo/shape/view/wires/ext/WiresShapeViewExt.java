@@ -403,7 +403,6 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         HandlerRegistration r0 = addWiresResizeStartHandler(wiresResizeStartEvent -> {
             final ResizeEvent event = buildResizeEvent(wiresResizeStartEvent);
             resizeHandler.start(event);
-            //rebuildTextBoundaries(event.getWidth(), event.getHeight());
         });
         HandlerRegistration r1 = addWiresResizeStepHandler(wiresResizeStepEvent -> {
             final ResizeEvent event = buildResizeEvent(wiresResizeStepEvent);
@@ -413,7 +412,6 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         HandlerRegistration r2 = addWiresResizeEndHandler(wiresResizeEndEvent -> {
             final ResizeEvent event = buildResizeEvent(wiresResizeEndEvent);
             resizeHandler.end(event);
-            //rebuildTextBoundaries(event.getWidth(), event.getHeight());
         });
         return new HandlerRegistration[]{r0, r1, r2};
     }
