@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 
+import java.util.Optional;
+
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.MultiPathDecorator;
@@ -79,8 +81,8 @@ public class WiresConnectorViewExtTest {
                                            HEAD_DECORATOR,
                                            TAIL_DECORATOR) {
             @Override
-            protected WiresConnectorLabel createLabel(String title) {
-                return WiresConnectorViewExtTest.this.label;
+            protected Optional<WiresConnectorLabel> createLabel(String title) {
+                return Optional.of(WiresConnectorViewExtTest.this.label);
             }
         };
         tested.setControl(connectorControl);

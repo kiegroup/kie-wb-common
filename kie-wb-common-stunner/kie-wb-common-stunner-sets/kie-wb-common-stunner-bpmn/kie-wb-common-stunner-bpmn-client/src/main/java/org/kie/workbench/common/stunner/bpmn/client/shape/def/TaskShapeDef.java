@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.CompositeShapeViewHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
@@ -53,6 +54,20 @@ public class TaskShapeDef extends BaseDimensionedShapeDef
                     .put(UserTask.class, BPMNGlyphFactory.TASK_USER)
                     .put(ScriptTask.class, BPMNGlyphFactory.TASK_SCRIPT)
                     .put(BusinessRuleTask.class, BPMNGlyphFactory.TASK_BUSINESS_RULE)
+                    .build();
+
+    private static final Map<Enum, Double> DEFAULT_TASK_MARGINS_WITH_ICON =
+            new Maps.Builder<Enum, Double>()
+                    .put(HorizontalAlignment.LEFT, 50d)
+                    .build();
+
+    private static Map<Class<? extends BaseTask>, Map<Enum, Double>> taskMarginSuppliers =
+            new Maps.Builder()
+                    .put(NoneTask.class, null)
+                    .put(UserTask.class, DEFAULT_TASK_MARGINS_WITH_ICON)
+                    .put(ScriptTask.class, DEFAULT_TASK_MARGINS_WITH_ICON)
+                    .put(BusinessRuleTask.class, DEFAULT_TASK_MARGINS_WITH_ICON)
+                    .put(ServiceTask.class, DEFAULT_TASK_MARGINS_WITH_ICON)
                     .build();
 
     @Override
@@ -93,7 +108,7 @@ public class TaskShapeDef extends BaseDimensionedShapeDef
     @Override
     public FontHandler<BaseTask, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .margin(HorizontalAlignment.LEFT, 50d)
+                .margins(bean -> taskMarginSuppliers.getOrDefault(bean.getClass(), null))
                 .build();
     }
 }

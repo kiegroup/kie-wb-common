@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape.view.handler;
 
+import java.util.Optional;
+
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
@@ -42,12 +44,20 @@ public class BPMNShapeViewHandlers {
                     .fontSize(bean -> bean.getFontSet().getFontSize().getValue())
                     .strokeColor(bean -> bean.getFontSet().getFontBorderColor().getValue())
                     .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
+                    .strokeAlpha(bean -> getStrokeAlpha(bean.getFontSet().getFontBorderSize().getValue()))
                     .verticalAlignment(bean -> VerticalAlignment.MIDDLE)
                     .horizontalAlignment(bean -> HorizontalAlignment.CENTER)
                     .referencePosition(bean -> ReferencePosition.INSIDE)
                     .orientation(bean -> Orientation.HORIZONTAL)
                     .textSizeConstraints(bean -> new Size(100, 100, SizeType.PERCENTAGE))
                     .textWrapperStrategy(bean -> TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
+        }
+
+        public static Double getStrokeAlpha(Double strokeWidth) {
+            return Optional.ofNullable(strokeWidth)
+                    .filter(value -> value > 0)
+                    .map(value -> 1.0)
+                    .orElse(0.0);
         }
     }
 

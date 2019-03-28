@@ -52,9 +52,11 @@ public abstract class AbstractElementShape<W, C extends View<W>, E extends Eleme
     public void applyTitle(final String title,
                            final E element,
                            final MutationContext mutationContext) {
+        //first set the font properties
         getShapeHandlersDef()
                 .fontHandler()
                 .ifPresent(h -> h.accept(getDefinition(element), getShapeView()));
+        //after set the title
         getShapeHandlersDef()
                 .titleHandler()
                 .ifPresent(h -> h.accept(title, getShapeView()));

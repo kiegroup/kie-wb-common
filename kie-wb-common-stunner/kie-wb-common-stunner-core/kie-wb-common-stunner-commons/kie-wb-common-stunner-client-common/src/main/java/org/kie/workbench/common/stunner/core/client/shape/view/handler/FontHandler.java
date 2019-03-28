@@ -61,6 +61,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
     private Function<W, HasTitle.Orientation> orientationProvider;
     private final Function<W, Size> sizeConstraintsProvider;
     private final Map<Enum, Double> margins;
+    private final Function<W,Map<Enum, Double>> marginsProvider;
 
     FontHandler(final Function<W, Double> alphaProvider, final Function<W, String> fontFamilyProvider,
                 final Function<W, String> fontColorProvider, final Function<W, Double> fontSizeProvider,
@@ -74,7 +75,8 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                 final Function<W, ReferencePosition> referencePositionProvider,
                 final Function<W, Orientation> orientationProvider,
                 final Function<W, Size> sizeConstraintsProvider,
-                final Map<Enum, Double> margins) {
+                final Map<Enum, Double> margins,
+                final Function<W,Map<Enum, Double>> marginsProvider) {
         this.alphaProvider = alphaProvider;
         this.fontFamilyProvider = fontFamilyProvider;
         this.fontColorProvider = fontColorProvider;
@@ -93,6 +95,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
         this.orientationProvider = orientationProvider;
         this.sizeConstraintsProvider = sizeConstraintsProvider;
         this.margins = margins;
+        this.marginsProvider = marginsProvider;
     }
 
     @Override
@@ -107,7 +110,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             final String strokeColor = strokeColorProvider.apply(element);
             final Double strokeSize = strokeSizeProvider.apply(element);
             final Double strokeAlpha = strokeAlphaProvider.apply(element);
-            final HasTitle.Position position = positionProvider.apply(element);
             final Double positionXOffset = positionXOffsetProvider.apply(element);
             final Double positionYOffset = positionYOffsetProvider.apply(element);
             final Double rotation = rotationProvider.apply(element);
@@ -116,7 +118,8 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             final VerticalAlignment verticalAlignment = verticalAlignmentProvider.apply(element);
             final HorizontalAlignment horizontalAlignment = horizontalAlignmentProvider.apply(element);
             final ReferencePosition referencePosition = referencePositionProvider.apply(element);
-            Orientation orientation = orientationProvider.apply(element);
+            final Orientation orientation = orientationProvider.apply(element);
+            final Map<Enum, Double> margins = marginsProvider.apply(element);
 
             if (fontFamily != null && fontFamily.trim().length() > 0) {
                 hasTitle.setTitleFontFamily(fontFamily);
@@ -154,7 +157,11 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
 
             hasTitle.setTextSizeConstraints(sizeConstraints);
 
-            hasTitle.setMargins(margins);
+            if(margins != null){
+                this.margins.putAll(margins);
+            }
+
+            hasTitle.setMargins(this.margins);
 
             applyTextPosition(hasTitle, rotation, verticalAlignment, horizontalAlignment, referencePosition,
                               orientation);
@@ -203,6 +210,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
         private Function<W, HasTitle.Orientation> orientationProvider;
         private Function<W, Size> sizeConstraintsProvider;
         private final Map<Enum, Double> margins = new HashMap<>();
+        private Function<W,Map<Enum, Double>> marginsProvider;
 
         public Builder() {
             this.alphaProvider = value -> null;
@@ -222,6 +230,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             this.referencePositionProvider = value -> null;
             this.orientationProvider = value -> null;
             this.sizeConstraintsProvider = value -> null;
+            this.marginsProvider = value -> null;
         }
 
         public Builder<W, V> alpha(Function<W, Double> alphaProvider) {
@@ -314,6 +323,12 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             return this;
         }
 
+        public Builder<W, V> margins(Function<W, Map<Enum, Double>> marginsProvider) {
+
+            this.marginsProvider = marginsProvider;
+            return this;
+        }
+
         public FontHandler<W, V> build() {
             return new FontHandler<>(alphaProvider,
                                      fontFamilyProvider,
@@ -332,7 +347,8 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                                      referencePositionProvider,
                                      orientationProvider,
                                      sizeConstraintsProvider,
-                                     margins);
+                                     margins,
+                                     marginsProvider);
         }
     }
 }

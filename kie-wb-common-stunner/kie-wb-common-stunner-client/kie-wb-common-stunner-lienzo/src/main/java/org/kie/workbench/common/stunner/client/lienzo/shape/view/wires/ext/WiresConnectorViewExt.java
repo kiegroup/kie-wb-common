@@ -69,7 +69,7 @@ public class WiresConnectorViewExt<T>
     }
 
     protected void init(final ViewEventType[] supportedEventTypes) {
-        this.label = Optional.empty();
+        this.label = createLabel("");
         this.textRotationDegrees = 0;
         this.eventHandlerManager = new ViewEventHandlerManager(getLine().asShape(),
                                                                getLine().asShape(),
@@ -119,15 +119,10 @@ public class WiresConnectorViewExt<T>
     @Override
     @SuppressWarnings("unchecked")
     public T setTitle(final String title) {
-        if (null == title || title.trim().length() == 0) {
-            destroyLabel();
-        } else {
-            if (!label.isPresent()) {
-                label = Optional.of(createLabel(title));
-            }
-            label.get().configure(text -> text.setText(title));
-        }
-        return cast();
+        return Optional.ofNullable(title)
+                .map(t -> label.map(l -> l.configure(text -> text.setText(t))))
+                .map(l -> cast())
+                .orElse(cast());
     }
 
     @Override
@@ -216,6 +211,12 @@ public class WiresConnectorViewExt<T>
     }
 
     @Override
+    public T setTitleStrokeAlpha(double alpha) {
+        label.ifPresent(l -> l.configure(text -> text.setStrokeAlpha(alpha)));
+        return cast();
+    }
+
+    @Override
     public void destroy() {
         super.destroy();
         // Clear registered event handlers.
@@ -226,8 +227,8 @@ public class WiresConnectorViewExt<T>
         destroyLabel();
     }
 
-    protected WiresConnectorLabel createLabel(final String title) {
-        return WiresConnectorLabelFactory.newLabelOnFirstSegment(title, this);
+    protected Optional<WiresConnectorLabel> createLabel(final String title) {
+        return Optional.of(WiresConnectorLabelFactory.newLabelOnFirstSegment(title, this));
     }
 
     private void destroyLabel() {
