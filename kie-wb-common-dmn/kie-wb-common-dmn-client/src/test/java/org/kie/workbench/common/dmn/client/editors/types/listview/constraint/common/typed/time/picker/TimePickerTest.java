@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker;
 
-import java.util.Date;
 import java.util.function.Consumer;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -27,15 +26,16 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.uberfire.client.views.pfly.widgets.Moment;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimePicker.TIME_FORMAT;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class TimePickerTest {
@@ -47,10 +47,7 @@ public class TimePickerTest {
     private TimePicker.View view;
 
     @Captor
-    private ArgumentCaptor<Long> dateInMillisArgumentCaptor;
-
-    @Captor
-    private ArgumentCaptor<Date> dateArgumentCaptor;
+    private ArgumentCaptor<Moment> momentArgumentCaptor;
 
     private TimePicker picker;
 
@@ -63,18 +60,30 @@ public class TimePickerTest {
     @Test
     public void testRefreshDateInPopup() {
 
+        final Moment moment = mock(Moment.class);
         final String inputValue = "22:30:51";
-        final long expected = TIME_FORMAT.parse(inputValue).getTime();
+        int expectedHours = 22;
+        int expectedMinutes = 30;
+        int expectedSeconds = 51;
+
+        when(moment.isValid()).thenReturn(true);
+        when(moment.hours()).thenReturn(expectedHours);
+        when(moment.minutes()).thenReturn(expectedMinutes);
+        when(moment.seconds()).thenReturn(expectedSeconds);
+
+        doReturn(moment).when(picker).getDateInInput();
 
         input.value = inputValue;
 
         picker.refreshDateInPopup();
 
-        verify(view).setDate(dateInMillisArgumentCaptor.capture());
+        verify(view).setDate(momentArgumentCaptor.capture());
 
-        final long actual = dateInMillisArgumentCaptor.getValue();
+        final Moment actual = momentArgumentCaptor.getValue();
 
-        assertEquals(expected, actual);
+        assertEquals(expectedHours, actual.hours());
+        assertEquals(expectedMinutes, actual.minutes());
+        assertEquals(expectedSeconds, actual.seconds());
     }
 
     @Test
@@ -104,16 +113,17 @@ public class TimePickerTest {
     @Test
     public void testOnDateChanged() {
 
-        final Consumer<java.util.Date> consumer = mock(Consumer.class);
+        final Consumer<Moment> consumer = mock(Consumer.class);
         picker.setOnDateChanged(consumer);
-        final java.util.Date javaDate = new java.util.Date();
-        final String expected = TIME_FORMAT.format(javaDate);
+        final String expected = "14:55:01";
+        final Moment moment = mock(Moment.class);
 
-        picker.onDateChanged(javaDate.getTime());
+        when(moment.format("HH:mm:ss")).thenReturn(expected);
+
+        picker.onDateChanged(moment);
 
         assertEquals(expected, input.value);
 
-        verify(consumer).accept(dateArgumentCaptor.capture());
-        assertEquals(javaDate.getTime(), dateArgumentCaptor.getValue().getTime());
+        verify(consumer).accept(momentArgumentCaptor.capture());
     }
 }

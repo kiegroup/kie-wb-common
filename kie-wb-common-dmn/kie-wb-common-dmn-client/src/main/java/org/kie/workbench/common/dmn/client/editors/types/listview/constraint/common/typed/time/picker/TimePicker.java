@@ -33,6 +33,9 @@ import org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
+import org.uberfire.client.views.pfly.widgets.Moment;
+
+import static org.uberfire.client.views.pfly.widgets.Moment.Builder.moment;
 
 @Dependent
 public class TimePicker {
@@ -45,7 +48,7 @@ public class TimePicker {
 
     private Element.OnblurCallbackFn previousCallback;
 
-    private Consumer<java.util.Date> onDateChanged;
+    private Consumer<Moment> onDateChanged;
 
     @Inject
     public TimePicker(final View view) {
@@ -77,15 +80,17 @@ public class TimePicker {
     void refreshDateInPopup() {
 
         if (isDateSetInInput()) {
-            try {
-                final long timeInMillis = TIME_FORMAT.parse(getInputBind().value).getTime();
-                view.setDate(timeInMillis);
-            } catch (final IllegalArgumentException exception) {
-                setDefaultData();
+            final Moment moment = getDateInInput();
+            if (moment.isValid()) {
+                view.setDate(moment);
             }
         } else {
             setDefaultData();
         }
+    }
+
+    Moment getDateInInput(){
+        return moment(getInputBind().value, "HH:mm:ss");
     }
 
     boolean isDateSetInInput() {
@@ -95,20 +100,19 @@ public class TimePicker {
     }
 
     void setDefaultData() {
-        view.setDate(new java.util.Date().getTime());
+        final Moment now = moment();
+        view.setDate(now);
     }
 
-    void onDateChanged(final long nativeDate) {
+    void onDateChanged(final Moment nativeDate) {
 
-        final java.util.Date date = new java.util.Date();
-        date.setTime(nativeDate);
-        getInputBind().value = TIME_FORMAT.format(date);
+        getInputBind().value = nativeDate.format("HH:mm:ss");
         if (!Objects.isNull(onDateChanged)) {
-            onDateChanged.accept(date);
+            onDateChanged.accept(nativeDate);
         }
     }
 
-    public void setOnDateChanged(final Consumer<java.util.Date> onDateChanged) {
+    public void setOnDateChanged(final Consumer<Moment> onDateChanged) {
         this.onDateChanged = onDateChanged;
     }
 
@@ -158,32 +162,30 @@ public class TimePicker {
 
     public String getValue() {
 
-        elemental2.core.Date currentDate = view.getDate();
+        final Moment currentDate = view.getDate();
         if (Objects.isNull(currentDate)) {
             return "";
         }
 
-        final java.util.Date date = new java.util.Date((long) currentDate.getTime());
-        return TIME_FORMAT.format(date);
+        return currentDate.format("HH:mm:ss");
     }
 
     public void setValue(final String value) {
 
-        try {
-            view.setDate(TIME_FORMAT.parse(value).getTime());
-        } catch (final IllegalArgumentException ignored) {
-
+        final Moment moment = moment(value, "HH:mm:ss");
+        if (moment.isValid()) {
+            view.setDate(moment);
         }
     }
 
     public interface View extends UberElemental<TimePickerView>,
                                   IsElement {
 
-        void setDate(final long timeInMillis);
+        void setDate(final Moment moment);
 
-        void setOnDateChanged(final Consumer<Long> onDateChanged);
+        void setOnDateChanged(final Consumer<Moment> onDateChanged);
 
-        elemental2.core.Date getDate();
+        Moment getDate();
 
         void setOnBlur(final Consumer<Event> onViewElementBlur);
     }

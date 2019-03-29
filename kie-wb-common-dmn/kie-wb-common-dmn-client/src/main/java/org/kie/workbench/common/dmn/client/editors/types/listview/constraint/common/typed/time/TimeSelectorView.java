@@ -118,7 +118,7 @@ public class TimeSelectorView implements TimeSelector.View {
     }
 
     Element getSelectPicker() {
-        return getElement().querySelector("[data-field=\"time-zone-selector\"]");
+        return this.timeZoneSelector;
     }
 
     void triggerPickerAction(final Element element,

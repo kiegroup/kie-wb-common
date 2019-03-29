@@ -24,21 +24,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.core.Date;
 import elemental2.dom.Event;
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.uberfire.client.views.pfly.widgets.Moment;
 
 @Templated
 @Dependent
 public class TimePickerView implements TimePicker.View {
-
-    @DataField("time-picker-container")
-    private final HTMLDivElement timePickerContainer;
 
     @DataField("increase-hours")
     private final HTMLAnchorElement increaseHours;
@@ -69,14 +65,13 @@ public class TimePickerView implements TimePicker.View {
 
     private TimePickerView presenter;
 
-    private Date date;
+    private Moment date;
 
-    private Consumer<Long> onDateChanged;
+    private Consumer<Moment> onDateChanged;
     private Consumer<Event> onBlur;
 
     @Inject
-    public TimePickerView(final HTMLDivElement timePickerContainer,
-                          final HTMLAnchorElement increaseHours,
+    public TimePickerView(final HTMLAnchorElement increaseHours,
                           final HTMLAnchorElement decreaseHours,
                           final HTMLAnchorElement increaseMinutes,
                           final HTMLAnchorElement decreaseMinutes,
@@ -85,7 +80,6 @@ public class TimePickerView implements TimePicker.View {
                           final @Named("span") HTMLElement hours,
                           final @Named("span") HTMLElement minutes,
                           final @Named("span") HTMLElement seconds) {
-        this.timePickerContainer = timePickerContainer;
         this.increaseHours = increaseHours;
         this.decreaseHours = decreaseHours;
         this.increaseMinutes = increaseMinutes;
@@ -103,21 +97,20 @@ public class TimePickerView implements TimePicker.View {
     }
 
     @Override
-    public void setDate(final long timeInMillis) {
+    public void setDate(final Moment moment) {
 
-        this.date = new Date();
-        this.date.setTime(timeInMillis);
+        this.date = moment;
         refresh();
     }
 
     void refresh() {
 
-        setHours(getDate().getHours());
-        setMinutes(getDate().getMinutes());
-        setSeconds(getDate().getSeconds());
+        setHours(getDate().hours());
+        setMinutes(getDate().minutes());
+        setSeconds(getDate().seconds());
 
         if (!Objects.isNull(onDateChanged)) {
-            onDateChanged.accept((long) getDate().getTime());
+            onDateChanged.accept(getDate());
         }
     }
 
@@ -135,68 +128,68 @@ public class TimePickerView implements TimePicker.View {
 
     String format(final double value) {
 
-        String str = String.valueOf((int)value);
+        String str = String.valueOf((int) value);
         str = str.length() < 2 ? "0" + str : str;
         return str;
     }
 
     @EventHandler("increase-hours")
     public void onIncreaseHoursClick(final ClickEvent event) {
-        getDate().setHours(getDate().getHours() + 1);
+        getDate().hours(getDate().hours() + 1);
         refresh();
     }
 
     @EventHandler("decrease-hours")
     public void onDecreaseHoursClick(final ClickEvent event) {
-        getDate().setHours(getDate().getHours() - 1);
+        getDate().hours(getDate().hours() - 1);
         refresh();
     }
 
     @EventHandler("increase-minutes")
     public void onIncreaseMinutesClick(final ClickEvent event) {
-        final double currentHours = getDate().getHours();
-        getDate().setMinutes(getDate().getMinutes() + 1);
-        getDate().setHours(currentHours);
+        final int currentHours = getDate().hours();
+        getDate().minutes(getDate().minutes() + 1);
+        getDate().hours(currentHours);
         refresh();
     }
 
     @EventHandler("decrease-minutes")
     public void onDecreaseMinutesClick(final ClickEvent event) {
-        final double currentHours = getDate().getHours();
-        getDate().setMinutes(getDate().getMinutes() - 1);
-        getDate().setHours(currentHours);
+        final int currentHours = getDate().hours();
+        getDate().minutes(getDate().minutes() - 1);
+        getDate().hours(currentHours);
         refresh();
     }
 
     @EventHandler("increase-seconds")
     public void onIncreaseSecondsClick(final ClickEvent event) {
-        setSeconds((int) getDate().getSeconds() + 1);
+        updateSeconds(getDate().seconds() + 1);
     }
 
     @EventHandler("decrease-seconds")
     public void onDecreaseSecondsClick(final ClickEvent event) {
-        setSeconds((int) getDate().getSeconds() - 1);
+        updateSeconds(getDate().seconds() - 1);
     }
 
-    void setSeconds(final int seconds) {
+    void updateSeconds(final int seconds) {
 
         // This is to prevent that when we increase seconds beyond 59 seconds,
         // the minutes are also increased and also the hours if minutes == 59.
 
-        final double currentHours = getDate().getHours();
-        final double currentMinutes = getDate().getMinutes();
-        getDate().setSeconds(seconds);
-        getDate().setMinutes(currentMinutes);
-        getDate().setHours(currentHours);
+        final int currentHours = getDate().hours();
+        final int currentMinutes = getDate().minutes();
+        getDate().seconds(seconds);
+        getDate().minutes(currentMinutes);
+        getDate().hours(currentHours);
         refresh();
     }
 
-    public void setOnDateChanged(final Consumer<Long> onDateChanged) {
+    public void setOnDateChanged(final Consumer<Moment> onDateChanged) {
         this.onDateChanged = onDateChanged;
     }
 
     @Override
-    public elemental2.core.Date getDate() {
+    public Moment getDate() {
         return date;
     }
 

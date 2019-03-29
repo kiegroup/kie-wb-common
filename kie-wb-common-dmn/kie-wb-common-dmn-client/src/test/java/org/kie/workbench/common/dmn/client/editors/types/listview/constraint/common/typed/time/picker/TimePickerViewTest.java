@@ -19,14 +19,13 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.co
 import java.util.function.Consumer;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import elemental2.core.Date;
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.uberfire.client.views.pfly.widgets.Moment;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
@@ -38,9 +37,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class TimePickerViewTest {
-
-    @Mock
-    private HTMLDivElement timePickerContainer;
 
     @Mock
     private HTMLAnchorElement increaseHours;
@@ -70,14 +66,13 @@ public class TimePickerViewTest {
     private HTMLElement seconds;
 
     @Mock
-    private Date date;
+    private Moment date;
 
     private TimePickerView view;
 
     @Before
     public void setup() {
-        view = spy(new TimePickerView(timePickerContainer,
-                                      increaseHours,
+        view = spy(new TimePickerView(increaseHours,
                                       decreaseHours,
                                       increaseMinutes,
                                       decreaseMinutes,
@@ -93,24 +88,22 @@ public class TimePickerViewTest {
     @Test
     public void testRefresh() {
 
-        final double hours = 14.0d;
-        final double minutes = 25.0d;
-        final double seconds = 17.0d;
-        final double timeInMillis = 12345676.0d;
-        final Consumer<Long> onDateChanged = mock(Consumer.class);
+        final int hours = 14;
+        final int minutes = 25;
+        final int seconds = 17;
+        final Consumer<Moment> onDateChanged = mock(Consumer.class);
         view.setOnDateChanged(onDateChanged);
 
-        when(date.getHours()).thenReturn(hours);
-        when(date.getMinutes()).thenReturn(minutes);
-        when(date.getSeconds()).thenReturn(seconds);
-        when(date.getTime()).thenReturn(timeInMillis);
+        when(date.hours()).thenReturn(hours);
+        when(date.minutes()).thenReturn(minutes);
+        when(date.seconds()).thenReturn(seconds);
 
         view.refresh();
 
         verify(view).setHours(hours);
         verify(view).setMinutes(minutes);
         verify(view).setSeconds(seconds);
-        verify(onDateChanged).accept((long) timeInMillis);
+        verify(onDateChanged).accept(date);
     }
 
     @Test
@@ -143,82 +136,82 @@ public class TimePickerViewTest {
     @Test
     public void testOnIncreaseHoursClick() {
 
-        when(date.getHours()).thenReturn(1.0d);
+        when(date.hours()).thenReturn(1);
         doNothing().when(view).refresh();
 
         view.onIncreaseHoursClick(null);
 
-        verify(date).setHours(2.0d);
+        verify(date).hours(2);
     }
 
     @Test
     public void testOnDecreaseHoursClick() {
 
-        when(date.getHours()).thenReturn(2.0d);
+        when(date.hours()).thenReturn(2);
         doNothing().when(view).refresh();
 
         view.onDecreaseHoursClick(null);
 
-        verify(date).setHours(1.0d);
+        verify(date).hours(1);
     }
 
     @Test
     public void testOnIncreaseMinutesClick() {
 
-        when(date.getMinutes()).thenReturn(1.0d);
+        when(date.minutes()).thenReturn(1);
         doNothing().when(view).refresh();
 
         view.onIncreaseMinutesClick(null);
 
-        verify(date).setMinutes(2.0d);
+        verify(date).minutes(2);
     }
 
     @Test
     public void testOnDecreaseMinutesClick() {
 
-        when(date.getMinutes()).thenReturn(2.0d);
+        when(date.minutes()).thenReturn(2);
         doNothing().when(view).refresh();
 
         view.onDecreaseMinutesClick(null);
 
-        verify(date).setMinutes(1.0d);
+        verify(date).minutes(1);
     }
 
     @Test
     public void testOnIncreaseSecondsClick() {
 
-        when(date.getSeconds()).thenReturn(1.0d);
+        when(date.seconds()).thenReturn(1);
         doNothing().when(view).refresh();
 
         view.onIncreaseSecondsClick(null);
 
-        verify(date).setSeconds(2.0d);
+        verify(date).seconds(2);
     }
 
     @Test
     public void testOnDecreaseSecondsClick() {
 
-        when(date.getSeconds()).thenReturn(2.0d);
+        when(date.seconds()).thenReturn(2);
         doNothing().when(view).refresh();
 
         view.onDecreaseSecondsClick(null);
 
-        verify(date).setSeconds(1.0d);
+        verify(date).seconds(1);
     }
 
     @Test
-    public void testSetSeconds() {
+    public void testUpdateSeconds() {
 
-        when(date.getHours()).thenReturn(23.0d);
-        when(date.getMinutes()).thenReturn(59.0d);
-        when(date.getSeconds()).thenReturn(59.0d);
+        when(date.hours()).thenReturn(23);
+        when(date.minutes()).thenReturn(59);
+        when(date.seconds()).thenReturn(59);
         doNothing().when(view).refresh();
 
-        view.setSeconds(0);
+        view.updateSeconds(0);
 
-        verify(date).setSeconds(0.0d);
-        verify(date).setMinutes(59.0d);
-        verify(date).setHours(23.0d);
+        verify(date).seconds(0);
+        verify(date).minutes(59);
+        verify(date).hours(23);
         verify(view).refresh();
     }
 }

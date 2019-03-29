@@ -16,6 +16,16 @@
 
 [data-i18n-prefix="TimePickerView."] {
 
+  &.time-picker {
+    background-color: white;
+    height: 110px;
+    width: 220px;
+    position: absolute;
+    z-index: 2000;
+    border: 1px solid #CCC;
+    box-shadow: 3px 3px 5px #888888;
+  }
+
   .col-md-1,
   .col-md-3 {
     vertical-align: middle;
@@ -27,30 +37,20 @@
     padding: 10px;
     color: #676b70;
   }
-}
 
-.colon {
-  color: #676b70;
-  height: 100px;
-  line-height: 95px;
-  font-size: 26px;
-}
+  .colon {
+    color: #676b70;
+    height: 100px;
+    line-height: 95px;
+    font-size: 26px;
+  }
 
-.number {
-  color: #676b70;
-  vertical-align: middle;
-  text-align: center;
-  font-size: 22px;
-  padding: 15px;
-  font-weight: 600;
-}
-
-.time-picker {
-  background-color: white;
-  height: 110px;
-  width: 220px;
-  position: absolute;
-  z-index: 2000;
-  border: 1px solid #CCC;
-  box-shadow: 3px 3px 5px #888888;
+  .number {
+    color: #676b70;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 22px;
+    padding: 15px;
+    font-weight: 600;
+  }
 }
