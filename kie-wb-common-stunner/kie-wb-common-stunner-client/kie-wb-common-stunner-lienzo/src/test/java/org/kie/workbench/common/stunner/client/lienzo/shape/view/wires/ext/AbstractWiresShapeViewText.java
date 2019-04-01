@@ -19,15 +19,24 @@ package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.wires.layout.direction.DirectionLayout;
 import com.ait.lienzo.client.core.shape.wires.layout.label.LabelLayout;
+import org.junit.Test;
 import org.mockito.Mock;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractWiresShapeViewText {
+public abstract class AbstractWiresShapeViewText<T extends WiresShapeViewExt<T>> {
+
+    public static final String TITLE = "Title";
 
     protected Text text;
 
     protected LabelLayout layout;
+
+    protected T tested;
 
     @Mock
     protected WiresTextDecorator textDecorator;
@@ -40,7 +49,25 @@ public abstract class AbstractWiresShapeViewText {
                 .referencePosition(DirectionLayout.ReferencePosition.INSIDE)
                 .build();
         when(textDecorator.getView()).thenReturn(text);
-        when(textDecorator.getView()).thenReturn(text);
         when(textDecorator.getLabelLayout()).thenReturn(layout);
+        this.tested = spy(createInstance());
+        this.tested.setTextViewDecorator(textDecorator);
+
+        verify(tested, never()).addLabel(any(), any());
+    }
+
+    public abstract T createInstance();
+
+    @Test
+    public void testTitle() {
+        tested.setTitle(TITLE);
+        verify(textDecorator).setTitle(TITLE);
+        verify(tested).addLabel(text, layout);
+    }
+
+    @Test
+    public void testNullTitle() {
+        //setTitle should not throw an exception when called with a null argument
+        tested.setTitle(null);
     }
 }

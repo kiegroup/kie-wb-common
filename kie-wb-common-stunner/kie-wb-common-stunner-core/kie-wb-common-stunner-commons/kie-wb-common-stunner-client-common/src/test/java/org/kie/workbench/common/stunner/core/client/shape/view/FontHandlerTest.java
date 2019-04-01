@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.shape.view;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeViewExtStub;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
@@ -39,6 +40,7 @@ public class FontHandlerTest {
     private static final double X_OFFSET = 10.0;
 
     private static final double Y_OFFSET = 20.0;
+    public static final HasTitle.Size SIZE_CONSTRAINTS = new HasTitle.Size(50d, 50d, HasTitle.Size.SizeType.PERCENTAGE);
 
     private FontHandler<Object, ShapeViewExtStub> tested;
 
@@ -60,10 +62,16 @@ public class FontHandlerTest {
                 .textWrapperStrategy(o -> TextWrapperStrategy.NO_WRAP)
                 .fontSize(o -> 10.5d)
                 .alpha(o -> 0.7d)
-                .rotation(o -> 180d)
-                .position(o -> HasTitle.Position.TOP)
+                .rotation(o -> 270d)
                 .positionXOffset(o -> X_OFFSET)
                 .positionYOffset(o -> Y_OFFSET)
+                .verticalAlignment(o -> HasTitle.VerticalAlignment.TOP)
+                .horizontalAlignment(o -> HasTitle.HorizontalAlignment.LEFT)
+                .referencePosition(o -> HasTitle.ReferencePosition.OUTSIDE)
+                .orientation(o -> HasTitle.Orientation.VERTICAL)
+                .margin(HasTitle.HorizontalAlignment.LEFT, 10d)
+                .margin(HasTitle.VerticalAlignment.TOP, 10d)
+                .textSizeConstraints(o -> SIZE_CONSTRAINTS)
                 .build();
         final Object bean = mock(Object.class);
         tested.handle(bean, view);
@@ -74,10 +82,17 @@ public class FontHandlerTest {
         verify(view).setTitleFontFamily(eq("fontFamily"));
         verify(view).setTitleFontSize(eq(10.5d));
         verify(view).setTitleAlpha(eq(0.7d));
-        verify(view).setTitleRotation(eq(180d));
+        verify(view).setTitleRotation(eq(270d));
         verify(view).setTitleXOffsetPosition(eq(X_OFFSET));
         verify(view).setTitleYOffsetPosition(eq(Y_OFFSET));
         verify(view).setTextWrapper(TextWrapperStrategy.NO_WRAP);
+        verify(view).setTitlePosition(HasTitle.VerticalAlignment.TOP, HasTitle.HorizontalAlignment.LEFT,
+                                      HasTitle.ReferencePosition.OUTSIDE, HasTitle.Orientation.VERTICAL);
+        verify(view).setMargins(new Maps.Builder()
+                                        .put(HasTitle.VerticalAlignment.TOP, 10d)
+                                        .put(HasTitle.HorizontalAlignment.LEFT, 10d)
+                                        .build());
+        verify(view).setTextSizeConstraints(SIZE_CONSTRAINTS);
     }
 
     @Test
@@ -92,9 +107,15 @@ public class FontHandlerTest {
                 .textWrapperStrategy(o -> null)
                 .alpha(o -> null)
                 .rotation(o -> null)
-                .position(o -> null)
                 .positionXOffset(o -> null)
                 .positionYOffset(o -> null)
+                .verticalAlignment(o -> null)
+                .horizontalAlignment(o -> null)
+                .referencePosition(o -> null)
+                .orientation(o -> null)
+                .margins(o -> null)
+                .textSizeConstraints(o -> null)
+
                 .build();
         final Object bean = mock(Object.class);
         tested.handle(bean, view);
@@ -109,5 +130,8 @@ public class FontHandlerTest {
         verify(view, never()).setTitleXOffsetPosition(anyDouble());
         verify(view, never()).setTitleYOffsetPosition(anyDouble());
         verify(view, never()).setTextWrapper(any());
+        verify(view, never()).setTitlePosition(any(), any(), any(), any());
+        verify(view, never()).setMargins(any());
+        verify(view, never()).setTextSizeConstraints(any());
     }
 }

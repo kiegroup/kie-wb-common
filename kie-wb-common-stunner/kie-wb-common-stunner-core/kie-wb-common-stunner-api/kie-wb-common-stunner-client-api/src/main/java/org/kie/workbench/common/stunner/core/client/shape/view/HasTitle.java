@@ -22,14 +22,6 @@ import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 
 public interface HasTitle<T> {
 
-    enum Position {
-        CENTER,
-        LEFT,
-        RIGHT,
-        TOP,
-        BOTTOM
-    }
-
     enum HorizontalAlignment {
         RIGHT,
         CENTER,

@@ -33,12 +33,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.ViewEventHandlerManager;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -47,6 +47,7 @@ import static org.mockito.Mockito.when;
 @RunWith(LienzoMockitoTestRunner.class)
 public class WiresTextDecoratorTest {
 
+    public static final BoundingBox NEW_SIZE = new BoundingBox(0, 0, 10, 10);
     @Mock
     private Supplier<ViewEventHandlerManager> eventHandlerManager;
 
@@ -76,28 +77,39 @@ public class WiresTextDecoratorTest {
         when(shape.getPath()).thenReturn(path);
         when(shape.getLabelContainerLayout()).thenReturn(Optional.of(layout));
         when(path.getBoundingBox()).thenReturn(bb);
-        when(layout.getMaxSize(path)).thenReturn(bb);
+        when(layout.getMaxSize(any())).thenReturn(bb);
+
         decorator = spy(new WiresTextDecorator(eventHandlerManager, shape));
     }
 
     @Test
     public void ensureThatWrapBoundariesAreSet() {
+        assertBoundaries(bb.getWidth(), bb.getHeight());
+    }
 
+    private void assertBoundaries(double width, double height) {
         final Text text = decorator.getView();
         final BoundingBox wrapBoundaries = ((TextBoundsWrap) text.getWrapper()).getWrapBoundaries();
-
-        assertEquals(bb.getWidth(), wrapBoundaries.getWidth(), 0.01d);
-        assertEquals(bb.getHeight(), wrapBoundaries.getHeight(), 0.01d);
-        assertNotEquals(wrapBoundaries.getWidth(), 0.0d, 0.01d);
-        assertNotEquals(wrapBoundaries.getHeight(), 0.0d, 0.01d);
+        assertEquals(width, wrapBoundaries.getWidth(), 0d);
+        assertEquals(height, wrapBoundaries.getHeight(), 0d);
+        assertNotEquals(wrapBoundaries.getWidth(), 0d, 0.d);
+        assertNotEquals(wrapBoundaries.getHeight(), 0d, 0d);
     }
 
     @Test
-    public void ensureThatResizeUpdatesTheNode() {
-        decorator.setTextBoundaries(10, 10);
-        ArgumentCaptor<BoundingBox> boundingBoxArgumentCaptor = ArgumentCaptor.forClass(BoundingBox.class);
-        verify(decorator).setTextBoundaries(boundingBoxArgumentCaptor.capture());
-        boundingBoxArgumentCaptor.getValue().equals(new BoundingBox(0, 0, 10, 10));
+    public void ensureResizeUpdatesTheNode() {
+        when(layout.getMaxSize(any())).thenReturn(NEW_SIZE);
+        decorator.update();
+        verify(layout, atLeastOnce()).execute();
+        assertBoundaries(NEW_SIZE.getWidth(), NEW_SIZE.getHeight());
+    }
+
+    @Test
+    public void assertWidthHeightWhenMaxSizeIsNull() {
+        when(layout.getMaxSize(any())).thenReturn(null);
+        decorator.setTextBoundaries(30, 30);
+        verify(layout, atLeastOnce()).execute();
+        assertBoundaries(30, 30);
     }
 
     @Test

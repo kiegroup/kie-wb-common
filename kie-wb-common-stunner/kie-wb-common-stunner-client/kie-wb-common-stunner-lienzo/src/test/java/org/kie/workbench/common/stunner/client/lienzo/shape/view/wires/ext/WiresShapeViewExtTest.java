@@ -32,20 +32,15 @@ public class WiresShapeViewExtTest extends AbstractWiresShapeViewText {
     private static ViewEventType[] viewEventTypes = {};
     private final static MultiPath PATH = new MultiPath();
 
-    private WiresShapeViewExt<WiresShapeViewExt> tested;
-
     @Before
     public void setup() throws Exception {
         super.setUp();
-        this.tested = new WiresShapeViewExt<>(viewEventTypes,
-                                              PATH);
-        this.tested.setTextViewDecorator(textDecorator);
     }
 
-    @Test
-    public void testTitle() {
-        //setTitle should not thrown an exception when called with a null argument
-        tested.setTitle(null);
+    @Override
+    public WiresShapeViewExt createInstance() {
+        return new WiresShapeViewExt<>(viewEventTypes,
+                                       PATH);
     }
 
     @Test

@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.cm.client.shape.def;
 import java.util.Optional;
 
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BaseDimensionedShapeDef;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGGlyphFactory;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
@@ -31,14 +30,10 @@ import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 public class CaseManagementSvgStageShapeDef extends BaseDimensionedShapeDef
         implements CaseManagementSvgShapeDef<AdHocSubprocess> {
 
-    private static HasTitle.Position getSubprocessTextPosition(final BaseSubprocess bean) {
-        return HasTitle.Position.CENTER;
-    }
-
     @Override
     public FontHandler<AdHocSubprocess, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .position(CaseManagementSvgStageShapeDef::getSubprocessTextPosition)
+                .horizontalAlignment(o -> HasTitle.HorizontalAlignment.CENTER)
                 .build();
     }
 

@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.shape.view.handler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -26,7 +27,6 @@ import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Orientation;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Position;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.ReferencePosition;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Size;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.VerticalAlignment;
@@ -50,7 +50,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
     private final Function<W, String> strokeColorProvider;
     private final Function<W, Double> strokeSizeProvider;
     private final Function<W, Double> strokeAlphaProvider;
-    private final Function<W, HasTitle.Position> positionProvider;
     private final Function<W, Double> positionXOffsetProvider;
     private final Function<W, Double> positionYOffsetProvider;
     private final Function<W, Double> rotationProvider;
@@ -61,13 +60,17 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
     private Function<W, HasTitle.Orientation> orientationProvider;
     private final Function<W, Size> sizeConstraintsProvider;
     private final Map<Enum, Double> margins;
-    private final Function<W,Map<Enum, Double>> marginsProvider;
+    private final Function<W, Map<Enum, Double>> marginsProvider;
 
-    FontHandler(final Function<W, Double> alphaProvider, final Function<W, String> fontFamilyProvider,
-                final Function<W, String> fontColorProvider, final Function<W, Double> fontSizeProvider,
-                final Function<W, String> strokeColorProvider, final Function<W, Double> strokeSizeProvider,
-                final Function<W, Double> strokeAlphaProvider, final Function<W, Position> positionProvider,
-                final Function<W, Double> positionXOffsetProvider, final Function<W, Double> positionYOffsetProvider,
+    FontHandler(final Function<W, Double> alphaProvider,
+                final Function<W, String> fontFamilyProvider,
+                final Function<W, String> fontColorProvider,
+                final Function<W, Double> fontSizeProvider,
+                final Function<W, String> strokeColorProvider,
+                final Function<W, Double> strokeSizeProvider,
+                final Function<W, Double> strokeAlphaProvider,
+                final Function<W, Double> positionXOffsetProvider,
+                final Function<W, Double> positionYOffsetProvider,
                 final Function<W, Double> rotationProvider,
                 final Function<W, TextWrapperStrategy> textWrapperStrategyProvider,
                 final Function<W, VerticalAlignment> verticalAlignmentProvider,
@@ -76,7 +79,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                 final Function<W, Orientation> orientationProvider,
                 final Function<W, Size> sizeConstraintsProvider,
                 final Map<Enum, Double> margins,
-                final Function<W,Map<Enum, Double>> marginsProvider) {
+                final Function<W, Map<Enum, Double>> marginsProvider) {
         this.alphaProvider = alphaProvider;
         this.fontFamilyProvider = fontFamilyProvider;
         this.fontColorProvider = fontColorProvider;
@@ -84,7 +87,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
         this.strokeColorProvider = strokeColorProvider;
         this.strokeSizeProvider = strokeSizeProvider;
         this.strokeAlphaProvider = strokeAlphaProvider;
-        this.positionProvider = positionProvider;
         this.positionXOffsetProvider = positionXOffsetProvider;
         this.positionYOffsetProvider = positionYOffsetProvider;
         this.rotationProvider = rotationProvider;
@@ -155,13 +157,14 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                 hasTitle.setTextWrapper(wrapperStrategy);
             }
 
-            hasTitle.setTextSizeConstraints(sizeConstraints);
-
-            if(margins != null){
-                this.margins.putAll(margins);
+            if (!this.margins.isEmpty()) {
+                hasTitle.setMargins(this.margins);
+                Optional.ofNullable(margins).ifPresent(m -> this.margins.putAll(m));
             }
 
-            hasTitle.setMargins(this.margins);
+            if (sizeConstraints != null) {
+                hasTitle.setTextSizeConstraints(sizeConstraints);
+            }
 
             applyTextPosition(hasTitle, rotation, verticalAlignment, horizontalAlignment, referencePosition,
                               orientation);
@@ -199,7 +202,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
         private Function<W, String> strokeColorProvider;
         private Function<W, Double> strokeSizeProvider;
         private Function<W, Double> strokeAlphaProvider;
-        private Function<W, HasTitle.Position> positionProvider;
         private Function<W, Double> positionXOffsetProvider;
         private Function<W, Double> positionYOffsetProvider;
         private Function<W, Double> rotationProvider;
@@ -210,7 +212,7 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
         private Function<W, HasTitle.Orientation> orientationProvider;
         private Function<W, Size> sizeConstraintsProvider;
         private final Map<Enum, Double> margins = new HashMap<>();
-        private Function<W,Map<Enum, Double>> marginsProvider;
+        private Function<W, Map<Enum, Double>> marginsProvider;
 
         public Builder() {
             this.alphaProvider = value -> null;
@@ -219,7 +221,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
             this.fontSizeProvider = value -> null;
             this.strokeColorProvider = value -> null;
             this.strokeSizeProvider = value -> null;
-            this.positionProvider = value -> null;
             this.positionXOffsetProvider = value -> null;
             this.positionYOffsetProvider = value -> null;
             this.rotationProvider = value -> null;
@@ -265,11 +266,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
 
         public Builder<W, V> strokeAlpha(Function<W, Double> provider) {
             this.strokeAlphaProvider = provider;
-            return this;
-        }
-
-        public Builder<W, V> position(Function<W, HasTitle.Position> provider) {
-            this.positionProvider = provider;
             return this;
         }
 
@@ -337,7 +333,6 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                                      strokeColorProvider,
                                      strokeSizeProvider,
                                      strokeAlphaProvider,
-                                     positionProvider,
                                      positionXOffsetProvider,
                                      positionYOffsetProvider,
                                      rotationProvider,

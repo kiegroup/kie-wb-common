@@ -31,6 +31,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
+import static org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Orientation;
+import static org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.ReferencePosition;
+import static org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Size;
+import static org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.VerticalAlignment;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -46,9 +53,13 @@ public class BPMNShapeViewHandlersTest {
     @Captor
     private ArgumentCaptor<TextWrapperStrategy> wrapper;
 
+    @Captor
+    private ArgumentCaptor<Size> sizeConstraints;
+
     @Before
     public void setUp() {
         task = new UserTask();
+        task.getFontSet().getFontBorderSize().setValue(0.0);
         fontHandler = new BPMNShapeViewHandlers.FontHandlerBuilder<>().build();
     }
 
@@ -57,5 +68,16 @@ public class BPMNShapeViewHandlersTest {
         fontHandler.handle(task, text);
         verify(text).setTextWrapper(wrapper.capture());
         assertEquals(wrapper.getValue(), TextWrapperStrategy.TRUNCATE_WITH_LINE_BREAK);
+        verify(text).setTitleStrokeWidth(0);
+        verify(text).setTitleStrokeAlpha(0);
+        verify(text).setTitlePosition(VerticalAlignment.MIDDLE, HorizontalAlignment.CENTER,
+                                      ReferencePosition.INSIDE, Orientation.HORIZONTAL);
+        verify(text, never()).setMargins(anyMap());
+        verify(text).setTextSizeConstraints(sizeConstraints.capture());
+
+        final Size size = sizeConstraints.getValue();
+        assertEquals(size.getHeight(), 100, 0d);
+        assertEquals(size.getWidth(), 100, 0d);
+        assertEquals(size.getType(), Size.SizeType.PERCENTAGE);
     }
 }

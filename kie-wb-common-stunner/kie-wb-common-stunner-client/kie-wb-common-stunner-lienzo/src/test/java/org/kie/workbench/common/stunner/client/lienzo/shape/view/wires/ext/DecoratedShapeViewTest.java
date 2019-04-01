@@ -37,24 +37,20 @@ public class DecoratedShapeViewTest extends AbstractWiresShapeViewText {
 
     private WiresScalableContainer container;
 
-    private DecoratedShapeView<WiresShapeViewExt> tested;
 
     @Before
     public void setup() throws Exception {
-        super.setUp();
         container = new WiresScalableContainer();
-        this.tested = new DecoratedShapeView<>(viewEventTypes,
-                                               container,
-                                               PATH,
-                                               width,
-                                               height);
-        this.tested.setTextViewDecorator(textDecorator);
+        super.setUp();
     }
 
-    @Test
-    public void testTitle() {
-        //setTitle should not throw an exception when called with a null argument
-        tested.setTitle(null);
+    @Override
+    public WiresShapeViewExt createInstance() {
+        return  new DecoratedShapeView<>(viewEventTypes,
+                                         container,
+                                         PATH,
+                                         width,
+                                         height);
     }
 
     @Test
