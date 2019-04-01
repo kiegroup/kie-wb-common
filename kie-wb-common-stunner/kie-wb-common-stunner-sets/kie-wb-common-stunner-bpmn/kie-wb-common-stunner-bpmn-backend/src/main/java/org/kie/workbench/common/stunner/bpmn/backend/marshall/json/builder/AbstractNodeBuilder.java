@@ -40,7 +40,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
-// TODO: Improve error handling.
+// TODO: Improve error handling to doExecuteCommand method
 public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
         extends AbstractObjectBuilder<W, T> implements NodeObjectBuilder<W, T> {
 
@@ -53,7 +53,7 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
 
         this.definitionClass = definitionClass;
         this.definitionId = definitionId;
-        this.childNodeIds = new LinkedHashSet<String>();
+        this.childNodeIds = new LinkedHashSet<>();
     }
 
     @Override
@@ -89,14 +89,11 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
             setBounds(context,
                       result);
             AddNodeCommand addNodeCommand = context.getCommandFactory().addNode(result);
-            if (doExecuteCommand(context,
-                                 addNodeCommand)) {
-                // Post processing.
-                afterNodeBuild(context,
-                               result);
-            } else {
-                // TODO: throw an exception and handle the error.
-            }
+            doExecuteCommand(context, addNodeCommand);
+
+            // Post processing.
+            afterNodeBuild(context, result);
+
             return result;
         } else {
             return (T) context.getIndex().getNode(this.nodeId);
@@ -145,8 +142,7 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
             for (Object property : properties) {
                 if (property instanceof Radius) {
                     Radius radius = (Radius) property;
-                    double r = getRadius(width,
-                                         height);
+                    double r = getRadius(width);
                     radius.setValue(r);
                     break;
                 }
@@ -207,7 +203,7 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
                     Edge edge = (Edge) edgeBuilder.build(context);
                     if (edge != null) {
                         // Command - Execute the graph command to set the node as the edge connection's source..
-                        Double sourceDocker[] = null;
+                        Double[] sourceDocker = null;
                         final List<Double[]> dockers = ((AbstractEdgeBuilder) outgoingBuilder).dockers;
                         if (dockers != null && dockers.size() > 1) {
                             sourceDocker = dockers.get(0);
@@ -267,8 +263,7 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
         return true;
     }
 
-    private double getRadius(final double width,
-                             final double height) {
+    private double getRadius(final double width) {
         return width / 2;
     }
 }

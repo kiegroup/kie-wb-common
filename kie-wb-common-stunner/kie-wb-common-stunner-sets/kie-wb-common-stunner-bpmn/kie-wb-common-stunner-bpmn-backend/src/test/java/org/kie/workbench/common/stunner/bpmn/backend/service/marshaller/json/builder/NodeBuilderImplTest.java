@@ -92,10 +92,11 @@ public class NodeBuilderImplTest {
     @Mock
     private GraphCommandFactory graphCommandFactory;
 
-    NodeBuilderImpl nodeBuilder;
+    private NodeBuilderImpl nodeBuilder;
 
     @Before
-    public void setup() throws Exception {
+    @SuppressWarnings("unchecked")
+    public void setup() {
         when(context.getFactoryManager()).thenReturn(factoryManager);
         when(context.getIndex()).thenReturn(index);
 
@@ -113,24 +114,42 @@ public class NodeBuilderImplTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testDoBuildNewNode() {
+        mockContext();
+        when(factoryManager.newElement(null, DEFINITION_ID)).thenReturn(node);
+        when(node.getContent()).thenReturn(view);
+        when(view.getDefinition()).thenReturn(definition);
+
+        Element node1 = nodeBuilder.build(context);
+        Assert.assertEquals(node1, node);
+    }
+
+    @Test(expected = RuntimeException.class)
+    @SuppressWarnings("unchecked")
+    public void testDoBuildNewNodeWithErrors() {
+        mockContext();
+        when(factoryManager.newElement(null, DEFINITION_ID)).thenReturn(node);
+        when(node.getContent()).thenReturn(view);
+        when(view.getDefinition()).thenReturn(definition);
+        when(res.getType()).thenReturn(CommandResult.Type.ERROR);
+
+        Element node1 = nodeBuilder.build(context);
+
+        Assert.assertEquals(node1, node);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mockContext() {
         when(context.getIndex().getNode(NODE_ID)).thenReturn(null);
         when(context.getOryxManager()).thenReturn(oryxManager);
         when(context.getOryxManager().getMappingsManager()).thenReturn(oryxIdMappings);
         when(context.getOryxManager().getMappingsManager().getDefinitionId(any(Class.class))).thenReturn(DEFINITION_ID);
-        when(factoryManager.newElement(null,
-                                       DEFINITION_ID)).thenReturn(node);
-        when(node.getContent()).thenReturn(view);
-        when(view.getDefinition()).thenReturn(definition);
         when(context.getDefinitionManager()).thenReturn(definitionManager);
         when(context.getDefinitionManager().adapters()).thenReturn(adapters);
         when(context.getDefinitionManager().adapters().forDefinition()).thenReturn(forDefinition);
         when(context.getDefinitionManager().adapters().forDefinition().getProperties(definition)).thenReturn(set);
         when(context.execute(any())).thenReturn(res);
         when(context.getCommandFactory()).thenReturn(graphCommandFactory);
-
-        Element node1 = nodeBuilder.build(context);
-        Assert.assertEquals(node1,
-                            node);
     }
 }
