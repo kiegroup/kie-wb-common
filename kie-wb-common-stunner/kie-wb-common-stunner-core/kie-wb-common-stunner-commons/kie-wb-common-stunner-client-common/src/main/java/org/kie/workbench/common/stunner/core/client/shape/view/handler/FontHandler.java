@@ -157,9 +157,9 @@ public class FontHandler<W, V extends ShapeView> implements ShapeViewHandler<W, 
                 hasTitle.setTextWrapper(wrapperStrategy);
             }
 
+            Optional.ofNullable(margins).ifPresent(m -> this.margins.putAll(m));
             if (!this.margins.isEmpty()) {
                 hasTitle.setMargins(this.margins);
-                Optional.ofNullable(margins).ifPresent(m -> this.margins.putAll(m));
             }
 
             if (sizeConstraints != null) {

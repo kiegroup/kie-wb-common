@@ -71,6 +71,7 @@ public class FontHandlerTest {
                 .orientation(o -> HasTitle.Orientation.VERTICAL)
                 .margin(HasTitle.HorizontalAlignment.LEFT, 10d)
                 .margin(HasTitle.VerticalAlignment.TOP, 10d)
+                .margins(o -> new Maps.Builder<Enum, Double>().put(HasTitle.HorizontalAlignment.RIGHT, 50d).build())
                 .textSizeConstraints(o -> SIZE_CONSTRAINTS)
                 .build();
         final Object bean = mock(Object.class);
@@ -91,6 +92,7 @@ public class FontHandlerTest {
         verify(view).setMargins(new Maps.Builder()
                                         .put(HasTitle.VerticalAlignment.TOP, 10d)
                                         .put(HasTitle.HorizontalAlignment.LEFT, 10d)
+                                        .put(HasTitle.HorizontalAlignment.RIGHT, 50d)
                                         .build());
         verify(view).setTextSizeConstraints(SIZE_CONSTRAINTS);
     }
