@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.included.modal;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,6 +24,7 @@ import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPagePresenter;
 import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
@@ -183,9 +183,7 @@ public class IncludedModelModalTest {
         final String value = "://namespace";
         final String path = "/src/path/file";
         final IncludedModel includedModel = spy(new IncludedModel(recordEngine));
-        final Map<String, String> metaData = new HashMap<String, String>() {{
-            put("path", path);
-        }};
+        final Map<String, String> metaData = new Maps.Builder<String, String>().put("path", path).build();
 
         when(view.getModelNameInput()).thenReturn(name);
         doReturn(includedModel).when(modal).createIncludedModel();

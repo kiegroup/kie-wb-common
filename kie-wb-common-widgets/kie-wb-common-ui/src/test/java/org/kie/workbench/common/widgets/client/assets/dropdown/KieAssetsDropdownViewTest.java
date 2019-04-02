@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.widgets.client.assets.dropdown;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -28,6 +28,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.commons.util.Maps;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPicker;
@@ -113,9 +114,7 @@ public class KieAssetsDropdownViewTest {
     public void testAddValue() {
 
         final HTMLOptionElement optionElement = mock(HTMLOptionElement.class);
-        final KieAssetsDropdownItem entry = new KieAssetsDropdownItem("text", "value", new HashMap<String, String>() {{
-            put("foo", "bar");
-        }});
+        final KieAssetsDropdownItem entry = new KieAssetsDropdownItem("text", "value", getMetaData());
 
         doReturn(optionElement).when(view).makeHTMLOptionElement();
 
@@ -219,5 +218,9 @@ public class KieAssetsDropdownViewTest {
     public void testOnFallbackInputChange() {
         view.onFallbackInputChange(mock(KeyUpEvent.class));
         verify(presenter).onValueChanged();
+    }
+
+    private Map<String, String> getMetaData() {
+        return new Maps.Builder<String, String>().put("foo", "bar").build();
     }
 }

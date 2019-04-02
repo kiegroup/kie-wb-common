@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.included.modal.dropdown;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsIndex;
@@ -84,11 +84,15 @@ public class DMNAssetsDropdownItemsProvider implements KieAssetsDropdownItemsPro
 
         final String text = dmnIncludeModel.getModelName();
         final String value = dmnIncludeModel.getNamespace();
-        final Map<String, String> metaData = new HashMap<String, String>() {{
-            put(PATH_METADATA, dmnIncludeModel.getPath());
-            put(SUBTEXT_METADATA, dmnIncludeModel.getModelPackage());
-        }};
+        final Map<String, String> metaData = getMetaData(dmnIncludeModel);
 
         return new KieAssetsDropdownItem(text, value, metaData);
+    }
+
+    private Map<String, String> getMetaData(final DMNIncludeModel dmnIncludeModel) {
+        return new Maps.Builder<String, String>()
+                .put(PATH_METADATA, dmnIncludeModel.getPath())
+                .put(SUBTEXT_METADATA, dmnIncludeModel.getModelPackage())
+                .build();
     }
 }
