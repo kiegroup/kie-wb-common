@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks;
 
+import java.util.Optional;
+
 import org.eclipse.bpmn2.Task;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -55,6 +57,7 @@ import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends BaseUserTaskExecutionSet> {
 
@@ -227,14 +230,10 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
     }
 
     private BpmnNode fallback(Task task) {
-        String taskName = CustomAttribute.serviceTaskName.of(task).get();
-        if (taskName.isEmpty()) {
-            return noneTask(task);
-        } else if (taskName.equals("BusinessRuleTask")) {
-            return noneTask(task);
-        } else {
-            return serviceTask(task);
-        }
+        return Optional.ofNullable(CustomAttribute.serviceTaskName.of(task).get())
+                .filter(StringUtils::nonEmpty)
+                .map(name -> serviceTask(task))
+                .orElseGet(() -> noneTask(task));
     }
 
     private BpmnNode noneTask(Task task) {
