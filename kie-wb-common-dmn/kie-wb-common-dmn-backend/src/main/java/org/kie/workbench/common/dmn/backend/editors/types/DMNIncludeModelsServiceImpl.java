@@ -18,15 +18,19 @@ package org.kie.workbench.common.dmn.backend.editors.types;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueFileExtensionIndexTerm;
 import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueRepositoryRootIndexTerm;
 import org.kie.workbench.common.services.refactoring.backend.server.query.RefactoringQueryServiceImpl;
@@ -40,7 +44,10 @@ import org.uberfire.backend.vfs.Path;
 import static java.lang.Boolean.TRUE;
 import static org.kie.workbench.common.dmn.backend.editors.types.query.FindAllDmnAssetsQuery.NAME;
 
+@Service
 public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
+
+    private static Logger LOGGER = Logger.getLogger(DMNIncludeModelsServiceImpl.class.getName());
 
     private final RefactoringQueryServiceImpl refactoringQueryService;
 
@@ -61,10 +68,20 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
     public List<DMNIncludeModel> loadModels(final WorkspaceProject workspaceProject) {
         return getPaths(workspaceProject)
                 .stream()
-                .map(includeModelFactory::create)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(getPathDMNIncludeModelFunction())
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private Function<Path, DMNIncludeModel> getPathDMNIncludeModelFunction() {
+        return (Path path) -> {
+            try {
+                return includeModelFactory.create(path);
+            } catch (final DMNIncludeModelCouldNotBeCreatedException e) {
+                LOGGER.warning("The 'DMNIncludeModel' could not be created for " + path.toURI());
+                return null;
+            }
+        };
     }
 
     private List<Path> getPaths(final WorkspaceProject workspaceProject) {

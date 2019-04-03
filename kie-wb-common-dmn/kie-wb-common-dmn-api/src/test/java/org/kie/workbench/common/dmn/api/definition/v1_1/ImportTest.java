@@ -50,10 +50,6 @@ public class ImportTest {
 
     @Test
     public void testEqualsId() {
-
-        import1.setId(new Id("123"));
-        import2.setId(new Id("123"));
-
         assertEquals(import1, import2);
     }
 

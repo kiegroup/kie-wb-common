@@ -17,13 +17,13 @@
 package org.kie.workbench.common.dmn.backend.editors.types;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
+import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.refactoring.backend.server.query.RefactoringQueryServiceImpl;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
@@ -69,7 +69,7 @@ public class DMNIncludeModelsServiceImplTest {
     }
 
     @Test
-    public void testLoadModelsWhenWorkspaceProjectIsNull() {
+    public void testLoadModelsWhenWorkspaceProjectIsNull() throws Exception {
 
         final WorkspaceProject workspaceProject = null;
         final DiagramRepresentation representation1 = mock(DiagramRepresentation.class);
@@ -87,9 +87,9 @@ public class DMNIncludeModelsServiceImplTest {
         when(representation1.getPath()).thenReturn(path1);
         when(representation2.getPath()).thenReturn(path2);
         when(representation3.getPath()).thenReturn(path3);
-        when(includeModelFactory.create(path1)).thenReturn(Optional.of(dmnIncludeModel1));
-        when(includeModelFactory.create(path2)).thenReturn(Optional.of(dmnIncludeModel2));
-        when(includeModelFactory.create(path3)).thenReturn(Optional.empty());
+        when(includeModelFactory.create(path1)).thenReturn(dmnIncludeModel1);
+        when(includeModelFactory.create(path2)).thenReturn(dmnIncludeModel2);
+        when(includeModelFactory.create(path3)).thenThrow(new DMNIncludeModelCouldNotBeCreatedException());
 
         final List<DMNIncludeModel> dmnIncludeModels = service.loadModels(workspaceProject);
 
@@ -99,7 +99,7 @@ public class DMNIncludeModelsServiceImplTest {
     }
 
     @Test
-    public void testLoadModelsWhenWorkspaceProjectIsNotNull() {
+    public void testLoadModelsWhenWorkspaceProjectIsNotNull() throws Exception {
 
         final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
         final Path rootPath = mock(Path.class);
@@ -121,9 +121,9 @@ public class DMNIncludeModelsServiceImplTest {
         when(row1.getValue()).thenReturn(path1);
         when(row2.getValue()).thenReturn(path2);
         when(row3.getValue()).thenReturn(path3);
-        when(includeModelFactory.create(path1)).thenReturn(Optional.of(dmnIncludeModel1));
-        when(includeModelFactory.create(path2)).thenReturn(Optional.of(dmnIncludeModel2));
-        when(includeModelFactory.create(path3)).thenReturn(Optional.empty());
+        when(includeModelFactory.create(path1)).thenReturn(dmnIncludeModel1);
+        when(includeModelFactory.create(path2)).thenReturn(dmnIncludeModel2);
+        when(includeModelFactory.create(path3)).thenThrow(new DMNIncludeModelCouldNotBeCreatedException());
 
         final List<DMNIncludeModel> dmnIncludeModels = service.loadModels(workspaceProject);
 

@@ -31,6 +31,7 @@ import org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdown
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 import org.uberfire.mvp.Command;
 
+import static org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.DMNAssetsDropdownItemsProvider.PATH_METADATA;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
@@ -103,7 +104,7 @@ public class IncludedModelModal extends Elemental2Modal<IncludedModelModal.View>
         final IncludedModel includedModel = createIncludedModel();
         includedModel.setName(getView().getModelNameInput());
         includedModel.setNamespace(value.getValue());
-        includedModel.setPath(value.getMetaData().get("path"));
+        includedModel.setPath(value.getMetaData().get(PATH_METADATA));
         includedModel.create();
     }
 

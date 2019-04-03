@@ -22,20 +22,28 @@ public class KieAssetsDropdownItem {
 
     private final String text;
 
+    private final String subText;
+
     private final String value;
 
     private final Map<String, String> metaData;
 
     public KieAssetsDropdownItem(final String text,
+                                 final String subText,
                                  final String value,
                                  final Map<String, String> metaData) {
         this.text = text;
+        this.subText = subText;
         this.value = value;
         this.metaData = metaData;
     }
 
     public String getText() {
         return text;
+    }
+
+    public String getSubText() {
+        return subText;
     }
 
     public String getValue() {

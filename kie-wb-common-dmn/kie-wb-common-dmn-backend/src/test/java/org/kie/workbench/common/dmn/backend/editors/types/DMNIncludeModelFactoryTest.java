@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.backend.editors.types;
 
 import java.nio.file.NoSuchFileException;
-import java.util.Optional;
 
 import org.guvnor.common.services.project.model.Package;
 import org.junit.Before;
@@ -27,6 +26,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -40,8 +40,6 @@ import org.uberfire.backend.vfs.Path;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -86,7 +84,7 @@ public class DMNIncludeModelFactoryTest {
     }
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception {
 
         final Package aPackage = mock(Package.class);
         final String packageName = "com.kie.dmn";
@@ -101,11 +99,7 @@ public class DMNIncludeModelFactoryTest {
         when(diagramService.getDiagramByPath(path)).thenReturn(diagram);
         doReturn(namespace).when(factory).getNamespace(diagram);
 
-        final Optional<DMNIncludeModel> optionalDMNIncludeModel = factory.create(path);
-
-        assertTrue(optionalDMNIncludeModel.isPresent());
-
-        final DMNIncludeModel dmnIncludeModel = optionalDMNIncludeModel.get();
+        final DMNIncludeModel dmnIncludeModel = factory.create(path);
 
         assertEquals(packageName, dmnIncludeModel.getModelPackage());
         assertEquals(fileName, dmnIncludeModel.getModelName());
@@ -113,13 +107,10 @@ public class DMNIncludeModelFactoryTest {
         assertEquals(namespace, dmnIncludeModel.getNamespace());
     }
 
-    @Test
-    public void testCreateWhenGetNamespaceRaisesAnError() {
+    @Test(expected = DMNIncludeModelCouldNotBeCreatedException.class)
+    public void testCreateWhenGetNamespaceRaisesAnError() throws Exception {
         doThrow(NoSuchFileException.class).when(factory).getNamespace(path);
-
-        final Optional<DMNIncludeModel> optionalDMNIncludeModel = factory.create(path);
-
-        assertFalse(optionalDMNIncludeModel.isPresent());
+        factory.create(path);
     }
 
     @Test

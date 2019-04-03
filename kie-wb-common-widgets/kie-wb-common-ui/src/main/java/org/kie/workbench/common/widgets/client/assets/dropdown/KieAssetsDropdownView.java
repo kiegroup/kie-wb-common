@@ -40,6 +40,8 @@ public class KieAssetsDropdownView implements KieAssetsDropdown.View {
 
     static final String HIDDEN_CSS_CLASS = "hidden";
 
+    static final String SELECT_PICKER_SUBTEXT_ATTRIBUTE = "data-subtext";
+
     @DataField("native-select")
     private final HTMLSelectElement nativeSelect;
 
@@ -142,14 +144,9 @@ public class KieAssetsDropdownView implements KieAssetsDropdown.View {
 
         option.text = entry.getText();
         option.value = entry.getValue();
-        entry.getMetaData().forEach((key, value) -> option.setAttribute(data(key), value));
+        option.setAttribute(SELECT_PICKER_SUBTEXT_ATTRIBUTE, entry.getSubText());
 
         return option;
-    }
-
-    private String data(final String key) {
-        final String prefix = "data-";
-        return prefix + key;
     }
 
     HTMLOptionElement makeHTMLOptionElement() {

@@ -40,6 +40,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdownView.HIDDEN_CSS_CLASS;
+import static org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdownView.SELECT_PICKER_SUBTEXT_ATTRIBUTE;
 import static org.kie.workbench.common.widgets.client.resources.i18n.KieWorkbenchWidgetsConstants.KieAssetsDropdownView_Select;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -114,7 +115,7 @@ public class KieAssetsDropdownViewTest {
     public void testAddValue() {
 
         final HTMLOptionElement optionElement = mock(HTMLOptionElement.class);
-        final KieAssetsDropdownItem entry = new KieAssetsDropdownItem("text", "value", getMetaData());
+        final KieAssetsDropdownItem entry = new KieAssetsDropdownItem("text", "subtext", "value", getMetaData());
 
         doReturn(optionElement).when(view).makeHTMLOptionElement();
 
@@ -122,7 +123,7 @@ public class KieAssetsDropdownViewTest {
 
         assertEquals("text", optionElement.text);
         assertEquals("value", optionElement.value);
-        verify(optionElement).setAttribute("data-foo", "bar");
+        verify(optionElement).setAttribute(SELECT_PICKER_SUBTEXT_ATTRIBUTE, "subtext");
         verify(nativeSelect).appendChild(optionElement);
     }
 

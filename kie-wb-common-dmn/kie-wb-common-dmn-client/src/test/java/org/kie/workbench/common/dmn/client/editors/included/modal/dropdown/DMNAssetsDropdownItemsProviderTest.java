@@ -107,8 +107,8 @@ public class DMNAssetsDropdownItemsProviderTest {
         final KieAssetsDropdownItem dropdownItem = itemsProvider.asKieAsset(model);
 
         assertEquals(model.getModelName(), dropdownItem.getText());
+        assertEquals(model.getModelPackage(), dropdownItem.getSubText());
         assertEquals(model.getNamespace(), dropdownItem.getValue());
         assertEquals(model.getPath(), dropdownItem.getMetaData().get("path"));
-        assertEquals(model.getModelPackage(), dropdownItem.getMetaData().get("subtext"));
     }
 }

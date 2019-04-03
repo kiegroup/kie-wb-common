@@ -71,7 +71,9 @@ public abstract class KieAssetsDropdown {
     }
 
     public void initialize() {
-        view.refreshSelectPicker();
+        if (!isSubmarine.get()) {
+            view.refreshSelectPicker();
+        }
     }
 
     public void clear() {
@@ -108,7 +110,7 @@ public abstract class KieAssetsDropdown {
 
     public Optional<KieAssetsDropdownItem> getValue() {
         if (isSubmarine.get()) {
-            return Optional.of(new KieAssetsDropdownItem("", view.getValue(), new HashMap<>()));
+            return Optional.of(new KieAssetsDropdownItem("", "", view.getValue(), new HashMap<>()));
         } else {
             return getKieAssets()
                     .stream()

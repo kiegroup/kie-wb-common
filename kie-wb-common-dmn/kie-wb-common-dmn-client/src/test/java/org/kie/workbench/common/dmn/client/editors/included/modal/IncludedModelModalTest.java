@@ -182,13 +182,14 @@ public class IncludedModelModalTest {
         final String name = "file.dmn";
         final String value = "://namespace";
         final String path = "/src/path/file";
+        final String anPackage = "path.file.com";
         final IncludedModel includedModel = spy(new IncludedModel(recordEngine));
         final Map<String, String> metaData = new Maps.Builder<String, String>().put("path", path).build();
 
         when(view.getModelNameInput()).thenReturn(name);
         doReturn(includedModel).when(modal).createIncludedModel();
 
-        modal.createIncludedModel(new KieAssetsDropdownItem(name, value, metaData));
+        modal.createIncludedModel(new KieAssetsDropdownItem(name, anPackage, value, metaData));
 
         assertEquals(name, includedModel.getName());
         assertEquals(value, includedModel.getNamespace());

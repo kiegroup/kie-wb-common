@@ -37,6 +37,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -108,6 +109,13 @@ public class KieAssetsDropdownTest {
     public void testInitialize() {
         dropdown.initialize();
         verify(view).refreshSelectPicker();
+    }
+
+    @Test
+    public void testInitializeWhenItIsNotSubmarine() {
+        when(isSubmarine.get()).thenReturn(true);
+        dropdown.initialize();
+        verify(view, never()).refreshSelectPicker();
     }
 
     @Test

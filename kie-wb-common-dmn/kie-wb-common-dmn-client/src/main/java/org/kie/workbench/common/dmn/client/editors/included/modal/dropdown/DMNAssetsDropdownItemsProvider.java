@@ -36,9 +36,7 @@ import org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdown
 @Dependent
 public class DMNAssetsDropdownItemsProvider implements KieAssetsDropdownItemsProvider {
 
-    private static final String PATH_METADATA = "path";
-
-    private static final String SUBTEXT_METADATA = "subtext";
+    public static final String PATH_METADATA = "path";
 
     private final DMNIncludeModelsClient client;
 
@@ -83,16 +81,17 @@ public class DMNAssetsDropdownItemsProvider implements KieAssetsDropdownItemsPro
     KieAssetsDropdownItem asKieAsset(final DMNIncludeModel dmnIncludeModel) {
 
         final String text = dmnIncludeModel.getModelName();
+        final String subText = dmnIncludeModel.getModelPackage();
         final String value = dmnIncludeModel.getNamespace();
-        final Map<String, String> metaData = getMetaData(dmnIncludeModel);
+        final Map<String, String> metaData = buildMetaData(dmnIncludeModel);
 
-        return new KieAssetsDropdownItem(text, value, metaData);
+        return new KieAssetsDropdownItem(text, subText, value, metaData);
     }
 
-    private Map<String, String> getMetaData(final DMNIncludeModel dmnIncludeModel) {
-        return new Maps.Builder<String, String>()
+    private Map<String, String> buildMetaData(final DMNIncludeModel dmnIncludeModel) {
+        return new Maps
+                .Builder<String, String>()
                 .put(PATH_METADATA, dmnIncludeModel.getPath())
-                .put(SUBTEXT_METADATA, dmnIncludeModel.getModelPackage())
                 .build();
     }
 }
