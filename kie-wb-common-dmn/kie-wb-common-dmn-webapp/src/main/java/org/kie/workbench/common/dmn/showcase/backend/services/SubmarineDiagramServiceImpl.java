@@ -19,11 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
@@ -32,30 +29,27 @@ import org.kie.workbench.common.dmn.backend.DMNBackendService;
 import org.kie.workbench.common.dmn.backend.DMNMarshaller;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
-import org.kie.workbench.common.stunner.core.backend.service.AbstractVFSDiagramService;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.service.DefinitionSetService;
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-import org.kie.workbench.common.stunner.core.registry.BackendRegistryFactory;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
 import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
 import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.commons.uuid.UUID;
-import org.uberfire.io.IOService;
 
 @Service
 @ApplicationScoped
-public class SubmarineDiagramServiceImpl extends AbstractVFSDiagramService<SubmarineMetadata, SubmarineDiagram> implements SubmarineDiagramService {
+public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubmarineDiagramServiceImpl.class);
 
@@ -64,8 +58,8 @@ public class SubmarineDiagramServiceImpl extends AbstractVFSDiagramService<Subma
     //This path is needed by DiagramsNavigatorImpl's use of AbstractClientDiagramService.lookup(..) to retrieve a list of diagrams
     private static final String ROOT = "default://master@system/stunner/" + DIAGRAMS_PATH;
 
+    private DefinitionManager definitionManager;
     private FactoryManager factoryManager;
-    private IOService ioService;
     private DMNBackendService dmnBackendService;
     private DMNDiagramFactory dmnDiagramFactory;
 
@@ -74,77 +68,18 @@ public class SubmarineDiagramServiceImpl extends AbstractVFSDiagramService<Subma
         this(null,
              null,
              null,
-             null,
-             null,
-             null,
              null);
     }
 
     @Inject
     public SubmarineDiagramServiceImpl(final DefinitionManager definitionManager,
                                        final FactoryManager factoryManager,
-                                       final Instance<DefinitionSetService> definitionSetServiceInstances,
-                                       final BackendRegistryFactory registryFactory,
-                                       final @Named("ioStrategy") IOService ioService,
                                        final DMNBackendService dmnBackendService,
                                        final DMNDiagramFactory dmnDiagramFactory) {
-        super(definitionManager,
-              factoryManager,
-              definitionSetServiceInstances,
-              registryFactory);
+        this.definitionManager = definitionManager;
         this.factoryManager = factoryManager;
-        this.ioService = ioService;
         this.dmnBackendService = dmnBackendService;
         this.dmnDiagramFactory = dmnDiagramFactory;
-    }
-
-    @PostConstruct
-    public void init() {
-        super.initialize();
-    }
-
-    @Override
-    protected IOService getIoService() {
-        return ioService;
-    }
-
-    @Override
-    protected Class<? extends Metadata> getMetadataType() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Path create(final Path path,
-                       final String name,
-                       final String defSetId) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected SubmarineMetadata obtainMetadata(final DefinitionSetService services,
-                                               final Path diagramFilePath,
-                                               final String defSetId,
-                                               final String fileName) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected SubmarineMetadata buildMetadataInstance(final Path path,
-                                                      final String defSetId,
-                                                      final String title) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected SubmarineMetadata doSave(final SubmarineDiagram diagram,
-                                       final String raw,
-                                       final String metadata) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected boolean doDelete(final Path path) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -169,13 +104,6 @@ public class SubmarineDiagramServiceImpl extends AbstractVFSDiagramService<Subma
             LOG.error("Cannot create new diagram", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private SubmarineMetadata buildMetadataInstance(final String defSetId) {
-        return new SubmarineMetadataImpl.SubmarineMetadataBuilder(defSetId,
-                                                                  getDefinitionManager())
-                .setRoot(PathFactory.newPath(".", ROOT))
-                .build();
     }
 
     @SuppressWarnings("unchecked")
@@ -203,11 +131,29 @@ public class SubmarineDiagramServiceImpl extends AbstractVFSDiagramService<Subma
     @Override
     public String transform(final SubmarineDiagram diagram) {
         try {
-            final String[] raw = serialize(diagram);
-            return raw[0];
+            final DMNMarshaller dmnMarshaller = (DMNMarshaller) dmnBackendService.getDiagramMarshaller();
+            return dmnMarshaller.marshall(convert(diagram));
         } catch (Exception e) {
             LOG.error("Error whilst converting DMNDiagram to XML.", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String getDefinitionSetId(final DefinitionSetService services) {
+        final Class<?> type = services.getResourceType().getDefinitionSetType();
+        return BindableAdapterUtils.getDefinitionSetId(type);
+    }
+
+    private SubmarineMetadata buildMetadataInstance(final String defSetId) {
+        return new SubmarineMetadataImpl.SubmarineMetadataBuilder(defSetId,
+                                                                  definitionManager)
+                .setRoot(PathFactory.newPath(".", ROOT))
+                .build();
+    }
+
+    private DiagramImpl convert(final SubmarineDiagram diagram) {
+        return new DiagramImpl(diagram.getName(),
+                               diagram.getGraph(),
+                               diagram.getMetadata());
     }
 }
