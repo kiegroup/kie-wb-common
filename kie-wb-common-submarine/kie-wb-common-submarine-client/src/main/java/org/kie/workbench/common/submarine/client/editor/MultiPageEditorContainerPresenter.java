@@ -52,12 +52,6 @@ public abstract class MultiPageEditorContainerPresenter<CONTENT>
         super.init(place);
     }
 
-    protected void createOriginalHash(final Object object) {
-        if (object != null) {
-            setOriginalHash(object.hashCode());
-        }
-    }
-
     protected void addPage(final Page page) {
         multiPageEditorContainerView.addPage(page);
     }
