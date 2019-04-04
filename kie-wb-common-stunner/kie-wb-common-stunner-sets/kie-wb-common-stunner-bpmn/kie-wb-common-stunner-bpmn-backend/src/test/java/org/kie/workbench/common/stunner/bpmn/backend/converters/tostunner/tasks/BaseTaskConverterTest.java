@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.ExtensionDefinition;
@@ -110,7 +111,7 @@ public class BaseTaskConverterTest {
         when(serviceTaskNode.getContent()).thenReturn(serviceTaskContent);
         when(serviceTaskContent.getDefinition()).thenReturn(serviceTaskDefinition);
         when(propertyReaderFactory.of(serviceTask)).thenReturn(taskPropertyReader);
-        when(propertyReaderFactory.ofCustom(serviceTask)).thenReturn(serviceTaskPropertyReader);
+        when(propertyReaderFactory.ofCustom(serviceTask)).thenReturn(Optional.of(serviceTaskPropertyReader));
 
         tested = spy(new BaseTaskConverter(factoryManager, propertyReaderFactory) {
             @Override
