@@ -81,9 +81,9 @@ public class DMNDiagramSubmarineWrapper {
     @SuppressWarnings("unchecked")
     public void saveFile(final ServiceCallback<String> callback) {
         final Path path = dmnDiagramEditor.getCanvasHandler().getDiagram().getMetadata().getPath();
-        dmnDiagramEditor.getContent().then(o -> {
+        dmnDiagramEditor.getContent().then(xml -> {
             clientDiagramService.saveAsXml(path,
-                                           (String) o,
+                                           (String) xml,
                                            callback);
             return null;
         });

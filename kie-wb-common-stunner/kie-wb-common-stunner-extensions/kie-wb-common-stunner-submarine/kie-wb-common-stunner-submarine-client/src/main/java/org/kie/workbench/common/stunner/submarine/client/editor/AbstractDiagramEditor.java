@@ -294,10 +294,13 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
     public void initialiseKieEditorForSession(final SubmarineDiagram diagram) {
         resetEditorPages();
         updateTitle(diagram.getMetadata().getTitle());
-        addDocumentationPage(diagram);
-        setOriginalContentHash(getCurrentDiagramHash());
-        hideLoadingViews();
         onDiagramLoad();
+
+        //Set original hash after onDiagramLoad that may have modified the Diagram
+        setOriginalContentHash(getCurrentDiagramHash());
+
+        addDocumentationPage(diagram);
+        hideLoadingViews();
     }
 
     protected void updateTitle(final String title) {

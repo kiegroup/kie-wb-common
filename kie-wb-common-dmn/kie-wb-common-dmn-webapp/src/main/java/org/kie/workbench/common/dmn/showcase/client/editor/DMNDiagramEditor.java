@@ -376,7 +376,7 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         stateHolder.saveFile(new ServiceCallback<String>() {
             @Override
             public void onSuccess(final String xml) {
-                setOriginalContentHash(getCurrentDiagramHash());
+                resetContentHash();
                 notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
                 hideLoadingViews();
             }
