@@ -57,6 +57,8 @@ public class TimeZoneServiceImplTest {
         assertEquals(2, simpleTimeZones.size());
         assertEquals(0, simpleTimeZones.get(0).getOffset(), 0.01d);
         assertEquals(1, simpleTimeZones.get(1).getOffset(), 0.01d);
+        assertEquals("+00:00", simpleTimeZones.get(0).getOffsetString());
+        assertEquals("+01:00", simpleTimeZones.get(1).getOffsetString());
     }
 
     @Test

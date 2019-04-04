@@ -37,7 +37,6 @@ public class TimeZoneProvider {
 
     private final List<String> timeZonesOffsets;
 
-    static final String UTC = "UTC";
 
     @Inject
     public TimeZoneProvider(final Caller<TimeZoneService> service) {
@@ -71,7 +70,7 @@ public class TimeZoneProvider {
     }
 
     public boolean isTimeZone(final String timeZone) {
-        if (UTC.equals(timeZone)) {
+        if (TimeValueFormatter.UTC.equals(timeZone)) {
             return false;
         }
         return getLoadedTimeZones().stream().anyMatch(s -> s.getId().equals(timeZone));

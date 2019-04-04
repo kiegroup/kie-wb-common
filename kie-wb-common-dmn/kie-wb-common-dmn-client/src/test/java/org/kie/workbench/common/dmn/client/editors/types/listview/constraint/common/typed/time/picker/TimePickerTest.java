@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -24,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.client.views.pfly.widgets.Moment;
@@ -31,6 +33,7 @@ import org.uberfire.client.views.pfly.widgets.Moment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -123,7 +126,11 @@ public class TimePickerTest {
         picker.onDateChanged(moment);
 
         assertEquals(expected, input.value);
-
-        verify(consumer).accept(momentArgumentCaptor.capture());
+            verify(consumer).accept(argThat(new ArgumentMatcher<Moment>() {
+            @Override
+            public boolean matches(Object argument) {
+                return Objects.equals(argument, moment);
+            }
+        }));
     }
 }

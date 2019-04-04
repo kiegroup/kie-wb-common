@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
 import elemental2.dom.Element;
 import elemental2.dom.Event;
 import elemental2.dom.FocusEvent;
@@ -35,12 +34,13 @@ import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
 import org.uberfire.client.views.pfly.widgets.Moment;
 
+import static org.uberfire.client.views.pfly.selectpicker.JQuery.$;
 import static org.uberfire.client.views.pfly.widgets.Moment.Builder.moment;
 
 @Dependent
 public class TimePicker {
 
-    static final DateTimeFormat TIME_FORMAT = DateTimeFormat.getFormat("HH:mm:ss");
+    static final String TIME_FORMAT = "HH:mm:ss";
 
     private final View view;
 
@@ -89,8 +89,8 @@ public class TimePicker {
         }
     }
 
-    Moment getDateInInput(){
-        return moment(getInputBind().value, "HH:mm:ss");
+    Moment getDateInInput() {
+        return moment(getInputBind().value, TIME_FORMAT);
     }
 
     boolean isDateSetInInput() {
@@ -106,7 +106,7 @@ public class TimePicker {
 
     void onDateChanged(final Moment nativeDate) {
 
-        getInputBind().value = nativeDate.format("HH:mm:ss");
+        getInputBind().value = nativeDate.format(TIME_FORMAT);
         if (!Objects.isNull(onDateChanged)) {
             onDateChanged.accept(nativeDate);
         }
@@ -118,6 +118,7 @@ public class TimePicker {
 
     Object inputOnClick(final Event event) {
         refreshDateInPopup();
+        view.getElement().style.top = $(inputBind).offset().top - 5 + "px";
         HiddenHelper.show(view.getElement());
         return this;
     }
@@ -125,14 +126,8 @@ public class TimePicker {
     private Object onViewElementBlur(final Event event) {
 
         final FocusEvent focusEvent = (FocusEvent) event;
-        if (!Objects.equals(focusEvent.relatedTarget, getInputBind())
-                && !isChildrenOfView((Element) focusEvent.relatedTarget)) {
 
-            HiddenHelper.hide(view.getElement());
-            if (!Objects.isNull(previousCallback)) {
-                previousCallback.onInvoke(event);
-            }
-        }
+        onBlur(focusEvent, getInputBind());
 
         return this;
     }
@@ -141,17 +136,23 @@ public class TimePicker {
 
         final FocusEvent focusEvent = (FocusEvent) event;
 
-        if (!Objects.equals(focusEvent.relatedTarget, view.getElement())
+        onBlur(focusEvent, view.getElement());
+
+        refreshDateInPopup();
+
+        return this;
+    }
+
+    private void onBlur(final FocusEvent focusEvent, final HTMLElement targetElement) {
+
+        if (!Objects.equals(focusEvent.relatedTarget, targetElement)
                 && !isChildrenOfView((Element) focusEvent.relatedTarget)) {
 
             HiddenHelper.hide(view.getElement());
             if (!Objects.isNull(previousCallback)) {
-                previousCallback.onInvoke(event);
+                previousCallback.onInvoke(focusEvent);
             }
         }
-
-        refreshDateInPopup();
-        return null;
     }
 
     boolean isChildrenOfView(final Element element) {
@@ -167,12 +168,12 @@ public class TimePicker {
             return "";
         }
 
-        return currentDate.format("HH:mm:ss");
+        return currentDate.format(TIME_FORMAT);
     }
 
     public void setValue(final String value) {
 
-        final Moment moment = moment(value, "HH:mm:ss");
+        final Moment moment = moment(value, TIME_FORMAT);
         if (moment.isValid()) {
             view.setDate(moment);
         }
