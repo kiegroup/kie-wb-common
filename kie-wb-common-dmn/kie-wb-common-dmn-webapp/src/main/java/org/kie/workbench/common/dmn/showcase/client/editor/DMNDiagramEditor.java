@@ -376,7 +376,7 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         stateHolder.saveFile(new ServiceCallback<String>() {
             @Override
             public void onSuccess(final String xml) {
-                setOriginalHash(xml.hashCode());
+                setOriginalContentHash(getCurrentDiagramHash());
                 notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
                 hideLoadingViews();
             }
@@ -437,16 +437,19 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         }
     }
 
+    @Override
     //@GetContent
     public Promise getContent() {
         return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
 
+    @Override
     @IsDirty
     public boolean isDirty() {
-        return true;
+        return super.isDirty();
     }
 
+    @Override
     //@SetContent
     public void setContent(final String value) {
         diagramServices.transform(value,
@@ -462,5 +465,10 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
                                           DMNDiagramEditor.this.getEditor().onLoadError(error);
                                       }
                                   });
+    }
+
+    @Override
+    public void resetContentHash() {
+        setOriginalContentHash(getCurrentDiagramHash());
     }
 }

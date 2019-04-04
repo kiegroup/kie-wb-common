@@ -135,7 +135,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
                 final Metadata metadata = dpe.getMetadata();
                 final String xml = dpe.getXml();
 
-                setOriginalHash(xml.hashCode());
+                setOriginalContentHash(xml.hashCode());
                 updateTitle(metadata.getTitle());
                 resetEditorPages();
                 menuSessionItems.setEnabled(false);
@@ -295,7 +295,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         resetEditorPages();
         updateTitle(diagram.getMetadata().getTitle());
         addDocumentationPage(diagram);
-        setOriginalHash(getCurrentDiagramHash());
+        setOriginalContentHash(getCurrentDiagramHash());
         hideLoadingViews();
         onDiagramLoad();
     }
@@ -374,14 +374,6 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         if (LogConfiguration.loggingIsEnabled()) {
             LOGGER.log(level, message);
         }
-    }
-
-    protected boolean hasUnsavedChanges() {
-        return !Objects.equals(editor.getCurrentDiagramHash(), getOriginalHash());
-    }
-
-    protected ClientTranslationService getTranslationService() {
-        return translationService;
     }
 
     @SuppressWarnings("unused")
