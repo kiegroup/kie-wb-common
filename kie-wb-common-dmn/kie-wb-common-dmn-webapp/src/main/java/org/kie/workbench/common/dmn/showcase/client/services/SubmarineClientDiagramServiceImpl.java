@@ -64,12 +64,16 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
     public void saveAsXml(final Path path,
                           final String xml,
                           final ServiceCallback<String> callback) {
-        vfsServiceCaller.call((String x) -> callback.onSuccess(x)).write(path, xml);
+        vfsServiceCaller.call((Path p) -> {
+            callback.onSuccess(xml);
+        }).write(path, xml);
     }
 
     public void loadAsXml(final Path path,
                           final ServiceCallback<String> callback) {
-        vfsServiceCaller.call((String x) -> callback.onSuccess(x)).readAllString(path);
+        vfsServiceCaller.call((String x) -> {
+            callback.onSuccess(x);
+        }).readAllString(path);
     }
 
     //Submarine requirements
