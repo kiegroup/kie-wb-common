@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.editors.types;
+package org.kie.workbench.common.dmn.showcase.client;
 
-import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.dmn.feel.parser.feel11.FEELParser;
-import org.kie.workbench.common.dmn.api.editors.types.DMNValidationService;
+import org.jboss.errai.ioc.client.api.EntryPoint;
+import org.jboss.errai.ui.shared.api.annotations.Bundle;
 
-@Service
-public class DMNValidationServiceImpl implements DMNValidationService {
+@EntryPoint
+@Bundle("resources/i18n/SubmarineClientConstants.properties")
+public class ShowcaseEntryPoint {
 
-    @Override
-    public boolean isValidVariableName(final String source) {
-        return FEELParser.isVariableNameValid(source);
-    }
 }

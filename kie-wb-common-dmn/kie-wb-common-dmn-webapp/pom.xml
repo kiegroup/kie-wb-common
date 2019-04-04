@@ -224,21 +224,15 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-preferences-api</artifactId>
     </dependency>
+    <!-- Required to provide default implementation of server-side CDI injection points -->
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-preferences-backend</artifactId>
     </dependency>
+    <!-- Required to provide default implementation of client-side CDI injection points -->
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-preferences-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-service-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-service-backend</artifactId>
     </dependency>
 
     <!-- DMN Editor -->
@@ -386,11 +380,13 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-layout-editor-client</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.uberfire</groupId>
+          <artifactId>uberfire-experimental-client</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-layout-editor-backend</artifactId>
     </dependency>
 
     <!-- UberFire Plugins Extension -->
@@ -398,15 +394,6 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-runtime-plugins-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-runtime-plugins-backend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-runtime-plugins-client</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- UberFire Properties Editor -->
@@ -548,10 +535,6 @@
     <!-- Required by uberfire-backend-server to secure FileSystem -->
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-ssh-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-ssh-backend</artifactId>
     </dependency>
 
@@ -560,10 +543,6 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-experimental-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-experimental-backend</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -759,7 +738,6 @@
 
             <!-- UF-ext -->
             <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-commons-editor-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-commons-editor-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-widgets-commons</compileSourcesArtifact>
