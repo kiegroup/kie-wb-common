@@ -15,9 +15,11 @@
  */
 package org.kie.workbench.common.submarine.client.editor;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import elemental2.promise.Promise;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.editor.commons.client.BaseEditorView;
@@ -65,10 +67,6 @@ public abstract class BaseSubmarineEditor<CONTENT> {
 
     protected abstract void buildMenuBar();
 
-    public void setOriginalHash(final Integer originalHash) {
-        this.originalHash = originalHash;
-    }
-
     public void disableMenuItem(final MenuItems menuItem) {
         setEnableMenuItem(menuItem, false);
     }
@@ -112,15 +110,11 @@ public abstract class BaseSubmarineEditor<CONTENT> {
         return () -> null;
     }
 
-    protected Supplier<Boolean> isDirtySupplier() {
-        return this::isContentDirty;
+    public void setOriginalContentHash(final Integer originalHash) {
+        this.originalHash = originalHash;
     }
 
-    boolean isContentDirty() {
-        return isDirty(getCurrentContentHash());
-    }
-
-    protected Integer getOriginalHash() {
+    protected Integer getOriginalContentHash() {
         return originalHash;
     }
 
@@ -137,14 +131,30 @@ public abstract class BaseSubmarineEditor<CONTENT> {
     }
 
     public boolean mayClose() {
-        return !isContentDirty() || baseEditorView.confirmClose();
+        return !isDirty() || baseEditorView.confirmClose();
     }
 
-    public boolean isDirty(final Integer currentHash) {
-        if (originalHash == null) {
-            return currentHash != null;
-        } else {
-            return !originalHash.equals(currentHash);
-        }
+    /**
+     * Used by Submarine to determine whether the content has unsaved changes.
+     * @return true if there are unsaved changes.
+     */
+    public boolean isDirty() {
+        return !Objects.equals(getCurrentContentHash(), getOriginalContentHash());
     }
+
+    /**
+     * Used by Submarine to set the content of the editor.
+     */
+    public abstract void setContent(final String value);
+
+    /**
+     * Used by Submarine to get the content of the editor. This should return a {@link String}
+     * representation of the editors content to persist to an underlying persistent store.
+     */
+    public abstract Promise getContent();
+
+    /**
+     * Used by Submarine to reset the editors "dirty" state following a successful save.
+     */
+    public abstract void resetContentHash();
 }
