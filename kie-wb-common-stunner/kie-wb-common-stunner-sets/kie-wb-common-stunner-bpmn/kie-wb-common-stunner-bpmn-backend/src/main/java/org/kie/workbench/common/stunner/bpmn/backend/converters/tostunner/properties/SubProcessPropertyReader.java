@@ -34,6 +34,10 @@ public class SubProcessPropertyReader extends MultipleInstanceActivityPropertyRe
         return CustomElement.async.of(element).get();
     }
 
+    public String getName() {
+        return process.getName() == null ? "" : process.getName();
+    }
+
     public String getProcessVariables() {
         return ProcessVariableReader.getProcessVariables(process.getProperties());
     }
