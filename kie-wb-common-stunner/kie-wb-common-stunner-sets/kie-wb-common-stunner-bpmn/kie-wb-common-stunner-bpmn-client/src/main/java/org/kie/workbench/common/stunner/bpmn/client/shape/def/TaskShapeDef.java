@@ -41,6 +41,8 @@ import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 public class TaskShapeDef extends BaseDimensionedShapeDef
         implements BPMNSvgShapeDef<BaseTask> {
 
+    public static final double ICON_WIDTH = 35d;
+
     public static final SVGShapeViewResources<BaseTask, BPMNSVGViewFactory> VIEW_RESOURCES =
             new SVGShapeViewResources<BaseTask, BPMNSVGViewFactory>()
                     .put(NoneTask.class, BPMNSVGViewFactory::noneTask)
@@ -58,7 +60,7 @@ public class TaskShapeDef extends BaseDimensionedShapeDef
 
     private static final Map<Enum, Double> DEFAULT_TASK_MARGINS_WITH_ICON =
             new Maps.Builder<Enum, Double>()
-                    .put(HorizontalAlignment.LEFT, 50d)
+                    .put(HorizontalAlignment.LEFT, ICON_WIDTH)
                     .build();
 
     private static Map<Class<? extends BaseTask>, Map<Enum, Double>> taskMarginSuppliers =

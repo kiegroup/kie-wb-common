@@ -37,6 +37,7 @@ import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 public class ServiceTaskShapeDef extends BaseDimensionedShapeDef
         implements BPMNSvgShapeDef<ServiceTask> {
 
+    public static final double ICON_WIDTH = 30d;
     private final Supplier<WorkItemDefinitionRegistry> workItemDefinitionRegistry;
     private final Function<String, Glyph> iconDataGlyphGenerator;
 
@@ -96,7 +97,7 @@ public class ServiceTaskShapeDef extends BaseDimensionedShapeDef
     @Override
     public FontHandler<ServiceTask, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .margin(HorizontalAlignment.LEFT, 50d)
+                .margin(HorizontalAlignment.LEFT, ICON_WIDTH)
                 .build();
     }
 }
