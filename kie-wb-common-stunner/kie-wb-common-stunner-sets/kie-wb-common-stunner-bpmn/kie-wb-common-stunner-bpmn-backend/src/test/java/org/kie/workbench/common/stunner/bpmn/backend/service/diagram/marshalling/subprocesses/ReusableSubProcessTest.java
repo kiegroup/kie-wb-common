@@ -133,7 +133,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelEmptyPropertiesSubProcess() throws Exception {
+    public void testUnmarshallTopLevelEmptyPropertiesSubProcess() {
         Diagram<Graph, Metadata> diagram = getDiagram();
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
@@ -157,7 +157,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelFilledPropertiesSubProcess() throws Exception {
+    public void testUnmarshallTopLevelFilledPropertiesSubProcess() {
         final String SUB_PROCESS_NAME = "Reusable process01 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String SUB_PROCESS_DOCUMENTATION = "Reusable process01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String CALLED_ELEMENT = "testProject.linkedReusableSubProcess";
@@ -220,7 +220,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelSubProcessWithEdges() throws Exception {
+    public void testUnmarshallTopLevelSubProcessWithEdges() {
         final String SUB_PROCESS_NAME = "Sub-process";
 
         Diagram<Graph, Metadata> diagram = getDiagram();
@@ -246,7 +246,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallSubProcessLevelEmptyPropertiesSubProcess() throws Exception {
+    public void testUnmarshallSubProcessLevelEmptyPropertiesSubProcess() {
         Diagram<Graph, Metadata> diagram = getDiagram();
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
@@ -270,7 +270,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallSubProcessLevelFilledPropertiesSubProcess() throws Exception {
+    public void testUnmarshallSubProcessLevelFilledPropertiesSubProcess() {
         final String SUB_PROCESS_NAME = "Reusable process03 name ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String SUB_PROCESS_DOCUMENTATION = "Reusable process03 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String CALLED_ELEMENT = "testProject.linkedReusableSubProcess";
@@ -333,7 +333,7 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallSubProcessLevelSubProcessWithEdges() throws Exception {
+    public void testUnmarshallSubProcessLevelSubProcessWithEdges() {
         final String SUB_PROCESS_NAME = "Sub-process";
 
         Diagram<Graph, Metadata> diagram = getDiagram();
@@ -359,13 +359,13 @@ public class ReusableSubProcessTest extends SubProcess<ReusableSubprocess> {
 
     @Test
     @Override
-    public void testMarshallTopLevelSubProcessWithEdges() throws Exception {
+    public void testMarshallTopLevelSubProcessWithEdges() {
         checkSubProcessMarshalling(getTopLevelSubProcessWithEdgesId(), ONE_INCOME_EDGE, TWO_OUTCOME_EDGES);
     }
 
     @Test
     @Override
-    public void testMarshallSubProcessLevelSubProcessWithEdges() throws Exception {
+    public void testMarshallSubProcessLevelSubProcessWithEdges() {
         checkSubProcessMarshalling(getSubProcessLevelSubProcessWithEdgesId(), ONE_INCOME_EDGE, TWO_OUTCOME_EDGES);
     }
 

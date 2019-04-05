@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.di.DiagramElement;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
@@ -127,11 +126,9 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
         oldRoundTripDiagram = diagram;
     }
 
-    @Ignore("The test should be enabled back once the issue will be resolved:\n" +
-            "https://issues.jboss.org/browse/JBPM-8393")
     @Test
     @Override
-    public void testUnmarshallTopLevelEmptyPropertiesSubProcess() throws Exception {
+    public void testUnmarshallTopLevelEmptyPropertiesSubProcess() {
         Diagram<Graph, Metadata> diagram = getDiagram();
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
@@ -152,7 +149,7 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelFilledPropertiesSubProcess() throws Exception {
+    public void testUnmarshallTopLevelFilledPropertiesSubProcess() {
         final String SUB_PROCESS_NAME_JAVA = "Embedded process01 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String SUB_PROCESS_DOCUMENTATION_JAVA = "Embedded process01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String SUB_PROCESS_NAME_JAVASCRIPT = "Embedded process02 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
@@ -212,7 +209,7 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallTopLevelSubProcessWithEdges() throws Exception {
+    public void testUnmarshallTopLevelSubProcessWithEdges() {
         final String SUB_PROCESS_NAME = "Sub-process07";
 
         Diagram<Graph, Metadata> diagram = getDiagram();
@@ -233,11 +230,9 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
         assertSubProcessProcessData(topLevelSubProcess.getProcessData(), EMPTY_VALUE);
     }
 
-    @Ignore("The test should be enabled back once the issue will be resolved:\n" +
-            "https://issues.jboss.org/browse/JBPM-8393")
     @Test
     @Override
-    public void testUnmarshallSubProcessLevelEmptyPropertiesSubProcess() throws Exception {
+    public void testUnmarshallSubProcessLevelEmptyPropertiesSubProcess() {
         Diagram<Graph, Metadata> diagram = getDiagram();
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
@@ -258,7 +253,7 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallSubProcessLevelFilledPropertiesSubProcess() throws Exception {
+    public void testUnmarshallSubProcessLevelFilledPropertiesSubProcess() {
         final String SUB_PROCESS_NAME_JAVA = "Embedded process04 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String SUB_PROCESS_DOCUMENTATION_JAVA = "Embedded process04 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
         final String SUB_PROCESS_NAME_JAVASCRIPT = "Embedded process05 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
@@ -318,7 +313,7 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
 
     @Test
     @Override
-    public void testUnmarshallSubProcessLevelSubProcessWithEdges() throws Exception {
+    public void testUnmarshallSubProcessLevelSubProcessWithEdges() {
         final String SUB_PROCESS_NAME = "Sub-process08";
 
         Diagram<Graph, Metadata> diagram = getDiagram();
@@ -428,12 +423,11 @@ public class EmbeddedSubProcessTest extends SubProcess<EmbeddedSubprocess> {
                 definitionsConverter.toDefinitions();
 
         List<DiagramElement> planeElement = definitions.getDiagrams().get(0).getPlane().getPlaneElement();
-        DiagramElement diagramElement = planeElement.stream()
+        BPMNShape diagramElement = planeElement.stream()
                 .filter(BPMNShape.class::isInstance)
                 .map(s -> (BPMNShape) s)
                 .filter(el -> el.getId().equals(END_EVENT)).findFirst().get();
-        BPMNShape shape = (BPMNShape) diagramElement;
-        assertThat(shape.getBounds().getX()).isEqualTo(885f);
-        assertThat(shape.getBounds().getY()).isEqualTo(143f);
+        assertThat(diagramElement.getBounds().getX()).isEqualTo(885f);
+        assertThat(diagramElement.getBounds().getY()).isEqualTo(143f);
     }
 }

@@ -53,7 +53,7 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
     static final boolean IS_ASYNC = true;
     static final boolean IS_NOT_ASYNC = false;
 
-    static ReentrantLock lock = new ReentrantLock();
+    private static ReentrantLock lock = new ReentrantLock();
 
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
@@ -62,7 +62,7 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
         });
     }
 
-    protected Marshaller currentMarshaller;
+    private Marshaller currentMarshaller;
 
     SubProcess(Marshaller marshallerType, List<Object[]> marshallers) throws Exception {
         currentMarshaller = marshallerType;
@@ -117,12 +117,12 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
     abstract void setOldRoundTripDiagram(Diagram<Graph, Metadata> diagram);
 
     @Test
-    public void testMarshallTopLevelEmptyPropertiesSubProcess() throws Exception {
+    public void testMarshallTopLevelEmptyPropertiesSubProcess() {
         checkSubProcessMarshalling(getTopLevelEmptyPropertiesSubProcessId(), EMPTY_INCOME_EDGES, EMPTY_OUTCOME_EDGES);
     }
 
     @Test
-    public void testMarshallTopLevelFilledPropertiesSubProcess() throws Exception {
+    public void testMarshallTopLevelFilledPropertiesSubProcess() {
         for (String subProcessId : getTopLevelFilledPropertiesSubProcessesIds()) {
             checkSubProcessMarshalling(subProcessId, EMPTY_INCOME_EDGES, EMPTY_OUTCOME_EDGES);
         }
@@ -134,12 +134,12 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
     }
 
     @Test
-    public void testMarshallSubProcessLevelEmptyPropertiesSubProcess() throws Exception {
+    public void testMarshallSubProcessLevelEmptyPropertiesSubProcess() {
         checkSubProcessMarshalling(getSubProcessLevelEmptyPropertiesSubProcessId(), EMPTY_INCOME_EDGES, EMPTY_OUTCOME_EDGES);
     }
 
     @Test
-    public void testMarshallSubProcessLevelFilledPropertiesSubProcess() throws Exception {
+    public void testMarshallSubProcessLevelFilledPropertiesSubProcess() {
         for (String subProcessId : getSubProcessLevelFilledPropertiesSubProcessesIds()) {
             checkSubProcessMarshalling(subProcessId, EMPTY_INCOME_EDGES, EMPTY_OUTCOME_EDGES);
         }
@@ -225,13 +225,13 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
         }
     }
 
-    @SuppressWarnings("unchecked")
     T getSubProcessNodeById(Diagram<Graph, Metadata> diagram, String id, int incomeEdges, int outcomeEdges) {
         Node<? extends Definition, ?> node = getNodebyId(diagram, id, incomeEdges, outcomeEdges);
         return getSubProcessType().cast(node.getContent().getDefinition());
     }
 
-    Node<? extends Definition, ?> getNodebyId(Diagram<Graph, Metadata> diagram, String id, int incomeEdges, int outcomeEdges) {
+    @SuppressWarnings("unchecked")
+    private Node<? extends Definition, ?> getNodebyId(Diagram<Graph, Metadata> diagram, String id, int incomeEdges, int outcomeEdges) {
         Node<? extends Definition, ?> node = diagram.getGraph().getNode(id);
         assertThat(node).isNotNull();
         assertThat(node.getInEdges()).hasSize(incomeEdges);
@@ -239,8 +239,7 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
         return node;
     }
 
-    @SuppressWarnings("unchecked")
-    void checkSubProcessMarshalling(String nodeID, int incomeEdges, int outcomeEdges) throws Exception {
+    void checkSubProcessMarshalling(String nodeID, int incomeEdges, int outcomeEdges) {
         Diagram<Graph, Metadata> initialDiagram = getDiagram();
         final int AMOUNT_OF_NODES_IN_DIAGRAM = getNodes(initialDiagram).size();
 
