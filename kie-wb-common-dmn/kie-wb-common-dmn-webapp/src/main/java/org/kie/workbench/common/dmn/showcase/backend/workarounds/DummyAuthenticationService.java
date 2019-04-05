@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.showcase.backend;
+package org.kie.workbench.common.dmn.showcase.backend.workarounds;
 
 import javax.enterprise.context.Dependent;
 
