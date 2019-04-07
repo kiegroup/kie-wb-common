@@ -15,12 +15,11 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.indexing;
 
-import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.kie.workbench.common.stunner.bpmn.backend.indexing.AbstractBpmnProcessDataEventListener;
+// TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
 
-public class CaseManagementDataEventListener extends AbstractBpmnProcessDataEventListener {
+public class CaseManagementDataEventListener /*extends AbstractBpmnProcessDataEventListener */ {
 
-    static final String NAME = "CMProcessInfoCollector";
+    /*static final String NAME = "CMProcessInfoCollector";
 
     @Override
     protected ResourceType getProcessNameResourceType() {
@@ -35,5 +34,5 @@ public class CaseManagementDataEventListener extends AbstractBpmnProcessDataEven
     @Override
     protected String getProcessDescriptorName() {
         return NAME;
-    }
+    }*/
 }

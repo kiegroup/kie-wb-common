@@ -15,51 +15,26 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
-import org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities;
-import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
 import org.kie.workbench.common.stunner.bpmn.service.DataTypesService;
 import org.uberfire.backend.vfs.Path;
 
 @Service
 public class FindDataTypesService implements DataTypesService {
 
-    private DataModelService dataModelService;
-
-    public FindDataTypesService() {
-        //CDI proxy
-    }
+    // TODO: (Submarine) private DataModelService dataModelService;
 
     @Inject
-    public FindDataTypesService(final DataModelService dataModelService) {
-        this.dataModelService = dataModelService;
+    public FindDataTypesService() {
     }
 
     public List<String> getDataTypeNames(final Path path) {
-        if (null == path) {
-            return Collections.emptyList();
-        }
-        final List<String> dataTypeNames = new ArrayList<>();
-
-        try {
-            final PackageDataModelOracle oracle = dataModelService.getDataModel(path);
-            final String[] fullyQualifiedClassNames = DataModelOracleUtilities.getFactTypes(oracle);
-
-            dataTypeNames.addAll(Arrays.asList(fullyQualifiedClassNames));
-            Collections.sort(dataTypeNames);
-        } catch (Exception e) {
-            throw ExceptionUtilities.handleException(e);
-        }
-
-        return dataTypeNames;
+        // TODO: (Submarine) - re-implement old
+        return Collections.emptyList();
     }
 }

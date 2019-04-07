@@ -159,6 +159,6 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
                 break;
             }
         }
-        return root.getMessage();
+        return null != root.getMessage() ? root.getMessage() : root.toString();
     }
 }

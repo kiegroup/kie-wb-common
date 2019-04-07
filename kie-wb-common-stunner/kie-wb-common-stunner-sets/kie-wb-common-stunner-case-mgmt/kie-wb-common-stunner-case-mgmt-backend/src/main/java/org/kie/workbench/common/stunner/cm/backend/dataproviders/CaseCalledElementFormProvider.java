@@ -15,16 +15,17 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.dataproviders;
 
-import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.AbstractCalledElementFormProvider;
 import org.kie.workbench.common.stunner.cm.backend.query.FindCaseManagementIdsQuery;
 
+// TODO: (Submarine)
+
 public class CaseCalledElementFormProvider extends AbstractCalledElementFormProvider {
 
-    @Override
+    /*@Override
     protected ResourceType getProcessIdResourceType() {
         return ResourceType.BPMN_CM;
-    }
+    }*/
 
     @Override
     protected String getQueryName() {

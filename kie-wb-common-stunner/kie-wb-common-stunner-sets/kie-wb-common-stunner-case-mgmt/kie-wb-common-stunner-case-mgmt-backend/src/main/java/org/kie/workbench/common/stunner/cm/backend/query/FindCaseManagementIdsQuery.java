@@ -17,17 +17,17 @@ package org.kie.workbench.common.stunner.cm.backend.query;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.kie.workbench.common.stunner.bpmn.backend.query.AbstractFindIdsQuery;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
+
+// TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
 
 @ApplicationScoped
 @CaseManagementEditor
-public class FindCaseManagementIdsQuery extends AbstractFindIdsQuery {
+public class FindCaseManagementIdsQuery /*extends AbstractFindIdsQuery*/ {
 
     public static final String NAME = FindCaseManagementIdsQuery.class.getSimpleName();
 
-    @Override
+    /*@Override
     public String getName() {
         return NAME;
     }
@@ -35,5 +35,5 @@ public class FindCaseManagementIdsQuery extends AbstractFindIdsQuery {
     @Override
     protected ResourceType getProcessIdResourceType() {
         return ResourceType.BPMN_CM;
-    }
+    }*/
 }

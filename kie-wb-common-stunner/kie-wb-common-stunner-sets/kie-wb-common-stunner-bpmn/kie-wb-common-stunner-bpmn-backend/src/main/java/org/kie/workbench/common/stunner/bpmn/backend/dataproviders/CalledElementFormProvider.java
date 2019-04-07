@@ -15,18 +15,19 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.kie.workbench.common.stunner.bpmn.backend.query.FindBpmnProcessIdsQuery;
+// TODO: (Submarine)
 
 public class CalledElementFormProvider extends AbstractCalledElementFormProvider {
 
-    @Override
+    /*@Override
     protected ResourceType getProcessIdResourceType() {
         return ResourceType.BPMN2;
-    }
+    }*/
 
     @Override
     protected String getQueryName() {
-        return FindBpmnProcessIdsQuery.NAME;
+        // TODO: (Submarine)
+        /*return FindBpmnProcessIdsQuery.NAME;*/
+        return "FindBpmnProcessIdsQuery";
     }
 }

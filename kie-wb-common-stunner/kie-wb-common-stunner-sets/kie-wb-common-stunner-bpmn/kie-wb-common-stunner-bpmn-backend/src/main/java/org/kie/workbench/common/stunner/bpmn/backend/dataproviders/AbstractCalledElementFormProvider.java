@@ -15,37 +15,28 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-
-import org.kie.soup.commons.util.Sets;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueResourceIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
-import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
-import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.uberfire.backend.vfs.Path;
 
+// TODO: (Submarine)
 public abstract class AbstractCalledElementFormProvider implements SelectorDataProvider {
 
-    @Inject
-    protected RefactoringQueryService queryService;
+    // TODO: (Submarine)
+    /*@Inject
+    protected RefactoringQueryService queryService;*/
 
     @Override
     public String getProviderName() {
         return getClass().getSimpleName();
     }
 
-    public void setQueryService(RefactoringQueryService queryService) {
+    /*public void setQueryService(RefactoringQueryService queryService) {
         this.queryService = queryService;
-    }
+    }*/
 
     @Override
     public SelectorData getSelectorData(FormRenderingContext context) {
@@ -54,7 +45,7 @@ public abstract class AbstractCalledElementFormProvider implements SelectorDataP
     }
 
     public Map<Object, String> getBusinessProcessIDs() {
-        final Set<ValueIndexTerm> queryTerms = new Sets.Builder<ValueIndexTerm>()
+        /*final Set<ValueIndexTerm> queryTerms = new Sets.Builder<ValueIndexTerm>()
                 .add(new ValueResourceIndexTerm("*",
                                                 getProcessIdResourceType(),
                                                 ValueIndexTerm.TermSearchType.WILDCARD))
@@ -62,23 +53,22 @@ public abstract class AbstractCalledElementFormProvider implements SelectorDataP
 
         List<RefactoringPageRow> results = queryService.query(
                 getQueryName(),
-                queryTerms);
+                queryTerms);*/
 
         Map<Object, String> businessProcessIDs = new TreeMap<>();
 
-        for (RefactoringPageRow row : results) {
+        /*for (RefactoringPageRow row : results) {
             Map<String, Path> mapRow = (Map<String, Path>) row.getValue();
             for (String rKey : mapRow.keySet()) {
                 businessProcessIDs.put(rKey,
                                        rKey);
             }
-        }
+        }*/
 
         return businessProcessIDs;
     }
 
-    protected abstract ResourceType getProcessIdResourceType();
+    // protected abstract ResourceType getProcessIdResourceType();
 
     protected abstract String getQueryName();
-
 }

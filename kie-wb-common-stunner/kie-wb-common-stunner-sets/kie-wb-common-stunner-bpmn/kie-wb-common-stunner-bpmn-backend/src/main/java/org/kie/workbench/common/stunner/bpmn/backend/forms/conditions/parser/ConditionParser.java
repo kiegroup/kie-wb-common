@@ -25,8 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.forms.conditions.Condition;
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.FunctionDef;
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.ParamDef;
 
-import static org.kie.workbench.common.services.datamodeller.util.StringEscapeUtils.unescapeJava;
-
 public class ConditionParser {
 
     public static final String KIE_FUNCTIONS = "KieFunctions.";
@@ -315,5 +313,10 @@ public class ConditionParser {
                 .map(FunctionDef::getName)
                 .collect(Collectors.joining(", "));
         return "{" + functionNames + "}";
+    }
+
+    public static String unescapeJava(String s) {
+        // TODO: (Submarine) return org.kie.workbench.common.services.datamodeller.util.StringEscapeUtils.unescapeJava(s);
+        return s;
     }
 }

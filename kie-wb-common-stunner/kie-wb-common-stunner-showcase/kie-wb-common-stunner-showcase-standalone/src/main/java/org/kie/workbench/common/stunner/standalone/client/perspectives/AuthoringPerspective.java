@@ -17,7 +17,7 @@ package org.kie.workbench.common.stunner.standalone.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.stunner.standalone.client.screens.DiagramsNavigatorScreen;
+import org.kie.workbench.common.stunner.standalone.client.editor.BPMNDiagramsNavigatorScreen;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
@@ -27,7 +27,7 @@ import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
 @ApplicationScoped
-@WorkbenchPerspective(identifier = AuthoringPerspective.PERSPECTIVE_ID, isTransient = false)
+@WorkbenchPerspective(identifier = AuthoringPerspective.PERSPECTIVE_ID, isTransient = false, isDefault = true)
 public class AuthoringPerspective {
 
     public static final String PERSPECTIVE_ID = "AuthoringPerspective";
@@ -36,7 +36,16 @@ public class AuthoringPerspective {
     public PerspectiveDefinition buildPerspective() {
         final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
         perspective.setName("Authoring");
-        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(DiagramsNavigatorScreen.SCREEN_ID)));
+        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BPMNDiagramsNavigatorScreen.SCREEN_ID)));
         return perspective;
     }
+
+//    @Perspective
+//    public PerspectiveDefinition buildSubmarinePerspective() {
+//        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleNoExpandWorkbenchPanelPresenter.class.getName());
+//        perspective.setName("Authoring");
+//        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BPMNSubmarineDiagramWrapper.EDITOR_ID)));
+//        return perspective;
+//    }
 }
+

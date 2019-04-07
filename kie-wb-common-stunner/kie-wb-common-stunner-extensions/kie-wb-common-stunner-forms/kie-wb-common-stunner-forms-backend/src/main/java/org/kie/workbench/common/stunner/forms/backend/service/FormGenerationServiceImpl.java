@@ -16,88 +16,30 @@
 
 package org.kie.workbench.common.stunner.forms.backend.service;
 
-import java.util.logging.Logger;
-
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.forms.service.FormGeneratedEvent;
-import org.kie.workbench.common.stunner.forms.service.FormGenerationFailureEvent;
 import org.kie.workbench.common.stunner.forms.service.FormGenerationService;
-import org.uberfire.backend.vfs.Path;
+
+// TODO: (Submarine) - re-implement old
 
 @ApplicationScoped
 @Service
 public class FormGenerationServiceImpl implements FormGenerationService {
 
-    private static Logger LOGGER = Logger.getLogger(FormGenerationServiceImpl.class.getName());
+    @Override
+    public void generateProcessForm(Diagram diagram) {
 
-    private final Event<FormGeneratedEvent> formGeneratedEvent;
-    private final Event<FormGenerationFailureEvent> formGenerationFailureEvent;
-    private final FormDefinitionGenerator formDefinitionGenerator;
-
-    // CDI proxy.
-    protected FormGenerationServiceImpl() {
-        this(null, null, null);
-    }
-
-    @Inject
-    public FormGenerationServiceImpl(final Event<FormGeneratedEvent> formGeneratedEvent,
-                                     final Event<FormGenerationFailureEvent> formGenerationFailureEvent,
-                                     final FormDefinitionGenerator formDefinitionGenerator) {
-        this.formGeneratedEvent = formGeneratedEvent;
-        this.formGenerationFailureEvent = formGenerationFailureEvent;
-        this.formDefinitionGenerator = formDefinitionGenerator;
     }
 
     @Override
-    public void generateProcessForm(final Diagram diagram) {
-        doGenerate(diagram, () -> formDefinitionGenerator.generateProcessForm(diagram));
+    public void generateAllForms(Diagram diagram) {
+
     }
 
     @Override
-    public void generateAllForms(final Diagram diagram) {
-        doGenerate(diagram, () -> formDefinitionGenerator.generateAllForms(diagram));
-    }
+    public void generateSelectedForms(Diagram diagram, String[] ids) {
 
-    @Override
-    public void generateSelectedForms(final Diagram diagram,
-                                      final String[] ids) {
-        this.doGenerate(diagram, () -> formDefinitionGenerator.generateSelectedForms(diagram, ids));
-    }
-
-    private void doGenerate(final Diagram diagram,
-                            final Runnable runnable) {
-        LOGGER.finest("Starting form generation...");
-
-        final Metadata metadata = diagram.getMetadata();
-        final String definitionSetId = metadata.getDefinitionSetId();
-        final String graphUUID = diagram.getGraph().getUUID();
-        final Path path = metadata.getPath();
-        final String fileName = null != path ?
-                path.getFileName() :
-                "<no-file>";
-
-        LOGGER.finest("FormGeneration test " +
-                              "[definitionSetId=" + definitionSetId +
-                              "[graphUUID=" + graphUUID +
-                              "[path=" + path +
-                              "[fileName=" + fileName);
-
-        try {
-            runnable.run();
-
-            // Fire the form generated event.
-            formGeneratedEvent.fire(new FormGeneratedEvent(graphUUID, diagram.getName()));
-
-            LOGGER.finest("Form generation completed successfully!");
-        } catch (Throwable e) {
-            formGenerationFailureEvent.fire(new FormGenerationFailureEvent(graphUUID, diagram.getName()));
-            LOGGER.severe("Error during Form Generation service: " + e.getMessage());
-        }
     }
 }

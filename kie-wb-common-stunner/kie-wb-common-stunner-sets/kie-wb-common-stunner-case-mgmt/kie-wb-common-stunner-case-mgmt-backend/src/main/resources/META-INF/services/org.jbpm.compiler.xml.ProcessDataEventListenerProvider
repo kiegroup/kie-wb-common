@@ -1,1 +1,2 @@
-org.kie.workbench.common.stunner.cm.backend.indexing.CaseManagementDataEventListenerProvider
+# TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
+# org.kie.workbench.common.stunner.cm.backend.indexing.CaseManagementDataEventListenerProvider

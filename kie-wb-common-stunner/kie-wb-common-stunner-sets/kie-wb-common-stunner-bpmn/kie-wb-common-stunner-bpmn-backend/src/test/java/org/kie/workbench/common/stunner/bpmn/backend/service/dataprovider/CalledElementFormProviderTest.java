@@ -62,7 +62,8 @@ public class CalledElementFormProviderTest {
 
     @Before
     public void setup() {
-        calledElementFormProvider.setQueryService(queryService);
+        // TODO: (Submarine)
+        // calledElementFormProvider.setQueryService(queryService);
         List<RefactoringPageRow> results = new ArrayList<RefactoringPageRow>();
         RefactoringMapPageRow refactoringMapPageRow = new RefactoringMapPageRow();
         Map<String, Path> map = new HashMap<String, Path>();

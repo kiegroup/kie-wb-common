@@ -85,6 +85,13 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-dynamic-forms-backend</artifactId>
+      <!-- TODO: (Submarine) -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.workbench.services</groupId>
+          <artifactId>kie-wb-common-refactoring-backend</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -97,7 +104,8 @@
       <artifactId>kie-wb-common-stunner-forms-backend</artifactId>
     </dependency>
 
-    <dependency>
+    <!-- TODO: (Submarine) -->
+    <!--<dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-api</artifactId>
     </dependency>
@@ -105,11 +113,19 @@
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-backend</artifactId>
-    </dependency>
+    </dependency>-->
 
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-services-backend</artifactId>
+      <!-- TODO: (Submarine) -->
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.workbench.services</groupId>
+          <artifactId>kie-wb-common-refactoring-backend</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -120,6 +136,8 @@
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-data-modeller-core</artifactId>
+      <!-- TODO: (Submarine) -->
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -237,10 +255,13 @@
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-datamodel-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-datamodel-backend</artifactId>
+      <!-- TODO: (Submarine) -->
+      <scope>test</scope>
     </dependency>
 
     <!-- Required for supporting legacy jbpm-designer marshallers/unmarshallers. -->
@@ -427,5 +448,17 @@
     </dependency>
 
   </dependencies>
+
+  <!-- TODO: (Submarine) - Re-enable tests.. -->
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

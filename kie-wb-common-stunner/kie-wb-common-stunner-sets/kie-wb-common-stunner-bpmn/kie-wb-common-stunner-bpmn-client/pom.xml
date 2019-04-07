@@ -246,7 +246,8 @@
       <artifactId>uberfire-client-api</artifactId>
     </dependency>
 
-    <dependency>
+    <!-- TODO: (Submarine) -->
+    <!--<dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-security-management-api</artifactId>
     </dependency>
@@ -254,7 +255,7 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-security-management-client</artifactId>
-    </dependency>
+    </dependency>-->
 
     <dependency>
       <groupId>org.jboss.errai</groupId>

@@ -16,13 +16,12 @@
 
 package org.kie.workbench.common.stunner.bpmn.factory;
 
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
-import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
 
 public interface BPMNDiagramFactory
         extends BPMNFactory,
-                DiagramFactory<Metadata, Diagram<Graph, Metadata>> {
+                DiagramFactory<SubmarineMetadata, SubmarineDiagram> {
 
 }

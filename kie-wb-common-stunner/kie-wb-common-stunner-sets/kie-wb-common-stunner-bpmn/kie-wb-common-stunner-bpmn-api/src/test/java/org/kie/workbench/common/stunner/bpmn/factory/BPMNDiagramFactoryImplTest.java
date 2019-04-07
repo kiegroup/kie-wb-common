@@ -24,6 +24,7 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -44,7 +45,7 @@ public class BPMNDiagramFactoryImplTest {
     private Graph graph;
 
     @Mock
-    private Metadata metadata;
+    private SubmarineMetadata metadata;
 
     @Mock
     private Node diagramNode;
@@ -69,9 +70,9 @@ public class BPMNDiagramFactoryImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testBuild() {
-        final Diagram<Graph, Metadata> diagram = tested.build(NAME,
-                                                              metadata,
-                                                              graph);
+        final Diagram<Graph, SubmarineMetadata> diagram = tested.build(NAME,
+                                                                       metadata,
+                                                                       graph);
         assertNotNull(diagram);
         assertEquals(NAME,
                      diagram.getName());

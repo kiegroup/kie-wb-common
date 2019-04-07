@@ -20,8 +20,6 @@ import java.text.MessageFormat;
 
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.Condition;
 
-import static org.kie.workbench.common.services.datamodeller.util.StringEscapeUtils.escapeJavaNonUTFChars;
-
 public class ConditionGenerator {
 
     private static final String PARAMETER_NULL_EMPTY = "Parameter can not be null nor empty";
@@ -61,6 +59,11 @@ public class ConditionGenerator {
         }
         script.append(");");
         return script.toString();
+    }
+
+    public static String escapeJavaNonUTFChars(String s) {
+        // TODO: (Submarine) return org.kie.workbench.common.services.datamodeller.util.StringEscapeUtils.escapeJavaNonUTFChars(s);
+        return s;
     }
 
     private boolean isValidFunction(String function) {

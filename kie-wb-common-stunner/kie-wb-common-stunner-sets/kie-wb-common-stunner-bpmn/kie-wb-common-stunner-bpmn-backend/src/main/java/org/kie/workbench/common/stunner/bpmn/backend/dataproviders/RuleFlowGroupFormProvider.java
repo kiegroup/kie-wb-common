@@ -16,27 +16,18 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-
-import org.kie.soup.commons.util.Sets;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-import org.kie.workbench.common.services.refactoring.backend.server.query.standard.FindRuleFlowNamesQuery;
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueSharedPartIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
-import org.kie.workbench.common.services.refactoring.service.PartType;
-import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
 
 public class RuleFlowGroupFormProvider implements SelectorDataProvider {
 
-    @Inject
-    protected RefactoringQueryService queryService;
+// TODO: (Submarine)
+    /*@Inject
+    protected RefactoringQueryService queryService;*/
 
     @Override
     public String getProviderName() {
@@ -53,20 +44,21 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @SuppressWarnings("unchecked")
     private Map<Object, String> getRuleFlowGroupNames() {
 
-        List<RefactoringPageRow> results = queryService.query(
+        // TODO: (Submarine)
+        /*List<RefactoringPageRow> results = queryService.query(
                 FindRuleFlowNamesQuery.NAME,
                 new Sets.Builder<ValueIndexTerm>()
                         .add(new ValueSharedPartIndexTerm("*",
                                                           PartType.RULEFLOW_GROUP,
                                                           ValueIndexTerm.TermSearchType.WILDCARD)).build()
-        );
+        );*/
 
         Map<Object, String> ruleFlowGroupNames = new TreeMap<>();
 
-        for (RefactoringPageRow row : results) {
+        /*for (RefactoringPageRow row : results) {
             ruleFlowGroupNames.put(((Map<String, String>) row.getValue()).get("name"),
                                    ((Map<String, String>) row.getValue()).get("name"));
-        }
+        }*/
 
         return ruleFlowGroupNames;
     }

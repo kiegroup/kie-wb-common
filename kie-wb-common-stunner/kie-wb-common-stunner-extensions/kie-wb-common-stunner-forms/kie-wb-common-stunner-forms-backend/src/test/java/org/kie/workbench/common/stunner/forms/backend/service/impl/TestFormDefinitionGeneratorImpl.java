@@ -17,19 +17,13 @@
 package org.kie.workbench.common.stunner.forms.backend.service.impl;
 
 import org.eclipse.bpmn2.Definitions;
-import org.kie.workbench.common.forms.jbpm.server.service.BPMNFormModelGenerator;
-import org.kie.workbench.common.forms.jbpm.server.service.formGeneration.BPMNFormGeneratorService;
-import org.kie.workbench.common.forms.services.backend.serialization.FormDefinitionSerializer;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelProviders;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.io.IOService;
 
 public class TestFormDefinitionGeneratorImpl extends FormDefinitionGeneratorImpl {
 
     private Definitions definitions;
 
-    public TestFormDefinitionGeneratorImpl(FormGenerationModelProviders providers, IOService ioService, BPMNFormModelGenerator bpmnFormModelGenerator, FormDefinitionSerializer serializer, BPMNFormGeneratorService<Path> bpmnFormGeneratorService, Definitions definitions) {
+    // TODO: (Submarine)
+    /*public TestFormDefinitionGeneratorImpl(FormGenerationModelProviders providers, IOService ioService, BPMNFormModelGenerator bpmnFormModelGenerator, FormDefinitionSerializer serializer, BPMNFormGeneratorService<Path> bpmnFormGeneratorService, Definitions definitions) {
         super(providers, ioService, bpmnFormModelGenerator, serializer, bpmnFormGeneratorService);
         this.definitions = definitions;
     }
@@ -37,5 +31,5 @@ public class TestFormDefinitionGeneratorImpl extends FormDefinitionGeneratorImpl
     @Override
     protected Definitions toDefinitions(Diagram diagram) {
         return definitions;
-    }
+    }*/
 }
