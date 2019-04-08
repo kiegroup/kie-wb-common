@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.workitem;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,10 +60,17 @@ public class WorkItemDefinitionResources {
     }
 
     public Collection<Path> resolveResources(final Metadata metadata) {
-        return resolveResources(resolveResourcePath(metadata),
-                                resolveGlobalPath(metadata),
-                                resolveResourcesPath(metadata),
-                                p -> p);
+        // TODO: (Submarine) Fixed NPE here as metada's paths are null...
+        return arePathsPresent(metadata) ?
+                resolveResources(resolveResourcePath(metadata),
+                                 resolveGlobalPath(metadata),
+                                 resolveResourcesPath(metadata),
+                                 p -> p) :
+                Collections.emptyList();
+    }
+
+    private static boolean arePathsPresent(final Metadata metadata) {
+        return null != metadata.getPath() && null != metadata.getRoot();
     }
 
     public Optional<Path> resolveResource(final Metadata metadata,

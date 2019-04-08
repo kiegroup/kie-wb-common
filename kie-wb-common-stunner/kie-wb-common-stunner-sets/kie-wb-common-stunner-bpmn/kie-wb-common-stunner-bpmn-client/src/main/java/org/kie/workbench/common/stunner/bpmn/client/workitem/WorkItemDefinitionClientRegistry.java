@@ -159,6 +159,7 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
                 break;
             }
         }
-        return null != root.getMessage() ? root.getMessage() : root.toString();
+        final String msg = null != root.getMessage() ? root.getMessage() : root.toString();
+        return "Cannot load Work Item definitions. Cause: " + msg;
     }
 }
