@@ -32,7 +32,20 @@
   <properties>
     <errai.jboss.home>${project.build.directory}/wildfly-${version.org.jboss.errai.wildfly}</errai.jboss.home>
     <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
+    <version.thorntail>2.2.1.Final</version.thorntail>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.thorntail</groupId>
+        <artifactId>bom</artifactId>
+        <version>${version.thorntail}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
 
@@ -694,6 +707,21 @@
     <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
 
     <plugins>
+
+      <plugin>
+        <!-- Maven version cannot be 3.6.0 - See https://github.com/thorntail/thorntail/pull/1195 -->
+        <groupId>io.thorntail</groupId>
+        <artifactId>thorntail-maven-plugin</artifactId>
+        <version>${version.thorntail}</version>
+        <executions>
+          <execution>
+            <id>package</id>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
