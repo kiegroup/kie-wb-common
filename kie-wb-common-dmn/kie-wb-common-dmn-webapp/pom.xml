@@ -32,20 +32,8 @@
   <properties>
     <errai.jboss.home>${project.build.directory}/wildfly-${version.org.jboss.errai.wildfly}</errai.jboss.home>
     <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
-    <version.thorntail>2.2.1.Final</version.thorntail>
+    <version.thorntail>2.4.0.Final</version.thorntail>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>io.thorntail</groupId>
-        <artifactId>bom</artifactId>
-        <version>${version.thorntail}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
 
@@ -700,6 +688,32 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Transient dependencies -->
+    <dependency>
+      <groupId>org.kie.soup</groupId>
+      <artifactId>kie-soup-project-datamodel-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-social-activities-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-message-console-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-service-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-workbench-models-datamodel-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.profile</groupId>
+      <artifactId>kie-wb-common-profile-api</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -707,21 +721,6 @@
     <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
 
     <plugins>
-
-      <plugin>
-        <!-- Maven version cannot be 3.6.0 - See https://github.com/thorntail/thorntail/pull/1195 -->
-        <groupId>io.thorntail</groupId>
-        <artifactId>thorntail-maven-plugin</artifactId>
-        <version>${version.thorntail}</version>
-        <executions>
-          <execution>
-            <id>package</id>
-            <goals>
-              <goal>package</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -917,6 +916,79 @@
   </build>
 
   <profiles>
+
+    <!-- Thorntail profile -->
+    <profile>
+      <id>thorntail</id>
+      <activation>
+        <property>
+          <name>thorntail</name>
+        </property>
+      </activation>
+
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>bom-all</artifactId>
+            <version>${version.thorntail}</version>
+            <scope>import</scope>
+            <type>pom</type>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+
+      <!-- Factions -->
+      <!-- Let Thorntail first discover factions and then add them explicitly -->
+      <!-- to include messaging that was not detected automatically -->
+      <dependencies>
+        <!-- CDI brings in bean-validation, cdi-config, logging, transactions, container and ee -->
+        <dependency>
+          <groupId>io.thorntail</groupId>
+          <artifactId>cdi</artifactId>
+        </dependency>
+        <!-- Undertow brings in io and request-controller -->
+        <dependency>
+          <groupId>io.thorntail</groupId>
+          <artifactId>undertow</artifactId>
+        </dependency>
+        <!-- Required by AppFormer's SocialActivities and Git clustering -->
+        <dependency>
+          <groupId>io.thorntail</groupId>
+          <artifactId>messaging</artifactId>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.thorntail</groupId>
+            <artifactId>thorntail-maven-plugin</artifactId>
+            <version>${version.thorntail}</version>
+            <executions>
+              <execution>
+                <id>package</id>
+                <goals>
+                  <goal>package</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- No need to bring in Wildfly when packaging for Thorntail -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
     <!-- Full profile builds all GWT permutations -->
     <profile>
