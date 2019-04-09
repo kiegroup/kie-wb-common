@@ -3,7 +3,7 @@
   "editors": [
     {
       "regex": "*.bpmn",
-      "editor": "BPMNDiagramEditor"
+      "editor": "BPMNStandaloneDiagramEditor"
     }
   ]
 }

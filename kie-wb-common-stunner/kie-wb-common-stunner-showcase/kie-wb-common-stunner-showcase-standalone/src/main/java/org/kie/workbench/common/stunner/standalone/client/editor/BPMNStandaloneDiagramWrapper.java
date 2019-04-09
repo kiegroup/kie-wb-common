@@ -27,22 +27,22 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.PlaceManager;
 
 @ApplicationScoped
-public class BPMNSubmarineDiagramWrapper {
+public class BPMNStandaloneDiagramWrapper {
 
     @Inject
     @DiagramEditor
-    private BPMNSubmarineDiagramEditor diagramEditor;
+    private BPMNStandaloneDiagramEditor diagramEditor;
 
     private PlaceManager placeManager;
     private SubmarineClientDiagramServiceImpl clientDiagramService;
 
-    public BPMNSubmarineDiagramWrapper() {
+    public BPMNStandaloneDiagramWrapper() {
         //CDI proxy
     }
 
     @Inject
-    public BPMNSubmarineDiagramWrapper(final PlaceManager placeManager,
-                                       final SubmarineClientDiagramServiceImpl clientDiagramService) {
+    public BPMNStandaloneDiagramWrapper(final PlaceManager placeManager,
+                                        final SubmarineClientDiagramServiceImpl clientDiagramService) {
         this.placeManager = placeManager;
         this.clientDiagramService = clientDiagramService;
     }

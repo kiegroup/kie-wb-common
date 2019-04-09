@@ -77,11 +77,11 @@ import org.uberfire.workbench.model.menu.Menus;
 
 @ApplicationScoped
 @DiagramEditor
-//@WorkbenchClientEditor(identifier = BPMNSubmarineDiagramEditor.EDITOR_ID)
-@WorkbenchScreen(identifier = BPMNSubmarineDiagramEditor.EDITOR_ID)
-public class BPMNSubmarineDiagramEditor extends AbstractDiagramEditor {
+// @WorkbenchClientEditor(identifier = BPMNStandaloneDiagramEditor.EDITOR_ID)
+@WorkbenchScreen(identifier = BPMNStandaloneDiagramEditor.EDITOR_ID)
+public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
 
-    public static final String EDITOR_ID = "BPMNDiagramEditor";
+    public static final String EDITOR_ID = "BPMNStandaloneDiagramEditor";
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -95,33 +95,33 @@ public class BPMNSubmarineDiagramEditor extends AbstractDiagramEditor {
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
 
     private final SubmarineClientDiagramService diagramServices;
-    private final BPMNSubmarineDiagramWrapper stateHolder;
+    private final BPMNStandaloneDiagramWrapper stateHolder;
 
     @Inject
-    public BPMNSubmarineDiagramEditor(final View view,
-                                      final FileMenuBuilder fileMenuBuilder,
-                                      final PlaceManager placeManager,
-                                      final MultiPageEditorContainerView multiPageEditorContainerView,
-                                      final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
-                                      final Event<NotificationEvent> notificationEvent,
-                                      final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
-                                      final TextEditorView xmlEditorView,
-                                      final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
-                                      final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                      final BPMNSubmarineEditorMenuSessionItems menuSessionItems,
-                                      final ErrorPopupPresenter errorPopupPresenter,
-                                      final DiagramClientErrorHandler diagramClientErrorHandler,
-                                      final ClientTranslationService translationService,
-                                      final DocumentationView documentationView,
-                                      final SessionManager sessionManager,
-                                      final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                      final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
-                                      final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
-                                      final DiagramEditorPropertiesDock diagramPropertiesDock,
-                                      final LayoutHelper layoutHelper,
-                                      final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
-                                      final SubmarineClientDiagramService diagramServices,
-                                      final BPMNSubmarineDiagramWrapper stateHolder) {
+    public BPMNStandaloneDiagramEditor(final View view,
+                                       final FileMenuBuilder fileMenuBuilder,
+                                       final PlaceManager placeManager,
+                                       final MultiPageEditorContainerView multiPageEditorContainerView,
+                                       final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
+                                       final Event<NotificationEvent> notificationEvent,
+                                       final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
+                                       final TextEditorView xmlEditorView,
+                                       final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                       final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                       final BPMNSubmarineEditorMenuSessionItems menuSessionItems,
+                                       final ErrorPopupPresenter errorPopupPresenter,
+                                       final DiagramClientErrorHandler diagramClientErrorHandler,
+                                       final ClientTranslationService translationService,
+                                       final DocumentationView documentationView,
+                                       final SessionManager sessionManager,
+                                       final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                       final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
+                                       final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
+                                       final DiagramEditorPropertiesDock diagramPropertiesDock,
+                                       final LayoutHelper layoutHelper,
+                                       final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
+                                       final SubmarineClientDiagramService diagramServices,
+                                       final BPMNStandaloneDiagramWrapper stateHolder) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -345,7 +345,7 @@ public class BPMNSubmarineDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    //@GetContent
+    // @GetContent
     public Promise getContent() {
         return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
@@ -357,7 +357,7 @@ public class BPMNSubmarineDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    //@SetContent
+    // @SetContent
     public void setContent(final String value) {
         diagramServices.transform(value,
                                   new ServiceCallback<SubmarineDiagram>() {
@@ -369,7 +369,7 @@ public class BPMNSubmarineDiagramEditor extends AbstractDiagramEditor {
 
                                       @Override
                                       public void onError(final ClientRuntimeError error) {
-                                          BPMNSubmarineDiagramEditor.this.getEditor().onLoadError(error);
+                                          BPMNStandaloneDiagramEditor.this.getEditor().onLoadError(error);
                                       }
                                   });
     }

@@ -44,15 +44,15 @@ public class BPMNDiagramsNavigatorScreen {
 
     public static final String SCREEN_ID = "BPMNDiagramsNavigatorScreen";
 
-    public static final PlaceRequest DIAGRAM_EDITOR = new DefaultPlaceRequest(BPMNSubmarineDiagramEditor.EDITOR_ID);
+    public static final PlaceRequest DIAGRAM_EDITOR = new DefaultPlaceRequest(BPMNStandaloneDiagramEditor.EDITOR_ID);
 
     private DiagramsNavigator diagramsNavigator;
     private ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder;
-    private BPMNSubmarineDiagramWrapper stateHolder;
+    private BPMNStandaloneDiagramWrapper stateHolder;
 
     @Inject
     @DiagramEditor
-    private BPMNSubmarineDiagramEditor diagramEditor;
+    private BPMNStandaloneDiagramEditor diagramEditor;
 
     private Menus menu = null;
     private LoadDiagramEvent selectedDiagramEvent = null;
@@ -64,7 +64,7 @@ public class BPMNDiagramsNavigatorScreen {
     @Inject
     public BPMNDiagramsNavigatorScreen(final DiagramsNavigator diagramsNavigator,
                                        final ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder,
-                                       final BPMNSubmarineDiagramWrapper stateHolder) {
+                                       final BPMNStandaloneDiagramWrapper stateHolder) {
         this.diagramsNavigator = diagramsNavigator;
         this.newDiagramMenuItemsBuilder = newDiagramMenuItemsBuilder;
         this.stateHolder = stateHolder;

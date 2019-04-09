@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNBackendService;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.factory.BPMNDiagramFactory;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -116,7 +117,10 @@ public class BPMNSubmarineDiagramServiceImpl implements SubmarineDiagramService 
         try {
             final DiagramMarshaller marshaller = backendService.getDiagramMarshaller();
             final Graph<DefinitionSet, ?> graph = marshaller.unmarshall(metadata, is);
-            final Node<Definition<BPMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, BPMNDiagram.class);
+            final Node<Definition<BPMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, BPMNDiagramImpl.class);
+            if (null == diagramNode) {
+                throw new RuntimeException("No BPMN Diagram can be found.");
+            }
             final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();
             metadata.setTitle(title);
 
@@ -124,7 +128,7 @@ public class BPMNSubmarineDiagramServiceImpl implements SubmarineDiagramService 
                                         metadata,
                                         graph);
         } catch (Exception e) {
-            LOG.error("Error whilst converting XML to BPMNDiagram.", e);
+            LOG.error("Error whilst converting XML to BPMN Diagram.", e);
             throw new DiagramParsingException(metadata, xml);
         }
     }
@@ -136,7 +140,7 @@ public class BPMNSubmarineDiagramServiceImpl implements SubmarineDiagramService 
             final DiagramMarshaller marshaller = backendService.getDiagramMarshaller();
             return marshaller.marshall(convert(diagram));
         } catch (Exception e) {
-            LOG.error("Error whilst converting BPMNDiagram to XML.", e);
+            LOG.error("Error whilst converting BPMN Diagram to XML.", e);
             throw new RuntimeException(e);
         }
     }

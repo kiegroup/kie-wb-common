@@ -40,12 +40,12 @@ public class AuthoringPerspective {
         return perspective;
     }
 
-//    @Perspective
-//    public PerspectiveDefinition buildSubmarinePerspective() {
-//        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleNoExpandWorkbenchPanelPresenter.class.getName());
-//        perspective.setName("Authoring");
-//        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BPMNSubmarineDiagramWrapper.EDITOR_ID)));
-//        return perspective;
-//    }
+    /*@Perspective
+    public PerspectiveDefinition buildSubmarinePerspective() {
+        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleWorkbenchPanelPresenter.class.getName());
+        perspective.setName("Authoring");
+        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BPMNStandaloneDiagramEditor.EDITOR_ID)));
+        return perspective;
+    }*/
 }
 
