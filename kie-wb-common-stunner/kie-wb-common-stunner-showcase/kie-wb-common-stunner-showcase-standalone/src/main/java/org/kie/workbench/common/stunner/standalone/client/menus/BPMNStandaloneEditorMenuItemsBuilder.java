@@ -25,18 +25,18 @@ import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationServic
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuItemsBuilder;
 
 @Dependent
-@Typed(BPMNSubmarineEditorMenuItemsBuilder.class)
-public class BPMNSubmarineEditorMenuItemsBuilder extends AbstractDiagramEditorMenuItemsBuilder {
+@Typed(BPMNStandaloneEditorMenuItemsBuilder.class)
+public class BPMNStandaloneEditorMenuItemsBuilder extends AbstractDiagramEditorMenuItemsBuilder {
 
     @SuppressWarnings("unused")
-    protected BPMNSubmarineEditorMenuItemsBuilder() {
+    protected BPMNStandaloneEditorMenuItemsBuilder() {
         //CDI proxy
         super();
     }
 
     @Inject
-    public BPMNSubmarineEditorMenuItemsBuilder(final ClientTranslationService translationService,
-                                               final PopupUtil popupUtil) {
+    public BPMNStandaloneEditorMenuItemsBuilder(final ClientTranslationService translationService,
+                                                final PopupUtil popupUtil) {
         super(translationService,
               popupUtil);
     }

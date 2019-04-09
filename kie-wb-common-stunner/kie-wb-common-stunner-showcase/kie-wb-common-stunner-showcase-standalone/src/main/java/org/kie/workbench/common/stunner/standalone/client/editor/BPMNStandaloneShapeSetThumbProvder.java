@@ -23,7 +23,7 @@ import com.google.gwt.safehtml.shared.UriUtils;
 import org.kie.workbench.common.stunner.core.client.ShapeSetThumbProvider;
 
 @ApplicationScoped
-public class SubmarineBPMNShapeSetThumbProvder implements ShapeSetThumbProvider {
+public class BPMNStandaloneShapeSetThumbProvder implements ShapeSetThumbProvider {
 
     @Override
     public SafeUri getThumbnailUri() {

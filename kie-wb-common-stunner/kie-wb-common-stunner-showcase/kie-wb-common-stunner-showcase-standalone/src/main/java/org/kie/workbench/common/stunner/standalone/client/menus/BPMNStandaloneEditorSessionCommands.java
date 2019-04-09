@@ -41,10 +41,10 @@ import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCo
 
 @Dependent
 @BPMN
-public class BPMNSubmarineEditorSessionCommands extends EditorSessionCommands {
+public class BPMNStandaloneEditorSessionCommands extends EditorSessionCommands {
 
     @Inject
-    public BPMNSubmarineEditorSessionCommands(final ManagedClientSessionCommands commands) {
+    public BPMNStandaloneEditorSessionCommands(final ManagedClientSessionCommands commands) {
         super(commands);
     }
 

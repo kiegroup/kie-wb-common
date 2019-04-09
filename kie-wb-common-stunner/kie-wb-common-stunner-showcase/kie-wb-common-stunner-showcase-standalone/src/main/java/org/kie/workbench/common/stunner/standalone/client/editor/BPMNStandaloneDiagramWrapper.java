@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
-import org.kie.workbench.common.stunner.standalone.client.services.SubmarineClientDiagramServiceImpl;
+import org.kie.workbench.common.stunner.standalone.client.services.BPMNStandaloneClientDiagramServiceImpl;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.PlaceManager;
 
@@ -34,7 +34,7 @@ public class BPMNStandaloneDiagramWrapper {
     private BPMNStandaloneDiagramEditor diagramEditor;
 
     private PlaceManager placeManager;
-    private SubmarineClientDiagramServiceImpl clientDiagramService;
+    private BPMNStandaloneClientDiagramServiceImpl clientDiagramService;
 
     public BPMNStandaloneDiagramWrapper() {
         //CDI proxy
@@ -42,7 +42,7 @@ public class BPMNStandaloneDiagramWrapper {
 
     @Inject
     public BPMNStandaloneDiagramWrapper(final PlaceManager placeManager,
-                                        final SubmarineClientDiagramServiceImpl clientDiagramService) {
+                                        final BPMNStandaloneClientDiagramServiceImpl clientDiagramService) {
         this.placeManager = placeManager;
         this.clientDiagramService = clientDiagramService;
     }

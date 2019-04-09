@@ -27,12 +27,12 @@ import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramE
 // TODO: (Submarine) Add generate-forms commands stuff
 
 @Dependent
-@Typed(BPMNSubmarineEditorMenuSessionItems.class)
-public class BPMNSubmarineEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<BPMNSubmarineEditorMenuItemsBuilder> {
+@Typed(BPMNStandaloneEditorMenuSessionItems.class)
+public class BPMNStandaloneEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<BPMNStandaloneEditorMenuItemsBuilder> {
 
     @Inject
-    public BPMNSubmarineEditorMenuSessionItems(final BPMNSubmarineEditorMenuItemsBuilder itemsBuilder,
-                                               final @BPMN BPMNSubmarineEditorSessionCommands sessionCommands) {
+    public BPMNStandaloneEditorMenuSessionItems(final BPMNStandaloneEditorMenuItemsBuilder itemsBuilder,
+                                                final @BPMN BPMNStandaloneEditorSessionCommands sessionCommands) {
         super(itemsBuilder,
               sessionCommands);
     }

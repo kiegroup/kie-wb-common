@@ -43,7 +43,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.standalone.client.menus.BPMNSubmarineEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.standalone.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.standalone.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
@@ -108,7 +108,7 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
                                        final TextEditorView xmlEditorView,
                                        final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
                                        final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                       final BPMNSubmarineEditorMenuSessionItems menuSessionItems,
+                                       final BPMNStandaloneEditorMenuSessionItems menuSessionItems,
                                        final ErrorPopupPresenter errorPopupPresenter,
                                        final DiagramClientErrorHandler diagramClientErrorHandler,
                                        final ClientTranslationService translationService,

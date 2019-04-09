@@ -38,22 +38,22 @@ import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.promise.Promises;
 
 @ApplicationScoped
-public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagramService {
+public class BPMNStandaloneClientDiagramServiceImpl implements SubmarineClientDiagramService {
 
     private ShapeManager shapeManager;
     private Caller<VFSService> vfsServiceCaller;
     private Caller<SubmarineDiagramService> submarineDiagramServiceCaller;
     private Promises promises;
 
-    public SubmarineClientDiagramServiceImpl() {
+    public BPMNStandaloneClientDiagramServiceImpl() {
         //CDI proxy
     }
 
     @Inject
-    public SubmarineClientDiagramServiceImpl(final ShapeManager shapeManager,
-                                             final Caller<VFSService> vfsServiceCaller,
-                                             final Caller<SubmarineDiagramService> submarineDiagramServiceCaller,
-                                             final Promises promises) {
+    public BPMNStandaloneClientDiagramServiceImpl(final ShapeManager shapeManager,
+                                                  final Caller<VFSService> vfsServiceCaller,
+                                                  final Caller<SubmarineDiagramService> submarineDiagramServiceCaller,
+                                                  final Promises promises) {
         this.shapeManager = shapeManager;
         this.vfsServiceCaller = vfsServiceCaller;
         this.submarineDiagramServiceCaller = submarineDiagramServiceCaller;
