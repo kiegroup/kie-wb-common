@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.legacy;
+package org.kie.workbench.common.dmn.client.api.included.legacy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
 import org.mockito.Mock;
 import org.uberfire.mocks.CallerMock;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -54,7 +56,10 @@ public class DMNIncludeModelsClientTest {
     private WorkspaceProjectContext projectContext;
 
     @Mock
-    private Consumer<List<DMNIncludeModel>> listConsumer;
+    private Consumer<List<DMNIncludeModel>> listConsumerDMNModels;
+
+    @Mock
+    private Consumer<List<DMNIncludedNode>> listConsumerDMNNodes;
 
     @Mock
     private ErrorCallback<Object> onError;
@@ -85,31 +90,47 @@ public class DMNIncludeModelsClientTest {
         when(service.call(onSuccess, onError)).thenReturn(dmnService);
         when(projectContext.getActiveWorkspaceProject()).thenReturn(optionalWorkspaceProject);
 
-        client.loadModels(listConsumer);
+        client.loadModels(listConsumerDMNModels);
 
         verify(dmnService).loadModels(workspaceProject);
     }
 
     @Test
+    public void testLoadNodesByNamespaces() {
+
+        final Optional<WorkspaceProject> optionalWorkspaceProject = Optional.of(workspaceProject);
+        final List<String> namespaces = asList("://namespace1", "://namespace2");
+
+        doReturn(onSuccess).when(client).onSuccess(any());
+        doReturn(onError).when(client).onError(any());
+        when(service.call(onSuccess, onError)).thenReturn(dmnService);
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(optionalWorkspaceProject);
+
+        client.loadNodesByNamespaces(namespaces, listConsumerDMNNodes);
+
+        verify(dmnService).loadNodesByNamespaces(workspaceProject, namespaces);
+    }
+
+    @Test
     public void testOnError() {
 
-        final Object error = mock(Object.class);
+        final boolean error = true;
         final Throwable throwable = mock(Throwable.class);
         doNothing().when(client).warn(any());
 
-        final boolean result = client.onError(listConsumer).error(error, throwable);
+        final boolean result = client.onError(listConsumerDMNModels).error(error, throwable);
 
         assertFalse(result);
         verify(client).warn(eq("[WARNING] DMNIncludeModelsClient could not get the asset list."));
-        verify(listConsumer).accept(eq(new ArrayList<>()));
+        verify(listConsumerDMNModels).accept(eq(new ArrayList<>()));
     }
 
     @Test
     public void testOnSuccess() {
         final List<DMNIncludeModel> dmnIncludeModels = new ArrayList<>();
 
-        client.onSuccess(listConsumer).callback(dmnIncludeModels);
+        client.onSuccess(listConsumerDMNModels).callback(dmnIncludeModels);
 
-        verify(listConsumer).accept(dmnIncludeModels);
+        verify(listConsumerDMNModels).accept(dmnIncludeModels);
     }
 }

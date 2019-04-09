@@ -18,41 +18,42 @@ package org.kie.workbench.common.dmn.api.editors.types;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 
 @Portable
-public class DMNIncludeModel {
+public class DMNIncludedNode {
 
     private String modelName;
 
-    private String modelPackage;
+    private String drgElementId;
 
-    private String path;
+    private String drgElementName;
 
-    private String namespace;
+    private Class<? extends DRGElement> drgElementClass;
 
-    public DMNIncludeModel(final @MapsTo("modelName") String modelName,
-                           final @MapsTo("modelPackage") String modelPackage,
-                           final @MapsTo("path") String path,
-                           final @MapsTo("namespace") String namespace) {
+    public DMNIncludedNode(final @MapsTo("modelName") String modelName,
+                           final @MapsTo("drgElementId") String drgElementId,
+                           final @MapsTo("drgElementName") String drgElementName,
+                           final @MapsTo("drgElementClass") Class<? extends DRGElement> drgElementClass) {
         this.modelName = modelName;
-        this.modelPackage = modelPackage;
-        this.path = path;
-        this.namespace = namespace;
+        this.drgElementId = drgElementId;
+        this.drgElementName = drgElementName;
+        this.drgElementClass = drgElementClass;
     }
 
     public String getModelName() {
         return modelName;
     }
 
-    public String getModelPackage() {
-        return modelPackage;
+    public String getDrgElementId() {
+        return drgElementId;
     }
 
-    public String getPath() {
-        return path;
+    public String getDrgElementName() {
+        return drgElementName;
     }
 
-    public String getNamespace() {
-        return namespace;
+    public Class<? extends DRGElement> getDrgElementClass() {
+        return drgElementClass;
     }
 }

@@ -27,9 +27,9 @@ import javax.inject.Inject;
 
 import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
+import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsIndex;
-import org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdownItem;
 import org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdownItemsProvider;
 

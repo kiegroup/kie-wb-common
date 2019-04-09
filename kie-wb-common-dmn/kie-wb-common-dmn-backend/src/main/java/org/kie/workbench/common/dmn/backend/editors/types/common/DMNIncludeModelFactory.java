@@ -14,38 +14,30 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.editors.types;
+package org.kie.workbench.common.dmn.backend.editors.types.common;
 
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Package;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.uberfire.backend.vfs.Path;
 
 public class DMNIncludeModelFactory {
 
     private static final String DEFAULT_PACKAGE_NAME = "";
 
-    private final DiagramService diagramService;
+    private final DMNDiagramHelper diagramHelper;
 
     private final KieModuleService moduleService;
 
     @Inject
-    public DMNIncludeModelFactory(final DiagramService diagramService,
+    public DMNIncludeModelFactory(final DMNDiagramHelper diagramHelper,
                                   final KieModuleService moduleService) {
-        this.diagramService = diagramService;
+        this.diagramHelper = diagramHelper;
         this.moduleService = moduleService;
     }
 
@@ -55,7 +47,7 @@ public class DMNIncludeModelFactory {
             final String fileName = path.getFileName();
             final String modelPackage = getPackage(path);
             final String pathURI = path.toURI();
-            final String namespace = getNamespace(path);
+            final String namespace = diagramHelper.getNamespace(path);
 
             return new DMNIncludeModel(fileName, modelPackage, pathURI, namespace);
         } catch (final Exception e) {
@@ -68,33 +60,5 @@ public class DMNIncludeModelFactory {
                 .ofNullable(moduleService.resolvePackage(path))
                 .map(Package::getPackageName)
                 .orElse(DEFAULT_PACKAGE_NAME);
-    }
-
-    String getNamespace(final Path path) {
-        final Diagram<Graph, Metadata> diagram = getDiagramByPath(path);
-        return getNamespace(diagram);
-    }
-
-    @SuppressWarnings("unchecked")
-    String getNamespace(final Diagram diagram) {
-
-        final Graph<?, Node> graph = diagram.getGraph();
-
-        return StreamSupport
-                .stream(graph.nodes().spliterator(), false)
-                .map(Node::getContent)
-                .filter(c -> c instanceof Definition)
-                .map(c -> (Definition) c)
-                .map(Definition::getDefinition)
-                .filter(d -> d instanceof DMNDiagram)
-                .map(d -> (DMNDiagram) d)
-                .findFirst()
-                .map(DMNDiagram::getDefinitions)
-                .map(definitions -> definitions.getNamespace().getValue())
-                .orElse("");
-    }
-
-    private Diagram<Graph, Metadata> getDiagramByPath(final Path path) {
-        return diagramService.getDiagramByPath(path);
     }
 }

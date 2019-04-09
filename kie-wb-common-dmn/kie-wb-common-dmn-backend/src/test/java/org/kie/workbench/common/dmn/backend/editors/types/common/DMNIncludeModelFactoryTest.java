@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.editors.types;
+package org.kie.workbench.common.dmn.backend.editors.types.common;
 
 import java.nio.file.NoSuchFileException;
 
@@ -22,25 +22,14 @@ import org.guvnor.common.services.project.model.Package;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
-import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -50,28 +39,10 @@ import static org.mockito.Mockito.when;
 public class DMNIncludeModelFactoryTest {
 
     @Mock
-    private DiagramService diagramService;
+    private DMNDiagramHelper dmnDiagramHelper;
 
     @Mock
     private KieModuleService moduleService;
-
-    @Mock
-    private Graph<?, Node> graph;
-
-    @Mock
-    private Node node;
-
-    @Mock
-    private Definition definition;
-
-    @Mock
-    private DMNDiagram dmnDiagram;
-
-    @Mock
-    private Diagram<Graph, Metadata> diagram;
-
-    @Mock
-    private Definitions definitions;
 
     @Mock
     private Path path;
@@ -80,7 +51,7 @@ public class DMNIncludeModelFactoryTest {
 
     @Before
     public void setup() {
-        factory = spy(new DMNIncludeModelFactory(diagramService, moduleService));
+        factory = spy(new DMNIncludeModelFactory(dmnDiagramHelper, moduleService));
     }
 
     @Test
@@ -96,8 +67,7 @@ public class DMNIncludeModelFactoryTest {
         when(path.getFileName()).thenReturn(fileName);
         when(path.toURI()).thenReturn(uri);
         when(moduleService.resolvePackage(path)).thenReturn(aPackage);
-        when(diagramService.getDiagramByPath(path)).thenReturn(diagram);
-        doReturn(namespace).when(factory).getNamespace(diagram);
+        when(dmnDiagramHelper.getNamespace(path)).thenReturn(namespace);
 
         final DMNIncludeModel dmnIncludeModel = factory.create(path);
 
@@ -109,24 +79,7 @@ public class DMNIncludeModelFactoryTest {
 
     @Test(expected = DMNIncludeModelCouldNotBeCreatedException.class)
     public void testCreateWhenGetNamespaceRaisesAnError() throws Exception {
-        doThrow(NoSuchFileException.class).when(factory).getNamespace(path);
+        doThrow(NoSuchFileException.class).when(dmnDiagramHelper).getNamespace(path);
         factory.create(path);
-    }
-
-    @Test
-    public void testGetNamespace() {
-
-        final String expectedNamespace = "://namespace";
-
-        when(diagram.getGraph()).thenReturn(graph);
-        when(graph.nodes()).thenReturn(singletonList(node));
-        when(node.getContent()).thenReturn(definition);
-        when(definition.getDefinition()).thenReturn(dmnDiagram);
-        when(dmnDiagram.getDefinitions()).thenReturn(definitions);
-        when(definitions.getNamespace()).thenReturn(new Text(expectedNamespace));
-
-        final String actualNamespace = factory.getNamespace(diagram);
-
-        assertEquals(expectedNamespace, actualNamespace);
     }
 }

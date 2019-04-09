@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.backend.editors.types;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +31,9 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
+import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludeModelFactory;
+import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueFileExtensionIndexTerm;
 import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueRepositoryRootIndexTerm;
@@ -55,13 +59,17 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
 
     private final DMNIncludeModelFactory includeModelFactory;
 
+    private final DMNIncludedNodesFilter includedNodesFilter;
+
     @Inject
     public DMNIncludeModelsServiceImpl(final RefactoringQueryServiceImpl refactoringQueryService,
                                        final DiagramLookupService diagramLookupService,
-                                       final DMNIncludeModelFactory includeModelFactory) {
+                                       final DMNIncludeModelFactory includeModelFactory,
+                                       final DMNIncludedNodesFilter includedNodesFilter) {
         this.refactoringQueryService = refactoringQueryService;
         this.diagramLookupService = diagramLookupService;
         this.includeModelFactory = includeModelFactory;
+        this.includedNodesFilter = includedNodesFilter;
     }
 
     @Override
@@ -70,6 +78,16 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
                 .stream()
                 .map(getPathDMNIncludeModelFunction())
                 .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DMNIncludedNode> loadNodesByNamespaces(final WorkspaceProject workspaceProject,
+                                                       final List<String> namespaces) {
+        return getPaths(workspaceProject)
+                .stream()
+                .map(path -> includedNodesFilter.getNodesByNamespaces(path, namespaces))
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +102,7 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
         };
     }
 
-    private List<Path> getPaths(final WorkspaceProject workspaceProject) {
+    List<Path> getPaths(final WorkspaceProject workspaceProject) {
         if (workspaceProject != null) {
             return getPathsByWorkspaceProject(workspaceProject);
         } else {

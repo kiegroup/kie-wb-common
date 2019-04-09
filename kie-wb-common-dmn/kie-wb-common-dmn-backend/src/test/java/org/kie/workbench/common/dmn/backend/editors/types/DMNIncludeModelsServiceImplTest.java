@@ -23,6 +23,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
+import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
+import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludeModelFactory;
+import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.refactoring.backend.server.query.RefactoringQueryServiceImpl;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
@@ -37,8 +40,10 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.paging.PageResponse;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -56,6 +61,9 @@ public class DMNIncludeModelsServiceImplTest {
     private DMNIncludeModelFactory includeModelFactory;
 
     @Mock
+    private DMNIncludedNodesFilter includedNodesFilter;
+
+    @Mock
     private LookupResponse<DiagramRepresentation> lookupResponse;
 
     @Mock
@@ -65,7 +73,7 @@ public class DMNIncludeModelsServiceImplTest {
 
     @Before
     public void setup() {
-        service = spy(new DMNIncludeModelsServiceImpl(refactoringQueryService, diagramLookupService, includeModelFactory));
+        service = spy(new DMNIncludeModelsServiceImpl(refactoringQueryService, diagramLookupService, includeModelFactory, includedNodesFilter));
     }
 
     @Test
@@ -130,5 +138,39 @@ public class DMNIncludeModelsServiceImplTest {
         assertEquals(2, dmnIncludeModels.size());
         assertEquals(dmnIncludeModel1, dmnIncludeModels.get(0));
         assertEquals(dmnIncludeModel2, dmnIncludeModels.get(1));
+    }
+
+    @Test
+    public void testLoadNodesByNamespaces() {
+
+        final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
+        final String namespace1 = "://namespace1";
+        final String namespace2 = "://namespace2";
+        final String namespace3 = "://namespace3";
+        final Path path1 = mock(Path.class);
+        final Path path2 = mock(Path.class);
+        final Path path3 = mock(Path.class);
+        final DMNIncludedNode node1 = mock(DMNIncludedNode.class);
+        final DMNIncludedNode node2 = mock(DMNIncludedNode.class);
+        final DMNIncludedNode node3 = mock(DMNIncludedNode.class);
+        final DMNIncludedNode node4 = mock(DMNIncludedNode.class);
+        final DMNIncludedNode node5 = mock(DMNIncludedNode.class);
+        final DMNIncludedNode node6 = mock(DMNIncludedNode.class);
+        final DMNIncludedNode node7 = mock(DMNIncludedNode.class);
+        final List<DMNIncludedNode> path1Nodes = asList(node1, node2, node3, node4);
+        final List<DMNIncludedNode> path2Nodes = singletonList(node5);
+        final List<DMNIncludedNode> path3Nodes = asList(node6, node7);
+        final List<String> namespaces = asList(namespace1, namespace2, namespace3);
+        final List<Path> paths = asList(path1, path2, path3);
+
+        doReturn(paths).when(service).getPaths(workspaceProject);
+        when(includedNodesFilter.getNodesByNamespaces(path1, namespaces)).thenReturn(path1Nodes);
+        when(includedNodesFilter.getNodesByNamespaces(path2, namespaces)).thenReturn(path2Nodes);
+        when(includedNodesFilter.getNodesByNamespaces(path3, namespaces)).thenReturn(path3Nodes);
+
+        final List<DMNIncludedNode> actualNodes = service.loadNodesByNamespaces(workspaceProject, namespaces);
+        final List<DMNIncludedNode> expectedNodes = asList(node1, node2, node3, node4, node5, node6, node7);
+
+        assertEquals(expectedNodes, actualNodes);
     }
 }

@@ -25,9 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
+import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPageState;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsIndex;
-import org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdownItem;
 import org.mockito.Mock;
 
