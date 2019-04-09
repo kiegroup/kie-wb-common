@@ -71,7 +71,6 @@ import org.kie.workbench.common.screens.library.client.screens.project.close.Clo
 import org.kie.workbench.common.screens.library.client.util.breadcrumb.LibraryBreadcrumbs;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceSuccessEvent;
-import org.kie.workbench.common.workbench.client.docks.AuthoringWorkbenchDocks;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
@@ -79,8 +78,6 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.PlaceStatus;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
-import org.uberfire.client.workbench.events.PlaceMaximizedEvent;
-import org.uberfire.client.workbench.events.PlaceMinimizedEvent;
 import org.uberfire.ext.editor.commons.client.event.ConcurrentDeleteAcceptedEvent;
 import org.uberfire.ext.editor.commons.client.event.ConcurrentRenameAcceptedEvent;
 import org.uberfire.ext.preferences.client.central.screen.PreferencesRootScreen;
@@ -149,8 +146,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private WorkspaceProjectContext projectContext;
 
-    private AuthoringWorkbenchDocks docks;
-
     private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     private Event<NotificationEvent> notificationEvent;
@@ -181,12 +176,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     @Inject
     private Promises promises;
 
-    private boolean docksReady = false;
-
-    private boolean docksHidden = true;
-
-    private boolean editorMaximized = false;
-
     private boolean closingLibraryPlaces = false;
 
     public LibraryPlaces() {
@@ -201,7 +190,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final Caller<KieModuleService> moduleService,
                          final PlaceManager placeManager,
                          final WorkspaceProjectContext projectContext,
-                         final AuthoringWorkbenchDocks docks,
                          final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
                          final Event<NotificationEvent> notificationEvent,
                          final TranslationUtils translationUtils,
@@ -222,7 +210,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.moduleService = moduleService;
         this.placeManager = placeManager;
         this.projectContext = projectContext;
-        this.docks = docks;
         this.projectContextChangeEvent = projectContextChangeEvent;
         this.notificationEvent = notificationEvent;
         this.translationUtils = translationUtils;
@@ -282,9 +269,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             if (place instanceof PathPlaceRequest) {
                 libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
                                                  ((PathPlaceRequest) place).getPath());
-                showDocks();
             } else if (!place.getIdentifier().equals(ALERTS) && isLibraryPlace(place)) {
-                hideDocks();
                 if (projectContext.getActiveWorkspaceProject().isPresent()
                         && place.getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)) {
                     libraryBreadcrumbs.setupForProject(getActiveWorkspace());
@@ -296,41 +281,12 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         }
     }
 
-    public void showDocksWhenMinimizingEditor(@Observes PlaceMinimizedEvent placeMinimizedEvent) {
-        editorMaximized = false;
-        showDocks();
-    }
-
-    public void hideDocksWhenMaximizingEditor(@Observes PlaceMaximizedEvent placeMaximizedEvent) {
-        editorMaximized = true;
-        hideDocks();
-    }
-
     /*
      * Re-reroutes this event for project screen. If we tried to observe this directly from the project screen,
      * there are timing issues involved with subscribing to the event.
      */
     public void onAssetListUpdateEvent(@Observes @Remote final ProjectAssetListUpdated event) {
         assetListUpdatedEvent.fire(event);
-    }
-
-    public void hideDocks() {
-        if (!docksHidden) {
-            docks.hide();
-            docksHidden = true;
-        }
-    }
-
-    public void showDocks() {
-        if (docksHidden && !editorMaximized) {
-            if (!docksReady) {
-                docks.setup(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                            new DefaultPlaceRequest(PROJECT_EXPLORER));
-                docksReady = true;
-            }
-            docks.show();
-            docksHidden = false;
-        }
     }
 
     private boolean isLibraryPlace(final PlaceRequest place) {
@@ -484,7 +440,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     public void refresh(final Command callback) {
-        editorMaximized = false;
         breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
         translationUtils.refresh(callback::execute);
     }
@@ -547,8 +502,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                           libraryPerspective.getRootPanel());
 
         libraryBreadcrumbs.setupForSpace(activeOu);
-
-        hideDocks();
     }
 
     public void goToProject(final WorkspaceProject project) {

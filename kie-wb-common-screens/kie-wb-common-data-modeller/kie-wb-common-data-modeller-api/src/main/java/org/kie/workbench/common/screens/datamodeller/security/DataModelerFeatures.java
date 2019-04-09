@@ -20,4 +20,6 @@ public interface DataModelerFeatures {
 
     String EDIT_SOURCES = "dataobject.edit" ;
 
+    String PLANNER_AVAILABLE = "planner.available";
+
 }
