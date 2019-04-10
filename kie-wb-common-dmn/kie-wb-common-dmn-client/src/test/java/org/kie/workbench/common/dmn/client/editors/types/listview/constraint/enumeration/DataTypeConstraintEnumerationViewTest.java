@@ -21,14 +21,18 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.NodeList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItemView.DATA_POSITION;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DataTypeConstraintEnumerationViewTest {
@@ -40,13 +44,16 @@ public class DataTypeConstraintEnumerationViewTest {
     private HTMLAnchorElement addIcon;
 
     @Mock
+    private HTMLDivElement addButtonContainer;
+
+    @Mock
     private DataTypeConstraintEnumeration presenter;
 
     private DataTypeConstraintEnumerationView view;
 
     @Before
     public void setup() {
-        view = new DataTypeConstraintEnumerationView(items, addIcon);
+        view = spy(new DataTypeConstraintEnumerationView(items, addIcon, addButtonContainer));
         view.init(presenter);
     }
 
@@ -58,15 +65,31 @@ public class DataTypeConstraintEnumerationViewTest {
 
     @Test
     public void testClear() {
-        items.innerHTML = "something";
+
+        final Element element = mock(Element.class);
+        items.firstChild = element;
+
+        when(items.removeChild(element)).then(a -> {
+            items.firstChild = null;
+            return element;
+        });
+
         view.clear();
-        assertTrue(items.innerHTML.isEmpty());
+
+        verify(items).removeChild(element);
     }
 
     @Test
     public void testAddItem() {
         final Element enumerationItem = mock(Element.class);
+        final DragAndDropHelper helper = mock(DragAndDropHelper.class);
+        items.childNodes = mock(NodeList.class);
+        doReturn(helper).when(view).getDragAndDropHelper();
+
         view.addItem(enumerationItem);
+
         verify(items).appendChild(enumerationItem);
+        verify(helper).refreshItemsPosition();
+        verify(enumerationItem).setAttribute(DATA_POSITION, 0);
     }
 }

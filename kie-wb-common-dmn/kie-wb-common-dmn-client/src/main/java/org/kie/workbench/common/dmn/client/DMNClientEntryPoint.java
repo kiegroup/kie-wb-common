@@ -15,11 +15,18 @@
  */
 package org.kie.workbench.common.dmn.client;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.uberfire.client.views.pfly.sys.PatternFlyBootstrapper;
 
 @EntryPoint
 @Bundle("resources/i18n/DMNClientConstants.properties")
 public class DMNClientEntryPoint {
 
+    @PostConstruct
+    public void init() {
+        PatternFlyBootstrapper.ensureMomentIsAvailable();
+    }
 }

@@ -29,6 +29,8 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -43,6 +45,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
+import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.Session;
@@ -95,6 +98,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final DecisionNavigatorDock decisionNavigatorDock;
     private final LayoutHelper layoutHelper;
     private final DataTypesPage dataTypesPage;
+    private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
+    private final IncludedModelsPage includedModelsPage;
+    private final IncludedModelsPageStateProviderImpl importsPageProvider;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -120,7 +126,10 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final DecisionNavigatorDock decisionNavigatorDock,
                             final LayoutHelper layoutHelper,
-                            final DataTypesPage dataTypesPage) {
+                            final DataTypesPage dataTypesPage,
+                            final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
+                            final IncludedModelsPage includedModelsPage,
+                            final IncludedModelsPageStateProviderImpl importsPageProvider) {
         super(view,
               documentationView,
               placeManager,
@@ -145,6 +154,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.decisionNavigatorDock = decisionNavigatorDock;
         this.layoutHelper = layoutHelper;
         this.dataTypesPage = dataTypesPage;
+        this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
+        this.includedModelsPage = includedModelsPage;
+        this.importsPageProvider = importsPageProvider;
     }
 
     @OnStartup
@@ -159,6 +171,20 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         superInitialiseKieEditorForSession(diagram);
 
         kieView.getMultiPage().addPage(dataTypesPage);
+        kieView.getMultiPage().addPage(includedModelsPage);
+    }
+
+    @Override
+    public void showDocks() {
+        super.showDocks();
+        decisionNavigatorDock.open();
+    }
+
+    @Override
+    public void hideDocks() {
+        super.hideDocks();
+        decisionNavigatorDock.close();
+        decisionNavigatorDock.resetContent();
     }
 
     public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
@@ -171,7 +197,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     @Override
     public void open(final ProjectDiagram diagram) {
-        this.layoutHelper.applyLayout(diagram);
+        this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         super.open(diagram);
     }
 
@@ -181,11 +207,11 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     @OnClose
+    @Override
     public void onClose() {
-        superOnClose();
-        decisionNavigatorDock.close();
-        decisionNavigatorDock.resetContent();
+        superDoClose();
         dataTypesPage.disableShortcuts();
+        super.onClose();
     }
 
     @Override
@@ -196,8 +222,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
             expressionEditor.setToolbarStateHandler(new ProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.setupCanvasHandler(c);
-            decisionNavigatorDock.open();
             dataTypesPage.reload();
+            includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
         });
     }
 
@@ -285,7 +311,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         super.doFocus();
     }
 
-    void superOnClose() {
+    void superDoClose() {
         super.doClose();
     }
 

@@ -24,10 +24,11 @@ import com.ait.lienzo.client.core.mediator.Mediators;
 import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import org.jboss.errai.common.client.dom.Anchor;
-import org.jboss.errai.common.client.dom.Heading;
+import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
-import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
@@ -65,6 +65,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidgetKeyboardHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperation;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationEditCell;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationInvokeContextMenuForSelectedCell;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveDown;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveLeft;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveRight;
@@ -99,10 +100,13 @@ public class ExpressionEditorViewImplTest {
     private static final String LITERAL_EXPRESSION_DEFINITION_NAME = "Literal Expression";
 
     @Mock
-    private Anchor returnToDRG;
+    private Anchor returnToLink;
 
     @Mock
-    private Heading expressionType;
+    private Span expressionName;
+
+    @Mock
+    private Span expressionType;
 
     @Mock
     private DMNGridPanel gridPanel;
@@ -216,7 +220,8 @@ public class ExpressionEditorViewImplTest {
                                                                        anyInt());
         doReturn(new BaseGridData()).when(editor).getModel();
 
-        this.view = spy(new ExpressionEditorViewImpl(returnToDRG,
+        this.view = spy(new ExpressionEditorViewImpl(returnToLink,
+                                                     expressionName,
                                                      expressionType,
                                                      gridPanelContainer,
                                                      translationService,
@@ -282,7 +287,7 @@ public class ExpressionEditorViewImplTest {
         verify(gridPanelContainer).clear();
         verify(gridPanelContainer).setWidget(gridPanel);
 
-        verify(view, times(6)).addKeyboardOperation(any(BaseGridWidgetKeyboardHandler.class),
+        verify(view, times(7)).addKeyboardOperation(any(BaseGridWidgetKeyboardHandler.class),
                                                     keyboardOperationArgumentCaptor.capture());
         final List<KeyboardOperation> operations = keyboardOperationArgumentCaptor.getAllValues();
         assertThat(operations.get(0)).isInstanceOf(KeyboardOperationEditCell.class);
@@ -291,6 +296,7 @@ public class ExpressionEditorViewImplTest {
         assertThat(operations.get(3)).isInstanceOf(KeyboardOperationMoveRight.class);
         assertThat(operations.get(4)).isInstanceOf(KeyboardOperationMoveUp.class);
         assertThat(operations.get(5)).isInstanceOf(KeyboardOperationMoveDown.class);
+        assertThat(operations.get(6)).isInstanceOf(KeyboardOperationInvokeContextMenuForSelectedCell.class);
     }
 
     @Test
@@ -325,7 +331,16 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testSetExpressionDoesUpdateReturnToDRGTextWhenHasNameIsNotEmpty() {
+    public void testSetReturnToLinkText() {
+        final String RETURN_LINK = "return-link";
+
+        view.setReturnToLinkText(RETURN_LINK);
+
+        verify(returnToLink).setTextContent(eq(RETURN_LINK));
+    }
+
+    @Test
+    public void testSetExpressionDoesUpdateExpressionNameTextWhenHasNameIsNotEmpty() {
         final String NAME = "NAME";
         final Name name = new Name(NAME);
         final HasName hasNameMock = mock(HasName.class);
@@ -336,18 +351,18 @@ public class ExpressionEditorViewImplTest {
                            hasExpression,
                            hasName);
 
-        verify(returnToDRG).setTextContent(eq(NAME));
+        verify(expressionName).setTextContent(eq(NAME));
     }
 
     @Test
-    public void testSetExpressionDoesNotUpdateReturnToDRGTextWhenHasNameIsEmpty() {
+    public void testSetExpressionDoesNotUpdateExpressionNameTextWhenHasNameIsEmpty() {
         final Optional<HasName> hasName = Optional.empty();
 
         view.setExpression(NODE_UUID,
                            hasExpression,
                            hasName);
 
-        verify(returnToDRG, never()).setTextContent(any(String.class));
+        verify(expressionName, never()).setTextContent(any(String.class));
     }
 
     @Test
@@ -371,7 +386,14 @@ public class ExpressionEditorViewImplTest {
                            hasExpression,
                            hasName);
 
-        verify(expressionType).setTextContent(eq("<" + DMNEditorConstants.ExpressionEditor_UndefinedExpressionType + ">"));
+        verify(expressionType).setTextContent(eq("<" + UNDEFINED_EXPRESSION_DEFINITION_NAME + ">"));
+    }
+
+    @Test
+    public void testOnClickReturnToLink() {
+        view.onClickReturnToLink(mock(ClickEvent.class));
+
+        verify(presenter).exit();
     }
 
     @Test

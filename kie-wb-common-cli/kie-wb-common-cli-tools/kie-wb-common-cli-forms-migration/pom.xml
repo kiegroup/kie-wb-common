@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-cli-tools</artifactId>
     <groupId>org.kie.workbench</groupId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -93,6 +93,10 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.screens</groupId>

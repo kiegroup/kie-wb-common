@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.kie.workbench</groupId>
     <artifactId>kie-wb-common-ala</artifactId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <artifactId>kie-wb-common-ala-services-api</artifactId>
   <packaging>jar</packaging>
@@ -46,7 +46,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.ws.rs</groupId>
-      <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+      <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

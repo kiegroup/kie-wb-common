@@ -27,8 +27,8 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.ConstraintPlaceholderHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.uberfire.client.mvp.UberElemental;
+import org.uberfire.mvp.Command;
 
-import static java.util.Collections.swap;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 @Dependent
@@ -59,12 +59,16 @@ public class DataTypeConstraintEnumerationItem {
     }
 
     public void setValue(final String newValue) {
-        value = isEmpty(newValue) ? NULL : newValue;
+        setNonNullValue(newValue);
         view.setValue(getValue());
     }
 
     public String getValue() {
         return value;
+    }
+
+    public int getOrder() {
+        return view.getOrder();
     }
 
     public Element getElement() {
@@ -79,17 +83,21 @@ public class DataTypeConstraintEnumerationItem {
         view.focusValueInput();
         view.enableHighlight();
         view.showSaveButton();
+        view.showClearButton();
+        view.hideDeleteButton();
     }
 
     public void disableEditMode() {
         view.showValueText();
         view.disableHighlight();
         view.hideSaveButton();
+        view.hideClearButton();
+        view.showDeleteButton();
     }
 
-    public void save(final String value) {
-        setValue(value);
-        refreshEnumerationList();
+    public void save(final String newValue) {
+        setNonNullValue(newValue);
+        refreshEnumerationListAndScrollToThisItem();
     }
 
     public void remove() {
@@ -102,50 +110,20 @@ public class DataTypeConstraintEnumerationItem {
         disableEditMode();
     }
 
-    void moveUp() {
-        moveEnumerationItem(-1);
-    }
-
-    void moveDown() {
-        moveEnumerationItem(1);
-    }
-
-    void moveEnumerationItem(final int reference) {
-
-        final int oldIndex = getCurrentIndex();
-        final int newIndex = getNewIndex(reference);
-
-        swap(getEnumerationItems(), oldIndex, newIndex);
-        refreshEnumerationList();
-    }
-
-    private int getNewIndex(final int reference) {
-
-        final int oldIndex = getCurrentIndex();
-        final int newIndex = oldIndex + reference;
-        final int modifier;
-
-        if (newIndex < 0) {
-            modifier = getEnumerationItems().size();
-        } else if (newIndex == getEnumerationItems().size()) {
-            modifier = -getEnumerationItems().size();
-        } else {
-            modifier = 0;
-        }
-
-        return newIndex + modifier;
-    }
-
-    private int getCurrentIndex() {
-        return getEnumerationItems().indexOf(this);
-    }
-
-    List<DataTypeConstraintEnumerationItem> getEnumerationItems() {
+    private List<DataTypeConstraintEnumerationItem> getEnumerationItems() {
         return dataTypeConstraintEnumeration.getEnumerationItems();
     }
 
     private void refreshEnumerationList() {
         dataTypeConstraintEnumeration.refreshView();
+    }
+
+    private void refreshEnumerationListAndScrollToThisItem() {
+        dataTypeConstraintEnumeration.refreshView(getScrollToThisItemCallback());
+    }
+
+    Command getScrollToThisItemCallback() {
+        return () -> dataTypeConstraintEnumeration.scrollToPosition(getOrder());
     }
 
     void setOldValue(final String value) {
@@ -161,7 +139,16 @@ public class DataTypeConstraintEnumerationItem {
     }
 
     public void setConstraintValueType(final String constraintValueType) {
+        view.setComponentSelector(constraintValueType);
         view.setPlaceholder(placeholderHelper.getPlaceholderSample(constraintValueType));
+    }
+
+    private void setNonNullValue(final String newValue) {
+        value = isEmpty(newValue) ? NULL : newValue;
+    }
+
+    public void setOrder(final int order) {
+        view.setOrder(order);
     }
 
     public interface View extends UberElemental<DataTypeConstraintEnumerationItem>,
@@ -184,5 +171,19 @@ public class DataTypeConstraintEnumerationItem {
         void setValue(final String value);
 
         void setPlaceholder(final String placeholder);
+
+        void setComponentSelector(final String type);
+
+        void showClearButton();
+
+        void hideDeleteButton();
+
+        void hideClearButton();
+
+        void showDeleteButton();
+
+        int getOrder();
+
+        void setOrder(final int order);
     }
 }

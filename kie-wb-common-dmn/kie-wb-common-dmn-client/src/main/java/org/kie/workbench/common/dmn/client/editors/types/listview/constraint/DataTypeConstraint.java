@@ -44,7 +44,6 @@ public class DataTypeConstraint {
     private String constraintValue = NONE;
 
     private ConstraintType constraintType = ConstraintType.NONE;
-    ;
 
     private DataTypeListItem listItem;
 
@@ -67,6 +66,7 @@ public class DataTypeConstraint {
 
         this.listItem = listItem;
         this.constraintValue = listItem.getDataType().getConstraint();
+        this.constraintType = listItem.getDataType().getConstraintType();
 
         refreshView();
     }

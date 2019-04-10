@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.project.client.handlers.util.CaseHelper;
 import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramResourceType;
 import org.kie.workbench.common.stunner.bpmn.service.BPMNDiagramService;
 import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
@@ -85,15 +86,18 @@ public class CaseDefinitionNewResourceHandlerTest {
     @Mock
     private Callback<Boolean, Void> callback;
 
+    private CaseHelper caseHelper;
+
     @Before
     public void setUp() throws Exception {
         when(translationService.getDefinitionDescription(CaseDefinitionNewResourceHandler.CASE_DEFINITION)).thenReturn(DESCRIPTION);
         when(projectContext.getActiveWorkspaceProject()).thenReturn(Optional.of(workspaceProject));
         when(workspaceProject.getRootPath()).thenReturn(rootPath);
 
+        caseHelper = new CaseHelper(new CallerMock<>(bpmnDiagramService), projectContext);
+
         tested = new CaseDefinitionNewResourceHandler(definitionManager, projectDiagramService, indicatorView,
-                                                      projectDiagramResourceType, translationService,
-                                                      new CallerMock<>(bpmnDiagramService), projectContext);
+                                                      projectDiagramResourceType, translationService, caseHelper);
     }
 
     @Test

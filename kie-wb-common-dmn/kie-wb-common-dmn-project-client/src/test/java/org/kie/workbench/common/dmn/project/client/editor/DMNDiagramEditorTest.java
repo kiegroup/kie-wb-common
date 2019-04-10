@@ -24,6 +24,8 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -34,11 +36,13 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
+import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectEditorMenuSessionItems;
+import org.kie.workbench.common.widgets.client.docks.DefaultEditorDock;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -96,7 +100,16 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private LayoutHelper layoutHelper;
 
     @Mock
+    private OpenDiagramLayoutExecutor layoutExecutor;
+
+    @Mock
     private DataTypesPage dataTypesPage;
+
+    @Mock
+    private IncludedModelsPage includedModelsPage;
+
+    @Mock
+    private IncludedModelsPageStateProviderImpl importsPageProvider;
 
     @Mock
     private MultiPageEditor multiPage;
@@ -105,6 +118,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Mock
     private DocumentationView documentationView;
+
+    @Mock
+    private DefaultEditorDock docks;
 
     @Before
     public void before() {
@@ -152,8 +168,12 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  sessionCommandManager,
                                                  decisionNavigatorDock,
                                                  layoutHelper,
-                                                 dataTypesPage) {
+                                                 dataTypesPage,
+                                                 layoutExecutor,
+                                                 includedModelsPage,
+                                                 importsPageProvider) {
             {
+                docks = DMNDiagramEditorTest.this.docks;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = DMNDiagramEditorTest.this.workbenchContext;
                 projectController = DMNDiagramEditorTest.this.projectController;
@@ -186,14 +206,13 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Test
     public void testOnClose() {
-        doNothing().when(diagramEditor).superOnClose();
+        doNothing().when(diagramEditor).superDoClose();
 
         diagramEditor.onClose();
 
-        verify(diagramEditor).superOnClose();
-        verify(decisionNavigatorDock).close();
-        verify(decisionNavigatorDock).resetContent();
+        verify(diagramEditor).superDoClose();
         verify(dataTypesPage).disableShortcuts();
+        verify(kieView).clear();
     }
 
     @Test
@@ -203,22 +222,25 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         diagramEditor.initialiseKieEditorForSession(diagram);
 
         verify(multiPage).addPage(dataTypesPage);
+        verify(multiPage).addPage(includedModelsPage);
     }
 
     @Test
     public void testOnDiagramLoadWhenCanvasHandlerIsNotNull() {
         when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
         when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(importsPageProvider.withDiagram(diagram)).thenReturn(importsPageProvider);
 
         open();
 
         final InOrder inOrder = inOrder(decisionNavigatorDock);
         inOrder.verify(decisionNavigatorDock).setupCanvasHandler(eq(canvasHandler));
-        inOrder.verify(decisionNavigatorDock).open();
 
         verify(expressionEditor).setToolbarStateHandler(any(ProjectToolbarStateHandler.class));
         verify(dataTypesPage).reload();
-        verify(layoutHelper).applyLayout(diagram);
+        verify(layoutHelper).applyLayout(diagram, layoutExecutor);
+        verify(includedModelsPage).setup(importsPageProvider);
     }
 
     @Test
@@ -230,6 +252,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(decisionNavigatorDock, never()).setupCanvasHandler(any());
         verify(decisionNavigatorDock, never()).open();
         verify(dataTypesPage, never()).reload();
+        verify(includedModelsPage, never()).setup(any());
     }
 
     @Test
@@ -297,5 +320,22 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         diagramEditor.getOnDataTypeEditModeToggleCallback(editModeToggleEvent).onInvoke();
 
         verify(diagramEditor).enableMenuItem(MenuItems.SAVE);
+    }
+
+    @Test
+    public void testShowDocks() {
+        diagramEditor.showDocks();
+
+        verify(decisionNavigatorDock).open();
+        verify(docks).show();
+    }
+
+    @Test
+    public void testHideDocks() {
+        diagramEditor.hideDocks();
+
+        verify(decisionNavigatorDock).close();
+        verify(decisionNavigatorDock).resetContent();
+        verify(docks).hide();
     }
 }

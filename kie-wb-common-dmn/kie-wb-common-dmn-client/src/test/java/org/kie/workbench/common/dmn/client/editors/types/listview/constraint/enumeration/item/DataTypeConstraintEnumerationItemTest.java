@@ -28,12 +28,10 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.ConstraintPlaceholderHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.mockito.Mock;
+import org.uberfire.mvp.Command;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.item.DataTypeConstraintEnumerationItem.NULL;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -114,6 +112,8 @@ public class DataTypeConstraintEnumerationItemTest {
         verify(view).focusValueInput();
         verify(view).enableHighlight();
         verify(view).showSaveButton();
+        verify(view).showClearButton();
+        verify(view).hideDeleteButton();
     }
 
     @Test
@@ -136,91 +136,53 @@ public class DataTypeConstraintEnumerationItemTest {
         verify(view).showValueText();
         verify(view).disableHighlight();
         verify(view).hideSaveButton();
+        verify(view).hideClearButton();
+        verify(view).showDeleteButton();
     }
 
     @Test
     public void testSave() {
 
         final String value = "123";
+        final Command command = mock(Command.class);
+
+        doReturn(command).when(enumerationItem).getScrollToThisItemCallback();
 
         enumerationItem.save(value);
 
-        verify(enumerationItem).setValue(value);
-        verify(dataTypeConstraintEnumeration).refreshView();
+        final String actual = enumerationItem.getValue();
+        final String expected = "123";
+
+        assertEquals(expected, actual);
+        verify(dataTypeConstraintEnumeration).refreshView(command);
     }
 
     @Test
-    public void testMoveUp() {
-        doNothing().when(enumerationItem).moveEnumerationItem(anyInt());
-        enumerationItem.moveUp();
-        verify(enumerationItem).moveEnumerationItem(-1);
+    public void testSaveWhenTheValueIsBlank() {
+
+        final String value = "";
+        final Command command = mock(Command.class);
+
+        doReturn(command).when(enumerationItem).getScrollToThisItemCallback();
+
+        enumerationItem.save(value);
+
+        final String actual = enumerationItem.getValue();
+        final String expected = NULL;
+
+        assertEquals(expected, actual);
+        verify(dataTypeConstraintEnumeration).refreshView(command);
     }
 
     @Test
-    public void testMoveDown() {
-        doNothing().when(enumerationItem).moveEnumerationItem(anyInt());
-        enumerationItem.moveDown();
-        verify(enumerationItem).moveEnumerationItem(1);
-    }
+    public void testGetScrollToThisItemCallback() {
 
-    @Test
-    public void testMoveEnumerationItemWhenReferenceValueIsOneNegative() {
+        final int order = 42;
+        when(enumerationItem.getOrder()).thenReturn(order);
 
-        final DataTypeConstraintEnumerationItem item1 = mock(DataTypeConstraintEnumerationItem.class);
-        final DataTypeConstraintEnumerationItem item2 = mock(DataTypeConstraintEnumerationItem.class);
-        final List<DataTypeConstraintEnumerationItem> enumerationItems = asList(item1, enumerationItem, item2);
+        enumerationItem.getScrollToThisItemCallback().execute();
 
-        when(dataTypeConstraintEnumeration.getEnumerationItems()).thenReturn(enumerationItems);
-
-        enumerationItem.moveEnumerationItem(-1);
-
-        verify(dataTypeConstraintEnumeration).refreshView();
-        assertEquals(asList(enumerationItem, item1, item2), enumerationItems);
-    }
-
-    @Test
-    public void testMoveEnumerationItemWhenReferenceValueIsOnePositive() {
-
-        final DataTypeConstraintEnumerationItem item1 = mock(DataTypeConstraintEnumerationItem.class);
-        final DataTypeConstraintEnumerationItem item2 = mock(DataTypeConstraintEnumerationItem.class);
-        final List<DataTypeConstraintEnumerationItem> enumerationItems = asList(item1, enumerationItem, item2);
-
-        when(dataTypeConstraintEnumeration.getEnumerationItems()).thenReturn(enumerationItems);
-
-        enumerationItem.moveEnumerationItem(1);
-
-        verify(dataTypeConstraintEnumeration).refreshView();
-        assertEquals(asList(item1, item2, enumerationItem), enumerationItems);
-    }
-
-    @Test
-    public void testMoveEnumerationItemWhenReferenceValueIsOnePositiveAndTheElementIsInTheEndOfTheList() {
-
-        final DataTypeConstraintEnumerationItem item1 = mock(DataTypeConstraintEnumerationItem.class);
-        final DataTypeConstraintEnumerationItem item2 = mock(DataTypeConstraintEnumerationItem.class);
-        final List<DataTypeConstraintEnumerationItem> enumerationItems = asList(item1, item2, enumerationItem);
-
-        when(dataTypeConstraintEnumeration.getEnumerationItems()).thenReturn(enumerationItems);
-
-        enumerationItem.moveEnumerationItem(1);
-
-        verify(dataTypeConstraintEnumeration).refreshView();
-        assertEquals(asList(enumerationItem, item2, item1), enumerationItems);
-    }
-
-    @Test
-    public void testMoveEnumerationItemWhenReferenceValueIsOneNegativeAndTheElementIsInTheBeginningOfTheList() {
-
-        final DataTypeConstraintEnumerationItem item1 = mock(DataTypeConstraintEnumerationItem.class);
-        final DataTypeConstraintEnumerationItem item2 = mock(DataTypeConstraintEnumerationItem.class);
-        final List<DataTypeConstraintEnumerationItem> enumerationItems = asList(enumerationItem, item1, item2);
-
-        when(dataTypeConstraintEnumeration.getEnumerationItems()).thenReturn(enumerationItems);
-
-        enumerationItem.moveEnumerationItem(-1);
-
-        verify(dataTypeConstraintEnumeration).refreshView();
-        assertEquals(asList(item2, item1, enumerationItem), enumerationItems);
+        verify(dataTypeConstraintEnumeration).scrollToPosition(order);
     }
 
     @Test
@@ -247,5 +209,18 @@ public class DataTypeConstraintEnumerationItemTest {
         enumerationItem.setConstraintValueType(type);
 
         verify(view).setPlaceholder(placeholder);
+        verify(view).setComponentSelector(type);
+    }
+
+    @Test
+    public void testGetOrder() {
+
+        final int expected = 1;
+
+        when(view.getOrder()).thenReturn(1);
+
+        final int actual = enumerationItem.getOrder();
+
+        assertEquals(expected, actual);
     }
 }

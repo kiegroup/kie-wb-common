@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-forms</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -164,6 +164,16 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-backend-services</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-data-modeller-integration-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-data-modeller-integration-backend</artifactId>
     </dependency>
 
     <dependency>

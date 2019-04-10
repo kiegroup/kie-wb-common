@@ -20,7 +20,10 @@ import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
-    public static final String ExpressionEditor_ReturnToDRG = "ExpressionEditor.ReturnToDRG";
+    public static final String ExpressionEditor_ReturnToLink = "ExpressionEditor.ReturnToLink";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ExpressionEditor_ExpressionTypeText = "ExpressionEditor.ExpressionTypeText";
 
     @TranslationKey(defaultValue = "")
     public static final String ExpressionEditor_UndefinedExpressionType = "ExpressionEditor.UndefinedExpressionType";
@@ -224,22 +227,22 @@ public class DMNEditorConstants {
     public static final String NameAndDataTypePopover_DataTypeLabel = "NameAndDataTypePopover.DataTypeLabel";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsBlankErrorMessage_StrongMessage = "NameIsBlankErrorMessage.StrongMessage";
+    public static final String DataTypeNameIsBlankErrorMessage_StrongMessage = "DataTypeNameIsBlankErrorMessage.StrongMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsBlankErrorMessage_RegularMessage = "NameIsBlankErrorMessage.RegularMessage";
+    public static final String DataTypeNameIsBlankErrorMessage_RegularMessage = "DataTypeNameIsBlankErrorMessage.RegularMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsInvalidErrorMessage_StrongMessage = "NameIsInvalidErrorMessage.StrongMessage";
+    public static final String DataTypeNameIsInvalidErrorMessage_StrongMessage = "DataTypeNameIsInvalidErrorMessage.StrongMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsInvalidErrorMessage_RegularMessage = "NameIsInvalidErrorMessage.RegularMessage";
+    public static final String DataTypeNameIsInvalidErrorMessage_RegularMessage = "DataTypeNameIsInvalidErrorMessage.RegularMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsNotUniqueErrorMessage_StrongMessage = "NameIsNotUniqueErrorMessage.StrongMessage";
+    public static final String DataTypeNameIsNotUniqueErrorMessage_StrongMessage = "DataTypeNameIsNotUniqueErrorMessage.StrongMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsNotUniqueErrorMessage_RegularMessage = "NameIsNotUniqueErrorMessage.RegularMessage";
+    public static final String DataTypeNameIsNotUniqueErrorMessage_RegularMessage = "DataTypeNameIsNotUniqueErrorMessage.RegularMessage";
 
     @TranslationKey(defaultValue = "")
     public static final String DataTypeWithFieldsWarningMessage_StrongMessage = "DataTypeWithFieldsWarningMessage.StrongMessage";
@@ -254,10 +257,10 @@ public class DMNEditorConstants {
     public static final String ReferencedDataTypeWarningMessage_RegularMessage = "ReferencedDataTypeWarningMessage.RegularMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsDefaultTypeMessage_StrongMessage = "NameIsDefaultTypeMessage.StrongMessage";
+    public static final String DataTypeNameIsDefaultTypeMessage_StrongMessage = "DataTypeNameIsDefaultTypeMessage.StrongMessage";
 
     @TranslationKey(defaultValue = "")
-    public static final String NameIsDefaultTypeMessage_RegularMessage = "NameIsDefaultTypeMessage.RegularMessage";
+    public static final String DataTypeNameIsDefaultTypeMessage_RegularMessage = "DataTypeNameIsDefaultTypeMessage.RegularMessage";
 
     @TranslationKey(defaultValue = "")
     public static final String DataTypeConstraintView_ConstraintsTooltip = "DataTypeConstraintView.ConstraintsTooltip";
@@ -275,7 +278,10 @@ public class DMNEditorConstants {
     public static final String SmallSwitchComponentView_No = "SmallSwitchComponentView.No";
 
     @TranslationKey(defaultValue = "")
-    public static final String DataTypesPage_Label = "DataTypesPage.Label";
+    public static final String DataTypesPage_Title = "DataTypesPage.Title";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelsPage_Title = "IncludedModelsPage.Title";
 
     @TranslationKey(defaultValue = "")
     public static final String DataTypeSearchBarView_Search = "DataTypeSearchBarView.Search";
@@ -291,4 +297,40 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String ConstraintPlaceholderHelper_SampleDefault = "ConstraintPlaceholderHelper.SampleDefault";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelNameIsNotUniqueErrorMessage_StrongMessage = "IncludedModelNameIsNotUniqueErrorMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelNameIsNotUniqueErrorMessage_RegularMessage = "IncludedModelNameIsNotUniqueErrorMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelNameIsBlankErrorMessage_StrongMessage = "IncludedModelNameIsBlankErrorMessage.StrongMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String IncludedModelNameIsBlankErrorMessage_RegularMessage = "IncludedModelNameIsBlankErrorMessage.RegularMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Days = "DayTimeValueConverter.Days";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Hours = "DayTimeValueConverter.Hours";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Minutes = "DayTimeValueConverter.Minutes";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Seconds = "DayTimeValueConverter.Seconds";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Day = "DayTimeValueConverter.Day";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Hour = "DayTimeValueConverter.Hour";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Minute = "DayTimeValueConverter.Minute";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DayTimeValueConverter_Second = "DayTimeValueConverter.Second";
 }

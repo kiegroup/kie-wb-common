@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.en
 
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,12 +27,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.dmn.client.editors.types.listview.common.MenuInitializer;
+import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueComponentSelector;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueSelector;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.show;
@@ -48,29 +49,26 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
 
     static final String NONE_CSS_CLASS = "none";
 
+    public static final String DATA_POSITION = "data-position";
+
+    private final TypedValueComponentSelector componentSelector;
+
+    private TypedValueSelector typedValueSelector;
+
     @DataField("value-text")
     private final HTMLElement valueText;
 
-    @DataField("value-input")
-    private final HTMLInputElement valueInput;
+    @DataField("value-input-container")
+    private final HTMLDivElement valueInputContainer;
 
     @DataField("save-anchor")
     private final HTMLAnchorElement saveAnchor;
 
-    @DataField("edit-anchor")
-    private final HTMLAnchorElement editAnchor;
-
     @DataField("remove-anchor")
     private final HTMLAnchorElement removeAnchor;
 
-    @DataField("move-up-anchor")
-    private final HTMLAnchorElement moveUpAnchor;
-
-    @DataField("move-down-anchor")
-    private final HTMLAnchorElement moveDownAnchor;
-
-    @DataField("kebab-menu")
-    private final HTMLDivElement kebabMenu;
+    @DataField("clear-field-anchor")
+    private final HTMLAnchorElement clearFieldAnchor;
 
     private final TranslationService translationService;
 
@@ -78,23 +76,19 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
 
     @Inject
     public DataTypeConstraintEnumerationItemView(final @Named("span") HTMLElement valueText,
-                                                 final HTMLInputElement valueInput,
+                                                 final HTMLDivElement valueInput,
                                                  final HTMLAnchorElement saveAnchor,
-                                                 final HTMLAnchorElement editAnchor,
                                                  final HTMLAnchorElement removeAnchor,
-                                                 final HTMLAnchorElement moveUpAnchor,
-                                                 final HTMLAnchorElement moveDownAnchor,
-                                                 final HTMLDivElement kebabMenu,
-                                                 final TranslationService translationService) {
+                                                 final HTMLAnchorElement clearFieldAnchor,
+                                                 final TranslationService translationService,
+                                                 final TypedValueComponentSelector valueComponentSelector) {
         this.valueText = valueText;
-        this.valueInput = valueInput;
+        this.valueInputContainer = valueInput;
         this.saveAnchor = saveAnchor;
-        this.editAnchor = editAnchor;
         this.removeAnchor = removeAnchor;
-        this.moveUpAnchor = moveUpAnchor;
-        this.moveDownAnchor = moveDownAnchor;
-        this.kebabMenu = kebabMenu;
+        this.clearFieldAnchor = clearFieldAnchor;
         this.translationService = translationService;
+        this.componentSelector = valueComponentSelector;
     }
 
     @Override
@@ -102,26 +96,21 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
         this.presenter = presenter;
     }
 
-    @PostConstruct
-    public void setupKebabElement() {
-        makeMenuInitializer(kebabMenu, ".dropdown").init();
-    }
-
     @Override
     public void showValueText() {
         show(valueText);
-        hide(valueInput);
+        hide(valueInputContainer);
     }
 
     @Override
     public void showValueInput() {
-        show(valueInput);
+        show(valueInputContainer);
         hide(valueText);
     }
 
     @Override
     public void focusValueInput() {
-        valueInput.select();
+        typedValueSelector.select();
     }
 
     @Override
@@ -151,12 +140,7 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
 
     @EventHandler("save-anchor")
     public void onSaveAnchorClick(final ClickEvent e) {
-        presenter.save(valueInput.value);
-    }
-
-    @EventHandler("edit-anchor")
-    public void onEditAnchorClick(final ClickEvent e) {
-        presenter.enableEditMode();
+        presenter.save(typedValueSelector.getValue());
     }
 
     @EventHandler("remove-anchor")
@@ -164,22 +148,19 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
         presenter.remove();
     }
 
-    @EventHandler("move-up-anchor")
-    public void onMoveUpAnchorClick(final ClickEvent e) {
-        presenter.moveUp();
+    @EventHandler("clear-field-anchor")
+    public void onClearFieldAnchorClick(final ClickEvent e) {
+        presenter.setValue("");
+        typedValueSelector.select();
     }
 
-    @EventHandler("move-down-anchor")
-    public void onMoveDownAnchorClick(final ClickEvent e) {
-        presenter.moveDown();
-    }
-
-    @EventHandler("value-input")
     public void onValueInputBlur(final BlurEvent blurEvent) {
 
-        final boolean isNotSaveButtonClick = !Objects.equals(getEventTarget(blurEvent), getSaveAnchorTarget());
+        final Object target = getEventTarget(blurEvent);
+        final boolean isNotSaveButtonClick = !Objects.equals(target, getSaveAnchorTarget());
+        final boolean isNotClearButtonClick = !Objects.equals(target, getClearAnchorTarget());
 
-        if (isNotSaveButtonClick) {
+        if (isNotSaveButtonClick && isNotClearButtonClick) {
             presenter.discardEditMode();
         }
     }
@@ -192,7 +173,51 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
 
     @Override
     public void setPlaceholder(final String placeholder) {
-        valueInput.setAttribute("placeholder", placeholder);
+        typedValueSelector.setPlaceholder(placeholder);
+    }
+
+    @Override
+    public void setComponentSelector(final String type) {
+        typedValueSelector = this.componentSelector.makeSelectorForType(type);
+        RemoveHelper.removeChildren(valueInputContainer);
+        valueInputContainer.appendChild(typedValueSelector.getElement());
+        typedValueSelector.setOnInputBlurCallback(this::onValueInputBlur);
+    }
+
+    @Override
+    public void showClearButton() {
+        show(clearFieldAnchor);
+    }
+
+    @Override
+    public void hideDeleteButton() {
+        hide(removeAnchor);
+    }
+
+    @Override
+    public void hideClearButton() {
+        hide(clearFieldAnchor);
+    }
+
+    @Override
+    public void showDeleteButton() {
+        show(removeAnchor);
+    }
+
+    @Override
+    public int getOrder() {
+
+        final String dataPosition = getElement().getAttribute(DATA_POSITION);
+        if (StringUtils.isEmpty(dataPosition)) {
+            return 0;
+        } else {
+            return Integer.valueOf(dataPosition);
+        }
+    }
+
+    @Override
+    public void setOrder(final int order) {
+        getElement().setAttribute(DATA_POSITION, order);
     }
 
     private void setText(final String value) {
@@ -201,15 +226,15 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
             valueText.textContent = none();
         } else {
             valueText.classList.remove(NONE_CSS_CLASS);
-            valueText.textContent = value;
+            valueText.textContent = typedValueSelector.toDisplay(value);
         }
     }
 
     private void setInput(final String value) {
         if (isNULL(value)) {
-            valueInput.value = "";
+            typedValueSelector.setValue("");
         } else {
-            valueInput.value = value;
+            typedValueSelector.setValue(value);
         }
     }
 
@@ -229,8 +254,7 @@ public class DataTypeConstraintEnumerationItemView implements DataTypeConstraint
         return saveAnchor;
     }
 
-    MenuInitializer makeMenuInitializer(final HTMLDivElement kebabMenu,
-                                        final String dropDownClass) {
-        return new MenuInitializer(kebabMenu, dropDownClass);
+    Object getClearAnchorTarget() {
+        return clearFieldAnchor;
     }
 }

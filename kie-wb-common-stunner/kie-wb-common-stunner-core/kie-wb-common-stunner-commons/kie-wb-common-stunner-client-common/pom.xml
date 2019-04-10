@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-commons</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -77,6 +77,11 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client-views-patternfly</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-client-api</artifactId>
     </dependency>
 
     <dependency>
@@ -198,6 +203,12 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.xml.bind</groupId>
+      <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

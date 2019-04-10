@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -37,6 +39,7 @@ import org.kie.workbench.common.stunner.client.widgets.views.session.ScreenPanel
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
+import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -97,10 +100,19 @@ public class SessionDiagramEditorScreenTest {
     private LayoutHelper layoutHelper;
 
     @Mock
+    private OpenDiagramLayoutExecutor layoutExecutor;
+
+    @Mock
     private KieEditorWrapperView kieView;
 
     @Mock
     private DataTypesPage dataTypesPage;
+
+    @Mock
+    private IncludedModelsPage includedModelsPage;
+
+    @Mock
+    private IncludedModelsPageStateProviderImpl importsPageProvider;
 
     private SessionDiagramEditorScreen editor;
 
@@ -142,7 +154,9 @@ public class SessionDiagramEditorScreenTest {
                                                     decisionNavigatorDock,
                                                     layoutHelper,
                                                     kieView,
-                                                    dataTypesPage));
+                                                    dataTypesPage,
+                                                    layoutExecutor,
+                                                    includedModelsPage, importsPageProvider));
     }
 
     @Test
@@ -161,6 +175,7 @@ public class SessionDiagramEditorScreenTest {
         verify(kieView).clear();
         verify(kieView).addMainEditorPage(screenPanelWidget);
         verify(multiPageEditor).addPage(dataTypesPage);
+        verify(multiPageEditor).addPage(includedModelsPage);
     }
 
     @Test
@@ -171,6 +186,7 @@ public class SessionDiagramEditorScreenTest {
         final Metadata metadata = mock(Metadata.class);
         final AbstractCanvasHandler canvasHandler = mock(AbstractCanvasHandler.class);
 
+        when(importsPageProvider.withDiagram(diagram)).thenReturn(importsPageProvider);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(diagram.getMetadata()).thenReturn(metadata);
 
@@ -182,6 +198,7 @@ public class SessionDiagramEditorScreenTest {
 
         verify(dataTypesPage).reload();
         verify(dataTypesPage).enableShortcuts();
+        verify(includedModelsPage).setup(importsPageProvider);
     }
 
     @Test

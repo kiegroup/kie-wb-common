@@ -21,7 +21,6 @@ import java.util.List;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
-import elemental2.dom.DOMTokenList;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -33,12 +32,12 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessages;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManagerStackStore;
 import org.kie.workbench.common.dmn.client.editors.types.common.ItemDefinitionUtils;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeList;
-import org.kie.workbench.common.dmn.client.editors.types.messages.DataTypeFlashMessages;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
 import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
@@ -49,12 +48,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
+import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.dmn.client.editors.types.DataTypesPage.DATA_TYPES_PAGE_CSS_CLASS;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -62,8 +59,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@WithClassesToStub({RootPanel.class})
 @RunWith(GwtMockitoTestRunner.class)
+@WithClassesToStub(RootPanel.class)
 public class DataTypesPageTest {
 
     @Mock
@@ -85,7 +82,7 @@ public class DataTypesPageTest {
     private DataTypeManagerStackStore stackIndex;
 
     @Mock
-    private DataTypeFlashMessages flashMessages;
+    private FlashMessages flashMessages;
 
     @Mock
     private DataTypeSearchBar searchBar;
@@ -105,48 +102,35 @@ public class DataTypesPageTest {
     @Captor
     private ArgumentCaptor<List<DataType>> dataTypesCaptor;
 
-    private DataTypesPage page;
+    private DataTypesPageFake page;
 
     @Before
     public void setup() {
-        page = spy(new DataTypesPage(treeList,
-                                     itemDefinitionUtils,
-                                     definitionStore,
-                                     dataTypeStore,
-                                     dataTypeManager,
-                                     stackIndex,
-                                     flashMessages,
-                                     searchBar,
-                                     dmnGraphUtils,
-                                     translationService,
-                                     dataTypeShortcuts,
-                                     pageView));
+        page = spy(new DataTypesPageFake(treeList,
+                                         itemDefinitionUtils,
+                                         definitionStore,
+                                         dataTypeStore,
+                                         dataTypeManager,
+                                         stackIndex,
+                                         flashMessages,
+                                         searchBar,
+                                         dmnGraphUtils,
+                                         translationService,
+                                         dataTypeShortcuts,
+                                         pageView) {
+
+            protected void setupPageCSSClass(final String cssClass) {
+                // Do nothing.
+            }
+        });
     }
 
     @Test
     public void testInit() {
 
-        doNothing().when(page).setupPage();
-
         page.init();
 
         verify(dataTypeShortcuts).init(treeList);
-        verify(page).setupPage();
-    }
-
-    @Test
-    public void testSetupPage() {
-
-        final Element targetElement = mock(Element.class);
-
-        pageView.parentNode = mock(Element.class);
-        pageView.parentNode.parentNode = targetElement;
-
-        targetElement.classList = mock(DOMTokenList.class);
-
-        page.setupPage();
-
-        verify(targetElement.classList).add(DATA_TYPES_PAGE_CSS_CLASS);
     }
 
     @Test
@@ -200,17 +184,20 @@ public class DataTypesPageTest {
 
         final HTMLElement flashMessagesElement = mock(HTMLElement.class);
         final HTMLElement treeListElement = mock(HTMLElement.class);
+        final Element element = mock(Element.class);
+        pageView.firstChild = element;
 
-        pageView.innerHTML = "something";
+        when(pageView.removeChild(element)).then(a -> {
+            pageView.firstChild = null;
+            return element;
+        });
+
         when(flashMessages.getElement()).thenReturn(flashMessagesElement);
         when(treeList.getElement()).thenReturn(treeListElement);
 
         page.refreshPageView();
 
-        final String actual = pageView.innerHTML;
-        final String expected = "";
-
-        assertEquals(expected, actual);
+        verify(pageView).removeChild(element);
         verify(pageView).appendChild(flashMessagesElement);
         verify(pageView).appendChild(treeListElement);
     }
@@ -357,4 +344,28 @@ public class DataTypesPageTest {
 
         return itemDefinition;
     }
+
+    private class DataTypesPageFake extends DataTypesPage {
+
+        DataTypesPageFake(final DataTypeList treeList,
+                          final ItemDefinitionUtils itemDefinitionUtils,
+                          final ItemDefinitionStore definitionStore,
+                          final DataTypeStore dataTypeStore,
+                          final DataTypeManager dataTypeManager,
+                          final DataTypeManagerStackStore stackIndex,
+                          final FlashMessages flashMessages,
+                          final DataTypeSearchBar searchBar,
+                          final DMNGraphUtils dmnGraphUtils,
+                          final TranslationService translationService,
+                          final DataTypeShortcuts dataTypeShortcuts,
+                          final HTMLDivElement pageView) {
+            super(treeList, itemDefinitionUtils, definitionStore, dataTypeStore, dataTypeManager, stackIndex, flashMessages, searchBar, dmnGraphUtils, translationService, dataTypeShortcuts, pageView);
+        }
+
+        @Override
+        protected void setupPageCSSClass(final String cssClass) {
+            super.setupPageCSSClass(cssClass);
+        }
+    }
 }
+

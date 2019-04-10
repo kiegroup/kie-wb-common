@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.kie.workbench.services</groupId>
     <artifactId>kie-wb-common-compiler</artifactId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <artifactId>kie-wb-common-compiler-offprocess-classpath</artifactId>
   <name>Kie Workbench - Common - Compiler - OffProcess - Classpath</name>
@@ -604,7 +604,10 @@
           </execution>
         </executions>
         <configuration>
-          <arguments>${version.org.kie}</arguments>
+          <arguments>
+            <argument>${version.org.kie}</argument>
+            <argument>${project.basedir}</argument>
+          </arguments>
           <mainClass>org.kie.workbench.common.services.backend.compiler.offprocess.generator.ClassPathMavenGenerator</mainClass>
         </configuration>
       </plugin>

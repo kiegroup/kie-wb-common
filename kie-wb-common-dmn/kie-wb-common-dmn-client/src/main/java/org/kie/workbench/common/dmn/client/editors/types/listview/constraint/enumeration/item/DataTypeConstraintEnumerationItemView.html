@@ -13,26 +13,25 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<div>
+<div class="draggable">
+
+    <span class="drag-grabber">
+        <i class="fa fa-ellipsis-v"></i>
+        <i class="fa fa-ellipsis-v"></i>
+    </span>
+
     <span data-field="value-text"></span>
-    <input data-field="value-input" type="text" class="hidden"/>
+    <div data-field="value-input-container" class="hidden"></div>
 
-    <div data-field="kebab-menu" class="dropdown-kebab-container">
-        <div class="dropdown dropdown-kebab-pf">
-            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
-                <span class="fa fa-ellipsis-v"></span>
-            </button>
-            <ul class="kie-data-type-constraints-enumeration dropdown-menu dropdown-menu-right">
-                <li><a data-field="edit-anchor" href="#" data-i18n-key="Edit"></a></li>
-                <li><a data-field="remove-anchor" href="#" data-i18n-key="Remove"></a></li>
-                <li class="divider"></li>
-                <li><a data-field="move-up-anchor" href="#" data-i18n-key="MoveUp"></a></li>
-                <li><a data-field="move-down-anchor" href="#" data-i18n-key="MoveDown"></a></li>
-            </ul>
-        </div>
-    </div>
+    <a href="#" data-field="remove-anchor">
+        <i class="fa fa-trash"></i>
+    </a>
 
-    <a tabindex="0" href="#" data-field="save-anchor" class="hidden">
+    <a href="#" data-field="clear-field-anchor" class="hidden">
+        <i class="fa fa-remove"></i>
+    </a>
+
+    <a href="#" data-field="save-anchor" class="hidden">
         <i class="fa fa-check"></i>
     </a>
 </div>

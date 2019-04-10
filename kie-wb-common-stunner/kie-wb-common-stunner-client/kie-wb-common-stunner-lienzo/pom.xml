@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-client</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -127,6 +127,11 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ui</artifactId>
     </dependency>
 
     <dependency>

@@ -16,6 +16,8 @@
 -->
 <kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
   <kbase name="org.kie.example1">
-    <ksession name="ksession1"/>
+    <ksession name="ksession1" type="stateful" default="true" clockType="realtime">
+      <fileLogger name="response-builder_filelogger" file="/tmp/response-builder_filelogger.log" threaded="true" interval="1500"/>
+    </ksession>
   </kbase>
 </kmodule>

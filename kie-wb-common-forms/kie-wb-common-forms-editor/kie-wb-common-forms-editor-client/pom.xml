@@ -22,7 +22,7 @@
   <parent>
     <artifactId>kie-wb-common-forms-editor</artifactId>
     <groupId>org.kie.workbench.forms</groupId>
-    <version>7.19.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -204,12 +204,6 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-editor-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.kie.workbench.services</groupId>
-          <artifactId>kie-wb-common-data-modeller-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -252,6 +246,19 @@
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
+    
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
 
     <dependency>
       <groupId>org.assertj</groupId>

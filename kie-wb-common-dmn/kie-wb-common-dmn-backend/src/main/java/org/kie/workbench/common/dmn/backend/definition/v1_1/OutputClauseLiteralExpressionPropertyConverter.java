@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.ImportedValues;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClauseLiteralExpression;
+import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
@@ -28,14 +29,16 @@ public class OutputClauseLiteralExpressionPropertyConverter {
         if (dmn == null) {
             return null;
         }
-        Id id = new Id(dmn.getId());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
-        Text text = new Text(dmn.getText());
-        ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
-        OutputClauseLiteralExpression result = new OutputClauseLiteralExpression(id,
-                                                                                 typeRef,
-                                                                                 text,
-                                                                                 importedValues);
+        final Id id = new Id(dmn.getId());
+        final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final Text text = new Text(dmn.getText());
+        final ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
+        final OutputClauseLiteralExpression result = new OutputClauseLiteralExpression(id,
+                                                                                       description,
+                                                                                       typeRef,
+                                                                                       text,
+                                                                                       importedValues);
         if (importedValues != null) {
             importedValues.setParent(result);
         }

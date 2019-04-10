@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.cm.client.canvas;
 
+import java.util.Optional;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -23,6 +25,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
+import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.api.ClientDefinitionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
@@ -35,13 +38,13 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.registration.Ca
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementUpdatedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
-import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.graph.processing.index.MutableIndex;
@@ -54,7 +57,6 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
 
     @Inject
     public CaseManagementCanvasHandler(final ClientDefinitionManager clientDefinitionManager,
-                                       final ClientFactoryService clientFactoryServices,
                                        final RuleManager ruleManager,
                                        final GraphUtils graphUtils,
                                        final GraphIndexBuilder<? extends MutableIndex<Node, Edge>> indexBuilder,
@@ -67,7 +69,6 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
                                        final @CaseManagementEditor CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory) {
         super(clientDefinitionManager,
               canvasCommandFactory,
-              clientFactoryServices,
               ruleManager,
               graphUtils,
               indexBuilder,
@@ -229,5 +230,25 @@ public class CaseManagementCanvasHandler<D extends Diagram, C extends WiresCanva
             }
         }
         return true;
+    }
+
+    public Optional<Element> getDiagramNode() {
+        return this.getCanvas().getShapes().stream().map(Shape::getUUID).map(this::getElement)
+                .filter(Optional::isPresent).map(Optional::get)
+                .filter(n -> ((View) n.getContent()).getDefinition() instanceof CaseManagementDiagram)
+                .findAny();
+    }
+
+    @Override
+    public Optional<Element> getElementAt(double x, double y) {
+        if (Double.compare(x, 0d) <= 0 || Double.compare(y, 0d) <= 0) {
+            return Optional.empty();
+        }
+
+        final Point2D transform = this.getAbstractCanvas().getTransform().transform(x, y);
+        final Optional<Element> parent = super.getElementAt(transform.getX(), transform.getY());
+
+        // Return the root diagram if there is no element at the given location
+        return parent.isPresent() ? parent : this.getDiagramNode();
     }
 }
