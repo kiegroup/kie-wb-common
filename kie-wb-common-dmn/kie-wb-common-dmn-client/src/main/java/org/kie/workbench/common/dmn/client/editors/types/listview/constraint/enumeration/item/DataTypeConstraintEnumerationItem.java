@@ -27,6 +27,7 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.ConstraintPlaceholderHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.enumeration.DataTypeConstraintEnumeration;
 import org.uberfire.client.mvp.UberElemental;
+import org.uberfire.mvp.Command;
 
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
@@ -66,6 +67,10 @@ public class DataTypeConstraintEnumerationItem {
         return value;
     }
 
+    public int getOrder() {
+        return view.getOrder();
+    }
+
     public Element getElement() {
         return view.getElement();
     }
@@ -92,7 +97,7 @@ public class DataTypeConstraintEnumerationItem {
 
     public void save(final String newValue) {
         setNonNullValue(newValue);
-        refreshEnumerationList();
+        refreshEnumerationListAndScrollToThisItem();
     }
 
     public void remove() {
@@ -105,12 +110,20 @@ public class DataTypeConstraintEnumerationItem {
         disableEditMode();
     }
 
-    List<DataTypeConstraintEnumerationItem> getEnumerationItems() {
+    private List<DataTypeConstraintEnumerationItem> getEnumerationItems() {
         return dataTypeConstraintEnumeration.getEnumerationItems();
     }
 
     private void refreshEnumerationList() {
         dataTypeConstraintEnumeration.refreshView();
+    }
+
+    private void refreshEnumerationListAndScrollToThisItem() {
+        dataTypeConstraintEnumeration.refreshView(getScrollToThisItemCallback());
+    }
+
+    Command getScrollToThisItemCallback() {
+        return () -> dataTypeConstraintEnumeration.scrollToPosition(getOrder());
     }
 
     void setOldValue(final String value) {
@@ -132,6 +145,10 @@ public class DataTypeConstraintEnumerationItem {
 
     private void setNonNullValue(final String newValue) {
         value = isEmpty(newValue) ? NULL : newValue;
+    }
+
+    public void setOrder(final int order) {
+        view.setOrder(order);
     }
 
     public interface View extends UberElemental<DataTypeConstraintEnumerationItem>,
@@ -164,5 +181,9 @@ public class DataTypeConstraintEnumerationItem {
         void hideClearButton();
 
         void showDeleteButton();
+
+        int getOrder();
+
+        void setOrder(final int order);
     }
 }

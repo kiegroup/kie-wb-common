@@ -5,7 +5,7 @@
   <parent>
     <artifactId>kie-wb-common-workbench</artifactId>
     <groupId>org.kie.workbench.screens</groupId>
-    <version>7.20.0-SNAPSHOT</version>
+    <version>7.21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -224,10 +224,6 @@
           <artifactId>jakarta-regexp</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.screens</groupId>
-      <artifactId>kie-wb-common-data-modeller-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.screens</groupId>
