@@ -29,6 +29,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -111,6 +112,24 @@ public class DecisionComponentFilterTest {
     }
 
     @Test
+    public void testQueryFilteredByTermMultipleResults() {
+
+        final DecisionComponentsItem item1 = item("Can Drive?", Decision.class);
+        final DecisionComponentsItem item2 = item("Is Allowed?", Decision.class);
+        final DecisionComponentsItem item3 = item("Age", InputData.class);
+        final DecisionComponentsItem item4 = item("Name", InputData.class);
+        final Stream<DecisionComponentsItem> stream = Stream.of(item1, item2, item3, item4);
+
+        filter.setTerm("?");
+
+        final Stream<DecisionComponentsItem> query = filter.query(stream);
+        final List<DecisionComponentsItem> actualResult = query.collect(Collectors.toList());
+        final List<DecisionComponentsItem> expectedResult = asList(item1, item2);
+
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
     public void testQueryFilteredByDrgElement() {
 
         final DecisionComponentsItem item1 = item("Can Drive?", Decision.class);
@@ -124,6 +143,24 @@ public class DecisionComponentFilterTest {
         final Stream<DecisionComponentsItem> query = filter.query(stream);
         final List<DecisionComponentsItem> actualResult = query.collect(Collectors.toList());
         final List<DecisionComponentsItem> expectedResult = asList(item1, item2);
+
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void testQueryFilteredByDrgElementNoResult() {
+
+        final DecisionComponentsItem item1 = item("Can Drive?", Decision.class);
+        final DecisionComponentsItem item2 = item("Is Allowed?", Decision.class);
+        final DecisionComponentsItem item3 = item("Age", InputData.class);
+        final DecisionComponentsItem item4 = item("Name", InputData.class);
+        final Stream<DecisionComponentsItem> stream = Stream.of(item1, item2, item3, item4);
+
+        filter.setDrgElement("KnowledgeRequirement");
+
+        final Stream<DecisionComponentsItem> query = filter.query(stream);
+        final List<DecisionComponentsItem> actualResult = query.collect(Collectors.toList());
+        final List<DecisionComponentsItem> expectedResult = emptyList();
 
         assertEquals(expectedResult, actualResult);
     }
@@ -143,6 +180,44 @@ public class DecisionComponentFilterTest {
         final Stream<DecisionComponentsItem> query = filter.query(stream);
         final List<DecisionComponentsItem> actualResult = query.collect(Collectors.toList());
         final List<DecisionComponentsItem> expectedResult = singletonList(item2);
+
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void testQueryFilteredByDrgElementAndTermMultipleResults() {
+
+        final DecisionComponentsItem item1 = item("Can Drive?", Decision.class);
+        final DecisionComponentsItem item2 = item("Is Allowed?", Decision.class);
+        final DecisionComponentsItem item3 = item("Age", InputData.class);
+        final DecisionComponentsItem item4 = item("Name", InputData.class);
+        final Stream<DecisionComponentsItem> stream = Stream.of(item1, item2, item3, item4);
+
+        filter.setTerm("e");
+        filter.setDrgElement("InputData");
+
+        final Stream<DecisionComponentsItem> query = filter.query(stream);
+        final List<DecisionComponentsItem> actualResult = query.collect(Collectors.toList());
+        final List<DecisionComponentsItem> expectedResult = asList(item3, item4);
+
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void testQueryFilteredByDrgElementAndTermNoResult() {
+
+        final DecisionComponentsItem item1 = item("Can Drive?", Decision.class);
+        final DecisionComponentsItem item2 = item("Is Allowed?", Decision.class);
+        final DecisionComponentsItem item3 = item("Age", InputData.class);
+        final DecisionComponentsItem item4 = item("Name", InputData.class);
+        final Stream<DecisionComponentsItem> stream = Stream.of(item1, item2, item3, item4);
+
+        filter.setTerm("?");
+        filter.setDrgElement("InputData");
+
+        final Stream<DecisionComponentsItem> query = filter.query(stream);
+        final List<DecisionComponentsItem> actualResult = query.collect(Collectors.toList());
+        final List<DecisionComponentsItem> expectedResult = emptyList();
 
         assertEquals(expectedResult, actualResult);
     }
