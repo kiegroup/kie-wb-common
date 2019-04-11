@@ -30,9 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
 import org.mockito.Mock;
 import org.uberfire.mocks.CallerMock;
 

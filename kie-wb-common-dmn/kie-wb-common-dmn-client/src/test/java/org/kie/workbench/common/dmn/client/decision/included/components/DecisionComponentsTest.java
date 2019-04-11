@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -59,11 +59,14 @@ public class DecisionComponentsTest {
     @Mock
     private ManagedInstance<DecisionComponentsItem> itemManagedInstance;
 
+    @Mock
+    private DecisionComponentFilter filter;
+
     private DecisionComponents decisionComponents;
 
     @Before
     public void setup() {
-        decisionComponents = spy(new DecisionComponents(view, graphUtils, client, itemManagedInstance));
+        decisionComponents = spy(new DecisionComponents(view, graphUtils, client, itemManagedInstance, filter));
     }
 
     @Test
@@ -90,7 +93,7 @@ public class DecisionComponentsTest {
         decisionComponents.refresh(diagram);
 
         verify(decisionComponents).clearDecisionComponents();
-        verify(decisionComponents).enableLoading();
+        verify(decisionComponents).startLoading();
         verify(client).loadNodesFromImports(imports, listConsumer);
     }
 
@@ -98,9 +101,6 @@ public class DecisionComponentsTest {
     public void testApplyTermFilter() {
 
         final String value = "value";
-        final DecisionComponentFilter filter = mock(DecisionComponentFilter.class);
-
-        doReturn(filter).when(decisionComponents).getFilter();
         doNothing().when(decisionComponents).applyFilter();
 
         decisionComponents.applyTermFilter(value);
@@ -113,9 +113,6 @@ public class DecisionComponentsTest {
     public void testApplyDrgElementFilterFilter() {
 
         final String value = "value";
-        final DecisionComponentFilter filter = mock(DecisionComponentFilter.class);
-
-        doReturn(filter).when(decisionComponents).getFilter();
         doNothing().when(decisionComponents).applyFilter();
 
         decisionComponents.applyDrgElementFilterFilter(value);
@@ -135,13 +132,14 @@ public class DecisionComponentsTest {
         final DecisionComponent component3 = mock(DecisionComponent.class);
         final List<DecisionComponentsItem> decisionComponentsItems = asList(item1, item2, item3);
 
+        doReturn(new DecisionComponentFilter()).when(decisionComponents).getFilter();
         doReturn(decisionComponentsItems).when(decisionComponents).getDecisionComponentsItems();
         when(item1.getDecisionComponent()).thenReturn(component1);
         when(item2.getDecisionComponent()).thenReturn(component2);
         when(item3.getDecisionComponent()).thenReturn(component3);
-        when(component1.getName()).thenReturn("name1");
+        when(component1.getName()).thenReturn("name3");
         when(component2.getName()).thenReturn("nome!!!");
-        when(component3.getName()).thenReturn("name3");
+        when(component3.getName()).thenReturn("name1");
 
         decisionComponents.getFilter().setTerm("name");
         decisionComponents.applyFilter();
@@ -149,8 +147,8 @@ public class DecisionComponentsTest {
         verify(item1).hide();
         verify(item2).hide();
         verify(item3).hide();
-        verify(item1).show();
         verify(item3).show();
+        verify(item1).show();
     }
 
     @Test

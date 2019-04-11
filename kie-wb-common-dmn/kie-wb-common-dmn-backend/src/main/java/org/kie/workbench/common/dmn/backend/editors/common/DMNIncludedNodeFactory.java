@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.editors.types.common;
+package org.kie.workbench.common.dmn.backend.editors.common;
 
 import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.uberfire.backend.vfs.Path;
 
 @Dependent

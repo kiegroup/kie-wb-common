@@ -21,9 +21,12 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javax.enterprise.context.Dependent;
+
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
-class DecisionComponentFilter {
+@Dependent
+public class DecisionComponentFilter {
 
     private String drgElement;
 
@@ -45,7 +48,7 @@ class DecisionComponentFilter {
         return getOptionalString(term);
     }
 
-    Stream<DecisionComponentsItem> query(Stream<DecisionComponentsItem> stream) {
+    Stream<DecisionComponentsItem> query(final Stream<DecisionComponentsItem> stream) {
         return stream.filter(byDrgElement()).filter(byTerm());
     }
 

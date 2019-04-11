@@ -63,7 +63,7 @@ public class DecisionComponentFilterTest {
     }
 
     @Test
-    public void testGetTermWhenDrgElementIsNotPresent() {
+    public void testGetTermWhenTermIsNotPresent() {
         assertFalse(filter.getTerm().isPresent());
     }
 

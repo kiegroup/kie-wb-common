@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.editors.types.common;
+package org.kie.workbench.common.dmn.backend.editors.common;
 
 import java.nio.file.NoSuchFileException;
 

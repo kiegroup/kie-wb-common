@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.decision.included.components;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -28,7 +29,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -45,19 +46,21 @@ public class DecisionComponents {
 
     private final ManagedInstance<DecisionComponentsItem> itemManagedInstance;
 
-    private final List<DecisionComponentsItem> decisionComponentsItems = new ArrayList<>();
+    private final DecisionComponentFilter filter;
 
-    private final DecisionComponentFilter filter = new DecisionComponentFilter();
+    private final List<DecisionComponentsItem> decisionComponentsItems = new ArrayList<>();
 
     @Inject
     public DecisionComponents(final View view,
                               final DMNGraphUtils graphUtils,
                               final DMNIncludeModelsClient client,
-                              final ManagedInstance<DecisionComponentsItem> itemManagedInstance) {
+                              final ManagedInstance<DecisionComponentsItem> itemManagedInstance,
+                              final DecisionComponentFilter filter) {
         this.view = view;
         this.graphUtils = graphUtils;
         this.client = client;
         this.itemManagedInstance = itemManagedInstance;
+        this.filter = filter;
     }
 
     @PostConstruct
@@ -72,7 +75,7 @@ public class DecisionComponents {
     public void refresh(final Diagram diagram) {
 
         clearDecisionComponents();
-        enableLoading();
+        startLoading();
 
         client.loadNodesFromImports(getImports(diagram), getNodesConsumer());
     }
@@ -90,7 +93,7 @@ public class DecisionComponents {
         };
     }
 
-    void enableLoading() {
+    void startLoading() {
         view.showLoading();
         view.disableFilterInputs();
     }
@@ -116,7 +119,10 @@ public class DecisionComponents {
     }
 
     private void showFilteredItems() {
-        getFilter().query(getDecisionComponentsItems().stream()).forEach(DecisionComponentsItem::show);
+        getFilter()
+                .query(getDecisionComponentsItems().stream())
+                .sorted(Comparator.comparing(item -> item.getDecisionComponent().getName()))
+                .forEach(DecisionComponentsItem::show);
     }
 
     private void hideAllItems() {

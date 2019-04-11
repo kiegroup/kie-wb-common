@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.editors.types;
+package org.kie.workbench.common.dmn.backend.editors.included;
 
 import java.util.List;
 
@@ -23,10 +23,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
-import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludeModelFactory;
-import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludedNodesFilter;
+import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
+import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.refactoring.backend.server.query.RefactoringQueryServiceImpl;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
