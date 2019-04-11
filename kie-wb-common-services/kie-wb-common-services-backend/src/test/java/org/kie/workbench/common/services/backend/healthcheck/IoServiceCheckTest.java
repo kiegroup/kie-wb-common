@@ -44,22 +44,31 @@ public class IoServiceCheckTest {
     }
 
     @Test
-    public void testSystemFsExists() {
+    public void testSystemFsExistsOpen() {
         final FileSystem fs = mock(FileSystem.class);
-        doReturn("foo").when(fs).getName();
+        doReturn(true).when(fs).isOpen();
         doReturn(fs).when(ioServiceCheck).getFileSystem();
 
         assertTrue(ioServiceCheck.systemFsExists());
     }
 
     @Test
-    public void testSystemFsExistsFalse() {
+    public void testSystemFsExistsClosed() {
+        final FileSystem fs = mock(FileSystem.class);
+        doReturn(false).when(fs).isOpen();
+        doReturn(fs).when(ioServiceCheck).getFileSystem();
+
+        assertFalse(ioServiceCheck.systemFsExists());
+    }
+
+    @Test
+    public void testSystemFsExistsWhenNull() {
         doReturn(null).when(ioServiceCheck).getFileSystem();
         assertFalse(ioServiceCheck.systemFsExists());
     }
 
     @Test
-    public void testSystemExistsError() {
+    public void testSystemFsExistsError() {
         doThrow(new RuntimeException()).when(ioServiceCheck).getFileSystem();
         assertFalse(ioServiceCheck.systemFsExists());
     }
@@ -67,7 +76,7 @@ public class IoServiceCheckTest {
     @Test
     public void testSystemExistsErrorGetName() {
         final FileSystem fs = mock(FileSystem.class);
-        doThrow(new RuntimeException()).when(fs).getName();
+        doThrow(new RuntimeException()).when(fs).isOpen();
         doReturn(fs).when(ioServiceCheck).getFileSystem();
 
         assertFalse(ioServiceCheck.systemFsExists());

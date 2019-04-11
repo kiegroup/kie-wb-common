@@ -40,8 +40,7 @@ public class IoServiceCheck implements ServiceCheck {
                 return false;
             }
 
-            fileSystem.getName();
-            return true;
+            return fileSystem.isOpen();
         } catch (final Exception e) {
             return false;
         }
