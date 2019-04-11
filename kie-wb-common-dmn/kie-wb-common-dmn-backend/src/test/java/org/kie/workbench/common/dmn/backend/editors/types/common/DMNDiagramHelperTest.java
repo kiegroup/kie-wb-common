@@ -21,15 +21,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
-import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -47,48 +43,30 @@ public class DMNDiagramHelperTest {
     private DiagramService diagramService;
 
     @Mock
+    private DMNDiagramUtils dmnDiagramUtils;
+
+    @Mock
     private Diagram<Graph, Metadata> diagram;
 
     @Mock
-    private Graph<?, Node> graph;
-
-    @Mock
-    private Node node;
-
-    @Mock
-    private Definition definition;
-
-    @Mock
-    private DMNDiagram dmnDiagram;
-
-    @Mock
-    private Definitions definitions;
-
-    @Mock
     private Path path;
-
-    private String namespace = "://namespace";
 
     private DMNDiagramHelper helper;
 
     @Before
     public void setup() {
-        helper = new DMNDiagramHelper(diagramService);
-
-        when(diagram.getGraph()).thenReturn(graph);
-        when(graph.nodes()).thenReturn(singletonList(node));
-        when(node.getContent()).thenReturn(definition);
+        helper = new DMNDiagramHelper(diagramService, dmnDiagramUtils);
     }
 
     @Test
     public void testGetNodes() {
 
         final DRGElement drgElement = mock(DRGElement.class);
+        final List<DRGElement> expectedNodes = singletonList(drgElement);
 
-        when(definition.getDefinition()).thenReturn(drgElement);
+        when(dmnDiagramUtils.getNodes(diagram)).thenReturn(expectedNodes);
 
         final List<DRGElement> actualNodes = helper.getNodes(diagram);
-        final List<DRGElement> expectedNodes = singletonList(drgElement);
 
         assertEquals(expectedNodes, actualNodes);
     }
@@ -96,13 +74,13 @@ public class DMNDiagramHelperTest {
     @Test
     public void testGetNamespaceByDiagram() {
 
-        when(definition.getDefinition()).thenReturn(dmnDiagram);
-        when(dmnDiagram.getDefinitions()).thenReturn(definitions);
-        when(definitions.getNamespace()).thenReturn(new Text(namespace));
+        final String expectedNamespace = "://namespace";
+
+        when(dmnDiagramUtils.getNamespace(diagram)).thenReturn(expectedNamespace);
 
         final String actualNamespace = helper.getNamespace(diagram);
 
-        assertEquals(namespace, actualNamespace);
+        assertEquals(expectedNamespace, actualNamespace);
     }
 
     @Test
@@ -118,13 +96,13 @@ public class DMNDiagramHelperTest {
     @Test
     public void testGetNamespaceByPath() {
 
+        final String expectedNamespace = "://namespace";
+
+        when(dmnDiagramUtils.getNamespace(diagram)).thenReturn(expectedNamespace);
         when(diagramService.getDiagramByPath(path)).thenReturn(diagram);
-        when(definition.getDefinition()).thenReturn(dmnDiagram);
-        when(dmnDiagram.getDefinitions()).thenReturn(definitions);
-        when(definitions.getNamespace()).thenReturn(new Text(namespace));
 
         final String actualNamespace = helper.getNamespace(path);
 
-        assertEquals(namespace, actualNamespace);
+        assertEquals(expectedNamespace, actualNamespace);
     }
 }

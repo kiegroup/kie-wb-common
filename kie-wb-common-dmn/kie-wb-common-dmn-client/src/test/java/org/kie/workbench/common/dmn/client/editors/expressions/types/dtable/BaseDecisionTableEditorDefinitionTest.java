@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.InputClauseLiteralExpres
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
+import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HitPolicyPopoverView;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
@@ -76,6 +77,9 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
 
     @Mock
     private SessionManager sessionManager;
+
+    @Mock
+    private DMNDiagramUtils dmnDiagramUtils;
 
     @Mock
     private DMNSession session;
@@ -148,7 +152,7 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
                                                             hitPolicyEditor,
                                                             headerEditor,
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
-                                                                                                      new DMNGraphUtils(sessionManager)));
+                                                                                                      new DMNGraphUtils(sessionManager, dmnDiagramUtils)));
 
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);

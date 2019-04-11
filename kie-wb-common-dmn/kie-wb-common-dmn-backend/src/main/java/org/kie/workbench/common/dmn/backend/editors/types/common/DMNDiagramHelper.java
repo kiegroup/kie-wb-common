@@ -17,19 +17,14 @@
 package org.kie.workbench.common.dmn.backend.editors.types.common;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
+import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.uberfire.backend.vfs.Path;
 
@@ -37,48 +32,29 @@ public class DMNDiagramHelper {
 
     private final DiagramService diagramService;
 
+    private final DMNDiagramUtils dmnDiagramUtils;
+
     @Inject
-    public DMNDiagramHelper(final DiagramService diagramService) {
+    public DMNDiagramHelper(final DiagramService diagramService,
+                            final DMNDiagramUtils dmnDiagramUtils) {
         this.diagramService = diagramService;
+        this.dmnDiagramUtils = dmnDiagramUtils;
     }
 
     public List<DRGElement> getNodes(final Diagram diagram) {
-        return getDefinitionStream(diagram)
-                .filter(d -> d instanceof DRGElement)
-                .map(d -> (DRGElement) d)
-                .collect(Collectors.toList());
+        return dmnDiagramUtils.getNodes(diagram);
     }
 
     public String getNamespace(final Path path) {
         final Diagram<Graph, Metadata> diagram = getDiagramByPath(path);
-        return getNamespace(diagram);
+        return dmnDiagramUtils.getNamespace(diagram);
     }
 
     public String getNamespace(final Diagram diagram) {
-        return getDefinitionStream(diagram)
-                .filter(d -> d instanceof DMNDiagram)
-                .map(d -> (DMNDiagram) d)
-                .findFirst()
-                .map(DMNDiagram::getDefinitions)
-                .map(definitions -> definitions.getNamespace().getValue())
-                .orElse("");
+        return dmnDiagramUtils.getNamespace(diagram);
     }
 
     public Diagram<Graph, Metadata> getDiagramByPath(final Path path) {
         return diagramService.getDiagramByPath(path);
-    }
-
-    private Stream<Object> getDefinitionStream(final Diagram diagram) {
-        return getNodeStream(diagram)
-                .map(Node::getContent)
-                .filter(c -> c instanceof Definition)
-                .map(c -> (Definition) c)
-                .map(Definition::getDefinition);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Stream<Node> getNodeStream(final Diagram diagram) {
-        final Graph<?, Node> graph = diagram.getGraph();
-        return StreamSupport.stream(graph.nodes().spliterator(), false);
     }
 }
