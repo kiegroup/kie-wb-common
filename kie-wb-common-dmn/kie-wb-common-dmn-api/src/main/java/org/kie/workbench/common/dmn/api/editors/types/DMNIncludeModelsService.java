@@ -20,12 +20,13 @@ import java.util.List;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 
 @Remote
 public interface DMNIncludeModelsService {
 
     List<DMNIncludeModel> loadModels(final WorkspaceProject rootPath);
 
-    List<DMNIncludedNode> loadNodesByNamespaces(final WorkspaceProject workspaceProject,
-                                                final List<String> namespaces);
+    List<DMNIncludedNode> loadNodesFromImports(final WorkspaceProject workspaceProject,
+                                               final List<Import> imports);
 }

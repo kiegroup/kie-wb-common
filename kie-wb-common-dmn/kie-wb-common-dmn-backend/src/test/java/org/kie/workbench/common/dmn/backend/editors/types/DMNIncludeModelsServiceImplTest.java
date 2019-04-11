@@ -22,6 +22,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
 import org.kie.workbench.common.dmn.backend.editors.types.common.DMNIncludeModelFactory;
@@ -141,12 +142,12 @@ public class DMNIncludeModelsServiceImplTest {
     }
 
     @Test
-    public void testLoadNodesByNamespaces() {
+    public void testLoadNodesFromImports() {
 
         final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
-        final String namespace1 = "://namespace1";
-        final String namespace2 = "://namespace2";
-        final String namespace3 = "://namespace3";
+        final Import anImport1 = mock(Import.class);
+        final Import anImport2 = mock(Import.class);
+        final Import anImport3 = mock(Import.class);
         final Path path1 = mock(Path.class);
         final Path path2 = mock(Path.class);
         final Path path3 = mock(Path.class);
@@ -160,15 +161,15 @@ public class DMNIncludeModelsServiceImplTest {
         final List<DMNIncludedNode> path1Nodes = asList(node1, node2, node3, node4);
         final List<DMNIncludedNode> path2Nodes = singletonList(node5);
         final List<DMNIncludedNode> path3Nodes = asList(node6, node7);
-        final List<String> namespaces = asList(namespace1, namespace2, namespace3);
+        final List<Import> namespaces = asList(anImport1, anImport2, anImport3);
         final List<Path> paths = asList(path1, path2, path3);
 
         doReturn(paths).when(service).getPaths(workspaceProject);
-        when(includedNodesFilter.getNodesByNamespaces(path1, namespaces)).thenReturn(path1Nodes);
-        when(includedNodesFilter.getNodesByNamespaces(path2, namespaces)).thenReturn(path2Nodes);
-        when(includedNodesFilter.getNodesByNamespaces(path3, namespaces)).thenReturn(path3Nodes);
+        when(includedNodesFilter.getNodesFromImports(path1, namespaces)).thenReturn(path1Nodes);
+        when(includedNodesFilter.getNodesFromImports(path2, namespaces)).thenReturn(path2Nodes);
+        when(includedNodesFilter.getNodesFromImports(path3, namespaces)).thenReturn(path3Nodes);
 
-        final List<DMNIncludedNode> actualNodes = service.loadNodesByNamespaces(workspaceProject, namespaces);
+        final List<DMNIncludedNode> actualNodes = service.loadNodesFromImports(workspaceProject, namespaces);
         final List<DMNIncludedNode> expectedNodes = asList(node1, node2, node3, node4, node5, node6, node7);
 
         assertEquals(expectedNodes, actualNodes);

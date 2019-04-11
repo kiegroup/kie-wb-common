@@ -29,6 +29,7 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
@@ -96,19 +97,21 @@ public class DMNIncludeModelsClientTest {
     }
 
     @Test
-    public void testLoadNodesByNamespaces() {
+    public void testLoadNodesFromImports() {
 
         final Optional<WorkspaceProject> optionalWorkspaceProject = Optional.of(workspaceProject);
-        final List<String> namespaces = asList("://namespace1", "://namespace2");
+        final Import anImport1 = mock(Import.class);
+        final Import anImport2 = mock(Import.class);
+        final List<Import> imports = asList(anImport1, anImport2);
 
         doReturn(onSuccess).when(client).onSuccess(any());
         doReturn(onError).when(client).onError(any());
         when(service.call(onSuccess, onError)).thenReturn(dmnService);
         when(projectContext.getActiveWorkspaceProject()).thenReturn(optionalWorkspaceProject);
 
-        client.loadNodesByNamespaces(namespaces, listConsumerDMNNodes);
+        client.loadNodesFromImports(imports, listConsumerDMNNodes);
 
-        verify(dmnService).loadNodesByNamespaces(workspaceProject, namespaces);
+        verify(dmnService).loadNodesFromImports(workspaceProject, imports);
     }
 
     @Test

@@ -19,7 +19,6 @@ package org.kie.workbench.common.dmn.client.decision.included.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -75,7 +74,7 @@ public class DecisionComponents {
         clearDecisionComponents();
         enableLoading();
 
-        client.loadNodesByNamespaces(getNamespaces(diagram), getNodesConsumer());
+        client.loadNodesFromImports(getImports(diagram), getNodesConsumer());
     }
 
     Consumer<List<DMNIncludedNode>> getNodesConsumer() {
@@ -116,13 +115,6 @@ public class DecisionComponents {
         applyFilter();
     }
 
-    List<String> getNamespaces(final Diagram diagram) {
-        return getImports(diagram)
-                .stream()
-                .map(Import::getNamespace)
-                .collect(Collectors.toList());
-    }
-
     private void showFilteredItems() {
         getFilter().query(getDecisionComponentsItems().stream()).forEach(DecisionComponentsItem::show);
     }
@@ -142,10 +134,10 @@ public class DecisionComponents {
     }
 
     private DecisionComponent makeDecisionComponent(final DMNIncludedNode node) {
-        return new DecisionComponent(node.getModelName(), node.getDrgElementId(), node.getDrgElementName(), node.getDrgElementClass());
+        return new DecisionComponent(node.getFileName(), node.getDrgElementId(), node.getDrgElementName(), node.getDrgElementClass());
     }
 
-    private List<Import> getImports(final Diagram diagram) {
+    List<Import> getImports(final Diagram diagram) {
         return graphUtils.getDefinitions(diagram).getImport();
     }
 

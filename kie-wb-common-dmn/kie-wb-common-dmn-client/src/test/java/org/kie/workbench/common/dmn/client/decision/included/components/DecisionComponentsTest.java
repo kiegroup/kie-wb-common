@@ -26,7 +26,6 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
@@ -82,17 +81,17 @@ public class DecisionComponentsTest {
     public void testRefresh() {
 
         final Diagram diagram = mock(Diagram.class);
-        final List<String> namespaces = new ArrayList<>();
+        final List<Import> imports = new ArrayList<>();
         final Consumer<List<DMNIncludedNode>> listConsumer = (list) -> {/* Nothing. */};
 
-        doReturn(namespaces).when(decisionComponents).getNamespaces(diagram);
+        doReturn(imports).when(decisionComponents).getImports(diagram);
         doReturn(listConsumer).when(decisionComponents).getNodesConsumer();
 
         decisionComponents.refresh(diagram);
 
         verify(decisionComponents).clearDecisionComponents();
         verify(decisionComponents).enableLoading();
-        verify(client).loadNodesByNamespaces(namespaces, listConsumer);
+        verify(client).loadNodesFromImports(imports, listConsumer);
     }
 
     @Test
@@ -158,28 +157,6 @@ public class DecisionComponentsTest {
     public void testRemoveAllItems() {
         decisionComponents.removeAllItems();
         verify(decisionComponents).clearDecisionComponents();
-    }
-
-    @Test
-    public void testGetNamespaces() {
-
-        final Diagram diagram = mock(Diagram.class);
-        final Definitions definitions = mock(Definitions.class);
-        final Import import1 = mock(Import.class);
-        final Import import2 = mock(Import.class);
-        final String namespace1 = "namespace1";
-        final String namespace2 = "namespace2";
-        final List<Import> imports = asList(import1, import2);
-
-        when(import1.getNamespace()).thenReturn(namespace1);
-        when(import2.getNamespace()).thenReturn(namespace2);
-        when(graphUtils.getDefinitions(diagram)).thenReturn(definitions);
-        when(definitions.getImport()).thenReturn(imports);
-
-        final List<String> actualNamespaces = decisionComponents.getNamespaces(diagram);
-        final List<String> expectedNamespaces = asList(namespace1, namespace2);
-
-        assertEquals(expectedNamespaces, actualNamespaces);
     }
 
     @Test

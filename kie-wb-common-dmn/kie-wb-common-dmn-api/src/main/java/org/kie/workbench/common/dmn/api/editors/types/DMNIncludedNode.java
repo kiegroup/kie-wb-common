@@ -23,6 +23,8 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 @Portable
 public class DMNIncludedNode {
 
+    private String fileName;
+
     private String modelName;
 
     private String drgElementId;
@@ -31,14 +33,20 @@ public class DMNIncludedNode {
 
     private Class<? extends DRGElement> drgElementClass;
 
-    public DMNIncludedNode(final @MapsTo("modelName") String modelName,
+    public DMNIncludedNode(final @MapsTo("fileName") String fileName,
+                           final @MapsTo("modelName") String modelName,
                            final @MapsTo("drgElementId") String drgElementId,
                            final @MapsTo("drgElementName") String drgElementName,
                            final @MapsTo("drgElementClass") Class<? extends DRGElement> drgElementClass) {
+        this.fileName = fileName;
         this.modelName = modelName;
         this.drgElementId = drgElementId;
         this.drgElementName = drgElementName;
         this.drgElementClass = drgElementClass;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     public String getModelName() {
@@ -47,6 +55,10 @@ public class DMNIncludedNode {
 
     public String getDrgElementId() {
         return drgElementId;
+    }
+
+    public String getImportedElementId() {
+        return modelName + ":" + drgElementId;
     }
 
     public String getDrgElementName() {

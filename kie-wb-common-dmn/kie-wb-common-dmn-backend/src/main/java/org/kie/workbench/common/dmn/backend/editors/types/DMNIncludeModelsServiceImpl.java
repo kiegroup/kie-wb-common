@@ -29,6 +29,7 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
@@ -82,11 +83,11 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
     }
 
     @Override
-    public List<DMNIncludedNode> loadNodesByNamespaces(final WorkspaceProject workspaceProject,
-                                                       final List<String> namespaces) {
+    public List<DMNIncludedNode> loadNodesFromImports(final WorkspaceProject workspaceProject,
+                                                      final List<Import> imports) {
         return getPaths(workspaceProject)
                 .stream()
-                .map(path -> includedNodesFilter.getNodesByNamespaces(path, namespaces))
+                .map(path -> includedNodesFilter.getNodesFromImports(path, imports))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }

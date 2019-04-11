@@ -19,10 +19,12 @@ package org.kie.workbench.common.dmn.backend.editors.types.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -42,27 +44,30 @@ public class DMNIncludedNodesFilter {
         this.factory = factory;
     }
 
-    public List<DMNIncludedNode> getNodesByNamespaces(final Path path,
-                                                      final List<String> namespaces) {
+    public List<DMNIncludedNode> getNodesFromImports(final Path path,
+                                                     final List<Import> imports) {
 
         final Diagram<Graph, Metadata> diagram = diagramHelper.getDiagramByPath(path);
+        final Optional<Import> diagramImport = getDiagramImport(diagram, imports);
+        final boolean isDiagramImported = diagramImport.isPresent();
 
-        if (isDiagramImported(diagram, namespaces)) {
+        if (isDiagramImported) {
             return diagramHelper
                     .getNodes(diagram)
                     .stream()
-                    .map(node -> factory.makeDMNIncludeModel(path, node))
+                    .map(node -> factory.makeDMNIncludeModel(path, diagramImport.get(), node))
                     .collect(Collectors.toList());
         }
 
         return new ArrayList<>();
     }
 
-    private boolean isDiagramImported(final Diagram<Graph, Metadata> diagram,
-                                      final List<String> importedNamespaces) {
+    private Optional<Import> getDiagramImport(final Diagram<Graph, Metadata> diagram,
+                                              final List<Import> imports) {
         final String pathNamespace = diagramHelper.getNamespace(diagram);
-        return importedNamespaces
+        return imports
                 .stream()
-                .anyMatch(namespace -> Objects.equals(pathNamespace, namespace));
+                .filter(i -> Objects.equals(pathNamespace, i.getNamespace()))
+                .findAny();
     }
 }

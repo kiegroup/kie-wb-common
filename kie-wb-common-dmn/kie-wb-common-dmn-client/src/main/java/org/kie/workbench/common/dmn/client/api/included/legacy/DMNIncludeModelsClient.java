@@ -29,6 +29,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModelsService;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
@@ -51,9 +52,9 @@ public class DMNIncludeModelsClient {
         service.call(onSuccess(listConsumer), onError(listConsumer)).loadModels(getWorkspaceProject());
     }
 
-    public void loadNodesByNamespaces(final List<String> namespaces,
-                                      final Consumer<List<DMNIncludedNode>> listConsumer) {
-        service.call(onSuccess(listConsumer), onError(listConsumer)).loadNodesByNamespaces(getWorkspaceProject(), namespaces);
+    public void loadNodesFromImports(final List<Import> imports,
+                                     final Consumer<List<DMNIncludedNode>> listConsumer) {
+        service.call(onSuccess(listConsumer), onError(listConsumer)).loadNodesFromImports(getWorkspaceProject(), imports);
     }
 
     <T> ErrorCallback<Boolean> onError(final Consumer<List<T>> listConsumer) {

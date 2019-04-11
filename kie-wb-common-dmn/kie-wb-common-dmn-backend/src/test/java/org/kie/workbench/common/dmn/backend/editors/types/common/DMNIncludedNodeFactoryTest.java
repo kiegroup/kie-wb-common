@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.editors.types.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -42,18 +43,24 @@ public class DMNIncludedNodeFactoryTest {
     public void testMakeDMNIncludeModel() {
 
         final Path path = mock(Path.class);
-        final String id = "0000-1111-3333-4444";
-        final String name = "Can Drive?";
-        final String fileName = "file.dmn";
-        final DRGElement drgElement = makeDecision(id, name);
+        final Import anImport = mock(Import.class);
+        final String expectedId = "0000-1111-3333-4444";
+        final String expectedDrgElementName = "Can Drive?";
+        final String expectedFileName = "file.dmn";
+        final String expectedModelName = "model";
+        final String expectedImportedElementId = "model:0000-1111-3333-4444";
+        final DRGElement importedElementId = makeDecision(expectedId, expectedDrgElementName);
 
-        when(path.getFileName()).thenReturn(fileName);
+        when(path.getFileName()).thenReturn(expectedFileName);
+        when(anImport.getName()).thenReturn(new Name(expectedModelName));
 
-        final DMNIncludedNode node = factory.makeDMNIncludeModel(path, drgElement);
+        final DMNIncludedNode node = factory.makeDMNIncludeModel(path, anImport, importedElementId);
 
-        assertEquals(id, node.getDrgElementId());
-        assertEquals(name, node.getDrgElementName());
-        assertEquals(fileName, node.getModelName());
+        assertEquals(expectedId, node.getDrgElementId());
+        assertEquals(expectedDrgElementName, node.getDrgElementName());
+        assertEquals(expectedImportedElementId, node.getImportedElementId());
+        assertEquals(expectedFileName, node.getFileName());
+        assertEquals(expectedModelName, node.getModelName());
         assertEquals(Decision.class, node.getDrgElementClass());
     }
 
