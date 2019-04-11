@@ -2,6 +2,7 @@ package org.kie.workbench.common.screens.impl;
 
 import java.util.Collection;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
@@ -11,13 +12,19 @@ import org.kie.workbench.common.screens.library.api.SpacesScreenService;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferencesPortableGeneratedImpl;
 import org.uberfire.preferences.shared.bean.PreferenceBeanServerStore;
 
+@ApplicationScoped
 public class SpacesScreenServiceImpl implements SpacesScreenService {
 
-    @Inject
-    public OrganizationalUnitService organizationalUnitService;
+    private final OrganizationalUnitService organizationalUnitService;
+
+    private final PreferenceBeanServerStore preferenceBeanServerStore;
 
     @Inject
-    public PreferenceBeanServerStore preferenceBeanServerStore;
+    public SpacesScreenServiceImpl(final OrganizationalUnitService organizationalUnitService,
+                                   final PreferenceBeanServerStore preferenceBeanServerStore) {
+        this.organizationalUnitService = organizationalUnitService;
+        this.preferenceBeanServerStore = preferenceBeanServerStore;
+    }
 
     @Override
     public Collection<OrganizationalUnit> getSpaces() {
