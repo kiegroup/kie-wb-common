@@ -875,6 +875,16 @@
 
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-data-modeller-integration-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-data-modeller-integration-backend</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-jbpm-integration-api</artifactId>
     </dependency>
 
@@ -1211,12 +1221,8 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
-          <extraJvmArgs>-Xmx6G -Xms1024m -Xss1M -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home} -Derrai.marshalling.server.classOutput=${project.build.outputDirectory} -Derrai.dynamic_validation.enabled=true</extraJvmArgs>
+          <extraJvmArgs>-Xmx16G -Xms4G -Xss1M -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home} -Derrai.marshalling.server.classOutput=${project.build.outputDirectory} -Derrai.dynamic_validation.enabled=true</extraJvmArgs>
           <module>org.kie.workbench.common.stunner.project.StunnerProjectShowcase</module>
-
-          <!-- TODO: (Submarine) -->
-          <skip>true</skip>
-
           <noServer>false</noServer>
           <server>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</server>
           <disableCastChecking>true</disableCastChecking>
