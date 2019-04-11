@@ -79,9 +79,6 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
     private SessionManager sessionManager;
 
     @Mock
-    private DMNDiagramUtils dmnDiagramUtils;
-
-    @Mock
     private DMNSession session;
 
     @Mock
@@ -152,7 +149,7 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
                                                             hitPolicyEditor,
                                                             headerEditor,
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
-                                                                                                      new DMNGraphUtils(sessionManager, dmnDiagramUtils)));
+                                                                                                      new DMNGraphUtils(sessionManager, new DMNDiagramUtils())));
 
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
