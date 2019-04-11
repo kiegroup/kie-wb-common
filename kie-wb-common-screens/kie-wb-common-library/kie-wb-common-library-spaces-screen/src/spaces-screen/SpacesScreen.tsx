@@ -30,6 +30,14 @@ interface State {
   loading: boolean;
 }
 
+const LibraryPlaces = (AppFormer as any).LibraryPlaces as {
+  goToSpace: (s: string) => Promise<void>;
+};
+
+const LibraryPermissions = (AppFormer as any).LibraryPermissions as {
+  canCreateSpace: () => boolean;
+};
+
 export class SpacesScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -38,18 +46,18 @@ export class SpacesScreen extends React.Component<Props, State> {
   }
 
   private goToSpace(space: Service.Space) {
-    this.showLoadingPopupWhile(
+    return this.showLoadingPopupWhile(
       Service.updateLibraryPreference({
         projectExplorerExpanded: false,
         lastOpenedOrganizationalUnit: space.name
+      }).then(() => {
+        return LibraryPlaces.goToSpace(space.name);
       })
-    ).then(() => {
-      (AppFormer as any).LibraryPlaces.goToSpace(space.name);
-    });
+    );
   }
 
   public canCreateSpace() {
-    return (AppFormer as any).LibraryPermissions.canCreateSpace();
+    return LibraryPermissions.canCreateSpace();
   }
 
   private openNewSpacePopup() {

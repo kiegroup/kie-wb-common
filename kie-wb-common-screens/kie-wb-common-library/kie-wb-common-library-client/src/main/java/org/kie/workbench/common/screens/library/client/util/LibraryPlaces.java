@@ -246,8 +246,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private static LibraryPlaces self;
 
-    public static void nativeGoToSpace(final String spaceName) {
-        self.promises.promisify(self.organizationalUnitService, s -> {
+    public static Object nativeGoToSpace(final String spaceName) {
+        return self.promises.promisify(self.organizationalUnitService, s -> {
             return s.getOrganizationalUnit(spaceName);
         }).then(space -> {
             self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
