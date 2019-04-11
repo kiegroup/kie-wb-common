@@ -30,6 +30,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
+import elemental2.promise.IThenable;
+import elemental2.promise.Promise;
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -251,8 +253,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             return s.getOrganizationalUnit(spaceName);
         }).then(space -> {
             self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
-            self.goToLibrary();
-            return self.promises.resolve();
+            return self.goToLibrary();
         });
     }
 
@@ -461,25 +462,31 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         libraryBreadcrumbs.setupForSpacesScreen();
     }
 
-    public void goToLibrary() {
+    public Promise<Void> goToLibrary() {
         if (!projectContext.getActiveOrganizationalUnit().isPresent()) {
-            libraryService.call(
-                    (RemoteCallback<OrganizationalUnit>) organizationalUnit -> {
-                        projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(organizationalUnit));
-                        setupLibraryPerspective();
-                    },
-                    (message, throwable) -> {
-                        try {
-                            throw throwable;
-                        } catch (UnauthorizedException ue) {
-                            this.goToOrganizationalUnits();
-                            return false;
-                        } catch (Throwable t) {
-                            return true; // Let default error handling happen.
-                        }
-                    }).getDefaultOrganizationalUnit();
+            return promises.create((res, rej) -> {
+                libraryService.call(
+                        (RemoteCallback<OrganizationalUnit>) organizationalUnit -> {
+                            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(organizationalUnit));
+                            setupLibraryPerspective();
+                            res.onInvoke((IThenable<Void>) null);
+                        },
+                        (message, throwable) -> {
+                            try {
+                                throw throwable;
+                            } catch (UnauthorizedException ue) {
+                                this.goToOrganizationalUnits();
+                                res.onInvoke((IThenable<Void>) null);
+                                return false;
+                            } catch (Throwable t) {
+                                rej.onInvoke(null);
+                                return true; // Let default error handling happen.
+                            }
+                        }).getDefaultOrganizationalUnit();
+            });
         } else {
             setupLibraryPerspective();
+            return promises.resolve();
         }
     }
 
