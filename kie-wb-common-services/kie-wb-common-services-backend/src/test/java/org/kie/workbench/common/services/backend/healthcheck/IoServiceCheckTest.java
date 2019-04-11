@@ -6,6 +6,8 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.FileSystem;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.services.backend.healthcheck.ServiceStatus.HEALTHY;
 import static org.kie.workbench.common.services.backend.healthcheck.ServiceStatus.INCONCLUSIVE;
 import static org.kie.workbench.common.services.backend.healthcheck.ServiceStatus.UNHEALTHY;
@@ -20,25 +22,54 @@ public class IoServiceCheckTest {
 
     @Before
     public void before() {
-        this.ioServiceCheck = spy(new IoServiceCheck(mock(IOService.class),
-                                                     mock(FileSystem.class)));
+        this.ioServiceCheck = spy(new IoServiceCheck(mock(IOService.class)));
     }
 
     @Test
     public void testHealthy() {
-        doReturn(true).when(ioServiceCheck).globalDirExists();
+        doReturn(true).when(ioServiceCheck).systemFsExists();
         assertEquals(HEALTHY, ioServiceCheck.getStatus());
     }
 
     @Test
     public void testUnhealthy() {
-        doReturn(false).when(ioServiceCheck).globalDirExists();
+        doReturn(false).when(ioServiceCheck).systemFsExists();
         assertEquals(UNHEALTHY, ioServiceCheck.getStatus());
     }
 
     @Test
     public void testInconclusive() {
-        doThrow(new RuntimeException()).when(ioServiceCheck).globalDirExists();
+        doThrow(new RuntimeException()).when(ioServiceCheck).systemFsExists();
         assertEquals(INCONCLUSIVE, ioServiceCheck.getStatus());
+    }
+
+    @Test
+    public void testSystemFsExists() {
+        final FileSystem fs = mock(FileSystem.class);
+        doReturn("foo").when(fs).getName();
+        doReturn(fs).when(ioServiceCheck).getFileSystem();
+
+        assertTrue(ioServiceCheck.systemFsExists());
+    }
+
+    @Test
+    public void testSystemFsExistsFalse() {
+        doReturn(null).when(ioServiceCheck).getFileSystem();
+        assertFalse(ioServiceCheck.systemFsExists());
+    }
+
+    @Test
+    public void testSystemExistsError() {
+        doThrow(new RuntimeException()).when(ioServiceCheck).getFileSystem();
+        assertFalse(ioServiceCheck.systemFsExists());
+    }
+
+    @Test
+    public void testSystemExistsErrorGetName() {
+        final FileSystem fs = mock(FileSystem.class);
+        doThrow(new RuntimeException()).when(fs).getName();
+        doReturn(fs).when(ioServiceCheck).getFileSystem();
+
+        assertFalse(ioServiceCheck.systemFsExists());
     }
 }
