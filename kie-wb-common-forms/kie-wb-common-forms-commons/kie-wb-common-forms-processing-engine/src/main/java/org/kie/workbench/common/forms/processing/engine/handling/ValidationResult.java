@@ -24,11 +24,11 @@ public class ValidationResult {
         ERROR(false, true);
 
         private boolean valid;
-        private boolean message;
+        private boolean hasMessage;
 
-        State(boolean valid, boolean message) {
+        State(boolean valid, boolean hasMessage) {
             this.valid = valid;
-            this.message = message;
+            this.hasMessage = hasMessage;
         }
 
         public boolean isValid() {
@@ -36,7 +36,7 @@ public class ValidationResult {
         }
 
         public boolean hasMessage() {
-            return message;
+            return hasMessage;
         }
     }
 

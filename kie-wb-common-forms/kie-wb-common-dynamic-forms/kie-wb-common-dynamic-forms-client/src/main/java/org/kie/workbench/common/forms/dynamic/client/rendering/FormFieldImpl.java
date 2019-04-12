@@ -92,22 +92,22 @@ public abstract class FormFieldImpl<F extends FieldDefinition> implements FormFi
 
     @Override
     public void clearError() {
-        if(formGroup instanceof ValidableFormGroup) {
-            ((ValidableFormGroup)formGroup).clearError();
+        if (formGroup instanceof ValidableFormGroup) {
+            ((ValidableFormGroup) formGroup).clearError();
         }
     }
 
     @Override
     public void showError(String error) {
-        if(formGroup instanceof ValidableFormGroup) {
-            ((ValidableFormGroup)formGroup).showError(error);
+        if (formGroup instanceof ValidableFormGroup) {
+            ((ValidableFormGroup) formGroup).showError(error);
         }
     }
 
     @Override
     public void showWarning(String warning) {
-        if(formGroup instanceof ValidableFormGroup) {
-            ((ValidableFormGroup)formGroup).showWarning(warning);
+        if (formGroup instanceof ValidableFormGroup) {
+            ((ValidableFormGroup) formGroup).showWarning(warning);
         }
     }
 

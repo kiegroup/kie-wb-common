@@ -18,7 +18,7 @@ appformer.forms.Documents.get = function() {
 };
 
 appformer.forms.Documents.get = function(autoUpload) {
-    if(autoUpload == true) {
+    if (autoUpload == true) {
         return new appformer.forms.Documents(true);
     }
 
@@ -44,7 +44,7 @@ appformer.forms.Documents.prototype.dropFiles = function (event) {
                     isFile =  item.getAsEntry().isFile;
                 }
 
-                if(isFile) {
+                if (isFile) {
                     this.dropFile(item.getAsFile());
                 }
             }
@@ -65,11 +65,11 @@ appformer.forms.Documents.prototype.dropFile = function (file) {
 
     var document = new appformer.forms.Document(id, file.name, '', file.size, file.lastModified);
 
-    if(this.autoUpload) {
+    if (this.autoUpload) {
         var callback =  this.onDropCallback;
         var fileReader = new FileReader();
         fileReader.onload = function (event) {
-            if(event.target.readyState == FileReader.DONE) {
+            if (event.target.readyState == FileReader.DONE) {
                 document.url = event.target.result
                 callback(document);
             }
@@ -81,7 +81,7 @@ appformer.forms.Documents.prototype.dropFile = function (file) {
 };
 
 appformer.forms.Documents.prototype.bind = function(element) {
-    if(!element) {
+    if (!element) {
         throw "Cannot bind documents upload to a null element";
     }
     if (!element.tagName) {
@@ -90,7 +90,7 @@ appformer.forms.Documents.prototype.bind = function(element) {
 
     var tag = element.tagName.toUpperCase();
 
-    if(tag === "DIV") {
+    if (tag === "DIV") {
         this.divElement = element;
         ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave'].forEach(eventName => this.divElement.addEventListener(eventName, event => this.preventEvents(event)));
         this.divElement.addEventListener('drop', event => this.dropFiles(event));

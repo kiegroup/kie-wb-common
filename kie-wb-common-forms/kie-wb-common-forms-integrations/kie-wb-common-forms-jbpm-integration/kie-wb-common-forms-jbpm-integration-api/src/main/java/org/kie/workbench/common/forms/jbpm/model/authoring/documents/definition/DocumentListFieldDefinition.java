@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.forms.jbpm.model.authoring.documents.definition;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
@@ -61,6 +63,31 @@ public class DocumentListFieldDefinition extends AbstractFieldDefinition {
 
     @Override
     protected void doCopyFrom(FieldDefinition other) {
+        if(other instanceof DocumentListFieldDefinition) {
+            this.maxDocuments = ((DocumentListFieldDefinition)other).maxDocuments;
+        }
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        DocumentListFieldDefinition that = (DocumentListFieldDefinition) o;
+        return Objects.equals(maxDocuments, that.maxDocuments);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = ~~result;
+        result = 31 * result + (maxDocuments != null ? maxDocuments.hashCode() : 0);
+        return result;
     }
 }

@@ -27,6 +27,10 @@ public class DocumentsListFieldDefinitionTest extends AbstractFieldDefinitionTes
 
     @Override
     protected DocumentListFieldDefinition getFullFieldDefinition() {
-        return new DocumentListFieldDefinition();
+
+        DocumentListFieldDefinition fieldDefinition = new DocumentListFieldDefinition();
+        fieldDefinition.setMaxDocuments(5);
+
+        return fieldDefinition;
     }
 }
