@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -62,24 +62,24 @@ public class DMNIncludedNodesFilterTest {
     public void testGetNodesFromImports() {
 
         final Path path = mock(Path.class);
-        final Import anImport1 = mock(Import.class);
-        final Import anImport2 = mock(Import.class);
-        final Import anImport3 = mock(Import.class);
-        final List<Import> imports = asList(anImport1, anImport2, anImport3);
+        final DMNIncludedModel includedModel1 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel2 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel3 = mock(DMNIncludedModel.class);
+        final List<DMNIncludedModel> imports = asList(includedModel1, includedModel2, includedModel3);
         final DMNIncludedNode dmnNode1 = mock(DMNIncludedNode.class);
         final DMNIncludedNode dmnNode2 = mock(DMNIncludedNode.class);
         final Decision node1 = new Decision();
         final InputData node2 = new InputData();
         final List<DRGElement> diagramNodes = asList(node1, node2);
 
-        when(anImport1.getNamespace()).thenReturn("://namespace1");
-        when(anImport2.getNamespace()).thenReturn("://namespace2");
-        when(anImport3.getNamespace()).thenReturn("://namespace3");
+        when(includedModel1.getNamespace()).thenReturn("://namespace1");
+        when(includedModel2.getNamespace()).thenReturn("://namespace2");
+        when(includedModel3.getNamespace()).thenReturn("://namespace3");
         when(diagramHelper.getDiagramByPath(path)).thenReturn(diagram);
         when(diagramHelper.getNodes(diagram)).thenReturn(diagramNodes);
         when(diagramHelper.getNamespace(diagram)).thenReturn("://namespace1");
-        when(factory.makeDMNIncludeModel(path, anImport1, node1)).thenReturn(dmnNode1);
-        when(factory.makeDMNIncludeModel(path, anImport1, node2)).thenReturn(dmnNode2);
+        when(factory.makeDMNIncludeModel(path, includedModel1, node1)).thenReturn(dmnNode1);
+        when(factory.makeDMNIncludeModel(path, includedModel1, node2)).thenReturn(dmnNode2);
 
         final List<DMNIncludedNode> actualNodes = filter.getNodesFromImports(path, imports);
         final List<DMNIncludedNode> expectedNodes = asList(dmnNode1, dmnNode2);
@@ -91,14 +91,14 @@ public class DMNIncludedNodesFilterTest {
     public void testGetNodesFromImportsWhenPathDoesNotRepresentsAnImportedDiagram() {
 
         final Path path = mock(Path.class);
-        final Import anImport1 = mock(Import.class);
-        final Import anImport2 = mock(Import.class);
-        final Import anImport3 = mock(Import.class);
-        final List<Import> imports = asList(anImport1, anImport2, anImport3);
+        final DMNIncludedModel includedModel1 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel2 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel3 = mock(DMNIncludedModel.class);
+        final List<DMNIncludedModel> imports = asList(includedModel1, includedModel2, includedModel3);
 
-        when(anImport1.getNamespace()).thenReturn("://namespace1");
-        when(anImport2.getNamespace()).thenReturn("://namespace2");
-        when(anImport3.getNamespace()).thenReturn("://namespace3");
+        when(includedModel1.getNamespace()).thenReturn("://namespace1");
+        when(includedModel2.getNamespace()).thenReturn("://namespace2");
+        when(includedModel3.getNamespace()).thenReturn("://namespace3");
         when(diagramHelper.getDiagramByPath(path)).thenReturn(diagram);
         when(diagramHelper.getNamespace(diagram)).thenReturn("://namespace4");
 

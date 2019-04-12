@@ -29,10 +29,9 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.included.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModelsService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.mockito.Mock;
 import org.uberfire.mocks.CallerMock;
 
@@ -48,16 +47,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class DMNIncludeModelsClientTest {
+public class DMNIncludedModelsClientTest {
 
     @Mock
-    private CallerMock<DMNIncludeModelsService> service;
+    private CallerMock<DMNIncludedModelsService> service;
 
     @Mock
     private WorkspaceProjectContext projectContext;
 
     @Mock
-    private Consumer<List<DMNIncludeModel>> listConsumerDMNModels;
+    private Consumer<List<DMNIncludedModel>> listConsumerDMNModels;
 
     @Mock
     private Consumer<List<DMNIncludedNode>> listConsumerDMNNodes;
@@ -66,10 +65,10 @@ public class DMNIncludeModelsClientTest {
     private ErrorCallback<Object> onError;
 
     @Mock
-    private RemoteCallback<List<DMNIncludeModel>> onSuccess;
+    private RemoteCallback<List<DMNIncludedModel>> onSuccess;
 
     @Mock
-    private DMNIncludeModelsService dmnService;
+    private DMNIncludedModelsService dmnService;
 
     @Mock
     private WorkspaceProject workspaceProject;
@@ -100,9 +99,9 @@ public class DMNIncludeModelsClientTest {
     public void testLoadNodesFromImports() {
 
         final Optional<WorkspaceProject> optionalWorkspaceProject = Optional.of(workspaceProject);
-        final Import anImport1 = mock(Import.class);
-        final Import anImport2 = mock(Import.class);
-        final List<Import> imports = asList(anImport1, anImport2);
+        final DMNIncludedModel includedModel1 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel2 = mock(DMNIncludedModel.class);
+        final List<DMNIncludedModel> imports = asList(includedModel1, includedModel2);
 
         doReturn(onSuccess).when(client).onSuccess(any());
         doReturn(onError).when(client).onError(any());
@@ -130,10 +129,10 @@ public class DMNIncludeModelsClientTest {
 
     @Test
     public void testOnSuccess() {
-        final List<DMNIncludeModel> dmnIncludeModels = new ArrayList<>();
+        final List<DMNIncludedModel> dmnIncludedModels = new ArrayList<>();
 
-        client.onSuccess(listConsumerDMNModels).callback(dmnIncludeModels);
+        client.onSuccess(listConsumerDMNModels).callback(dmnIncludedModels);
 
-        verify(listConsumerDMNModels).accept(dmnIncludeModels);
+        verify(listConsumerDMNModels).accept(dmnIncludedModels);
     }
 }

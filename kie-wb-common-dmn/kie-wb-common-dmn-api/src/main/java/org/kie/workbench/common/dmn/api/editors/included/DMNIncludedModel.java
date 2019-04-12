@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.api.editors.types;
+package org.kie.workbench.common.dmn.api.editors.included;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class DMNIncludeModel {
+public class DMNIncludedModel {
 
     private String modelName;
 
@@ -30,10 +30,10 @@ public class DMNIncludeModel {
 
     private String namespace;
 
-    public DMNIncludeModel(final @MapsTo("modelName") String modelName,
-                           final @MapsTo("modelPackage") String modelPackage,
-                           final @MapsTo("path") String path,
-                           final @MapsTo("namespace") String namespace) {
+    public DMNIncludedModel(final @MapsTo("modelName") String modelName,
+                            final @MapsTo("modelPackage") String modelPackage,
+                            final @MapsTo("path") String path,
+                            final @MapsTo("namespace") String namespace) {
         this.modelName = modelName;
         this.modelPackage = modelPackage;
         this.path = path;

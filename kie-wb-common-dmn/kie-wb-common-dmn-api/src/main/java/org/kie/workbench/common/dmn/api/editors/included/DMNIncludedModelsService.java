@@ -20,28 +20,26 @@ import java.util.List;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Remote;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 
 /**
  * This service handles calls related to included DMN models.
  */
 @Remote
-public interface DMNIncludeModelsService {
+public interface DMNIncludedModelsService {
 
     /**
      * This method loads all DMN models from a given project.
      * @param workspaceProject represents the project that will be scanned.
-     * @return returns all 'DMNIncludeModel's from a given project.
+     * @return returns all 'DMNIncludedModel's from a given project.
      */
-    List<DMNIncludeModel> loadModels(final WorkspaceProject workspaceProject);
+    List<DMNIncludedModel> loadModels(final WorkspaceProject workspaceProject);
 
     /**
-     * This method loads all nodes from the imports.
+     * This method loads all nodes from an included model.
      * @param workspaceProject represents the project that will be scanned.
-     * @param imports represents all imports that provide the list of nodes.
+     * @param includedModels represents all imports that provide the list of nodes.
      * @return returns the list of 'DMNIncludedNode's.
      */
     List<DMNIncludedNode> loadNodesFromImports(final WorkspaceProject workspaceProject,
-                                               final List<Import> imports);
+                                               final List<DMNIncludedModel> includedModels);
 }

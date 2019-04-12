@@ -19,7 +19,7 @@ package org.kie.workbench.common.dmn.backend.editors.common;
 import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.uberfire.backend.vfs.Path;
 
@@ -27,11 +27,11 @@ import org.uberfire.backend.vfs.Path;
 public class DMNIncludedNodeFactory {
 
     DMNIncludedNode makeDMNIncludeModel(final Path path,
-                                        final Import anImport,
+                                        final DMNIncludedModel includeModel,
                                         final DRGElement drgElement) {
 
         final String fileName = path.getFileName();
-        final String modelName = anImport.getName().getValue();
+        final String modelName = includeModel.getModelName();
         final String drgElementId = drgElement.getId().getValue();
         final String drgElementName = drgElement.getName().getValue();
         final Class<? extends DRGElement> drgElementClass = drgElement.getClass();

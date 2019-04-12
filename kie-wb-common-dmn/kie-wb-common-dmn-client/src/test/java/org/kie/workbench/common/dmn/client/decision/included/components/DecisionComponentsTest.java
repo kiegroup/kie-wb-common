@@ -26,7 +26,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
@@ -84,17 +84,17 @@ public class DecisionComponentsTest {
     public void testRefresh() {
 
         final Diagram diagram = mock(Diagram.class);
-        final List<Import> imports = new ArrayList<>();
+        final List<DMNIncludedModel> includedModels = new ArrayList<>();
         final Consumer<List<DMNIncludedNode>> listConsumer = (list) -> {/* Nothing. */};
 
-        doReturn(imports).when(decisionComponents).getImports(diagram);
+        doReturn(includedModels).when(decisionComponents).getDMNIncludedModels(diagram);
         doReturn(listConsumer).when(decisionComponents).getNodesConsumer();
 
         decisionComponents.refresh(diagram);
 
         verify(decisionComponents).clearDecisionComponents();
         verify(decisionComponents).startLoading();
-        verify(client).loadNodesFromImports(imports, listConsumer);
+        verify(client).loadNodesFromImports(includedModels, listConsumer);
     }
 
     @Test

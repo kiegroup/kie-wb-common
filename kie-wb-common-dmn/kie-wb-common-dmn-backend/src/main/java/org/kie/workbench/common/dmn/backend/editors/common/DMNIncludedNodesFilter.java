@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -45,10 +45,10 @@ public class DMNIncludedNodesFilter {
     }
 
     public List<DMNIncludedNode> getNodesFromImports(final Path path,
-                                                     final List<Import> imports) {
+                                                     final List<DMNIncludedModel> includedModels) {
 
         final Diagram<Graph, Metadata> diagram = diagramHelper.getDiagramByPath(path);
-        final Optional<Import> diagramImport = getDiagramImport(diagram, imports);
+        final Optional<DMNIncludedModel> diagramImport = getDiagramImport(diagram, includedModels);
         final boolean isDiagramImported = diagramImport.isPresent();
 
         if (isDiagramImported) {
@@ -62,10 +62,10 @@ public class DMNIncludedNodesFilter {
         return new ArrayList<>();
     }
 
-    private Optional<Import> getDiagramImport(final Diagram<Graph, Metadata> diagram,
-                                              final List<Import> imports) {
+    private Optional<DMNIncludedModel> getDiagramImport(final Diagram<Graph, Metadata> diagram,
+                                                        final List<DMNIncludedModel> includedModels) {
         final String pathNamespace = diagramHelper.getNamespace(diagram);
-        return imports
+        return includedModels
                 .stream()
                 .filter(i -> Objects.equals(pathNamespace, i.getNamespace()))
                 .findAny();

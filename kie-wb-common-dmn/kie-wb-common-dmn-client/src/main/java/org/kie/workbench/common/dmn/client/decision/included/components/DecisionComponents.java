@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -29,6 +30,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
@@ -77,7 +79,7 @@ public class DecisionComponents {
         clearDecisionComponents();
         startLoading();
 
-        client.loadNodesFromImports(getImports(diagram), getNodesConsumer());
+        client.loadNodesFromImports(getDMNIncludedModels(diagram), getNodesConsumer());
     }
 
     Consumer<List<DMNIncludedNode>> getNodesConsumer() {
@@ -143,8 +145,20 @@ public class DecisionComponents {
         return new DecisionComponent(node.getFileName(), node.getDrgElementId(), node.getDrgElementName(), node.getDrgElementClass());
     }
 
-    List<Import> getImports(final Diagram diagram) {
-        return graphUtils.getDefinitions(diagram).getImport();
+    List<DMNIncludedModel> getDMNIncludedModels(final Diagram diagram) {
+        return graphUtils
+                .getDefinitions(diagram)
+                .getImport()
+                .stream()
+                .map(this::asDMNIncludedModel)
+                .collect(Collectors.toList());
+    }
+
+    private DMNIncludedModel asDMNIncludedModel(final Import anImport) {
+        final String modelName = anImport.getName().getValue();
+        final String namespace = anImport.getNamespace();
+        final String none = "";
+        return new DMNIncludedModel(modelName, none, none, namespace);
     }
 
     List<DecisionComponentsItem> getDecisionComponentsItems() {

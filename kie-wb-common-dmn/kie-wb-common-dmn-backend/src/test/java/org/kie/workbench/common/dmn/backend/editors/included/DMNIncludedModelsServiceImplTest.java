@@ -22,9 +22,8 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
@@ -50,7 +49,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DMNIncludeModelsServiceImplTest {
+public class DMNIncludedModelsServiceImplTest {
 
     @Mock
     private RefactoringQueryServiceImpl refactoringQueryService;
@@ -70,11 +69,11 @@ public class DMNIncludeModelsServiceImplTest {
     @Mock
     private PageResponse<RefactoringPageRow> pageResponse;
 
-    private DMNIncludeModelsServiceImpl service;
+    private DMNIncludedModelsServiceImpl service;
 
     @Before
     public void setup() {
-        service = spy(new DMNIncludeModelsServiceImpl(refactoringQueryService, diagramLookupService, includeModelFactory, includedNodesFilter));
+        service = spy(new DMNIncludedModelsServiceImpl(refactoringQueryService, diagramLookupService, includeModelFactory, includedNodesFilter));
     }
 
     @Test
@@ -87,8 +86,8 @@ public class DMNIncludeModelsServiceImplTest {
         final Path path1 = mock(Path.class);
         final Path path2 = mock(Path.class);
         final Path path3 = mock(Path.class);
-        final DMNIncludeModel dmnIncludeModel1 = mock(DMNIncludeModel.class);
-        final DMNIncludeModel dmnIncludeModel2 = mock(DMNIncludeModel.class);
+        final DMNIncludedModel dmnIncludedModel1 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel dmnIncludedModel2 = mock(DMNIncludedModel.class);
         final List<DiagramRepresentation> results = asList(representation1, representation2, representation3);
 
         when(diagramLookupService.lookup(any(DiagramLookupRequest.class))).thenReturn(lookupResponse);
@@ -96,15 +95,15 @@ public class DMNIncludeModelsServiceImplTest {
         when(representation1.getPath()).thenReturn(path1);
         when(representation2.getPath()).thenReturn(path2);
         when(representation3.getPath()).thenReturn(path3);
-        when(includeModelFactory.create(path1)).thenReturn(dmnIncludeModel1);
-        when(includeModelFactory.create(path2)).thenReturn(dmnIncludeModel2);
+        when(includeModelFactory.create(path1)).thenReturn(dmnIncludedModel1);
+        when(includeModelFactory.create(path2)).thenReturn(dmnIncludedModel2);
         when(includeModelFactory.create(path3)).thenThrow(new DMNIncludeModelCouldNotBeCreatedException());
 
-        final List<DMNIncludeModel> dmnIncludeModels = service.loadModels(workspaceProject);
+        final List<DMNIncludedModel> dmnIncludedModels = service.loadModels(workspaceProject);
 
-        assertEquals(2, dmnIncludeModels.size());
-        assertEquals(dmnIncludeModel1, dmnIncludeModels.get(0));
-        assertEquals(dmnIncludeModel2, dmnIncludeModels.get(1));
+        assertEquals(2, dmnIncludedModels.size());
+        assertEquals(dmnIncludedModel1, dmnIncludedModels.get(0));
+        assertEquals(dmnIncludedModel2, dmnIncludedModels.get(1));
     }
 
     @Test
@@ -120,8 +119,8 @@ public class DMNIncludeModelsServiceImplTest {
         final Path path1 = mock(Path.class);
         final Path path2 = mock(Path.class);
         final Path path3 = mock(Path.class);
-        final DMNIncludeModel dmnIncludeModel1 = mock(DMNIncludeModel.class);
-        final DMNIncludeModel dmnIncludeModel2 = mock(DMNIncludeModel.class);
+        final DMNIncludedModel dmnIncludedModel1 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel dmnIncludedModel2 = mock(DMNIncludedModel.class);
 
         when(workspaceProject.getRootPath()).thenReturn(rootPath);
         when(rootPath.toURI()).thenReturn(uri);
@@ -130,24 +129,24 @@ public class DMNIncludeModelsServiceImplTest {
         when(row1.getValue()).thenReturn(path1);
         when(row2.getValue()).thenReturn(path2);
         when(row3.getValue()).thenReturn(path3);
-        when(includeModelFactory.create(path1)).thenReturn(dmnIncludeModel1);
-        when(includeModelFactory.create(path2)).thenReturn(dmnIncludeModel2);
+        when(includeModelFactory.create(path1)).thenReturn(dmnIncludedModel1);
+        when(includeModelFactory.create(path2)).thenReturn(dmnIncludedModel2);
         when(includeModelFactory.create(path3)).thenThrow(new DMNIncludeModelCouldNotBeCreatedException());
 
-        final List<DMNIncludeModel> dmnIncludeModels = service.loadModels(workspaceProject);
+        final List<DMNIncludedModel> dmnIncludedModels = service.loadModels(workspaceProject);
 
-        assertEquals(2, dmnIncludeModels.size());
-        assertEquals(dmnIncludeModel1, dmnIncludeModels.get(0));
-        assertEquals(dmnIncludeModel2, dmnIncludeModels.get(1));
+        assertEquals(2, dmnIncludedModels.size());
+        assertEquals(dmnIncludedModel1, dmnIncludedModels.get(0));
+        assertEquals(dmnIncludedModel2, dmnIncludedModels.get(1));
     }
 
     @Test
     public void testLoadNodesFromImports() {
 
         final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
-        final Import anImport1 = mock(Import.class);
-        final Import anImport2 = mock(Import.class);
-        final Import anImport3 = mock(Import.class);
+        final DMNIncludedModel includedModel1 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel2 = mock(DMNIncludedModel.class);
+        final DMNIncludedModel includedModel3 = mock(DMNIncludedModel.class);
         final Path path1 = mock(Path.class);
         final Path path2 = mock(Path.class);
         final Path path3 = mock(Path.class);
@@ -161,15 +160,15 @@ public class DMNIncludeModelsServiceImplTest {
         final List<DMNIncludedNode> path1Nodes = asList(node1, node2, node3, node4);
         final List<DMNIncludedNode> path2Nodes = singletonList(node5);
         final List<DMNIncludedNode> path3Nodes = asList(node6, node7);
-        final List<Import> namespaces = asList(anImport1, anImport2, anImport3);
+        final List<DMNIncludedModel> includedModels = asList(includedModel1, includedModel2, includedModel3);
         final List<Path> paths = asList(path1, path2, path3);
 
         doReturn(paths).when(service).getPaths(workspaceProject);
-        when(includedNodesFilter.getNodesFromImports(path1, namespaces)).thenReturn(path1Nodes);
-        when(includedNodesFilter.getNodesFromImports(path2, namespaces)).thenReturn(path2Nodes);
-        when(includedNodesFilter.getNodesFromImports(path3, namespaces)).thenReturn(path3Nodes);
+        when(includedNodesFilter.getNodesFromImports(path1, includedModels)).thenReturn(path1Nodes);
+        when(includedNodesFilter.getNodesFromImports(path2, includedModels)).thenReturn(path2Nodes);
+        when(includedNodesFilter.getNodesFromImports(path3, includedModels)).thenReturn(path3Nodes);
 
-        final List<DMNIncludedNode> actualNodes = service.loadNodesFromImports(workspaceProject, namespaces);
+        final List<DMNIncludedNode> actualNodes = service.loadNodesFromImports(workspaceProject, includedModels);
         final List<DMNIncludedNode> expectedNodes = asList(node1, node2, node3, node4, node5, node6, node7);
 
         assertEquals(expectedNodes, actualNodes);

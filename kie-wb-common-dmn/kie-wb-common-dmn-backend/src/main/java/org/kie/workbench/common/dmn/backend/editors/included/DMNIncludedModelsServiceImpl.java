@@ -29,10 +29,9 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.included.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModelsService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
@@ -50,9 +49,9 @@ import static java.lang.Boolean.TRUE;
 import static org.kie.workbench.common.dmn.backend.editors.types.query.FindAllDmnAssetsQuery.NAME;
 
 @Service
-public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
+public class DMNIncludedModelsServiceImpl implements DMNIncludedModelsService {
 
-    private static Logger LOGGER = Logger.getLogger(DMNIncludeModelsServiceImpl.class.getName());
+    private static Logger LOGGER = Logger.getLogger(DMNIncludedModelsServiceImpl.class.getName());
 
     private final RefactoringQueryServiceImpl refactoringQueryService;
 
@@ -63,10 +62,10 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
     private final DMNIncludedNodesFilter includedNodesFilter;
 
     @Inject
-    public DMNIncludeModelsServiceImpl(final RefactoringQueryServiceImpl refactoringQueryService,
-                                       final DiagramLookupService diagramLookupService,
-                                       final DMNIncludeModelFactory includeModelFactory,
-                                       final DMNIncludedNodesFilter includedNodesFilter) {
+    public DMNIncludedModelsServiceImpl(final RefactoringQueryServiceImpl refactoringQueryService,
+                                        final DiagramLookupService diagramLookupService,
+                                        final DMNIncludeModelFactory includeModelFactory,
+                                        final DMNIncludedNodesFilter includedNodesFilter) {
         this.refactoringQueryService = refactoringQueryService;
         this.diagramLookupService = diagramLookupService;
         this.includeModelFactory = includeModelFactory;
@@ -74,7 +73,7 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
     }
 
     @Override
-    public List<DMNIncludeModel> loadModels(final WorkspaceProject workspaceProject) {
+    public List<DMNIncludedModel> loadModels(final WorkspaceProject workspaceProject) {
         return getPaths(workspaceProject)
                 .stream()
                 .map(getPathDMNIncludeModelFunction())
@@ -84,20 +83,20 @@ public class DMNIncludeModelsServiceImpl implements DMNIncludeModelsService {
 
     @Override
     public List<DMNIncludedNode> loadNodesFromImports(final WorkspaceProject workspaceProject,
-                                                      final List<Import> imports) {
+                                                      final List<DMNIncludedModel> includedModels) {
         return getPaths(workspaceProject)
                 .stream()
-                .map(path -> includedNodesFilter.getNodesFromImports(path, imports))
+                .map(path -> includedNodesFilter.getNodesFromImports(path, includedModels))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    private Function<Path, DMNIncludeModel> getPathDMNIncludeModelFunction() {
+    private Function<Path, DMNIncludedModel> getPathDMNIncludeModelFunction() {
         return (Path path) -> {
             try {
                 return includeModelFactory.create(path);
             } catch (final DMNIncludeModelCouldNotBeCreatedException e) {
-                LOGGER.warning("The 'DMNIncludeModel' could not be created for " + path.toURI());
+                LOGGER.warning("The 'DMNIncludedModel' could not be created for " + path.toURI());
                 return null;
             }
         };

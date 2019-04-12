@@ -29,32 +29,31 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
-import org.kie.workbench.common.dmn.api.editors.included.DMNIncludeModelsService;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModelsService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
 
 @Dependent
 public class DMNIncludeModelsClient {
 
-    private final Caller<DMNIncludeModelsService> service;
+    private final Caller<DMNIncludedModelsService> service;
 
     private final WorkspaceProjectContext projectContext;
 
     @Inject
-    public DMNIncludeModelsClient(final Caller<DMNIncludeModelsService> service,
+    public DMNIncludeModelsClient(final Caller<DMNIncludedModelsService> service,
                                   final WorkspaceProjectContext projectContext) {
         this.service = service;
         this.projectContext = projectContext;
     }
 
-    public void loadModels(final Consumer<List<DMNIncludeModel>> listConsumer) {
+    public void loadModels(final Consumer<List<DMNIncludedModel>> listConsumer) {
         service.call(onSuccess(listConsumer), onError(listConsumer)).loadModels(getWorkspaceProject());
     }
 
-    public void loadNodesFromImports(final List<Import> imports,
+    public void loadNodesFromImports(final List<DMNIncludedModel> includeModels,
                                      final Consumer<List<DMNIncludedNode>> listConsumer) {
-        service.call(onSuccess(listConsumer), onError(listConsumer)).loadNodesFromImports(getWorkspaceProject(), imports);
+        service.call(onSuccess(listConsumer), onError(listConsumer)).loadNodesFromImports(getWorkspaceProject(), includeModels);
     }
 
     <T> ErrorCallback<Boolean> onError(final Consumer<List<T>> listConsumer) {

@@ -22,7 +22,7 @@ import org.guvnor.common.services.project.model.Package;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DMNIncludeModelFactoryTest {
+public class DMNIncludedModelFactoryTest {
 
     @Mock
     private DMNDiagramHelper dmnDiagramHelper;
@@ -69,12 +69,12 @@ public class DMNIncludeModelFactoryTest {
         when(moduleService.resolvePackage(path)).thenReturn(aPackage);
         when(dmnDiagramHelper.getNamespace(path)).thenReturn(namespace);
 
-        final DMNIncludeModel dmnIncludeModel = factory.create(path);
+        final DMNIncludedModel dmnIncludedModel = factory.create(path);
 
-        assertEquals(packageName, dmnIncludeModel.getModelPackage());
-        assertEquals(fileName, dmnIncludeModel.getModelName());
-        assertEquals(uri, dmnIncludeModel.getPath());
-        assertEquals(namespace, dmnIncludeModel.getNamespace());
+        assertEquals(packageName, dmnIncludedModel.getModelPackage());
+        assertEquals(fileName, dmnIncludedModel.getModelName());
+        assertEquals(uri, dmnIncludedModel.getPath());
+        assertEquals(namespace, dmnIncludedModel.getNamespace());
     }
 
     @Test(expected = DMNIncludeModelCouldNotBeCreatedException.class)

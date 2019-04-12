@@ -21,7 +21,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Package;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.uberfire.backend.vfs.Path;
@@ -41,7 +41,7 @@ public class DMNIncludeModelFactory {
         this.moduleService = moduleService;
     }
 
-    public DMNIncludeModel create(final Path path) throws DMNIncludeModelCouldNotBeCreatedException {
+    public DMNIncludedModel create(final Path path) throws DMNIncludeModelCouldNotBeCreatedException {
         try {
 
             final String fileName = path.getFileName();
@@ -49,7 +49,7 @@ public class DMNIncludeModelFactory {
             final String pathURI = path.toURI();
             final String namespace = diagramHelper.getNamespace(path);
 
-            return new DMNIncludeModel(fileName, modelPackage, pathURI, namespace);
+            return new DMNIncludedModel(fileName, modelPackage, pathURI, namespace);
         } catch (final Exception e) {
             throw new DMNIncludeModelCouldNotBeCreatedException();
         }

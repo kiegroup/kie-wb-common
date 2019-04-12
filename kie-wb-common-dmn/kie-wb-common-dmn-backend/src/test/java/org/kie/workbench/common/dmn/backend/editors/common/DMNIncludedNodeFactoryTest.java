@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Import;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -43,7 +43,7 @@ public class DMNIncludedNodeFactoryTest {
     public void testMakeDMNIncludeModel() {
 
         final Path path = mock(Path.class);
-        final Import anImport = mock(Import.class);
+        final DMNIncludedModel includedModel = mock(DMNIncludedModel.class);
         final String expectedId = "0000-1111-3333-4444";
         final String expectedDrgElementName = "Can Drive?";
         final String expectedFileName = "file.dmn";
@@ -52,9 +52,9 @@ public class DMNIncludedNodeFactoryTest {
         final DRGElement importedElementId = makeDecision(expectedId, expectedDrgElementName);
 
         when(path.getFileName()).thenReturn(expectedFileName);
-        when(anImport.getName()).thenReturn(new Name(expectedModelName));
+        when(includedModel.getModelName()).thenReturn(expectedModelName);
 
-        final DMNIncludedNode node = factory.makeDMNIncludeModel(path, anImport, importedElementId);
+        final DMNIncludedNode node = factory.makeDMNIncludeModel(path, includedModel, importedElementId);
 
         assertEquals(expectedId, node.getDrgElementId());
         assertEquals(expectedDrgElementName, node.getDrgElementName());
