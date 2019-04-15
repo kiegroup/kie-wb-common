@@ -24,10 +24,12 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.ITextWrapper;
 import com.ait.lienzo.client.core.shape.ITextWrapperWithBoundaries;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.TextBoundsWrap;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.layout.direction.DirectionLayout;
 import com.ait.lienzo.client.core.shape.wires.layout.direction.DirectionLayout.Direction;
 import com.ait.lienzo.client.core.shape.wires.layout.label.LabelContainerLayout;
@@ -283,7 +285,16 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
     @SuppressWarnings("unchecked")
     public WiresTextDecorator moveTitleToTop() {
         text.moveToTop();
+        moveShapeChildrenToFront();
         return this;
+    }
+
+    private void moveShapeChildrenToFront() {
+        shape.getChildShapes()
+                .toList()
+                .stream()
+                .map(WiresShape::getGroup)
+                .forEach(Group::moveToTop);
     }
 
     public Text getView() {

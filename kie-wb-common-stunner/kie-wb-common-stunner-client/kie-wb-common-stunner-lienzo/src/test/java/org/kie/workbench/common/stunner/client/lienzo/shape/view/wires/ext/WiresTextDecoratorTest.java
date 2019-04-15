@@ -16,30 +16,38 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.ITextWrapper;
 import com.ait.lienzo.client.core.shape.ITextWrapperWithBoundaries;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.TextBoundsWrap;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.layout.label.LabelContainerLayout;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.ViewEventHandlerManager;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,6 +56,7 @@ import static org.mockito.Mockito.when;
 public class WiresTextDecoratorTest {
 
     public static final BoundingBox NEW_SIZE = new BoundingBox(0, 0, 10, 10);
+
     @Mock
     private Supplier<ViewEventHandlerManager> eventHandlerManager;
 
@@ -71,6 +80,15 @@ public class WiresTextDecoratorTest {
 
     private WiresTextDecorator decorator;
 
+    @Mock
+    private NFastArrayList<WiresShape> children;
+
+    @Mock
+    private WiresShape child1;
+
+    @Mock
+    private WiresShape child2;
+
     @Before
     public void setup() {
         when(eventHandlerManager.get()).thenReturn(manager);
@@ -78,6 +96,10 @@ public class WiresTextDecoratorTest {
         when(shape.getLabelContainerLayout()).thenReturn(Optional.of(layout));
         when(path.getBoundingBox()).thenReturn(bb);
         when(layout.getMaxSize(any())).thenReturn(bb);
+        when(shape.getChildShapes()).thenReturn(children);
+        when(children.toList()).thenReturn(Arrays.asList(child1, child2));
+        when(child1.getGroup()).thenReturn(mock(Group.class));
+        when(child2.getGroup()).thenReturn(mock(Group.class));
 
         decorator = spy(new WiresTextDecorator(eventHandlerManager, shape));
     }
@@ -165,5 +187,18 @@ public class WiresTextDecoratorTest {
         decorator.setTextWrapper(any());
 
         verify(textWrapperWithBoundaries).setWrapBoundaries(any());
+    }
+
+    @Test
+    public void testMoveTitleToFront() {
+        Text text = spy(new Text(""));
+        Whitebox.setInternalState(decorator, "text", text);
+
+        decorator.moveTitleToTop();
+
+        InOrder order = inOrder(text, child1.getGroup(), child2.getGroup());
+        order.verify(text).moveToTop();
+        order.verify(child1.getGroup()).moveToTop();
+        order.verify(child2.getGroup()).moveToTop();
     }
 }
