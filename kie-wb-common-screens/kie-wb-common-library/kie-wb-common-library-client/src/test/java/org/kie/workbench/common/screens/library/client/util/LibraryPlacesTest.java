@@ -85,6 +85,7 @@ import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
+import org.uberfire.promise.SyncPromises;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.spaces.Space;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -242,7 +243,8 @@ public class LibraryPlacesTest {
                                               libraryBreadcrumbs,
                                               sessionInfo,
                                               libraryInternalPreferences,
-                                              repositoryServiceCaller) {
+                                              repositoryServiceCaller,
+                                              new SyncPromises()) {
 
             @Override
             protected Map<String, List<String>> getParameterMap() {

@@ -175,7 +175,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     @Inject
     private Caller<OrganizationalUnitService> organizationalUnitService;
 
-    @Inject
     private Promises promises;
 
     private boolean closingLibraryPlaces = false;
@@ -203,7 +202,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final LibraryBreadcrumbs libraryBreadcrumbs,
                          final SessionInfo sessionInfo,
                          final LibraryInternalPreferences libraryInternalPreferences,
-                         final Caller<RepositoryService> repositoryService) {
+                         final Caller<RepositoryService> repositoryService,
+                         final Promises promises) {
+
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
         this.assetDetailEvent = assetDetailEvent;
@@ -224,6 +225,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.sessionInfo = sessionInfo;
         this.libraryInternalPreferences = libraryInternalPreferences;
         this.repositoryService = repositoryService;
+        this.promises = promises;
     }
 
     @PostConstruct

@@ -31,9 +31,12 @@ import org.uberfire.preferences.shared.bean.PreferenceBeanServerStore;
 @ApplicationScoped
 public class SpacesScreenServiceImpl implements SpacesScreenService {
 
-    private final OrganizationalUnitService organizationalUnitService;
+    private OrganizationalUnitService organizationalUnitService;
 
-    private final PreferenceBeanServerStore preferenceBeanServerStore;
+    private PreferenceBeanServerStore preferenceBeanServerStore;
+
+    public SpacesScreenServiceImpl() {
+    }
 
     @Inject
     public SpacesScreenServiceImpl(final OrganizationalUnitService organizationalUnitService,
