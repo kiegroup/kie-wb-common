@@ -45,10 +45,12 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
 
     private BPMNDocumentationService documentationService;
 
+    @Inject
     @Named("documentationDiv")
     @DataField
     private HTMLElement documentationDiv;
 
+    @Inject
     @DataField
     private Button printButton;
 
@@ -56,15 +58,21 @@ public class BPMNDocumentationView extends DefaultDiagramDocumentationView {
 
     private Supplier<Boolean> isSelected;
 
-    @Inject
-    public BPMNDocumentationView(final BPMNDocumentationService documentationService,
-                                 final ClientTranslationService clientTranslationService,
-                                 final HTMLElement documentationDiv,
-                                 final Button printButton) {
+    protected BPMNDocumentationView(final BPMNDocumentationService documentationService,
+                                    final ClientTranslationService clientTranslationService,
+                                    final HTMLElement documentationDiv,
+                                    final Button printButton) {
         this.documentationService = documentationService;
         this.clientTranslationService = clientTranslationService;
         this.documentationDiv = documentationDiv;
         this.printButton = printButton;
+    }
+
+    @Inject
+    public BPMNDocumentationView(final BPMNDocumentationService documentationService,
+                                 final ClientTranslationService clientTranslationService) {
+        this.documentationService = documentationService;
+        this.clientTranslationService = clientTranslationService;
     }
 
     @Override
