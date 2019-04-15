@@ -3,12 +3,9 @@ package org.kie.workbench.common.screens.impl;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.ws.rs.core.Response;
-
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.organizationalunit.impl.OrganizationalUnitImpl;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +15,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.preferences.shared.bean.PreferenceBeanServerStore;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -30,6 +28,7 @@ public class SpacesScreenServiceImplTest {
 
     @Mock
     private OrganizationalUnitService organizationalUnitService;
+
     @Mock
     private PreferenceBeanServerStore preferenceBeanServerStore;
 
