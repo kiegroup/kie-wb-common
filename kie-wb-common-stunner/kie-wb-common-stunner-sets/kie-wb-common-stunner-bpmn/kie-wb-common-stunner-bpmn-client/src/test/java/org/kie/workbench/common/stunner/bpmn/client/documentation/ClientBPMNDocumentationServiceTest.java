@@ -142,7 +142,6 @@ public class ClientBPMNDocumentationServiceTest {
     public static final String TASK_PRIORITY = "1";
     public static final String TASK_SUBJECT = "Task Subject";
     public static final String TASK_DESCRIPTION = "Task Description";
-    public static final String PACKAGE = "org.kie";
     public static final String SUB_PROCESS_NAME = "Sub-process";
     public static final String RENDERED_DOC = "rendered";
     public static final String TASK_DOCUMENTATION = "TASK DOC";
