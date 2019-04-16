@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
 import org.uberfire.ext.wires.core.grids.client.widget.dom.single.impl.BaseSingletonDOMElementFactory;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridLayer;
@@ -76,22 +75,14 @@ public class TextBoxSingletonDOMElementFactory extends BaseSingletonDOMElementFa
     }
 
     @Override
-    public TextBoxDOMElement createDomElement(final GridLayer gridLayer,
-                                              final GridWidget gridWidget,
-                                              final GridBodyCellRenderContext context) {
-        this.widget = createWidget();
-        this.e = new TextBoxDOMElement(widget,
-                                       gridLayer,
-                                       gridWidget,
-                                       sessionManager,
-                                       sessionCommandManager,
-                                       hasNoValueCommand,
-                                       hasValueCommand);
-        widget.addBlurHandler((event) -> {
-            destroyResources();
-            gridPanel.setFocus(true);
-        });
-        return e;
+    protected TextBoxDOMElement createDomElementInternal() {
+        return new TextBoxDOMElement(widget,
+                                     gridLayer,
+                                     gridWidget,
+                                     sessionManager,
+                                     sessionCommandManager,
+                                     hasNoValueCommand,
+                                     hasValueCommand);
     }
 
     @Override
