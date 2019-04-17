@@ -65,9 +65,21 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGr
                                     final int uiHeaderRowIndex,
                                     final int uiHeaderColumnIndex,
                                     final AbstractNodeMouseEvent event) {
-        //Get column information
-        final double cx = relativeLocation.getX();
+        //Lookup Header block start
         final BaseGridRendererHelper rendererHelper = gridWidget.getRendererHelper();
+        final List<GridColumn<?>> gridColumns = gridWidget.getModel().getColumns();
+        final List<GridColumn.HeaderMetaData> columnHeaderMetaData = gridColumns.get(uiHeaderColumnIndex).getHeaderMetaData();
+        if (Objects.isNull(columnHeaderMetaData) || columnHeaderMetaData.isEmpty()) {
+            return false;
+        }
+        final GridColumn.HeaderMetaData headerMetaData = columnHeaderMetaData.get(uiHeaderRowIndex);
+        final int blockStartColumnIndex = ColumnIndexUtilities.getHeaderBlockStartColumnIndex(gridColumns,
+                                                                                              headerMetaData,
+                                                                                              uiHeaderRowIndex,
+                                                                                              uiHeaderColumnIndex);
+
+        //Get column information
+        final double cx = rendererHelper.getColumnOffset(blockStartColumnIndex) + gridColumns.get(blockStartColumnIndex).getWidth() / 2;
         final BaseGridRendererHelper.ColumnInformation ci = rendererHelper.getColumnInformation(cx);
         final GridColumn<?> column = ci.getColumn();
         if (column == null) {
@@ -85,7 +97,7 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGr
         //Get rendering information
         final Point2D gridWidgetComputedLocation = gridWidget.getComputedLocation();
         final BaseGridRendererHelper.RenderingInformation ri = rendererHelper.getRenderingInformation();
-        final EditableHeaderMetaData headerMetaData = (EditableHeaderMetaData) column.getHeaderMetaData().get(uiHeaderRowIndex);
+        final EditableHeaderMetaData editableHeaderMetaData = (EditableHeaderMetaData) column.getHeaderMetaData().get(uiHeaderRowIndex);
         final GridBodyCellEditContext context = CellContextUtilities.makeHeaderCellRenderContext(gridWidget,
                                                                                                  ri,
                                                                                                  ci,
@@ -93,7 +105,7 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGr
                                                                                                  uiHeaderRowIndex);
 
         if (isHeaderSelectionValid(gridWidget)) {
-            if (Objects.equals(headerMetaData.getSupportedEditAction(), GridCellEditAction.getSupportedEditAction(event))) {
+            if (Objects.equals(editableHeaderMetaData.getSupportedEditAction(), GridCellEditAction.getSupportedEditAction(event))) {
                 headerMetaData.edit(context);
                 return true;
             }
