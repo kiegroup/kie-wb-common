@@ -18,8 +18,6 @@ package org.kie.workbench.common.dmn.client.widgets.grid.columns.factory;
 
 import java.util.function.Function;
 
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextBoxDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -66,12 +64,7 @@ public class TextBoxSingletonDOMElementFactory extends BaseSingletonDOMElementFa
 
     @Override
     public TextBox createWidget() {
-        final TextBox textBox = new TextBox();
-
-        textBox.addKeyDownHandler(KeyDownEvent::stopPropagation);
-        textBox.addMouseDownHandler(MouseDownEvent::stopPropagation);
-
-        return textBox;
+        return new TextBox();
     }
 
     @Override

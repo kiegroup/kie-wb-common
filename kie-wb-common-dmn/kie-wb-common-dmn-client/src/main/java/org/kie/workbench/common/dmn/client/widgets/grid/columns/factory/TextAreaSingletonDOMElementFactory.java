@@ -18,8 +18,6 @@ package org.kie.workbench.common.dmn.client.widgets.grid.columns.factory;
 
 import java.util.function.Function;
 
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextAreaDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -66,12 +64,7 @@ public class TextAreaSingletonDOMElementFactory extends BaseSingletonDOMElementF
 
     @Override
     public TextArea createWidget() {
-        final TextArea textArea = new TextArea();
-
-        textArea.addKeyDownHandler(KeyDownEvent::stopPropagation);
-        textArea.addMouseDownHandler(MouseDownEvent::stopPropagation);
-
-        return textArea;
+        return new TextArea();
     }
 
     @Override
