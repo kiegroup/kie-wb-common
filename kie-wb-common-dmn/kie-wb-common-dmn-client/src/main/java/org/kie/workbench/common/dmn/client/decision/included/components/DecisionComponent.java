@@ -54,6 +54,10 @@ public class DecisionComponent {
         return drgElementId;
     }
 
+    public String getClassName() {
+        return drgElementClass.getName();
+    }
+
     public String getName() {
         return drgElementName;
     }

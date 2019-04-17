@@ -89,6 +89,7 @@ import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ComponentsWidthsE
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDIExtensionsRegister;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.PointUtils;
+import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -100,6 +101,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bound;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
@@ -442,6 +444,13 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
     private Node dmnToStunner(org.kie.dmn.model.api.DRGElement dmn,
                               final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
+
+        final Node node = createNode(dmn, hasComponentWidthsConsumer);
+        return setAllowOnlyVisualChange(node);
+    }
+
+    private Node createNode(org.kie.dmn.model.api.DRGElement dmn,
+                            final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (dmn instanceof org.kie.dmn.model.api.InputData) {
             return inputDataConverter.nodeFromDMN((org.kie.dmn.model.api.InputData) dmn,
                                                   hasComponentWidthsConsumer);
@@ -460,6 +469,23 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO 
         }
+    }
+
+    private Node setAllowOnlyVisualChange(final Node node) {
+
+        final Object content = node.getContent();
+        if (content instanceof Definition) {
+            final Definition definition = (Definition) content;
+            final Object objectDefinition = definition.getDefinition();
+            if (objectDefinition instanceof DynamicReadOnly && objectDefinition instanceof DMNElement) {
+                final String id =((DMNElement)objectDefinition).getId().getValue();
+                if (id.contains(":")) {
+                    ((DynamicReadOnly)objectDefinition).setAllowOnlyVisualChange(true);
+                }
+            }
+        }
+
+        return node;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -610,9 +636,19 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 View<?> view = (View<?>) node.getContent();
                 if (view.getDefinition() instanceof DRGElement) {
                     DRGElement n = (org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement) view.getDefinition();
-                    nodes.put(n.getId().getValue(),
-                              stunnerToDMN(node,
-                                           componentWidthsConsumer));
+                    if (view.getDefinition() instanceof DynamicReadOnly) {
+                        final DynamicReadOnly def = (DynamicReadOnly) view.getDefinition();
+                        if (!def.isAllowOnlyVisualChange()) {
+                            nodes.put(n.getId().getValue(),
+                                      stunnerToDMN(node,
+                                                   componentWidthsConsumer));
+                        }
+                    }
+                    else {
+                        nodes.put(n.getId().getValue(),
+                                  stunnerToDMN(node,
+                                               componentWidthsConsumer));
+                    }
                     dmnDDDMNDiagram.getDMNDiagramElement().add(stunnerToDDExt((View<? extends DMNElement>) view));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
