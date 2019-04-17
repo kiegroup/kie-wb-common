@@ -18,8 +18,8 @@ package org.kie.workbench.common.dmn.showcase.backend.workarounds;
 
 import javax.enterprise.inject.Specializes;
 
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
-import org.kie.workbench.common.dmn.backend.editors.types.DMNIncludeModelFactory;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
+import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
 import org.uberfire.backend.vfs.Path;
 
@@ -31,7 +31,7 @@ public class MockDMNIncludeModelFactory extends DMNIncludeModelFactory {
     }
 
     @Override
-    public DMNIncludeModel create(final Path path) throws DMNIncludeModelCouldNotBeCreatedException {
+    public DMNIncludedModel create(final Path path) throws DMNIncludeModelCouldNotBeCreatedException {
         throw new DMNIncludeModelCouldNotBeCreatedException();
     }
 }

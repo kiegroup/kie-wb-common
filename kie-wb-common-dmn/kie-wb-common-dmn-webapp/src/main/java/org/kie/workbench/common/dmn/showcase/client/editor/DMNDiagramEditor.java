@@ -384,7 +384,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
                                                                                 refreshFormPropertiesEvent,
                                                                                 event.getNodeUUID(),
                                                                                 event.getHasExpression(),
-                                                                                event.getHasName()));
+                                                                                event.getHasName(),
+                                                                                event.isOnlyVisualChangeAllowed()));
         }
     }
 

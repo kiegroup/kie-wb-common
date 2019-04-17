@@ -22,18 +22,18 @@ import java.util.List;
 import javax.enterprise.inject.Specializes;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.kie.workbench.common.dmn.api.editors.types.DMNIncludeModel;
-import org.kie.workbench.common.dmn.backend.editors.types.DMNIncludeModelsServiceImpl;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
+import org.kie.workbench.common.dmn.backend.editors.included.DMNIncludedModelsServiceImpl;
 
 @Specializes
-public class MockDMNIncludeModelsServiceImpl extends DMNIncludeModelsServiceImpl {
+public class MockDMNIncludeModelsServiceImpl extends DMNIncludedModelsServiceImpl {
 
     public MockDMNIncludeModelsServiceImpl() {
-        super(null, null, null);
+        super(null, null, null, null);
     }
 
     @Override
-    public List<DMNIncludeModel> loadModels(final WorkspaceProject workspaceProject) {
+    public List<DMNIncludedModel> loadModels(final WorkspaceProject workspaceProject) {
         return Collections.emptyList();
     }
 }

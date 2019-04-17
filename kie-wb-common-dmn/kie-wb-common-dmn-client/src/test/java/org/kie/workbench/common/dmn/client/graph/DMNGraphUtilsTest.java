@@ -19,12 +19,14 @@ package org.kie.workbench.common.dmn.client.graph;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-<<<<<<< HEAD
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
@@ -38,19 +40,19 @@ import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
 import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
-=======
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
->>>>>>> master
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DMNGraphUtilsTest {
+
+    private static final String NAME = "name";
 
     @Mock
     private SessionManager sessionManager;
@@ -62,28 +64,25 @@ public class DMNGraphUtilsTest {
     private ClientSession clientSession;
 
     @Mock
-<<<<<<< HEAD
-    private SubmarineMetadata metadata;
-=======
     private CanvasHandler canvasHandler;
->>>>>>> master
 
     @Mock
-    private Diagram diagram;
+    private SubmarineMetadata metadata;
+
+    @Mock
+    private Bounds bounds;
 
     private DMNGraphUtils utils;
 
+    private GraphImpl<DefinitionSet> graph;
+
+    private SubmarineDiagramImpl diagram;
+
     @Before
     public void setup() {
-<<<<<<< HEAD
-        this.utils = new DMNGraphUtils(sessionManager);
+        this.utils = new DMNGraphUtils(sessionManager, dmnDiagramUtils);
         this.graph = new GraphImpl<>(UUID.uuid(), new GraphNodeStoreImpl());
-        final SubmarineDiagramImpl diagram = new SubmarineDiagramImpl(NAME, graph, metadata);
-=======
-
-        utils = new DMNGraphUtils(sessionManager, dmnDiagramUtils);
-
->>>>>>> master
+        this.diagram = new SubmarineDiagramImpl(NAME, graph, metadata);
         when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
@@ -114,5 +113,63 @@ public class DMNGraphUtilsTest {
 
         assertNotNull(actualDefinitions);
         assertEquals(expectedDefinitions, actualDefinitions);
+    }
+
+    @Test
+    public void testGetDefinitionsWithRootNode() {
+        final DMNDiagram definition = new DMNDiagram();
+        graph.addNode(newNode(definition));
+
+        final Definitions definitions = utils.getDefinitions();
+        assertNotNull(definitions);
+        assertEquals(definition.getDefinitions(),
+                     definitions);
+    }
+
+    @Test
+    public void testGetDefinitionsWithMultipleRootNodes() {
+        final Decision definition1 = new Decision();
+        final DMNDiagram definition2 = new DMNDiagram();
+        graph.addNode(newNode(definition1));
+        graph.addNode(newNode(definition2));
+
+        final Definitions definitions = utils.getDefinitions();
+        assertNotNull(definitions);
+        assertEquals(definition2.getDefinitions(),
+                     definitions);
+    }
+
+    @Test
+    public void testGetDefinitionsWithConnectedNodes() {
+        final Decision definition1 = new Decision();
+        final DMNDiagram definition2 = new DMNDiagram();
+        final Node<View, Edge> node1 = newNode(definition1);
+        final Node<View, Edge> node2 = newNode(definition2);
+
+        final Edge<View, Node> edge = new EdgeImpl<>(UUID.uuid());
+        node1.getInEdges().add(edge);
+        node2.getOutEdges().add(edge);
+        edge.setSourceNode(node2);
+        edge.setTargetNode(node1);
+
+        graph.addNode(node1);
+        graph.addNode(node2);
+
+        final Definitions definitions = utils.getDefinitions();
+        assertNotNull(definitions);
+        assertEquals(definition2.getDefinitions(),
+                     definitions);
+    }
+
+    @Test
+    public void testGetDefinitionsWithNoNodes() {
+        assertNull(utils.getDefinitions());
+    }
+
+    private Node<View, Edge> newNode(final Object definition) {
+        final Node<View, Edge> node = new NodeImpl<>(UUID.uuid());
+        final View<Object> content = new ViewImpl<>(definition, bounds);
+        node.setContent(content);
+        return node;
     }
 }
