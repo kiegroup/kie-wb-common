@@ -30,7 +30,7 @@ public class ProcessOverview {
     }
 
     @JsOverlay
-    public static final ProcessOverview create(final General general, final ProcessVariablesTotal dataTotal){
+    public static final ProcessOverview create(final General general, final ProcessVariablesTotal dataTotal) {
         final ProcessOverview instance = new ProcessOverview();
         instance.general = general;
         instance.dataTotal = dataTotal;
