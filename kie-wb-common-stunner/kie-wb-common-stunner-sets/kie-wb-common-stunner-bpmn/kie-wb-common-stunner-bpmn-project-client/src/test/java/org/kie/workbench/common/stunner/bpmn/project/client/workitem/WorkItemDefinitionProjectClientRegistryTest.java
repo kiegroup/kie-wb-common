@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.workitem;
+package org.kie.workbench.common.stunner.bpmn.project.client.workitem;
 
 import java.util.Collections;
 import java.util.function.Consumer;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.jboss.errai.common.client.api.Caller;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroy
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.Command;
 
@@ -46,8 +47,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WorkItemDefinitionClientRegistryTest {
+@RunWith(GwtMockitoTestRunner.class)
+public class WorkItemDefinitionProjectClientRegistryTest {
 
     private static final WorkItemDefinition WID = new WorkItemDefinition().setName("testWID");
 
@@ -72,8 +73,9 @@ public class WorkItemDefinitionClientRegistryTest {
     @Mock
     private SessionDestroyedEvent sessionDestroyedEvent;
 
-    private WorkItemDefinitionClientRegistry tested;
+    private WorkItemDefinitionProjectClientService tested;
     private Caller<WorkItemDefinitionLookupService> serviceCaller;
+    private Promises promises;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -83,22 +85,22 @@ public class WorkItemDefinitionClientRegistryTest {
         when(sessionDestroyedEvent.getMetadata()).thenReturn(metadata);
         when(index.remove(metadata)).thenReturn(registry);
         serviceCaller = new CallerMock<>(service);
-        tested = new WorkItemDefinitionClientRegistry(serviceCaller,
-                                                      sessionManager,
-                                                      () -> registry,
-                                                      errorPresenter,
-                                                      index);
+        promises = new Promises();
+        tested = new WorkItemDefinitionProjectClientService(promises,
+                                                            serviceCaller,
+                                                            sessionManager,
+                                                            () -> registry,
+                                                            errorPresenter,
+                                                            index);
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testLoad() {
-        Command callback = mock(Command.class);
-        tested.load(metadata,
-                    callback);
+    public void testCallService() {
+        // TODO: (Submarine)
+        // tested.call(metadata);
         verify(index, times(1)).put(eq(metadata), eq(registry));
         verify(registry, times(1)).register(eq(WID));
-        verify(callback, times(1)).execute();
     }
 
     @Test
@@ -112,8 +114,8 @@ public class WorkItemDefinitionClientRegistryTest {
         when(diagram.getMetadata()).thenReturn(metadata);
         when(sessionManager.getCurrentSession()).thenReturn(session);
         Command callback = mock(Command.class);
-        tested.load(metadata,
-                    callback);
+        // TODO: (Submarine)
+        // tested.load(metadata, callback);
         verify(index, times(1)).put(eq(metadata), eq(registry));
         verify(registry, times(1)).register(eq(WID));
         verify(callback, times(1)).execute();

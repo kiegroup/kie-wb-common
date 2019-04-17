@@ -151,6 +151,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Elemental2 -->
+
+    <dependency>
+      <groupId>com.google.elemental2</groupId>
+      <artifactId>elemental2-promise</artifactId>
+    </dependency>
+
     <!-- Uberfire & Errai. -->
 
     <dependency>

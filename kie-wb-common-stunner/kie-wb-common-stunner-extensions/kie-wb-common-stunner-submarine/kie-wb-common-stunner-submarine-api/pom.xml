@@ -69,6 +69,13 @@
       <artifactId>errai-common</artifactId>
     </dependency>
 
+    <!-- Others -->
+    <dependency>
+      <groupId>com.google.elemental2</groupId>
+      <artifactId>elemental2-promise</artifactId>
+    </dependency>
+
+
     <!-- Stunner -->
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>

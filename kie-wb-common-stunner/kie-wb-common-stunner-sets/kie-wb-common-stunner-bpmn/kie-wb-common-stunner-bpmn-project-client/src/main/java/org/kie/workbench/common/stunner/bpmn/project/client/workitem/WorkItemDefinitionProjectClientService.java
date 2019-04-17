@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.workitem;
+package org.kie.workbench.common.stunner.bpmn.project.client.workitem;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -27,12 +28,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistries;
@@ -42,8 +43,8 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
-import org.uberfire.mvp.Command;
 
 /**
  * - It manages the registries relying on the client session lifecycle
@@ -52,9 +53,9 @@ import org.uberfire.mvp.Command;
  * - It destroy the registry, if any, when a session is being destroyed
  */
 @ApplicationScoped
-@Typed(WorkItemDefinitionClientRegistry.class)
-public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegistry {
+public class WorkItemDefinitionProjectClientService implements WorkItemDefinitionClientService {
 
+    private final Promises promises;
     private final Caller<WorkItemDefinitionLookupService> service;
     private final WorkItemDefinitionRegistries<Metadata> index;
     private final SessionManager sessionManager;
@@ -62,11 +63,13 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
     private final Consumer<Throwable> errorPresenter;
 
     @Inject
-    public WorkItemDefinitionClientRegistry(final Caller<WorkItemDefinitionLookupService> service,
-                                            final SessionManager sessionManager,
-                                            final ManagedInstance<WorkItemDefinitionCacheRegistry> registryInstances,
-                                            final ErrorPopupPresenter errorPopupPresenter) {
-        this(service,
+    public WorkItemDefinitionProjectClientService(final Promises promises,
+                                                  final Caller<WorkItemDefinitionLookupService> service,
+                                                  final SessionManager sessionManager,
+                                                  final ManagedInstance<WorkItemDefinitionCacheRegistry> registryInstances,
+                                                  final ErrorPopupPresenter errorPopupPresenter) {
+        this(promises,
+             service,
              sessionManager,
              registryInstances::get,
              exception -> errorPopupPresenter.showMessage(getExceptionMessage(exception)),
@@ -75,11 +78,13 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
                                                 registryInstances::destroy));
     }
 
-    WorkItemDefinitionClientRegistry(final Caller<WorkItemDefinitionLookupService> service,
-                                     final SessionManager sessionManager,
-                                     final Supplier<WorkItemDefinitionCacheRegistry> registryInstances,
-                                     final Consumer<Throwable> errorPresenter,
-                                     final WorkItemDefinitionRegistries<Metadata> index) {
+    WorkItemDefinitionProjectClientService(final Promises promises,
+                                           final Caller<WorkItemDefinitionLookupService> service,
+                                           final SessionManager sessionManager,
+                                           final Supplier<WorkItemDefinitionCacheRegistry> registryInstances,
+                                           final Consumer<Throwable> errorPresenter,
+                                           final WorkItemDefinitionRegistries<Metadata> index) {
+        this.promises = promises;
         this.service = service;
         this.sessionManager = sessionManager;
         this.registryInstanceSupplier = registryInstances;
@@ -87,33 +92,28 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
         this.index = index;
     }
 
-    @Override
-    public Collection<WorkItemDefinition> items() {
-        return getCurrentSessionRegistry().items();
-    }
-
-    @Override
-    public WorkItemDefinition get(final String name) {
-        return getCurrentSessionRegistry().get(name);
-    }
-
     @Produces
     @Default
+    @Override
     public WorkItemDefinitionRegistry getRegistry() {
         return getCurrentSessionRegistry();
     }
 
-    public void load(final Metadata metadata,
-                     final Command callback) {
-        service.call((RemoteCallback<Collection<WorkItemDefinition>>) workItemDefinitions -> {
-            final WorkItemDefinitionCacheRegistry registry = getRegistryForModule(metadata);
-            workItemDefinitions.forEach(registry::register);
-            callback.execute();
-        }, (message, throwable) -> {
-            errorPresenter.accept(throwable);
-            callback.execute();
-            return false;
-        }).execute(metadata);
+    @Override
+    public Promise<Collection<WorkItemDefinition>> call(final Metadata metadata) {
+        return promises.promisify(service,
+                                  s -> {
+                                      return s.execute(metadata);
+                                  })
+                .then(workItemDefinitions -> {
+                    final WorkItemDefinitionCacheRegistry registry = getRegistryForModule(metadata);
+                    workItemDefinitions.forEach(registry::register);
+                    return promises.resolve(workItemDefinitions);
+                })
+                .catch_((Promise.CatchOnRejectedCallbackFn<Collection<WorkItemDefinition>>) error -> {
+                    errorPresenter.accept((Throwable) error);
+                    return promises.resolve(Collections.emptyList());
+                });
     }
 
     public void removeRegistry(final Metadata metadata) {
