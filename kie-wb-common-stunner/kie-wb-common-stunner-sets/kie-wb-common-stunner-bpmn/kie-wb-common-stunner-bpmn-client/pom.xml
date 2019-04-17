@@ -257,17 +257,6 @@
       <artifactId>uberfire-client-api</artifactId>
     </dependency>
 
-    <!-- TODO: (Submarine) -->
-    <!--<dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-management-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-management-client</artifactId>
-    </dependency>-->
-
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-data-binding</artifactId>

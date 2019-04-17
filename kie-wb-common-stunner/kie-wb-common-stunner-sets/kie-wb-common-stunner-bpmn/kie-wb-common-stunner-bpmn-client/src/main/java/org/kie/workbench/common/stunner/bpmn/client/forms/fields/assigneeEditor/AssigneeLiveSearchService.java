@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.submarine.api.service;
+package org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor;
 
-import elemental2.promise.Promise;
+import java.util.function.Consumer;
+
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.widget.AssigneeLiveSearchEntryCreationEditor;
+import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeType;
 import org.kie.workbench.common.stunner.submarine.api.SubmarineContext;
+import org.uberfire.ext.widgets.common.client.dropdown.EntryCreationLiveSearchService;
 
-public interface SubmarineService<T, R> extends SubmarineContext {
+public interface AssigneeLiveSearchService
+        extends EntryCreationLiveSearchService<String, AssigneeLiveSearchEntryCreationEditor>,
+                SubmarineContext {
 
-    Promise<R> call(T input);
+    void init(AssigneeType type);
+
+    void setSearchErrorHandler(Consumer<Throwable> searchErrorHandler);
 }
