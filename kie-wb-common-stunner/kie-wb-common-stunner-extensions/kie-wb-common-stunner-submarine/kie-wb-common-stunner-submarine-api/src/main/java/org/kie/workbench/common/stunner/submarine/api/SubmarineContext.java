@@ -17,7 +17,7 @@
 package org.kie.workbench.common.stunner.submarine.api;
 
 /**
- * TODO: Refactor as just SOURCE scoped annotation
+ * TODO: (Submarine) Refactor as just SOURCE scoped annotation
  * <p>
  * Using this interface just to easily identify all contexts resulting from the functional decomposition being performed
  * during the submarine initiative refactoring.

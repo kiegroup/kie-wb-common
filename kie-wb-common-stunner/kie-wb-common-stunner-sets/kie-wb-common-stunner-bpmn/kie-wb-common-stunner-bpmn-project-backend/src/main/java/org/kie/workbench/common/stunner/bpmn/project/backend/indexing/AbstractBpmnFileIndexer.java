@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.drools.compiler.builder.impl.KnowledgeBuilderConfigurationImpl;
@@ -40,6 +42,7 @@ import org.kie.api.io.ResourceType;
 import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderError;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
+import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.AbstractFileIndexer;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.DefaultIndexBuilder;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.IndexBuilder;
@@ -61,8 +64,8 @@ public abstract class AbstractBpmnFileIndexer extends AbstractFileIndexer {
         modules.addSemanticModule(new BPMNExtensionsSemanticModule());
     }
 
-    // TODO: (Submarine) @Inject
-    // TODO: (Submarine) protected ModuleClassLoaderHelper classLoaderHelper;
+    @Inject
+    protected ModuleClassLoaderHelper classLoaderHelper;
 
     /* (non-Javadoc)
      * @see org.kie.workbench.common.services.refactoring.backend.server.indexing.AbstractFileIndexer#fillIndexBuilder(org.uberfire.java.nio.file.Path)
@@ -156,8 +159,7 @@ public abstract class AbstractBpmnFileIndexer extends AbstractFileIndexer {
 
     // Protected method for testing
     protected ClassLoader getModuleClassLoader(final KieModule module) {
-        // TODO: (Submarine) return classLoaderHelper.getModuleClassLoader(module);
-        return getClass().getClassLoader();
+        return classLoaderHelper.getModuleClassLoader(module);
     }
 
     private List<AbstractBpmnProcessDataEventListener> buildProcessDefinition(String bpmn2Content,

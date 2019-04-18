@@ -15,18 +15,22 @@
  */
 package org.kie.workbench.common.stunner.bpmn.project.backend.service.indexing;
 
+import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.refactoring.backend.server.TestIndexer;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.bpmn.project.backend.indexing.BpmnFileIndexer;
 import org.kie.workbench.common.stunner.bpmn.resource.BPMNDefinitionSetResourceType;
 import org.uberfire.io.IOService;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class TestBpmnFileIndexer extends BpmnFileIndexer implements TestIndexer<BPMNDefinitionSetResourceType> {
 
     public TestBpmnFileIndexer() {
-        // TODO: (Submarine)
-        /*this.classLoaderHelper = mock(ModuleClassLoaderHelper.class);
-        when(this.classLoaderHelper.getModuleClassLoader(any())).thenReturn(this.getClass().getClassLoader());*/
+        this.classLoaderHelper = mock(ModuleClassLoaderHelper.class);
+        when(this.classLoaderHelper.getModuleClassLoader(any())).thenReturn(this.getClass().getClassLoader());
     }
 
     @Override
