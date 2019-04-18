@@ -221,7 +221,32 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         final List<org.kie.dmn.model.api.DRGElement> drgElements = new ArrayList<>();
 
         drgElements.addAll(dmnXml.getDrgElement());
-        drgElements.addAll(importedDRGElements);
+
+        Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
+
+        if(dmnDDDiagram.isPresent()){
+            final org.kie.dmn.model.api.dmndi.DMNDiagram diagram = dmnDDDiagram.get();
+            List<org.kie.dmn.model.api.dmndi.DiagramElement> existingElements = diagram.getDMNDiagramElement();
+            for (org.kie.dmn.model.api.dmndi.DiagramElement existingElement : existingElements){
+
+                if(existingElement instanceof DMNShape){
+                    final DMNShape shape = (DMNShape) existingElement;
+                    final QName reference = shape.getDmnElementRef();
+                    if(reference!=null){
+                        final String referenced = reference.getLocalPart();
+                        if(!drgElements.stream().anyMatch(d-> referenced.equals(d.getId()))){
+                            Optional<org.kie.dmn.model.api.DRGElement> ref = importedDRGElements.stream().filter(d -> referenced.equals(d.getId())).findFirst();
+                            if(ref.isPresent()){
+                                drgElements.add(ref.get());
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        //drgElements.addAll(importedDRGElements);
 
         Map<String, Entry<org.kie.dmn.model.api.DRGElement, Node>> elems = drgElements.stream().collect(Collectors.toMap(org.kie.dmn.model.api.DRGElement::getId,
                                                                                                                                     dmn -> new SimpleEntry<>(dmn,
@@ -231,7 +256,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
 
         Set<org.kie.dmn.model.api.DecisionService> dmnDecisionServices = new HashSet<>();
-        Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
+
 
         // Stunner rely on relative positioning for Edge connections, so need to cycle on DMNShape first.
         for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {

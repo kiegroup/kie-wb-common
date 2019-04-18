@@ -169,9 +169,6 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
 
                                                                      final Object definition = clientFactoryServices.getClientFactoryManager().newDefinition(className);
                                                                      ((HasName) definition).setName(new Name(name.textContent));
-                                                                     if (!objectId.contains(":")) {
-                                                                         objectId = "importedNode:" + objectId;
-                                                                     }
                                                                      ((DMNElement) definition).getId().setValue(objectId);
                                                                      if (definition instanceof DynamicReadOnly) {
                                                                          ((DynamicReadOnly) definition).setAllowOnlyVisualChange(true);
