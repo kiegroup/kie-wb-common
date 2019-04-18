@@ -18,6 +18,8 @@ package org.kie.workbench.common.dmn.backend;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
@@ -133,15 +136,16 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     private TextAnnotationConverter textAnnotationConverter;
     private DecisionServiceConverter decisionServiceConverter;
     private org.kie.dmn.api.marshalling.DMNMarshaller marshaller;
+    private DMNMarshallerImportsHelper dmnMarshallerImportsHelper;
 
     protected DMNMarshaller() {
-        this(null,
-             null);
+        this(null, null, null);
     }
 
     @Inject
     public DMNMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
-                         final FactoryManager factoryManager) {
+                         final FactoryManager factoryManager,
+                         final DMNMarshallerImportsHelper dmnMarshallerImportsHelper) {
         this.diagramMetadataMarshaller = diagramMetadataMarshaller;
         this.factoryManager = factoryManager;
         this.inputDataConverter = new InputDataConverter(factoryManager);
@@ -151,6 +155,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
         this.marshaller = DMNMarshallerFactory.newMarshallerWithExtensions(Collections.singletonList(new DMNDIExtensionsRegister()));
+        this.dmnMarshallerImportsHelper = dmnMarshallerImportsHelper;
+    }
+
+    @PostConstruct
+    public void init() {
+        dmnMarshallerImportsHelper.init(marshaller);
     }
 
     @Deprecated
@@ -193,6 +203,20 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         };
 
         org.kie.dmn.model.api.Definitions dmnXml = marshaller.unmarshal(new InputStreamReader(input));
+
+        final Instant t0 = Instant.now();
+        System.out.println(">>>>>> CALLING " + metadata.getPath().getFileName());
+        final List<org.kie.dmn.model.api.DRGElement> importedDRGElements = dmnMarshallerImportsHelper.getImportedDRGElements(metadata, dmnXml.getImport());
+//
+        importedDRGElements.forEach(node -> {
+            System.out.println("===================================>>");
+            System.out.println("=====> " + node.getId());
+            System.out.println("=====> " + node.getName());
+            System.out.println("<<===================================");
+        });
+
+        final Instant t1 = Instant.now();
+        System.out.println("=========================================> " + Duration.between(t0, t1).toMillis());
 
         Map<String, Entry<org.kie.dmn.model.api.DRGElement, Node>> elems = dmnXml.getDrgElement().stream().collect(Collectors.toMap(org.kie.dmn.model.api.DRGElement::getId,
                                                                                                                                     dmn -> new SimpleEntry<>(dmn,
