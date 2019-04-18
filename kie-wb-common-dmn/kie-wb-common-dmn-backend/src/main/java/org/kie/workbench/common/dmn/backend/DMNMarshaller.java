@@ -218,10 +218,17 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         final Instant t1 = Instant.now();
         System.out.println("=========================================> " + Duration.between(t0, t1).toMillis());
 
-        Map<String, Entry<org.kie.dmn.model.api.DRGElement, Node>> elems = dmnXml.getDrgElement().stream().collect(Collectors.toMap(org.kie.dmn.model.api.DRGElement::getId,
+        final List<org.kie.dmn.model.api.DRGElement> drgElements = new ArrayList<>();
+
+        drgElements.addAll(dmnXml.getDrgElement());
+        drgElements.addAll(importedDRGElements);
+
+        Map<String, Entry<org.kie.dmn.model.api.DRGElement, Node>> elems = drgElements.stream().collect(Collectors.toMap(org.kie.dmn.model.api.DRGElement::getId,
                                                                                                                                     dmn -> new SimpleEntry<>(dmn,
                                                                                                                                                              dmnToStunner(dmn,
                                                                                                                                                                           hasComponentWidthsConsumer))));
+
+
 
         Set<org.kie.dmn.model.api.DecisionService> dmnDecisionServices = new HashSet<>();
         Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
