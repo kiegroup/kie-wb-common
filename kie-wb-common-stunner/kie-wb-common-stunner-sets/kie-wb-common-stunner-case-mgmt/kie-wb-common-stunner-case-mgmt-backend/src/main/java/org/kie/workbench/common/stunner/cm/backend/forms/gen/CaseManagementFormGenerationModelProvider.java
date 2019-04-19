@@ -30,6 +30,8 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.backend.gen.FormGenerationModelProvider;
 
+// TODO: (Submarine)
+
 @ApplicationScoped
 @CaseManagementEditor
 public class CaseManagementFormGenerationModelProvider implements FormGenerationModelProvider<Definitions> {
@@ -62,6 +64,8 @@ public class CaseManagementFormGenerationModelProvider implements FormGeneration
 
     @Override
     public Definitions generate(Diagram diagram) throws IOException {
-        return formGenerationModelProviderHelper.generate(diagram);
+        // TODO: (Submarine)
+        //return formGenerationModelProviderHelper.generate(diagram);
+        return null;
     }
 }

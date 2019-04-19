@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util;
+package org.kie.workbench.common.stunner.bpmn.project.backend.forms.gen.util;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;

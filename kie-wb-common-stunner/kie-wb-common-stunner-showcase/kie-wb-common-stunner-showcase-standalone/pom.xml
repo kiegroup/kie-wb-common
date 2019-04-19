@@ -225,12 +225,6 @@
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-bpmn-backend</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.kie.workbench.stunner</groupId>
-          <artifactId>kie-wb-common-stunner-forms-backend</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>

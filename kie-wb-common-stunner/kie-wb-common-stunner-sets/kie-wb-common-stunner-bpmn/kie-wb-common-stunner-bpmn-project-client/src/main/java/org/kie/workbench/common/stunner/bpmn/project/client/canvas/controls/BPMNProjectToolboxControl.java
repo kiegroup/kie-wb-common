@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.cm.client.canvas.controls;
+package org.kie.workbench.common.stunner.bpmn.project.client.canvas.controls;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,34 +25,37 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
+import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.toolbox.AbstractToolboxControl;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.FlowActionsToolbox;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.MorphActionsToolbox;
 
+/**
+ * Custom toolbox control for BPMN, which includes additional items.
+ */
 @Dependent
-@CaseManagementEditor
-public class CaseManagementToolboxControl extends AbstractToolboxControl {
+@BPMN
+public class BPMNProjectToolboxControl extends AbstractToolboxControl {
 
     private final ManagedInstance<ActionsToolboxFactory> flowActionsToolboxFactories;
     private final ManagedInstance<ActionsToolboxFactory> morphActionsToolboxFactories;
-    private final ManagedInstance<ActionsToolboxFactory> cmCommonActionsToolboxFactories;
+    private final ManagedInstance<ActionsToolboxFactory> bpmnCommonActionsToolboxFactories;
 
     @Inject
-    public CaseManagementToolboxControl(final @Any @FlowActionsToolbox ManagedInstance<ActionsToolboxFactory> flowActionsToolboxFactories,
-                                        final @Any @MorphActionsToolbox ManagedInstance<ActionsToolboxFactory> morphActionsToolboxFactories,
-                                        final @Any @CaseManagementEditor ManagedInstance<ActionsToolboxFactory> cmCommonActionsToolboxFactories) {
+    public BPMNProjectToolboxControl(final @Any @FlowActionsToolbox ManagedInstance<ActionsToolboxFactory> flowActionsToolboxFactories,
+                                     final @Any @MorphActionsToolbox ManagedInstance<ActionsToolboxFactory> morphActionsToolboxFactories,
+                                     final @Any @BPMN ManagedInstance<ActionsToolboxFactory> bpmnCommonActionsToolboxFactories) {
         this.flowActionsToolboxFactories = flowActionsToolboxFactories;
         this.morphActionsToolboxFactories = morphActionsToolboxFactories;
-        this.cmCommonActionsToolboxFactories = cmCommonActionsToolboxFactories;
+        this.bpmnCommonActionsToolboxFactories = bpmnCommonActionsToolboxFactories;
     }
 
     @Override
     protected List<ActionsToolboxFactory> getFactories() {
         return Arrays.asList(flowActionsToolboxFactories.get(),
                              morphActionsToolboxFactories.get(),
-                             cmCommonActionsToolboxFactories.get());
+                             bpmnCommonActionsToolboxFactories.get());
     }
 
     @PreDestroy
@@ -61,6 +64,6 @@ public class CaseManagementToolboxControl extends AbstractToolboxControl {
         super.destroy();
         flowActionsToolboxFactories.destroyAll();
         morphActionsToolboxFactories.destroyAll();
-        cmCommonActionsToolboxFactories.destroyAll();
+        bpmnCommonActionsToolboxFactories.destroyAll();
     }
 }

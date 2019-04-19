@@ -174,8 +174,6 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-data-modeller-integration-backend</artifactId>
-      <!-- TODO: (Submarine) -->
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -186,8 +184,6 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-jbpm-integration-backend</artifactId>
-      <!-- TODO: (Submarine) -->
-      <scope>test</scope>
     </dependency>
 
     <dependency>

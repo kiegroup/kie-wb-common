@@ -25,7 +25,6 @@ import org.eclipse.bpmn2.Definitions;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.jbpm.simulation.util.BPMN2Utils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.soup.project.datamodel.commons.util.RawMVELEvaluator;
@@ -78,8 +77,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-// TODO: (Submarine)
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class FormDefinitionGeneratorImplTest {
 
@@ -195,14 +192,12 @@ public class FormDefinitionGeneratorImplTest {
                                                                                                             commentedOptionFactory,
                                                                                                             synchronizationUtil);
 
-        // TODO: (Submarine)
-        /*generator = spy(new TestFormDefinitionGeneratorImpl(formGenerationModelProviders,
+        generator = spy(new TestFormDefinitionGeneratorImpl(formGenerationModelProviders,
                                                             ioService,
                                                             bpmnFormModelGenerator,
                                                             formDefinitionSerializer,
                                                             bpmnFormGeneratorService,
-                                                            processDefinitions));*/
-        generator = spy(new TestFormDefinitionGeneratorImpl());
+                                                            processDefinitions));
 
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getPath()).thenReturn(diagramPath);
@@ -214,7 +209,7 @@ public class FormDefinitionGeneratorImplTest {
     public void testGenerateProcessForm() {
         generator.generateProcessForm(diagram);
 
-        // TODO: (Submarine) verify(generator, times(1)).createFormForModel(formModelArgumentCaptor.capture(), any());
+        verify(generator, times(1)).createFormForModel(formModelArgumentCaptor.capture(), any());
         verify(formDefinitionSerializer, times(1)).serialize(formDefinitionArgumentCaptor.capture());
 
         verify(ioService, times(1)).createFile(any());
@@ -247,7 +242,7 @@ public class FormDefinitionGeneratorImplTest {
     private void checkSingleSelectedTaskFormGenerated(String taskId, String taskName) {
         generator.generateSelectedForms(diagram, taskId);
 
-        // TODO: (Submarine) verify(generator, times(1)).createFormForModel(formModelArgumentCaptor.capture(), any());
+        verify(generator, times(1)).createFormForModel(formModelArgumentCaptor.capture(), any());
 
         verify(formDefinitionSerializer, times(1)).serialize(formDefinitionArgumentCaptor.capture());
 
@@ -272,7 +267,7 @@ public class FormDefinitionGeneratorImplTest {
     public void testGenerateSelectedTaskForms() {
         generator.generateSelectedForms(diagram, FULL_TASK_ID, INPUTS_TASK_ID, OUTPUTS_TASK_ID);
 
-        // TODO: (Submarine) verify(generator, times(3)).createFormForModel(formModelArgumentCaptor.capture(), any());
+        verify(generator, times(3)).createFormForModel(formModelArgumentCaptor.capture(), any());
         verify(formDefinitionSerializer, times(3)).serialize(formDefinitionArgumentCaptor.capture());
 
         verify(ioService, times(1)).startBatch(any());
@@ -302,7 +297,7 @@ public class FormDefinitionGeneratorImplTest {
     public void testGenerateAllForms() {
         generator.generateAllForms(diagram);
 
-        // TODO: (Submarine) verify(generator, times(4)).createFormForModel(formModelArgumentCaptor.capture(), any());
+        verify(generator, times(4)).createFormForModel(formModelArgumentCaptor.capture(), any());
         verify(formDefinitionSerializer, times(4)).serialize(formDefinitionArgumentCaptor.capture());
 
         verify(ioService, times(1)).startBatch(any());

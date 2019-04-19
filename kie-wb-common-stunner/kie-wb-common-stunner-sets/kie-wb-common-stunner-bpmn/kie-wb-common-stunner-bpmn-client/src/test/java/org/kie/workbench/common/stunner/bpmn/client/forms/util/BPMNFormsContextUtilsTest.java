@@ -34,19 +34,19 @@ import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 
 import static org.mockito.Mockito.mock;
 
-public class ContextUtilsTest {
+public class BPMNFormsContextUtilsTest {
 
     @Test
     public void testIsFormGenerationSupported() {
-        Assert.assertTrue(ContextUtils.isFormGenerationSupported(createNode(new UserTask())));
-        Assert.assertTrue(ContextUtils.isFormGenerationSupported(createNode(mock(BaseUserTask.class))));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(mock(BaseTask.class))));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(new ScriptTask())));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(new BusinessRuleTask())));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(new NoneTask())));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(new StartNoneEvent())));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(new EndNoneEvent())));
-        Assert.assertFalse(ContextUtils.isFormGenerationSupported(createNode(new ParallelGateway())));
+        Assert.assertTrue(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new UserTask())));
+        Assert.assertTrue(BPMNFormsContextUtils.isFormGenerationSupported(createNode(mock(BaseUserTask.class))));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(mock(BaseTask.class))));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new ScriptTask())));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new BusinessRuleTask())));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new NoneTask())));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new StartNoneEvent())));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new EndNoneEvent())));
+        Assert.assertFalse(BPMNFormsContextUtils.isFormGenerationSupported(createNode(new ParallelGateway())));
     }
 
     private static Node createNode(final Object def) {

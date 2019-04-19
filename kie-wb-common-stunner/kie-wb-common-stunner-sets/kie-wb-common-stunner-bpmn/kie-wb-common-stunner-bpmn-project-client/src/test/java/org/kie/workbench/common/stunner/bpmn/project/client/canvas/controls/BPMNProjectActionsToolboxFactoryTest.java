@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.canvas.controls;
+package org.kie.workbench.common.stunner.bpmn.project.client.canvas.controls;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.client.canvas.controls.util.ActionsToolboxHelper;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
@@ -49,7 +48,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class BPMNCommonActionsToolboxFactoryTest {
+public class BPMNProjectActionsToolboxFactoryTest {
 
     @Mock
     private AbstractCanvasHandler canvasHandler;
@@ -70,9 +69,8 @@ public class BPMNCommonActionsToolboxFactoryTest {
     @Mock
     private ActionsToolboxView view;
 
-    private BPMNCommonActionsToolboxFactory tested;
+    private BPMNProjectActionsToolboxFactory tested;
     private Node element;
-    private ActionsToolboxHelper actionsToolboxHelper;
 
     @Before
     public void init() {
@@ -81,10 +79,9 @@ public class BPMNCommonActionsToolboxFactoryTest {
                                             eq(element))).thenReturn(Collections.singletonList(action1));
         generateFormsActions = spy(new ManagedInstanceStub<>(formGenerationToolboxAction));
         views = spy(new ManagedInstanceStub<>(view));
-        actionsToolboxHelper = new ActionsToolboxHelper(commonActionToolbox, generateFormsActions);
-        tested = new BPMNCommonActionsToolboxFactory(generateFormsActions,
-                                                     views,
-                                                     actionsToolboxHelper);
+        tested = new BPMNProjectActionsToolboxFactory(commonActionToolbox,
+                                                      generateFormsActions,
+                                                      views);
     }
 
     @Test

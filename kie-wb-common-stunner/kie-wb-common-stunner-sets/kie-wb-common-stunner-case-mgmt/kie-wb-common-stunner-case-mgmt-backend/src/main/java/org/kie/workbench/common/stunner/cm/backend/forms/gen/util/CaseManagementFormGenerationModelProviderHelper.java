@@ -17,16 +17,14 @@
 package org.kie.workbench.common.stunner.cm.backend.forms.gen.util;
 
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.bpmn.backend.forms.gen.util.FormGenerationModelProviderHelper;
-import org.kie.workbench.common.stunner.cm.backend.CaseManagementBackendService;
+// TODO: (Submarine)
 
 @Dependent
-public class CaseManagementFormGenerationModelProviderHelper extends FormGenerationModelProviderHelper {
+public class CaseManagementFormGenerationModelProviderHelper /*extends FormGenerationModelProviderHelper*/ {
 
-    @Inject
+    /*@Inject
     public CaseManagementFormGenerationModelProviderHelper(final CaseManagementBackendService backendService) {
         super(backendService);
-    }
+    }*/
 }

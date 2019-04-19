@@ -21,7 +21,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class ContextUtils {
+public class BPMNFormsContextUtils {
 
     public static Object getModel(final FormRenderingContext context) {
         Object model = null;

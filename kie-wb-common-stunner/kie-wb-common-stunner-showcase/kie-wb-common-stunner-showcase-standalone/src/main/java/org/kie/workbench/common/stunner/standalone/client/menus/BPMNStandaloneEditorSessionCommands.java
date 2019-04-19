@@ -39,6 +39,8 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.Validat
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
 
+// TODO: (Submarine) Really need for this class?
+
 @Dependent
 @BPMN
 public class BPMNStandaloneEditorSessionCommands extends EditorSessionCommands {

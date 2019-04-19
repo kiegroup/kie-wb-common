@@ -14,46 +14,69 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.canvas.controls.util;
+package org.kie.workbench.common.stunner.bpmn.project.client.canvas.controls;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.stunner.bpmn.client.forms.util.ContextUtils;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.BPMNFormsContextUtils;
+import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.AbstractActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
+import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolbox;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.forms.client.components.toolbox.FormGenerationToolboxAction;
 
+/**
+ * Produces same toolbox content and view as the @CommonActionsToolbox but
+ * it additionally add the form generation action, if it applies.
+ */
 @Dependent
-public class ActionsToolboxHelper {
+@BPMN
+public class BPMNProjectActionsToolboxFactory extends AbstractActionsToolboxFactory {
 
     private final ActionsToolboxFactory commonActionToolbox;
     private final ManagedInstance<FormGenerationToolboxAction> generateFormsActions;
+    private final ManagedInstance<ActionsToolboxView> views;
 
     @Inject
-    public ActionsToolboxHelper(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
-                                final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions) {
+    public BPMNProjectActionsToolboxFactory(final @CommonActionsToolbox ActionsToolboxFactory commonActionToolbox,
+                                            final @Any ManagedInstance<FormGenerationToolboxAction> generateFormsActions,
+                                            final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views) {
         this.commonActionToolbox = commonActionToolbox;
         this.generateFormsActions = generateFormsActions;
+        this.views = views;
     }
 
-    @SuppressWarnings("all")
+    @Override
+    protected ActionsToolboxView<?> newViewInstance() {
+        return views.get();
+    }
+
+    @Override
     public Collection<ToolboxAction<AbstractCanvasHandler>> getActions(final AbstractCanvasHandler canvasHandler,
                                                                        final Element<?> e) {
         final List<ToolboxAction<AbstractCanvasHandler>> actions = new LinkedList<>();
         actions.addAll(commonActionToolbox.getActions(canvasHandler, e));
-        if (ContextUtils.isFormGenerationSupported(e)) {
+        if (BPMNFormsContextUtils.isFormGenerationSupported(e)) {
             actions.add(generateFormsActions.get());
         }
         return actions;
+    }
+
+    @PreDestroy
+    public void destroy() {
+        generateFormsActions.destroyAll();
+        views.destroyAll();
     }
 }

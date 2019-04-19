@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.forms.backend.service;
 import javax.enterprise.event.Event;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -36,8 +35,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-// TODO: (Submarine)
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class FormGenerationServiceImplTest {
 
@@ -70,9 +67,7 @@ public class FormGenerationServiceImplTest {
         when(metadata.getPath()).thenReturn(path);
         when(diagram.getGraph()).thenReturn(graph);
 
-        // TODO: (Submarine) - re-implement old
-        //generationService = new FormGenerationServiceImpl(formGeneratedEvent, formGenerationFailureEvent, formDefinitionGenerator);
-        generationService = new FormGenerationServiceImpl();
+        generationService = new FormGenerationServiceImpl(formGeneratedEvent, formGenerationFailureEvent, formDefinitionGenerator);
     }
 
     @Test

@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.client.editor;
 
-import org.kie.workbench.common.stunner.bpmn.client.forms.util.ContextUtils;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.BPMNFormsContextUtils;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.command.ManagedClientSessionCommands;
 import org.kie.workbench.common.stunner.forms.client.session.command.GenerateDiagramFormsSessionCommand;
@@ -43,7 +43,7 @@ public abstract class AbstractProcessEditorSessionCommands extends EditorSession
     public EditorSessionCommands bind(final ClientSession session) {
         super.bind(session);
         getGenerateSelectedFormsSessionCommand()
-                .setElementAcceptor(ContextUtils::isFormGenerationSupported);
+                .setElementAcceptor(BPMNFormsContextUtils::isFormGenerationSupported);
         return this;
     }
 
