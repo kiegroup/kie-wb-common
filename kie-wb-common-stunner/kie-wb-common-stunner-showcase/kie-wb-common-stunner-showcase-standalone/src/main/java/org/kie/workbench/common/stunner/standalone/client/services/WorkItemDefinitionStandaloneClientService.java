@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.standalone.client.workitem;
+package org.kie.workbench.common.stunner.standalone.client.services;
 
 import java.util.Collection;
 

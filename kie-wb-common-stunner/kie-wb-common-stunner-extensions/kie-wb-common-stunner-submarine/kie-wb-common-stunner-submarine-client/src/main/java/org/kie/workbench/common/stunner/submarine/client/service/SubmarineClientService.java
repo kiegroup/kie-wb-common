@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.submarine.api.service;
+package org.kie.workbench.common.stunner.submarine.client.service;
 
 import elemental2.promise.Promise;
 import org.kie.workbench.common.stunner.submarine.api.SubmarineContext;
 
-public interface SubmarineService<T, R> extends SubmarineContext {
+public interface SubmarineClientService<T, R> extends SubmarineContext {
 
     Promise<R> call(T input);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.bpmn.backend.service;
+
+package org.kie.workbench.common.stunner.standalone.client.services;
 
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.workbench.common.stunner.bpmn.service.DataTypesService;
+import elemental2.promise.Promise;
+import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.uberfire.backend.vfs.Path;
 
-@Service
-public class FindDataTypesService implements DataTypesService {
+@ApplicationScoped
+public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
-    // TODO: (Submarine) private DataModelService dataModelService;
-
-    @Inject
-    public FindDataTypesService() {
-    }
-
-    public List<String> getDataTypeNames(final Path path) {
-        // TODO: (Submarine) - re-implement old
-        return Collections.emptyList();
+    @Override
+    public Promise<List<String>> call(final Path path) {
+        return Promise.resolve(Collections.emptyList());
     }
 }

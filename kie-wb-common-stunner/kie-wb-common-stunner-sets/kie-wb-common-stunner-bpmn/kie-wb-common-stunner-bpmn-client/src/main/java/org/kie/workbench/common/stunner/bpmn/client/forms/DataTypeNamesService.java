@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.workitem;
+package org.kie.workbench.common.stunner.bpmn.client.forms;
 
-import java.util.Collection;
+import java.util.List;
 
-import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
-import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
+import org.uberfire.backend.vfs.Path;
 
-public interface WorkItemDefinitionClientService extends SubmarineClientService<Metadata, Collection<WorkItemDefinition>> {
+public interface DataTypeNamesService extends SubmarineClientService<Path, List<String>> {
 
-    WorkItemDefinitionRegistry getRegistry();
 }

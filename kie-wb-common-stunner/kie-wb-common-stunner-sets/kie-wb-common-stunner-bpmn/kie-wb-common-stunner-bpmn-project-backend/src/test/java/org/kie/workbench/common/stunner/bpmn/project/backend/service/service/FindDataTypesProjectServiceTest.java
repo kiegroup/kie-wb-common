@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.bpmn.backend.service;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service.service;
 
-import org.junit.Ignore;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.project.datamodel.oracle.DataType;
+import org.kie.soup.project.datamodel.oracle.FieldAccessorsAndMutators;
+import org.kie.soup.project.datamodel.oracle.ModelField;
+import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.kie.workbench.common.stunner.bpmn.project.backend.service.BPMNFindDataTypesProjectService;
+import org.kie.workbench.common.stunner.bpmn.service.DataTypesService;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.backend.vfs.Path;
 
-@Ignore
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FindDataTypesServiceTest {
+public class FindDataTypesProjectServiceTest {
 
-    /*@Mock
+    @Mock
     private DataModelService dataModelService;
 
     @Mock
@@ -37,7 +53,7 @@ public class FindDataTypesServiceTest {
 
     @Before
     public void setup() {
-        this.service = new FindDataTypesService(dataModelService);
+        this.service = new BPMNFindDataTypesProjectService(dataModelService);
     }
 
     @Test
@@ -81,5 +97,5 @@ public class FindDataTypesServiceTest {
         assertEquals(2, dataTypeNames.size());
         assertEquals("org.Antelope", dataTypeNames.get(0));
         assertEquals("org.Zebra", dataTypeNames.get(1));
-    }*/
+    }
 }
