@@ -470,6 +470,11 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         return graph;
     }
 
+    List<org.kie.dmn.model.api.DRGElement> getImportedDRGElements(final Metadata metadata,
+                                                                  final org.kie.dmn.model.api.Definitions dmnXml) {
+        return dmnMarshallerImportsHelper.getImportedDRGElements(metadata, dmnXml.getImport());
+    }
+
     /**
      * Stunner's factoryManager is only used to create Nodes that are considered part of a "Definition Set" (a collection of nodes visible to the User e.g. BPMN2 StartNode, EndNode and DMN's DecisionNode etc).
      * Relationships are not created with the factory.
@@ -534,9 +539,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             final Definition definition = (Definition) content;
             final Object objectDefinition = definition.getDefinition();
             if (objectDefinition instanceof DynamicReadOnly && objectDefinition instanceof DMNElement) {
-                final String id =((DMNElement)objectDefinition).getId().getValue();
+                final String id = ((DMNElement) objectDefinition).getId().getValue();
                 if (id.contains(":")) {
-                    ((DynamicReadOnly)objectDefinition).setAllowOnlyVisualChange(true);
+                    ((DynamicReadOnly) objectDefinition).setAllowOnlyVisualChange(true);
                 }
             }
         }
@@ -699,8 +704,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                       stunnerToDMN(node,
                                                    componentWidthsConsumer));
                         }
-                    }
-                    else {
+                    } else {
                         nodes.put(n.getId().getValue(),
                                   stunnerToDMN(node,
                                                componentWidthsConsumer));

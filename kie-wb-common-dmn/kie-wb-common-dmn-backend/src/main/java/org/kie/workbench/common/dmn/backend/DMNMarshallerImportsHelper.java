@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.backend;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +75,7 @@ public class DMNMarshallerImportsHelper {
         final List<DRGElement> importedNodes = new ArrayList<>();
 
         if (imports.size() > 0) {
-            for (final Definitions definitions : getAllDMNDiagramsDefinitions(metadata)) {
+            for (final Definitions definitions : getOtherDMNDiagramsDefinitions(metadata)) {
 
                 final Optional<Import> anImport = findImportByDefinitions(definitions, imports);
                 final boolean isDiagramAnImport = anImport.isPresent();
@@ -90,8 +89,8 @@ public class DMNMarshallerImportsHelper {
         return importedNodes;
     }
 
-    private List<DRGElement> getDrgElementsWithNamespace(final Definitions definitions,
-                                                         final Import anImport) {
+    List<DRGElement> getDrgElementsWithNamespace(final Definitions definitions,
+                                                 final Import anImport) {
         return definitions
                 .getDrgElement()
                 .stream()
@@ -103,10 +102,9 @@ public class DMNMarshallerImportsHelper {
         return drgElement -> {
 
             final String namespace = anImport.getName();
-            final String drgElementId = drgElement.getId();
 
-            drgElement.setId(namespace + ":" + drgElementId);
-            drgElement.setName(namespace + "." + drgElementId);
+            drgElement.setId(namespace + ":" + drgElement.getId());
+            drgElement.setName(namespace + "." + drgElement.getName());
         };
     }
 
@@ -118,27 +116,28 @@ public class DMNMarshallerImportsHelper {
                 .findAny();
     }
 
-    private List<Definitions> getAllDMNDiagramsDefinitions(final Metadata metadata) {
+    List<Definitions> getOtherDMNDiagramsDefinitions(final Metadata metadata) {
 
-        final List<Path> otherDiagramPaths = pathsHelper.getDiagramsPaths(getProject(metadata));
+        final List<Path> diagramPaths = pathsHelper.getDiagramsPaths(getProject(metadata));
 
-        return otherDiagramPaths
+        return diagramPaths
                 .stream()
                 .filter(path -> !Objects.equals(metadata.getPath(), path))
-                .map(path -> marshaller.unmarshal(new InputStreamReader(loadPath(path))))
+                .map(path -> marshaller.unmarshal(loadPath(path)))
                 .collect(Collectors.toList());
     }
 
-    private InputStream loadPath(final org.uberfire.backend.vfs.Path _path) {
-        final byte[] bytes = ioService.readAllBytes(Paths.convert(_path));
-        return new ByteArrayInputStream(bytes);
+    InputStreamReader loadPath(final Path path) {
+        final byte[] bytes = ioService.readAllBytes(Paths.convert(path));
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        return new InputStreamReader(inputStream);
     }
 
     private WorkspaceProject getProject(final Metadata metadata) {
         try {
             return projectService.resolveProject(metadata.getPath());
-        } catch (final Exception e) {
-            // TODO: Improve error handler.
+        } catch (final NullPointerException e) {
+            // There's not project when the webapp is running on standalone mode, thus NullPointerException is raised.
             return null;
         }
     }
