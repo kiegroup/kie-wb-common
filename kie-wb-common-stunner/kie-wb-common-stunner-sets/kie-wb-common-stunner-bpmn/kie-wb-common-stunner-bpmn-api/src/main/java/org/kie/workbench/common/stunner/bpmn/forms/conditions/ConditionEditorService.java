@@ -21,6 +21,8 @@ import java.util.List;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.uberfire.backend.vfs.Path;
 
+// TODO: (Submarine) Split into several SubmarineClientService's and refactor the calls. Also remove standalone service impl, if any.
+
 @Remote
 public interface ConditionEditorService {
 
@@ -31,5 +33,4 @@ public interface ConditionEditorService {
     GenerateConditionResult generateCondition(Condition condition);
 
     TypeMetadataQueryResult findMetadata(TypeMetadataQuery query);
-
 }
