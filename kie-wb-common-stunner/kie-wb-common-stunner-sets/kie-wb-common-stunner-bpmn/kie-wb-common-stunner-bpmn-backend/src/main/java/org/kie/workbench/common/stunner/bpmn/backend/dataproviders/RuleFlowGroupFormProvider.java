@@ -16,8 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import java.util.Map;
-import java.util.TreeMap;
+import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
@@ -25,9 +24,8 @@ import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContex
 
 public class RuleFlowGroupFormProvider implements SelectorDataProvider {
 
-// TODO: (Submarine)
-    /*@Inject
-    protected RefactoringQueryService queryService;*/
+    @Inject
+    private RuleFlowGroupFormDataProvider dataProvider;
 
     @Override
     public String getProviderName() {
@@ -37,29 +35,6 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @Override
     @SuppressWarnings("unchecked")
     public SelectorData getSelectorData(final FormRenderingContext context) {
-        return new SelectorData(getRuleFlowGroupNames(),
-                                null);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<Object, String> getRuleFlowGroupNames() {
-
-        // TODO: (Submarine)
-        /*List<RefactoringPageRow> results = queryService.query(
-                FindRuleFlowNamesQuery.NAME,
-                new Sets.Builder<ValueIndexTerm>()
-                        .add(new ValueSharedPartIndexTerm("*",
-                                                          PartType.RULEFLOW_GROUP,
-                                                          ValueIndexTerm.TermSearchType.WILDCARD)).build()
-        );*/
-
-        Map<Object, String> ruleFlowGroupNames = new TreeMap<>();
-
-        /*for (RefactoringPageRow row : results) {
-            ruleFlowGroupNames.put(((Map<String, String>) row.getValue()).get("name"),
-                                   ((Map<String, String>) row.getValue()).get("name"));
-        }*/
-
-        return ruleFlowGroupNames;
+        return new SelectorData(dataProvider.getRuleFlowGroupNames(), null);
     }
 }

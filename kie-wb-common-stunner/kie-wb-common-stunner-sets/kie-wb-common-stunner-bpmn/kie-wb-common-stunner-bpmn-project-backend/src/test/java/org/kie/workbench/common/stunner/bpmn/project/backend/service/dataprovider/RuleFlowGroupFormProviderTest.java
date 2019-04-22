@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.dataprovider;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service.dataprovider;
 
-import org.junit.Ignore;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Test;
+import org.kie.workbench.common.services.refactoring.backend.server.query.standard.FindRuleFlowNamesQuery;
+import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
+import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueSharedPartIndexTerm;
 import org.kie.workbench.common.services.refactoring.service.PartType;
 
-// TODO: (Submarine)
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-@Ignore
 public class RuleFlowGroupFormProviderTest {
 
     private final static String ERROR_MSG = PartType.ACTIVATION_GROUP.toString() + "' can not be used";
 
-    /*@Test
+    @Test
     public void findRuleFlowNamesQueryTermsTest() {
         FindRuleFlowNamesQuery query = new FindRuleFlowNamesQuery();
 
@@ -67,5 +73,5 @@ public class RuleFlowGroupFormProviderTest {
         queryTerms.add(new ValueSharedPartIndexTerm("rule-flow",
                                                     PartType.RULEFLOW_GROUP));
         query.validateTerms(queryTerms);
-    }*/
+    }
 }

@@ -94,19 +94,6 @@
       <artifactId>kie-wb-common-stunner-forms-api</artifactId>
     </dependency>
 
-
-
-    <!-- TODO: (Submarine) -->
-    <!--<dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-refactoring-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-refactoring-backend</artifactId>
-    </dependency>-->
-
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-services-backend</artifactId>
@@ -354,13 +341,6 @@
       <artifactId>kie-wb-common-stunner-backend</artifactId>
       <scope>test</scope>
       <type>test-jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-refactoring-backend</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
     </dependency>
 
     <dependency>

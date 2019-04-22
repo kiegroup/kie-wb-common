@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.forms.conditions;
+package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
-import org.jboss.errai.bus.server.annotations.Remote;
-import org.uberfire.backend.vfs.Path;
+import javax.enterprise.context.Dependent;
 
-@Remote
-public interface ConditionEditorService {
+@Dependent
+public class RuleFlowGroupFormDataProvider {
 
-    List<FunctionDef> findAvailableFunctions(Path path, String clazz);
-
-    ParseConditionResult parseCondition(String conditionStr);
-
-    GenerateConditionResult generateCondition(Condition condition);
-
-    TypeMetadataQueryResult findMetadata(TypeMetadataQuery query);
+    public Map<Object, String> getRuleFlowGroupNames() {
+        return Collections.emptyMap();
+    }
 }
