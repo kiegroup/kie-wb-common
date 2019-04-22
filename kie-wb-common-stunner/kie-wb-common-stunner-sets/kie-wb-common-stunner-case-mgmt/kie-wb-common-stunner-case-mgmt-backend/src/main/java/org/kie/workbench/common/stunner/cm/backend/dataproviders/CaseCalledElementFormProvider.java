@@ -15,20 +15,19 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.dataproviders;
 
-import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.AbstractCalledElementFormProvider;
-import org.kie.workbench.common.stunner.cm.backend.query.FindCaseManagementIdsQuery;
+import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.CalledElementFormProvider;
 
-// TODO: (Submarine)
+// TODO: (Submarine): Inherit only CalledElementFormProjectDataProvider and override the methods below
 
-public class CaseCalledElementFormProvider extends AbstractCalledElementFormProvider {
+public class CaseCalledElementFormProvider extends CalledElementFormProvider {
 
     /*@Override
-    protected ResourceType getProcessIdResourceType() {
+    public ResourceType getProcessIdResourceType() {
         return ResourceType.BPMN_CM;
-    }*/
+    }
 
     @Override
-    protected String getQueryName() {
+    public String getQueryName() {
         return FindCaseManagementIdsQuery.NAME;
-    }
+    }*/
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.dataprovider;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service.dataprovider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +30,7 @@ import org.kie.workbench.common.services.refactoring.model.query.RefactoringMapP
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
 import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.CalledElementFormProvider;
+import org.kie.workbench.common.stunner.bpmn.project.backend.dataproviders.CalledElementFormProjectDataProvider;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -43,7 +44,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CalledElementFormProviderTest {
 
-    CalledElementFormProvider calledElementFormProvider = new CalledElementFormProvider();
+    private static final String ID1 = "P1.Process1";
+    private static final String ID2 = "P1.Process2";
 
     @Mock
     FormRenderingContext context;
@@ -57,13 +59,15 @@ public class CalledElementFormProviderTest {
     @Mock
     Path path2;
 
-    private static final String ID1 = "P1.Process1";
-    private static final String ID2 = "P1.Process2";
+    private CalledElementFormProvider calledElementFormProvider;
+    private CalledElementFormProjectDataProvider projectDataProvider;
 
     @Before
     public void setup() {
-        // TODO: (Submarine)
-        // calledElementFormProvider.setQueryService(queryService);
+        calledElementFormProvider = new CalledElementFormProvider();
+        projectDataProvider = new CalledElementFormProjectDataProvider();
+        calledElementFormProvider.setDataProvider(projectDataProvider);
+        projectDataProvider.setQueryService(queryService);
         List<RefactoringPageRow> results = new ArrayList<RefactoringPageRow>();
         RefactoringMapPageRow refactoringMapPageRow = new RefactoringMapPageRow();
         Map<String, Path> map = new HashMap<String, Path>();
@@ -79,7 +83,7 @@ public class CalledElementFormProviderTest {
 
     @Test
     public void getBusinessProcessIDsTest() {
-        Map<Object, String> results = calledElementFormProvider.getBusinessProcessIDs();
+        Map<Object, String> results = projectDataProvider.getBusinessProcessIDs();
         assertEquals(results.size(),
                      2);
         assertTrue(results.keySet().contains(ID1));

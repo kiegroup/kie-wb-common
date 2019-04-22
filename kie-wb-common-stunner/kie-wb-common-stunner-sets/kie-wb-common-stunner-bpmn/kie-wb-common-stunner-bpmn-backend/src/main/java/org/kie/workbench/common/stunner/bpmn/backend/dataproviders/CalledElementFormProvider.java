@@ -15,19 +15,29 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-// TODO: (Submarine)
+import javax.inject.Inject;
 
-public class CalledElementFormProvider extends AbstractCalledElementFormProvider {
+import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
+import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
+import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
-    /*@Override
-    protected ResourceType getProcessIdResourceType() {
-        return ResourceType.BPMN2;
-    }*/
+public class CalledElementFormProvider implements SelectorDataProvider {
+
+    @Inject
+    private CalledElementFormDataProvider dataProvider;
+
+    public void setDataProvider(final CalledElementFormDataProvider dataProvider) {
+        this.dataProvider = dataProvider;
+    }
 
     @Override
-    protected String getQueryName() {
-        // TODO: (Submarine)
-        /*return FindBpmnProcessIdsQuery.NAME;*/
-        return "FindBpmnProcessIdsQuery";
+    public String getProviderName() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public SelectorData getSelectorData(final FormRenderingContext context) {
+        return new SelectorData(dataProvider.getBusinessProcessIDs(), null);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
-import org.junit.Ignore;
+import java.util.Collections;
+import java.util.Map;
 
-// TODO: (Submarine)
+import javax.enterprise.context.Dependent;
 
-@Ignore
-public class CalledElementFormProviderTest {
+@Dependent
+public class CalledElementFormDataProvider {
 
-    private CalledElementFormProvider tested = new CalledElementFormProvider();
-
-    /*@Test
-    public void testGetProcessIdResourceType() throws Exception {
-        assertEquals(tested.getProcessIdResourceType(), ResourceType.BPMN2);
+    public Map<Object, String> getBusinessProcessIDs() {
+        return Collections.emptyMap();
     }
-
-    @Test
-    public void testGetQueryName() throws Exception {
-        assertEquals(tested.getQueryName(), FindBpmnProcessIdsQuery.NAME);
-    }*/
 }
