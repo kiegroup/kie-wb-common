@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.diagram;
+package org.kie.workbench.common.stunner.bpmn.project.client.diagram;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,23 +25,24 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.stunner.bpmn.service.BPMNDiagramService;
+import org.kie.workbench.common.stunner.bpmn.client.diagram.DiagramTypeClientService;
+import org.kie.workbench.common.stunner.bpmn.project.service.BPMNDiagramService;
 import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
 @ApplicationScoped
-public class DiagramTypeServiceImpl implements DiagramTypeService {
+public class DiagramTypeClientProjectService implements DiagramTypeClientService {
 
     private final Caller<BPMNDiagramService> bpmnDiagramService;
     private static final Map<String, ProjectType> projectTypeRegistry = new HashMap<>();
 
-    DiagramTypeServiceImpl() {
+    DiagramTypeClientProjectService() {
         this(null);
     }
 
     @Inject
-    public DiagramTypeServiceImpl(Caller<BPMNDiagramService> bpmnDiagramService) {
+    public DiagramTypeClientProjectService(Caller<BPMNDiagramService> bpmnDiagramService) {
         this.bpmnDiagramService = bpmnDiagramService;
     }
 

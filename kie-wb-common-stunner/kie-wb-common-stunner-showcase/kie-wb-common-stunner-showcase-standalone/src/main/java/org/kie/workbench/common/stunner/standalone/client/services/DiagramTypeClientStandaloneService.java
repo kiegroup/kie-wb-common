@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.service;
+package org.kie.workbench.common.stunner.standalone.client.services;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
+import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.stunner.bpmn.client.diagram.DiagramTypeClientService;
+import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
-@Portable
-public enum ProjectType {
+@ApplicationScoped
+public class DiagramTypeClientStandaloneService implements DiagramTypeClientService {
 
-    BPMN(null),
-    CASE(".caseproject");
-
-    ProjectType(String fileName) {
-        this.fileName = fileName;
+    @Override
+    public void loadDiagramType(final Metadata metadata) {
     }
 
-    private String fileName;
-
-    public static Optional<ProjectType> fromFileName(Optional<String> fileName) {
-        return fileName.map(name -> Stream.of(ProjectType.values())
-                .filter(v -> Objects.equals(v.fileName, name))
-                .findFirst().orElse(null));
+    @Override
+    public ProjectType getProjectType(final Metadata metadata) {
+        return ProjectType.BPMN;
     }
 }

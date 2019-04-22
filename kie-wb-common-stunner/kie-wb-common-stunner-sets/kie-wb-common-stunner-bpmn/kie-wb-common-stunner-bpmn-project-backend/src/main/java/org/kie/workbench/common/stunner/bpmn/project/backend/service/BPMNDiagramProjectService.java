@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 
 import java.util.stream.StreamSupport;
 
@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.workbench.common.stunner.bpmn.service.BPMNDiagramService;
+import org.kie.workbench.common.stunner.bpmn.project.service.BPMNDiagramService;
 import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
@@ -30,16 +30,16 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.DirectoryStream;
 
 @Service
-public class BPMNDiagramServiceImpl implements BPMNDiagramService {
+public class BPMNDiagramProjectService implements BPMNDiagramService {
 
     private IOService ioService;
 
     @Inject
-    public BPMNDiagramServiceImpl(final @Named("ioStrategy") IOService ioService) {
+    public BPMNDiagramProjectService(final @Named("ioStrategy") IOService ioService) {
         this.ioService = ioService;
     }
 
-    public BPMNDiagramServiceImpl() {
+    public BPMNDiagramProjectService() {
     }
 
     @Override

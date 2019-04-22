@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BPMNDiagramServiceImplTest {
+public class BPMNDiagramProjectServiceTest {
 
     public static final String DIR_URI = "default://master@diagrams/root";
 
@@ -45,7 +45,7 @@ public class BPMNDiagramServiceImplTest {
 
     public static final String FILE_URI = DIR_URI + "/" + FILE_NAME;
 
-    private BPMNDiagramServiceImpl tested;
+    private BPMNDiagramProjectService tested;
 
     @Mock
     private IOService ioService;
@@ -77,7 +77,7 @@ public class BPMNDiagramServiceImplTest {
         when(fsPath.getFileSystem()).thenReturn(fs);
         when(fileName.toString()).thenReturn(FILE_NAME);
 
-        tested = new BPMNDiagramServiceImpl(ioService);
+        tested = new BPMNDiagramProjectService(ioService);
     }
 
     @Test

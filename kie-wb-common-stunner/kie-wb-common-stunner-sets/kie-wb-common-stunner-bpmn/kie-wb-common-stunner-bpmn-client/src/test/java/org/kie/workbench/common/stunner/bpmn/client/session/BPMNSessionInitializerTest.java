@@ -21,7 +21,7 @@ import elemental2.promise.Promise;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.client.diagram.DiagramTypeService;
+import org.kie.workbench.common.stunner.bpmn.client.diagram.DiagramTypeClientService;
 import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.Mock;
@@ -45,7 +45,7 @@ public class BPMNSessionInitializerTest {
     private Promise promise;
 
     @Mock
-    private DiagramTypeService diagramTypeService;
+    private DiagramTypeClientService diagramTypeService;
 
     private BPMNSessionInitializer tested;
 

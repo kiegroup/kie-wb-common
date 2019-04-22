@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import elemental2.promise.Promise;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
-import org.kie.workbench.common.stunner.bpmn.service.DataTypesService;
+import org.kie.workbench.common.stunner.bpmn.project.service.DataTypesService;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.promise.Promises;
 

@@ -35,6 +35,9 @@ import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry
 import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
+// TODO: (Submarine) This fails when loading a process in an standalone context?
+// see https://gist.github.com/romartin/244bd0388a346492711c9045aa900070
+
 /**
  * - It produces the work item definition registry for the current request
  * - It performs look-ups by calling the VFS WorkItemDefinitionService, in order to populate a request's registry

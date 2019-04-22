@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.diagram;
+package org.kie.workbench.common.stunner.bpmn.project.client.diagram;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.service.BPMNDiagramService;
+import org.kie.workbench.common.stunner.bpmn.project.service.BPMNDiagramService;
 import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -33,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DiagramTypeServiceTest {
+public class DiagramTypeClientProjectServiceTest {
 
     private static final String ID = "ID";
-    private DiagramTypeServiceImpl tested;
+    private DiagramTypeClientProjectService tested;
 
     @Mock
     private BPMNDiagramService bpmnDiagramService;
@@ -61,7 +61,7 @@ public class DiagramTypeServiceTest {
         when(bpmnDiagramService.getProjectType(path)).thenReturn(ProjectType.CASE);
 
         bpmnDiagramServiceCaller = new CallerMock<>(bpmnDiagramService);
-        tested = new DiagramTypeServiceImpl(bpmnDiagramServiceCaller);
+        tested = new DiagramTypeClientProjectService(bpmnDiagramServiceCaller);
     }
 
     @Test

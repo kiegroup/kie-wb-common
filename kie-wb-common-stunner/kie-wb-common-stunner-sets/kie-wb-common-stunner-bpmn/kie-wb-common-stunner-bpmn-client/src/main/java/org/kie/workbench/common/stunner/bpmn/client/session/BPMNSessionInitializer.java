@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
-import org.kie.workbench.common.stunner.bpmn.client.diagram.DiagramTypeService;
+import org.kie.workbench.common.stunner.bpmn.client.diagram.DiagramTypeClientService;
 import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
@@ -38,7 +38,7 @@ public class BPMNSessionInitializer implements SessionInitializer {
     private static Logger LOGGER = Logger.getLogger(BPMNSessionInitializer.class.getName());
 
     private final WorkItemDefinitionClientService workItemDefinitionService;
-    private final DiagramTypeService diagramTypeService;
+    private final DiagramTypeClientService diagramTypeService;
 
     // CDI proxy.
     protected BPMNSessionInitializer() {
@@ -47,7 +47,7 @@ public class BPMNSessionInitializer implements SessionInitializer {
 
     @Inject
     public BPMNSessionInitializer(final WorkItemDefinitionClientService workItemDefinitionService,
-                                  final DiagramTypeService diagramTypeService) {
+                                  final DiagramTypeClientService diagramTypeService) {
         this.workItemDefinitionService = workItemDefinitionService;
         this.diagramTypeService = diagramTypeService;
     }
@@ -55,9 +55,7 @@ public class BPMNSessionInitializer implements SessionInitializer {
     @Override
     public void init(final Metadata metadata,
                      final Command completeCallback) {
-        // TODO: (Submarine) Refactor DiagramTypeService
         diagramTypeService.loadDiagramType(metadata);
-
         workItemDefinitionService
                 .call(metadata)
                 .then(workItemDefinitions -> {

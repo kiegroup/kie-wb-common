@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.service;
+package org.kie.workbench.common.stunner.bpmn.client.diagram;
 
-import org.jboss.errai.bus.server.annotations.Remote;
-import org.uberfire.backend.vfs.Path;
+import org.kie.workbench.common.stunner.bpmn.service.ProjectType;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
-@Remote
-public interface BPMNDiagramService {
+public interface DiagramTypeClientService {
 
-    ProjectType getProjectType(Path projectRootPath);
+    void loadDiagramType(Metadata metadata);
+
+    ProjectType getProjectType(Metadata metadata);
 }
