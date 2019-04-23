@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.workitem.service;
+package org.kie.workbench.common.stunner.bpmn.project.backend.workitem.service;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.workitem.deploy.WorkItemDefinitionDeployServices;
+import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionVFSLookupService;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -37,7 +38,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WorkItemDefinitionBackendServiceTest {
+public class WorkItemDefinitionProjectServiceTest {
 
     private static WorkItemDefinition wid1 = new WorkItemDefinition().setName("wid1");
     private static WorkItemDefinition wid2 = new WorkItemDefinition().setName("wid2");
@@ -54,7 +55,7 @@ public class WorkItemDefinitionBackendServiceTest {
     @Mock
     private Metadata metadata;
 
-    private WorkItemDefinitionBackendService tested;
+    private WorkItemDefinitionProjectService tested;
     private WorkItemDefinitionCacheRegistry registry;
 
     @Before
@@ -62,7 +63,7 @@ public class WorkItemDefinitionBackendServiceTest {
         when(vfsService.search(eq(metadata))).thenReturn(Arrays.asList(wid1,
                                                                        wid2));
         registry = new WorkItemDefinitionCacheRegistry();
-        tested = new WorkItemDefinitionBackendService(registry,
+        tested = new WorkItemDefinitionProjectService(registry,
                                                       vfsService,
                                                       deployServices,
                                                       deployPredicate);

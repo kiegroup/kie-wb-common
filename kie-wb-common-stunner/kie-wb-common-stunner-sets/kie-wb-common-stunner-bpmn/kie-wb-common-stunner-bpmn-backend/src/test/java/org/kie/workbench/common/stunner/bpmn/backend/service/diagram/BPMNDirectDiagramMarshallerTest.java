@@ -50,7 +50,6 @@ import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeMode
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -114,6 +113,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
+import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
@@ -299,7 +299,7 @@ public class BPMNDirectDiagramMarshallerTest {
         GraphCommandFactory commandFactory = new GraphCommandFactory();
 
         // The work item definition service.
-        WorkItemDefinitionBackendService widService = mock(WorkItemDefinitionBackendService.class);
+        WorkItemDefinitionLookupService widService = mock(WorkItemDefinitionLookupService.class);
         when(widService.execute(any(Metadata.class))).thenReturn(workItemDefinitionMockRegistry.items());
 
         // The tested BPMN marshaller.

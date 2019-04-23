@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
+import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -41,7 +41,7 @@ public class BPMNDirectDiagramMarshaller extends BaseDirectDiagramMarshaller {
             final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
             final DefinitionManager definitionManager,
             final RuleManager ruleManager,
-            final WorkItemDefinitionBackendService workItemDefinitionService,
+            final WorkItemDefinitionLookupService workItemDefinitionService,
             final FactoryManager factoryManager,
             final GraphCommandFactory commandFactory,
             final GraphCommandManager commandManager) {
@@ -60,7 +60,7 @@ public class BPMNDirectDiagramMarshaller extends BaseDirectDiagramMarshaller {
             final Graph graph,
             final PropertyWriterFactory propertyWriterFactory) {
         return new org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory(new DefinitionsBuildingContext(graph),
-                                    propertyWriterFactory);
+                                                                                                         propertyWriterFactory);
     }
 
     @Override

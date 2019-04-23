@@ -71,7 +71,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TaskTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TimerSettingsTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.VariablesTypeSerializer;
-import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -129,6 +128,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
+import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.bind.BackendBindableMorphAdapter;
@@ -460,7 +460,7 @@ public class BPMNDiagramMarshallerTest {
         when(rulesManager.evaluate(any(RuleSet.class),
                                    any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
         // The work item definition service.
-        WorkItemDefinitionBackendService widService = mock(WorkItemDefinitionBackendService.class);
+        WorkItemDefinitionLookupService widService = mock(WorkItemDefinitionLookupService.class);
         when(widService.execute(any(Metadata.class))).thenReturn(workItemDefinitionMockRegistry.items());
         // The tested BPMN marshaller.
         tested = new BPMNDiagramMarshaller(new XMLEncoderDiagramMetadataMarshaller(),

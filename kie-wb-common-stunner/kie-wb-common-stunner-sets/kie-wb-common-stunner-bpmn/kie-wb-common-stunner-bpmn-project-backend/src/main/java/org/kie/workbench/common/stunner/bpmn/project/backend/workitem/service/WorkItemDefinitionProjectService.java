@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.workitem.service;
+package org.kie.workbench.common.stunner.bpmn.project.backend.workitem.service;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,14 +29,12 @@ import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.stunner.bpmn.backend.workitem.deploy.WorkItemDefinitionDeployServices;
+import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionVFSLookupService;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-
-// TODO: (Submarine) This fails when loading a process in an standalone context?
-// see https://gist.github.com/romartin/244bd0388a346492711c9045aa900070
 
 /**
  * - It produces the work item definition registry for the current request
@@ -45,7 +43,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
  */
 @RequestScoped
 @Service
-public class WorkItemDefinitionBackendService
+public class WorkItemDefinitionProjectService
         implements WorkItemDefinitionLookupService {
 
     private final WorkItemDefinitionCacheRegistry registry;
@@ -63,12 +61,12 @@ public class WorkItemDefinitionBackendService
 
     // CDI proxy.
     @SuppressWarnings("all")
-    protected WorkItemDefinitionBackendService() {
+    protected WorkItemDefinitionProjectService() {
         this(null, null, null, null);
     }
 
     @Inject
-    public WorkItemDefinitionBackendService(final WorkItemDefinitionCacheRegistry registry,
+    public WorkItemDefinitionProjectService(final WorkItemDefinitionCacheRegistry registry,
                                             final WorkItemDefinitionVFSLookupService vfsService,
                                             final WorkItemDefinitionDeployServices deployServices) {
         this(registry,
@@ -77,7 +75,7 @@ public class WorkItemDefinitionBackendService
              DEFAULT_DEPLOY_PREDICATE);
     }
 
-    WorkItemDefinitionBackendService(final WorkItemDefinitionCacheRegistry registry,
+    WorkItemDefinitionProjectService(final WorkItemDefinitionCacheRegistry registry,
                                      final WorkItemDefinitionVFSLookupService vfsService,
                                      final WorkItemDefinitionDeployServices deployServices,
                                      final BiPredicate<Metadata, Collection<WorkItemDefinition>> deployPredicate) {

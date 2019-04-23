@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
@@ -63,6 +62,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
+import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
@@ -189,7 +189,7 @@ public class CaseManagementDirectDiagramMarshallerTest {
         GraphCommandFactory commandFactory = new GraphCommandFactory();
 
         // The work item definition service.
-        WorkItemDefinitionBackendService widService = mock(WorkItemDefinitionBackendService.class);
+        WorkItemDefinitionLookupService widService = mock(WorkItemDefinitionLookupService.class);
 
         // The tested CM marshaller.
         tested = new CaseManagementDirectDiagramMarshaller(new XMLEncoderDiagramMetadataMarshaller(),

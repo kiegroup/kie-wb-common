@@ -48,7 +48,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.Defini
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
-import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
+import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -79,7 +79,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
     private final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller;
     private final DefinitionManager definitionManager;
     private final RuleManager ruleManager;
-    private final WorkItemDefinitionBackendService workItemDefinitionService;
+    private final WorkItemDefinitionLookupService workItemDefinitionService;
     protected final TypedFactoryManager typedFactoryManager;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
@@ -87,7 +87,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
     public BaseDirectDiagramMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
                                        final DefinitionManager definitionManager,
                                        final RuleManager ruleManager,
-                                       final WorkItemDefinitionBackendService workItemDefinitionService,
+                                       final WorkItemDefinitionLookupService workItemDefinitionService,
                                        final FactoryManager factoryManager,
                                        final GraphCommandFactory commandFactory,
                                        final GraphCommandManager commandManager) {

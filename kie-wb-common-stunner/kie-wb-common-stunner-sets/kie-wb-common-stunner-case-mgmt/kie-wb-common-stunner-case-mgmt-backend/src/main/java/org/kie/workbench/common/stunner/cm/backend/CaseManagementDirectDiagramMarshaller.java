@@ -35,10 +35,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
+import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.backend.converters.fromstunner.properties.CaseManagementPropertyWriterFactory;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
@@ -79,7 +79,7 @@ public class CaseManagementDirectDiagramMarshaller extends BaseDirectDiagramMars
     public CaseManagementDirectDiagramMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
                                                  final DefinitionManager definitionManager,
                                                  final RuleManager ruleManager,
-                                                 final WorkItemDefinitionBackendService workItemDefinitionService,
+                                                 final WorkItemDefinitionLookupService workItemDefinitionService,
                                                  final FactoryManager factoryManager,
                                                  final GraphCommandFactory commandFactory,
                                                  final GraphCommandManager commandManager) {
