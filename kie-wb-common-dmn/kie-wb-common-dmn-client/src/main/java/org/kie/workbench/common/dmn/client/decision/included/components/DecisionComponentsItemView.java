@@ -168,7 +168,8 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
                                                                                         int y) {
 
                                                                      final Object definition = clientFactoryServices.getClientFactoryManager().newDefinition(className);
-                                                                     ((HasName) definition).setName(new Name(name.textContent));
+                                                                     final Name nameObject = getName();
+                                                                     ((HasName) definition).setName(nameObject);
                                                                      ((DMNElement) definition).getId().setValue(objectId);
                                                                      if (definition instanceof DynamicReadOnly) {
                                                                          ((DynamicReadOnly) definition).setAllowOnlyVisualChange(true);
@@ -181,5 +182,10 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
                                                                                                                           y));
                                                                  }
                                                              });
+    }
+
+    private Name getName() {
+        final String prefix = objectId.split(":")[0];
+        return new Name(prefix + "." + name.textContent);
     }
 }

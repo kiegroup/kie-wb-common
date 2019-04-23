@@ -18,8 +18,6 @@ package org.kie.workbench.common.dmn.backend;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -204,19 +202,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
         org.kie.dmn.model.api.Definitions dmnXml = marshaller.unmarshal(new InputStreamReader(input));
 
-        final Instant t0 = Instant.now();
-        System.out.println(">>>>>> CALLING " + metadata.getPath().getFileName());
         final List<org.kie.dmn.model.api.DRGElement> importedDRGElements = dmnMarshallerImportsHelper.getImportedDRGElements(metadata, dmnXml.getImport());
-//
-        importedDRGElements.forEach(node -> {
-            System.out.println("===================================>>");
-            System.out.println("=====> " + node.getId());
-            System.out.println("=====> " + node.getName());
-            System.out.println("<<===================================");
-        });
-
-        final Instant t1 = Instant.now();
-        System.out.println("=========================================> " + Duration.between(t0, t1).toMillis());
 
         final List<org.kie.dmn.model.api.DRGElement> drgElements = new ArrayList<>();
 
@@ -224,29 +210,26 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
         Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
 
-        if(dmnDDDiagram.isPresent()){
+        if (dmnDDDiagram.isPresent()) {
             final org.kie.dmn.model.api.dmndi.DMNDiagram diagram = dmnDDDiagram.get();
             List<org.kie.dmn.model.api.dmndi.DiagramElement> existingElements = diagram.getDMNDiagramElement();
-            for (org.kie.dmn.model.api.dmndi.DiagramElement existingElement : existingElements){
+            for (org.kie.dmn.model.api.dmndi.DiagramElement existingElement : existingElements) {
 
-                if(existingElement instanceof DMNShape){
+                if (existingElement instanceof DMNShape) {
                     final DMNShape shape = (DMNShape) existingElement;
                     final QName reference = shape.getDmnElementRef();
-                    if(reference!=null){
+                    if (reference != null) {
                         final String referenced = reference.getLocalPart();
-                        if(!drgElements.stream().anyMatch(d-> referenced.equals(d.getId()))){
+                        if (!drgElements.stream().anyMatch(d -> referenced.equals(d.getId()))) {
                             Optional<org.kie.dmn.model.api.DRGElement> ref = importedDRGElements.stream().filter(d -> referenced.equals(d.getId())).findFirst();
-                            if(ref.isPresent()){
+                            if (ref.isPresent()) {
                                 drgElements.add(ref.get());
                             }
                         }
                     }
                 }
             }
-
         }
-
-        //drgElements.addAll(importedDRGElements);
 
         Map<String, Entry<org.kie.dmn.model.api.DRGElement, Node>> elems = drgElements.stream().collect(Collectors.toMap(org.kie.dmn.model.api.DRGElement::getId,
                                                                                                                                     dmn -> new SimpleEntry<>(dmn,
@@ -256,7 +239,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
 
         Set<org.kie.dmn.model.api.DecisionService> dmnDecisionServices = new HashSet<>();
-
 
         // Stunner rely on relative positioning for Edge connections, so need to cycle on DMNShape first.
         for (Entry<org.kie.dmn.model.api.DRGElement, Node> kv : elems.values()) {
@@ -453,8 +435,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         //Copy ComponentWidths information
         final Optional<ComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
         extension.ifPresent(componentsWidthsExtension -> {
-            hasComponentWidthsMap.entrySet().forEach(es -> {
-                componentsWidthsExtension
+            //This condition is required because a node with ComponentsWidthsExtension
+            //can be imported from another diagram but the extension is not imported or present in this diagram.
+            //TODO: This will be fixed in this JIRA: https://issues.jboss.org/browse/DROOLS-3934
+            if (extension.get().getComponentsWidths() != null) {
+                hasComponentWidthsMap.entrySet().forEach(es -> {
+                    componentsWidthsExtension
                         .getComponentsWidths()
                         .stream()
                         .filter(componentWidths -> componentWidths.getDmnElementRef().getLocalPart().equals(es.getKey()))
@@ -464,7 +450,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                             widths.clear();
                             widths.addAll(componentWidths.getWidths());
                         });
-            });
+                });
+            }
         });
 
         return graph;
