@@ -47,19 +47,19 @@ public final class CaseManagementSvgSubprocessShapeDef extends BaseDimensionedSh
                     .put(CaseReusableSubprocess.class, CaseManagementSVGGlyphFactory.SUBCASE_GLYPH).build();
 
     @Override
-    public FontHandler<ReusableSubprocess, SVGShapeView> newFontHandler() {
-        return newFontHandlerBuilder()
-                .horizontalAlignment(o -> HasTitle.HorizontalAlignment.CENTER)
-                .build();
-    }
-
-    @Override
     public SizeHandler<ReusableSubprocess, SVGShapeView> newSizeHandler() {
         return newSizeHandlerBuilder()
                 .width(e -> e.getDimensionsSet().getWidth().getValue())
                 .height(e -> e.getDimensionsSet().getHeight().getValue())
                 .minWidth(e -> 50d)
                 .minHeight(e -> 50d)
+                .build();
+    }
+
+    @Override
+    public FontHandler<ReusableSubprocess, SVGShapeView> newFontHandler() {
+        return newFontHandlerBuilder()
+                .margin(HasTitle.HorizontalAlignment.LEFT, 30d)
                 .build();
     }
 

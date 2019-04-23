@@ -21,21 +21,12 @@ import org.kie.workbench.common.stunner.bpmn.client.shape.def.BaseDimensionedSha
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGGlyphFactory;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
 public class CaseManagementSvgStageShapeDef extends BaseDimensionedShapeDef
         implements CaseManagementSvgShapeDef<AdHocSubprocess> {
-
-    @Override
-    public FontHandler<AdHocSubprocess, SVGShapeView> newFontHandler() {
-        return newFontHandlerBuilder()
-                .horizontalAlignment(o -> HasTitle.HorizontalAlignment.CENTER)
-                .build();
-    }
 
     @Override
     public SizeHandler<AdHocSubprocess, SVGShapeView> newSizeHandler() {

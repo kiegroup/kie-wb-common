@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.shape.view;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 
@@ -71,6 +72,26 @@ public interface HasTitle<T> {
 
         public SizeType getType() {
             return type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Size size = (Size) o;
+            return Double.compare(size.height, height) == 0 &&
+                    Double.compare(size.width, width) == 0 &&
+                    type == size.type;
+        }
+
+        @Override
+        public int hashCode() {
+
+            return Objects.hash(height, width, type);
         }
     }
 

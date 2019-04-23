@@ -32,13 +32,6 @@ public final class CaseManagementSvgUserTaskShapeDef extends BaseDimensionedShap
         implements CaseManagementSvgShapeDef<UserTask> {
 
     @Override
-    public FontHandler<UserTask, SVGShapeView> newFontHandler() {
-        return newFontHandlerBuilder()
-                .horizontalAlignment(o -> HasTitle.HorizontalAlignment.CENTER)
-                .build();
-    }
-
-    @Override
     public SizeHandler<UserTask, SVGShapeView> newSizeHandler() {
         return newSizeHandlerBuilder()
                 .width(e -> e.getDimensionsSet().getWidth().getValue())
@@ -52,6 +45,13 @@ public final class CaseManagementSvgUserTaskShapeDef extends BaseDimensionedShap
     public SVGShapeView<?> newViewInstance(final CaseManagementSVGViewFactory factory, final UserTask obj) {
         // user task should not be resizable in case modeler
         return newViewInstance(Optional.empty(), Optional.empty(), factory.task());
+    }
+
+    @Override
+    public FontHandler<UserTask, SVGShapeView> newFontHandler() {
+        return newFontHandlerBuilder()
+                .margin(HasTitle.HorizontalAlignment.LEFT, 30d)
+                .build();
     }
 
     @Override
