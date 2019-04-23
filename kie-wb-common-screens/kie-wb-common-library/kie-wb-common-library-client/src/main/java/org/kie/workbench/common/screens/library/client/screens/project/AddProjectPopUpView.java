@@ -95,6 +95,20 @@ public class AddProjectPopUpView implements AddProjectPopUpPresenter.View,
 
     private Button addButton;
 
+    public AddProjectPopUpView() {
+
+    }
+
+    public AddProjectPopUpView(final AddProjectPopUpPresenter presenter,
+                               final TranslationService ts,
+                               final Div advancedOptions,
+                               final Anchor showHideAdvancedOptions) {
+        this.presenter = presenter;
+        this.ts = ts;
+        this.advancedOptions = advancedOptions;
+        this.showHideAdvancedOptions = showHideAdvancedOptions;
+    }
+
     @Override
     public void init(final AddProjectPopUpPresenter presenter) {
         this.presenter = presenter;

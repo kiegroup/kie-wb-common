@@ -396,7 +396,6 @@ public class AddProjectPopUpPresenter {
     
     public void restoreDefaultAdvancedOptions() {
         libraryPreferences.load(loadedLibraryPreferences -> {
-            view.setDescription(loadedLibraryPreferences.getProjectPreferences().getDescription());
             view.setVersion(loadedLibraryPreferences.getProjectPreferences().getVersion());
             view.setGroupId(projectContext.getActiveOrganizationalUnit().isPresent() ? projectContext.getActiveOrganizationalUnit().get().getDefaultGroupId() 
                                                                                      : loadedLibraryPreferences.getOrganizationalUnitPreferences().getGroupId());
