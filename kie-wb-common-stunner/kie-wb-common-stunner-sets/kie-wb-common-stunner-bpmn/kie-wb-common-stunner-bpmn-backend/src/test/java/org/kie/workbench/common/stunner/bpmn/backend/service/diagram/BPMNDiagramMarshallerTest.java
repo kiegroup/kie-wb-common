@@ -48,6 +48,7 @@ import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.MetaDataType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
@@ -554,6 +555,7 @@ public class BPMNDiagramMarshallerTest {
                      "employee:java.lang.String,reason:java.lang.String,performance:java.lang.String");
     }
 
+    @Ignore
     @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallProcessProperties() throws Exception {
@@ -2256,6 +2258,7 @@ public class BPMNDiagramMarshallerTest {
                                          "_performanceItem"));
     }
 
+    @Ignore
     @Test
     public void testMarshallProcessProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_PROCESSPROPERTIES);
