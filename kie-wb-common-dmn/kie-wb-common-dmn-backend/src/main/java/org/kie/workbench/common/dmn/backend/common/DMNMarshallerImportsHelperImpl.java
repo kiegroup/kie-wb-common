@@ -82,13 +82,9 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
         if (imports.size() > 0) {
             for (final Definitions definitions : getOtherDMNDiagramsDefinitions(metadata)) {
-
-                final Optional<Import> anImport = findImportByDefinitions(definitions, imports);
-                final boolean isDiagramAnImport = anImport.isPresent();
-
-                if (isDiagramAnImport) {
-                    importDefinitions.put(anImport.get(), definitions);
-                }
+                findImportByDefinitions(definitions, imports).ifPresent(anImport -> {
+                    importDefinitions.put(anImport, definitions);
+                });
             }
         }
 
