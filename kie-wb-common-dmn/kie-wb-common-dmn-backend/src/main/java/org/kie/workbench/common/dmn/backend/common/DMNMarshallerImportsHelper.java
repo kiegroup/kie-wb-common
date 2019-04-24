@@ -33,7 +33,7 @@ public interface DMNMarshallerImportsHelper {
 
     /**
      * This method loads all imported definitions from a list of imports.
-     * @param metadata represents the metadata from the DMN model that holds the imports.
+     * @param metadata represents the metadata from the main DMN model.
      * @param imports represent the list of imported files.
      * @return a map {@link Definitions} indexed by {@link Import}s.
      */
