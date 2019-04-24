@@ -62,10 +62,10 @@ import static org.uberfire.backend.vfs.PathFactory.PathImpl;
 
 @PrepareForTest(Paths.class)
 @RunWith(PowerMockRunner.class)
-public class DMNMarshallerImportsHelperTest {
+public class DMNMarshallerImportsHelperImplTest {
 
     @Mock
-    private DMNPathsHelper pathsHelper;
+    private DMNPathsHelperImpl pathsHelper;
 
     @Mock
     private WorkspaceProjectService projectService;
@@ -76,11 +76,11 @@ public class DMNMarshallerImportsHelperTest {
     @Mock
     private DMNMarshaller marshaller;
 
-    private DMNMarshallerImportsHelper helper;
+    private DMNMarshallerImportsHelperImpl helper;
 
     @Before
     public void setup() {
-        helper = spy(new DMNMarshallerImportsHelper(pathsHelper, projectService, ioService));
+        helper = spy(new DMNMarshallerImportsHelperImpl(pathsHelper, projectService, ioService));
         helper.init(marshaller);
     }
 

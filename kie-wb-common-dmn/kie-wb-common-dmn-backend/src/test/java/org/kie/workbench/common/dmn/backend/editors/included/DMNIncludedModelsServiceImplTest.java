@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.backend.common.DMNPathsHelper;
+import org.kie.workbench.common.dmn.backend.common.DMNPathsHelperImpl;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class DMNIncludedModelsServiceImplTest {
 
     @Mock
-    private DMNPathsHelper pathsHelper;
+    private DMNPathsHelperImpl pathsHelper;
 
     @Mock
     private DMNIncludeModelFactory includeModelFactory;

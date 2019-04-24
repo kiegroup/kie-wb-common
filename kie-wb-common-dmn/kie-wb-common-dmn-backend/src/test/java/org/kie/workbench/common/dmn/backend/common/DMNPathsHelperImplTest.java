@@ -42,8 +42,8 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.dmn.backend.common.DMNPathsHelper.STANDALONE_FILE_NAME;
-import static org.kie.workbench.common.dmn.backend.common.DMNPathsHelper.STANDALONE_URI;
+import static org.kie.workbench.common.dmn.backend.common.DMNPathsHelperImpl.STANDALONE_FILE_NAME;
+import static org.kie.workbench.common.dmn.backend.common.DMNPathsHelperImpl.STANDALONE_URI;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -53,7 +53,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @PrepareForTest({PathFactory.class, Paths.class})
 @RunWith(PowerMockRunner.class)
-public class DMNPathsHelperTest {
+public class DMNPathsHelperImplTest {
 
     @Mock
     private RefactoringQueryServiceImpl refactoringQueryService;
@@ -69,12 +69,12 @@ public class DMNPathsHelperTest {
 
     private DMNDefinitionSetResourceType resourceType;
 
-    private DMNPathsHelper helper;
+    private DMNPathsHelperImpl helper;
 
     @Before
     public void setup() {
         resourceType = new DMNDefinitionSetResourceType();
-        helper = spy(new DMNPathsHelper(refactoringQueryService, resourceType, ioService));
+        helper = spy(new DMNPathsHelperImpl(refactoringQueryService, resourceType, ioService));
     }
 
     @Test

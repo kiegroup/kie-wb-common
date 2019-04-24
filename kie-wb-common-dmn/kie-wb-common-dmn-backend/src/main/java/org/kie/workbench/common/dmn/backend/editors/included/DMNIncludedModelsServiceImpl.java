@@ -30,7 +30,7 @@ import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModelsService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.backend.common.DMNPathsHelper;
+import org.kie.workbench.common.dmn.backend.common.DMNPathsHelperImpl;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludedNodesFilter;
 import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
@@ -41,14 +41,14 @@ public class DMNIncludedModelsServiceImpl implements DMNIncludedModelsService {
 
     private static Logger LOGGER = Logger.getLogger(DMNIncludedModelsServiceImpl.class.getName());
 
-    private final DMNPathsHelper pathsHelper;
+    private final DMNPathsHelperImpl pathsHelper;
 
     private final DMNIncludeModelFactory includeModelFactory;
 
     private final DMNIncludedNodesFilter includedNodesFilter;
 
     @Inject
-    public DMNIncludedModelsServiceImpl(final DMNPathsHelper pathsHelper,
+    public DMNIncludedModelsServiceImpl(final DMNPathsHelperImpl pathsHelper,
                                         final DMNIncludeModelFactory includeModelFactory,
                                         final DMNIncludedNodesFilter includedNodesFilter) {
         this.pathsHelper = pathsHelper;
