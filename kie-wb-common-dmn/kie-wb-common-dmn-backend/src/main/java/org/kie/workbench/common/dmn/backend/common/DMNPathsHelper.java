@@ -21,7 +21,15 @@ import java.util.List;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.uberfire.backend.vfs.Path;
 
+/**
+ * This helper provides methods to handle common path operations in the DMN context.
+ */
 public interface DMNPathsHelper {
 
+    /**
+     * This method loads all DMN paths into a given project.
+     * @param workspaceProject represents the project that will be scanned.
+     * @return all paths from a given project.
+     */
     List<Path> getDiagramsPaths(final WorkspaceProject workspaceProject);
 }

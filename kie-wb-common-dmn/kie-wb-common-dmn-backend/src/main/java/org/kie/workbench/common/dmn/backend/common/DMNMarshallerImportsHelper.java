@@ -23,14 +23,34 @@ import org.kie.dmn.model.api.DRGElement;
 import org.kie.dmn.model.api.Definitions;
 import org.kie.dmn.model.api.Import;
 import org.kie.dmn.model.api.ItemDefinition;
+import org.kie.workbench.common.dmn.backend.DMNMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
+/**
+ * This helper provides methods to handle imports into the {@link DMNMarshaller}.
+ */
 public interface DMNMarshallerImportsHelper {
 
+    /**
+     * This method loads all imported definitions from a list of imports.
+     * @param metadata represents the metadata from the DMN model that holds the imports.
+     * @param imports represent the list of imported files.
+     * @return a map {@link Definitions} indexed by {@link Import}s.
+     */
     Map<Import, Definitions> getImportDefinitions(final Metadata metadata,
                                                   final List<Import> imports);
 
+    /**
+     * This method extract a list of {@link DRGElement}s from the <code>importDefinitions</code> map.
+     * @param importDefinitions is a map of {@link Definitions} indexed by {@link Import}.
+     * @return a list of imported {@link DRGElement}s.
+     */
     List<DRGElement> getImportedDRGElements(final Map<Import, Definitions> importDefinitions);
 
+    /**
+     * This method extract a list of {@link ItemDefinition} from the <code>importDefinitions</code> map.
+     * @param importDefinitions is a map of {@link Definitions} indexed by {@link Import}.
+     * @return a list of imported {@link ItemDefinition}s.
+     */
     List<ItemDefinition> getImportedItemDefinitions(final Map<Import, Definitions> importDefinitions);
 }
