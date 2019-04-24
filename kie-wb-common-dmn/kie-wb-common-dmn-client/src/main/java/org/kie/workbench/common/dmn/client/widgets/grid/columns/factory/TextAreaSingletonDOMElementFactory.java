@@ -76,7 +76,9 @@ public class TextAreaSingletonDOMElementFactory extends BaseSingletonDOMElementF
     }
 
     @Override
-    protected TextAreaDOMElement createDomElementInternal() {
+    protected TextAreaDOMElement createDomElementInternal(final TextArea widget,
+                                                          final GridLayer gridLayer,
+                                                          final GridWidget gridWidget) {
         return new TextAreaDOMElement(widget,
                                       gridLayer,
                                       gridWidget,
