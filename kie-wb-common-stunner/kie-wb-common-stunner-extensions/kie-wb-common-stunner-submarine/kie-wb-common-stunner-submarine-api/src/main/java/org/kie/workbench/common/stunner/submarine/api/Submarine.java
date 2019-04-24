@@ -16,10 +16,14 @@
 
 package org.kie.workbench.common.stunner.submarine.api;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * TODO: (Submarine) Refactor as just SOURCE scoped annotation
  * <p>
- * Using this interface just to easily identify all contexts resulting from the functional decomposition being performed
+ * Using this interface just to easily identify all types resulting from the functional decomposition being performed
  * during the submarine initiative refactoring.
  * Any component, service or whatever managed bean that requires access to any remote context should, at least, provide
  * two implementations for its declared SubmarineContext subtype:
@@ -28,6 +32,8 @@ package org.kie.workbench.common.stunner.submarine.api;
  * <li>The "Project" implementation - This implementation targets KIE Workbench based editors - it's able to depend on all KIE related services</li>
  * </ul>
  */
-public interface SubmarineContext {
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.TYPE})
+public @interface Submarine {
 
 }

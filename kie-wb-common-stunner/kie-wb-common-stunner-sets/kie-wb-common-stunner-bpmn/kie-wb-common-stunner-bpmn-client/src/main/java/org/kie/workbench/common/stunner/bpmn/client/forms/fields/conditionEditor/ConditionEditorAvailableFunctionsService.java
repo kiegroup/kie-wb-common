@@ -19,9 +19,11 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEdito
 import java.util.List;
 
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.FunctionDef;
+import org.kie.workbench.common.stunner.submarine.api.Submarine;
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
 import org.uberfire.backend.vfs.Path;
 
+@Submarine
 public interface ConditionEditorAvailableFunctionsService
         extends SubmarineClientService<ConditionEditorAvailableFunctionsService.Input, List<FunctionDef>> {
 

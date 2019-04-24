@@ -18,8 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEdito
 
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.TypeMetadataQuery;
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.TypeMetadataQueryResult;
+import org.kie.workbench.common.stunner.submarine.api.Submarine;
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
 
+@Submarine
 public interface ConditionEditorMetadataService
         extends SubmarineClientService<TypeMetadataQuery, TypeMetadataQueryResult> {
 

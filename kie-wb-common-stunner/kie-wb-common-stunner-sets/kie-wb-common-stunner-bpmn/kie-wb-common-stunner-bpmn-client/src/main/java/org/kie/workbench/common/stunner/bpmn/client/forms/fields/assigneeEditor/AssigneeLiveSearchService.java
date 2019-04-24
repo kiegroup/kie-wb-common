@@ -20,12 +20,12 @@ import java.util.function.Consumer;
 
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.widget.AssigneeLiveSearchEntryCreationEditor;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeType;
-import org.kie.workbench.common.stunner.submarine.api.SubmarineContext;
+import org.kie.workbench.common.stunner.submarine.api.Submarine;
 import org.uberfire.ext.widgets.common.client.dropdown.EntryCreationLiveSearchService;
 
+@Submarine
 public interface AssigneeLiveSearchService
-        extends EntryCreationLiveSearchService<String, AssigneeLiveSearchEntryCreationEditor>,
-                SubmarineContext {
+        extends EntryCreationLiveSearchService<String, AssigneeLiveSearchEntryCreationEditor> {
 
     void init(AssigneeType type);
 

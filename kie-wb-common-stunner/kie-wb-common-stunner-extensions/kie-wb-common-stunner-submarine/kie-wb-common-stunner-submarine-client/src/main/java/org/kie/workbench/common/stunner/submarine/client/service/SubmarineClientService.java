@@ -17,9 +17,10 @@
 package org.kie.workbench.common.stunner.submarine.client.service;
 
 import elemental2.promise.Promise;
-import org.kie.workbench.common.stunner.submarine.api.SubmarineContext;
+import org.kie.workbench.common.stunner.submarine.api.Submarine;
 
-public interface SubmarineClientService<T, R> extends SubmarineContext {
+@Submarine
+public interface SubmarineClientService<T, R> {
 
     Promise<R> call(T input);
 }

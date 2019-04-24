@@ -21,8 +21,10 @@ import java.util.Collection;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.submarine.api.Submarine;
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
 
+@Submarine
 public interface WorkItemDefinitionClientService extends SubmarineClientService<Metadata, Collection<WorkItemDefinition>> {
 
     WorkItemDefinitionRegistry getRegistry();
