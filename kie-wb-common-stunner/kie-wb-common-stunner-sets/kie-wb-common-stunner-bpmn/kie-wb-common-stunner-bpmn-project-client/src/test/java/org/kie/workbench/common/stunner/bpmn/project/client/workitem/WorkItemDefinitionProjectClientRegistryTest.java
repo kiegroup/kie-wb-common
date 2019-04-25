@@ -34,10 +34,10 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.submarine.client.PromisesMock;
 import org.mockito.Mock;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.mocks.CallerMock;
-import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.eq;
@@ -85,7 +85,7 @@ public class WorkItemDefinitionProjectClientRegistryTest {
         when(sessionDestroyedEvent.getMetadata()).thenReturn(metadata);
         when(index.remove(metadata)).thenReturn(registry);
         serviceCaller = new CallerMock<>(service);
-        promises = new Promises();
+        promises = PromisesMock.build();
         tested = new WorkItemDefinitionProjectClientService(promises,
                                                             serviceCaller,
                                                             sessionManager,
@@ -97,8 +97,7 @@ public class WorkItemDefinitionProjectClientRegistryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testCallService() {
-        // TODO: (Submarine)
-        // tested.call(metadata);
+        tested.call(metadata);
         verify(index, times(1)).put(eq(metadata), eq(registry));
         verify(registry, times(1)).register(eq(WID));
     }
@@ -113,12 +112,9 @@ public class WorkItemDefinitionProjectClientRegistryTest {
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getMetadata()).thenReturn(metadata);
         when(sessionManager.getCurrentSession()).thenReturn(session);
-        Command callback = mock(Command.class);
-        // TODO: (Submarine)
-        // tested.load(metadata, callback);
+        tested.call(metadata);
         verify(index, times(1)).put(eq(metadata), eq(registry));
         verify(registry, times(1)).register(eq(WID));
-        verify(callback, times(1)).execute();
         WorkItemDefinitionCacheRegistry currentSessionRegistry = tested.getCurrentSessionRegistry();
         assertEquals(registry, currentSessionRegistry);
     }

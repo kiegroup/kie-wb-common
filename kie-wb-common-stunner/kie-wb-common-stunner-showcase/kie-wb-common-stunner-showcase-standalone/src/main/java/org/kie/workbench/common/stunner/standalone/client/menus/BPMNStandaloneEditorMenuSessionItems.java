@@ -24,8 +24,6 @@ import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 
-// TODO: (Submarine) Add generate-forms commands stuff
-
 @Dependent
 @Typed(BPMNStandaloneEditorMenuSessionItems.class)
 public class BPMNStandaloneEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<BPMNStandaloneEditorMenuItemsBuilder> {

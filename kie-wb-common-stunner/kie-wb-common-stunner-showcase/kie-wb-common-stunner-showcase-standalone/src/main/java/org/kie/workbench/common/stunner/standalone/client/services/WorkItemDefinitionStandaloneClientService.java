@@ -31,8 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.uberfire.client.promise.Promises;
 
-// TODO: (Submarine) - unit tests
-
 @ApplicationScoped
 public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService {
 
