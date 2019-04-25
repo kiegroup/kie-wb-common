@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,6 +38,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
+import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
@@ -94,6 +96,8 @@ public class DataTypeListView implements DataTypeList.View {
     private final ScrollHelper scrollHelper;
 
     private DataTypeList presenter;
+
+    private DataTypeListItem currentEditingItem;
 
     @Inject
     public DataTypeListView(final HTMLDivElement listItems,
@@ -361,6 +365,17 @@ public class DataTypeListView implements DataTypeList.View {
     @Override
     public HTMLDivElement getListItems() {
         return listItems;
+    }
+
+    public void onDataTypeEditModeToggle(final @Observes DataTypeEditModeToggleEvent event) {
+        if (event.isEditModeEnabled()) {
+            if (currentEditingItem != null) {
+                currentEditingItem.disableEditMode();
+            }
+            currentEditingItem = event.getItem();
+        } else if (event.getItem() == currentEditingItem) {
+            currentEditingItem = null;
+        }
     }
 
     @Override
