@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.cm.backend.query;
+package org.kie.workbench.common.stunner.cm.backend.dataproviders;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Typed;
 
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.kie.workbench.common.stunner.bpmn.project.backend.query.AbstractFindIdsQuery;
-import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
+import org.kie.workbench.common.stunner.bpmn.project.backend.dataproviders.CalledElementFormProjectDataProvider;
+import org.kie.workbench.common.stunner.cm.backend.query.FindCaseManagementIdsQuery;
 
-@ApplicationScoped
-@CaseManagementEditor
-public class FindCaseManagementIdsQuery extends AbstractFindIdsQuery {
-
-    public static final String NAME = FindCaseManagementIdsQuery.class.getSimpleName();
+@Typed(CaseCalledElementFormDataProvider.class)
+public class CaseCalledElementFormDataProvider extends CalledElementFormProjectDataProvider {
 
     @Override
-    public String getName() {
-        return NAME;
+    public ResourceType getProcessIdResourceType() {
+        return ResourceType.BPMN_CM;
     }
 
     @Override
-    protected ResourceType getProcessIdResourceType() {
-        return ResourceType.BPMN_CM;
+    public String getQueryName() {
+        return FindCaseManagementIdsQuery.NAME;
     }
 }

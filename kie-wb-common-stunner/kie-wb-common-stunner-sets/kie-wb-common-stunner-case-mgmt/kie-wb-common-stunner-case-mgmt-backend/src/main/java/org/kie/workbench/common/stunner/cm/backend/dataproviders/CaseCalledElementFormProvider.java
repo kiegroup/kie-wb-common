@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,29 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.dataproviders;
 
-import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.CalledElementFormProvider;
+import javax.inject.Inject;
 
-// TODO: (Submarine): Inherit only CalledElementFormProjectDataProvider and override the methods below
+import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
+import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
+import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
-public class CaseCalledElementFormProvider extends CalledElementFormProvider {
+public class CaseCalledElementFormProvider implements SelectorDataProvider {
 
-    /*@Override
-    public ResourceType getProcessIdResourceType() {
-        return ResourceType.BPMN_CM;
+    @Inject
+    private CaseCalledElementFormDataProvider dataProvider;
+
+    public void setDataProvider(final CaseCalledElementFormDataProvider dataProvider) {
+        this.dataProvider = dataProvider;
     }
 
     @Override
-    public String getQueryName() {
-        return FindCaseManagementIdsQuery.NAME;
-    }*/
+    public String getProviderName() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public SelectorData getSelectorData(final FormRenderingContext context) {
+        return new SelectorData(dataProvider.getBusinessProcessIDs(), null);
+    }
 }

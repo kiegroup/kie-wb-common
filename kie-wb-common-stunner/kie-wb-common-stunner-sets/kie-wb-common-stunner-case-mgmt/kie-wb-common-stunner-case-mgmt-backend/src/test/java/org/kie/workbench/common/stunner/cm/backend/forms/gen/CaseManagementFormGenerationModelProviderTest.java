@@ -20,7 +20,6 @@ import org.eclipse.bpmn2.Definitions;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
@@ -43,9 +42,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-// TODO: (Submarine)
-
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class CaseManagementFormGenerationModelProviderTest {
 
@@ -82,8 +78,7 @@ public class CaseManagementFormGenerationModelProviderTest {
         when(metadata.getDefinitionSetId()).thenReturn(ID);
         when(definitionUtils.getDefinitionSetId(eq(CaseManagementDefinitionSet.class))).thenReturn(ID);
 
-        // TODO: (Submarine)
-        // formGenerationModelProviderHelper = new CaseManagementFormGenerationModelProviderHelper(cmBackendService);
+        formGenerationModelProviderHelper = new CaseManagementFormGenerationModelProviderHelper(cmBackendService);
         tested = new CaseManagementFormGenerationModelProvider(definitionUtils, formGenerationModelProviderHelper);
         tested.init();
         verify(definitionUtils).getDefinitionSetId(eq(CaseManagementDefinitionSet.class));

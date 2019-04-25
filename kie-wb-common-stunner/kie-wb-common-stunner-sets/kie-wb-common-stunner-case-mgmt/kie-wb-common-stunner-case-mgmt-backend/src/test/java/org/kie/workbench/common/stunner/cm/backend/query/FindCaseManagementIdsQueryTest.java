@@ -16,14 +16,21 @@
 
 package org.kie.workbench.common.stunner.cm.backend.query;
 
-import org.junit.Ignore;
+import java.util.HashSet;
+import java.util.Set;
 
-// TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
+import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueResourceIndexTerm;
+import org.kie.workbench.common.services.refactoring.service.ResourceType;
 
-@Ignore
+import static org.junit.Assert.assertEquals;
+
 public class FindCaseManagementIdsQueryTest {
 
-    /*private FindCaseManagementIdsQuery tested = new FindCaseManagementIdsQuery();
+    private FindCaseManagementIdsQuery tested = new FindCaseManagementIdsQuery();
 
     @Before
     public void setUp() throws Exception {
@@ -63,5 +70,5 @@ public class FindCaseManagementIdsQueryTest {
         } catch (IllegalArgumentException ex) {
             Assert.fail(ex.getMessage());
         }
-    }*/
+    }
 }

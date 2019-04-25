@@ -16,14 +16,22 @@
 
 package org.kie.workbench.common.stunner.cm.backend.indexing;
 
-import org.junit.Ignore;
+import java.util.Collection;
+import java.util.UUID;
 
-// TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
+import org.jbpm.process.core.Process;
+import org.jbpm.process.core.impl.ProcessImpl;
+import org.junit.Before;
+import org.junit.Test;
+import org.kie.workbench.common.services.refactoring.Resource;
+import org.kie.workbench.common.services.refactoring.service.ResourceType;
 
-@Ignore
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class CaseManagementDataEventListenerTest {
 
-    /*private CaseManagementDataEventListener tested = new CaseManagementDataEventListener();
+    private CaseManagementDataEventListener tested = new CaseManagementDataEventListener();
 
     @Before
     public void setUp() throws Exception {
@@ -56,5 +64,5 @@ public class CaseManagementDataEventListenerTest {
         assertTrue(resources.stream().allMatch(
                 r -> (processId.equals(r.getResourceFQN()) && tested.getProcessIdResourceType().equals(r.getResourceType()))
                         || (processName.equals(r.getResourceFQN()) && tested.getProcessNameResourceType().equals(r.getResourceType()))));
-    }*/
+    }
 }

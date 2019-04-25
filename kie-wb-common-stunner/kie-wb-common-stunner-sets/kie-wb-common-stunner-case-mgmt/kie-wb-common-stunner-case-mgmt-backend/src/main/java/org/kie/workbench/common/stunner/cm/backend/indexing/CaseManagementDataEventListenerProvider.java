@@ -15,16 +15,16 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.indexing;
 
-// TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
+import org.jbpm.compiler.xml.ProcessDataEventListenerProvider;
 
 /**
  * This is referenced in
  * kie-wb-common-stunner-cm-backend/src/main/resources/META-INF/services/org.jbpm.compiler.xml.ProcessDataEventListenerProvider
  */
-public class CaseManagementDataEventListenerProvider /*implements ProcessDataEventListenerProvider*/ {
+public class CaseManagementDataEventListenerProvider implements ProcessDataEventListenerProvider {
 
-    /*@Override
+    @Override
     public CaseManagementDataEventListener newInstance() {
         return new CaseManagementDataEventListener();
-    }*/
+    }
 }

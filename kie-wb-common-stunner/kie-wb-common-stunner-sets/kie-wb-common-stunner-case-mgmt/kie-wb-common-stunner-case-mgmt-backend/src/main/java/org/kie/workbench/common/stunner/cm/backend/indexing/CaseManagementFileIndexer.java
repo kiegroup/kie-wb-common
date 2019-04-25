@@ -16,16 +16,19 @@
 package org.kie.workbench.common.stunner.cm.backend.indexing;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.bpmn.project.backend.indexing.AbstractBpmnFileIndexer;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
-
-// TODO: (Submarine) - Move to some project-backend modules, as already did on bpmn modules
+import org.kie.workbench.common.stunner.cm.resource.CaseManagementDefinitionSetResourceType;
+import org.uberfire.backend.server.util.Paths;
+import org.uberfire.java.nio.file.Path;
 
 @ApplicationScoped
 @CaseManagementEditor
-public class CaseManagementFileIndexer /*extends AbstractBpmnFileIndexer*/ {
+public class CaseManagementFileIndexer extends AbstractBpmnFileIndexer {
 
-    /*@Inject
+    @Inject
     protected CaseManagementDefinitionSetResourceType cmTypeDefinition;
 
     @Override
@@ -36,5 +39,5 @@ public class CaseManagementFileIndexer /*extends AbstractBpmnFileIndexer*/ {
     @Override
     public boolean supportsPath(Path path) {
         return cmTypeDefinition.accept(Paths.convert(path));
-    }*/
+    }
 }
