@@ -28,11 +28,8 @@ import org.kie.workbench.common.services.refactoring.backend.server.query.Refact
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.uberfire.backend.server.util.Paths;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
-import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
 import org.uberfire.java.nio.file.DirectoryStream;
@@ -49,10 +46,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@PrepareForTest({PathFactory.class, Paths.class})
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DMNPathsHelperImplTest {
 
     @Mock
@@ -87,9 +82,8 @@ public class DMNPathsHelperImplTest {
         final DirectoryStreamFake fakeStream = new DirectoryStreamFake(nioPath1, nioPath2);
 
         doReturn(fakeStream).when(helper).getDMNPaths();
-        mockStatic(Paths.class);
-        when(Paths.convert(nioPath1)).thenReturn(path1);
-        when(Paths.convert(nioPath2)).thenReturn(path2);
+        doReturn(path1).when(helper).convertPath(nioPath1);
+        doReturn(path2).when(helper).convertPath(nioPath2);
 
         final List<Path> expectedPaths = asList(path1, path2);
         final List<Path> actualPaths = helper.getDiagramsPaths(null);
@@ -153,9 +147,8 @@ public class DMNPathsHelperImplTest {
 
         when(path1.getFileName()).thenReturn("/Users/karreiro/projects/dmn-project/file.dmn");
         when(path2.getFileName()).thenReturn("/Users/karreiro/projects/dmn-project/Readme.md");
-        mockStatic(Paths.class);
-        when(Paths.convert(nioPath1)).thenReturn(path1);
-        when(Paths.convert(nioPath2)).thenReturn(path2);
+        doReturn(path1).when(helper).convertPath(nioPath1);
+        doReturn(path2).when(helper).convertPath(nioPath2);
 
         assertTrue(filter.accept(nioPath1));
         assertFalse(filter.accept(nioPath2));
@@ -167,9 +160,8 @@ public class DMNPathsHelperImplTest {
         final Path path = mock(Path.class);
         final org.uberfire.java.nio.file.Path expectedPath = mock(org.uberfire.java.nio.file.Path.class);
 
-        mockStatic(PathFactory.class, Paths.class);
-        when(PathFactory.newPath(STANDALONE_FILE_NAME, STANDALONE_URI)).thenReturn(path);
-        when(Paths.convert(path)).thenReturn(expectedPath);
+        doReturn(path).when(helper).newPath(STANDALONE_FILE_NAME, STANDALONE_URI);
+        doReturn(expectedPath).when(helper).convertPath(path);
 
         final org.uberfire.java.nio.file.Path actualPath = helper.getStandaloneRootPath();
 

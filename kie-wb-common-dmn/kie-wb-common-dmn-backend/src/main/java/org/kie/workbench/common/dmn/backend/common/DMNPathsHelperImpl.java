@@ -80,7 +80,7 @@ public class DMNPathsHelperImpl implements DMNPathsHelper {
     private List<Path> getStandalonePaths() {
         return StreamSupport
                 .stream(getDMNPaths().spliterator(), false)
-                .map(Paths::convert)
+                .map(this::convertPath)
                 .collect(Collectors.toList());
     }
 
@@ -114,10 +114,23 @@ public class DMNPathsHelperImpl implements DMNPathsHelper {
     }
 
     DirectoryStream.Filter<org.uberfire.java.nio.file.Path> dmnAssetsFilter() {
-        return path -> resourceType.accept(Paths.convert(path));
+        return path -> resourceType.accept(convertPath(path));
     }
 
     org.uberfire.java.nio.file.Path getStandaloneRootPath() {
-        return Paths.convert(PathFactory.newPath(STANDALONE_FILE_NAME, STANDALONE_URI));
+        return convertPath(newPath(STANDALONE_FILE_NAME, STANDALONE_URI));
+    }
+
+    Path newPath(final String fileName,
+                 final String uri) {
+        return PathFactory.newPath(fileName, uri);
+    }
+
+    org.uberfire.java.nio.file.Path convertPath(final Path path) {
+        return Paths.convert(path);
+    }
+
+    Path convertPath(final org.uberfire.java.nio.file.Path path) {
+        return Paths.convert(path);
     }
 }

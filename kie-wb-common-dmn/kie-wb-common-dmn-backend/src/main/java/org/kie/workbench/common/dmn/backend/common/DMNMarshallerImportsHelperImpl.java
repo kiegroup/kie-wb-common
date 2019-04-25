@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.backend.common;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -128,12 +128,12 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
                                                              final String namespace) {
         return itemDefinitions
                 .stream()
-                .peek(itemDefinition -> setItemDefinitionNamespace(itemDefinition, namespace))
+                .map(itemDefinition -> setItemDefinitionNamespace(itemDefinition, namespace))
                 .collect(Collectors.toList());
     }
 
-    private void setItemDefinitionNamespace(final ItemDefinition itemDefinition,
-                                            final String namespace) {
+    private ItemDefinition setItemDefinitionNamespace(final ItemDefinition itemDefinition,
+                                                      final String namespace) {
 
         final String nameWithNamespace = namespace + "." + itemDefinition.getName();
         final List<ItemDefinition> itemComponents = itemDefinition.getItemComponent();
@@ -144,6 +144,8 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
         itemDefinition.setName(nameWithNamespace);
         setItemDefinitionsNamespace(itemComponents, namespace);
+
+        return itemDefinition;
     }
 
     private boolean isBuiltInType(final QName typeRef) {
@@ -173,18 +175,19 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
         return definitions
                 .getDrgElement()
                 .stream()
-                .peek(drgElementWithNamespace(anImport))
+                .map(drgElement -> drgElementWithNamespace(drgElement, anImport))
                 .collect(Collectors.toList());
     }
 
-    private Consumer<DRGElement> drgElementWithNamespace(final Import anImport) {
-        return drgElement -> {
+    private DRGElement drgElementWithNamespace(final DRGElement drgElement,
+                                               final Import anImport) {
 
-            final String namespace = anImport.getName();
+        final String namespace = anImport.getName();
 
-            drgElement.setId(namespace + ":" + drgElement.getId());
-            drgElement.setName(namespace + "." + drgElement.getName());
-        };
+        drgElement.setId(namespace + ":" + drgElement.getId());
+        drgElement.setName(namespace + "." + drgElement.getName());
+
+        return drgElement;
     }
 
     private Optional<Import> findImportByDefinitions(final Definitions definitions,
@@ -208,12 +211,29 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     Optional<InputStreamReader> loadPath(final Path path) {
+
+        InputStreamReader mutableInputStream = null;
+
         try {
-            final byte[] bytes = ioService.readAllBytes(Paths.convert(path));
+
+            final byte[] bytes = ioService.readAllBytes(convertPath(path));
             final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-            return Optional.of(new InputStreamReader(inputStream));
+            mutableInputStream = new InputStreamReader(inputStream);
+
+            return Optional.of(mutableInputStream);
         } catch (final Exception e) {
+            closeInputStreamReader(mutableInputStream);
             return Optional.empty();
+        }
+    }
+
+    void closeInputStreamReader(final InputStreamReader mutableInputStream) {
+        if (mutableInputStream != null) {
+            try {
+                mutableInputStream.close();
+            } catch (final IOException e) {
+                // Ignore.
+            }
         }
     }
 
@@ -224,5 +244,9 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
             // There's not project when the webapp is running on standalone mode, thus NullPointerException is raised.
             return null;
         }
+    }
+
+    org.uberfire.java.nio.file.Path convertPath(final Path path) {
+        return Paths.convert(path);
     }
 }

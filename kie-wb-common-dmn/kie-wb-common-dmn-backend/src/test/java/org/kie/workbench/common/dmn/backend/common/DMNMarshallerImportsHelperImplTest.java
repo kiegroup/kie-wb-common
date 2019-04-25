@@ -40,9 +40,7 @@ import org.kie.dmn.model.v1_2.TInputData;
 import org.kie.dmn.model.v1_2.TItemDefinition;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.uberfire.backend.server.util.Paths;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
@@ -56,12 +54,11 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.uberfire.backend.vfs.PathFactory.PathImpl;
 
-@PrepareForTest(Paths.class)
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DMNMarshallerImportsHelperImplTest {
 
     @Mock
@@ -240,7 +237,7 @@ public class DMNMarshallerImportsHelperImplTest {
         final Path path1 = makePath("../file1.dmn");
         final Path path2 = makePath("../file2.dmn");
         final Path path3 = makePath("../file3.dmn");
-        final Path path4 = makePath("../file3.dmn");
+        final Path path4 = makePath("../file4.dmn");
         final InputStreamReader inputStreamReader1 = mock(InputStreamReader.class);
         final InputStreamReader inputStreamReader2 = mock(InputStreamReader.class);
         final InputStreamReader inputStreamReader3 = mock(InputStreamReader.class);
@@ -304,8 +301,7 @@ public class DMNMarshallerImportsHelperImplTest {
         final String expectedContent = "<dmn/>";
         final byte[] contentBytes = expectedContent.getBytes();
 
-        mockStatic(Paths.class);
-        when(Paths.convert(path)).thenReturn(nioPath);
+        doReturn(nioPath).when(helper).convertPath(path);
         when(ioService.readAllBytes(nioPath)).thenReturn(contentBytes);
 
         final Optional<InputStreamReader> inputStreamReader = helper.loadPath(path);
@@ -320,13 +316,23 @@ public class DMNMarshallerImportsHelperImplTest {
         final Path path = mock(Path.class);
         final org.uberfire.java.nio.file.Path nioPath = mock(org.uberfire.java.nio.file.Path.class);
 
-        mockStatic(Paths.class);
-        when(Paths.convert(path)).thenReturn(nioPath);
+        doReturn(nioPath).when(helper).convertPath(path);
         when(ioService.readAllBytes(nioPath)).thenThrow(new IOException());
 
         final Optional<InputStreamReader> inputStreamReader = helper.loadPath(path);
 
+        verify(helper).closeInputStreamReader(any());
         assertFalse(inputStreamReader.isPresent());
+    }
+
+    @Test
+    public void testCloseInputStreamReader() throws Exception {
+
+        final InputStreamReader mutableInputStream = mock(InputStreamReader.class);
+
+        helper.closeInputStreamReader(mutableInputStream);
+
+        verify(mutableInputStream).close();
     }
 
     private Path makePath(final String uri) {
