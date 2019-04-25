@@ -33,7 +33,7 @@ public class AddProjectPopUpViewTest {
     private Div advancedOptions;
 
     @Mock
-    private Anchor showHideAdvancedOptions;
+    private Anchor advancedOptionsAnchor;
 
     private AddProjectPopUpView view;
 
@@ -42,36 +42,36 @@ public class AddProjectPopUpViewTest {
         view = spy(new AddProjectPopUpView(presenter,
                                            translationService,
                                            advancedOptions,
-                                           showHideAdvancedOptions));
+                                           advancedOptionsAnchor));
     }
 
     @Test
-    public void testShowAdvancedOptions() {
+    public void testConfigureAdvancedOptions() {
         ClickEvent clickEvent = mock(ClickEvent.class);
 
         doReturn(true).when(advancedOptions).getHidden();
-        doReturn("hide").when(translationService).format(LibraryConstants.HideAdvancedOptions);
+        doReturn("restore").when(translationService).format(LibraryConstants.RestoreAdvancedOptions);
 
-        view.showAdvancedOptions(clickEvent);
+        view.advancedOptionsAnchorOnClick(clickEvent);
 
         verify(advancedOptions).setHidden(false);
-        verify(translationService).format(LibraryConstants.HideAdvancedOptions);
-        verify(showHideAdvancedOptions).setTextContent("hide");
-        verify(presenter, never()).restoreDefaultAdvancedOptions();
+        verify(translationService).format(LibraryConstants.RestoreAdvancedOptions);
+        verify(advancedOptionsAnchor).setTextContent("restore");
+        verify(presenter, never()).restoreAdvancedOptions();
     }
 
     @Test
-    public void testHideAdvancedOptions() {
+    public void testRestoreAdvancedOptions() {
         ClickEvent clickEvent = mock(ClickEvent.class);
 
         doReturn(false).when(advancedOptions).getHidden();
-        doReturn("show").when(translationService).format(LibraryConstants.ShowAdvancedOptions);
+        doReturn("configure").when(translationService).format(LibraryConstants.ConfigureAdvancedOptions);
 
-        view.showAdvancedOptions(clickEvent);
+        view.advancedOptionsAnchorOnClick(clickEvent);
 
         verify(advancedOptions).setHidden(true);
-        verify(translationService).format(LibraryConstants.ShowAdvancedOptions);
-        verify(showHideAdvancedOptions).setTextContent("show");
-        verify(presenter).restoreDefaultAdvancedOptions();
+        verify(translationService).format(LibraryConstants.ConfigureAdvancedOptions);
+        verify(advancedOptionsAnchor).setTextContent("configure");
+        verify(presenter).restoreAdvancedOptions();
     }
 }

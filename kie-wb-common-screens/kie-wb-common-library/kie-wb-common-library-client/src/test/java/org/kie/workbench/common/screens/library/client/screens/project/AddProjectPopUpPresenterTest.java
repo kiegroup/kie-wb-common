@@ -501,7 +501,7 @@ public class AddProjectPopUpPresenterTest {
     }
 
     @Test
-    public void testRestoreDefaultAdvancedOptionsWithActiveOrganizationalUnit() {
+    public void testRestoreAdvancedOptionsWithActiveOrganizationalUnit() {
         LibraryPreferences loadedLibraryPreferences = mock(LibraryPreferences.class);
         LibraryProjectPreferences libraryProjectPreferences = mock(LibraryProjectPreferences.class);
 
@@ -512,17 +512,17 @@ public class AddProjectPopUpPresenterTest {
         executeParametrizedCommandWith(0, loadedLibraryPreferences).when(libraryPreferences).load(any(ParameterizedCommand.class),
                                                                                                   any(ParameterizedCommand.class));
 
-        presenter.restoreDefaultAdvancedOptions();
+        presenter.restoreAdvancedOptions();
 
         verify(libraryPreferences).load(any(ParameterizedCommand.class), any(ParameterizedCommand.class));
         verify(view).setVersion("version");
         verify(view).setGroupId("group");
         verify(view, never()).setDescription(any());
-        verify(view, never()).setArtifactId(any());
+        verify(view).setArtifactId("");
     }
 
     @Test
-    public void testRestoreDefaultAdvancedOptionsWithoutActiveOrganizationalUnit() {
+    public void testRestoreAdvancedOptionsWithoutActiveOrganizationalUnit() {
         LibraryPreferences loadedLibraryPreferences = mock(LibraryPreferences.class);
         LibraryProjectPreferences libraryProjectPreferences = mock(LibraryProjectPreferences.class);
         LibraryOrganizationalUnitPreferences libraryOrganizationalUnitPreferences = mock(LibraryOrganizationalUnitPreferences.class);
@@ -536,11 +536,11 @@ public class AddProjectPopUpPresenterTest {
         executeParametrizedCommandWith(0, loadedLibraryPreferences).when(libraryPreferences).load(any(ParameterizedCommand.class),
                                                                                                   any(ParameterizedCommand.class));
 
-        presenter.restoreDefaultAdvancedOptions();
+        presenter.restoreAdvancedOptions();
 
         verify(view).setVersion("version");
         verify(view).setGroupId("group");
         verify(view, never()).setDescription(any());
-        verify(view, never()).setArtifactId(any());
+        verify(view).setArtifactId("");
     }
 }
