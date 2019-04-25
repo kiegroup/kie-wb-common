@@ -132,15 +132,28 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
         command.bind(session);
         command.listen(statusCallback);
 
-        ((UndoSessionCommand) command).onCommandAdded(new RegisterChangedEvent());
+        ((UndoSessionCommand) command).onCommandAdded(new RegisterChangedEvent(canvasHandler));
         assertFalse(command.isEnabled());
 
         commandHistory.add(mock(Command.class));
 
-        ((UndoSessionCommand) command).onCommandAdded(new RegisterChangedEvent());
+        ((UndoSessionCommand) command).onCommandAdded(new RegisterChangedEvent(canvasHandler));
         assertTrue(command.isEnabled());
         verify(statusCallback,
                atLeastOnce()).execute();
+        verify(commandRegistry,
+               never()).clear();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testOnCommandExecutedCheckWrongSession() {
+        command.bind(session);
+        command.listen(statusCallback);
+
+        assertFalse(command.isEnabled());
+        verify(statusCallback,
+               never()).execute();
         verify(commandRegistry,
                never()).clear();
     }

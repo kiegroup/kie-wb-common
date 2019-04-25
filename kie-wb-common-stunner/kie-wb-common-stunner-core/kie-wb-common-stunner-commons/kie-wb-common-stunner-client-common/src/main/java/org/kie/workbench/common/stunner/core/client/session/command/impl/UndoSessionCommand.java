@@ -100,7 +100,9 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     void onCommandAdded(final @Observes RegisterChangedEvent registerChangedEvent) {
         checkNotNull("registerChangedEvent",
                      registerChangedEvent);
-        checkState();
+        if (registerChangedEvent.getCanvasHandler().equals(getCanvasHandler())) {
+            checkState();
+        }
     }
 
     private void checkState() {

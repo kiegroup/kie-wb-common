@@ -64,6 +64,7 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        redoCommandHandler.setSession(getSession());
     }
 
     @Override
