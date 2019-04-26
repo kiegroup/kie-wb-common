@@ -18,13 +18,18 @@ package org.kie.workbench.common.forms.dynamic.client.rendering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
@@ -42,6 +47,7 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
     protected F field;
     protected FormFieldImpl formField = null;
     protected List<FieldChangeListener> fieldChangeListeners = new ArrayList<>();
+    private Map<String, IsWidget> partsWidgets = new HashMap<>();
 
     @Inject
     protected ManagedInstance<FORM_GROUP> formGroupsInstance;
@@ -66,6 +72,9 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
         } else {
 
             FormGroup formGroup = getFormGroup(renderingContext.getRenderMode());
+            
+            Map<String, Widget> formPartsWidgets = formGroup.getPartsWidgets();
+            partsWidgets.putAll(formPartsWidgets);
 
             formField = new FormFieldImpl(field,
                                           formGroup) {
@@ -137,6 +146,10 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
 
     }
 
+    protected void registerPart(String partId, IsWidget partWidget) {
+        this.partsWidgets.put(partId, partWidget);
+    }
+
     private Collection<FieldChangeListener> getFieldChangeListeners() {
         return fieldChangeListeners;
     }
@@ -161,5 +174,17 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
     @PreDestroy
     public void preDestroy() {
         formGroupsInstance.destroyAll();
+    }
+    
+    final public Set<String> getFieldParts() {
+        return partsWidgets.keySet();
+    }
+    
+    public Widget getFieldPartWidget(String partId) {
+        IsWidget partWidget = partsWidgets.get(partId);
+        if (partWidget != null) {
+            return partWidget.asWidget();
+        }
+        return null;
     }
 }

@@ -41,6 +41,8 @@ public abstract class AbstractListBoxFieldRenderer<FIELD extends ListBoxBaseDefi
         extends SelectorFieldRenderer<FIELD, OPTION, TYPE>
         implements RequiresValueConverter {
 
+    private static final String PART_LIST_BOX = "List Box";
+
     protected DefaultValueListBoxRenderer<TYPE> optionsRenderer = new DefaultValueListBoxRenderer<>();
 
     protected ValueListBox<TYPE> widgetList;
@@ -75,10 +77,12 @@ public abstract class AbstractListBoxFieldRenderer<FIELD extends ListBoxBaseDefi
             widgetList.setName(fieldNS);
             widgetList.setEnabled(!field.getReadOnly());
             refreshSelectorOptions();
-
+            
             formGroup.render(inputId,
                              widgetList,
                              field);
+
+            registerPart(PART_LIST_BOX, widgetList);
         }
 
         return formGroup;

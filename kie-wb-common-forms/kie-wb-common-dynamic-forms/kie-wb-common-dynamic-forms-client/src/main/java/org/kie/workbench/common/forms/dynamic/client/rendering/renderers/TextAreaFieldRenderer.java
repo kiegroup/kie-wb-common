@@ -31,6 +31,8 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.de
 @Dependent
 public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition, DefaultFormGroup> implements RequiresValueConverter {
 
+    private static final String PART_TEXT_AREA = "Text Area";
+
     @Override
     public String getName() {
         return "TextArea";
@@ -59,6 +61,8 @@ public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition
             textArea.setVisibleLines(field.getRows());
 
             formGroup.render(inputId, textArea, field);
+            
+            registerPart(PART_TEXT_AREA, textArea);
         }
 
         return formGroup;

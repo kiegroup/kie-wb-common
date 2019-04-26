@@ -39,6 +39,7 @@ public abstract class RadioGroupFieldRendererBase<FIELD extends RadioGroupBaseDe
         extends SelectorFieldRenderer<FIELD, OPTION, TYPE>
         implements RequiresValueConverter {
 
+    private static final String PART_RADIO_GROUP = "Radio Group";
     private RadioGroupBase<TYPE> input;
 
     abstract protected RadioGroupBase<TYPE> getRadioGroup();
@@ -65,6 +66,7 @@ public abstract class RadioGroupFieldRendererBase<FIELD extends RadioGroupBaseDe
             input.setValue(selectedValue,
                            true);
         }
+        registerPart(PART_RADIO_GROUP, input);
     }
 
     protected SafeHtml getOptionLabel(String text) {

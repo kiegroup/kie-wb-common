@@ -34,6 +34,7 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.integerBox.
 public class IntegerBoxFieldRenderer extends FieldRenderer<IntegerBoxFieldDefinition, DefaultFormGroup>
         implements RequiresValueConverter {
 
+    private static final String PART_INTEGER_BOX = "Integer Box";
     private IntegerBox integerBox;
 
     @Inject
@@ -69,6 +70,7 @@ public class IntegerBoxFieldRenderer extends FieldRenderer<IntegerBoxFieldDefini
         formGroup.render(inputId,
                          widget,
                          field);
+        registerPart(PART_INTEGER_BOX, widget);
 
         return formGroup;
     }

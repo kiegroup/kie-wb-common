@@ -16,8 +16,11 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.model.FieldDefinition;
@@ -51,5 +54,13 @@ public abstract class AbstractFormGroup<VIEW extends FormGroupView> implements F
     @Override
     public HTMLElement getElement() {
         return view.getElement();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup#getPartsWidgets()
+     */
+    @Override
+    public Map<String, Widget> getPartsWidgets() {
+        return view.getViewPartsWidgets();
     }
 }

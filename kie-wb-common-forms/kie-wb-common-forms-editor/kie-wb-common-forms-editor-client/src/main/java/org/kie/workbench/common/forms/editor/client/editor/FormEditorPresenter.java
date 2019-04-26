@@ -56,6 +56,7 @@ import org.kie.workbench.common.services.refactoring.client.usages.ShowAssetUsag
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.kie.workbench.common.widgets.metadata.client.KieEditor;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorView;
+import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.kie.workbench.common.workbench.client.events.LayoutEditorFocusEvent;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
@@ -72,6 +73,10 @@ import org.uberfire.ext.layout.editor.client.api.ComponentRemovedEvent;
 import org.uberfire.ext.layout.editor.client.api.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.api.LayoutDragComponentPalette;
 import org.uberfire.ext.layout.editor.client.api.LayoutEditor;
+import org.uberfire.ext.layout.editor.client.api.LayoutEditorElement;
+import org.uberfire.ext.layout.editor.client.components.columns.ComponentColumn;
+import org.uberfire.ext.layout.editor.client.event.LayoutEditorElementSelectEvent;
+import org.uberfire.ext.layout.editor.client.widgets.LayoutEditorPropertiesPresenter;
 import org.uberfire.ext.plugin.client.perspective.editor.layout.editor.HTMLLayoutDragComponent;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
@@ -108,6 +113,10 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
     protected LayoutDragComponentPalette layoutDragComponentPalette;
     @Inject
     protected Event<LayoutEditorFocusEvent> layoutFocusEvent;
+    @Inject
+    FormFieldPropertiesEditorDock formFieldPropertiesEditorDock;
+    @Inject
+    LayoutEditorPropertiesPresenter layoutEditorPropertiesPresenter;
 
     private ShowAssetUsagesDisplayer showAssetUsagesDisplayer;
     private FormEditorView view;
@@ -146,6 +155,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         init(path,
              place,
              resourceType);
+        formFieldPropertiesEditorDock.init(PerspectiveIds.LIBRARY);
+        layoutEditorPropertiesPresenter.edit(layoutEditor);
     }
 
     @OnFocus
@@ -155,6 +166,18 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         } else {
             setActiveInstance();
         }
+    }
+    
+    @Override
+    public void showDocks() {
+        super.showDocks();
+        formFieldPropertiesEditorDock.open();
+    }
+    
+    @Override
+    public void hideDocks() {
+        super.hideDocks();
+        formFieldPropertiesEditorDock.close();
     }
 
     @Override
@@ -248,6 +271,7 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
                           LayoutTemplate.Style.FLUID);
 
         layoutEditor.loadLayout(editorHelper.getContent().getDefinition().getLayoutTemplate());
+        layoutEditor.setElementSelectionEnabled(true);
     }
 
     protected void synchronizeLayoutEditor() {
@@ -487,7 +511,14 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
             }
         }
     }
-
+    
+    public void onLayoutEditorElementSelectEvent(@Observes LayoutEditorElementSelectEvent event) {
+        LayoutEditorElement element = event.getElement();
+        if (element instanceof ComponentColumn) {
+            ((ComponentColumn) element).setupParts();
+        }
+    }
+    
     protected void removeAllDraggableGroupComponent(Collection<FieldDefinition> fields) {
         String groupId = translationService.getTranslation(FormEditorConstants.FormEditorPresenterModelFields);
         Iterator<FieldDefinition> it = fields.iterator();

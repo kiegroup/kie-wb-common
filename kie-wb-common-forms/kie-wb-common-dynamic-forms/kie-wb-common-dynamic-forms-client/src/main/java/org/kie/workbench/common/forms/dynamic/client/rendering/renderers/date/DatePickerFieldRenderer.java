@@ -32,6 +32,8 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.datePicker.
 @Dependent
 public class DatePickerFieldRenderer extends FieldRenderer<DatePickerFieldDefinition, DefaultFormGroup> {
 
+    private static final String PART_DATE = "Date";
+
     private Widget input;
 
     protected WidgetHandler handler;
@@ -55,6 +57,9 @@ public class DatePickerFieldRenderer extends FieldRenderer<DatePickerFieldDefini
             formGroup.render(inputId,
                              input,
                              field);
+            
+            registerPart(PART_DATE, input);
+            
         }
 
         return formGroup;

@@ -31,6 +31,8 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.def
 @Dependent
 public class TextBoxFieldRenderer extends FieldRenderer<TextBoxBaseDefinition, DefaultFormGroup> implements RequiresValueConverter {
 
+    final static String PART_TEXT_BOX = "Text Box";
+    
     private TextBox textBox = new TextBox();
 
     @Override
@@ -55,6 +57,8 @@ public class TextBoxFieldRenderer extends FieldRenderer<TextBoxBaseDefinition, D
             textBox.setPlaceholder(field.getPlaceHolder());
             textBox.setMaxLength(field.getMaxLength());
             textBox.setEnabled(!field.getReadOnly());
+            
+            registerPart(PART_TEXT_BOX, textBox);
 
             formGroup.render(inputId, textBox, field);
         }
@@ -76,4 +80,5 @@ public class TextBoxFieldRenderer extends FieldRenderer<TextBoxBaseDefinition, D
     public Converter getConverter() {
         return ValueConvertersFactory.getConverterForType(field.getStandaloneClassName());
     }
+    
 }
