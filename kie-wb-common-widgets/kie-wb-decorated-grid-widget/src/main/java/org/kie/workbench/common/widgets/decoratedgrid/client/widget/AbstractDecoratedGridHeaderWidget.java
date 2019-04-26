@@ -31,6 +31,7 @@ import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -263,27 +264,21 @@ public abstract class AbstractDecoratedGridHeaderWidget<M, T> extends CellPanel
                                                                                            },
                                                                                            MouseDownEvent.getType()));
 
-        this.rootPanelMouseUpHandlerRegistration = Optional.of(rootPanel().addDomHandler((event) -> {
-                                                                                             if (!resizerInfo.isResizing()) {
-                                                                                                 return;
-                                                                                             }
-                                                                                             resizerInfo.setResizing(false);
-                                                                                             resizerInfo.setResizePrimed(false);
-                                                                                             resizer.getStyle().setVisibility(Visibility.HIDDEN);
-                                                                                             event.preventDefault();
-                                                                                         },
+        this.rootPanelMouseUpHandlerRegistration = Optional.of(rootPanel().addDomHandler(this::resetResizerInfo,
                                                                                          MouseUpEvent.getType()));
 
-        this.rootPanelMouseOutHandlerRegistration = Optional.of(rootPanel().addDomHandler((event) -> {
-                                                                                              if (!resizerInfo.isResizing()) {
-                                                                                                  return;
-                                                                                              }
-                                                                                              resizerInfo.setResizing(false);
-                                                                                              resizerInfo.setResizePrimed(false);
-                                                                                              resizer.getStyle().setVisibility(Visibility.HIDDEN);
-                                                                                              event.preventDefault();
-                                                                                          },
+        this.rootPanelMouseOutHandlerRegistration = Optional.of(rootPanel().addDomHandler(this::resetResizerInfo,
                                                                                           MouseOutEvent.getType()));
+    }
+
+    private void resetResizerInfo(final DomEvent event) {
+        if (!resizerInfo.isResizing()) {
+            return;
+        }
+        resizerInfo.setResizing(false);
+        resizerInfo.setResizePrimed(false);
+        resizer.getStyle().setVisibility(Visibility.HIDDEN);
+        event.preventDefault();
     }
 
     RootPanel rootPanel() {
