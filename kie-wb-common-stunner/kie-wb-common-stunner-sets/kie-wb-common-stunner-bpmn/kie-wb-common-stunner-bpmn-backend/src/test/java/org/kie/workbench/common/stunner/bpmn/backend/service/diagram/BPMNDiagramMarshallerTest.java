@@ -555,7 +555,8 @@ public class BPMNDiagramMarshallerTest {
                      "employee:java.lang.String,reason:java.lang.String,performance:java.lang.String");
     }
 
-    @Ignore
+    //
+    @Ignore("Test is ignored, because new and old marshaller differ over different properties supported by them")
     @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallProcessProperties() throws Exception {
@@ -2258,7 +2259,7 @@ public class BPMNDiagramMarshallerTest {
                                          "_performanceItem"));
     }
 
-    @Ignore
+    @Ignore("Test is ignored, because new and old marshaller differ over different properties supported by them")
     @Test
     public void testMarshallProcessProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_PROCESSPROPERTIES);
