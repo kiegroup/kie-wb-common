@@ -131,9 +131,6 @@ import static org.mockito.Mockito.when;
 @RunWith(GwtMockitoTestRunner.class)
 public class ClientBPMNDocumentationServiceTest {
 
-    private static final String VARIABLES = "PV1:java.lang.String,PV2:java.lang.Boolean";
-    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String,GL2:java.lang.Boolean";
-    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String,SUBPV2:java.lang.Boolean";
     public static final String PROCESS_NAME = "processTest";
     public static final String PROCESS_DOCUMENTATION = "Process Documentation\nLine2";
     public static final String PROCESS_VERSION = "1.0";
@@ -163,11 +160,14 @@ public class ClientBPMNDocumentationServiceTest {
     public static final String ON_EXIT_ACTION = LANGUAGE + ":" + SCRIPT;
     public static final String SUB_PROCESS_DOCUMENTATION = "SUB_PROCESS_DOCUMENTATION";
     public static final String ON_ENTRY_CAPTION = "ONENTRY_CAPTION";
+    public static final String TEMPLATE = "documentationTemplate";
+    public static final String ASSIGNEMNTS = "assignemnts";
+    private static final String VARIABLES = "PV1:java.lang.String,PV2:java.lang.Boolean";
+    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String,GL2:java.lang.Boolean";
+    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String,SUBPV2:java.lang.Boolean";
     private static final String ISASYNC_CAPTION = "ISASYNC_CAPTION";
     private static final String ON_EXIT_CAPTION = "ONEXIT_CAPTION";
-    public static final String TEMPLATE = "documentationTemplate";
     private static final String ICON_HTML = "icon image";
-    public static final String ASSIGNEMNTS = "assignemnts";
     private static final String ASSIGNEMNTS_CAPTION = "ASSIGNEMNTS_CAPTION";
     private static final String SLA_DUE_DATE = "";
 
