@@ -33,19 +33,11 @@ import org.jboss.errai.security.shared.api.identity.User;
 @ApplicationScoped
 public class LibraryPermissions {
 
-    private User user;
-
     private OrganizationalUnitController organizationalUnitController;
 
-    private ProjectController projectController;
-
     @Inject
-    public LibraryPermissions(final User user,
-                              final OrganizationalUnitController organizationalUnitController,
-                              final ProjectController projectController) {
-        this.user = user;
+    public LibraryPermissions(final OrganizationalUnitController organizationalUnitController) {
         this.organizationalUnitController = organizationalUnitController;
-        this.projectController = projectController;
         self = this;
     }
 
@@ -66,71 +58,7 @@ public class LibraryPermissions {
         }
     }-*/;
 
-    public boolean userCanReadOrganizationalUnits() {
-        return organizationalUnitController.canReadOrgUnits();
-    }
-
-    public boolean userCanReadOrganizationalUnit(final OrganizationalUnit organizationalUnit) {
-        return userIsAtLeast(ContributorType.CONTRIBUTOR, organizationalUnit.getContributors())
-                || organizationalUnitController.canReadOrgUnit(organizationalUnit);
-    }
-
-    public boolean userCanDeleteOrganizationalUnit(final OrganizationalUnit organizationalUnit) {
-        return userIsAtLeast(ContributorType.OWNER, organizationalUnit.getContributors())
-                || organizationalUnitController.canDeleteOrgUnit(organizationalUnit);
-    }
-
-    public boolean userCanUpdateOrganizationalUnit(final OrganizationalUnit organizationalUnit) {
-        return userIsAtLeast(ContributorType.ADMIN, organizationalUnit.getContributors())
-                || organizationalUnitController.canUpdateOrgUnit(organizationalUnit);
-    }
-
     public boolean userCanCreateOrganizationalUnit() {
         return organizationalUnitController.canCreateOrgUnits();
-    }
-
-    public boolean userCanDeleteProject(final WorkspaceProject project) {
-        return userIsAtLeast(ContributorType.OWNER, project.getRepository().getContributors())
-                || userIsAtLeast(ContributorType.ADMIN, project.getOrganizationalUnit().getContributors())
-                || projectController.canDeleteProject(project);
-    }
-
-    public boolean userCanDeleteBranch(final WorkspaceProject project) {
-        return (userIsAtLeast(ContributorType.ADMIN, project.getRepository().getContributors())
-                || userIsAtLeast(ContributorType.ADMIN, project.getOrganizationalUnit().getContributors())
-                || userCanDeleteProject(project))
-                && !project.getBranch().getName().equals("master");
-    }
-
-    public boolean userCanBuildProject(final WorkspaceProject project) {
-        return (userIsAtLeast(ContributorType.ADMIN, project.getRepository().getContributors())
-                || userIsAtLeast(ContributorType.CONTRIBUTOR, project.getOrganizationalUnit().getContributors())
-                || projectController.canBuildProject(project))
-                && project.getMainModule() != null;
-    }
-
-    public boolean userCanDeployProject(final WorkspaceProject project) {
-        return (userIsAtLeast(ContributorType.ADMIN, project.getRepository().getContributors())
-                || userIsAtLeast(ContributorType.ADMIN, project.getOrganizationalUnit().getContributors())
-                || projectController.canBuildProject(project))
-                && project.getMainModule() != null;
-    }
-
-    public boolean userCanUpdateProject(final WorkspaceProject project) {
-        return (userIsAtLeast(ContributorType.ADMIN, project.getRepository().getContributors())
-                || userIsAtLeast(ContributorType.CONTRIBUTOR, project.getOrganizationalUnit().getContributors())
-                || projectController.canUpdateProject(project))
-                && project.getMainModule() != null;
-    }
-
-    public boolean userCanCreateProject(final OrganizationalUnit organizationalUnit) {
-        return userIsAtLeast(ContributorType.CONTRIBUTOR, organizationalUnit.getContributors())
-                || projectController.canCreateProjects();
-    }
-
-    boolean userIsAtLeast(final ContributorType type,
-                          final Collection<Contributor> contributors) {
-        return contributors.stream().anyMatch(c -> c.getUsername().equals(user.getIdentifier())
-                && ContributorType.PRIORITY_ORDER.indexOf(c.getType()) <= ContributorType.PRIORITY_ORDER.indexOf(type));
     }
 }
