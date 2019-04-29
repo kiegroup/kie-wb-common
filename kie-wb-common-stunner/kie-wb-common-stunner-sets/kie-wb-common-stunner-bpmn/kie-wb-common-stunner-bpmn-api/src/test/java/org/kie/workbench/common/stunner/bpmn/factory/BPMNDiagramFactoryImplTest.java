@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
@@ -63,7 +62,7 @@ public class BPMNDiagramFactoryImplTest {
     public void testTypes() {
         assertEquals(BPMNDefinitionSet.class,
                      tested.getDefinitionSetType());
-        assertEquals(Metadata.class,
+        assertEquals(SubmarineMetadata.class,
                      tested.getMetadataType());
     }
 

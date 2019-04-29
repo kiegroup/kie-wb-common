@@ -37,6 +37,7 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorCore;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
@@ -90,6 +91,9 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Mock
     private BPMNProjectEditorMenuSessionItems bpmnMenuSessionItems;
+
+    @Mock
+    private DocumentationView documentationView;
 
     private ArgumentCaptor<Command> commandCaptor;
 
@@ -147,8 +151,7 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                   notificationEvent,
                                                   errorPopupPresenter,
                                                   diagramClientErrorHandler,
-                                                  // TODO: (Submarine) documentationView,
-                                                  null,
+                                                  documentationView,
                                                   (BPMNDiagramResourceType) getResourceType(),
                                                   bpmnMenuSessionItems,
                                                   projectMessagesListener,

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.refactoring.backend.server.BaseIndexingTest;
 import org.kie.workbench.common.services.refactoring.backend.server.IndexingTest;
@@ -57,6 +58,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Ignore("Needs Submarine backend")
 public class BpmnFileIndexerTest extends BaseIndexingTest<BPMNDefinitionSetResourceType> {
 
     private final static List<String> PROCESS_IDS = Arrays.asList(new String[]{"hiring", "ParentProcess", "SubProcess", "multiple-rule-tasks", "org.jbpm.signal", "org.jbpm.broken"});
