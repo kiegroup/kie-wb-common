@@ -87,6 +87,7 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -99,6 +100,7 @@ import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -245,6 +247,8 @@ public class AbstractProjectDiagramEditorTest {
     protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> presenterCore;
 
     protected boolean isReadOnly = false;
+
+    protected Promises promises = new SyncPromises();
 
     abstract class ClientResourceTypeMock implements ClientResourceType {
 
@@ -393,7 +397,7 @@ public class AbstractProjectDiagramEditorTest {
 
         doNothing().when(presenter).addDownloadMenuItem(any());
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(true).when(projectController).canUpdateProject(any());
+        when(projectController.canUpdateProject(any())).thenReturn(promises.resolve(true));
         doReturn(saveAndRenameCommand).when(presenter).getSaveAndRename();
 
         presenter.makeMenuBar();
@@ -412,7 +416,7 @@ public class AbstractProjectDiagramEditorTest {
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
         doNothing().when(presenter).addDownloadMenuItem(any());
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(false).when(projectController).canUpdateProject(any());
+        when(projectController.canUpdateProject(any())).thenReturn(promises.resolve(false));
 
         presenter.makeMenuBar();
 

@@ -19,23 +19,14 @@ package org.kie.workbench.common.dmn.client.graph;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
-import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
-import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
-import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
@@ -68,9 +59,6 @@ public class DMNGraphUtilsTest {
 
     @Mock
     private SubmarineMetadata metadata;
-
-    @Mock
-    private Bounds bounds;
 
     private DMNGraphUtils utils;
 
@@ -116,60 +104,7 @@ public class DMNGraphUtilsTest {
     }
 
     @Test
-    public void testGetDefinitionsWithRootNode() {
-        final DMNDiagram definition = new DMNDiagram();
-        graph.addNode(newNode(definition));
-
-        final Definitions definitions = utils.getDefinitions();
-        assertNotNull(definitions);
-        assertEquals(definition.getDefinitions(),
-                     definitions);
-    }
-
-    @Test
-    public void testGetDefinitionsWithMultipleRootNodes() {
-        final Decision definition1 = new Decision();
-        final DMNDiagram definition2 = new DMNDiagram();
-        graph.addNode(newNode(definition1));
-        graph.addNode(newNode(definition2));
-
-        final Definitions definitions = utils.getDefinitions();
-        assertNotNull(definitions);
-        assertEquals(definition2.getDefinitions(),
-                     definitions);
-    }
-
-    @Test
-    public void testGetDefinitionsWithConnectedNodes() {
-        final Decision definition1 = new Decision();
-        final DMNDiagram definition2 = new DMNDiagram();
-        final Node<View, Edge> node1 = newNode(definition1);
-        final Node<View, Edge> node2 = newNode(definition2);
-
-        final Edge<View, Node> edge = new EdgeImpl<>(UUID.uuid());
-        node1.getInEdges().add(edge);
-        node2.getOutEdges().add(edge);
-        edge.setSourceNode(node2);
-        edge.setTargetNode(node1);
-
-        graph.addNode(node1);
-        graph.addNode(node2);
-
-        final Definitions definitions = utils.getDefinitions();
-        assertNotNull(definitions);
-        assertEquals(definition2.getDefinitions(),
-                     definitions);
-    }
-
-    @Test
     public void testGetDefinitionsWithNoNodes() {
         assertNull(utils.getDefinitions());
-    }
-
-    private Node<View, Edge> newNode(final Object definition) {
-        final Node<View, Edge> node = new NodeImpl<>(UUID.uuid());
-        final View<Object> content = new ViewImpl<>(definition, bounds);
-        node.setContent(content);
-        return node;
     }
 }
