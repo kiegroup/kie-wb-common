@@ -369,13 +369,21 @@ public class DataTypeListView implements DataTypeList.View {
 
     public void onDataTypeEditModeToggle(final @Observes DataTypeEditModeToggleEvent event) {
         if (event.isEditModeEnabled()) {
-            if (currentEditingItem != null) {
-                currentEditingItem.disableEditMode();
+            if (getCurrentEditingItem() != null) {
+                getCurrentEditingItem().disableEditMode();
             }
-            currentEditingItem = event.getItem();
-        } else if (event.getItem() == currentEditingItem) {
-            currentEditingItem = null;
+            setCurrentEditingItem(event.getItem());
+        } else if (event.getItem() == getCurrentEditingItem()) {
+            setCurrentEditingItem(null);
         }
+    }
+
+    DataTypeListItem getCurrentEditingItem() {
+        return currentEditingItem;
+    }
+
+    void setCurrentEditingItem(final DataTypeListItem currentEditingItem) {
+        this.currentEditingItem = currentEditingItem;
     }
 
     @Override

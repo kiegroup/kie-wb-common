@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
+import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -677,5 +678,48 @@ public class DataTypeListViewTest {
     private void mockDOMElementsByParentUUID(final String parentUUID,
                                              final NodeList<Element> rowElements) {
         when(listItems.querySelectorAll("[" + PARENT_UUID_ATTR + "=\"" + parentUUID + "\"]")).thenReturn(rowElements);
+    }
+
+    @Test
+    public void testOnDataTypeEditModeToggleStartEditing() {
+
+        final DataTypeListItem currentEditingItem = mock(DataTypeListItem.class);
+        final DataTypeEditModeToggleEvent event = new DataTypeEditModeToggleEvent(true, currentEditingItem);
+
+        view.onDataTypeEditModeToggle(event);
+
+        final DataTypeListItem actual = view.getCurrentEditingItem();
+
+        assertEquals(currentEditingItem, actual);
+    }
+
+    @Test
+    public void testOnDataTypeEditModeToggleStopEditing() {
+
+        final DataTypeListItem currentEditingItem = mock(DataTypeListItem.class);
+        final DataTypeEditModeToggleEvent event = new DataTypeEditModeToggleEvent(false, currentEditingItem);
+
+        view.onDataTypeEditModeToggle(event);
+
+        final DataTypeListItem actual = view.getCurrentEditingItem();
+
+        assertEquals(null, actual);
+    }
+
+    @Test
+    public void testOnDataTypeEditModeToggleChangedCurrentEditingItem() {
+
+        final DataTypeListItem currentEditingItem = mock(DataTypeListItem.class);
+        final DataTypeListItem previousEditingItem = mock(DataTypeListItem.class);
+        final DataTypeEditModeToggleEvent event = new DataTypeEditModeToggleEvent(true, currentEditingItem);
+
+        view.setCurrentEditingItem(previousEditingItem);
+
+        view.onDataTypeEditModeToggle(event);
+
+        final DataTypeListItem actual = view.getCurrentEditingItem();
+
+        assertEquals(currentEditingItem, actual);
+        verify(previousEditingItem).disableEditMode();
     }
 }
