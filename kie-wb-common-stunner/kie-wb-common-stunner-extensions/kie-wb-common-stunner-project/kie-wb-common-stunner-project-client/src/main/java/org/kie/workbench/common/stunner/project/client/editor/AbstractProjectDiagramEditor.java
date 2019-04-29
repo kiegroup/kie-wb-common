@@ -80,7 +80,6 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
-import org.uberfire.workbench.model.menu.Menus;
 
 import static org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientConstants.DIAGRAM_PARSING_ERROR;
 
@@ -107,7 +106,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     private String title = "Project Diagram Editor";
 
-    private boolean menuBarInitializd = false;
+    private boolean menuBarInitialzed = false;
 
     public class ProjectDiagramEditorCore extends AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> {
 

@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.showcase.client.editor;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -112,8 +113,8 @@ public class DMNDiagramsNavigatorScreen {
     }
 
     @WorkbenchMenu
-    public Menus getMenu() {
-        return menu;
+    public void getMenus(final Consumer<Menus> menusConsumer) {
+        menusConsumer.accept(menu);
     }
 
     @WorkbenchPartTitle

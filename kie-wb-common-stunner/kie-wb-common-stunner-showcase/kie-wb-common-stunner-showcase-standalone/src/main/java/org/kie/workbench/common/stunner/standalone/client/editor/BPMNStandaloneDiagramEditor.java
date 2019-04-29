@@ -16,6 +16,7 @@
 package org.kie.workbench.common.stunner.standalone.client.editor;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -295,10 +296,9 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
         return "";
     }
 
-    @Override
     @WorkbenchMenu
-    public Menus getMenus() {
-        return super.getMenus();
+    public void getMenus(final Consumer<Menus> menusConsumer) {
+        menusConsumer.accept(super.getMenus());
     }
 
     @Override

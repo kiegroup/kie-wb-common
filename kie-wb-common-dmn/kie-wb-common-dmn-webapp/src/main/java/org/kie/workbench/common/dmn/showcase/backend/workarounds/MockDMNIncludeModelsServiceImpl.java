@@ -29,7 +29,7 @@ import org.kie.workbench.common.dmn.backend.editors.included.DMNIncludedModelsSe
 public class MockDMNIncludeModelsServiceImpl extends DMNIncludedModelsServiceImpl {
 
     public MockDMNIncludeModelsServiceImpl() {
-        super(null, null, null, null);
+        super(null, null, null);
     }
 
     @Override
