@@ -42,6 +42,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.messageconsole.client.console.MessageConsoleScreen;
+import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterDeleteOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
@@ -172,6 +173,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private Caller<RepositoryService> repositoryService;
 
+    private OrganizationalUnitController organizationalUnitController;
+
     @Inject
     private Caller<OrganizationalUnitService> organizationalUnitService;
 
@@ -203,7 +206,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final SessionInfo sessionInfo,
                          final LibraryInternalPreferences libraryInternalPreferences,
                          final Caller<RepositoryService> repositoryService,
-                         final Promises promises) {
+                         final Promises promises,
+                         final OrganizationalUnitController organizationalUnitController) {
 
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
@@ -226,6 +230,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.libraryInternalPreferences = libraryInternalPreferences;
         this.repositoryService = repositoryService;
         this.promises = promises;
+        this.organizationalUnitController = organizationalUnitController;
     }
 
     @PostConstruct
@@ -261,9 +266,19 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     public native void expose() /*-{
         $wnd.AppFormer.LibraryPlaces = {
-            goToSpace: @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToSpace(Ljava/lang/String;)
+            goToSpace: @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeGoToSpace(Ljava/lang/String;),
+            canCreateSpace: @org.kie.workbench.common.screens.library.client.util.LibraryPlaces::nativeUserCanCreateOrganizationalUnit()
         }
     }-*/;
+
+
+    public static boolean nativeUserCanCreateOrganizationalUnit() {
+        return self.userCanCreateOrganizationalUnit();
+    }
+
+    public boolean userCanCreateOrganizationalUnit() {
+        return this.organizationalUnitController.canCreateOrgUnits();
+    }
 
     public void onSelectPlaceEvent(@Observes final PlaceGainFocusEvent placeGainFocusEvent) {
         if (isLibraryPerspectiveOpen() && !closingLibraryPlaces) {

@@ -36,6 +36,7 @@ import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.project.social.ModuleEventType;
+import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
@@ -244,7 +245,8 @@ public class LibraryPlacesTest {
                                               sessionInfo,
                                               libraryInternalPreferences,
                                               repositoryServiceCaller,
-                                              new SyncPromises()) {
+                                              new SyncPromises(),
+                                              mock(OrganizationalUnitController.class)) {
 
             @Override
             protected Map<String, List<String>> getParameterMap() {

@@ -32,9 +32,6 @@ interface State {
 
 const LibraryPlaces = (AppFormer as any).LibraryPlaces as {
   goToSpace: (s: string) => Promise<void>;
-};
-
-const LibraryPermissions = (AppFormer as any).LibraryPermissions as {
   canCreateSpace: () => boolean;
 };
 
@@ -57,7 +54,7 @@ export class SpacesScreen extends React.Component<Props, State> {
   }
 
   public canCreateSpace() {
-    return LibraryPermissions.canCreateSpace();
+    return LibraryPlaces.canCreateSpace();
   }
 
   private openNewSpacePopup() {
