@@ -28,6 +28,8 @@ import javax.enterprise.event.Observes;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.logging.client.LogConfiguration;
+import elemental2.promise.Promise;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -105,7 +107,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     private String title = "Project Diagram Editor";
 
-    private boolean menuBarInitialized = false;
+    private boolean menuBarInitializd = false;
 
     public class ProjectDiagramEditorCore extends AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> {
 
@@ -221,7 +223,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                 getView().setWidget(getXMLEditorView().asWidget());
                 setEditorProxy(makeXmlEditorProxy());
                 hideLoadingViews();
-                notification.fire(new NotificationEvent(translationService.getValue(DIAGRAM_PARSING_ERROR, Objects.toString(e.getMessage(), "")),
+                notification.fire(new NotificationEvent(getDiagramParsingErrorMessage(dpe),
                                                         NotificationEvent.NotificationType.ERROR));
 
                 Scheduler.get().scheduleDeferred(getXMLEditorView()::onResize);
@@ -234,6 +236,10 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                                                   getEditorIdentifier()));
             }
         }
+    }
+
+    protected String getDiagramParsingErrorMessage(final DiagramParsingException e) {
+        return translationService.getValue(DIAGRAM_PARSING_ERROR, Objects.toString(e.getMessage(), ""));
     }
 
     private final AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> editor;
@@ -402,27 +408,36 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     public abstract String getEditorIdentifier();
 
     @Override
-    protected void makeMenuBar() {
-        if (!menuBarInitialized) {
+    protected Promise<Void> makeMenuBar() {
+        if (!menuBarInitialzed) {
             menuSessionItems.populateMenu(fileMenuBuilder);
             makeAdditionalStunnerMenus(fileMenuBuilder);
-            if (canUpdateProject()) {
-                fileMenuBuilder
-                        .addSave(versionRecordManager.newSaveMenuItem(this::saveAction))
-                        .addCopy(versionRecordManager.getCurrentPath(),
-                                 assetUpdateValidator)
-                        .addRename(getSaveAndRename())
-                        .addDelete(versionRecordManager.getPathToLatest(),
-                                   assetUpdateValidator);
+            if (workbenchContext.getActiveWorkspaceProject().isPresent()) {
+                final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject().get();
+                return projectController.canUpdateProject(activeProject).then(canUpdateProject -> {
+                    if (canUpdateProject) {
+                        fileMenuBuilder
+                                .addSave(versionRecordManager.newSaveMenuItem(this::saveAction))
+                                .addCopy(versionRecordManager.getCurrentPath(),
+                                         assetUpdateValidator)
+                                .addRename(getSaveAndRename())
+                                .addDelete(versionRecordManager.getPathToLatest(),
+                                           assetUpdateValidator);
+                    }
+
+                    addDownloadMenuItem(fileMenuBuilder);
+
+                    fileMenuBuilder
+                            .addNewTopLevelMenu(versionRecordManager.buildMenu())
+                            .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
+                    menuBarInitialzed = true;
+
+                    return promises.resolve();
+                });
             }
-
-            addDownloadMenuItem(fileMenuBuilder);
-
-            fileMenuBuilder
-                    .addNewTopLevelMenu(versionRecordManager.buildMenu())
-                    .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
-            menuBarInitialized = true;
         }
+
+        return promises.resolve();
     }
 
     @Override
@@ -482,13 +497,6 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     @Override
     public String getTitleText() {
         return title;
-    }
-
-    protected Menus getMenus() {
-        if (menus == null) {
-            makeMenuBar();
-        }
-        return menus;
     }
 
     @Override

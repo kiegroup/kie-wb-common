@@ -104,9 +104,6 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     private BPMNDiagramEditor diagramEditor;
 
-    @Mock
-    private DocumentationView documentationView;
-
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
@@ -151,7 +148,8 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                   notificationEvent,
                                                   errorPopupPresenter,
                                                   diagramClientErrorHandler,
-                                                  documentationView,
+                                                  // TODO: (Submarine) documentationView,
+                                                  null,
                                                   (BPMNDiagramResourceType) getResourceType(),
                                                   bpmnMenuSessionItems,
                                                   projectMessagesListener,

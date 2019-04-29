@@ -16,9 +16,11 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
@@ -30,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.widgets.client.docks.DefaultEditorDock;
+import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilderImpl;
 import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateValidator;
 import org.mockito.ArgumentCaptor;
@@ -38,8 +41,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.client.mvp.AbstractWorkbenchActivity;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
+import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.mvp.PlaceStatus;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
 import org.uberfire.client.workbench.events.PlaceHiddenEvent;
 import org.uberfire.client.workbench.type.ClientResourceType;
@@ -52,6 +59,7 @@ import org.uberfire.ext.editor.commons.service.support.SupportsSaveAndRename;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -69,6 +77,8 @@ import static org.mockito.Mockito.when;
 @RunWith(GwtMockitoTestRunner.class)
 public class KieEditorTest {
 
+    @Mock
+    protected PlaceManager placeManager;
     @Mock
     protected BasicFileMenuBuilder menuBuilder;
     @Mock
@@ -95,9 +105,14 @@ public class KieEditorTest {
     @Spy
     @InjectMocks
     protected AssetUpdateValidator assetUpdateValidator;
+
+    protected Promises promises;
+
     protected KieEditorFake presenter;
     @Captor
     ArgumentCaptor<PlaceRequest> placeRequestArgumentCaptor;
+    @Captor
+    ArgumentCaptor<Command> commandArgumentCaptor;
     @Mock
     private DefaultEditorDock docks;
     @Mock
@@ -105,15 +120,17 @@ public class KieEditorTest {
 
     @Before
     public void setup() {
+        promises = new SyncPromises();
         when(alertsButtonMenuItemBuilder.build()).thenReturn(alertsButtonMenuItem);
         presenter = spy(new KieEditorFake());
+        doReturn(promises.resolve(true)).when(projectController).canUpdateProject(any());
     }
 
     @Test
     public void testMakeMenuBar() {
 
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(true).when(projectController).canUpdateProject(any());
+        doReturn(promises.resolve(true)).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
 
@@ -129,7 +146,7 @@ public class KieEditorTest {
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
 
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(false).when(projectController).canUpdateProject(any());
+        doReturn(promises.resolve(false)).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
 
@@ -238,7 +255,7 @@ public class KieEditorTest {
     @Test
     public void testValidSaveAction() {
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(true).when(projectController).canUpdateProject(any());
+        doReturn(promises.resolve(true)).when(projectController).canUpdateProject(any());
 
         presenter.saveAction();
 
@@ -248,7 +265,7 @@ public class KieEditorTest {
     @Test
     public void testNotAllowedSaveAction() {
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(false).when(projectController).canUpdateProject(any());
+        doReturn(promises.resolve(false)).when(projectController).canUpdateProject(any());
         doReturn("not-allowed").when(kieView).getNotAllowedSavingMessage();
 
         presenter.saveAction();
@@ -375,6 +392,55 @@ public class KieEditorTest {
         assertEquals(assetUpdateValidator, renameValidator);
     }
 
+    @Test
+    public void registerDock() {
+        presenter.registerDock("test", mock(IsWidget.class));
+
+        verify(placeManager).registerOnOpenCallback(placeRequestArgumentCaptor.capture(),
+                                                    any(Command.class));
+        final PlaceRequest placeRequest = placeRequestArgumentCaptor.getValue();
+        assertEquals("org.docks.PlaceHolder", placeRequest.getIdentifier());
+        final Map<String, String> parameters = placeRequest.getParameters();
+        assertEquals(1, parameters.size());
+        assertEquals("test", parameters.get("name"));
+    }
+
+    @Test
+    public void registerDockWhenItExists() {
+        final IsWidget widget = mock(IsWidget.class);
+        presenter.registerDock("test", widget);
+
+        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(any(PlaceRequest.class));
+        final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
+        doReturn(workbenchActivity).when(placeManager).getActivity(any());
+        final DockPlaceHolderView placeHolderView = mock(DockPlaceHolderView.class);
+        doReturn(placeHolderView).when(workbenchActivity).getWidget();
+        verify(placeManager).registerOnOpenCallback(any(),
+                                                    commandArgumentCaptor.capture());
+
+        commandArgumentCaptor.getValue().execute();
+
+        verify(placeHolderView).setWidget(widget);
+    }
+
+    @Test
+    public void registerDockWhenDockDoesNotExist() {
+        final IsWidget widget = mock(IsWidget.class);
+        presenter.registerDock("test", widget);
+
+        doReturn(PlaceStatus.CLOSE).when(placeManager).getStatus(any(PlaceRequest.class));
+        final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
+        doReturn(workbenchActivity).when(placeManager).getActivity(any());
+        final DockPlaceHolderView placeHolderView = mock(DockPlaceHolderView.class);
+        doReturn(placeHolderView).when(workbenchActivity).getWidget();
+        verify(placeManager).registerOnOpenCallback(any(),
+                                                    commandArgumentCaptor.capture());
+
+        commandArgumentCaptor.getValue().execute();
+
+        verify(placeHolderView, never()).setWidget(widget);
+    }
+
     class KieEditorFake extends KieEditor<String> {
 
         public static final String EDITOR_ID = "KieEditorFake";
@@ -394,6 +460,8 @@ public class KieEditorTest {
             metadata = KieEditorTest.this.metadata;
             alertsButtonMenuItemBuilder = KieEditorTest.this.alertsButtonMenuItemBuilder;
             perspectiveManager = KieEditorTest.this.perspectiveManager;
+            placeManager = KieEditorTest.this.placeManager;
+            promises = KieEditorTest.this.promises;
         }
 
         @Override

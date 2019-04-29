@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.submarine.client.screens;
 
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -125,8 +126,7 @@ public class DiagramEditorExplorerScreen {
     }
 
     @WorkbenchMenu
-    public Menus getMenu() {
-        return null;
+    public void getMenus(final Consumer<Menus> menusConsumer) {
     }
 
     @WorkbenchPartTitle

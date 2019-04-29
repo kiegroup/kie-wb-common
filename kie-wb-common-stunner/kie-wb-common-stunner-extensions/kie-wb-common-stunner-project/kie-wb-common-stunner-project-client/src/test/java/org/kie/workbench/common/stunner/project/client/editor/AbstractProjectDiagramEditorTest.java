@@ -121,12 +121,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// TODO: (Submarine) Last commit merged is d4a65118454da8859ff57b1a2d6855c95f4721e7
+
 @RunWith(GwtMockitoTestRunner.class)
 public class AbstractProjectDiagramEditorTest {
 
     private static final String TITLE = "title";
 
     private static final String VIEWER_SESSION_XML = "xml";
+
+    public static final String DOC_LABEL = "doc";
 
     @Mock
     protected PerspectiveManager perspectiveManagerMock;

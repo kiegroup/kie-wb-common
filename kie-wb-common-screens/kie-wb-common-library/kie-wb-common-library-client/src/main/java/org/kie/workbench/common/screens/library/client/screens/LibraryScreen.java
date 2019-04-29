@@ -26,9 +26,7 @@ import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
-import org.guvnor.structure.events.AfterEditOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.dom.HTMLElement;
@@ -38,7 +36,6 @@ import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspe
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ContributorsListPresenter;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.SpaceContributorsListServiceImpl;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.delete.DeleteOrganizationalUnitPopUpPresenter;
-import org.kie.workbench.common.screens.library.client.util.LibraryPermissions;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -51,66 +48,45 @@ import org.uberfire.spaces.Space;
         owningPerspective = LibraryPerspective.class)
 public class LibraryScreen {
 
-    public interface View extends UberElement<LibraryScreen> {
-
-        void setTitle(String title);
-
-        void setProjectsCount(int count);
-
-        void setContributorsCount(int count);
-
-        void updateContent(HTMLElement content);
-    }
-
     protected List<WorkspaceProject> projects;
     private View view;
-
     private ManagedInstance<DeleteOrganizationalUnitPopUpPresenter> deleteOrganizationalUnitPopUpPresenters;
-
-    private LibraryPermissions libraryPermissions;
+    private ProjectController projectController;
+    private OrganizationalUnitController organizationalUnitController;
 
     private WorkspaceProjectContext projectContext;
-
     private EmptyLibraryScreen emptyLibraryScreen;
-
     private PopulatedLibraryScreen populatedLibraryScreen;
-
     private OrgUnitsMetricsScreen orgUnitsMetricsScreen;
-
     private ContributorsListPresenter contributorsListPresenter;
-
     private Caller<LibraryService> libraryService;
-
     private LibraryPlaces libraryPlaces;
-
-    private Caller<OrganizationalUnitService> organizationalUnitService;
-
     private SpaceContributorsListServiceImpl spaceContributorsListService;
 
     @Inject
     public LibraryScreen(final View view,
                          final ManagedInstance<DeleteOrganizationalUnitPopUpPresenter> deleteOrganizationalUnitPopUpPresenters,
                          final WorkspaceProjectContext projectContext,
-                         final LibraryPermissions libraryPermissions,
+                         final ProjectController projectController,
+                         final OrganizationalUnitController organizationalUnitController,
                          final EmptyLibraryScreen emptyLibraryScreen,
                          final PopulatedLibraryScreen populatedLibraryScreen,
                          final OrgUnitsMetricsScreen orgUnitsMetricsScreen,
                          final ContributorsListPresenter contributorsListPresenter,
                          final Caller<LibraryService> libraryService,
                          final LibraryPlaces libraryPlaces,
-                         final Caller<OrganizationalUnitService> organizationalUnitService,
                          final SpaceContributorsListServiceImpl spaceContributorsListService) {
         this.view = view;
         this.deleteOrganizationalUnitPopUpPresenters = deleteOrganizationalUnitPopUpPresenters;
         this.projectContext = projectContext;
-        this.libraryPermissions = libraryPermissions;
+        this.projectController = projectController;
+        this.organizationalUnitController = organizationalUnitController;
         this.emptyLibraryScreen = emptyLibraryScreen;
         this.populatedLibraryScreen = populatedLibraryScreen;
         this.orgUnitsMetricsScreen = orgUnitsMetricsScreen;
         this.contributorsListPresenter = contributorsListPresenter;
         this.libraryService = libraryService;
         this.libraryPlaces = libraryPlaces;
-        this.organizationalUnitService = organizationalUnitService;
         this.spaceContributorsListService = spaceContributorsListService;
     }
 
@@ -128,18 +104,18 @@ public class LibraryScreen {
     public void trySamples() {
         if (userCanCreateProjects()) {
             libraryPlaces.closeAllPlacesOrNothing(() -> {
-                                                      libraryPlaces.goToLibrary();
-                                                      libraryPlaces.goToTrySamples();
-                                                  });
+                libraryPlaces.goToLibrary();
+                libraryPlaces.goToTrySamples();
+            });
         }
     }
 
     public void importProject() {
         if (userCanCreateProjects()) {
             libraryPlaces.closeAllPlacesOrNothing(() -> {
-                                                      libraryPlaces.goToLibrary();
-                                                      libraryPlaces.goToImportRepositoryPopUp();
-                                                  });
+                libraryPlaces.goToLibrary();
+                libraryPlaces.goToImportRepositoryPopUp();
+            });
         }
     }
 
@@ -154,7 +130,7 @@ public class LibraryScreen {
     public void showProjects() {
 
         final OrganizationalUnit activeOU = projectContext.getActiveOrganizationalUnit()
-                                                          .orElseThrow(() -> new IllegalStateException("Cannot try to query library projects without an active organizational unit."));
+                .orElseThrow(() -> new IllegalStateException("Cannot try to query library projects without an active organizational unit."));
         final boolean cachedHasProjects = !activeOU.getRepositories().isEmpty();
         if (cachedHasProjects) {
             showPopulatedLibraryScreen();
@@ -191,15 +167,15 @@ public class LibraryScreen {
     }
 
     public boolean userCanCreateProjects() {
-        return libraryPermissions.userCanCreateProject(libraryPlaces.getActiveSpace());
+        return projectController.canCreateProjects(libraryPlaces.getActiveSpace());
     }
 
     public boolean userCanUpdateOrganizationalUnit() {
-        return libraryPermissions.userCanUpdateOrganizationalUnit(projectContext.getActiveOrganizationalUnit().orElseThrow(() -> new IllegalStateException("Cannot try to update an organizational unit when none is active.")));
+        return organizationalUnitController.canUpdateOrgUnit(projectContext.getActiveOrganizationalUnit().orElseThrow(() -> new IllegalStateException("Cannot try to update an organizational unit when none is active.")));
     }
 
     public boolean userCanDeleteOrganizationalUnit() {
-        return libraryPermissions.userCanDeleteOrganizationalUnit(projectContext.getActiveOrganizationalUnit().orElseThrow(() -> new IllegalStateException("Cannot try to delete an organizational unit when none is active.")));
+        return organizationalUnitController.canDeleteOrgUnit(projectContext.getActiveOrganizationalUnit().orElseThrow(() -> new IllegalStateException("Cannot try to delete an organizational unit when none is active.")));
     }
 
     public void onNewProject(@Observes NewProjectEvent e) {
@@ -236,5 +212,16 @@ public class LibraryScreen {
     @WorkbenchPartView
     public View getView() {
         return view;
+    }
+
+    public interface View extends UberElement<LibraryScreen> {
+
+        void setTitle(String title);
+
+        void setProjectsCount(int count);
+
+        void setContributorsCount(int count);
+
+        void updateContent(HTMLElement content);
     }
 }
