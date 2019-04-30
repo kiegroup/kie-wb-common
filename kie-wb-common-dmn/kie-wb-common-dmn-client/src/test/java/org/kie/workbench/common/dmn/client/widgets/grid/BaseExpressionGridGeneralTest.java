@@ -231,17 +231,6 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
             protected void initialiseUiModel() {
                 //Nothing for this test
             }
-
-            @Override
-            public List<ListSelectorItem> getItems(final int uiRowIndex,
-                                                   final int uiColumnIndex) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public void onItemSelected(final ListSelectorItem item) {
-                //Nothing for this test
-            }
         };
     }
 
