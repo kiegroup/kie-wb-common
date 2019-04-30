@@ -103,6 +103,14 @@ public class ModelBeanValidatorTest {
         verify(consumer, never()).accept(anyCollection());
     }
 
+    @Test
+    public void testValidateNullBean() {
+        when(element.getContent()).thenReturn(null);
+        Consumer<Collection<ModelBeanViolation>> consumer = mock(Consumer.class);
+        tested.validate(element, consumer);
+        verify(consumer, never()).accept(anyCollection());
+    }
+
     private void assertViolation(final Collection<ModelBeanViolation> violations,
                                  final ConstraintViolation violation) {
         assertNotNull(violations);

@@ -30,6 +30,8 @@ import org.kie.workbench.common.stunner.core.definition.adapter.binding.Bindable
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
+import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,8 +44,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNValidatorImplTest {
 
-    private static final String BPMN_NO_END = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/no-end.bpmn";
     private static final String BPMN_VALID = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/valid.bpmn";
+    private static final String BPMN_VALIDATION_ISSUES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/validation_issues.bpmn";
 
     private BPMNValidatorImpl bpmnValidador;
 
@@ -83,11 +85,35 @@ public class BPMNValidatorImplTest {
 
     @Test
     public void validateWithViolation() {
-        when(diagramService.getRawContent(diagram)).thenReturn(getSerializedProcess(BPMN_NO_END));
+        when(diagramService.getRawContent(diagram)).thenReturn(getSerializedProcess(BPMN_VALIDATION_ISSUES));
         bpmnValidador.validate(diagram, result -> {
             assertNotNull(result);
-            assertEquals(result.size(), 2);
-            assertTrue(result.stream().map(Violation::getViolationType).allMatch(t -> Violation.Type.WARNING.equals(t)));
+            assertEquals(10, result.size());
+            assertTrue(result.stream().map(DomainViolation::getViolationType).allMatch(t -> Violation.Type.WARNING.equals(t)));
+            assertEquals(10, result.stream().map(DomainViolation::getUUID).filter(StringUtils::nonEmpty).count());
+
+            //task1
+            assertEquals(4, result.stream()
+                    .map(DomainViolation::getUUID)
+                    .filter("_426E32AD-E08B-4025-B201-9850EEC82254"::equals)
+                    .count());
+            //task2
+            assertEquals(3, result.stream()
+                    .map(DomainViolation::getUUID)
+                    .filter("_3E6C197E-FF8A-41F4-AEB6-710454E8529C"::equals)
+                    .count());
+
+            //startEvent
+            assertEquals(1, result.stream()
+                    .map(DomainViolation::getUUID)
+                    .filter("_0F455E77-669C-480F-A4A2-C5070EF1A83F"::equals)
+                    .count());
+
+            //endEvent
+            assertEquals(2, result.stream()
+                    .map(DomainViolation::getUUID)
+                    .filter("_5B1068ED-1260-41FD-B7C1-226CB909E569"::equals)
+                    .count());
         });
     }
 
