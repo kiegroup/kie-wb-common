@@ -19,8 +19,10 @@ package org.kie.workbench.common.widgets.metadata.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
 import org.guvnor.common.services.project.model.Module;
@@ -36,12 +38,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
+import org.kie.workbench.common.widgets.client.docks.PlaceHolderBaseView;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.callbacks.Callback;
+import org.uberfire.client.mvp.AbstractWorkbenchActivity;
+import org.uberfire.client.mvp.PlaceStatus;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilder;
 import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilderImpl;
@@ -49,6 +55,7 @@ import org.uberfire.ext.editor.commons.client.menu.MenuItems;
 import org.uberfire.java.nio.base.version.VersionRecord;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -73,6 +80,11 @@ public class KieMultipleDocumentEditorTest
 
     @Mock
     private User user;
+
+    @Captor
+    ArgumentCaptor<PlaceRequest> placeRequestArgumentCaptor;
+    @Captor
+    ArgumentCaptor<Command> commandArgumentCaptor;
 
     @Test
     public void testSetupMenuBar() {
@@ -829,5 +841,54 @@ public class KieMultipleDocumentEditorTest
                      paths.size());
         assertEquals(newDocumentPath,
                      paths.get(0));
+    }
+
+    @Test
+    public void registerDock() {
+        editor.registerDock("test", mock(IsWidget.class));
+
+        verify(placeManager).registerOnOpenCallback(placeRequestArgumentCaptor.capture(),
+                                                    any(Command.class));
+        final PlaceRequest placeRequest = placeRequestArgumentCaptor.getValue();
+        assertEquals("org.docks.PlaceHolder", placeRequest.getIdentifier());
+        final Map<String, String> parameters = placeRequest.getParameters();
+        assertEquals(1, parameters.size());
+        assertEquals("test", parameters.get("name"));
+    }
+
+    @Test
+    public void registerDockWhenItExists() {
+        final IsWidget widget = mock(IsWidget.class);
+        editor.registerDock("test", widget);
+
+        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(any(PlaceRequest.class));
+        final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
+        doReturn(workbenchActivity).when(placeManager).getActivity(any());
+        final PlaceHolderBaseView placeHolderView = mock(PlaceHolderBaseView.class);
+        doReturn(placeHolderView).when(workbenchActivity).getWidget();
+        verify(placeManager).registerOnOpenCallback(any(),
+                                                    commandArgumentCaptor.capture());
+
+        commandArgumentCaptor.getValue().execute();
+
+        verify(placeHolderView).setWidget(widget);
+    }
+
+    @Test
+    public void registerDockWhenDockDoesNotExist() {
+        final IsWidget widget = mock(IsWidget.class);
+        editor.registerDock("test", widget);
+
+        doReturn(PlaceStatus.CLOSE).when(placeManager).getStatus(any(PlaceRequest.class));
+        final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
+        doReturn(workbenchActivity).when(placeManager).getActivity(any());
+        final PlaceHolderBaseView placeHolderView = mock(PlaceHolderBaseView.class);
+        doReturn(placeHolderView).when(workbenchActivity).getWidget();
+        verify(placeManager).registerOnOpenCallback(any(),
+                                                    commandArgumentCaptor.capture());
+
+        commandArgumentCaptor.getValue().execute();
+
+        verify(placeHolderView, never()).setWidget(widget);
     }
 }

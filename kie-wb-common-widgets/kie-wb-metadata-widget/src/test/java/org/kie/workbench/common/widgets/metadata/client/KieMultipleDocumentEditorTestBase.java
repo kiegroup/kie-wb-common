@@ -34,6 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.ext.editor.commons.client.file.popups.CopyPopUpPresenter;
@@ -143,6 +144,9 @@ abstract class KieMultipleDocumentEditorTestBase {
     @Mock
     protected MenuItem downloadMenuItemButton;
 
+    @Mock
+    protected PlaceManager placeManager;
+
     protected Promises promises;
 
     protected Command concurrentRenameCommand;
@@ -192,6 +196,7 @@ abstract class KieMultipleDocumentEditorTestBase {
         wrapped.setAssetUpdateValidator(assetUpdateValidator);
         wrapped.setDownloadMenuItem(downloadMenuItem);
         wrapped.setPromises(promises);
+        wrapped.setPlaceManager(placeManager);
 
         this.editor = spy(wrapped);
 
