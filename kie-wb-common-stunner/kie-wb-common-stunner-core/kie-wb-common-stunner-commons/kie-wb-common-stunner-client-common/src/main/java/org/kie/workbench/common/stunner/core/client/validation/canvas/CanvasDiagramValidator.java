@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.validation.canvas;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -29,8 +30,12 @@ import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramValidator;
+import org.kie.workbench.common.stunner.core.validation.DomainViolation;
+import org.kie.workbench.common.stunner.core.validation.ElementViolation;
+import org.kie.workbench.common.stunner.core.validation.ModelBeanViolation;
 
 @Dependent
 public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
@@ -74,6 +79,10 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
         final String title = diagram.getMetadata().getTitle();
         final boolean[] valid = {true};
         elementViolations
+                .stream()
+                .filter(v -> v.getDomainViolations().stream().map(DomainViolation::getMessage).anyMatch(StringUtils::nonEmpty)
+                        || v.getGraphViolations().stream().map(ElementViolation::getMessage).anyMatch(StringUtils::nonEmpty)
+                        || v.getModelViolations().stream().map(ModelBeanViolation::getMessage).anyMatch(StringUtils::nonEmpty))
                 .forEach(v -> {
                     if (checkViolation(canvasHandler,
                                        v)) {
@@ -94,14 +103,18 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
 
     private boolean checkViolation(final H canvasHandler,
                                    final DiagramElementViolation<RuleViolation> elementViolation) {
-        return Stream.concat(elementViolation.getGraphViolations().stream(),
-                             elementViolation.getDomainViolations().stream())
-                .filter(v -> v instanceof RuleViolation)
-                .anyMatch(v -> applyViolation(canvasHandler, (RuleViolation) v));
+        return Stream.of(Optional.ofNullable(elementViolation.getGraphViolations()).map(Collection::stream).orElse(Stream.empty()),
+                         Optional.ofNullable(elementViolation.getDomainViolations()).map(Collection::stream).orElse(Stream.empty()),
+                         Optional.ofNullable(elementViolation.getModelViolations()).map(Collection::stream).orElse(Stream.empty()))
+                .flatMap(s -> s)
+                .filter(v -> v instanceof ElementViolation)
+                .map(v -> (ElementViolation) v)
+                .map(v -> applyViolation(canvasHandler, v))
+                .anyMatch(Boolean.TRUE::equals);
     }
 
     private boolean applyViolation(final H canvasHandler,
-                                   final RuleViolation violation) {
+                                   final ElementViolation violation) {
         if (hasViolations(violation)) {
             final Shape shape = getShape(canvasHandler,
                                          violation.getUUID());
@@ -118,7 +131,7 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
         return canvasHandler.getCanvas().getShape(uuid);
     }
 
-    private boolean hasViolations(final RuleViolation violation) {
+    private boolean hasViolations(final ElementViolation violation) {
         return RuleViolation.Type.ERROR.equals(violation.getViolationType()) ||
                 RuleViolation.Type.WARNING.equals(violation.getViolationType());
     }

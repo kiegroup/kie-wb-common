@@ -25,6 +25,8 @@ import java.util.Optional;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
+import org.kie.workbench.common.stunner.core.i18n.StunnerTranslationService;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
@@ -40,6 +42,7 @@ public final class ElementViolationImpl
     private final Collection<ModelBeanViolation> modelViolations;
     private final Collection<DomainViolation> domainViolations;
     private final Type type;
+    private Optional<StunnerTranslationService> translationService;
 
     ElementViolationImpl(final @MapsTo("uuid") String uuid,
                          final @MapsTo("graphViolations") Collection<RuleViolation> graphViolations,
@@ -51,6 +54,11 @@ public final class ElementViolationImpl
         this.modelViolations = modelViolations;
         this.domainViolations = domainViolations;
         this.type = type;
+        this.translationService = Optional.empty();
+    }
+
+    public void setTranslationService(StunnerTranslationService translationService) {
+        this.translationService = Optional.ofNullable(translationService);
     }
 
     @Override
@@ -74,6 +82,14 @@ public final class ElementViolationImpl
     }
 
     @Override
+    public String getMessage() {
+        return translationService
+                .map(t -> CoreTranslationMessages.getElementValidationMessage(t, this))
+                .orElse(Optional.empty())
+                .orElse("");
+    }
+
+    @Override
     public Type getViolationType() {
         return type;
     }
@@ -86,6 +102,7 @@ public final class ElementViolationImpl
         private Collection<ModelBeanViolation> modelViolations = Collections.emptyList();
         private Collection<DomainViolation> domainViolations = Collections.emptyList();
         private Violation.Type type;
+        private StunnerTranslationService translationService;
 
         public Builder setUuid(String uuid) {
             this.uuid = uuid;
@@ -112,6 +129,11 @@ public final class ElementViolationImpl
             return this;
         }
 
+        public Builder setTranslationService(StunnerTranslationService translationService) {
+            this.translationService = translationService;
+            return this;
+        }
+
         public ElementViolationImpl build() {
             if (Objects.isNull(type)) {
                 setType(ValidationUtils.getMaxSeverity(new LinkedHashSet<org.kie.workbench.common.stunner.core.validation.Violation>() {{
@@ -120,7 +142,9 @@ public final class ElementViolationImpl
                     Optional.ofNullable(domainViolations).ifPresent(v -> addAll(v));
                 }}));
             }
-            return new ElementViolationImpl(uuid, graphViolations, modelViolations, domainViolations, type);
+            ElementViolationImpl violation = new ElementViolationImpl(uuid, graphViolations, modelViolations, domainViolations, type);
+            violation.setTranslationService(translationService);
+            return violation;
         }
     }
 }

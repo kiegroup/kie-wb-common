@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
+import org.gwtbootstrap3.extras.animate.client.ui.constants.Animation;
 import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
 import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
@@ -49,6 +50,7 @@ import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Error;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Notifications;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
 
 // TODO: i18n.
@@ -57,8 +59,7 @@ import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.Stu
 public class SessionPresenterView extends Composite
         implements SessionPresenter.View {
 
-    private static final int DELAY = 10000;
-    private static final int TIMER = 100;
+    private static final int DELAY = 1000;
 
     @Inject
     @DataField
@@ -94,9 +95,10 @@ public class SessionPresenterView extends Composite
     public void init() {
         settings.setShowProgressbar(false);
         settings.setPauseOnMouseOver(true);
+        settings.setNewestOnTop(true);
         settings.setAllowDismiss(true);
         settings.setDelay(DELAY);
-        settings.setTimer(TIMER);
+        settings.setAnimation(Animation.NO_ANIMATION, Animation.FADE_OUT);
         handlerRegistration = addDomHandler((e) -> {
                                                 e.preventDefault();
                                                 e.stopPropagation();
@@ -192,35 +194,35 @@ public class SessionPresenterView extends Composite
 
     @Override
     public SessionPresenterView showError(final String message) {
-
+        Notify.hideAll();
         getSettings().setType(kieNotificationCssClass(NotifyType.DANGER));
-        showNotification(translate(SessionPresenterView_Error), message, IconType.EXCLAMATION_CIRCLE);
+        showNotification(translate(SessionPresenterView_Error),
+                         translate(SessionPresenterView_Notifications),
+                         IconType.EXCLAMATION_CIRCLE);
 
         return this;
     }
 
     @Override
     public SessionPresenter.View showWarning(final String message) {
-
+        Notify.hideAll();
         getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
-        showNotification(translate(SessionPresenterView_Warning), message, IconType.EXCLAMATION_TRIANGLE);
-
+        showNotification(translate(SessionPresenterView_Warning),
+                         translate(SessionPresenterView_Notifications),
+                         IconType.EXCLAMATION_TRIANGLE);
         return this;
     }
 
     @Override
     public SessionPresenterView showMessage(final String message) {
-
         getSettings().setType(kieNotificationCssClass(NotifyType.SUCCESS));
         showNotification(translate(SessionPresenterView_Info), message, IconType.INFO_CIRCLE);
-
         return this;
     }
 
     void showNotification(final String title,
                           final String message,
                           final IconType icon) {
-
         Notify.notify(title,
                       buildHtmlEscapedText(message),
                       icon,

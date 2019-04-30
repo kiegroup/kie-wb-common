@@ -43,6 +43,7 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertNotNull;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Error;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Notifications;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -58,6 +59,7 @@ import static org.mockito.Mockito.when;
 @WithClassesToStub(NotifySettings.class)
 public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
+    public static final String DETAILS_MESSAGE = "details message";
     @Mock
     private ContextMenuEvent contextMenuEvent;
 
@@ -145,6 +147,8 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
         doReturn(sessionContainerElement).when(sessionContainer).getElement();
         doReturn(sessionContainerElementStyle).when(sessionContainerElement).getStyle();
+
+        when(translationService.getTranslation(SessionPresenterView_Notifications)).thenReturn(DETAILS_MESSAGE);
 
         tested.init();
     }
@@ -235,7 +239,7 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
         view.showError(message);
 
         verify(settings).setType("danger kie-session-notification");
-        verify(view).showNotification(error, message, IconType.EXCLAMATION_CIRCLE);
+        verify(view).showNotification(error, DETAILS_MESSAGE, IconType.EXCLAMATION_CIRCLE);
     }
 
     @Test
@@ -252,7 +256,7 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
         view.showWarning(message);
 
         verify(settings).setType("warning kie-session-notification");
-        verify(view).showNotification(warning, message, IconType.EXCLAMATION_TRIANGLE);
+        verify(view).showNotification(warning, DETAILS_MESSAGE, IconType.EXCLAMATION_TRIANGLE);
     }
 
     @Test
