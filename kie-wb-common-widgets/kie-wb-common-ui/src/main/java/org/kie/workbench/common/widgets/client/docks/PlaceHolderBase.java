@@ -15,38 +15,39 @@
  */
 package org.kie.workbench.common.widgets.client.docks;
 
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.jboss.errai.ioc.client.api.AfterInitialization;
+import org.uberfire.client.annotations.WorkbenchPartTitle;
+import org.uberfire.client.annotations.WorkbenchPartView;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+public class PlaceHolderBase {
 
-@RunWith(MockitoJUnitRunner.class)
-public class DockPlaceHolderTest {
-
-    @Mock
     private PlaceHolderBaseView view;
 
-    @InjectMocks
-    private DockPlaceHolder dockPlaceHolder = new DockPlaceHolder();
-
-    @Test
-    public void viewIsNotNull() {
-        assertEquals(view, dockPlaceHolder.getView());
+    public PlaceHolderBase() {
+        // CDI
     }
 
-    @Test
-    public void setContent() {
-        final IsWidget widget = mock(IsWidget.class);
+    @Inject
+    public void init(final PlaceHolderBaseView view) {
+        this.view = view;
+        this.view.setPresenter(this);
+    }
 
-        dockPlaceHolder.setView(widget);
+    @WorkbenchPartTitle
+    public String getTitle() {
+        return "DockPlaceHolder"; // Never used.
+    }
 
-        verify(view).clear();
-        verify(view).setWidget(widget);
+    @WorkbenchPartView
+    public IsWidget getView() {
+        return view;
+    }
+
+    public void setView(final IsWidget widget) {
+        view.clear();
+        view.setWidget(widget);
     }
 }

@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.widgets.client.docks;
+package org.kie.workbench.common.services.verifier.reporting.client.panel;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import javax.enterprise.context.ApplicationScoped;
 
-public interface DockPlaceHolderView
-        extends IsWidget {
+import org.kie.workbench.common.widgets.client.docks.PlaceHolderBase;
+import org.uberfire.client.annotations.WorkbenchScreen;
 
-    void clear();
+@ApplicationScoped
+@WorkbenchScreen(identifier = AnalysisDockPlaceHolder.IDENTIFIER)
+public class AnalysisDockPlaceHolder
+        extends PlaceHolderBase {
 
-    void setWidget(IsWidget widget);
+    public static final String IDENTIFIER = "org.docks.AnalysisDockPlaceHolder";
 }

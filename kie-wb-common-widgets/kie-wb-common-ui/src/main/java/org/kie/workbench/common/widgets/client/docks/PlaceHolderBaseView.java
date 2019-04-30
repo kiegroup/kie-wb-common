@@ -15,13 +15,16 @@
  */
 package org.kie.workbench.common.widgets.client.docks;
 
-import javax.enterprise.context.ApplicationScoped;
+import com.google.gwt.user.client.ui.IsWidget;
 
-import org.uberfire.client.annotations.WorkbenchScreen;
+public interface PlaceHolderBaseView
+        extends IsWidget {
 
-@ApplicationScoped
-@WorkbenchScreen(identifier = "org.docks.PlaceHolder")
-public class DockPlaceHolder
-        extends PlaceHolderBase {
+    void clear();
 
+    void setWidget(final IsWidget widget);
+
+    PlaceHolderBase getPresenter();
+
+    void setPresenter(final PlaceHolderBase presenter);
 }

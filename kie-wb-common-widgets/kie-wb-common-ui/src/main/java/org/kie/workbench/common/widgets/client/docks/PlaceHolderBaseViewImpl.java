@@ -15,13 +15,21 @@
  */
 package org.kie.workbench.common.widgets.client.docks;
 
-import javax.enterprise.context.ApplicationScoped;
+import com.google.gwt.user.client.ui.SimplePanel;
 
-import org.uberfire.client.annotations.WorkbenchScreen;
+public class PlaceHolderBaseViewImpl
+        extends SimplePanel
+        implements PlaceHolderBaseView {
 
-@ApplicationScoped
-@WorkbenchScreen(identifier = "org.docks.PlaceHolder")
-public class DockPlaceHolder
-        extends PlaceHolderBase {
+    private PlaceHolderBase presenter;
 
+    @Override
+    public PlaceHolderBase getPresenter() {
+        return presenter;
+    }
+
+    @Override
+    public void setPresenter(PlaceHolderBase presenter) {
+        this.presenter = presenter;
+    }
 }
