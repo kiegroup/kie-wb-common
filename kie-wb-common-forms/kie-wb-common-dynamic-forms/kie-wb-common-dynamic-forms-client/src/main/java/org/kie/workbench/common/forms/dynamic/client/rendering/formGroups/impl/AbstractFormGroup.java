@@ -56,9 +56,6 @@ public abstract class AbstractFormGroup<VIEW extends FormGroupView> implements F
         return view.getElement();
     }
     
-    /* (non-Javadoc)
-     * @see org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup#getPartsWidgets()
-     */
     @Override
     public Map<String, Widget> getPartsWidgets() {
         return view.getViewPartsWidgets();

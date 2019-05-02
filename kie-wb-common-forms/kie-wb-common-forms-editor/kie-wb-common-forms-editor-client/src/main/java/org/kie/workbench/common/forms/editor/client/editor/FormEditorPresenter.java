@@ -113,10 +113,6 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
     protected LayoutDragComponentPalette layoutDragComponentPalette;
     @Inject
     protected Event<LayoutEditorFocusEvent> layoutFocusEvent;
-    @Inject
-    FormFieldPropertiesEditorDock formFieldPropertiesEditorDock;
-    @Inject
-    LayoutEditorPropertiesPresenter layoutEditorPropertiesPresenter;
 
     private ShowAssetUsagesDisplayer showAssetUsagesDisplayer;
     private FormEditorView view;
@@ -125,6 +121,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
     private Caller<FormEditorService> editorService;
     private TranslationService translationService;
     private ErrorMessageDisplayer errorMessageDisplayer;
+    private FormFieldPropertiesEditorDock formFieldPropertiesEditorDock;
+    private LayoutEditorPropertiesPresenter layoutEditorPropertiesPresenter;
 
     protected boolean setActiveOnLoad = false;
 
@@ -136,7 +134,9 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
                                TranslationService translationService,
                                ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents,
                                ShowAssetUsagesDisplayer showAssetUsagesDisplayer,
-                               ErrorMessageDisplayer errorMessageDisplayer) {
+                               ErrorMessageDisplayer errorMessageDisplayer,
+                               FormFieldPropertiesEditorDock formFieldPropertiesEditorDock,
+                               LayoutEditorPropertiesPresenter layoutEditorPropertiesPresenter) {
         super(view);
         this.view = view;
         this.changesNotificationDisplayer = changesNotificationDisplayer;
@@ -146,6 +146,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         this.editorFieldLayoutComponents = editorFieldLayoutComponents;
         this.showAssetUsagesDisplayer = showAssetUsagesDisplayer;
         this.errorMessageDisplayer = errorMessageDisplayer;
+        this.formFieldPropertiesEditorDock = formFieldPropertiesEditorDock;
+        this.layoutEditorPropertiesPresenter = layoutEditorPropertiesPresenter;
     }
 
     @OnStartup
