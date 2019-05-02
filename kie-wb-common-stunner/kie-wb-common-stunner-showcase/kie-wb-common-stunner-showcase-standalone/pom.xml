@@ -811,6 +811,8 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-submarine-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-submarine-client</compileSourcesArtifact>
 
+            <compileSourcesArtifact>org.uberfire:appformer-js-bridge</compileSourcesArtifact>
+
           </compileSourcesArtifacts>
         </configuration>
         <executions>

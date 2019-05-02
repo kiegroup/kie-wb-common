@@ -830,6 +830,8 @@
             <compileSourcesArtifact>org.kie.workbench:kie-wb-common-dmn-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-wires-core-grids</compileSourcesArtifact>
 
+            <compileSourcesArtifact>org.uberfire:appformer-js-bridge</compileSourcesArtifact>
+
           </compileSourcesArtifacts>
         </configuration>
         <executions>
