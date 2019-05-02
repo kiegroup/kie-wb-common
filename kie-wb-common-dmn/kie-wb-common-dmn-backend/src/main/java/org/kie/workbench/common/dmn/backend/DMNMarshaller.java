@@ -65,6 +65,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionService;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
@@ -84,6 +85,7 @@ import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionServiceConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DefinitionsConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.ItemDefinitionPropertyConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ColorUtils;
@@ -150,6 +152,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                          final DMNMarshallerImportsHelper dmnMarshallerImportsHelper) {
         this.diagramMetadataMarshaller = diagramMetadataMarshaller;
         this.factoryManager = factoryManager;
+        this.dmnMarshallerImportsHelper = dmnMarshallerImportsHelper;
         this.inputDataConverter = new InputDataConverter(factoryManager);
         this.decisionConverter = new DecisionConverter(factoryManager);
         this.bkmConverter = new BusinessKnowledgeModelConverter(factoryManager);
@@ -157,7 +160,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
         this.marshaller = DMNMarshallerFactory.newMarshallerWithExtensions(Collections.singletonList(new DMNDIExtensionsRegister()));
-        this.dmnMarshallerImportsHelper = dmnMarshallerImportsHelper;
     }
 
     @PostConstruct
@@ -406,6 +408,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
         Node<?, ?> dmnDiagramRoot = findDMNDiagramRoot(graph);
         Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(dmnXml);
+        loadImportedItemDefinitions(definitionsStunnerPojo, importDefinitions);
         ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(definitionsStunnerPojo);
 
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
@@ -713,6 +716,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
         Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot(g);
         Definitions definitionsStunnerPojo = dmnDiagramRoot.getContent().getDefinition().getDefinitions();
+        cleanImportedItemDefinitions(definitionsStunnerPojo);
         org.kie.dmn.model.api.Definitions definitions = DefinitionsConverter.dmnFromWB(definitionsStunnerPojo);
         if (definitions.getExtensionElements() == null) {
             if (definitions instanceof org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase) {
@@ -852,6 +856,24 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         dmnDDDMNDiagram.getDMNDiagramElement().addAll(dmnEdges);
 
         return marshaller.marshal(definitions);
+    }
+
+    void loadImportedItemDefinitions(final Definitions definitions,
+                                     final Map<Import, org.kie.dmn.model.api.Definitions> importDefinitions) {
+        definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions));
+    }
+
+    void cleanImportedItemDefinitions(final Definitions definitions) {
+        definitions.getItemDefinition().removeIf(ItemDefinition::isAllowOnlyVisualChange);
+    }
+
+    List<org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition> getWbImportedItemDefinitions(final Map<Import, org.kie.dmn.model.api.Definitions> importDefinitions) {
+        return dmnMarshallerImportsHelper
+                .getImportedItemDefinitions(importDefinitions)
+                .stream()
+                .map(ItemDefinitionPropertyConverter::wbFromDMN)
+                .peek(itemDefinition -> itemDefinition.setAllowOnlyVisualChange(true))
+                .collect(Collectors.toList());
     }
 
     private void ddExtAugmentStunner(Optional<org.kie.dmn.model.api.dmndi.DMNDiagram> dmnDDDiagram, Node currentNode) {
