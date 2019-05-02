@@ -20,6 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElement;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
@@ -59,7 +60,8 @@ public class ObserverBuilderControl extends org.kie.workbench.common.stunner.cor
     }
 
     @Override
-    protected void updateElementFromDefinition(final Element element, final Object definition) {
+    protected void updateElementFromDefinition(final Element element,
+                                               final Object definition) {
 
         final Object content = element.getContent();
         if (!(content instanceof View)) {
@@ -73,6 +75,10 @@ public class ObserverBuilderControl extends org.kie.workbench.common.stunner.cor
 
         if (newDefinition instanceof DynamicReadOnly && definition instanceof DynamicReadOnly) {
             ((DynamicReadOnly) newDefinition).setAllowOnlyVisualChange(((DynamicReadOnly) definition).isAllowOnlyVisualChange());
+        }
+
+        if (newDefinition instanceof HasExpression && definition instanceof HasExpression) {
+            ((HasExpression) newDefinition).setExpression(((HasExpression) definition).getExpression());
         }
 
         if (newDefinition instanceof DMNElement && definition instanceof DMNElement) {

@@ -27,6 +27,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +50,7 @@ public class DMNIncludedNodeFactoryTest {
         final String expectedFileName = "file.dmn";
         final String expectedModelName = "model";
         final String expectedImportedElementId = "model:0000-1111-3333-4444";
+        final String expectedImportedElementName = "model.Can Drive?";
         final DRGElement importedElementId = makeDecision(expectedId, expectedDrgElementName);
 
         when(path.getFileName()).thenReturn(expectedFileName);
@@ -56,12 +58,10 @@ public class DMNIncludedNodeFactoryTest {
 
         final DMNIncludedNode node = factory.makeDMNIncludeModel(path, includedModel, importedElementId);
 
-        assertEquals(expectedId, node.getDrgElementId());
-        assertEquals(expectedDrgElementName, node.getDrgElementName());
-        assertEquals(expectedImportedElementId, node.getImportedElementId());
+        assertEquals(expectedImportedElementId, node.getDrgElement().getId().getValue());
+        assertEquals(expectedImportedElementName, node.getDrgElement().getName().getValue());
         assertEquals(expectedFileName, node.getFileName());
-        assertEquals(expectedModelName, node.getModelName());
-        assertEquals(Decision.class, node.getDrgElementClass());
+        assertTrue(node.getDrgElement().isAllowOnlyVisualChange());
     }
 
     private Decision makeDecision(final String id,
