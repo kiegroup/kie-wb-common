@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.forms.editor.client.resources.i18n.FormEditorConstants;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDocks;
@@ -116,8 +117,7 @@ public class FormFieldPropertiesEditorDock {
     }
 
     private String dockLabel() {
-        // TODO: use i18n
-        return "Field Properties Editor";
+        return translationService.format(FormEditorConstants.FielPropertiesEditor);
     }
 
     private DefaultPlaceRequest placeRequest() {
