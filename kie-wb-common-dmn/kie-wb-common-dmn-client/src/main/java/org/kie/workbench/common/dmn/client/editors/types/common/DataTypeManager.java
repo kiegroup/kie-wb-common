@@ -40,7 +40,7 @@ import org.uberfire.commons.uuid.UUID;
 
 import static java.util.stream.Collectors.toList;
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
-import static org.kie.workbench.common.dmn.client.editors.types.common.BuiltInTypeUtils.isDefault;
+import static org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils.isBuiltInType;
 import static org.kie.workbench.common.dmn.client.editors.types.common.DataType.TOP_LEVEL_PARENT_UUID;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeManager_None;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeManager_Structure;
@@ -404,7 +404,7 @@ public class DataTypeManager {
         if (getDataType().isTopLevel()) {
             return Optional.ofNullable(name);
         } else {
-            if (!Objects.equals(type, structure()) && !isDefault(type)) {
+            if (!Objects.equals(type, structure()) && !isBuiltInType(type)) {
                 return Optional.ofNullable(type);
             }
         }

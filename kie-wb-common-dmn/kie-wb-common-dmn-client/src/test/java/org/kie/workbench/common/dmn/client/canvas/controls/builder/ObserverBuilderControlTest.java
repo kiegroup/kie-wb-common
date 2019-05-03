@@ -21,8 +21,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
+import org.kie.workbench.common.dmn.api.definition.v1_1.IsInformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
@@ -136,4 +138,24 @@ public class ObserverBuilderControlTest {
 
         verify(newHasExpression).setExpression(expression);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUpdateVariableFromDefinition() {
+
+        final Element element = mock(Element.class);
+        final View elementContent = mock(View.class);
+        final HasVariable newHasVariable = mock(HasVariable.class);
+        final HasVariable hasVariable = mock(HasVariable.class);
+        final IsInformationItem isInformationItem = mock(IsInformationItem.class);
+
+        when(element.getContent()).thenReturn(elementContent);
+        when(elementContent.getDefinition()).thenReturn(newHasVariable);
+        when(hasVariable.getVariable()).thenReturn(isInformationItem);
+
+        observerBuilderControl.updateElementFromDefinition(element, hasVariable);
+
+        verify(newHasVariable).setVariable(isInformationItem);
+    }
 }
+

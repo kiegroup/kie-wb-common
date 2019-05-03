@@ -18,12 +18,18 @@ package org.kie.workbench.common.dmn.backend.editors.common;
 
 import javax.enterprise.context.Dependent;
 
+import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItemPrimary;
+import org.kie.workbench.common.dmn.api.definition.v1_1.IsInformationItem;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.uberfire.backend.vfs.Path;
+
+import static org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils.isBuiltInType;
 
 @Dependent
 public class DMNIncludedNodeFactory {
@@ -44,6 +50,28 @@ public class DMNIncludedNodeFactory {
         drgElement.setName(new Name(namespace + "." + drgElement.getName().getValue()));
         drgElement.setAllowOnlyVisualChange(true);
 
+        if (drgElement instanceof HasVariable) {
+
+            final HasVariable hasVariable = (HasVariable) drgElement;
+            final IsInformationItem variable = hasVariable.getVariable();
+            final QName qName = variable.getTypeRef();
+
+            if (qName != null && !isBuiltInType(qName.getLocalPart())) {
+
+                final QName typeRef = new QName(qName.getNamespaceURI(), namespace + "." + qName.getLocalPart(), qName.getPrefix());
+                setVariable(hasVariable, variable, typeRef);
+            }
+        }
+
         return drgElement;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setVariable(final HasVariable hasVariable,
+                             final IsInformationItem variable,
+                             final QName typeRef) {
+        if (variable instanceof InformationItemPrimary) {
+            hasVariable.setVariable(new InformationItemPrimary(variable.getId(), typeRef));
+        }
     }
 }

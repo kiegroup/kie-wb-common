@@ -16,14 +16,12 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import javax.xml.namespace.QName;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
-import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
 
 public class ImportedItemDefinitionConverter {
 
@@ -65,15 +63,7 @@ public class ImportedItemDefinitionConverter {
     }
 
     private static boolean isBuiltInType(final QName typeRef) {
-        return Arrays
-                .stream(BuiltInType.values())
-                .anyMatch(builtInType -> {
-
-                    final String builtInTypeName = builtInType.getName();
-                    final String typeRefName = typeRef.getLocalPart();
-
-                    return Objects.equals(builtInTypeName, typeRefName);
-                });
+        return BuiltInTypeUtils.isBuiltInType(typeRef.getLocalPart());
     }
 
     private static QName makeQNameWithPrefix(final QName qName,

@@ -21,12 +21,18 @@ import java.util.List;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.uberfire.workbench.events.UberFireEvent;
 
+import static java.util.Collections.emptyList;
+
 public class RefreshDataTypesListEvent implements UberFireEvent {
 
     private final List<ItemDefinition> newItemDefinitions;
 
     public RefreshDataTypesListEvent(final List<ItemDefinition> newItemDefinitions) {
         this.newItemDefinitions = newItemDefinitions;
+    }
+
+    public RefreshDataTypesListEvent() {
+        this(emptyList());
     }
 
     public List<ItemDefinition> getNewItemDefinitions() {

@@ -30,20 +30,27 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.namespace.QName;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.kie.dmn.api.marshalling.DMNMarshaller;
 import org.kie.dmn.model.api.DRGElement;
+import org.kie.dmn.model.api.Decision;
 import org.kie.dmn.model.api.Definitions;
 import org.kie.dmn.model.api.Import;
+import org.kie.dmn.model.api.InformationItem;
+import org.kie.dmn.model.api.InputData;
+import org.kie.dmn.model.api.Invocable;
 import org.kie.dmn.model.api.ItemDefinition;
+import org.kie.dmn.model.v1_2.TInformationItem;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 
 import static java.util.Collections.emptyList;
+import static org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils.isBuiltInType;
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.ImportedItemDefinitionConverter.withNamespace;
 
 @ApplicationScoped
@@ -164,8 +171,58 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
         drgElement.setId(namespace + ":" + drgElement.getId());
         drgElement.setName(namespace + "." + drgElement.getName());
+        updateInformationItem(namespace, drgElement);
 
         return drgElement;
+    }
+
+    private void updateInformationItem(final String namespace,
+                                       final DRGElement drgElement) {
+
+        getInformationItem(drgElement).ifPresent(informationItem -> {
+
+            final InformationItem tInformationItem = new TInformationItem();
+            final QName qName = informationItem.getTypeRef();
+
+            if (qName != null && !isBuiltInType(qName.getLocalPart())) {
+                tInformationItem.setTypeRef(new QName(qName.getNamespaceURI(), namespace + "." + qName.getLocalPart(), qName.getPrefix()));
+            }
+
+            setInformationItem(drgElement, tInformationItem);
+        });
+    }
+
+    private Optional<InformationItem> getInformationItem(final DRGElement drgElement) {
+
+        if (drgElement instanceof Decision) {
+            return Optional.of(((Decision) drgElement).getVariable());
+        }
+
+        if (drgElement instanceof InputData) {
+            return Optional.of(((InputData) drgElement).getVariable());
+        }
+
+        if (drgElement instanceof Invocable) {
+            return Optional.of(((Invocable) drgElement).getVariable());
+        }
+
+        return Optional.empty();
+    }
+
+    private void setInformationItem(final DRGElement drgElement,
+                                    final InformationItem informationItem) {
+
+        if (drgElement instanceof Decision) {
+            ((Decision) drgElement).setVariable(informationItem);
+        }
+
+        if (drgElement instanceof InputData) {
+            ((InputData) drgElement).setVariable(informationItem);
+        }
+
+        if (drgElement instanceof Invocable) {
+            ((Invocable) drgElement).setVariable(informationItem);
+        }
     }
 
     private Optional<Import> findImportByDefinitions(final Definitions definitions,
