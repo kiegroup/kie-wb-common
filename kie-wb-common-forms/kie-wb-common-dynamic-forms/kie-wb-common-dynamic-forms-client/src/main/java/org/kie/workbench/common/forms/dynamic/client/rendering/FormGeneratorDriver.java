@@ -103,7 +103,8 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
     
     @Override
     public Optional<IsWidget> getComponentPart(HTMLElement column, LayoutComponent layoutComponent, String partId) {
-        final LayoutDragComponent dragComponent = lookupComponent(layoutComponent);
+        FieldDefinition field = getFieldForLayoutComponent(layoutComponent);
+        FieldLayoutComponent dragComponent = getFieldLayoutComponentForField(field);
         if (dragComponent != null) {
             Widget columnWidget = ElementWrapperWidget.getWidget(column);
             RenderingContext componentContext = new RenderingContext(layoutComponent, columnWidget);
@@ -128,8 +129,7 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
         if (dragComponent instanceof FieldLayoutComponent) {
             FieldLayoutComponent fieldComponent = (FieldLayoutComponent) dragComponent;
 
-            FieldDefinition field = renderingContext.getRootForm().getFieldById(layoutComponent.getProperties().get(
-                    FieldLayoutComponent.FIELD_ID));
+            FieldDefinition field = getFieldForLayoutComponent(layoutComponent);
             fieldComponent.init(renderingContext,
                                 field);
 
@@ -155,5 +155,11 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
     public void clear() {
         layoutComponents.clear();
         instance.destroyAll();
+    }
+    
+    private FieldDefinition getFieldForLayoutComponent(LayoutComponent layoutComponent) {
+        FieldDefinition field = renderingContext.getRootForm().getFieldById(layoutComponent.getProperties().get(
+                FieldLayoutComponent.FIELD_ID));
+        return field;
     }
 }
