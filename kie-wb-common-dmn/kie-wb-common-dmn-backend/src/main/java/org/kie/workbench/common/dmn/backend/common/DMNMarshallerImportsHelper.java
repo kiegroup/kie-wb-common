@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.backend.common;
 import java.util.List;
 import java.util.Map;
 
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.kie.dmn.model.api.DRGElement;
 import org.kie.dmn.model.api.Definitions;
 import org.kie.dmn.model.api.Import;
@@ -53,6 +54,17 @@ public interface DMNMarshallerImportsHelper {
      * @return a list of imported {@link ItemDefinition}s.
      */
     List<ItemDefinition> getImportedItemDefinitions(final Map<Import, Definitions> importDefinitions);
+
+    /**
+     * This method finds the list of {@link ItemDefinition}s for a given <code>namespace</code>.
+     * @param workspaceProject represents the project that will be scanned.
+     * @param modelName is the value used as the prefix for imported {@link ItemDefinition}s.
+     * @param namespace is the namespace of the model that provides the list of {@link ItemDefinition}s.
+     * @return a list of imported {@link ItemDefinition}s.
+     */
+    List<ItemDefinition> getImportedItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
+                                                               final String modelName,
+                                                               final String namespace);
 
     /**
      * This method initialises the helper.

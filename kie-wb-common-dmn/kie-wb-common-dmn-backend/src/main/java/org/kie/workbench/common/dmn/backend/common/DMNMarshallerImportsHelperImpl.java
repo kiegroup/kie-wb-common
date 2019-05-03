@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.namespace.QName;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
@@ -40,11 +38,13 @@ import org.kie.dmn.model.api.DRGElement;
 import org.kie.dmn.model.api.Definitions;
 import org.kie.dmn.model.api.Import;
 import org.kie.dmn.model.api.ItemDefinition;
-import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
+
+import static java.util.Collections.emptyList;
+import static org.kie.workbench.common.dmn.backend.definition.v1_1.ImportedItemDefinitionConverter.withNamespace;
 
 @ApplicationScoped
 public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelper {
@@ -115,59 +115,37 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
         return itemDefinitions;
     }
 
+    @Override
+    public List<ItemDefinition> getImportedItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
+                                                                      final String modelName,
+                                                                      final String namespace) {
+
+        return findDefinitionsByNamespace(workspaceProject, namespace)
+                .map(Definitions::getItemDefinition)
+                .orElse(emptyList());
+    }
+
+    private Optional<Definitions> findDefinitionsByNamespace(final WorkspaceProject workspaceProject,
+                                                             final String namespace) {
+        return pathsHelper
+                .getDiagramsPaths(workspaceProject)
+                .stream()
+                .map(path -> loadPath(path).map(marshaller::unmarshal).orElse(null))
+                .filter(Objects::nonNull)
+                .filter(definitions -> Objects.equals(definitions.getNamespace(), namespace))
+                .findAny();
+    }
+
     List<ItemDefinition> getItemDefinitionsWithNamespace(final Definitions definitions,
                                                          final Import anImport) {
 
         final List<ItemDefinition> itemDefinitions = definitions.getItemDefinition();
-        final String namespace = anImport.getName();
+        final String prefix = anImport.getName();
 
-        return setItemDefinitionsNamespace(itemDefinitions, namespace);
-    }
-
-    private List<ItemDefinition> setItemDefinitionsNamespace(final List<ItemDefinition> itemDefinitions,
-                                                             final String namespace) {
         return itemDefinitions
                 .stream()
-                .map(itemDefinition -> setItemDefinitionNamespace(itemDefinition, namespace))
+                .map(itemDefinition -> withNamespace(itemDefinition, prefix))
                 .collect(Collectors.toList());
-    }
-
-    private ItemDefinition setItemDefinitionNamespace(final ItemDefinition itemDefinition,
-                                                      final String namespace) {
-
-        final String nameWithNamespace = namespace + "." + itemDefinition.getName();
-        final List<ItemDefinition> itemComponents = itemDefinition.getItemComponent();
-
-        if (itemDefinition.getTypeRef() != null && !isBuiltInType(itemDefinition.getTypeRef())) {
-            itemDefinition.setTypeRef(makeQNameWithNamespace(itemDefinition.getTypeRef(), namespace));
-        }
-
-        itemDefinition.setName(nameWithNamespace);
-        setItemDefinitionsNamespace(itemComponents, namespace);
-
-        return itemDefinition;
-    }
-
-    private boolean isBuiltInType(final QName typeRef) {
-        return Arrays
-                .stream(BuiltInType.values())
-                .anyMatch(builtInType -> {
-
-                    final String builtInTypeName = builtInType.getName();
-                    final String typeRefName = typeRef.getLocalPart();
-
-                    return Objects.equals(builtInTypeName, typeRefName);
-                });
-    }
-
-    private QName makeQNameWithNamespace(final QName qName,
-                                         final String namespace) {
-
-        final String namespaceURI = qName.getNamespaceURI();
-        final String localPart = namespace + "." + qName.getLocalPart();
-        final String prefix = qName.getPrefix();
-
-        return new QName(namespaceURI, localPart, prefix);
     }
 
     List<DRGElement> getDrgElementsWithNamespace(final Definitions definitions,

@@ -25,6 +25,7 @@ import java.util.Scanner;
 
 import javax.xml.namespace.QName;
 
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.junit.Before;
 import org.junit.Test;
@@ -333,6 +334,45 @@ public class DMNMarshallerImportsHelperImplTest {
         helper.closeInputStreamReader(mutableInputStream);
 
         verify(mutableInputStream).close();
+    }
+
+    @Test
+    public void testGetImportedItemDefinitionsByNamespace() {
+
+        final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
+        final String modelName = "model1";
+        final String namespace = "://namespace1";
+        final Path path1 = makePath("../file1.dmn");
+        final Path path2 = makePath("../file2.dmn");
+        final Path path3 = makePath("../file3.dmn");
+        final Path path4 = makePath("../file4.dmn");
+        final InputStreamReader inputStreamReader1 = mock(InputStreamReader.class);
+        final InputStreamReader inputStreamReader2 = mock(InputStreamReader.class);
+        final InputStreamReader inputStreamReader3 = mock(InputStreamReader.class);
+        final Definitions definitions1 = mock(Definitions.class);
+        final Definitions definitions2 = mock(Definitions.class);
+        final Definitions definitions3 = mock(Definitions.class);
+        final ItemDefinition itemDefinition1 = mock(ItemDefinition.class);
+        final ItemDefinition itemDefinition2 = mock(ItemDefinition.class);
+        final List<Path> paths = asList(path1, path2, path3, path4);
+
+        when(pathsHelper.getDiagramsPaths(any())).thenReturn(paths);
+        doReturn(Optional.of(inputStreamReader1)).when(helper).loadPath(path1);
+        doReturn(Optional.of(inputStreamReader2)).when(helper).loadPath(path2);
+        doReturn(Optional.of(inputStreamReader3)).when(helper).loadPath(path3);
+        doReturn(Optional.empty()).when(helper).loadPath(path4);
+        when(marshaller.unmarshal(inputStreamReader1)).thenReturn(definitions1);
+        when(marshaller.unmarshal(inputStreamReader2)).thenReturn(definitions2);
+        when(marshaller.unmarshal(inputStreamReader3)).thenReturn(definitions3);
+        when(definitions1.getNamespace()).thenReturn("://namespace1");
+        when(definitions2.getNamespace()).thenReturn("://namespace2");
+        when(definitions3.getNamespace()).thenReturn("://namespace3");
+        when(definitions1.getItemDefinition()).thenReturn(asList(itemDefinition1, itemDefinition2));
+
+        final List<ItemDefinition> actualItemDefinitions = helper.getImportedItemDefinitionsByNamespace(workspaceProject, modelName, namespace);
+        final List<ItemDefinition> expectedItemDefinitions = asList(itemDefinition1, itemDefinition2);
+
+        assertEquals(expectedItemDefinitions, actualItemDefinitions);
     }
 
     private Path makePath(final String uri) {

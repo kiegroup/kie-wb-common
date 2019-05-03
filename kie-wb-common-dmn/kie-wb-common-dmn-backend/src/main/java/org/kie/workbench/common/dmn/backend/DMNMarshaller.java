@@ -1150,4 +1150,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     public DiagramMetadataMarshaller<Metadata> getMetadataMarshaller() {
         return diagramMetadataMarshaller;
     }
+
+    public org.kie.dmn.api.marshalling.DMNMarshaller getMarshaller() {
+        return marshaller;
+    }
 }
