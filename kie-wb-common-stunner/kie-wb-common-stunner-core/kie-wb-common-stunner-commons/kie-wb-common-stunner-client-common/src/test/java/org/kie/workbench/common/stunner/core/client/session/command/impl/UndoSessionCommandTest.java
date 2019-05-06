@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -60,6 +61,9 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
     private CommandResult commandResult;
 
     @Mock
+    private SessionManager sessionManager;
+
+    @Mock
     private org.uberfire.mvp.Command statusCallback;
 
     private List commandHistory;
@@ -72,11 +76,13 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
         commandHistory = new ArrayList<>();
         when(commandRegistry.getCommandHistory()).thenReturn(commandHistory);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
+        when(session.getCommandRegistry()).thenReturn(commandRegistry);
+        when(sessionManager.getCurrentSession()).thenReturn(session);
     }
 
     @Override
     protected AbstractClientSessionCommand<EditorSession> getCommand() {
-        return new UndoSessionCommand(sessionCommandManager);
+        return new UndoSessionCommand(sessionManager, sessionCommandManager);
     }
 
     @Override
