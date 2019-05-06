@@ -222,7 +222,6 @@ public class MigrationDiagramMarshallerTest {
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.registry()).thenReturn(adapterRegistry);
         DefinitionUtils definitionUtils1 = new DefinitionUtils(definitionManager,
-                                                               applicationFactoryManager,
                                                                null); // TODO!
         testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
         // Definition manager.
@@ -378,7 +377,6 @@ public class MigrationDiagramMarshallerTest {
                                    any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
 
         DefinitionUtils definitionUtils = new DefinitionUtils(definitionManager,
-                                                              applicationFactoryManager,
                                                               null); // TODO!
         TestScopeModelFactory testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
         // Definition manager.
