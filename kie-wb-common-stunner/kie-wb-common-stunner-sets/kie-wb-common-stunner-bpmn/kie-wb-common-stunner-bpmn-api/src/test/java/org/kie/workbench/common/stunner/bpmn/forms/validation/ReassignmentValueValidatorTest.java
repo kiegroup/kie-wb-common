@@ -32,8 +32,6 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
 
     private ConstraintValidatorContext context;
 
-    private ReassignmentValue value;
-
     private List<String> errorMessages = new ArrayList<>();
 
     @Override
@@ -45,7 +43,6 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     protected void gwtSetUp() throws Exception {
         super.gwtSetUp();
         validator = new ReassignmentValueValidator();
-        value = new ReassignmentValue();
         context = new ConstraintValidatorContext() {
             @Override
             public void disableDefaultConstraintViolation() {
@@ -78,6 +75,7 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     public void testEmptyReassignmentValue(){
         boolean result = validator.isValid(new ReassignmentValue(), context);
         assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
     }
 
     @Test
@@ -86,6 +84,7 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
         value.setDuration("-1d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
     }
 
     @Test
@@ -94,6 +93,77 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
         value.setDuration("1111111111111111111111111111111111111111111d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test1DigExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("1d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test2DigExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("11d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test3DigExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test4DigExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("1111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+    }
+
+    @Test
+    public void test5DigExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("11111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test10DigExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("1111111111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+    }
+
+    @Test
+    public void test2147483647ExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("2147483647d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test2147483648ExpiresAtReassignmentValue(){
+        ReassignmentValue value =  new ReassignmentValue();
+        value.setDuration("2147483648d");
+        boolean result = validator.isValid(value, context);
+        assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
     }
 }
 

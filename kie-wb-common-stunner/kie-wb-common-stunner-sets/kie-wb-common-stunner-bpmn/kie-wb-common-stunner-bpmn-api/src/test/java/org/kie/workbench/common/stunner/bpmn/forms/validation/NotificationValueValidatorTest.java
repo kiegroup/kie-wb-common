@@ -32,8 +32,6 @@ public class NotificationValueValidatorTest extends GWTTestCase {
 
     private ConstraintValidatorContext context;
 
-    private NotificationValue value;
-
     private List<String> errorMessages = new ArrayList<>();
 
     @Override
@@ -45,7 +43,6 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     protected void gwtSetUp() throws Exception {
         super.gwtSetUp();
         validator = new NotificationValueValidator();
-        value = new NotificationValue();
         context = new ConstraintValidatorContext() {
             @Override
             public void disableDefaultConstraintViolation() {
@@ -78,6 +75,7 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     public void testEmptyNotificationValue(){
         boolean result = validator.isValid(new NotificationValue(), context);
         assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
     }
 
     @Test
@@ -86,6 +84,7 @@ public class NotificationValueValidatorTest extends GWTTestCase {
         value.setExpiresAt("-1d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
     }
 
     @Test
@@ -94,5 +93,76 @@ public class NotificationValueValidatorTest extends GWTTestCase {
         value.setExpiresAt("1111111111111111111111111111111111111111111d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test1DigExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("1d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test2DigExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("11d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test3DigExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test4DigExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("1111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+    }
+
+    @Test
+    public void test5DigExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("11111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test10DigExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("1111111111d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+    }
+
+    @Test
+    public void test2147483647ExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("2147483647d");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void test2147483648ExpiresAtNotificationValue(){
+        NotificationValue value =  new NotificationValue();
+        value.setExpiresAt("2147483648d");
+        boolean result = validator.isValid(value, context);
+        assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
     }
 }
