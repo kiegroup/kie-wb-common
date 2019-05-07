@@ -459,9 +459,9 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
 
     @Override
     @SuppressWarnings("unused")
-    public java.util.List<ListSelectorItem> getItems(final int uiRowIndex,
-                                                     final int uiColumnIndex) {
-        final java.util.List<ListSelectorItem> items = new ArrayList<>();
+    public List<ListSelectorItem> getItems(final int uiRowIndex,
+                                           final int uiColumnIndex) {
+        final List<ListSelectorItem> items = new ArrayList<>();
 
         getExpression().get().ifPresent(dtable -> {
             final boolean isMultiColumn = SelectionUtils.isMultiColumn(model);
@@ -491,7 +491,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         return items;
     }
 
-    private void addInputClauseItems(final java.util.List<ListSelectorItem> items,
+    private void addInputClauseItems(final List<ListSelectorItem> items,
                                      final DecisionTable dtable,
                                      final int uiColumnIndex,
                                      final boolean isMultiColumn) {
@@ -508,7 +508,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                 () -> deleteInputClause(uiColumnIndex)));
     }
 
-    private void addOutputClauseItems(final java.util.List<ListSelectorItem> items,
+    private void addOutputClauseItems(final List<ListSelectorItem> items,
                                       final DecisionTable dtable,
                                       final int uiColumnIndex,
                                       final boolean isMultiColumn) {
@@ -525,7 +525,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                 () -> deleteOutputClause(uiColumnIndex)));
     }
 
-    void addItems(final java.util.List<ListSelectorItem> items,
+    void addItems(final List<ListSelectorItem> items,
                   final ListSelectorItemDefinition onBefore,
                   final ListSelectorItemDefinition onAfter,
                   final ListSelectorItemDefinition onDelete) {
@@ -550,7 +550,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     }
 
     void addDecisionRuleItems(final DecisionTable dtable,
-                              final java.util.List<ListSelectorItem> items,
+                              final List<ListSelectorItem> items,
                               final int uiRowIndex) {
         final boolean isMultiRow = SelectionUtils.isMultiRow(model);
 
