@@ -129,7 +129,7 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
     }
 
     @Test
-    public void testMarshallTopLevelSubProcessWithEdges() throws Exception {
+    public void testMarshallTopLevelSubProcessWithEdges() {
         checkSubProcessMarshalling(getTopLevelSubProcessWithEdgesId(), ONE_INCOME_EDGE, FOUR_OUTCOME_EDGES);
     }
 
@@ -146,7 +146,7 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
     }
 
     @Test
-    public void testMarshallSubProcessLevelSubProcessWithEdges() throws Exception {
+    public void testMarshallSubProcessLevelSubProcessWithEdges() {
         checkSubProcessMarshalling(getSubProcessLevelSubProcessWithEdgesId(), ONE_INCOME_EDGE, FOUR_OUTCOME_EDGES);
     }
 
