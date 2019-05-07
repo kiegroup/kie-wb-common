@@ -166,6 +166,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
     private Decision decision = new Decision();
 
+    private interface MockHasCellEditorControlsHeaderMetaData extends HasCellEditorControls,
+                                                                      GridColumn.HeaderMetaData {
+
+    }
+
     @Override
     public void setup() {
         super.setup();
@@ -837,11 +842,51 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
-    public void testShowContextMenu() {
-        final double columnWidth = 100.0;
+    @SuppressWarnings("unchecked")
+    public void testShowContextMenuHeader() {
+        final MockHasCellEditorControlsHeaderMetaData headerMetaData = mock(MockHasCellEditorControlsHeaderMetaData.class);
+        final HasCellEditorControls.Editor cellControlsEditorMock = mock(HasCellEditorControls.Editor.class);
+        doReturn(Optional.of(cellControlsEditorMock)).when(headerMetaData).getEditor();
+
+        grid.getModel().appendColumn(new BaseGridColumn<Object>(headerMetaData,
+                                                                mock(GridColumnRenderer.class),
+                                                                COLUMN_WIDTH));
+
+        assertThat(grid.showContextMenuForHeader(0, 0)).isTrue();
+
+        verify(cellControlsEditorMock).bind(eq(headerMetaData),
+                                            eq(0),
+                                            eq(0));
+        verify(cellEditorControls).show(eq(cellControlsEditorMock),
+                                        eq(Optional.empty()),
+                                        eq((int) COLUMN_WIDTH / 2),
+                                        eq((int) HEADER_HEIGHT / 2));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testShowContextMenuHeaderMissingEditor() {
+        final MockHasCellEditorControlsHeaderMetaData headerMetaData = mock(MockHasCellEditorControlsHeaderMetaData.class);
+        doReturn(Optional.empty()).when(headerMetaData).getEditor();
+
         grid.getModel().appendColumn(new BaseGridColumn<Object>(mock(GridColumn.HeaderMetaData.class),
                                                                 mock(GridColumnRenderer.class),
-                                                                columnWidth));
+                                                                COLUMN_WIDTH));
+
+        assertThat(grid.showContextMenuForHeader(0, 0)).isFalse();
+
+        verify(cellEditorControls, never()).show(any(HasCellEditorControls.Editor.class),
+                                                 any(Optional.class),
+                                                 anyInt(),
+                                                 anyInt());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testShowContextMenu() {
+        grid.getModel().appendColumn(new BaseGridColumn<Object>(mock(GridColumn.HeaderMetaData.class),
+                                                                mock(GridColumnRenderer.class),
+                                                                COLUMN_WIDTH));
         final BaseGridRow gridRow = new BaseGridRow();
         grid.getModel().appendRow(gridRow);
 
@@ -853,18 +898,21 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
         assertThat(grid.showContextMenuForCell(0, 0)).isTrue();
 
+        verify(cellControlsEditorMock).bind(eq(grid),
+                                            eq(0),
+                                            eq(0));
         verify(cellEditorControls).show(eq(cellControlsEditorMock),
                                         eq(Optional.empty()),
-                                        eq((int) columnWidth / 2),
+                                        eq((int) COLUMN_WIDTH / 2),
                                         eq((int) (gridRow.getHeight() / 2 + HEADER_HEIGHT)));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testShowContextMenuMissingEditor() {
-        final double columnWidth = 100.0;
         grid.getModel().appendColumn(new BaseGridColumn<Object>(mock(GridColumn.HeaderMetaData.class),
                                                                 mock(GridColumnRenderer.class),
-                                                                columnWidth));
+                                                                COLUMN_WIDTH));
         final BaseGridRow gridRow = new BaseGridRow();
         grid.getModel().appendRow(gridRow);
 
