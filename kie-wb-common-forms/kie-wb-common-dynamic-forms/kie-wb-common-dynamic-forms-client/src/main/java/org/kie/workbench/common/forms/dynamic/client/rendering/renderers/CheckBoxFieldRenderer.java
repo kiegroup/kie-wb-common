@@ -28,7 +28,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.de
 @Dependent
 public class CheckBoxFieldRenderer extends FieldRenderer<CheckBoxFieldDefinition, CheckBoxFormGroup> {
 
-    private static final String PART_CHECK_BOX = "Check Box";
     private SimpleCheckBox checkbox;
 
     @Override
@@ -47,7 +46,7 @@ public class CheckBoxFieldRenderer extends FieldRenderer<CheckBoxFieldDefinition
         formGroup.render(checkbox,
                          field);
         
-        registerPart(PART_CHECK_BOX, checkbox);
+        registerFieldRendererPart(checkbox);
 
         return formGroup;
     }

@@ -33,7 +33,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.decimalBox.
 public class DecimalBoxFieldRenderer extends FieldRenderer<DecimalBoxFieldDefinition, DefaultFormGroup>
         implements RequiresValueConverter {
 
-    private static final String PART_DECIMAL_BOX = "Decimal Box";
     private DecimalBox decimalBox;
 
     @Inject
@@ -62,7 +61,7 @@ public class DecimalBoxFieldRenderer extends FieldRenderer<DecimalBoxFieldDefini
             formGroup.render(inputId,
                              decimalBox.asWidget(),
                              field);
-            registerPart(PART_DECIMAL_BOX, decimalBox);
+            registerFieldRendererPart(decimalBox);
         }
 
         return formGroup;

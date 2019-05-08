@@ -31,7 +31,7 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 @ApplicationScoped
 public class FormFieldPropertiesEditorDock {
 
-    static final double DOCK_SIZE = 300d;
+    private static final double DOCK_SIZE = 300d;
 
     private UberfireDocks uberfireDocks;
 

@@ -169,13 +169,7 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
             setActiveInstance();
         }
     }
-    
-    @Override
-    public void showDocks() {
-        super.showDocks();
-        formFieldPropertiesEditorDock.open();
-    }
-    
+        
     @Override
     public void hideDocks() {
         super.hideDocks();
@@ -274,6 +268,7 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
 
         layoutEditor.loadLayout(editorHelper.getContent().getDefinition().getLayoutTemplate());
         layoutEditor.setElementSelectionEnabled(true);
+        formFieldPropertiesEditorDock.open();
     }
 
     protected void synchronizeLayoutEditor() {

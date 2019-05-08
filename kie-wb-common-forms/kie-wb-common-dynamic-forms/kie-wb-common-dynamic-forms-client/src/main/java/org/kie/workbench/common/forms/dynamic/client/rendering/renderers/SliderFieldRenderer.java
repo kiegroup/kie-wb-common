@@ -32,7 +32,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.slider.defi
 public class SliderFieldRenderer extends FieldRenderer<SliderBaseDefinition, SliderFormGroup>
         implements RequiresValueConverter {
 
-    private static final String PART_SLIDER = "Slider";
     private Slider slider;
 
     @Override
@@ -59,7 +58,7 @@ public class SliderFieldRenderer extends FieldRenderer<SliderBaseDefinition, Sli
         formGroup.render(slider,
                          field);
         
-        registerPart(PART_SLIDER, slider);
+        registerFieldRendererPart(slider);
 
         return formGroup;
     }

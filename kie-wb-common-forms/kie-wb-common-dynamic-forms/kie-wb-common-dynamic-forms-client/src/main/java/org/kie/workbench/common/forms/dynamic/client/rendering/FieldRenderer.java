@@ -146,7 +146,8 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
 
     }
 
-    protected void registerPart(String partId, IsWidget partWidget) {
+    protected void registerFieldRendererPart(IsWidget partWidget) {
+        String partId = field.getFieldType().getTypeName();
         this.partsWidgets.put(partId, partWidget);
     }
 
