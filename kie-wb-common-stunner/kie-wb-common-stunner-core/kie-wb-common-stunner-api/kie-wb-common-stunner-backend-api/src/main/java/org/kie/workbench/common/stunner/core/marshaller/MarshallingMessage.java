@@ -18,14 +18,18 @@ package org.kie.workbench.common.stunner.core.marshaller;
 
 import java.util.Objects;
 
+import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 
+@Portable
 public class MarshallingMessage implements DomainViolation {
 
-    private String elementUUID;
-    private int code;
-    private Type type;
-    private String message;
+    private final String elementUUID;
+    private final int code;
+    private final Type type;
+    private final String message;
 
     public String getElementUUID() {
         return elementUUID;
@@ -45,7 +49,8 @@ public class MarshallingMessage implements DomainViolation {
         return code;
     }
 
-    public MarshallingMessage(String elementUUID, int code, Type type, String message) {
+    public MarshallingMessage(@MapsTo("elementUUID") String elementUUID, @MapsTo("code") int code,
+                              @MapsTo("type") Type type, @MapsTo("message") String message) {
         this.elementUUID = elementUUID;
         this.code = code;
         this.type = type;
@@ -105,7 +110,8 @@ public class MarshallingMessage implements DomainViolation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getElementUUID(), getCode(), type, getMessage());
+        return HashUtil.combineHashCodes(Objects.hashCode(getElementUUID()), Objects.hashCode(getCode()),
+                                         Objects.hashCode(type), Objects.hashCode(getMessage()));
     }
 
     @Override

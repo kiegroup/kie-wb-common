@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
+
+@Portable
 public class MarshallingResponse<T> {
 
     public enum State {
@@ -28,11 +33,12 @@ public class MarshallingResponse<T> {
         SUCCESS
     }
 
-    private List<MarshallingMessage> messages;
-    private State state;
-    private Optional<T> result;
+    private final List<MarshallingMessage> messages;
+    private final State state;
+    private final Optional<T> result;
 
-    private MarshallingResponse(List<MarshallingMessage> messages, State state, Optional<T> result) {
+    private MarshallingResponse(@MapsTo("messages") List<MarshallingMessage> messages,
+                                @MapsTo("state") State state, @MapsTo("result") Optional<T> result) {
         this.messages = messages;
         this.state = state;
         this.result = result;
@@ -80,7 +86,8 @@ public class MarshallingResponse<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMessages(), getState(), getResult());
+        return HashUtil.combineHashCodes(Objects.hashCode(getMessages()), Objects.hashCode(getState()),
+                                         Objects.hashCode(getResult()));
     }
 
     public static class MarshallingResponseBuilder<T> {

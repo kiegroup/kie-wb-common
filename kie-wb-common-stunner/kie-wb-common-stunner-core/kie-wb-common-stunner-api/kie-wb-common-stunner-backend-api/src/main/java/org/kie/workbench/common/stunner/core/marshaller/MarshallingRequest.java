@@ -18,8 +18,12 @@ package org.kie.workbench.common.stunner.core.marshaller;
 
 import java.util.Objects;
 
+import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
+@Portable
 public class MarshallingRequest<I, M extends Metadata> {
 
     /**
@@ -41,11 +45,11 @@ public class MarshallingRequest<I, M extends Metadata> {
         IGNORE
     }
 
-    private I input;
-    private M metadata;
-    private Mode mode;
+    private final I input;
+    private final M metadata;
+    private final Mode mode;
 
-    public MarshallingRequest(I input, M metadata, Mode mode) {
+    public MarshallingRequest(@MapsTo("input") I input, @MapsTo("metadata") M metadata, @MapsTo("mode") Mode mode) {
         this.input = input;
         this.metadata = metadata;
         this.mode = mode;
@@ -93,7 +97,8 @@ public class MarshallingRequest<I, M extends Metadata> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getInput(), getMetadata(), getMode());
+        return HashUtil.combineHashCodes(Objects.hashCode(getInput()), Objects.hashCode(getMetadata()),
+                                         Objects.hashCode(getMode()));
     }
 
     public static class MarshallingRequestBuilder<I, M extends Metadata> {
