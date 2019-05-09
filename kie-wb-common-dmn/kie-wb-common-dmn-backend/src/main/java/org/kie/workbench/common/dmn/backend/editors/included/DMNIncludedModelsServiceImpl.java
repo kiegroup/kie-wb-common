@@ -23,7 +23,6 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -32,7 +31,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModelsService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.backend.DMNMarshaller;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNPathsHelperImpl;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.ImportedItemDefinitionConverter;
@@ -54,24 +52,15 @@ public class DMNIncludedModelsServiceImpl implements DMNIncludedModelsService {
 
     private final DMNMarshallerImportsHelper importsHelper;
 
-    private final DMNMarshaller dmnMarshaller;
-
     @Inject
     public DMNIncludedModelsServiceImpl(final DMNPathsHelperImpl pathsHelper,
                                         final DMNIncludeModelFactory includeModelFactory,
                                         final DMNIncludedNodesFilter includedNodesFilter,
-                                        final DMNMarshallerImportsHelper importsHelper,
-                                        final DMNMarshaller dmnMarshaller) {
+                                        final DMNMarshallerImportsHelper importsHelper) {
         this.pathsHelper = pathsHelper;
         this.includeModelFactory = includeModelFactory;
         this.includedNodesFilter = includedNodesFilter;
         this.importsHelper = importsHelper;
-        this.dmnMarshaller = dmnMarshaller;
-    }
-
-    @PostConstruct
-    public void init() {
-        importsHelper.init(getMarshaller());
     }
 
     @Override
@@ -117,10 +106,6 @@ public class DMNIncludedModelsServiceImpl implements DMNIncludedModelsService {
 
     private List<Path> getPaths(final WorkspaceProject workspaceProject) {
         return pathsHelper.getDiagramsPaths(workspaceProject);
-    }
-
-    private org.kie.dmn.api.marshalling.DMNMarshaller getMarshaller() {
-        return dmnMarshaller.getMarshaller();
     }
 
     ItemDefinition wbFromDMN(final org.kie.dmn.model.api.ItemDefinition itemDefinition,

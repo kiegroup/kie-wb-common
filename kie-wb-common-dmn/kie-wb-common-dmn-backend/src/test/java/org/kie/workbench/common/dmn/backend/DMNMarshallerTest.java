@@ -116,6 +116,7 @@ import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelper;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConverter;
+import org.kie.workbench.common.dmn.backend.producers.DMNMarshallerProducer;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
@@ -2143,7 +2144,12 @@ public class DMNMarshallerTest {
     private DMNMarshaller getDMNMarshaller() {
         return new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                  applicationFactoryManager,
-                                 dmnMarshallerImportsHelper);
+                                 dmnMarshallerImportsHelper,
+                                 getMarshaller());
+    }
+
+    private org.kie.dmn.api.marshalling.DMNMarshaller getMarshaller() {
+        return new DMNMarshallerProducer().get();
     }
 
     private void assertXPathEquals(XPath xpathOriginal, XPath xpathRoundtrip, String xpathExpression, String expectedXml, String actualXml) throws XPathExpressionException {

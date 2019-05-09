@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,13 +34,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
 import org.jboss.errai.marshalling.server.ServerMarshalling;
-import org.kie.dmn.backend.marshalling.v1x.DMNMarshallerFactory;
 import org.kie.dmn.model.api.Import;
 import org.kie.dmn.model.api.dmndi.Bounds;
 import org.kie.dmn.model.api.dmndi.Color;
@@ -91,7 +88,6 @@ import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConver
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ColorUtils;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ComponentWidths;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ComponentsWidthsExtension;
-import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDIExtensionsRegister;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.PointUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
@@ -143,28 +139,24 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     private DMNMarshallerImportsHelper dmnMarshallerImportsHelper;
 
     protected DMNMarshaller() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Inject
     public DMNMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
                          final FactoryManager factoryManager,
-                         final DMNMarshallerImportsHelper dmnMarshallerImportsHelper) {
+                         final DMNMarshallerImportsHelper dmnMarshallerImportsHelper,
+                         final org.kie.dmn.api.marshalling.DMNMarshaller marshaller) {
         this.diagramMetadataMarshaller = diagramMetadataMarshaller;
         this.factoryManager = factoryManager;
         this.dmnMarshallerImportsHelper = dmnMarshallerImportsHelper;
+        this.marshaller = marshaller;
         this.inputDataConverter = new InputDataConverter(factoryManager);
         this.decisionConverter = new DecisionConverter(factoryManager);
         this.bkmConverter = new BusinessKnowledgeModelConverter(factoryManager);
         this.knowledgeSourceConverter = new KnowledgeSourceConverter(factoryManager);
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
-        this.marshaller = DMNMarshallerFactory.newMarshallerWithExtensions(Collections.singletonList(new DMNDIExtensionsRegister()));
-    }
-
-    @PostConstruct
-    public void init() {
-        dmnMarshallerImportsHelper.init(marshaller);
     }
 
     @Deprecated
@@ -1149,9 +1141,5 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     @Override
     public DiagramMetadataMarshaller<Metadata> getMetadataMarshaller() {
         return diagramMetadataMarshaller;
-    }
-
-    public org.kie.dmn.api.marshalling.DMNMarshaller getMarshaller() {
-        return marshaller;
     }
 }

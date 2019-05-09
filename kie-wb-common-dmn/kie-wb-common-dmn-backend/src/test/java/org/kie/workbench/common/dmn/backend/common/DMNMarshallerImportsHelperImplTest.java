@@ -81,8 +81,7 @@ public class DMNMarshallerImportsHelperImplTest {
 
     @Before
     public void setup() {
-        helper = spy(new DMNMarshallerImportsHelperImpl(pathsHelper, projectService, ioService));
-        helper.init(marshaller);
+        helper = spy(new DMNMarshallerImportsHelperImpl(pathsHelper, projectService, marshaller, ioService));
     }
 
     @Test

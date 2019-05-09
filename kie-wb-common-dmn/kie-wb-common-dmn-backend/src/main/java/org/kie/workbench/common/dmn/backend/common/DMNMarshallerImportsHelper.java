@@ -65,10 +65,4 @@ public interface DMNMarshallerImportsHelper {
     List<ItemDefinition> getImportedItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
                                                                final String modelName,
                                                                final String namespace);
-
-    /**
-     * This method initialises the helper.
-     * @param marshaller is instance used to unmarshal the imports.
-     */
-    void init(final org.kie.dmn.api.marshalling.DMNMarshaller marshaller);
 }

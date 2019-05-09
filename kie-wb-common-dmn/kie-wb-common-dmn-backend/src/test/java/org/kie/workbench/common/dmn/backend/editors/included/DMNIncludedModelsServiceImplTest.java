@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
-import org.kie.workbench.common.dmn.backend.DMNMarshaller;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNPathsHelperImpl;
 import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludeModelFactory;
@@ -41,7 +40,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,25 +57,11 @@ public class DMNIncludedModelsServiceImplTest {
     @Mock
     private DMNMarshallerImportsHelper importsHelper;
 
-    @Mock
-    private DMNMarshaller dmnMarshaller;
-
     private DMNIncludedModelsServiceImpl service;
 
     @Before
     public void setup() {
-        service = spy(new DMNIncludedModelsServiceImpl(pathsHelper, includeModelFactory, includedNodesFilter, importsHelper, dmnMarshaller));
-    }
-
-    @Test
-    public void testInit() {
-
-        final org.kie.dmn.api.marshalling.DMNMarshaller marshaller = mock(org.kie.dmn.api.marshalling.DMNMarshaller.class);
-        when(dmnMarshaller.getMarshaller()).thenReturn(marshaller);
-
-        service.init();
-
-        verify(importsHelper).init(marshaller);
+        service = spy(new DMNIncludedModelsServiceImpl(pathsHelper, includeModelFactory, includedNodesFilter, importsHelper));
     }
 
     @Test

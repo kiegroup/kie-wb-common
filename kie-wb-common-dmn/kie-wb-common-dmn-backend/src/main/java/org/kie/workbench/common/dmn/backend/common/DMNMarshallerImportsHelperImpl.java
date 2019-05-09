@@ -62,23 +62,21 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
     private final IOService ioService;
 
-    private DMNMarshaller marshaller;
+    private final DMNMarshaller marshaller;
 
     public DMNMarshallerImportsHelperImpl() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Inject
     public DMNMarshallerImportsHelperImpl(final DMNPathsHelperImpl pathsHelper,
                                           final WorkspaceProjectService projectService,
+                                          final DMNMarshaller marshaller,
                                           final @Named("ioStrategy") IOService ioService) {
         this.pathsHelper = pathsHelper;
         this.projectService = projectService;
-        this.ioService = ioService;
-    }
-
-    public void init(final DMNMarshaller marshaller) {
         this.marshaller = marshaller;
+        this.ioService = ioService;
     }
 
     @Override
