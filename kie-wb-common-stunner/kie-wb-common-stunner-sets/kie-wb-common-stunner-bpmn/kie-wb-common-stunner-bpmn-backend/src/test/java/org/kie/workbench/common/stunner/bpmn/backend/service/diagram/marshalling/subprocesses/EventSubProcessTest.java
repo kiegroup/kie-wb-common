@@ -110,7 +110,7 @@ public class EventSubProcessTest extends SubProcess<EventSubprocess> {
     @Test
     @Override
     public void testMarshallSubProcessLevelSubProcessWithEdges() {
-        // event sub-process cannot have any incoming edges to bpmn specification
+        // event sub-process cannot have any incoming edges relating to bpmn specification
         checkSubProcessMarshalling(getSubProcessLevelSubProcessWithEdgesId(), EMPTY_INCOME_EDGES, FOUR_OUTCOME_EDGES);
     }
 
