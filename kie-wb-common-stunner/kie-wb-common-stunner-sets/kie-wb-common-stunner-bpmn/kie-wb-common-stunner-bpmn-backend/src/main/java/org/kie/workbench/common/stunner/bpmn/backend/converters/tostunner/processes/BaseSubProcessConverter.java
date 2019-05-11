@@ -127,7 +127,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node);
+        return BpmnNode.of(node, p);
     }
 
     private BpmnNode convertAdHocSubProcess(org.eclipse.bpmn2.AdHocSubProcess subProcess) {
@@ -135,7 +135,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         A definition = node.getContent().getDefinition();
         AdHocSubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(new Name(subProcess.getName()),
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()),
                                                  new Documentation(p.getDocumentation())
         ));
 
@@ -151,7 +151,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 
-        return BpmnNode.of(node);
+        return BpmnNode.of(node, p);
     }
 
     private BpmnNode convertEmbeddedSubprocessNode(SubProcess subProcess) {
@@ -161,7 +161,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         EmbeddedSubprocess definition = node.getContent().getDefinition();
         SubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(new Name(subProcess.getName()),
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()),
                                                  new Documentation(p.getDocumentation())
         ));
 
@@ -180,7 +180,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 
-        return BpmnNode.of(node);
+        return BpmnNode.of(node, p);
     }
 
     private BpmnNode convertEventSubprocessNode(SubProcess subProcess) {
@@ -190,7 +190,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         EventSubprocess definition = node.getContent().getDefinition();
         SubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(new Name(subProcess.getName()),
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()),
                                                  new Documentation(p.getDocumentation())
         ));
 
@@ -206,7 +206,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node);
+        return BpmnNode.of(node, p);
     }
 
     protected abstract Node<View<A>, Edge> createNode(String id);

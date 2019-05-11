@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-showcase</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.21.0-SNAPSHOT</version>
+    <version>7.22.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -1006,6 +1006,8 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-case-mgmt-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-client</compileSourcesArtifact>
+
+            <compileSourcesArtifact>org.uberfire:appformer-js-bridge</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
         </configuration>

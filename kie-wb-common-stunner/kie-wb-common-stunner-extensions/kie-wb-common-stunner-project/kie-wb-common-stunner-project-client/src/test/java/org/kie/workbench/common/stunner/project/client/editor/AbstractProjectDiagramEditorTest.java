@@ -50,6 +50,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
@@ -84,6 +85,7 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -96,6 +98,7 @@ import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -125,6 +128,7 @@ import static org.mockito.Mockito.when;
 public class AbstractProjectDiagramEditorTest {
 
     private static final String TITLE = "title";
+    public static final String DOC_LABEL = "doc";
 
     @Mock
     protected PerspectiveManager perspectiveManagerMock;
@@ -149,6 +153,8 @@ public class AbstractProjectDiagramEditorTest {
 
     @Mock
     protected EventSourceMock<NotificationEvent> notification;
+
+    protected Promises promises;
 
     @Mock
     protected ClientProjectDiagramService clientProjectDiagramService;
@@ -210,6 +216,7 @@ public class AbstractProjectDiagramEditorTest {
     protected TextEditorView xmlEditorView;
     @Mock
     protected Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller;
+
     @Mock
     protected StunnerDiagramEditorPreferences diagramEditorPreferences;
     @Mock
@@ -220,9 +227,11 @@ public class AbstractProjectDiagramEditorTest {
     @Captor
     private ArgumentCaptor<Consumer<EditorSession>> clientSessionConsumerCaptor;
     @Captor
+    protected ArgumentCaptor<DocumentationPage> documentationPageCaptor;
+
     private ArgumentCaptor<SessionPresenter.SessionPresenterCallback> clientSessionPresenterCallbackCaptor;
     @Mock
-    private DocumentationView viewDocumentation;
+    protected DocumentationView documentationView;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -262,6 +271,7 @@ public class AbstractProjectDiagramEditorTest {
         when(getMenuSessionItems().setLoadingCompleted(any(Command.class))).thenReturn(getMenuSessionItems());
         when(getMenuSessionItems().setLoadingStarts(any(Command.class))).thenReturn(getMenuSessionItems());
         resourceType = mockResourceType();
+        promises = new SyncPromises();
         presenter = createDiagramEditor();
         presenter.init();
     }
@@ -284,7 +294,7 @@ public class AbstractProjectDiagramEditorTest {
     @SuppressWarnings("unchecked")
     protected AbstractProjectDiagramEditor createDiagramEditor() {
         return spy(new AbstractProjectDiagramEditor<ClientResourceTypeMock>(view,
-                                                                            viewDocumentation,
+                                                                            documentationView,
                                                                             placeManager,
                                                                             errorPopupPresenter,
                                                                             changeTitleNotificationEvent,
@@ -312,6 +322,7 @@ public class AbstractProjectDiagramEditorTest {
                 kieView = AbstractProjectDiagramEditorTest.this.kieView;
                 overviewWidget = AbstractProjectDiagramEditorTest.this.overviewWidget;
                 notification = AbstractProjectDiagramEditorTest.this.notification;
+                promises = AbstractProjectDiagramEditorTest.this.promises;
             }
 
             @Override
@@ -328,7 +339,7 @@ public class AbstractProjectDiagramEditorTest {
 
         doNothing().when(presenter).addDownloadMenuItem(any());
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(true).when(projectController).canUpdateProject(any());
+        doReturn(promises.resolve(true)).when(projectController).canUpdateProject(any());
         doReturn(saveAndRenameCommand).when(presenter).getSaveAndRename();
 
         presenter.makeMenuBar();
@@ -347,7 +358,7 @@ public class AbstractProjectDiagramEditorTest {
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
         doNothing().when(presenter).addDownloadMenuItem(any());
         doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
-        doReturn(false).when(projectController).canUpdateProject(any());
+        doReturn(promises.resolve(false)).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
 
@@ -397,6 +408,7 @@ public class AbstractProjectDiagramEditorTest {
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
 
+        verify(presenter).addDocumentationPage(diagram);
         verify(presenter).onDiagramLoad();
     }
 
@@ -793,6 +805,20 @@ public class AbstractProjectDiagramEditorTest {
 
         verify(onDiagramFocusEvent).fire(any());
         verify(defaultEditorDock).show();
+    }
+
+    @Test
+    public void testAddDocumentationPage() {
+        when(documentationView.isEnabled()).thenReturn(Boolean.TRUE);
+        when(translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION)).thenReturn(DOC_LABEL);
+        when(documentationView.initialize(diagram)).thenReturn(documentationView);
+
+        presenter.addDocumentationPage(diagram);
+        verify(translationService).getValue(StunnerProjectClientConstants.DOCUMENTATION);
+        verify(kieView).addPage(documentationPageCaptor.capture());
+        DocumentationPage documentationPage = documentationPageCaptor.getValue();
+        assertEquals(documentationPage.getDocumentationView(), documentationView);
+        assertEquals(documentationPage.getLabel(), DOC_LABEL);
     }
 
     abstract class ClientResourceTypeMock implements ClientResourceType {

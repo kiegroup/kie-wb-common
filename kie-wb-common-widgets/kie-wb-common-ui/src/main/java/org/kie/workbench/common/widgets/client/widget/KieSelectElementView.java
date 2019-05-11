@@ -78,28 +78,4 @@ public class KieSelectElementView implements KieSelectElement.View,
     private native void selectpicker(final HTMLSelectElement select)/*-{
         $wnd.jQuery(select).selectpicker();
     }-*/;
-
-    @Templated("KieSelectElementView.html#option")
-    public static class Option implements ListItemView<KieSelectElement.OptionElement>,
-                                          IsElement {
-
-        @Inject
-        @DataField("option")
-        private HTMLOptionElement option;
-
-        private KieSelectElement.OptionElement presenter;
-
-        @Override
-        public void init(final KieSelectElement.OptionElement presenter) {
-            this.presenter = presenter;
-        }
-
-        public void setLabel(final String label) {
-            this.option.textContent = label;
-        }
-
-        public void setValue(final String value) {
-            this.option.value = value;
-        }
-    }
 }

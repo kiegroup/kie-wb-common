@@ -47,9 +47,7 @@ public class DatePickerFieldRenderer extends FieldRenderer<DatePickerFieldDefini
     protected FormGroup getFormGroup(RenderMode renderMode) {
 
         DefaultFormGroup formGroup = formGroupsInstance.get();
-
         String inputId = generateUniqueId();
-
         datePickerWrapper.setDatePickerWidget(field.getShowTime());
         datePickerWrapper.setId(inputId);
         datePickerWrapper.setName(fieldNS);

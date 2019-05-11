@@ -18,15 +18,21 @@ package org.kie.workbench.common.forms.dynamic.client.rendering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
+
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.configError.ConfigErrorDisplayer;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -42,6 +48,7 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
     protected F field;
     protected FormFieldImpl formField = null;
     protected List<FieldChangeListener> fieldChangeListeners = new ArrayList<>();
+    private Map<String, IsWidget> partsWidgets = new HashMap<>();
 
     @Inject
     protected ManagedInstance<FORM_GROUP> formGroupsInstance;
@@ -66,6 +73,9 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
         } else {
 
             FormGroup formGroup = getFormGroup(renderingContext.getRenderMode());
+            
+            Map<String, Widget> formPartsWidgets = formGroup.getPartsWidgets();
+            partsWidgets.putAll(formPartsWidgets);
 
             formField = new FormFieldImpl(field,
                                           formGroup) {
@@ -73,6 +83,13 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
                 protected void doSetReadOnly(boolean readOnly) {
                     if (renderingContext.getRenderMode().equals(RenderMode.PRETTY_MODE)) {
                         return;
+                    }
+                    final Object model = renderingContext.getModel();
+                    if (model instanceof DynamicReadOnly){
+                        final DynamicReadOnly.ReadOnly readonlyMode = ((DynamicReadOnly) model).getReadOnly(field.getName());
+                        if (readonlyMode == DynamicReadOnly.ReadOnly.TRUE) {
+                            readOnly = true;
+                        }
                     }
                     FieldRenderer.this.setReadOnly(readOnly);
                 }
@@ -137,6 +154,11 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
 
     }
 
+    protected void registerFieldRendererPart(IsWidget partWidget) {
+        String partId = field.getFieldType().getTypeName();
+        this.partsWidgets.put(partId, partWidget);
+    }
+
     private Collection<FieldChangeListener> getFieldChangeListeners() {
         return fieldChangeListeners;
     }
@@ -161,5 +183,17 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
     @PreDestroy
     public void preDestroy() {
         formGroupsInstance.destroyAll();
+    }
+    
+    final public Set<String> getFieldParts() {
+        return partsWidgets.keySet();
+    }
+    
+    public Widget getFieldPartWidget(String partId) {
+        IsWidget partWidget = partsWidgets.get(partId);
+        if (partWidget != null) {
+            return partWidget.asWidget();
+        }
+        return null;
     }
 }

@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.forms.client.event.FormPropertiesOpened;
 import org.kie.workbench.common.stunner.forms.client.widgets.FormPropertiesWidget;
 import org.kie.workbench.common.stunner.project.client.view.ProjectScreenView;
 import org.uberfire.client.annotations.WorkbenchContextId;
-import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -43,7 +42,6 @@ import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.workbench.model.menu.Menus;
 
 /**
  * The screen for the project context (includes the kie workbenches) which is included in a docked area
@@ -136,11 +134,6 @@ public class ProjectDiagramPropertiesScreen {
     private void destroy() {
         formPropertiesWidget.destroy();
         session = null;
-    }
-
-    @WorkbenchMenu
-    public Menus getMenu() {
-        return null;
     }
 
     @WorkbenchPartTitle

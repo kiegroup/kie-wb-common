@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
     <artifactId>kie-wb-common-screens</artifactId>
-    <version>7.21.0-SNAPSHOT</version>
+    <version>7.22.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -16,5 +16,6 @@
     <module>kie-wb-common-library-api</module>
     <module>kie-wb-common-library-backend</module>
     <module>kie-wb-common-library-client</module>
+    <module>kie-wb-common-library-spaces-screen</module>
   </modules>
 </project>

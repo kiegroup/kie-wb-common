@@ -529,4 +529,34 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String Test = "Test";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchManagementReadPermissionTooltip = "BranchManagementReadPermissionTooltip";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchManagementWritePermissionTooltip = "BranchManagementWritePermissionTooltip";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchManagementDeletePermissionTooltip = "BranchManagementDeletePermissionTooltip";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchManagementDeployPermissionTooltip = "BranchManagementDeployPermissionTooltip";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchesToBeImported = "BranchesToBeImported";
+
+    @TranslationKey(defaultValue = "")
+    public static final String Ok = "Ok";
+
+    @TranslationKey(defaultValue = "")
+    public static final String MasterIsRequired = "MasterIsRequired";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AtLeastMasterIsRequired = "AtLeastMasterIsRequired";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchSelectorClickToSelectBranches = "BranchSelectorClickToSelectBranches";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchSelectorSelectedBranches = "BranchSelectorSelectedBranches";
 }

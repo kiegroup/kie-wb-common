@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
@@ -30,6 +31,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import elemental2.promise.Promise;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
@@ -53,6 +56,7 @@ import org.kie.workbench.common.services.refactoring.client.usages.ShowAssetUsag
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.kie.workbench.common.widgets.metadata.client.KieEditor;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorView;
+import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.kie.workbench.common.workbench.client.events.LayoutEditorFocusEvent;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
@@ -69,6 +73,10 @@ import org.uberfire.ext.layout.editor.client.api.ComponentRemovedEvent;
 import org.uberfire.ext.layout.editor.client.api.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.api.LayoutDragComponentPalette;
 import org.uberfire.ext.layout.editor.client.api.LayoutEditor;
+import org.uberfire.ext.layout.editor.client.api.LayoutEditorElement;
+import org.uberfire.ext.layout.editor.client.components.columns.ComponentColumn;
+import org.uberfire.ext.layout.editor.client.event.LayoutEditorElementSelectEvent;
+import org.uberfire.ext.layout.editor.client.widgets.LayoutEditorPropertiesPresenter;
 import org.uberfire.ext.plugin.client.perspective.editor.layout.editor.HTMLLayoutDragComponent;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
@@ -113,6 +121,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
     private Caller<FormEditorService> editorService;
     private TranslationService translationService;
     private ErrorMessageDisplayer errorMessageDisplayer;
+    private FormFieldPropertiesEditorDock formFieldPropertiesEditorDock;
+    private LayoutEditorPropertiesPresenter layoutEditorPropertiesPresenter;
 
     protected boolean setActiveOnLoad = false;
 
@@ -124,7 +134,9 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
                                TranslationService translationService,
                                ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents,
                                ShowAssetUsagesDisplayer showAssetUsagesDisplayer,
-                               ErrorMessageDisplayer errorMessageDisplayer) {
+                               ErrorMessageDisplayer errorMessageDisplayer,
+                               FormFieldPropertiesEditorDock formFieldPropertiesEditorDock,
+                               LayoutEditorPropertiesPresenter layoutEditorPropertiesPresenter) {
         super(view);
         this.view = view;
         this.changesNotificationDisplayer = changesNotificationDisplayer;
@@ -134,6 +146,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         this.editorFieldLayoutComponents = editorFieldLayoutComponents;
         this.showAssetUsagesDisplayer = showAssetUsagesDisplayer;
         this.errorMessageDisplayer = errorMessageDisplayer;
+        this.formFieldPropertiesEditorDock = formFieldPropertiesEditorDock;
+        this.layoutEditorPropertiesPresenter = layoutEditorPropertiesPresenter;
     }
 
     @OnStartup
@@ -143,6 +157,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         init(path,
              place,
              resourceType);
+        formFieldPropertiesEditorDock.init(PerspectiveIds.LIBRARY);
+        layoutEditorPropertiesPresenter.edit(layoutEditor);
     }
 
     @OnFocus
@@ -152,6 +168,12 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         } else {
             setActiveInstance();
         }
+    }
+        
+    @Override
+    public void hideDocks() {
+        super.hideDocks();
+        formFieldPropertiesEditorDock.close();
     }
 
     @Override
@@ -245,6 +267,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
                           LayoutTemplate.Style.FLUID);
 
         layoutEditor.loadLayout(editorHelper.getContent().getDefinition().getLayoutTemplate());
+        layoutEditor.setElementSelectionEnabled(true);
+        formFieldPropertiesEditorDock.open();
     }
 
     protected void synchronizeLayoutEditor() {
@@ -282,11 +306,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
     }
 
     @WorkbenchMenu
-    public Menus getMenus() {
-        if (menus == null) {
-            makeMenuBar();
-        }
-        return menus;
+    public void getMenus(final Consumer<Menus> menusConsumer) {
+        super.getMenus(menusConsumer);
     }
 
     @Override
@@ -296,24 +317,33 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
     }
 
     @Override
-    protected void makeMenuBar() {
-        if (canUpdateProject()) {
-            fileMenuBuilder
-                    .addSave(versionRecordManager.newSaveMenuItem(() -> saveAction()))
-                    .addCopy(this::safeCopy)
-                    .addRename(this::safeRename)
-                    .addDelete(this::safeDelete);
-        }
-        addDownloadMenuItem(fileMenuBuilder);
+    protected Promise<Void> makeMenuBar() {
+        if (workbenchContext.getActiveWorkspaceProject().isPresent()) {
+            final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject().get();
+            return projectController.canUpdateProject(activeProject).then(canUpdateProject -> {
+                if (canUpdateProject) {
+                    fileMenuBuilder
+                            .addSave(versionRecordManager.newSaveMenuItem(() -> saveAction()))
+                            .addCopy(this::safeCopy)
+                            .addRename(this::safeRename)
+                            .addDelete(this::safeDelete);
+                }
+                addDownloadMenuItem(fileMenuBuilder);
 
-        fileMenuBuilder
-                .addNewTopLevelMenu(versionRecordManager.buildMenu())
-                .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
-                /*.addCommand( "PREVIEW",
-                             () -> {
-                                 synchronizeFormLayout();
-                                 IOC.getBeanManager().lookupBean( PreviewFormPresenter.class ).newInstance().preview( getRenderingContext() );
-                             } )*/
+                fileMenuBuilder
+                        .addNewTopLevelMenu(versionRecordManager.buildMenu())
+                        .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
+                        /*.addCommand( "PREVIEW",
+                                     () -> {
+                                         synchronizeFormLayout();
+                                         IOC.getBeanManager().lookupBean( PreviewFormPresenter.class ).newInstance().preview( getRenderingContext() );
+                                     } )*/
+
+                return promises.resolve();
+            });
+        }
+
+        return promises.resolve();
     }
 
     protected void safeCopy() {
@@ -478,7 +508,14 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
             }
         }
     }
-
+    
+    public void onLayoutEditorElementSelectEvent(@Observes LayoutEditorElementSelectEvent event) {
+        LayoutEditorElement element = event.getElement();
+        if (element instanceof ComponentColumn) {
+            ((ComponentColumn) element).setupParts();
+        }
+    }
+    
     protected void removeAllDraggableGroupComponent(Collection<FieldDefinition> fields) {
         String groupId = translationService.getTranslation(FormEditorConstants.FormEditorPresenterModelFields);
         Iterator<FieldDefinition> it = fields.iterator();

@@ -142,7 +142,7 @@ public class DecisionComponents {
     }
 
     private DecisionComponent makeDecisionComponent(final DMNIncludedNode node) {
-        return new DecisionComponent(node.getFileName(), node.getDrgElementId(), node.getDrgElementName(), node.getDrgElementClass());
+        return new DecisionComponent(node.getFileName(), node.getDrgElement());
     }
 
     List<DMNIncludedModel> getDMNIncludedModels(final Diagram diagram) {
@@ -157,8 +157,7 @@ public class DecisionComponents {
     private DMNIncludedModel asDMNIncludedModel(final Import anImport) {
         final String modelName = anImport.getName().getValue();
         final String namespace = anImport.getNamespace();
-        final String none = "";
-        return new DMNIncludedModel(modelName, none, none, namespace);
+        return new DMNIncludedModel(modelName, "", "", namespace, 0, 0);
     }
 
     List<DecisionComponentsItem> getDecisionComponentsItems() {
