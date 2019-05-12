@@ -168,6 +168,13 @@ public class DataTypeList {
 
     void setupViewItems() {
         view.setupListItems(getItems());
+        view.showReadOnlyMessage(hasReadOnlyDataTypes());
+    }
+
+    private boolean hasReadOnlyDataTypes() {
+        return getItems()
+                .stream()
+                .anyMatch(DataTypeListItem::isReadOnly);
     }
 
     public List<DataTypeListItem> getItems() {
@@ -255,6 +262,10 @@ public class DataTypeList {
         this.onDataTypeListItemUpdate = onDataTypeListItemUpdate;
     }
 
+    void insertNestedField(final String dataTypeHash) {
+        findItemByDataTypeHash(dataTypeHash).ifPresent(DataTypeListItem::insertNestedField);
+    }
+
     void fireOnDataTypeListItemUpdateCallback(final String dataTypeHash) {
         findItemByDataTypeHash(dataTypeHash).ifPresent(this::fireOnDataTypeListItemUpdateCallback);
     }
@@ -303,5 +314,7 @@ public class DataTypeList {
         void showNoDataTypesFound();
 
         HTMLDivElement getListItems();
+
+        void showReadOnlyMessage(boolean show);
     }
 }

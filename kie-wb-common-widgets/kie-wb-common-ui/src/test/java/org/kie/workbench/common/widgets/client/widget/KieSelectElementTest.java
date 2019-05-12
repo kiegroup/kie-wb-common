@@ -26,7 +26,6 @@ import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.widgets.client.widget.KieSelectElement.Option;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -45,7 +44,7 @@ public class KieSelectElementTest {
     private KieSelectElement.View view;
 
     @Mock
-    private KieSelectElement.OptionsListPresenter optionsListPresenter;
+    private KieSelectOptionsListPresenter optionsListPresenter;
 
     private KieSelectElement kieSelectElement;
 
@@ -75,8 +74,8 @@ public class KieSelectElementTest {
 
         container.innerHTML = "";
 
-        final List<Option> options =
-                singletonList(new Option("Label", "Value"));
+        final List<KieSelectOption> options =
+                singletonList(new KieSelectOption("Label", "Value"));
 
         kieSelectElement.setup(
                 container,
