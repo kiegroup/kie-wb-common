@@ -56,7 +56,6 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     @Mock
     private SubmarineKieAssetsDropdownView viewlocalMock;
 
-    @Mock
     private KieAssetsDropdown dropdownLocal;
 
     @Before

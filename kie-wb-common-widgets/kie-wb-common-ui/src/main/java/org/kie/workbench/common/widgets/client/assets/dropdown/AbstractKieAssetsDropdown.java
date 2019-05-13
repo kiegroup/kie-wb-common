@@ -105,13 +105,10 @@ public abstract class AbstractKieAssetsDropdown implements KieAssetsDropdown {
         return this::assetListConsumerMethod;
     }
 
-    protected void assetListConsumerMethod(List<KieAssetsDropdownItem> assetList) {
+    protected void assetListConsumerMethod(final List<KieAssetsDropdownItem> assetList) {
         assetList.forEach(this::addValue);
         view.refreshSelectPicker();
         view.initialize();
     }
 
-    protected List<KieAssetsDropdownItem> getKieAssets() {
-        return kieAssets;
-    }
 }

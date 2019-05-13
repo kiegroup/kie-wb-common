@@ -59,7 +59,6 @@ public class AbstractKieAssetsDropdownTest extends AbstractDropdownTest {
     @Mock
     private KieAssetsDropdownView viewlocalMock;
 
-    @Mock
     private KieAssetsDropdown dropdownLocal;
 
     @Before
