@@ -72,15 +72,15 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void testEmptyReassignmentValue(){
+    public void testEmptyReassignmentValue() {
         boolean result = validator.isValid(new ReassignmentValue(), context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
     }
 
     @Test
-    public void testNegativeDurationReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void testNegativeDurationReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("-1d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
@@ -88,8 +88,8 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void testIsTooBigDurationReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void testIsTooBigDurationReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("1111111111111111111111111111111111111111111d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
@@ -97,8 +97,8 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test1DigExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void test1DigExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("1d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -106,8 +106,8 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test2DigExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void test2DigExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("11d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -115,8 +115,8 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test3DigExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void test3DigExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -124,16 +124,16 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test4DigExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void test4DigExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("1111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
     }
 
     @Test
-    public void test5DigExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void test5DigExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("11111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -141,16 +141,16 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test10DigExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void test10DigExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("1111111111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
     }
 
     @Test
-    public void test2147483647ExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void testIntMaxExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("2147483647d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -158,8 +158,8 @@ public class ReassignmentValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test2147483648ExpiresAtReassignmentValue(){
-        ReassignmentValue value =  new ReassignmentValue();
+    public void testIntOverflowExpiresAtReassignmentValue() {
+        ReassignmentValue value = new ReassignmentValue();
         value.setDuration("2147483648d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);

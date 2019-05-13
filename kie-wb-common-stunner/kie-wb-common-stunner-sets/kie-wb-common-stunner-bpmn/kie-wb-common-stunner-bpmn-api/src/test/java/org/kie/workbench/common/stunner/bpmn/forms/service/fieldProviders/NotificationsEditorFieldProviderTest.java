@@ -18,14 +18,22 @@ package org.kie.workbench.common.stunner.bpmn.forms.service.fieldProviders;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.forms.model.TypeInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationTypeListValue;
 import org.kie.workbench.common.stunner.bpmn.forms.model.NotificationsEditorFieldDefinition;
 import org.kie.workbench.common.stunner.bpmn.forms.model.NotificationsEditorFieldType;
+import org.mockito.Mock;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 public class NotificationsEditorFieldProviderTest {
 
     private NotificationsEditorFieldProvider notificationsEditorFieldProviderUnderTest;
+
+    @Mock
+    private TypeInfo typeInfo;
 
     @Before
     public void setUp() {
@@ -75,5 +83,18 @@ public class NotificationsEditorFieldProviderTest {
 
         // Verify the results
         assertEquals(NotificationsEditorFieldDefinition.FIELD_TYPE, result.getFieldType());
+    }
+
+    @Test
+    public void testCreateFieldByType() {
+        assertTrue(notificationsEditorFieldProviderUnderTest.createFieldByType(null) instanceof NotificationsEditorFieldDefinition);
+    }
+
+    @Test
+    public void testDoRegisterFields() {
+        notificationsEditorFieldProviderUnderTest = spy(notificationsEditorFieldProviderUnderTest);
+        notificationsEditorFieldProviderUnderTest.doRegisterFields();
+        assertEquals(1, notificationsEditorFieldProviderUnderTest.getSupportedTypes().length);
+        assertEquals(NotificationTypeListValue.class.getName(), notificationsEditorFieldProviderUnderTest.getSupportedTypes()[0]);
     }
 }

@@ -72,15 +72,15 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void testEmptyNotificationValue(){
+    public void testEmptyNotificationValue() {
         boolean result = validator.isValid(new NotificationValue(), context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
     }
 
     @Test
-    public void testNegativeExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void testNegativeExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("-1d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
@@ -88,8 +88,8 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void testIsTooBigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void testIsTooBigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("1111111111111111111111111111111111111111111d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
@@ -97,8 +97,8 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test1DigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void test1DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("1d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -106,8 +106,8 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test2DigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void test2DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("11d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -115,8 +115,8 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test3DigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void test3DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -124,16 +124,16 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test4DigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void test4DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("1111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
     }
 
     @Test
-    public void test5DigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void test5DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("11111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -141,16 +141,16 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test10DigExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void test10DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("1111111111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
     }
 
     @Test
-    public void test2147483647ExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void testIntMaxExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("2147483647d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
@@ -158,8 +158,8 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     }
 
     @Test
-    public void test2147483648ExpiresAtNotificationValue(){
-        NotificationValue value =  new NotificationValue();
+    public void testIntOverflowExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
         value.setExpiresAt("2147483648d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);

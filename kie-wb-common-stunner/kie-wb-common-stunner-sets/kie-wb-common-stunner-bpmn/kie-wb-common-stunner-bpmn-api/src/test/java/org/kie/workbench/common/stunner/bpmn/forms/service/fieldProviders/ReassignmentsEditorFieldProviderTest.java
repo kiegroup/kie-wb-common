@@ -18,10 +18,13 @@ package org.kie.workbench.common.stunner.bpmn.forms.service.fieldProviders;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentTypeListValue;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ReassignmentsEditorFieldDefinition;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ReassignmentsEditorFieldType;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
 public class ReassignmentsEditorFieldProviderTest {
 
@@ -75,5 +78,18 @@ public class ReassignmentsEditorFieldProviderTest {
 
         // Verify the results
         assertEquals(ReassignmentsEditorFieldDefinition.FIELD_TYPE, result.getFieldType());
+    }
+
+    @Test
+    public void testCreateFieldByType() {
+        assertTrue(reassignmentsEditorFieldProviderUnderTest.createFieldByType(null) instanceof ReassignmentsEditorFieldDefinition);
+    }
+
+    @Test
+    public void testDoRegisterFields() {
+        reassignmentsEditorFieldProviderUnderTest = spy(reassignmentsEditorFieldProviderUnderTest);
+        reassignmentsEditorFieldProviderUnderTest.doRegisterFields();
+        assertEquals(1, reassignmentsEditorFieldProviderUnderTest.getSupportedTypes().length);
+        assertEquals(ReassignmentTypeListValue.class.getName(), reassignmentsEditorFieldProviderUnderTest.getSupportedTypes()[0]);
     }
 }
