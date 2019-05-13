@@ -16,24 +16,23 @@
 
 package org.kie.workbench.common.dmn.showcase.backend.workarounds;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.enterprise.inject.Specializes;
 
-import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
-import org.kie.workbench.common.dmn.backend.editors.included.DMNIncludedModelsServiceImpl;
+import org.kie.workbench.common.dmn.backend.editors.common.DMNIncludedModelFactory;
+import org.kie.workbench.common.dmn.backend.editors.types.exceptions.DMNIncludeModelCouldNotBeCreatedException;
+import org.uberfire.backend.vfs.Path;
 
 @Specializes
-public class MockDMNIncludeModelsServiceImpl extends DMNIncludedModelsServiceImpl {
+public class MockDMNIncludedModelFactory extends DMNIncludedModelFactory {
 
-    public MockDMNIncludeModelsServiceImpl() {
-        super(null, null, null);
+    public MockDMNIncludedModelFactory() {
+        super(null, null);
     }
 
     @Override
-    public List<DMNIncludedModel> loadModels(final WorkspaceProject workspaceProject) {
-        return Collections.emptyList();
+    public DMNIncludedModel create(final Path path) throws DMNIncludeModelCouldNotBeCreatedException {
+        throw new DMNIncludeModelCouldNotBeCreatedException();
     }
 }
+
