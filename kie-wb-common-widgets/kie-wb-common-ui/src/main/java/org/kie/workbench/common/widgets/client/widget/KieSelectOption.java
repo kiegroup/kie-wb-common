@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.projecteditor.util;
+package org.kie.workbench.common.widgets.client.widget;
 
-import org.junit.Test;
+public class KieSelectOption {
 
-import static org.junit.Assert.*;
+    public final String value;
+    public final String label;
 
-public class NewWorkspaceProjectUtilsTest {
-
-    @Test
-    public void sanitizeProjectNameTest() {
-        assertEquals("project-name",
-                     NewWorkspaceProjectUtils.sanitizeProjectName("project-n a*m?e!"));
+    public KieSelectOption(final String label,
+                           final String value) {
+        this.label = label;
+        this.value = value;
     }
 }
