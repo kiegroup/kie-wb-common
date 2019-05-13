@@ -26,21 +26,20 @@ import javax.inject.Inject;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
-public class KieSelectElement {
+public class KieSelectElement implements KieSelectElementBase {
 
     private final View view;
-    private final OptionsListPresenter optionsListPresenter;
+    private final KieSelectOptionsListPresenter optionsListPresenter;
     private final Elemental2DomUtil elemental2DomUtil;
 
     Consumer<String> onChange;
 
     @Inject
     public KieSelectElement(final View view,
-                            final OptionsListPresenter optionsListPresenter,
+                            final KieSelectOptionsListPresenter optionsListPresenter,
                             final Elemental2DomUtil elemental2DomUtil) {
         this.view = view;
         this.optionsListPresenter = optionsListPresenter;
@@ -55,7 +54,7 @@ public class KieSelectElement {
     }
 
     public void setup(final Element element,
-                      final List<Option> options,
+                      final List<KieSelectOption> options,
                       final String initialValue,
                       final Consumer<String> onChange) {
 
@@ -95,53 +94,5 @@ public class KieSelectElement {
         void setValue(final String value);
 
         String getValue();
-    }
-
-    public static class Option {
-
-        public final String value;
-        public final String label;
-
-        public Option(final String label, final String value) {
-            this.label = label;
-            this.value = value;
-        }
-    }
-
-    @Dependent
-    public static class OptionElement extends ListItemPresenter<Option, KieSelectElement, KieSelectElementView.Option> {
-
-        private Option option;
-
-        @Inject
-        public OptionElement(final KieSelectElementView.Option view) {
-            super(view);
-        }
-
-        @Override
-        public OptionElement setup(final Option option,
-                                   final KieSelectElement parentPresenter) {
-            this.option = option;
-
-            view.init(this);
-            view.setLabel(option.label);
-            view.setValue(option.value);
-
-            return this;
-        }
-
-        @Override
-        public Option getObject() {
-            return option;
-        }
-    }
-
-    @Dependent
-    public static class OptionsListPresenter extends ListPresenter<Option, OptionElement> {
-
-        @Inject
-        public OptionsListPresenter(final ManagedInstance<OptionElement> itemPresenters) {
-            super(itemPresenters);
-        }
     }
 }

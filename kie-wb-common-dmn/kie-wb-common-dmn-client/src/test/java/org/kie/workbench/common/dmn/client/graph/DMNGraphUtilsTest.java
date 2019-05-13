@@ -16,9 +16,12 @@
 
 package org.kie.workbench.common.dmn.client.graph;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -34,6 +37,7 @@ import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiag
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -106,5 +110,28 @@ public class DMNGraphUtilsTest {
     @Test
     public void testGetDefinitionsWithNoNodes() {
         assertNull(utils.getDefinitions());
+    }
+
+    @Test
+    public void testGetDiagram() {
+        final Diagram actualDiagram = utils.getDiagram();
+        assertEquals(diagram, actualDiagram);
+    }
+
+    @Test
+    public void testGetCanvasHandler() {
+        final CanvasHandler actualCanvasHandler = utils.getCanvasHandler();
+        assertEquals(canvasHandler, actualCanvasHandler);
+    }
+
+    @Test
+    public void testGetDRGElements() {
+
+        final List<DRGElement> expectedDRGElements = asList(mock(DRGElement.class), mock(DRGElement.class));
+        when(dmnDiagramUtils.getNodes(diagram)).thenReturn(expectedDRGElements);
+
+        final List<DRGElement> actualDRGElements = utils.getDRGElements();
+
+        assertEquals(expectedDRGElements, actualDRGElements);
     }
 }
