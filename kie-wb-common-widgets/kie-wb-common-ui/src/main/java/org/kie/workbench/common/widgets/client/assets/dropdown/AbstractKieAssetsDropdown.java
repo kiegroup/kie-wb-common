@@ -25,8 +25,6 @@ import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 
 import elemental2.dom.HTMLElement;
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
 public abstract class AbstractKieAssetsDropdown implements KieAssetsDropdown {
@@ -81,7 +79,7 @@ public abstract class AbstractKieAssetsDropdown implements KieAssetsDropdown {
     @Override
     public Optional<KieAssetsDropdownItem> getValue() {
         String currentValue = view.getValue();
-        return  kieAssets
+        return kieAssets
                 .stream()
                 .filter(kieAsset -> Objects.equals(currentValue, kieAsset.getValue()))
                 .findAny();

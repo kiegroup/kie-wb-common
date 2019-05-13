@@ -26,7 +26,6 @@ public abstract class SubmarineKieAssetsDropdown extends AbstractKieAssetsDropdo
 
     protected final IsSubmarine isSubmarine;
 
-
     public SubmarineKieAssetsDropdown(final SubmarineKieAssetsDropdown.View view,
                                       final IsSubmarine isSubmarine,
                                       final KieAssetsDropdownItemsProvider dataProvider) {
@@ -40,7 +39,7 @@ public abstract class SubmarineKieAssetsDropdown extends AbstractKieAssetsDropdo
             clear();
             initializeInput();
         } else {
-           super.loadAssets();
+            super.loadAssets();
         }
     }
 
@@ -53,12 +52,12 @@ public abstract class SubmarineKieAssetsDropdown extends AbstractKieAssetsDropdo
 
     @Override
     public void initializeDropdown() {
-        ((SubmarineKieAssetsDropdown.View)view).enableDropdownMode();
+        ((SubmarineKieAssetsDropdown.View) view).enableDropdownMode();
         super.initializeDropdown();
     }
 
     protected void initializeInput() {
-        ((SubmarineKieAssetsDropdown.View)view).enableInputMode();
+        ((SubmarineKieAssetsDropdown.View) view).enableInputMode();
         view.initialize();
     }
 
@@ -71,7 +70,8 @@ public abstract class SubmarineKieAssetsDropdown extends AbstractKieAssetsDropdo
         }
     }
 
-    public interface View extends AbstractKieAssetsDropdown.View, IsElement {
+    public interface View extends AbstractKieAssetsDropdown.View,
+                                  IsElement {
 
         void enableInputMode();
 

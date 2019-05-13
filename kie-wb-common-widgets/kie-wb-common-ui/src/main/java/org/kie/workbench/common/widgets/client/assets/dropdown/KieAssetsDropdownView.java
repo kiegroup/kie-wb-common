@@ -38,16 +38,11 @@ public class KieAssetsDropdownView implements KieAssetsDropdown.View {
     public static final String HIDDEN_CSS_CLASS = "hidden";
 
     public static final String SELECT_PICKER_SUBTEXT_ATTRIBUTE = "data-subtext";
-
-    protected KieAssetsDropdown presenter;
-
     @DataField("native-select")
     protected final HTMLSelectElement nativeSelect;
-
     protected final HTMLOptionElement htmlOptionElement;
-
     protected final TranslationService translationService;
-
+    protected KieAssetsDropdown presenter;
 
     @Inject
     public KieAssetsDropdownView(final HTMLSelectElement nativeSelect,

@@ -22,10 +22,8 @@ import static org.mockito.Mockito.when;
 
 public abstract class AbstractDropdownTest {
 
-
     protected final static String KIEASSETSDROPDOWNVIEW_SELECT = "KIEASSETSDROPDOWNVIEW_SELECT";
     protected final static String DEFAULT_VALUE = "DEFAULT_VALUE";
-
 
     @Mock
     protected HTMLElement htmlElementMock;
@@ -33,15 +31,12 @@ public abstract class AbstractDropdownTest {
     @Mock
     protected KieAssetsDropdownItem kieAssetsDropdownItemMock;
 
-    protected KieAssetsDropdown dropdown;
-
-    protected KieAssetsDropdown.View viewMock;
-
-
-
     protected void commonSetup() {
-        when(viewMock.getElement()).thenReturn(htmlElementMock);
-        when(viewMock.getValue()).thenReturn(DEFAULT_VALUE);
+        when(getViewMock().getElement()).thenReturn(htmlElementMock);
+        when(getViewMock().getValue()).thenReturn(DEFAULT_VALUE);
     }
 
+    protected abstract KieAssetsDropdown.View getViewMock();
+
+    protected abstract KieAssetsDropdown getDropdown();
 }

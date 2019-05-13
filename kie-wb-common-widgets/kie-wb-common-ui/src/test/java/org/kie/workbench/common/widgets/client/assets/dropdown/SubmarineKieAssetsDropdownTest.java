@@ -32,7 +32,6 @@ import org.kie.workbench.common.widgets.client.submarine.IsSubmarine;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
-import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -48,7 +47,6 @@ import static org.mockito.Mockito.when;
 @RunWith(GwtMockitoTestRunner.class)
 public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTest {
 
-
     @Mock
     private IsSubmarine isSubmarine;
 
@@ -58,12 +56,13 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     @Mock
     private SubmarineKieAssetsDropdownView viewlocalMock;
 
+    @Mock
+    private KieAssetsDropdown dropdownLocal;
 
     @Before
     public void setup() {
-        viewMock = viewlocalMock;
         when(isSubmarine.get()).thenReturn(false);
-        dropdown = spy(new SubmarineKieAssetsDropdown(viewlocalMock, isSubmarine, dataProviderMock) {
+        dropdownLocal = spy(new SubmarineKieAssetsDropdown(viewlocalMock, isSubmarine, dataProviderMock) {
             {
                 onValueChangeHandler = onValueChangeHandlerMock;
                 this.kieAssets.addAll(assetList);
@@ -76,8 +75,8 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     public void testRegisterOnChangeHandler() {
         final Command command = mock(Command.class);
 
-        dropdown.registerOnChangeHandler(command);
-        dropdown.onValueChanged();
+        getDropdown().registerOnChangeHandler(command);
+        getDropdown().onValueChanged();
 
         verify(command).execute();
     }
@@ -87,45 +86,45 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
 
         when(isSubmarine.get()).thenReturn(true);
 
-        dropdown.loadAssets();
+        getDropdown().loadAssets();
 
-        verify(dropdown).clear();
+        verify(getDropdown()).clear();
         verify(viewlocalMock).enableInputMode();
-        verify(viewMock).initialize();
+        verify(getViewMock()).initialize();
     }
 
     @Test
     public void testLoadAssetsWhenEnvIsNotSubmarine() {
 
-        doReturn(kieAssetsConsumer).when((SubmarineKieAssetsDropdown)dropdown).getAssetListConsumer();
+        doReturn(kieAssetsConsumer).when((SubmarineKieAssetsDropdown) getDropdown()).getAssetListConsumer();
 
-        dropdown.loadAssets();
+        getDropdown().loadAssets();
 
-        verify(dropdown).clear();
+        verify(getDropdown()).clear();
         verify(viewlocalMock).enableDropdownMode();
         verify(dataProviderMock).getItems(kieAssetsConsumer);
     }
 
     @Test
     public void testInitialize() {
-        dropdown.initialize();
-        verify(viewMock).refreshSelectPicker();
+        getDropdown().initialize();
+        verify(getViewMock()).refreshSelectPicker();
     }
 
     @Test
     public void testInitializeWhenItIsNotSubmarine() {
         when(isSubmarine.get()).thenReturn(true);
-        dropdown.initialize();
-        verify(viewMock, never()).refreshSelectPicker();
+        getDropdown().initialize();
+        verify(getViewMock(), never()).refreshSelectPicker();
     }
 
     @Test
     public void testGetElement() {
 
         final HTMLElement expectedElement = mock(HTMLElement.class);
-        when(viewMock.getElement()).thenReturn(expectedElement);
+        when(getViewMock().getElement()).thenReturn(expectedElement);
 
-        final HTMLElement actualElement = dropdown.getElement();
+        final HTMLElement actualElement = getDropdown().getElement();
 
         assertEquals(expectedElement, actualElement);
     }
@@ -133,23 +132,23 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     @Test
     public void testGetValue() {
         final List<KieAssetsDropdownItem> kieAssets = IntStream.range(0, 4).mapToObj(i -> {
-            final KieAssetsDropdownItem toReturn =  mock(KieAssetsDropdownItem.class);
+            final KieAssetsDropdownItem toReturn = mock(KieAssetsDropdownItem.class);
             when(toReturn.getValue()).thenReturn("item" + i);
             return toReturn;
         }).collect(Collectors.toList());
 
-        when(viewMock.getValue()).thenReturn("item2");
-        ((SubmarineKieAssetsDropdown)dropdown).kieAssets.clear();
-        ((SubmarineKieAssetsDropdown)dropdown).kieAssets.addAll(kieAssets);
-        final Optional<KieAssetsDropdownItem> retrieved = dropdown.getValue();
+        when(getViewMock().getValue()).thenReturn("item2");
+        ((SubmarineKieAssetsDropdown) getDropdown()).kieAssets.clear();
+        ((SubmarineKieAssetsDropdown) getDropdown()).kieAssets.addAll(kieAssets);
+        final Optional<KieAssetsDropdownItem> retrieved = getDropdown().getValue();
         assertTrue(retrieved.isPresent());
         assertEquals("item2", retrieved.get().getValue());
     }
 
     @Test
     public void testGetValueWhenOptionDoesNotExist() {
-        ((SubmarineKieAssetsDropdown)dropdown).kieAssets.clear();
-        assertFalse(dropdown.getValue().isPresent());
+        ((SubmarineKieAssetsDropdown) getDropdown()).kieAssets.clear();
+        assertFalse(getDropdown().getValue().isPresent());
     }
 
     @Test
@@ -158,9 +157,9 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
         final String expectedValue = "value";
 
         when(isSubmarine.get()).thenReturn(true);
-        when(viewMock.getValue()).thenReturn(expectedValue);
+        when(getViewMock().getValue()).thenReturn(expectedValue);
 
-        final Optional<KieAssetsDropdownItem> value = dropdown.getValue();
+        final Optional<KieAssetsDropdownItem> value = getDropdown().getValue();
 
         assertTrue(value.isPresent());
         assertEquals(expectedValue, value.get().getValue());
@@ -169,16 +168,25 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     @Test
     public void getAssetListConsumer() {
         final List<KieAssetsDropdownItem> expectedDropdownItems = new ArrayList<>();
-        ((SubmarineKieAssetsDropdown)dropdown).getAssetListConsumer().accept(expectedDropdownItems);
-        verify(((SubmarineKieAssetsDropdown)dropdown), times(1)).assetListConsumerMethod(eq(expectedDropdownItems));
+        ((SubmarineKieAssetsDropdown) getDropdown()).getAssetListConsumer().accept(expectedDropdownItems);
+        verify(((SubmarineKieAssetsDropdown) getDropdown()), times(1)).assetListConsumerMethod(eq(expectedDropdownItems));
     }
 
     @Test
     public void assetListConsumerMethod() {
-        ((SubmarineKieAssetsDropdown)dropdown).assetListConsumerMethod(assetList);
-        assetList.forEach(item -> verify(viewMock).addValue(item));
-        verify(viewMock).refreshSelectPicker();
-        verify(viewMock).initialize();
+        ((SubmarineKieAssetsDropdown) getDropdown()).assetListConsumerMethod(assetList);
+        assetList.forEach(item -> verify(getViewMock()).addValue(item));
+        verify(getViewMock()).refreshSelectPicker();
+        verify(getViewMock()).initialize();
     }
-    
+
+    @Override
+    protected KieAssetsDropdown getDropdown() {
+        return dropdownLocal;
+    }
+
+    @Override
+    protected KieAssetsDropdown.View getViewMock() {
+        return viewlocalMock;
+    }
 }

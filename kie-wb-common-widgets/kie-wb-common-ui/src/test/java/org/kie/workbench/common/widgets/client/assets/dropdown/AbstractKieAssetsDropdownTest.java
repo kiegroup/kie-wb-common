@@ -52,7 +52,6 @@ public class AbstractKieAssetsDropdownTest extends AbstractDropdownTest {
     @Mock
     protected Command onValueChangeHandlerMock;
 
-
     protected List<KieAssetsDropdownItem> assetList = IntStream.range(0, 3)
             .mapToObj(i -> new KieAssetsDropdownItem("File_" + i + ".txt", "", DEFAULT_VALUE, new HashMap<>()))
             .collect(Collectors.toList());
@@ -60,10 +59,12 @@ public class AbstractKieAssetsDropdownTest extends AbstractDropdownTest {
     @Mock
     private KieAssetsDropdownView viewlocalMock;
 
+    @Mock
+    private KieAssetsDropdown dropdownLocal;
+
     @Before
     public void setup() {
-        viewMock = viewlocalMock;
-        dropdown = spy(new AbstractKieAssetsDropdown(viewMock, dataProviderMock) {
+        dropdownLocal = spy(new AbstractKieAssetsDropdown(getViewMock(), dataProviderMock) {
             {
                 onValueChangeHandler = onValueChangeHandlerMock;
                 this.kieAssets.addAll(assetList);
@@ -74,74 +75,84 @@ public class AbstractKieAssetsDropdownTest extends AbstractDropdownTest {
 
     @Test
     public void init() {
-        dropdown.init();
-        verify(viewMock, times(1)).init(eq(dropdown));
+        getDropdown().init();
+        verify(getViewMock(), times(1)).init(eq(getDropdown()));
     }
 
     @Test
     public void loadAssets() {
-        dropdown.loadAssets();
-        verify(dropdown, times(1)).clear();
-        verify(dropdown, times(1)).initializeDropdown();
+        getDropdown().loadAssets();
+        verify(getDropdown(), times(1)).clear();
+        verify(getDropdown(), times(1)).initializeDropdown();
     }
 
     @Test
     public void initialize() {
-        dropdown.initialize();
-        verify(viewMock, times(1)).refreshSelectPicker();
+        getDropdown().initialize();
+        verify(getViewMock(), times(1)).refreshSelectPicker();
     }
 
     @Test
     public void clear() {
-        dropdown.clear();
-        verify(viewMock, times(1)).clear();
+        getDropdown().clear();
+        verify(getViewMock(), times(1)).clear();
     }
 
     @Test
     public void getElement() {
-        final HTMLElement retrieved = dropdown.getElement();
-        verify(viewMock, times(1)).getElement();
+        final HTMLElement retrieved = getDropdown().getElement();
+        verify(getViewMock(), times(1)).getElement();
         assertEquals(htmlElementMock, retrieved);
     }
 
     @Test
     public void getValue() {
-        when(viewMock.getValue()).thenReturn(DEFAULT_VALUE);
-        Optional<KieAssetsDropdownItem> retrieved = dropdown.getValue();
+        when(getViewMock().getValue()).thenReturn(DEFAULT_VALUE);
+        Optional<KieAssetsDropdownItem> retrieved = getDropdown().getValue();
         assertNotNull(retrieved);
         assertTrue(retrieved.isPresent());
-        verify(viewMock, times(1)).getValue();
-        reset(viewMock);
-        when(viewMock.getValue()).thenReturn("UNKNOWN");
-        retrieved = dropdown.getValue();
+        verify(getViewMock(), times(1)).getValue();
+        reset(getViewMock());
+        when(getViewMock().getValue()).thenReturn("UNKNOWN");
+        retrieved = getDropdown().getValue();
         assertNotNull(retrieved);
         assertFalse(retrieved.isPresent());
     }
 
     @Test
     public void assetListConsumerMethod() {
-        ((AbstractKieAssetsDropdown) dropdown).assetListConsumerMethod(assetList);
+        ((AbstractKieAssetsDropdown) getDropdown()).assetListConsumerMethod(assetList);
         assetList.forEach(asset ->
-                                  verify(dropdown, times(1)).addValue(eq(asset)));
-        verify(viewMock, times(1)).refreshSelectPicker();
-        verify(viewMock, times(1)).initialize();
+                                  verify(getDropdown(), times(1)).addValue(eq(asset)));
+        verify(getViewMock(), times(1)).refreshSelectPicker();
+        verify(getViewMock(), times(1)).initialize();
     }
 
     @Test
     public void onValueChanged() {
-        dropdown.onValueChanged();
+        getDropdown().onValueChanged();
         verify(onValueChangeHandlerMock, times(1)).execute();
     }
 
     @Test
     public void initializeDropdown() {
-        dropdown.initializeDropdown();
+        getDropdown().initializeDropdown();
         verify(dataProviderMock, times(1)).getItems(isA(Consumer.class));
     }
 
     @Test
     public void addValue() {
-        dropdown.addValue(kieAssetsDropdownItemMock);
-        verify(viewMock, times(1)).addValue(eq(kieAssetsDropdownItemMock));
+        getDropdown().addValue(kieAssetsDropdownItemMock);
+        verify(getViewMock(), times(1)).addValue(eq(kieAssetsDropdownItemMock));
+    }
+
+    @Override
+    protected KieAssetsDropdown getDropdown() {
+        return dropdownLocal;
+    }
+
+    @Override
+    protected KieAssetsDropdown.View getViewMock() {
+        return viewlocalMock;
     }
 }

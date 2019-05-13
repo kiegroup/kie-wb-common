@@ -87,5 +87,4 @@ public class SubmarineKieAssetsDropdownView extends KieAssetsDropdownView implem
         fallbackInput.value = event.target.value;
         super.onDropdownChangeHandlerMethod(event);
     }
-
 }

@@ -32,7 +32,6 @@ import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerTarget;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.widgets.client.resources.i18n.KieWorkbenchWidgetsConstants.KieAssetsDropdownView_Select;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -169,5 +168,15 @@ public class KieAssetsDropdownViewTest extends AbstractDropdownTest {
         eventMock.target = targetMock;
         kieAssetsDropdownView.onDropdownChangeHandlerMethod(eventMock);
         verify(presenterMock, times(1)).onValueChanged();
+    }
+
+    @Override
+    protected KieAssetsDropdown getDropdown() {
+        return null;
+    }
+
+    @Override
+    protected KieAssetsDropdown.View getViewMock() {
+        return kieAssetsDropdownView;
     }
 }
