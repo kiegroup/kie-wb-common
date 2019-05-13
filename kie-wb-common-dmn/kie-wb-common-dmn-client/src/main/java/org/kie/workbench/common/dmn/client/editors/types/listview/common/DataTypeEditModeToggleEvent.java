@@ -34,6 +34,6 @@ public class DataTypeEditModeToggleEvent implements UberFireEvent {
     }
 
     public DataTypeListItem getItem() {
-        return this.item;
+        return item;
     }
 }
