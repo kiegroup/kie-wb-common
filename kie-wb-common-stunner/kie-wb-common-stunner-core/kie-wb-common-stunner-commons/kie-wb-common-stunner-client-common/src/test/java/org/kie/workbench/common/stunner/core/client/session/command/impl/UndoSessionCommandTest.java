@@ -82,7 +82,7 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
 
     @Override
     protected AbstractClientSessionCommand<EditorSession> getCommand() {
-        return new UndoSessionCommand(sessionManager, sessionCommandManager);
+        return new UndoSessionCommand(sessionCommandManager);
     }
 
     @Override
