@@ -23,6 +23,8 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 
+import static org.junit.Assert.assertEquals;
+
 public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/startNoneEvents.bpmn";
@@ -31,6 +33,8 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
     private static final String EMPTY_TOP_LEVEL_EVENT_ID = "1BA1C8C8-16DA-49A5-9C04-2F165B5A4273";
     private static final String FILLED_SUBPROCESS_LEVEL_EVENT_ID = "6B710126-9C80-4409-9A49-4EECD2F88A14";
     private static final String EMPTY_SUBPROCESS_LEVEL_EVENT_ID = "6A19FF0A-296B-4BC5-B951-C380B8E7AB56";
+
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 11;
 
@@ -49,6 +53,10 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
         StartNoneEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertEquals(filledTop.getExecutionSet().getSlaDueDate().getValue(), SLA_DUE_DATE);
+        }
     }
 
     @Test
@@ -59,6 +67,10 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
         StartNoneEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertEquals(emptyTop.getExecutionSet().getSlaDueDate().getValue(), "");
+        }
     }
 
     @Test
@@ -72,6 +84,10 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
         StartNoneEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertEquals(filledSubprocess.getExecutionSet().getSlaDueDate().getValue(), SLA_DUE_DATE);
+        }
     }
 
     @Test
@@ -82,6 +98,10 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
         StartNoneEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertEquals(emptySubprocess.getExecutionSet().getSlaDueDate().getValue(), "");
+        }
     }
 
     @Override
