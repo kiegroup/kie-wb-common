@@ -299,7 +299,7 @@ public class DataTypeList {
                 getCurrentEditingItem().disableEditMode();
             }
             setCurrentEditingItem(event.getItem());
-        } else if (event.getItem() == getCurrentEditingItem()) {
+        } else if (Objects.equals(event.getItem(), getCurrentEditingItem())) {
             setCurrentEditingItem(null);
         }
     }
