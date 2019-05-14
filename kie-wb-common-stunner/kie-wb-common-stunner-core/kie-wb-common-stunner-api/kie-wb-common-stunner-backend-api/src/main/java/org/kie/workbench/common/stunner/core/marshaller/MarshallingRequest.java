@@ -23,20 +23,28 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
+/**
+ * Encapsulates the attriutes required on a marshalling process.
+ * Includes the {@link Mode} that represents how the marshaller should handle errors and exceptions.
+ *
+ * @param <I> represents the input type
+ * @param <M> represents the metadata type
+ */
 @Portable
 public class MarshallingRequest<I, M extends Metadata> {
 
     /**
-     * Mode
+     * Mode of the marshalling process
      * <p>
      * ERROR:
      * - return errors when it has unsupported nodes
-     * - error messages
+     * - return ERROR messages
      * AUTO:
-     * - try to adapt unsupported nodes do generic ones
-     * - warn messages
+     * - try to adapt and convert unsupported nodes to generic ones
+     * - retun warn messages
+     * - ignore unsupported nodes that doesn't have options to be converted
      * IGNORE:
-     * - remove unsupported nodes and relationships to them
+     * - remove all unsupported nodes and relationships to them
      * - warn messages
      */
     public enum Mode {

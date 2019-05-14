@@ -16,10 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.definition.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -53,17 +51,16 @@ public class DiagramMarshallerTest {
 
     private MarshallingRequest request;
 
-    @Before
-    public void setUp() {
-
+    @Test
+    public void unmarshallWithValidation() throws Exception {
         tested = spy(new DiagramMarshaller() {
             @Override
-            public Graph unmarshall(Metadata metadata, InputStream input) throws IOException {
+            public Graph unmarshall(Metadata metadata, InputStream input) {
                 return graph;
             }
 
             @Override
-            public String marshall(Diagram diagram) throws IOException {
+            public String marshall(Diagram diagram) {
                 return null;
             }
 
@@ -73,16 +70,12 @@ public class DiagramMarshallerTest {
             }
         });
 
-        request =
-                MarshallingRequest.builder()
-                        .metadata(metadata)
-                        .input(input)
-                        .mode(MarshallingRequest.Mode.ERROR)
-                        .build();
-    }
+        request = MarshallingRequest.builder()
+                .metadata(metadata)
+                .input(input)
+                .mode(MarshallingRequest.Mode.ERROR)
+                .build();
 
-    @Test
-    public void unmarshallWithValidation() throws Exception {
         final MarshallingResponse response = tested.unmarshallWithValidation(request);
         verify(tested).unmarshall(metadata, input);
         assertEquals(response.getResult().orElse(null), graph);
@@ -93,12 +86,12 @@ public class DiagramMarshallerTest {
     public void unmarshallWithValidationError() throws Exception {
         tested = spy(new DiagramMarshaller() {
             @Override
-            public Graph unmarshall(Metadata metadata, InputStream input) throws IOException {
+            public Graph unmarshall(Metadata metadata, InputStream input) {
                 throw new RuntimeException(MESSAGE);
             }
 
             @Override
-            public String marshall(Diagram diagram) throws IOException {
+            public String marshall(Diagram diagram) {
                 return null;
             }
 
@@ -107,6 +100,12 @@ public class DiagramMarshallerTest {
                 return null;
             }
         });
+
+        request = MarshallingRequest.builder()
+                .metadata(metadata)
+                .input(input)
+                .mode(MarshallingRequest.Mode.ERROR)
+                .build();
 
         final MarshallingResponse response = tested.unmarshallWithValidation(request);
         verify(tested).unmarshall(metadata, input);

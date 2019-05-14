@@ -25,6 +25,10 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
+/**
+ * Encapcsulates the response of a marshalling process, containing messages details and the respective {@link State}.
+ * @param <T> result type in case of marshalling success.
+ */
 @Portable
 public class MarshallingResponse<T> {
 
