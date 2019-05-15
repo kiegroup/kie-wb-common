@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.subprocesses;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
@@ -26,6 +25,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeFalse;
 
 public class EventSubProcessTest extends SubProcess<EventSubprocess> {
 
@@ -92,12 +92,14 @@ public class EventSubProcessTest extends SubProcess<EventSubprocess> {
         oldRoundTripDiagram = diagram;
     }
 
-    @Ignore("There is a bug in old marshaller. Once, the bug is fixed, the method should be removed only from this class, " +
-            "not from its superclass.\n" +
-            "For more information see https://issues.jboss.org/browse/JBPM-8467")
     @Test
     @Override
     public void testMarshallTopLevelFilledPropertiesSubProcess() {
+        final String ignoreMessage = "There is a bug in old marshaller. Once, the bug is fixed, the " +
+                "method should be removed only from this class, not from its superclass.\n" +
+                "For more information see https://issues.jboss.org/browse/JBPM-8467";
+        assumeFalse(ignoreMessage, isCurrentMarshallerOld());
+        super.testMarshallTopLevelFilledPropertiesSubProcess();
     }
 
     @Test

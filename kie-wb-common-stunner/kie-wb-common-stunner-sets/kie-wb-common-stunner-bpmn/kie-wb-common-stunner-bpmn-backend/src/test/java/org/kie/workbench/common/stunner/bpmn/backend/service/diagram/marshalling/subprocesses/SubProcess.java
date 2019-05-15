@@ -90,6 +90,10 @@ public abstract class SubProcess<T extends BaseSubprocess> extends BPMNDiagramMa
         }
     }
 
+    protected boolean isCurrentMarshallerOld() {
+        return currentMarshaller == OLD;
+    }
+
     private void marshallDiagramWithNewMarshaller() throws Exception {
         setNewDiagram(unmarshall(newMarshaller, getBpmnSubProcessFilePath()));
         setNewRoundTripDiagram(unmarshall(newMarshaller, getStream(newMarshaller.marshall(getNewDiagram()))));
