@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
@@ -29,6 +28,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeFalse;
 
 public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
 
@@ -51,8 +51,8 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
 
     private static final String ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT = "autocomplete";
     private static final String ADHOC_COMPLETION_CONDITION_SCRIPT = "org.kie.api.runtime.process.CaseData(data.get(\"someData\") == true)";
-    private static final String ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL = "mvel";
-    private static final String ADHOC_COMPLETION_CONDITION_LANGUGAE_DROOLS = "drools";
+    private static final String ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL = "mvel";
+    private static final String ADHOC_COMPLETION_CONDITION_LANGUAGE_DROOLS = "drools";
     private static final String ADHOC_ORDERING_SEQUENTIAL = "Sequential";
     private static final String ADHOC_ORDERING_PARALLEL = "Parallel";
 
@@ -79,6 +79,13 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
     private static final String SUBPROCESS_ON_EXIT_ACTION_MVEL = "System.out.println(\"On Exit Action\");\n" +
             "System.out.println(\"`&(^*&^(\\n\\r\");\n" +
             "Object o = kcontext.getVariable(\"hello_world\");";
+
+    private static final String IGNORE_MESSAGE_FOR_INHERETED_TEST = "There is a bug in old marshaller. Once, the bug is fixed, the " +
+            "method should be removed only from this class, not from its superclass.\n" +
+            "For more information see https://issues.jboss.org/browse/JBPM-8462";
+
+    private static final String IGNORE_MESSAGE_FOR_TEST = "There is a bug in old marshaller. Once, the bug is fixed, the test should not be ignored any more.\n" +
+            "For more information see https://issues.jboss.org/browse/JBPM-8462";
 
     private static Diagram<Graph, Metadata> oldDiagram;
     private static Diagram<Graph, Metadata> oldRoundTripDiagram;
@@ -130,35 +137,32 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         oldRoundTripDiagram = diagram;
     }
 
-    @Ignore("There is a bug in old marshaller. Once, the bug is fixed, the method should be removed only from this class, " +
-            "not from its superclass.\n" +
-            "For more information see https://issues.jboss.org/browse/JBPM-8462")
     @Test
     @Override
     public void testMarshallSubProcessLevelEmptyPropertiesSubProcess() {
+        assumeFalse(IGNORE_MESSAGE_FOR_INHERETED_TEST, isCurrentMarshallerOld());
+        super.testMarshallSubProcessLevelEmptyPropertiesSubProcess();
     }
 
-    @Ignore("There is a bug in old marshaller. Once, the bug is fixed, the method should be removed only from this class, " +
-            "not from its superclass.\n" +
-            "For more information see https://issues.jboss.org/browse/JBPM-8462")
     @Test
     @Override
     public void testMarshallTopLevelEmptyPropertiesSubProcess() {
+        assumeFalse(IGNORE_MESSAGE_FOR_INHERETED_TEST, isCurrentMarshallerOld());
+        super.testMarshallTopLevelEmptyPropertiesSubProcess();
     }
 
-    @Ignore("There is a bug in old marshaller. Once, the bug is fixed, the method should be removed only from this class, " +
-            "not from its superclass.\n" +
-            "For more information see https://issues.jboss.org/browse/JBPM-8462")
     @Test
     @Override
     public void testMarshallTopLevelFilledPropertiesSubProcess() {
+        assumeFalse(IGNORE_MESSAGE_FOR_INHERETED_TEST, isCurrentMarshallerOld());
+        super.testMarshallTopLevelFilledPropertiesSubProcess();
     }
 
-    @Ignore("There is a bug in old marshaller. Once, the bug is fixed, the ignore annotation should be removed.\n" +
-            "For more information see https://issues.jboss.org/browse/JBPM-8462")
     @Test
     @Override
     public void testUnmarshallTopLevelEmptyPropertiesSubProcess() {
+        assumeFalse(IGNORE_MESSAGE_FOR_TEST, isCurrentMarshallerOld());
+
         Diagram<Graph, Metadata> diagram = getDiagram();
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
@@ -170,7 +174,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(topLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                           EMPTY_VALUE,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           EMPTY_VALUE,
                                           SUBPROCESS_SCRIPT_JAVA_LANGUAGE,
@@ -204,7 +208,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertAdHocSubProcessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           SUBPROCESS_ON_ENTRY_ACTION_JAVA,
                                           SUBPROCESS_SCRIPT_JAVA_LANGUAGE,
@@ -220,7 +224,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(topLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertAdHocSubProcessExecutionSet(topLevelSubProcessJavascript.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_DROOLS,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_DROOLS,
                                           ADHOC_ORDERING_PARALLEL,
                                           SUBPROCESS_ON_ENTRY_ACTION_JAVASCRIPT,
                                           SUBPROCESS_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -236,7 +240,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(topLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertAdHocSubProcessExecutionSet(topLevelSubProcessMVEL.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           SUBPROCESS_ON_ENTRY_ACTION_MVEL,
                                           SUBPROCESS_SCRIPT_MVEL_LANGUAGE,
@@ -261,7 +265,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(topLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           EMPTY_VALUE,
                                           SUBPROCESS_SCRIPT_JAVA_LANGUAGE,
@@ -270,11 +274,11 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertSubProcessProcessData(topLevelSubProcess.getProcessData(), EMPTY_VALUE);
     }
 
-    @Ignore("There is a bug in old marshaller. Once, the bug is fixed, the ignore annotation should be removed.\n" +
-            "For more information see https://issues.jboss.org/browse/JBPM-8462")
     @Test
     @Override
     public void testUnmarshallSubProcessLevelEmptyPropertiesSubProcess() {
+        assumeFalse(IGNORE_MESSAGE_FOR_TEST, isCurrentMarshallerOld());
+
         Diagram<Graph, Metadata> diagram = getDiagram();
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
@@ -286,7 +290,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(subProcessLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                           EMPTY_VALUE,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           EMPTY_VALUE,
                                           SUBPROCESS_SCRIPT_JAVA_LANGUAGE,
@@ -320,7 +324,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           SUBPROCESS_ON_ENTRY_ACTION_JAVA,
                                           SUBPROCESS_SCRIPT_JAVA_LANGUAGE,
@@ -336,7 +340,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(subProcessLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcessJavascript.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_DROOLS,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_DROOLS,
                                           ADHOC_ORDERING_PARALLEL,
                                           SUBPROCESS_ON_ENTRY_ACTION_JAVASCRIPT,
                                           SUBPROCESS_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -352,7 +356,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(subProcessLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcessMVEL.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           SUBPROCESS_ON_ENTRY_ACTION_MVEL,
                                           SUBPROCESS_SCRIPT_MVEL_LANGUAGE,
@@ -377,7 +381,7 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
         assertGeneralSet(subProcessLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
-                                          ADHOC_COMPLETION_CONDITION_LANGUGAE_MVEL,
+                                          ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
                                           ADHOC_ORDERING_SEQUENTIAL,
                                           EMPTY_VALUE,
                                           SUBPROCESS_SCRIPT_JAVA_LANGUAGE,
