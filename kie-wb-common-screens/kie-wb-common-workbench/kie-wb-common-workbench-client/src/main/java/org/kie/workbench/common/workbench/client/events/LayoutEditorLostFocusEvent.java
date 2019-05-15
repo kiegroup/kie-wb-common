@@ -17,17 +17,17 @@
 package org.kie.workbench.common.workbench.client.events;
 
 /**
- * Focus event launched by those authoring editors built on top of the layout editor. For example, the form editor.
+ * Lost focus event launched by those authoring editors built on top of the layout editor. For example, the form editor.
  */
-public class LayoutEditorFocusEvent {
+public class LayoutEditorLostFocusEvent {
     
     
     private String editorId;
     
-    public LayoutEditorFocusEvent() {
+    public LayoutEditorLostFocusEvent() {
     }
 
-    public LayoutEditorFocusEvent(String editorId) {
+    public LayoutEditorLostFocusEvent(String editorId) {
         this.editorId = editorId;
     }
     
