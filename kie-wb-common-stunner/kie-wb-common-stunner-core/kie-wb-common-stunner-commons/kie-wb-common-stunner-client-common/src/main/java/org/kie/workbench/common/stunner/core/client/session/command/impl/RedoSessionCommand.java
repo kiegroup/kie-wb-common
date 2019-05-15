@@ -110,10 +110,12 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     void onCommandExecuted(final @Observes CanvasCommandExecutedEvent commandExecutedEvent) {
         checkNotNull("commandExecutedEvent",
                      commandExecutedEvent);
-        if (null != commandExecutedEvent.getCommand()) {
-            redoCommandHandler.onCommandExecuted(commandExecutedEvent.getCommand());
+        if (getSession().getCanvasHandler().equals(commandExecutedEvent.getCanvasHandler())) {
+            if (null != commandExecutedEvent.getCommand()) {
+                redoCommandHandler.onCommandExecuted(commandExecutedEvent.getCommand());
+            }
+            checkState();
         }
-        checkState();
     }
 
     @SuppressWarnings("unchecked")
