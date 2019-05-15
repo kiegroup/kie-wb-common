@@ -53,14 +53,19 @@ public class NoInputNodesInImportedDecisionRuleTest {
     @Mock
     protected GraphConnectionContext context;
 
+    @Mock
+    protected View content;
+
+    @Mock
+    protected DynamicReadOnly definition;
+
     @Before
     public void setup() {
         check = spy(new NoInputNodesInImportedDecisionRule());
         final Node target = mock(Node.class);
-        final DynamicReadOnly dynamicReadonly = mock(DynamicReadOnly.class);
-        final View content = mock(View.class);
-        when(dynamicReadonly.isAllowOnlyVisualChange()).thenReturn(true);
-        when(content.getDefinition()).thenReturn(dynamicReadonly);
+
+        when(definition.isAllowOnlyVisualChange()).thenReturn(true);
+        when(content.getDefinition()).thenReturn(definition);
         when(target.getContent()).thenReturn(content);
 
         when(context.getTarget()).thenReturn(Optional.of(target));
@@ -109,7 +114,7 @@ public class NoInputNodesInImportedDecisionRuleTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void checkIsReadOnly() {
+    public void testIsReadOnly() {
         final Node target = mock(Node.class);
         final View content = mock(View.class);
         final DynamicReadOnly dynamicReadonly = mock(DynamicReadOnly.class);
@@ -123,5 +128,21 @@ public class NoInputNodesInImportedDecisionRuleTest {
         assertTrue(actual);
 
         verify(check).isReadOnly(any(Optional.class));
+    }
+
+    @Test
+    public void testAcceptWhenIsExpectedClass() {
+        when(rule.getId()).thenReturn(definition.getClass().getName());
+        boolean actual = check.accepts(rule, context);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testAcceptWhenIsNotExpectedClass() {
+        when(rule.getId()).thenReturn("SomeOtherClass");
+        boolean actual = check.accepts(rule, context);
+
+        assertFalse(actual);
     }
 }

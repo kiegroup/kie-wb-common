@@ -50,7 +50,16 @@ public class NoInputNodesInImportedDecisionRule extends RuleExtensionHandler<NoI
     @Override
     public boolean accepts(final RuleExtension rule,
                            final GraphConnectionContext context) {
-        return true;
+        if (context.getTarget().isPresent()) {
+            final Node<? extends View<?>, ? extends Edge> target = context.getTarget().get();
+            final View<?> content = target.getContent();
+            if (Objects.isNull(content)) {
+                return false;
+            }
+            final Object definition = content.getDefinition();
+            return definition.getClass().getName().equals(rule.getId());
+        }
+        return false;
     }
 
     @Override
