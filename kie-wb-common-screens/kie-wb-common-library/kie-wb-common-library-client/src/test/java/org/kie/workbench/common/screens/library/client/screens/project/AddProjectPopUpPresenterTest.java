@@ -508,6 +508,7 @@ public class AddProjectPopUpPresenterTest {
         doReturn(libraryProjectPreferences).when(loadedLibraryPreferences).getProjectPreferences();
         doReturn("version").when(libraryProjectPreferences).getVersion();
         when(projectContext.getActiveOrganizationalUnit().get().getDefaultGroupId()).thenReturn("group");
+        when(view.getName()).thenReturn("Project Test");
 
         executeParametrizedCommandWith(0, loadedLibraryPreferences).when(libraryPreferences).load(any(ParameterizedCommand.class),
                                                                                                   any(ParameterizedCommand.class));
@@ -518,7 +519,7 @@ public class AddProjectPopUpPresenterTest {
         verify(view).setVersion("version");
         verify(view).setGroupId("group");
         verify(view, never()).setDescription(any());
-        verify(view).setArtifactId("");
+        verify(view).setArtifactId("ProjectTest");
     }
 
     @Test
@@ -532,6 +533,7 @@ public class AddProjectPopUpPresenterTest {
         doReturn(libraryOrganizationalUnitPreferences).when(loadedLibraryPreferences).getOrganizationalUnitPreferences();
         when(libraryOrganizationalUnitPreferences.getGroupId()).thenReturn("group");
         when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.empty());
+        when(view.getName()).thenReturn("Project Test");
 
         executeParametrizedCommandWith(0, loadedLibraryPreferences).when(libraryPreferences).load(any(ParameterizedCommand.class),
                                                                                                   any(ParameterizedCommand.class));
@@ -541,6 +543,6 @@ public class AddProjectPopUpPresenterTest {
         verify(view).setVersion("version");
         verify(view).setGroupId("group");
         verify(view, never()).setDescription(any());
-        verify(view).setArtifactId("");
+        verify(view).setArtifactId("ProjectTest");
     }
 }
