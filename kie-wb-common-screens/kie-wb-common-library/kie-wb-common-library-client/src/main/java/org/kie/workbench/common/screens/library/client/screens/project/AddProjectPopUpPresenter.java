@@ -393,11 +393,15 @@ public class AddProjectPopUpPresenter {
     public void cancel() {
         view.hide();
     }
+
+    public void setDefaultArtifactId() {
+        view.setArtifactId(view.getName().replaceAll(" ", ""));
+    }
     
     public void restoreAdvancedOptions() {
         libraryPreferences.load(loadedLibraryPreferences -> {
             view.setVersion(loadedLibraryPreferences.getProjectPreferences().getVersion());
-            view.setArtifactId("");
+            setDefaultArtifactId();
             view.setGroupId(projectContext.getActiveOrganizationalUnit().isPresent() ? projectContext.getActiveOrganizationalUnit().get().getDefaultGroupId() 
                                                                                      : loadedLibraryPreferences.getOrganizationalUnitPreferences().getGroupId());
         },
