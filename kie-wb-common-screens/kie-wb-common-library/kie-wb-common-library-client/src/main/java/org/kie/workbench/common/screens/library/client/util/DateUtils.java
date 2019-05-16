@@ -30,16 +30,12 @@ public class DateUtils {
     public static final int ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 
     private static final int SEVEN_DAYS = 7;
-    private static final String SPACE = " ";
 
-    private TranslationService ts;
-
-    public DateUtils() {
-    }
+    private TranslationService translationService;
 
     @Inject
-    public DateUtils(TranslationService ts) {
-        this.ts = ts;
+    public DateUtils(TranslationService translationService) {
+        this.translationService = translationService;
     }
 
     public String format(Date date) {
@@ -59,20 +55,20 @@ public class DateUtils {
 
     private String formatInDays(int diffInDays) {
         if (diffInDays == 0) {
-            return ts.getTranslation(LibraryConstants.Today);
+            return translationService.getTranslation(LibraryConstants.Today);
         } else if (diffInDays == 1) {
-            return diffInDays + SPACE + ts.getTranslation(LibraryConstants.DayAgo);
+            return translationService.getTranslation(LibraryConstants.OneDayAgo);
         } else {
-            return diffInDays + SPACE + ts.getTranslation(LibraryConstants.DaysAgo);
+            return translationService.format(LibraryConstants.DaysAgo, diffInDays);
         }
     }
 
     private String formatInWeeks(int diffInDays) {
         int numberOfWeeks = diffInDays / SEVEN_DAYS;
         if (numberOfWeeks <= 1) {
-            return ts.getTranslation(LibraryConstants.OneWeekAgo);
+            return translationService.getTranslation(LibraryConstants.OneWeekAgo);
         } else {
-            return numberOfWeeks + SPACE + ts.getTranslation(LibraryConstants.WeeksAgo);
+            return translationService.format(LibraryConstants.WeeksAgo, numberOfWeeks);
         }
     }
 }

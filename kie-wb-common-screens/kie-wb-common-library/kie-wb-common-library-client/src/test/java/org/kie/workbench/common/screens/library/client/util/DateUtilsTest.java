@@ -35,86 +35,101 @@ public class DateUtilsTest {
     private DateUtils dateUtils;
 
     @Mock
-    private TranslationService ts;
+    private TranslationService translationService;
 
     @Before
     public void setUp() {
-        dateUtils = new DateUtils(ts);
+        dateUtils = new DateUtils(translationService);
     }
 
     private Date createDateFromNow(int daysToSubtract) {
         Date today = new Date();
-        int miliSecondsToSubtract = daysToSubtract * DateUtils.ONE_DAY_IN_MS;
-        Date targetDate = new Date(today.getTime() - miliSecondsToSubtract);
+        int msToSubtract = daysToSubtract * DateUtils.ONE_DAY_IN_MS;
+        Date targetDate = new Date(today.getTime() - msToSubtract);
         return targetDate;
     }
 
     @Test
-    public void printToday() {
-        when(ts.getTranslation(LibraryConstants.Today)).thenReturn("today");
-
+    public void testFormatToday() {
         String expected = "today";
+
+        when(translationService.getTranslation(LibraryConstants.Today)).thenReturn(expected);
+
         String actual = dateUtils.format(new Date());
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void printOneDayAgo() {
-        when(ts.getTranslation(LibraryConstants.DayAgo)).thenReturn("day ago");
-
+    public void testFormatOneDayAgo() {
         String expected = "1 day ago";
-        String actual = dateUtils.format(createDateFromNow(1));
+        int nDays = 1;
+
+        when(translationService.getTranslation(LibraryConstants.OneDayAgo)).thenReturn(expected);
+
+        String actual = dateUtils.format(createDateFromNow(nDays));
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void printTwoDaysAgo() {
-        when(ts.getTranslation(LibraryConstants.DaysAgo)).thenReturn("days ago");
-
+    public void testFormatTwoDaysAgo() {
         String expected = "2 days ago";
-        String actual = dateUtils.format(createDateFromNow(2));
+        int nDays = 2;
+
+        when(translationService.format(LibraryConstants.DaysAgo, nDays)).thenReturn(expected);
+
+        String actual = dateUtils.format(createDateFromNow(nDays));
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void printOneWeekAgo() {
-        when(ts.getTranslation(LibraryConstants.OneWeekAgo)).thenReturn("1 week ago");
-
+    public void testFormatOneWeekAgoWithSevenDays() {
         String expected = "1 week ago";
-        String actual = dateUtils.format(createDateFromNow(7));
+        int nDays = 7;
+
+        when(translationService.getTranslation(LibraryConstants.OneWeekAgo)).thenReturn(expected);
+
+        String actual = dateUtils.format(createDateFromNow(nDays));
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void printOneWeekAgo2() {
-        when(ts.getTranslation(LibraryConstants.OneWeekAgo)).thenReturn("1 week ago");
-
+    public void testFormatOneWeekAgoWithEightDays() {
         String expected = "1 week ago";
-        String actual = dateUtils.format(createDateFromNow(8));
+        int nDays = 8;
+
+        when(translationService.getTranslation(LibraryConstants.OneWeekAgo)).thenReturn(expected);
+
+        String actual = dateUtils.format(createDateFromNow(nDays));
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void printTwoWeeksAgo1() {
-        when(ts.getTranslation(LibraryConstants.WeeksAgo)).thenReturn("weeks ago");
-
+    public void testFormatTwoWeeksAgoWithFourteenDays() {
         String expected = "2 weeks ago";
-        String actual = dateUtils.format(createDateFromNow(14));
+        int nDays = 14;
+        int nWeeks = 2;
+
+        when(translationService.format(LibraryConstants.WeeksAgo, nWeeks)).thenReturn(expected);
+
+        String actual = dateUtils.format(createDateFromNow(nDays));
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void printTwoWeeksAgo() {
-        when(ts.getTranslation(LibraryConstants.WeeksAgo)).thenReturn("weeks ago");
-
+    public void testFormatTwoWeeksAgoWithFifteenDays() {
         String expected = "2 weeks ago";
-        String actual = dateUtils.format(createDateFromNow(15));
+        int nDays = 15;
+        int nWeeks = 2;
+
+        when(translationService.format(LibraryConstants.WeeksAgo, nWeeks)).thenReturn(expected);
+
+        String actual = dateUtils.format(createDateFromNow(nDays));
 
         assertEquals(expected, actual);
     }

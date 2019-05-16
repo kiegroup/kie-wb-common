@@ -570,7 +570,7 @@ public class LibraryConstants {
     public static final String Today = "Today";
 
     @TranslationKey(defaultValue = "")
-    public static final String DayAgo = "DayAgo";
+    public static final String OneDayAgo = "OneDayAgo";
 
     @TranslationKey(defaultValue = "")
     public static final String DaysAgo = "DaysAgo";
