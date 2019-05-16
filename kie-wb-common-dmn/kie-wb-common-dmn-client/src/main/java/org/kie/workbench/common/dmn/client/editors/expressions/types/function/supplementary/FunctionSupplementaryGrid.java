@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -27,17 +28,24 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
+import org.kie.workbench.common.dmn.api.definition.v1_1.IsLiteralExpression;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextGridRowNumberColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextUIModelMapper;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextUIModelMapperHelper;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.util.PMMLValueUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorGridRow;
@@ -50,6 +58,8 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
 public class FunctionSupplementaryGrid extends BaseExpressionGrid<Context, FunctionSupplementaryGridData, ContextUIModelMapper> implements HasListSelectorControl {
 
@@ -150,5 +160,40 @@ public class FunctionSupplementaryGrid extends BaseExpressionGrid<Context, Funct
                                            2);
             });
         });
+    }
+
+    public String getExpressionValue(final String key) {
+        final Optional<Context> oContext = getExpression().get();
+        if (oContext.isPresent()) {
+            final Context context = oContext.get();
+            return context.getContextEntry()
+                    .stream()
+                    .filter(ce -> Objects.equals(key, ce.getVariable().getName().getValue()))
+                    .findFirst()
+                    .map(ContextEntry::getExpression)
+                    .filter(cee -> cee instanceof IsLiteralExpression)
+                    .map(cee -> (IsLiteralExpression) cee)
+                    .map(ile -> PMMLValueUtils.removeQuotes(ile.getText().getValue()))
+                    .orElse("");
+        }
+        return "";
+    }
+
+    public Optional<BaseExpressionGrid<? extends Expression, ? extends GridData, ? extends BaseUIModelMapper>> getExpressionValueEditor(final String key) {
+        final Optional<Context> oContext = getExpression().get();
+        if (oContext.isPresent()) {
+            final Context context = oContext.get();
+            return context.getContextEntry()
+                    .stream()
+                    .filter(ce -> Objects.equals(key, ce.getVariable().getName().getValue()))
+                    .findFirst()
+                    .map(ce -> context.getContextEntry().indexOf(ce))
+                    .map(rowIndex -> model.getCell(rowIndex, ContextUIModelMapperHelper.EXPRESSION_COLUMN_INDEX))
+                    .map(GridCell::getValue)
+                    .filter(value -> value instanceof ExpressionCellValue)
+                    .map(value -> (ExpressionCellValue) value)
+                    .flatMap(ExpressionCellValue::getValue);
+        }
+        return Optional.empty();
     }
 }
