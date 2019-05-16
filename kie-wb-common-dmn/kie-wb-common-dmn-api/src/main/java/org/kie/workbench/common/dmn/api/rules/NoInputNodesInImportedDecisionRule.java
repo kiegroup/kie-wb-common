@@ -57,7 +57,7 @@ public class NoInputNodesInImportedDecisionRule extends RuleExtensionHandler<NoI
                 return false;
             }
             final Object definition = content.getDefinition();
-            return definition.getClass().getName().equals(rule.getId());
+            return Objects.equals(definition.getClass().getName(), rule.getId());
         }
         return false;
     }

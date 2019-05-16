@@ -133,7 +133,7 @@ public class NoInputNodesInImportedDecisionRuleTest {
     @Test
     public void testAcceptWhenIsExpectedClass() {
         when(rule.getId()).thenReturn(definition.getClass().getName());
-        boolean actual = check.accepts(rule, context);
+        final boolean actual = check.accepts(rule, context);
 
         assertTrue(actual);
     }
@@ -141,7 +141,7 @@ public class NoInputNodesInImportedDecisionRuleTest {
     @Test
     public void testAcceptWhenIsNotExpectedClass() {
         when(rule.getId()).thenReturn("SomeOtherClass");
-        boolean actual = check.accepts(rule, context);
+        final boolean actual = check.accepts(rule, context);
 
         assertFalse(actual);
     }
