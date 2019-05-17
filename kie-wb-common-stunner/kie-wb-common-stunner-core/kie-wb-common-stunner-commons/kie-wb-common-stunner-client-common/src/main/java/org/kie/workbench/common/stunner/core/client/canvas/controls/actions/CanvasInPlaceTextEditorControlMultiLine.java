@@ -16,9 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.actions;
 
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -27,9 +25,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingView;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
-@Dependent
-@MultiLineTextEditorBox
-@Default
 public class CanvasInPlaceTextEditorControlMultiLine
         extends AbstractCanvasInPlaceTextEditorControl {
 

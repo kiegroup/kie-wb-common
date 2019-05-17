@@ -247,6 +247,16 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         return this;
     }
 
+    @Override
+    public String getTitleFontFamily() {
+        return text.getFontFamily();
+    }
+
+    @Override
+    public double getTitleFontSize() {
+        return text.getFontSize();
+    }
+
     public WiresTextDecorator setTitleStrokeAlpha(final double strokeAlpha) {
         text.setStrokeAlpha(strokeAlpha);
         return this;

@@ -44,6 +44,12 @@ public interface TextEditorBox<C extends CanvasHandler, E extends Element>
     default double getDisplayOffsetY() {
         return 0.0;
     }
+
+    void setWidth(final double width);
+
+    void setHeight(final double height);
+
+    void setFontSize(final double size);
 }
 
 

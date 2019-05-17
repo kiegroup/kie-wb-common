@@ -60,9 +60,9 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
     static final double SHAPE_EDIT_ALPHA = 0.2d;
     static final double SHAPE_NOT_EDIT_ALPHA = 1.0d;
 
-    private String uuid;
+    protected String uuid;
 
-    private final Command hideFloatingViewOnTimeoutCommand = this::flush;
+    protected final Command hideFloatingViewOnTimeoutCommand = this::flush;
 
     protected abstract FloatingView<IsWidget> getFloatingView();
 
@@ -170,7 +170,9 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
         if (getTextEditorBox().isVisible()) {
             flush();
         }
+
         this.uuid = item.getUUID();
+
         enableShapeEdit();
         getTextEditorBox().show(item);
         final double offsetX = getTextEditorBox().getDisplayOffsetX();
@@ -209,7 +211,7 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
         this.uuid = null;
     }
 
-    private boolean enableShapeEdit() {
+    protected boolean enableShapeEdit() {
         return setShapeEditMode(true);
     }
 
@@ -229,7 +231,7 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
         return false;
     }
 
-    private Shape<?> getShape(final String uuid) {
+    protected Shape<?> getShape(final String uuid) {
         return null != uuid ? getCanvas().getShape(uuid) : null;
     }
 

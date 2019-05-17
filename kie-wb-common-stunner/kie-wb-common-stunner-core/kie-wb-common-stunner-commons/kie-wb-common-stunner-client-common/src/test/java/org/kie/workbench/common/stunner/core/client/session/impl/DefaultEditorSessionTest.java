@@ -31,7 +31,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.ResizeContro
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ToolboxControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.CanvasInPlaceTextEditorControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.MultiLineTextEditorBox;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.InLineTextEditorBox;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.EdgeBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.ElementBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.NodeBuilderControl;
@@ -120,7 +120,7 @@ public class DefaultEditorSessionTest {
         verify(managedSession, times(1)).registerCanvasHandlerControl(eq(ContainmentAcceptorControl.class));
         verify(managedSession, times(1)).registerCanvasHandlerControl(eq(DockingAcceptorControl.class));
         verify(managedSession, times(1)).registerCanvasHandlerControl(eq(CanvasInPlaceTextEditorControl.class),
-                                                                      eq(MultiLineTextEditorBox.class));
+                                                                      eq(InLineTextEditorBox.class));
         verify(managedSession, times(1)).registerCanvasHandlerControl(eq(LocationControl.class));
         verify(managedSession, times(1)).registerCanvasHandlerControl(eq(ToolboxControl.class));
         verify(managedSession, times(1)).registerCanvasHandlerControl(eq(ElementBuilderControl.class),

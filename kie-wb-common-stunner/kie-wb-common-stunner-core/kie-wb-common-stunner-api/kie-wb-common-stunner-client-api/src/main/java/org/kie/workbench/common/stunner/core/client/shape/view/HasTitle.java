@@ -122,6 +122,10 @@ public interface HasTitle<T> {
 
     T setTitleStrokeWidth(final double strokeWidth);
 
+    String getTitleFontFamily();
+
+    double getTitleFontSize();
+
     default T setTitleStrokeAlpha(final double alpha) {
         return (T) this;
     }

@@ -137,6 +137,15 @@ public class ShapeViewExtStub
     }
 
     @Override
+    public String getTitleFontFamily() {
+        return "";
+    }
+
+    public double getTitleFontSize() {
+        return 0;
+    }
+
+    @Override
     public Object setTitleAlpha(final double alpha) {
         return this;
     }

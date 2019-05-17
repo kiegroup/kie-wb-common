@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.ResizeContro
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ToolboxControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.CanvasInPlaceTextEditorControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.MultiLineTextEditorBox;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.InLineTextEditorBox;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.EdgeBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.ElementBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.NodeBuilderControl;
@@ -100,7 +100,7 @@ public class DefaultEditorSession
                      .registerCanvasHandlerControl(ContainmentAcceptorControl.class)
                      .registerCanvasHandlerControl(DockingAcceptorControl.class)
                      .registerCanvasHandlerControl(CanvasInPlaceTextEditorControl.class,
-                                                   MultiLineTextEditorBox.class)
+                                                   InLineTextEditorBox.class)
                      .registerCanvasHandlerControl(LocationControl.class)
                      .registerCanvasHandlerControl(ToolboxControl.class)
                      .registerCanvasHandlerControl(ElementBuilderControl.class,

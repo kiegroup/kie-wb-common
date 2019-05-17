@@ -194,6 +194,16 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     }
 
     @Override
+    public String getTitleFontFamily() {
+        return textViewDecorator.getTitleFontFamily();
+    }
+
+    @Override
+    public double getTitleFontSize() {
+        return textViewDecorator.getTitleFontSize();
+    }
+
+    @Override
     public T setTitleStrokeAlpha(final double strokeAlpha) {
         textViewDecorator.setTitleStrokeAlpha(strokeAlpha);
         return cast();
