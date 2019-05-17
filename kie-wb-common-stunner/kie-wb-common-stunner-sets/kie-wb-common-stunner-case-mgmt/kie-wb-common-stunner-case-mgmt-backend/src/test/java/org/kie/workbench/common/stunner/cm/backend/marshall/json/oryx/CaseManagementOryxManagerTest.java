@@ -33,6 +33,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.DoubleTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.EnumTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.IntegerTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.NotificationsTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ReassignmentsTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.StringTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.VariablesTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
@@ -75,11 +77,12 @@ public class CaseManagementOryxManagerTest {
     public void setup() {
         OryxIdMappings oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager, WorkItemDefinitionEmptyRegistry::new);
         DefinitionUtils definitionUtils = new DefinitionUtils(definitionManager,
-                                                              factoryManager,
                                                               null);// TODO!
         List<Bpmn2OryxPropertySerializer<?>> oryxPropertySerializers = new ArrayList<>();
         oryxPropertySerializers.add(new AssigneeTypeSerializer());
         oryxPropertySerializers.add(new AssignmentsTypeSerializer());
+        oryxPropertySerializers.add(new NotificationsTypeSerializer());
+        oryxPropertySerializers.add(new ReassignmentsTypeSerializer());
         oryxPropertySerializers.add(new BooleanTypeSerializer());
         oryxPropertySerializers.add(new ColorTypeSerializer());
         oryxPropertySerializers.add(new DoubleTypeSerializer());

@@ -46,9 +46,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractBpmnProcessDataEventListener
         extends ResourceReferenceCollector
         implements ProcessDataEventListener,
-                   Serializable
-
-{
+                   Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractBpmnProcessDataEventListener.class);
 
