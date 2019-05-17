@@ -29,5 +29,7 @@ public interface AssigneeLiveSearchService
 
     void init(AssigneeType type);
 
+    void addCustomEntry(String customEntry);
+
     void setSearchErrorHandler(Consumer<Throwable> searchErrorHandler);
 }

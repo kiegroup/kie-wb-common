@@ -50,6 +50,11 @@ public class AssigneeLiveSearchStandaloneService implements AssigneeLiveSearchSe
     }
 
     @Override
+    public void addCustomEntry(final String customEntry) {
+        localSearchService.addCustomEntry(customEntry);
+    }
+
+    @Override
     public void setSearchErrorHandler(final Consumer<Throwable> searchErrorHandler) {
     }
 

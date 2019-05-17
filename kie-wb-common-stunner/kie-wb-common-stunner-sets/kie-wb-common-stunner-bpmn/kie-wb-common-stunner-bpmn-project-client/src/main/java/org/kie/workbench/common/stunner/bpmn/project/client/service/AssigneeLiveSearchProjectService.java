@@ -99,6 +99,16 @@ public class AssigneeLiveSearchProjectService implements AssigneeLiveSearchServi
     }
 
     @Override
+    public void addCustomEntry(final String customEntry) {
+        localSearchService.addCustomEntry(customEntry);
+    }
+
+    @Override
+    public AssigneeLiveSearchEntryCreationEditor getEditor() {
+        return editor;
+    }
+
+    @Override
     public void searchEntry(String key,
                             LiveSearchCallback<String> callback) {
 
@@ -212,14 +222,5 @@ public class AssigneeLiveSearchProjectService implements AssigneeLiveSearchServi
 
     List<String> getCustomEntries() {
         return localSearchService.getCustomEntries();
-    }
-
-    void addCustomEntry(final String customEntry) {
-        localSearchService.addCustomEntry(customEntry);
-    }
-
-    @Override
-    public AssigneeLiveSearchEntryCreationEditor getEditor() {
-        return editor;
     }
 }

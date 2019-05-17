@@ -42,7 +42,7 @@ import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.selector.input.MultipleSelectorInput;
-import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.widget.AssigneeLiveSearchService;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.AssigneeLiveSearchService;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.event.NotificationEvent;
@@ -136,12 +136,10 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                                             final MultipleSelectorInput multipleSelectorInputGroups,
                                             final LiveSearchDropDown liveSearchFromDropDown,
                                             final LiveSearchDropDown liveSearchReplyToDropDown,
-
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceFrom,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceReplyTo,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceUsers,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceGroups,
-
                                             final AssigneeLiveSearchService groupLiveSearchService) {
         initUsersAndGroupsDropdowns(multipleSelectorInputUsers,
                                     multipleSelectorInputGroups,
