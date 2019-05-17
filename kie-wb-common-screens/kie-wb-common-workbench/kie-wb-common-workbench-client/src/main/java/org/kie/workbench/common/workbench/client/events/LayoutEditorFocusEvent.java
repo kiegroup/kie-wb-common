@@ -20,5 +20,19 @@ package org.kie.workbench.common.workbench.client.events;
  * Focus event launched by those authoring editors built on top of the layout editor. For example, the form editor.
  */
 public class LayoutEditorFocusEvent {
+    
+    
+    private String editorId;
+    
+    public LayoutEditorFocusEvent() {
+    }
 
+    public LayoutEditorFocusEvent(String editorId) {
+        this.editorId = editorId;
+    }
+    
+    public String getEditorId() {
+        return editorId;
+    }
+    
 }

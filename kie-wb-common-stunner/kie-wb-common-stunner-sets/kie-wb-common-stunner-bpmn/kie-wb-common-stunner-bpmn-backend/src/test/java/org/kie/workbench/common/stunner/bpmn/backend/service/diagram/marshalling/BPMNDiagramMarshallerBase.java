@@ -49,6 +49,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.DoubleTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.EnumTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.IntegerTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.NotificationsTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ReassignmentsTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeListTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.StringTypeSerializer;
@@ -168,7 +170,6 @@ public abstract class BPMNDiagramMarshallerBase {
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.registry()).thenReturn(adapterRegistry);
         DefinitionUtils definitionUtils1 = new DefinitionUtils(definitionManager,
-                                                               applicationFactoryManager,
                                                                null); // TODO!
         testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
         // Definition manager.
@@ -254,6 +255,8 @@ public abstract class BPMNDiagramMarshallerBase {
         IntegerTypeSerializer integerTypeSerializer = new IntegerTypeSerializer();
         EnumTypeSerializer enumTypeSerializer = new EnumTypeSerializer(definitionUtils1);
         AssignmentsTypeSerializer assignmentsTypeSerializer = new AssignmentsTypeSerializer();
+        NotificationsTypeSerializer notificationsTypeSerializer = new NotificationsTypeSerializer();
+        ReassignmentsTypeSerializer reassignmentsTypeSerializer = new ReassignmentsTypeSerializer();
         VariablesTypeSerializer variablesTypeSerializer = new VariablesTypeSerializer();
         TimerSettingsTypeSerializer timerSettingsTypeSerializer = new TimerSettingsTypeSerializer();
         ScriptTypeTypeSerializer scriptTypeTypeSerializer = new ScriptTypeTypeSerializer();
@@ -268,6 +271,8 @@ public abstract class BPMNDiagramMarshallerBase {
         propertySerializers.add(integerTypeSerializer);
         propertySerializers.add(enumTypeSerializer);
         propertySerializers.add(assignmentsTypeSerializer);
+        propertySerializers.add(notificationsTypeSerializer);
+        propertySerializers.add(reassignmentsTypeSerializer);
         propertySerializers.add(variablesTypeSerializer);
         propertySerializers.add(timerSettingsTypeSerializer);
         propertySerializers.add(scriptTypeTypeSerializer);
@@ -322,7 +327,6 @@ public abstract class BPMNDiagramMarshallerBase {
                                    any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
 
         DefinitionUtils definitionUtils = new DefinitionUtils(definitionManager,
-                                                              applicationFactoryManager,
                                                               null); // TODO!
         TestScopeModelFactory testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
         // Definition manager.
