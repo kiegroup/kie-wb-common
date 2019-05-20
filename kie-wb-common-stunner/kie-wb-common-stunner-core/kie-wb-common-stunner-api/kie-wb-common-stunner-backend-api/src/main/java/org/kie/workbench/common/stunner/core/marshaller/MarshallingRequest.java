@@ -41,7 +41,7 @@ public class MarshallingRequest<I, M extends Metadata> {
      * - return ERROR messages
      * AUTO:
      * - try to adapt and convert unsupported nodes to generic ones
-     * - retun warn messages
+     * - return warn messages
      * - ignore unsupported nodes that doesn't have options to be converted
      * IGNORE:
      * - remove all unsupported nodes and relationships to them
