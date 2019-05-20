@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.marshaller;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
@@ -30,6 +32,8 @@ public class MarshallingMessage implements DomainViolation {
     private final int code;
     private final Type type;
     private final String message;
+    private final String messageKey;
+    private final List<?> messageArguments;
 
     public String getElementUUID() {
         return elementUUID;
@@ -49,12 +53,24 @@ public class MarshallingMessage implements DomainViolation {
         return code;
     }
 
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public List<?> getMessageArguments() {
+        return messageArguments;
+    }
+
     public MarshallingMessage(@MapsTo("elementUUID") String elementUUID, @MapsTo("code") int code,
-                              @MapsTo("type") Type type, @MapsTo("message") String message) {
+                              @MapsTo("type") Type type, @MapsTo("message") String message,
+                              @MapsTo("messageKey") String messageKey,
+                              @MapsTo("messageArguments") List<?> messageArguments) {
         this.elementUUID = elementUUID;
         this.code = code;
         this.type = type;
         this.message = message;
+        this.messageKey = messageKey;
+        this.messageArguments = messageArguments;
     }
 
     public static MarshallingMessageBuilder builder(){
@@ -67,6 +83,8 @@ public class MarshallingMessage implements DomainViolation {
         private int code;
         private Type type = Type.ERROR;
         private String message;
+        private String messageKey;
+        private List<?> messageArguments = Collections.emptyList();
 
         public MarshallingMessageBuilder elementUUID(String elementUUID) {
             this.elementUUID = elementUUID;
@@ -88,8 +106,18 @@ public class MarshallingMessage implements DomainViolation {
             return this;
         }
 
+        public MarshallingMessageBuilder messageKey(String messageKey) {
+            this.messageKey = messageKey;
+            return this;
+        }
+
+        public MarshallingMessageBuilder messageArguments(List<?> messageArguments) {
+            this.messageArguments = messageArguments;
+            return this;
+        }
+
         public MarshallingMessage build() {
-            return new MarshallingMessage(elementUUID, code, type, message);
+            return new MarshallingMessage(elementUUID, code, type, message, messageKey, messageArguments);
         }
     }
 
@@ -98,30 +126,34 @@ public class MarshallingMessage implements DomainViolation {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MarshallingMessage)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         MarshallingMessage that = (MarshallingMessage) o;
-        return getCode() == that.getCode() &&
-                Objects.equals(getElementUUID(), that.getElementUUID()) &&
+        return code == that.code &&
+                Objects.equals(elementUUID, that.elementUUID) &&
                 type == that.type &&
-                Objects.equals(getMessage(), that.getMessage());
+                Objects.equals(message, that.message) &&
+                Objects.equals(messageKey, that.messageKey) &&
+                Objects.equals(messageArguments, that.messageArguments);
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(getElementUUID()), Objects.hashCode(getCode()),
-                                         Objects.hashCode(type), Objects.hashCode(getMessage()));
+                                         Objects.hashCode(type), Objects.hashCode(getMessage()),
+                                         Objects.hashCode(getMessageKey()), Objects.hashCode(getMessageArguments()));
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MarshallingMessage{");
-        sb.append("elementUUID='").append(elementUUID).append('\'');
-        sb.append(", code=").append(code);
-        sb.append(", type=").append(type);
-        sb.append(", message='").append(message).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "MarshallingMessage{" +
+                "elementUUID='" + elementUUID + '\'' +
+                ", code=" + code +
+                ", type=" + type +
+                ", message='" + message + '\'' +
+                ", messageKey='" + messageKey + '\'' +
+                ", messageArguments=" + messageArguments +
+                '}';
     }
 }
