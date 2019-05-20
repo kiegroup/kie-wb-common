@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.definition.service;
 
 import java.io.InputStream;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -51,6 +52,15 @@ public class DiagramMarshallerTest {
 
     private MarshallingRequest request;
 
+    @Before
+    public void setUp(){
+        request = MarshallingRequest.builder()
+                .metadata(metadata)
+                .input(input)
+                .mode(MarshallingRequest.Mode.ERROR)
+                .build();
+    }
+
     @Test
     public void unmarshallWithValidation() throws Exception {
         tested = spy(new DiagramMarshaller() {
@@ -69,12 +79,6 @@ public class DiagramMarshallerTest {
                 return null;
             }
         });
-
-        request = MarshallingRequest.builder()
-                .metadata(metadata)
-                .input(input)
-                .mode(MarshallingRequest.Mode.ERROR)
-                .build();
 
         final MarshallingResponse response = tested.unmarshallWithValidation(request);
         verify(tested).unmarshall(metadata, input);
@@ -100,12 +104,6 @@ public class DiagramMarshallerTest {
                 return null;
             }
         });
-
-        request = MarshallingRequest.builder()
-                .metadata(metadata)
-                .input(input)
-                .mode(MarshallingRequest.Mode.ERROR)
-                .build();
 
         final MarshallingResponse response = tested.unmarshallWithValidation(request);
         verify(tested).unmarshall(metadata, input);
