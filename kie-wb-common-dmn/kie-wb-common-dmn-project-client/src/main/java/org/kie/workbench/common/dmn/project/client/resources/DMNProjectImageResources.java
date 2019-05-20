@@ -25,4 +25,7 @@ public interface DMNProjectImageResources extends ClientBundleWithLookup {
 
     @Source("images/dmn-icon.png")
     ImageResource dmnIcon();
+
+    @Source("images/pmml-icon.png")
+    ImageResource pmmlIcon();
 }

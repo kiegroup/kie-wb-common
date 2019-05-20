@@ -32,4 +32,9 @@ public interface DMNProjectClientConstants {
     @TranslationKey(defaultValue = "")
     String DMNDiagramParsingErrorMessage = "DMNDiagramParsingErrorMessage";
 
+    @TranslationKey(defaultValue = "")
+    String PMMLDiagramResourceType = "PMMLDiagramResourceType.shortName";
+
+    @TranslationKey(defaultValue = "")
+    String PMMLDiagramResourceTypeDescription = "PMMLDiagramResourceType.description";
 }
