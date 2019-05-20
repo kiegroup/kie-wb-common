@@ -38,7 +38,6 @@ public interface DMNClientServicesProxy {
     // ------------------------------------
 
     default void logWarning(final ClientRuntimeError error) {
-        warn("[WARNING] DMNClientService could not get the asset list.");
         warn(error.getMessage());
     }
 
