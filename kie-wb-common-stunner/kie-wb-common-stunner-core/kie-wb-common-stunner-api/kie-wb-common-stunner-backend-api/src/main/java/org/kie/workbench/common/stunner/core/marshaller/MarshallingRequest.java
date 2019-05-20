@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 /**
- * Encapsulates the attriutes required on a marshalling process.
+ * Encapsulates the attributes required on a marshalling process.
  * Includes the {@link Mode} that represents how the marshaller should handle errors and exceptions.
  *
  * @param <I> represents the input type
