@@ -186,12 +186,12 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
     @Test
     @Override
     public void testUnmarshallTopLevelFilledPropertiesSubProcess() {
-        final String SUB_PROCESS_NAME_JAVA = "Ad-hoc process01 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_DOCUMENTATION_JAVA = "Ad-hoc process01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_NAME_JAVASCRIPT = "Ad-hoc process02 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_DOCUMENTATION_JAVASCRIPT = "Ad-hoc process02 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_NAME_MVEL = "Ad-hoc process03 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_DOCUMENTATION_MVEL = "Ad-hoc process03 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_NAME_JAVA = "Ad-hoc sub-process01 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_DOCUMENTATION_JAVA = "Ad-hoc sub-process01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_NAME_JAVASCRIPT = "Ad-hoc sub-process02 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_DOCUMENTATION_JAVASCRIPT = "Ad-hoc sub-process02 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_NAME_MVEL = "Ad-hoc sub-process03 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_DOCUMENTATION_MVEL = "Ad-hoc sub-process03 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
 
         final String SUB_PROCESS_VARIABLES_JAVA = "subVar01:String";
         final String SUB_PROCESS_VARIABLES_JAVASCRIPT = "subVar02:String";
@@ -302,12 +302,12 @@ public class AdHocSubProcessTest extends SubProcess<AdHocSubprocess> {
     @Test
     @Override
     public void testUnmarshallSubProcessLevelFilledPropertiesSubProcess() {
-        final String SUB_PROCESS_NAME_JAVA = "Ad-hoc process04 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_DOCUMENTATION_JAVA = "Ad-hoc process04 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_NAME_JAVASCRIPT = "Ad-hoc process05 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_DOCUMENTATION_JAVASCRIPT = "Ad-hoc process05 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_NAME_MVEL = "Ad-hoc process06 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
-        final String SUB_PROCESS_DOCUMENTATION_MVEL = "Ad-hoc process06 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_NAME_JAVA = "Ad-hoc sub-process04 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_DOCUMENTATION_JAVA = "Ad-hoc sub-process04 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_NAME_JAVASCRIPT = "Ad-hoc sub-process05 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_DOCUMENTATION_JAVASCRIPT = "Ad-hoc sub-process05 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_NAME_MVEL = "Ad-hoc sub-process06 name ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
+        final String SUB_PROCESS_DOCUMENTATION_MVEL = "Ad-hoc sub-process06 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
 
         final String SUB_PROCESS_VARIABLES_JAVA = "subVar04:String";
         final String SUB_PROCESS_VARIABLES_JAVASCRIPT = "subVar05:String";
