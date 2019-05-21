@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
@@ -282,8 +283,7 @@ public abstract class KieEditor<T>
 
         kieView.clear();
 
-        kieView.addMainEditorPage(baseView,
-                                  getMainEditorPageTitle());
+        kieView.addMainEditorPage(baseView);
 
         kieView.addOverviewPage(overviewWidget,
                                 () -> overviewWidget.refresh(versionRecordManager.getVersion()));
@@ -524,8 +524,8 @@ public abstract class KieEditor<T>
     public void onEditTabUnselected() {
     }
 
-    protected Optional<String> getMainEditorPageTitle() {
-        return Optional.empty();
+    public void addTabBarWidget(final Widget customWidget) {
+        kieView.addTabBarWidget(customWidget);
     }
 
     //Handler for MayClose requests

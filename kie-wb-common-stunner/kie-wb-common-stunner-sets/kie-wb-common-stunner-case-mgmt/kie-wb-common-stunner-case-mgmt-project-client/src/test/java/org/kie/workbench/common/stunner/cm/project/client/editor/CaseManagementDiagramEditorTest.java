@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
-import org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants;
 import org.kie.workbench.common.stunner.cm.project.client.type.CaseManagementDiagramResourceType;
 import org.kie.workbench.common.stunner.cm.project.service.CaseManagementSwitchViewService;
 import org.kie.workbench.common.stunner.core.client.session.command.ManagedClientSessionCommands;
@@ -56,17 +55,12 @@ public class CaseManagementDiagramEditorTest extends AbstractProjectDiagramEdito
     private PlaceRequest currentPlace;
 
     @Mock
-    private AbstractProjectDiagramEditor.View processView;
-
-    @Mock
     private Caller<CaseManagementSwitchViewService> caseManagementSwitchViewServiceCaller;
 
     @Mock
     private CaseManagementSwitchViewService caseManagementSwitchViewService;
 
     private CaseManagementDiagramEditor tested;
-
-    private String mainEditorTitle;
 
     @Before
     @Override
@@ -77,11 +71,6 @@ public class CaseManagementDiagramEditorTest extends AbstractProjectDiagramEdito
         final ManagedClientSessionCommands managedClientSessionCommands = mock(ManagedClientSessionCommands.class);
         when(editorSessionCommands.getCommands()).thenReturn(managedClientSessionCommands);
         when(cmMenuSessionItems.getCommands()).thenReturn(editorSessionCommands);
-
-        mainEditorTitle = "Case View";
-
-        when(translationService.getValue(eq(CaseManagementProjectClientConstants.CaseManagementMainEditorPageTitle)))
-                .thenReturn(mainEditorTitle);
 
         RemoteCallback[] remoteCallback = new RemoteCallback[1];
 
@@ -120,7 +109,6 @@ public class CaseManagementDiagramEditorTest extends AbstractProjectDiagramEdito
                                                      translationService,
                                                      xmlEditorView,
                                                      projectDiagramResourceServiceCaller,
-                                                     processView,
                                                      caseManagementSwitchViewServiceCaller) {
             {
                 {
@@ -155,11 +143,6 @@ public class CaseManagementDiagramEditorTest extends AbstractProjectDiagramEdito
         return resourceType;
     }
 
-    @Override
-    protected Optional<String> mainEditorTitle() {
-        return Optional.of(mainEditorTitle);
-    }
-
     @Test
     public void testReopenSession() throws Exception {
         final ProjectDiagram projectDiagram = mock(ProjectDiagram.class);
@@ -175,10 +158,10 @@ public class CaseManagementDiagramEditorTest extends AbstractProjectDiagramEdito
         final String defSetId = "defSetId";
         final String shapeDefId = "shapeDefId";
 
-        tested.onSwitch(diagram, defSetId, shapeDefId, Optional.of(sessionEditorPresenter));
+        tested.onSwitch(diagram, defSetId, shapeDefId, view, Optional.of(sessionEditorPresenter));
 
-        verify(processView, times(1)).showLoading();
-        verify(processView, times(1)).hideBusyIndicator();
+        verify(view, times(1)).showLoading();
+        verify(view, times(1)).hideBusyIndicator();
         verify(sessionEditorPresenter, times(1)).open(any(ProjectDiagram.class), any(SessionPresenter.SessionPresenterCallback.class));
     }
 }

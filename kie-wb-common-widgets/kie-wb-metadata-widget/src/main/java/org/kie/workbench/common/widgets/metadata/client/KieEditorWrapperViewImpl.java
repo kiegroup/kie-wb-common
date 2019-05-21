@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
-import java.util.Optional;
-
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.Command;
@@ -56,13 +54,8 @@ public class KieEditorWrapperViewImpl
 
     @Override
     public void addMainEditorPage(IsWidget baseView) {
-        this.addMainEditorPage(baseView, Optional.empty());
-    }
-
-    @Override
-    public void addMainEditorPage(IsWidget baseView, Optional<String> title) {
         addPage(new PageImpl(baseView,
-                             title.orElse(CommonConstants.INSTANCE.EditTabTitle())) {
+                             CommonConstants.INSTANCE.EditTabTitle()) {
             @Override
             public void onFocus() {
                 presenter.onEditTabSelected();

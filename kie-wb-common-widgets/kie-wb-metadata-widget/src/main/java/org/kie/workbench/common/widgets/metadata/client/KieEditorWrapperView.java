@@ -16,10 +16,9 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
-import java.util.Optional;
-
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
@@ -42,8 +41,6 @@ public interface KieEditorWrapperView
     void setPresenter(KieEditorWrapperPresenter presenter);
 
     void addMainEditorPage(IsWidget baseView);
-
-    void addMainEditorPage(IsWidget baseView, Optional<String> title);
 
     MultiPageEditor getMultiPage();
 
@@ -69,6 +66,8 @@ public interface KieEditorWrapperView
                          Command onFocus);
 
     void addSourcePage(ViewDRLSourceWidget sourceWidget);
+
+    void addTabBarWidget(Widget customWidget);
 
     String getNotAllowedSavingMessage();
 
