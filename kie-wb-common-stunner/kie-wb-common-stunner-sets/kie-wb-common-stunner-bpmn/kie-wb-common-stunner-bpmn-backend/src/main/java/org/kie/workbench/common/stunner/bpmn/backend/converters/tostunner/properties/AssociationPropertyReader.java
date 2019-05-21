@@ -26,7 +26,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
-public class AssociationPropertyReader extends BasePropertyReader {
+public class AssociationPropertyReader extends BasePropertyReader implements EdgePropertyReader {
 
     private final DefinitionResolver definitionResolver;
     private final Association association;

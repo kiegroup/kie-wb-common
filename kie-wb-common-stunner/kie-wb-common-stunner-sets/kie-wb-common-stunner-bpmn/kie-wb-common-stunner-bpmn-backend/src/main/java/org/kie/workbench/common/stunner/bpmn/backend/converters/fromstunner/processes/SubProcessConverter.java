@@ -70,7 +70,7 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         }
 
         DefinitionsBuildingContext subContext = context.withRootNode(node);
-        SubProcessPropertyWriter processRoot = processRootResult.value();
+        SubProcessPropertyWriter processRoot = processRootResult.value().get();
 
         super.convertChildNodes(processRoot, subContext);
         super.convertEdges(processRoot, subContext);

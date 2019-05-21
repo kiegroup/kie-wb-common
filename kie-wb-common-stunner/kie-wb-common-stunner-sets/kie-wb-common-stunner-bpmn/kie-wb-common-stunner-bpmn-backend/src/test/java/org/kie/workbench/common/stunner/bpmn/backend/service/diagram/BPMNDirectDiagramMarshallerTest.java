@@ -124,6 +124,7 @@ import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry
 import org.kie.workbench.common.stunner.core.StunnerTestingGraphAPI;
 import org.kie.workbench.common.stunner.core.backend.StunnerTestingGraphBackendAPI;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -157,6 +158,21 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNDirectDiagramMarshallerTest {
+
+    static final String BPMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
+
+    private static final String BPMN_SERVICE_TASKS_UNSUPPORTED = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/serviceTasks.bpmn";
+    private static final String BPMN_MANUAL_TASK = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/manualTask.bpmn";
+    private static final String BPMN_SEND_TASK = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/sendTask.bpmn";
+    private static final String BPMN_RECEIVE_TASK = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/receiveTask.bpmn";
+    private static final String P1_v3 = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/4.6.10.10_P1_v3.bpmn";
+    private static final String EXECUTION = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/Execution.bpmn";
+    private static final String TestDataStore = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/TestDataStore.bpmn";
+    private static final String jbpmDesigner1 = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram" +
+            "/unsupported" +
+            "/jbpmDesigner1.bpmn";
+
+    private static final String dataObject = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/unsupported/dataObject1.bpmn";
 
     private static final String BPMN_BASIC = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/basic.bpmn";
     private static final String BPMN_EVALUATION = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/evaluation.bpmn";

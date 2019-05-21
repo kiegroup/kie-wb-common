@@ -83,7 +83,7 @@ public class SubProcessConverterTest {
         subProcessNode.getExecutionSet().setIsAsync(new IsAsync(true));
         n.setContent(new ViewImpl<>(subProcessNode, Bounds.create()));
 
-        Activity activity = c.convertSubProcess(n).value().getFlowElement();
+        Activity activity = c.convertSubProcess(n).value().get().getFlowElement();
         Boolean value = CustomElement.async.of(activity).get();
 
         assertThat(value).isEqualTo(true);

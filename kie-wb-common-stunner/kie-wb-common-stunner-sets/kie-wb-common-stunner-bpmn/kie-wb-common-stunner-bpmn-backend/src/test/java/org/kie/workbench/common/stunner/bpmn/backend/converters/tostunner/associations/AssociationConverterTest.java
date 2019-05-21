@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.associations;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +81,6 @@ public class AssociationConverterTest {
 
     private AssociationConverter associationConverter;
 
-    @Mock
     private Map<String, BpmnNode> nodes;
 
     @Mock
@@ -113,10 +113,10 @@ public class AssociationConverterTest {
         when(associationReader.getTargetConnection()).thenReturn(targetConnection);
         when(associationReader.getControlPoints()).thenReturn(controlPoints);
 
-        when(nodes.get(SOURCE_ID)).thenReturn(sourceNode);
-        when(nodes.get(TARGET_ID)).thenReturn(targetNode);
-
         associationConverter = new AssociationConverter(factoryManager, propertyReaderFactory);
+        nodes = new HashMap<>();
+        nodes.put(SOURCE_ID, sourceNode);
+        nodes.put(TARGET_ID, targetNode);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class AssociationConverterTest {
 
         assertEquals(ASSOCIATION_DOCUMENTATION, generalSetCaptor.getValue().getDocumentation().getValue());
 
-        BpmnEdge.Simple result = (BpmnEdge.Simple) associationConverter.convertEdge(association, nodes);
+        BpmnEdge.Simple result = (BpmnEdge.Simple) associationConverter.convertEdge(association, nodes).value().get();
         assertEquals(sourceNode, result.getSource());
         assertEquals(targetNode, result.getTarget());
         assertEquals(sourceConnection, result.getSourceConnection());

@@ -140,7 +140,7 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                                  final ResourceTypeDefinition resourceType) {
         final String suffix = resourceType.getSuffix();
         final String prefix = resourceType.getPrefix();
-        final String extension = !(suffix == null || "".equals(suffix)) ? "." + resourceType.getSuffix() : "";
+        final String extension = !(suffix == null || "" .equals(suffix)) ? "." + resourceType.getSuffix() : "";
         if (baseFileName.endsWith(extension)) {
             return prefix + baseFileName;
         }
@@ -173,18 +173,20 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                             services.getDiagramMarshaller().unmarshallWithValidation(MarshallingRequest.builder()
                                                                                              .metadata(metadata)
                                                                                              .input(is)
-                                                                                             .mode(MarshallingRequest.Mode.ERROR)
+                                                                                             .mode(MarshallingRequest.Mode.AUTO)
                                                                                              .build());
                     final Graph<DefinitionSet, ?> graph =
                             marshallingResponse.getResult()
-                                    .orElseThrow(()-> new RuntimeException(marshallingResponse.getMessages().toString()));
+                                    .orElseThrow(() -> new RuntimeException(marshallingResponse.getMessages().toString()));
 
                     final DiagramFactory<M, ?> factory =
                             factoryManager.registry().getDiagramFactory(graph.getContent().getDefinition(),
-                                                                                               getMetadataType());
-                    return (D) factory.build(name,
-                                             metadata,
-                                             graph);
+                                                                        getMetadataType());
+
+                    D diagram = (D) factory.build(name,
+                                                  metadata,
+                                                  graph);
+                    return diagram;
                 } catch (Exception e) {
                     LOG.error("Cannot unmarshall diagram for diagram's path [" + file + "]", e);
                     final String xml = getIoService().readAllString(Paths.convert(file));

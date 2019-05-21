@@ -108,7 +108,7 @@ public class MarshallingResponse<T> {
         private State state;
         private Optional<T> result = Optional.empty();
 
-        public MarshallingResponseBuilder<T> messages(List<MarshallingMessage> messages) {
+        public MarshallingResponseBuilder messages(List<MarshallingMessage> messages) {
             this.messages.addAll(messages);
             return this;
         }

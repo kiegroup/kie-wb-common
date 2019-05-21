@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import bpsim.impl.BpsimFactoryImpl;
 import bpsim.impl.BpsimPackageImpl;
@@ -39,6 +41,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsFactoryImpl;
 import org.jboss.drools.impl.DroolsPackageImpl;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
@@ -63,6 +66,9 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessage;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingResponse;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,8 +143,20 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
     }
 
     @Override
-    public Graph<DefinitionSet, Node> unmarshall(final Metadata metadata,
-                                                 final InputStream inputStream) throws IOException {
+    public Graph unmarshall(Metadata metadata, InputStream input) throws IOException {
+        MarshallingResponse<Graph> marshallingResponse = unmarshallWithValidation(MarshallingRequest.builder()
+                                                                                          .metadata(metadata)
+                                                                                          .input(input)
+                                                                                          .mode(MarshallingRequest.Mode.ERROR)
+                                                                                          .build());
+        return marshallingResponse.getResult().get();
+    }
+
+    @Override
+    public MarshallingResponse<Graph> unmarshallWithValidation(MarshallingRequest<InputStream, Metadata> request) {
+        final Metadata metadata = request.getMetadata();
+        final InputStream inputStream = request.getInput();
+
         LOG.debug("Starting diagram unmarshalling...");
 
         DefinitionResolver definitionResolver;
@@ -147,42 +165,62 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
             final DefinitionsHandler definitionsHandler = parseDefinitions(inputStream);
             definitionResolver = new DefinitionResolver(definitionsHandler.getDefinitions(),
                                                         workItemDefinitionService.execute(metadata),
-                                                        definitionsHandler.isJbpm());
-        } finally {
-            inputStream.close();
+                                                        definitionsHandler.isJbpm(),
+                                                        request.getMode());
+
+            metadata.setCanvasRootUUID(definitionResolver.getDefinitions().getId());
+            metadata.setTitle(definitionResolver.getProcess().getName());
+
+            BaseConverterFactory converterFactory = createToStunnerConverterFactory(definitionResolver, typedFactoryManager);
+
+            // perform actual conversion. Process is the root of the diagram
+            Result<BpmnNode> result = converterFactory.rootProcessConverter().convertProcess();
+
+            BpmnNode diagramRoot = result.value().get();
+
+            LOG.debug("Diagram unmarshalling completed successfully.");
+
+            // the root node contains all of the information
+            // needed to build the entire graph (including parent/child relationships)
+            // thus, we can now walk the graph to issue all the commands
+            // to draw it on our canvas
+            Diagram<Graph<DefinitionSet, Node>, Metadata> diagram =
+                    typedFactoryManager.newDiagram(
+                            definitionResolver.getDefinitions().getId(),
+                            getDefinitionSetClass(),
+                            metadata);
+            Graph<DefinitionSet, Node> graph = diagram.getGraph();
+            GraphBuilder graphBuilder =
+                    new GraphBuilder(
+                            graph,
+                            definitionManager,
+                            typedFactoryManager,
+                            ruleManager,
+                            commandFactory,
+                            commandManager);
+            graphBuilder.render(diagramRoot);
+
+            LOG.debug("Diagram drawing completed successfully.");
+
+            LOG.warn("Marshalling Messages " + result.messages()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(MarshallingMessage::getMessage)
+                    .filter(Objects::nonNull).map(String::valueOf)
+                    .collect(Collectors.joining("\n")));
+
+            return MarshallingResponse.builder()
+                    .state(MarshallingResponse.State.SUCCESS)
+                    .messages(result.messages())
+                    .result(graph)
+                    .build();
+        } catch (Exception e) {
+            LOG.error("Marshalling error.", e);
+            return MarshallingResponse.builder()
+                    .state(MarshallingResponse.State.ERROR)
+                    .addMessage(MarshallingMessage.builder().message(e.getMessage()).build())
+                    .build();
         }
-
-        metadata.setCanvasRootUUID(definitionResolver.getDefinitions().getId());
-        metadata.setTitle(definitionResolver.getProcess().getName());
-
-        BaseConverterFactory converterFactory = createToStunnerConverterFactory(definitionResolver, typedFactoryManager);
-
-        // perform actual conversion. Process is the root of the diagram
-        BpmnNode diagramRoot = converterFactory.rootProcessConverter().convertProcess();
-
-        LOG.debug("Diagram unmarshalling completed successfully.");
-
-        // the root node contains all of the information
-        // needed to build the entire graph (including parent/child relationships)
-        // thus, we can now walk the graph to issue all the commands
-        // to draw it on our canvas
-        Diagram<Graph<DefinitionSet, Node>, Metadata> diagram =
-                typedFactoryManager.newDiagram(
-                        definitionResolver.getDefinitions().getId(),
-                        getDefinitionSetClass(),
-                        metadata);
-        GraphBuilder graphBuilder =
-                new GraphBuilder(
-                        diagram.getGraph(),
-                        definitionManager,
-                        typedFactoryManager,
-                        ruleManager,
-                        commandFactory,
-                        commandManager);
-        graphBuilder.render(diagramRoot);
-
-        LOG.debug("Diagram drawing completed successfully.");
-        return diagram.getGraph();
     }
 
     private Bpmn2Resource createBpmn2Resource() {

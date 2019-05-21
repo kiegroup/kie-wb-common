@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ class ProcessConverterDelegate {
                 context.nodes().map(converterFactory.subProcessConverter()::convertSubProcess)
                         .filter(Result::notIgnored)
                         .map(Result::value)
+                        .map(Optional::get)
                         .collect(toList());
 
         // keep track of nested children to avoid adding them again to ancestors
@@ -68,6 +70,7 @@ class ProcessConverterDelegate {
                 .map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
+                .map(Optional::get)
                 .forEach(p::addChildElement);
 
         convertLanes(context, processed, p);
@@ -81,6 +84,7 @@ class ProcessConverterDelegate {
                 .map(laneConverter::toElement)
                 .filter(Result::isSuccess)
                 .map(Result::value)
+                .map(Optional::get)
                 .peek(convertedLane -> {
                     // for each lane, we get the child nodes in the graph
                     context.withRootNode(convertedLane.getId()).childNodes()
@@ -110,6 +114,7 @@ class ProcessConverterDelegate {
                 .map(e -> converterFactory.edgeElementConverter().toFlowElement(e, p))
                 .filter(Result::isSuccess)
                 .map(Result::value)
+                .map(Optional::get)
                 .forEach(p::addChildElement);
     }
 

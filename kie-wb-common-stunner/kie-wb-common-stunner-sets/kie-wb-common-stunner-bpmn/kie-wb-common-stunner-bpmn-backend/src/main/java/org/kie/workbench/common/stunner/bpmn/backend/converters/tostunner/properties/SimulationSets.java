@@ -119,7 +119,7 @@ public class SimulationSets {
                     sset.getMean().setValue(pdt.getMean());
                     sset.getDistributionType().setValue("poisson");
                     return sset;
-                }).apply(paramValue).asSuccess().value();
+                }).apply(paramValue).asSuccess().value().get();
 
         CostParameters costParams = eleType.getCostParameters();
         if (costParams != null) {

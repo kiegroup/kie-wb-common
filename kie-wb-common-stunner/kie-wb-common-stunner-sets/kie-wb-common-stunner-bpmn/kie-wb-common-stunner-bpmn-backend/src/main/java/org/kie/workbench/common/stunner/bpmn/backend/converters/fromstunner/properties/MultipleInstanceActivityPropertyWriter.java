@@ -221,6 +221,8 @@ public class MultipleInstanceActivityPropertyWriter extends ActivityPropertyWrit
     }
 
     private Property findPropertyById(String id) {
-        return variableScope.lookup(id).getTypedIdentifier();
+        return variableScope.lookup(id)
+                .map(VariableScope.Variable::getTypedIdentifier)
+                .orElse(null);
     }
 }
