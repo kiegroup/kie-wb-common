@@ -72,24 +72,6 @@ public class DefinitionsHandlerTest {
     }
 
     @Test
-    public void testUpdate() {
-
-        final String newModelName = "model2";
-        final String oldModelName = model;
-        final String newNamespace = "://namespace2";
-        final IncludedModel includedModel = mock(IncludedModel.class);
-
-        when(includedModel.getName()).thenReturn(newModelName);
-        when(includedModel.getNamespace()).thenReturn(newNamespace);
-
-        handler.update(oldModelName, includedModel);
-
-        assertEquals(1, nsContext.size());
-        assertTrue(nsContext.keySet().contains(newModelName));
-        assertEquals(newNamespace, nsContext.get(newModelName));
-    }
-
-    @Test
     public void testDestroy() {
 
         final IncludedModel includedModel = mock(IncludedModel.class);
