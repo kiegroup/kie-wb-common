@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseCancellingEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.compensation.ActivityRef;
@@ -482,12 +483,16 @@ public class HashCodeAndEqualityTest {
     public void IntermediateMessageEventCatchingEquals() {
         final String MESSAGE_REF = "message ref";
         final CancellingMessageEventExecutionSet A_EXECUTION_SET = new CancellingMessageEventExecutionSet(new CancelActivity(true),
+                                                                                                          new SLADueDate(),
                                                                                                           new MessageRef(MESSAGE_REF));
         final CancellingMessageEventExecutionSet B_EXECUTION_SET = new CancellingMessageEventExecutionSet(new CancelActivity(true),
+                                                                                                          new SLADueDate(),
                                                                                                           new MessageRef(MESSAGE_REF));
         final CancellingMessageEventExecutionSet C_EXECUTION_SET = new CancellingMessageEventExecutionSet(new CancelActivity(true),
+                                                                                                          new SLADueDate(),
                                                                                                           new MessageRef("Other value"));
         final CancellingMessageEventExecutionSet D_EXECUTION_SET = new CancellingMessageEventExecutionSet(new CancelActivity(true),
+                                                                                                          new SLADueDate(),
                                                                                                           new MessageRef(MESSAGE_REF));
 
         final String ASSIGNMENT_INFO = "some value";
@@ -1682,29 +1687,29 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new CancellingConditionalEventExecutionSet(),
                              new CancellingConditionalEventExecutionSet())
 
-                .addTrueCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression()),
-                             new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression()))
+                .addTrueCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression()),
+                             new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression()))
 
-                .addTrueCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
-                             new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))))
+                .addTrueCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
+                             new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))))
 
                 .addFalseCase(new CancellingConditionalEventExecutionSet(),
                               null)
 
-                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
-                              new CancellingConditionalEventExecutionSet(new CancelActivity(true), new ConditionExpression(new ScriptTypeValue("drools", "script"))))
+                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
+                              new CancellingConditionalEventExecutionSet(new CancelActivity(true), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))))
 
-                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
-                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools1", "script"))))
+                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
+                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools1", "script"))))
 
-                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
-                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script1"))))
+                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
+                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script1"))))
 
-                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
-                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools1", "script"))))
+                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
+                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools1", "script"))))
 
-                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
-                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), null))
+                .addFalseCase(new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script"))),
+                              new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), null))
 
                 .test();
     }
@@ -1788,17 +1793,17 @@ public class HashCodeAndEqualityTest {
                 .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet()),
                               new IntermediateConditionalEvent(new BPMNGeneralSet("name1", "doc1"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet()))
 
-                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
+                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
                               new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet()))
 
-                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
-                              new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(true), new ConditionExpression(new ScriptTypeValue("drools", "script")))))
+                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
+                              new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(true), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script")))))
 
-                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
-                              new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools1", "script")))))
+                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
+                              new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools1", "script")))))
 
-                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
-                              new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new ConditionExpression(new ScriptTypeValue("drools", "script1")))))
+                .addFalseCase(new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script")))),
+                              new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingConditionalEventExecutionSet(new CancelActivity(false), new SLADueDate(), new ConditionExpression(new ScriptTypeValue("drools", "script1")))))
 
                 .test();
     }
@@ -1822,20 +1827,20 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new CancellingEscalationEventExecutionSet(),
                              new CancellingEscalationEventExecutionSet())
 
-                .addTrueCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef()),
-                             new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef()))
+                .addTrueCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef()),
+                             new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef()))
 
-                .addTrueCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)),
-                             new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)))
+                .addTrueCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)),
+                             new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)))
 
                 .addFalseCase(new CancellingEscalationEventExecutionSet(),
                               null)
 
-                .addFalseCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)),
-                              new CancellingEscalationEventExecutionSet(new CancelActivity(true), new EscalationRef(ESCALATION_REF)))
+                .addFalseCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)),
+                              new CancellingEscalationEventExecutionSet(new CancelActivity(true), new SLADueDate(), new EscalationRef(ESCALATION_REF)))
 
-                .addFalseCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)),
-                              new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF_1)))
+                .addFalseCase(new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)),
+                              new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF_1)))
 
                 .test();
     }
@@ -1944,23 +1949,23 @@ public class HashCodeAndEqualityTest {
                 .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(), new DataIOSet()),
                               new IntermediateEscalationEvent(new BPMNGeneralSet("name1", "doc1"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(), new DataIOSet()))
 
-                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(true), new EscalationRef(ESCALATION_REF)), new DataIOSet()),
-                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), new DataIOSet()))
+                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(true), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet()),
+                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet()))
 
-                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(true), new EscalationRef(ESCALATION_REF)), new DataIOSet()),
-                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(true), new EscalationRef(ESCALATION_REF_1)), new DataIOSet()))
+                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(true), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet()),
+                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(true), new SLADueDate(), new EscalationRef(ESCALATION_REF_1)), new DataIOSet()))
 
-                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), new DataIOSet()),
-                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")))
+                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet()),
+                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")))
 
-                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")),
-                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(null, new EscalationRef(ESCALATION_REF)), new DataIOSet()))
+                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")),
+                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(null, new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet()))
 
-                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")),
-                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), null), new DataIOSet()))
+                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")),
+                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), null), new DataIOSet()))
 
-                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")),
-                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new EscalationRef(ESCALATION_REF)), null))
+                .addFalseCase(new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), new DataIOSet("data")),
+                              new IntermediateEscalationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new CancellingEscalationEventExecutionSet(new CancelActivity(false), new SLADueDate(), new EscalationRef(ESCALATION_REF)), null))
 
                 .test();
     }
@@ -2064,16 +2069,16 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new IntermediateCompensationEvent(),
                              new IntermediateCompensationEvent())
 
-                .addTrueCase(new IntermediateCompensationEvent(new BPMNGeneralSet(), new BackgroundSet(), new FontSet(), new CircleDimensionSet()),
-                             new IntermediateCompensationEvent(new BPMNGeneralSet(), new BackgroundSet(), new FontSet(), new CircleDimensionSet()))
+                .addTrueCase(new IntermediateCompensationEvent(new BPMNGeneralSet(), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new BaseCancellingEventExecutionSet()),
+                             new IntermediateCompensationEvent(new BPMNGeneralSet(), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new BaseCancellingEventExecutionSet()))
 
-                .addTrueCase(new IntermediateCompensationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()),
-                             new IntermediateCompensationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()))
+                .addTrueCase(new IntermediateCompensationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new BaseCancellingEventExecutionSet()),
+                             new IntermediateCompensationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new BaseCancellingEventExecutionSet()))
 
                 .addFalseCase(new IntermediateCompensationEvent(), null)
 
-                .addFalseCase(new IntermediateCompensationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()),
-                              new IntermediateCompensationEvent(new BPMNGeneralSet("name1", "doc1"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()))
+                .addFalseCase(new IntermediateCompensationEvent(new BPMNGeneralSet("name", "doc"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new BaseCancellingEventExecutionSet()),
+                              new IntermediateCompensationEvent(new BPMNGeneralSet("name1", "doc1"), new BackgroundSet(), new FontSet(), new CircleDimensionSet(), new BaseCancellingEventExecutionSet()))
 
                 .test();
     }

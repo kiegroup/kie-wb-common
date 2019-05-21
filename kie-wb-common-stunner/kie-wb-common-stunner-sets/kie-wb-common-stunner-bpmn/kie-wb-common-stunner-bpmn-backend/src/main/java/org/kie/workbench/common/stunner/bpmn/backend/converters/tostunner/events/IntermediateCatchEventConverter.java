@@ -43,6 +43,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEvent
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseCancellingEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.conditional.CancellingConditionalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.CancellingErrorEventExecutionSet;
@@ -58,6 +59,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.Tim
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -122,10 +124,10 @@ public class IntermediateCatchEventConverter {
         IntermediateErrorEventCatching definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation())));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
 
         definition.setDataIOSet(
                 new DataIOSet(
@@ -133,14 +135,11 @@ public class IntermediateCatchEventConverter {
 
         definition.setExecutionSet(new CancellingErrorEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
+                new SLADueDate(p.getSlaDueDate()),
                 new ErrorRef(EventDefinitionReader.errorRefOf(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
-
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }
@@ -152,10 +151,10 @@ public class IntermediateCatchEventConverter {
         IntermediateSignalEventCatching definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation()) ));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -163,14 +162,12 @@ public class IntermediateCatchEventConverter {
 
         definition.setExecutionSet(new CancellingSignalEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
+                new SLADueDate(p.getSlaDueDate()),
                 new SignalRef(p.getSignalRef())
         ));
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }
@@ -182,21 +179,18 @@ public class IntermediateCatchEventConverter {
         IntermediateTimerEvent definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation()) ));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
 
         definition.setExecutionSet(new CancellingTimerEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
+                new SLADueDate(p.getSlaDueDate()),
                 new TimerSettings(p.getTimerSettings(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
-
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }
@@ -208,25 +202,20 @@ public class IntermediateCatchEventConverter {
         IntermediateMessageEventCatching definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation()) ));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
 
-        definition.setDataIOSet(new DataIOSet(
-                p.getAssignmentsInfo()
-        ));
+        definition.setDataIOSet(new DataIOSet(p.getAssignmentsInfo()));
 
         definition.setExecutionSet(new CancellingMessageEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
+                new SLADueDate(p.getSlaDueDate()),
                 new MessageRef(EventDefinitionReader.messageRefOf(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
-
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }
@@ -238,21 +227,18 @@ public class IntermediateCatchEventConverter {
         IntermediateConditionalEvent definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation()) ));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
 
         definition.setExecutionSet(new CancellingConditionalEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
+                new SLADueDate(p.getSlaDueDate()),
                 p.getConditionExpression(e)
         ));
 
         node.getContent().setBounds(p.getBounds());
-
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }
@@ -266,24 +252,22 @@ public class IntermediateCatchEventConverter {
         IntermediateEscalationEvent definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation()) ));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
 
         definition.setDataIOSet(
                 new DataIOSet(p.getAssignmentsInfo()));
 
         definition.setExecutionSet(new CancellingEscalationEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
+                new SLADueDate(p.getSlaDueDate()),
                 new EscalationRef(EventDefinitionReader.escalationRefOf(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }
@@ -291,22 +275,23 @@ public class IntermediateCatchEventConverter {
     private BpmnNode compensationEvent(CatchEvent event,
                                        CompensateEventDefinition e) {
         String nodeId = event.getId();
-        Node<View<IntermediateCompensationEvent>, Edge> node = factoryManager.newNode(nodeId,
-                                                                                      IntermediateCompensationEvent.class);
+        Node<View<IntermediateCompensationEvent>, Edge> node =
+                factoryManager.newNode(nodeId, IntermediateCompensationEvent.class);
 
         IntermediateCompensationEvent definition = node.getContent().getDefinition();
         CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
+        definition.setGeneral(new BPMNGeneralSet(new Name(p.getName()), new Documentation(p.getDocumentation())));
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setDimensionsSet(p.getCircleDimensionSet());
+
+        SLADueDate slaDueDate = new SLADueDate(p.getSlaDueDate());
+        BaseCancellingEventExecutionSet executionSet =
+                new BaseCancellingEventExecutionSet(null, slaDueDate);
+        definition.setExecutionSet(executionSet);
 
         node.getContent().setBounds(p.getBounds());
-
-        definition.setDimensionsSet(p.getCircleDimensionSet());
-        definition.setFontSet(p.getFontSet());
-        definition.setBackgroundSet(p.getBackgroundSet());
 
         return BpmnNode.of(node, p);
     }

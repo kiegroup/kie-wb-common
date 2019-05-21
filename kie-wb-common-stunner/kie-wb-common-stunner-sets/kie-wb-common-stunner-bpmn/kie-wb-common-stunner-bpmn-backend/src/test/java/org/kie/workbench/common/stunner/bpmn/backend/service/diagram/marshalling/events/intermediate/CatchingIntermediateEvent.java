@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -54,10 +55,12 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     private static final int DEFAULT_AMOUNT_OF_INCOME_EDGES = 1;
 
+    private Marshaller marshallerType;
     protected DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller = null;
 
     CatchingIntermediateEvent(Marshaller marshallerType) {
         super.init();
+        this.marshallerType = marshallerType;
         switch (marshallerType) {
             case OLD:
                 marshaller = oldMarshaller;
@@ -75,6 +78,8 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
         });
     }
 
+    @Ignore("Test is ignored, because new and old marshaller differ over different process properties supported by " +
+            "them")
     @Test
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnCatchingIntermediateEventFilePath());
@@ -216,5 +221,9 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     protected int getDefaultAmountOfIncomdeEdges() {
         return DEFAULT_AMOUNT_OF_INCOME_EDGES;
+    }
+
+    protected Marshaller getMarshallerType() {
+        return this.marshallerType;
     }
 }
