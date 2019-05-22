@@ -37,7 +37,7 @@ public class ProjectMessagesListener {
 
     public static final String MESSAGE_TYPE = "Stunner.";
     private final Event<PublishMessagesEvent> publishMessagesEvent;
-    private final Event<UnpublishMessagesEvent> unpublishMessagesEventEvent;
+    private final Event<UnpublishMessagesEvent> unpublishMessagesEvent;
     private final NotificationsObserver notificationsObserver;
     private final SessionManager clientSessionManager;
 
@@ -51,11 +51,11 @@ public class ProjectMessagesListener {
     @Inject
     public ProjectMessagesListener(final NotificationsObserver notificationsObserver,
                                    final Event<PublishMessagesEvent> publishMessagesEvent,
-                                   final Event<UnpublishMessagesEvent> unpublishMessagesEventEvent,
+                                   final Event<UnpublishMessagesEvent> unpublishMessagesEvent,
                                    final SessionManager clientSessionManager) {
         this.notificationsObserver = notificationsObserver;
         this.publishMessagesEvent = publishMessagesEvent;
-        this.unpublishMessagesEventEvent = unpublishMessagesEventEvent;
+        this.unpublishMessagesEvent = unpublishMessagesEvent;
         this.clientSessionManager = clientSessionManager;
     }
 
@@ -106,6 +106,6 @@ public class ProjectMessagesListener {
     protected void clearMessages(AbstractNotification notification) {
         final UnpublishMessagesEvent unpublishMessagesEvent = new UnpublishMessagesEvent();
         unpublishMessagesEvent.setMessageType(getMessageType(getDiagramPath()));
-        unpublishMessagesEventEvent.fire(unpublishMessagesEvent);
+        this.unpublishMessagesEvent.fire(unpublishMessagesEvent);
     }
 }
