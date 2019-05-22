@@ -110,7 +110,7 @@ public class BaseTaskConverterTest {
                 .thenReturn(serviceTaskNode);
         when(serviceTaskNode.getContent()).thenReturn(serviceTaskContent);
         when(serviceTaskContent.getDefinition()).thenReturn(serviceTaskDefinition);
-        when(propertyReaderFactory.of(serviceTask)).thenReturn(taskPropertyReader);
+        //when(propertyReaderFactory.of(serviceTask)).thenReturn(taskPropertyReader); //TODO
         when(propertyReaderFactory.ofCustom(serviceTask)).thenReturn(Optional.of(serviceTaskPropertyReader));
 
         tested = createTaskConverter();

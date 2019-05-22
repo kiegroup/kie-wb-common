@@ -164,4 +164,7 @@ public interface BPMNSVGViewFactory {
 
     @SVGSource(PATH_RECTANGLE)
     SVGShapeViewResource rectangle();
+
+    @SVGSource(PATH_TASK)
+    SVGShapeViewResource genericServiceTask();
 }

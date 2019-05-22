@@ -43,6 +43,7 @@ public class PropertyWriterUtils {
                                           ControlPoint[] mid,
                                           Connection targetConnection) {
         BPMNEdge bpmnEdge = di.createBPMNEdge();
+
         bpmnEdge.setId(Ids.bpmnEdge(source.getShape().getId(),
                                     target.getShape().getId()));
 
