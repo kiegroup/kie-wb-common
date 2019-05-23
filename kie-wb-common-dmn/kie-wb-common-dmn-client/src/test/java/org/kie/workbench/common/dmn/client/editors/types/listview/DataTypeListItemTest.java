@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypeChangedEvent;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -97,6 +100,9 @@ public class DataTypeListItemTest {
     @Mock
     private DataTypeNameFormatValidator nameFormatValidator;
 
+    @Mock
+    private EventSourceMock<DataTypeChangedEvent> dataTypeChangedEvent;
+
     @Captor
     private ArgumentCaptor<DataTypeEditModeToggleEvent> eventArgumentCaptor;
 
@@ -110,7 +116,7 @@ public class DataTypeListItemTest {
     public void setup() {
 
         dataTypeManager = spy(new DataTypeManager(null, null, itemDefinitionStore, null, null, null, null, null));
-        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeListComponent, dataTypeManager, confirmation, nameFormatValidator, editModeToggleEvent));
+        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeListComponent, dataTypeManager, confirmation, nameFormatValidator, editModeToggleEvent, dataTypeChangedEvent));
         listItem.init(dataTypeList);
 
         doReturn(structure).when(dataTypeManager).structure();
@@ -425,6 +431,7 @@ public class DataTypeListItemTest {
         verify(listItem).closeEditMode();
         verify(dataTypeList).fireOnDataTypeListItemUpdateCallback(newDataTypeHash);
         verify(listItem).insertNewFieldIfDataTypeIsStructure(newDataTypeHash);
+        verify(listItem).fireDataChangedEvent();
     }
 
     @Test
@@ -666,6 +673,7 @@ public class DataTypeListItemTest {
         listItem.doRemove().execute();
 
         verify(dataTypeList).refreshItemsByUpdatedDataTypes(asList(dataType0, dataType3));
+        verify(listItem).fireDataChangedEvent();
     }
 
     @Test
