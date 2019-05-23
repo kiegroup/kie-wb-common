@@ -179,6 +179,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -1851,6 +1852,7 @@ public class DMNMarshallerTest {
 
         when(dmnMarshallerImportsHelper.getImportedDRGElements(importDefinitions)).thenReturn(importedDRGElements);
 
+        doNothing().when(marshaller).updateIDsWithAlias(any(), any());
         doReturn(Optional.of(ref1)).when(marshaller).getReference(importedDRGElements, "REF1");
         doReturn(Optional.of(ref2)).when(marshaller).getReference(importedDRGElements, "REF2");
         doReturn(Optional.of(ref3)).when(marshaller).getReference(importedDRGElements, "REF3");

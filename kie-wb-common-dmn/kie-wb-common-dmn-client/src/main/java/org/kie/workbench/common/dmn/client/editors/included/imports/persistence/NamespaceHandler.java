@@ -57,7 +57,7 @@ public class NamespaceHandler {
     }
 
     public static Optional<Map.Entry<String, String>> getAlias(final Map<String, String> nsContext,
-                                                        final String namespace) {
+                                                               final String namespace) {
         return nsContext.entrySet()
                    .stream()
                    .filter(k -> k.getValue().equals(namespace))

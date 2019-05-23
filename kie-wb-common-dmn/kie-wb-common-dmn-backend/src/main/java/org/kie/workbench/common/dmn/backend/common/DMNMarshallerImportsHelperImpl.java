@@ -64,7 +64,7 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
     private final DMNMarshaller marshaller;
 
-    static final QName NAMESPACE = new QName("Namespace");
+    public static final QName NAMESPACE = new QName("Namespace");
 
     public DMNMarshallerImportsHelperImpl() {
         this(null, null, null, null);

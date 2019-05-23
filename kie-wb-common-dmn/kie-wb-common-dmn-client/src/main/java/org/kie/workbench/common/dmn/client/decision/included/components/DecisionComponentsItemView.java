@@ -159,12 +159,17 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
         return new DragProxyCallbackImpl(drgElement, factory, sessionManager, notificationEvent, clientTranslationService);
     }
 
-    private Map<String, String> getNsContext() {
+    Map<String, String> getNsContext() {
 
         final Optional<Diagram> diagram = Optional.of(dmnGraphUtils.getDiagram());
         return diagram.map(dmnGraphUtils::getDefinitions)
                       .map(DMNModelInstrumentedBase::getNsContext)
                       .orElseThrow(UnsupportedOperationException::new);
+    }
+
+    Graph<?, Node> getGraph(){
+        final Diagram diagram = sessionManager.getCurrentSession().getCanvasHandler().getDiagram();
+        return diagram.getGraph();
     }
 
     ShapeGlyphDragHandler.Item makeDragHandler(final Glyph glyph) {
@@ -226,8 +231,7 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
 
                 final String alias = existingAlias.get().getKey();
                 final String id = alias + ":" + drgElement.getId().getValue().split(":")[1];
-                final Diagram diagram = sessionManager.getCurrentSession().getCanvasHandler().getDiagram();
-                final Graph<?, Node> graph = diagram.getGraph();
+                final Graph<?, Node> graph = getGraph();
 
                 return StreamSupport
                            .stream(graph.nodes().spliterator(), false)

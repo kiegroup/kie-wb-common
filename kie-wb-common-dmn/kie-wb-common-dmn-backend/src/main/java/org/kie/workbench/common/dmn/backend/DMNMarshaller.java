@@ -76,6 +76,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelper;
+import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperImpl;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
@@ -453,7 +454,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             return;
         }
 
-        final QName namespace = new QName("Namespace");
+        final QName namespace = DMNMarshallerImportsHelperImpl.NAMESPACE;
 
         for (org.kie.dmn.model.api.DRGElement element : importedDrgElements) {
             final String namespaceAttribute = element.getAdditionalAttributes().getOrDefault(namespace, "");
