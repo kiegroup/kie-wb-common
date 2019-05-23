@@ -34,6 +34,7 @@ public abstract class AbstractTextEditorBox implements TextEditorBoxView.Present
     private TextPropertyProviderFactory textPropertyProviderFactory;
     private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
     private Command closeCallback;
+
     private Element<? extends Definition> element;
     private String value;
 
@@ -174,4 +175,13 @@ public abstract class AbstractTextEditorBox implements TextEditorBoxView.Present
     public void setFontSize(final double height) {
 
     }
+
+    public void setElement(Element<? extends Definition> element) {
+        this.element = element;
+    }
+
+    public TextPropertyProviderFactory getTextPropertyProviderFactory() {
+        return textPropertyProviderFactory;
+    }
+
 }

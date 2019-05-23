@@ -22,22 +22,16 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingView;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.TextDoubleClickEvent;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.TextDoubleClickHandler;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.TextEnterEvent;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.TextEnterHandler;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.TextExitEvent;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.TextExitHandler;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.uberfire.client.views.pfly.selectpicker.JQueryElementOffset;
+
+import static org.uberfire.client.views.pfly.selectpicker.JQuery.$;
 
 @Default
 @Dependent
@@ -60,95 +54,33 @@ public class CanvasInPlaceTextEditorControlInLine extends AbstractCanvasInPlaceT
     }
 
     @Override
-    protected void doInit() {
-        super.doInit();
-        getTextEditorBox().initialize(canvasHandler,
-                                      () -> {
-                                          final String idToSelect = CanvasInPlaceTextEditorControlInLine.this.uuid;
-                                          CanvasInPlaceTextEditorControlInLine.this.hide();
-                                          getCanvasSelectionEvent().fire(new CanvasSelectionEvent(canvasHandler,
-                                                                                                  idToSelect));
-                                      });
-
-        getFloatingView()
-                .hide()
-                .setHideCallback(hideFloatingViewOnTimeoutCommand)
-                .setTimeOut(FLOATING_VIEW_TIMEOUT)
-                .add(wrapTextEditorBoxElement(getTextEditorBox().getElement()));
-    }
-
-    @Override
-    public void register(final Element element) {
-        if (checkNotRegistered(element)) {
-            final Shape<?> shape = getShape(element.getUUID());
-            if (null != shape) {
-                final ShapeView shapeView = shape.getShapeView();
-                if (shapeView instanceof HasEventHandlers) {
-                    final HasEventHandlers hasEventHandlers = (HasEventHandlers) shapeView;
-                    if (hasEventHandlers.supports(ViewEventType.TEXT_DBL_CLICK)) {
-                        final TextDoubleClickHandler clickHandler = new TextDoubleClickHandler() {
-                            @Override
-                            public void handle(final TextDoubleClickEvent event) {
-                                CanvasInPlaceTextEditorControlInLine.this.show(element,
-                                                                               shapeView);
-                            }
-                        };
-                        hasEventHandlers.addHandler(ViewEventType.TEXT_DBL_CLICK,
-                                                    clickHandler);
-                        registerHandler(shape.getUUID(),
-                                        clickHandler);
-                    }
-
-                    // Change mouse cursor, if shape supports it.
-                    if (hasEventHandlers.supports(ViewEventType.TEXT_ENTER)) {
-                        final TextEnterHandler enterHandler = new TextEnterHandler() {
-                            @Override
-                            public void handle(TextEnterEvent event) {
-                                canvasHandler.getAbstractCanvas().getView().setCursor(AbstractCanvas.Cursors.TEXT);
-                            }
-                        };
-                        hasEventHandlers.addHandler(ViewEventType.TEXT_ENTER,
-                                                    enterHandler);
-                        registerHandler(shape.getUUID(),
-                                        enterHandler);
-                    }
-                    if (hasEventHandlers.supports(ViewEventType.TEXT_EXIT)) {
-                        final TextExitHandler exitHandler = new TextExitHandler() {
-                            @Override
-                            public void handle(TextExitEvent event) {
-                                canvasHandler.getAbstractCanvas().getView().setCursor(AbstractCanvas.Cursors.DEFAULT);
-                            }
-                        };
-                        hasEventHandlers.addHandler(ViewEventType.TEXT_EXIT,
-                                                    exitHandler);
-                        registerHandler(shape.getUUID(),
-                                        exitHandler);
-                    }
-                }
-            }
-        }
-    }
-
     public CanvasInPlaceTextEditorControl<AbstractCanvasHandler, EditorSession, Element> show(final Element item,
-                                                                                              ShapeView shapeView) {
+                                                                                              final double x,
+                                                                                              final double y) {
         if (getTextEditorBox().isVisible()) {
             flush();
         }
+        setUuid(item.getUUID());
 
-        this.uuid = item.getUUID();
+        final Shape<?> shape = getShape(item.getUUID());
+        final ShapeView shapeView = shape.getShapeView();
+
+        JQueryElementOffset offset = $(".canvas-panel").offset();
 
         enableShapeEdit();
         getTextEditorBox().show(item);
         final double offsetX = getTextEditorBox().getDisplayOffsetX();
         final double offsetY = getTextEditorBox().getDisplayOffsetY();
 
+        double translateX = canvasHandler.getCanvas().getTransform().getTranslate().getX();
+        double translateY = canvasHandler.getCanvas().getTransform().getTranslate().getY();
         double scale = canvasHandler.getCanvas().getTransform().getScale().getX();
 
         getFloatingView()
                 .setX(shapeView.getShapeX() * scale)
                 .setY(shapeView.getShapeY() * scale)
-                .setOffsetX(-offsetX)
-                .setOffsetY(-offsetY)
+                .setOffsetX(((offset.left + offsetX) * scale) + translateX)
+                .setOffsetY(((offset.top + offsetY) * scale) + translateY)
                 .show();
 
         getTextEditorBox().setWidth(shapeView.getBoundingBox().getWidth() * scale);

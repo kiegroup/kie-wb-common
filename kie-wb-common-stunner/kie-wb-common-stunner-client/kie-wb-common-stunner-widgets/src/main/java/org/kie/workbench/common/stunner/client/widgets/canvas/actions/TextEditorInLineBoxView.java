@@ -72,7 +72,7 @@ public class TextEditorInLineBoxView
     @PostConstruct
     public void initialize() {
         super.initialize();
-        nameField.setAttribute("placeHolder",
+        nameField.setAttribute("data-text",
                                translationService.getTranslation(StunnerWidgetsConstants.NameEditBoxWidgetViewImp_name));
     }
 
@@ -83,9 +83,8 @@ public class TextEditorInLineBoxView
 
     @Override
     public void show(final String name) {
-        nameField.innerHTML = name.replaceAll("\\n", "<br>").replaceAll("\\s", "&nbsp;");
+        nameField.innerHTML = name;
         setVisible();
-        nameField.focus();
     }
 
     @EventHandler("editNameBox")
@@ -125,7 +124,7 @@ public class TextEditorInLineBoxView
     public void setWidth(final double width) {
         if (width > defaultWidth) {
             editNameBox.getStyle().setProperty("width", width + "px");
-            nameField.style.width = CSSProperties.WidthUnionType.of(width + "px");
+            nameField.style.width = CSSProperties.WidthUnionType.of(width - 2 + "px");
         }
     }
 

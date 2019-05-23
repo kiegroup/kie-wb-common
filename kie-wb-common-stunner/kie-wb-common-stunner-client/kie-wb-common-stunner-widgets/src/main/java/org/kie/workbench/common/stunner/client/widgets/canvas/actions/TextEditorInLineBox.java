@@ -20,14 +20,16 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.InLineTextEditorBox;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
+import org.kie.workbench.common.stunner.core.graph.Element;
 
 @Dependent
 @InLineTextEditorBox
 public class TextEditorInLineBox extends AbstractTextEditorBox {
 
-    private static final double OFFSET_X = 00.0;
+    private static final double OFFSET_X = 0.0;
 
-    private static final double OFFSET_Y = -85.0;
+    private static final double OFFSET_Y = 0.0;
 
     private final TextEditorInLineBoxView view;
 
@@ -65,5 +67,18 @@ public class TextEditorInLineBox extends AbstractTextEditorBox {
     @Override
     public void setFontSize(double size) {
         view.setFontSize(size);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void show(final Element element) {
+        setElement(element);
+        final TextPropertyProvider textPropertyProvider = getTextPropertyProviderFactory().getProvider(element);
+        final String name = textPropertyProvider.getText(element);
+        getView().show(prepareNodeNameToShow(name));
+    }
+
+    String prepareNodeNameToShow(String name){
+        return name.replaceAll("\\n", "<br>").replaceAll("\\s", "&nbsp;");
     }
 }

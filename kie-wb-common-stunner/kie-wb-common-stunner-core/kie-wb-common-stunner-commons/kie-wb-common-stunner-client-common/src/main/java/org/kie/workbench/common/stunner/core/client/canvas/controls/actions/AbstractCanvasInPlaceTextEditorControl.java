@@ -60,9 +60,9 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
     static final double SHAPE_EDIT_ALPHA = 0.2d;
     static final double SHAPE_NOT_EDIT_ALPHA = 1.0d;
 
-    protected String uuid;
+    private String uuid;
 
-    protected final Command hideFloatingViewOnTimeoutCommand = this::flush;
+    private final Command hideFloatingViewOnTimeoutCommand = this::flush;
 
     protected abstract FloatingView<IsWidget> getFloatingView();
 
@@ -276,7 +276,12 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
     }
 
     void flush() {
+        disableShapeEdit();
         getTextEditorBox().flush();
         hide();
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

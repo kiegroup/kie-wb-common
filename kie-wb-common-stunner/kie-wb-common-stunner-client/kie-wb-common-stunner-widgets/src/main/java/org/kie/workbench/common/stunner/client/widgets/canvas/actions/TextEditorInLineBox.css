@@ -1,11 +1,9 @@
 .inlineEditNameBox {
     position: absolute;
     background-color: white;
-    min-width: 100px
+    min-width: 100px;
     border: 1px solid #0099d3;
-    margin-top: -2px;
-    margin-left: -1px;
-    border-collapse: collapse;
+
 }
 
 .inlineNameEditBoxNameBox {
@@ -22,4 +20,14 @@
     text-align: center;
     transform: translate(0, -50%);
     border: 1px solid #0099d3;
+}
+
+[contenteditable] {
+    padding:1px;
+}
+
+[data-text]:empty:before {
+     content: attr(data-text);
+     color: #888;
+     font-style: italic;
 }
