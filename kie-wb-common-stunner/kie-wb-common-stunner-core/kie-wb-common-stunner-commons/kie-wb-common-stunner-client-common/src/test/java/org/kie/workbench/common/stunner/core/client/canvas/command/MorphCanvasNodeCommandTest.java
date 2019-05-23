@@ -27,9 +27,9 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.shape.EdgeShape;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
+import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
-import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.mockito.Mock;
@@ -37,6 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,15 +48,25 @@ public class MorphCanvasNodeCommandTest extends AbstractCanvasCommandTest {
 
     private MorphCanvasNodeCommand tested;
 
-    @Mock
-    private MorphDefinition morphDefinition;
-
     private TestingGraphInstanceBuilder.TestGraph4 graphInstance;
 
     @Mock
     private ViewConnector viewConnector;
 
+    @Mock
+    private EdgeShape edge1Shape;
+
+    @Mock
+    private ShapeView edge1ShapeView;
+
+    @Mock
+    private EdgeShape edge2Shape;
+
+    @Mock
+    private ShapeView edge2ShapeView;
+
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         super.setUp();
 
@@ -68,13 +79,16 @@ public class MorphCanvasNodeCommandTest extends AbstractCanvasCommandTest {
         StreamSupport.<Node>stream(graphInstance.graph.nodes().spliterator(), true)
                 .map(node -> ((Node) node).getUUID())
                 .forEach(uuid -> when(canvas.getShape((String) uuid)).thenReturn(mock(Shape.class)));
-        when(canvas.getShape(graphInstance.edge1.getUUID())).thenReturn(mock(EdgeShape.class));
-        when(canvas.getShape(graphInstance.edge2.getUUID())).thenReturn(mock(EdgeShape.class));
+        when(canvas.getShape(graphInstance.edge1.getUUID())).thenReturn(edge1Shape);
+        when(canvas.getShape(graphInstance.edge2.getUUID())).thenReturn(edge2Shape);
+        when(edge1Shape.getShapeView()).thenReturn(edge1ShapeView);
+        when(edge2Shape.getShapeView()).thenReturn(edge2ShapeView);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void executeDockedNode() {
-        this.tested = new MorphCanvasNodeCommand(graphInstance.dockedNode, morphDefinition, NEW_SHAPE_SET_ID);
+        this.tested = new MorphCanvasNodeCommand(graphInstance.dockedNode, NEW_SHAPE_SET_ID);
         CommandResult<CanvasViolation> result = tested.execute(canvasHandler);
         assertFalse(CommandUtils.isError(result));
         verify(canvasHandler).deregister(graphInstance.dockedNode);
@@ -85,8 +99,9 @@ public class MorphCanvasNodeCommandTest extends AbstractCanvasCommandTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void executeIntermediateNode() {
-        this.tested = new MorphCanvasNodeCommand(graphInstance.intermNode, morphDefinition, NEW_SHAPE_SET_ID);
+        this.tested = new MorphCanvasNodeCommand(graphInstance.intermNode, NEW_SHAPE_SET_ID);
         CommandResult<CanvasViolation> result = tested.execute(canvasHandler);
         assertFalse(CommandUtils.isError(result));
         verify(canvasHandler).deregister(graphInstance.intermNode);
@@ -94,5 +109,7 @@ public class MorphCanvasNodeCommandTest extends AbstractCanvasCommandTest {
         verify(canvasHandler).applyElementMutation(graphInstance.intermNode, MutationContext.STATIC);
         verify(canvasHandler).removeChild(graphInstance.parentNode, graphInstance.intermNode);
         verify(canvasHandler).addChild(graphInstance.parentNode, graphInstance.intermNode);
+        verify(edge1ShapeView, times(1)).moveToTop();
+        verify(edge2ShapeView, times(1)).moveToTop();
     }
 }
