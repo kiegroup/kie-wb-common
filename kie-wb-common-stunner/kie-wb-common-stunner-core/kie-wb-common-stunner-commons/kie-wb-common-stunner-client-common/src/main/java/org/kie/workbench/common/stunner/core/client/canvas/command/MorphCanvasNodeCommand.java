@@ -78,7 +78,7 @@ public class MorphCanvasNodeCommand extends AbstractCanvasCommand {
         dockedNodes.stream().forEach(node -> context.dock(candidate, node));
 
         //Adding the child
-        childNodes.stream().forEach(node -> context.removeChild(candidate, node));
+        childNodes.stream().forEach(node -> context.addChild(candidate, node));
 
         // Adding parent to the new morphed node
         if (dockParentOptional.isPresent()) {
