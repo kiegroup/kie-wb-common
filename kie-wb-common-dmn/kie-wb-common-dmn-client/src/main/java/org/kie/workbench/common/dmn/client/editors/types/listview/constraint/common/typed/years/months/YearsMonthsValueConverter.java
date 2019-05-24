@@ -42,8 +42,9 @@ public class YearsMonthsValueConverter {
 
     public YearsMonthsValue fromDMNString(final String dmnString) {
 
+        String dmnStringWithoutWhiteSpaces = dmnString.replaceAll("\\s","");
         final YearsMonthsValue yearsMonthsValue = new YearsMonthsValue();
-        final String value = removePrefixAndSuffix(dmnString);
+        final String value = removePrefixAndSuffix(dmnStringWithoutWhiteSpaces);
         final String[] yearsSplit = value.split(YEARS);
 
         String months = "";

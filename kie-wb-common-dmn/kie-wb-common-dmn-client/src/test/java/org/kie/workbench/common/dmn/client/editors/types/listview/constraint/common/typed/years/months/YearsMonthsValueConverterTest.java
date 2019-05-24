@@ -94,6 +94,34 @@ public class YearsMonthsValueConverterTest {
     }
 
     @Test
+    public void testFromDMNStringWhiteSpacesStartAndEnd() {
+
+        final String input = "duration( \"P1Y\" )";
+        testFromDMNString(input, "1", "");
+    }
+
+    @Test
+    public void testFromDMNStringWhiteSpacesStart() {
+
+        final String input = "duration( \"P1Y\")";
+        testFromDMNString(input, "1", "");
+    }
+
+    @Test
+    public void testFromDMNStringWhiteSpacesEnd() {
+
+        final String input = "duration(\"P1Y\" )";
+        testFromDMNString(input, "1", "");
+    }
+
+    @Test
+    public void testFromDMNStringWhiteSpacesFourSpacesEverywhere() {
+
+        final String input = "duration(    \"    P    1    Y    \"    )";
+        testFromDMNString(input, "1", "");
+    }
+
+    @Test
     public void testToDMNStringEmpty() {
 
         testToDMNString("", "", "");
