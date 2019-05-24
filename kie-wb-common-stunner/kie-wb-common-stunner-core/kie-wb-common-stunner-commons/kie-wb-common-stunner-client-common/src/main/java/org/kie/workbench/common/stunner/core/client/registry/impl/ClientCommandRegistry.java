@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.registry.impl;
+package org.kie.workbench.common.stunner.core.client.registry.impl;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.registry.impl.CommandRegistryImpl;
 
 /**
  * The client implementation for the CommandRegistry type.
@@ -32,6 +34,8 @@ import org.kie.workbench.common.stunner.core.command.Command;
 public class ClientCommandRegistry<C extends Command> extends CommandRegistryImpl<C> {
 
     private Event<RegisterChangedEvent> registerChangedEvent;
+
+    private ClientSession session;
 
     @Inject
     public ClientCommandRegistry(Event<RegisterChangedEvent> registerChangedEvent) {
@@ -44,19 +48,23 @@ public class ClientCommandRegistry<C extends Command> extends CommandRegistryImp
     @Override
     public void register(final C command) {
         super.register(command);
-        registerChangedEvent.fire(new RegisterChangedEvent());
+        registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler()));
     }
 
     @Override
     public void clear() {
         super.clear();
-        registerChangedEvent.fire(new RegisterChangedEvent());
+        registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler()));
     }
 
     @Override
     public C pop() {
         C command = super.pop();
-        registerChangedEvent.fire(new RegisterChangedEvent());
+        registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler()));
         return command;
+    }
+
+    public void setSession(ClientSession session) {
+        this.session = session;
     }
 }
