@@ -45,10 +45,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.sequencePredicate;
 import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.CHILD_HEIGHT;
 import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.CHILD_WIDTH;
 import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.STAGE_GAP;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.sequencePredicate;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -203,7 +203,7 @@ public class CaseManagementSetChildNodeGraphCommandTest extends CaseManagementAb
     }
 
     @Test
-    public void testRemoveExistingRelationship() throws Exception {
+    public void testRemoveExistingRelationship() {
         final Node diagram = createNode(CaseManagementDiagram.class);
         final Node stage = createNode(AdHocSubprocess.class);
         final Node start = createNode(StartNoneEvent.class);
@@ -236,7 +236,7 @@ public class CaseManagementSetChildNodeGraphCommandTest extends CaseManagementAb
     }
 
     @Test
-    public void testAddNewRelationship_withIndex() throws Exception {
+    public void testAddNewRelationship_withIndex() {
         final Node diagram = createNode(CaseManagementDiagram.class);
         final Node start = createNode(StartNoneEvent.class);
         final Node end = createNode(EndNoneEvent.class);
@@ -273,7 +273,7 @@ public class CaseManagementSetChildNodeGraphCommandTest extends CaseManagementAb
     }
 
     @Test
-    public void testAddNewRelationship_noIndex() throws Exception {
+    public void testAddNewRelationship_noIndex() {
         final Node diagram = createNode(CaseManagementDiagram.class);
         final Node start = createNode(StartNoneEvent.class);
         final Node end = createNode(EndNoneEvent.class);
@@ -310,7 +310,7 @@ public class CaseManagementSetChildNodeGraphCommandTest extends CaseManagementAb
     }
 
     @Test
-    public void testSequenceFlowSupplier() throws Exception {
+    public void testSequenceFlowSupplier() {
         final CaseManagementSetChildNodeGraphCommand command = new CaseManagementSetChildNodeGraphCommand(parent,
                                                                                                           candidate,
                                                                                                           index,
@@ -328,8 +328,8 @@ public class CaseManagementSetChildNodeGraphCommandTest extends CaseManagementAb
     }
 
     @Test
-    public void testResizeNodes() throws Exception {
-        final Node stage = createNode(AdHocSubprocess.class, 5.0, 5.0, 200.0, 200.0);
+    public void testResizeNodes() {
+        final Node stage = createNode(AdHocSubprocess.class, 5.0, 5.0, 225.0, 225.0);
         final Node task = createNode(UserTask.class, 5.0, 5.0, 75.0, 75.0);
 
         final CaseManagementSetChildNodeGraphCommand command = new CaseManagementSetChildNodeGraphCommand(stage,
@@ -340,14 +340,14 @@ public class CaseManagementSetChildNodeGraphCommandTest extends CaseManagementAb
 
         command.resizeNodes();
 
-        assertEquals(Optional.of(Bounds.create(5.0, 5.0, 200.0, 200.0)), command.originalParentBounds);
+        assertEquals(Optional.of(Bounds.create(5.0, 5.0, 225.0, 225.0)), command.originalParentBounds);
         assertEquals(Optional.of(Bounds.create(5.0, 5.0, 75.0, 75.0)), command.originalBounds);
-        assertEquals(Bounds.create(5.0, 5.0, 200.0, 200.0 + STAGE_GAP + CHILD_HEIGHT), ((View) stage.getContent()).getBounds());
-        assertEquals(Bounds.create(STAGE_GAP, 195.0, STAGE_GAP + CHILD_WIDTH, 195.0 + CHILD_HEIGHT), ((View) task.getContent()).getBounds());
+        assertEquals(Bounds.create(5.0, 5.0, 225.0, 225.0), ((View) stage.getContent()).getBounds());
+        assertEquals(Bounds.create(STAGE_GAP, STAGE_GAP, STAGE_GAP + CHILD_WIDTH, STAGE_GAP + CHILD_HEIGHT), ((View) task.getContent()).getBounds());
 
         command.undoResizeNodes();
 
-        assertEquals(Bounds.create(5.0, 5.0, 200.0, 200.0), ((View) stage.getContent()).getBounds());
+        assertEquals(Bounds.create(5.0, 5.0, 225.0, 225.0), ((View) stage.getContent()).getBounds());
         assertEquals(Bounds.create(5.0, 5.0, 75.0, 75.0), ((View) task.getContent()).getBounds());
     }
 

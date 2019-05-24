@@ -49,12 +49,12 @@ public class ManagedClientSessionCommandsTest {
     private ManagedClientSessionCommands tested;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         tested = new ManagedClientSessionCommands(definitionUtils, sessionCommands);
     }
 
     @Test
-    public void testDestroyCommands() throws Exception {
+    public void testDestroyCommands() {
         final ClientSession clientSession = mock(ClientSession.class);
         final CanvasHandler canvasHandler = mock(CanvasHandler.class);
         final Diagram diagram = mock(Diagram.class);
@@ -76,11 +76,10 @@ public class ManagedClientSessionCommandsTest {
         tested.register(MockClientSessionCommand.class);
         tested.bind(clientSession);
 
-        tested.destroyCommands();
+        tested.clearCommands();
 
         verify(clientSessionCommand, times(1)).destroy();
         verify(sessionCommands, times(1)).destroy(eq(clientSessionCommand));
-        verify(sessionCommands, times(1)).destroyAll();
     }
 
     private static class MockClientSessionCommand implements ClientSessionCommand {

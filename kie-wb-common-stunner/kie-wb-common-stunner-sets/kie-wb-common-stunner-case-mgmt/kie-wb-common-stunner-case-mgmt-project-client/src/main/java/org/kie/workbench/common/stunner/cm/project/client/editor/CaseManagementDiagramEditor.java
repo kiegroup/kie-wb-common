@@ -43,6 +43,7 @@ import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -87,6 +88,8 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
 
     private AtomicBoolean switchedToProcess;
 
+    private SwitchViewControl switchViewControl;
+
     @Inject
     public CaseManagementDiagramEditor(final View view,
                                        final DocumentationView documentationView,
@@ -128,18 +131,14 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
 
         this.caseManagementSwitchViewService = caseManagementSwitchViewService;
         this.switchedToProcess = new AtomicBoolean();
+        this.switchViewControl = initSwitchViewControl();
     }
 
-    @Override
-    public void init() {
-        super.init();
-
+    private SwitchViewControl initSwitchViewControl() {
         final Runnable caseViewSwitchHandler = () -> {
             final boolean toProcess = CaseManagementDiagramEditor.this.switchedToProcess.getAndSet(false);
             if (toProcess) {
-                updateSessionEditorPresenter(this.getEditorSessionPresenter(),
-                                             this.getView(),
-                                             CaseManagementDefinitionSet.class.getName(),
+                updateSessionEditorPresenter(CaseManagementDefinitionSet.class.getName(),
                                              CaseManagementShapeSet.class.getName());
             }
         };
@@ -147,9 +146,7 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
         final Runnable processViewSwitchHandler = () -> {
             final boolean toProcess = CaseManagementDiagramEditor.this.switchedToProcess.getAndSet(true);
             if (!toProcess) {
-                updateSessionEditorPresenter(this.getEditorSessionPresenter(),
-                                             this.getView(),
-                                             BPMNDefinitionSet.class.getName(),
+                updateSessionEditorPresenter(BPMNDefinitionSet.class.getName(),
                                              BPMNShapeSet.class.getName());
             }
         };
@@ -159,17 +156,23 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
         final String processViewTooltip = this.getTranslationService()
                 .getValue(CaseManagementProjectClientConstants.CaseManagementEditorProcessViewTooltip);
 
-        this.addTabBarWidget(
-                new SwitchViewControl("COLUMNS", caseViewTooltip, caseViewSwitchHandler,
-                                      "SITEMAP", processViewTooltip, processViewSwitchHandler));
+        return new SwitchViewControl("COLUMNS", caseViewTooltip, caseViewSwitchHandler,
+                                     "SITEMAP", processViewTooltip, processViewSwitchHandler);
     }
 
-    private void updateSessionEditorPresenter(final Optional<SessionEditorPresenter<EditorSession>> sessionEditorPresenter,
-                                              final View view, final String defSetId, final String shapeSetId) {
-        sessionEditorPresenter.ifPresent(p -> {
-            final Diagram d = p.getHandler().getDiagram();
-            CaseManagementDiagramEditor.this.onSwitch(d, defSetId, shapeSetId, view, sessionEditorPresenter);
-        });
+    @Override
+    public void init() {
+        super.init();
+
+        this.addTabBarWidget(switchViewControl);
+    }
+
+    private void updateSessionEditorPresenter(final String defSetId, final String shapeSetId) {
+        final SessionPresenter<? extends ClientSession, ?, Diagram> presenter = this.getSessionPresenter();
+        if (presenter != null) {
+            final Diagram d = presenter.getHandler().getDiagram();
+            CaseManagementDiagramEditor.this.onSwitch(d, defSetId, shapeSetId);
+        }
     }
 
     @OnStartup
@@ -237,47 +240,54 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
                 .displayNotifications(type -> false);
     }
 
-    public void reopenSession(final ProjectDiagram diagram,
-                              final Optional<SessionEditorPresenter<EditorSession>> sessionEditorPresenter) {
-        sessionEditorPresenter.ifPresent(
-                p -> p.open(diagram,
-                            new SessionPresenter.SessionPresenterCallback<Diagram>() {
-                                @Override
-                                public void afterSessionOpened() {
-
-                                }
-
-                                @Override
-                                public void afterCanvasInitialized() {
-
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                    CaseManagementDiagramEditor.this.getMenuSessionItems().getCommands()
-                                            .getCommands().destroyCommands();
-                                    CaseManagementDiagramEditor.this.getMenuSessionItems()
-                                            .bind(CaseManagementDiagramEditor.this.getSession());
-                                }
-
-                                @Override
-                                public void onError(final ClientRuntimeError error) {
-                                    onLoadError(error);
-                                }
-                            })
-        );
+    @Override
+    protected void loadContent() {
+        this.switchedToProcess.getAndSet(false);
+        this.switchViewControl.caseViewButton.click();
+        super.loadContent();
     }
 
-    protected void onSwitch(final Diagram diagram, final String defSetId, final String shapeDefId, final View view,
-                            final Optional<SessionEditorPresenter<EditorSession>> sessionEditorPresenter) {
-        view.showLoading();
+    void reopenSession(final ProjectDiagram diagram) {
+        final Integer originalHash = this.originalHash;
+        final boolean unsaved = this.hasUnsavedChanges();
+
+        this.getMenuSessionItems().getCommands().getCommands().clearCommands();
+        this.destroySession();
+
+        this.open(diagram, Optional.of(new SessionPresenter.SessionPresenterCallback<Diagram>() {
+            @Override
+            public void afterSessionOpened() {
+
+            }
+
+            @Override
+            public void afterCanvasInitialized() {
+
+            }
+
+            @Override
+            public void onSuccess() {
+                if (unsaved) {
+                    CaseManagementDiagramEditor.this.setOriginalHash(originalHash);
+                }
+            }
+
+            @Override
+            public void onError(ClientRuntimeError error) {
+
+            }
+        }));
+    }
+
+    protected void onSwitch(final Diagram diagram, final String defSetId, final String shapeDefId) {
+        this.showLoadingViews();
 
         caseManagementSwitchViewService.call(new RemoteCallback<Optional<ProjectDiagram>>() {
             @Override
             public void callback(Optional<ProjectDiagram> diagram) {
                 diagram.ifPresent(d -> {
-                    CaseManagementDiagramEditor.this.reopenSession(d, sessionEditorPresenter);
-                    view.hideBusyIndicator();
+                    CaseManagementDiagramEditor.this.reopenSession(d);
+                    CaseManagementDiagramEditor.this.hideLoadingViews();
                 });
             }
         }).switchView(diagram, defSetId, shapeDefId);

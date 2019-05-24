@@ -62,6 +62,5 @@ public class InstanceUtils {
                                    final Consumer<T> destroyer) {
         destroyer.accept(control);
         controlInstance.destroy(control);
-        controlInstance.destroyAll();
     }
 }

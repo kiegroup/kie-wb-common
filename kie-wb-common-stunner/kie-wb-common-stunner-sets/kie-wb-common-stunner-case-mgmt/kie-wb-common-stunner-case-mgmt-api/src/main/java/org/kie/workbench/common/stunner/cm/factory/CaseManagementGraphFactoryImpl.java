@@ -66,6 +66,9 @@ import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.STAGE
 @Dependent
 public class CaseManagementGraphFactoryImpl extends AbstractGraphFactory implements CaseManagementGraphFactory {
 
+    private static final double CONNECTION_LOCATION_X = 475d;
+    private static final double CONNECTION_LOCATION_Y = 475d;
+
     private final DefinitionManager definitionManager;
     private final RuleManager ruleManager;
     private final GraphIndexBuilder<?> indexBuilder;
@@ -175,13 +178,13 @@ public class CaseManagementGraphFactoryImpl extends AbstractGraphFactory impleme
         commands.add(graphCommandFactory.addChildNode(diagramNode, stageNode));
         commands.add(graphCommandFactory.addChildNode(diagramNode, endEventNode));
         commands.add(graphCommandFactory.setSourceNode(startEventNode, startEventEdge,
-                                                       new MagnetConnection.Builder().atX(475d).atY(475d).auto(true).build()));
+                                                       new MagnetConnection.Builder().atX(CONNECTION_LOCATION_X).atY(CONNECTION_LOCATION_Y).auto(true).build()));
         commands.add(graphCommandFactory.setTargetNode(stageNode, startEventEdge,
-                                                       new MagnetConnection.Builder().atX(475d).atY(475d).auto(true).build()));
+                                                       new MagnetConnection.Builder().atX(CONNECTION_LOCATION_X).atY(CONNECTION_LOCATION_Y).auto(true).build()));
         commands.add(graphCommandFactory.setSourceNode(stageNode, endEventEdge,
-                                                       new MagnetConnection.Builder().atX(475d).atY(475d).auto(true).build()));
+                                                       new MagnetConnection.Builder().atX(CONNECTION_LOCATION_X).atY(CONNECTION_LOCATION_Y).auto(true).build()));
         commands.add(graphCommandFactory.setTargetNode(endEventNode, endEventEdge,
-                                                       new MagnetConnection.Builder().atX(475d).atY(475d).auto(true).build()));
+                                                       new MagnetConnection.Builder().atX(CONNECTION_LOCATION_X).atY(CONNECTION_LOCATION_Y).auto(true).build()));
 
         return commands;
     }

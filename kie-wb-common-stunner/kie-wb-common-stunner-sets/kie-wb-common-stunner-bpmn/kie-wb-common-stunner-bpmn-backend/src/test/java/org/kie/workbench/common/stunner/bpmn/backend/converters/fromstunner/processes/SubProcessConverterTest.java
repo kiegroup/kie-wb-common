@@ -79,7 +79,7 @@ public class SubProcessConverterTest {
     }
 
     @Test
-    public void testConvertAdHocSubprocessNode_autostart() throws Exception {
+    public void testConvertAdHocSubprocessNode_autostart() {
         final AdHocSubprocess definition = new AdHocSubprocess();
         definition.getExecutionSet().setAdHocAutostart(new AdHocAutostart(true));
         final View<BaseAdHocSubprocess> view = new ViewImpl<>(definition, Bounds.create());
@@ -92,7 +92,7 @@ public class SubProcessConverterTest {
     }
 
     @Test
-    public void testConvertAdHocSubprocessNode_notautostart() throws Exception {
+    public void testConvertAdHocSubprocessNode_notautostart() {
         final AdHocSubprocess definition = new AdHocSubprocess();
         definition.getExecutionSet().setAdHocAutostart(new AdHocAutostart(false));
         final View<BaseAdHocSubprocess> view = new ViewImpl<>(definition, Bounds.create());

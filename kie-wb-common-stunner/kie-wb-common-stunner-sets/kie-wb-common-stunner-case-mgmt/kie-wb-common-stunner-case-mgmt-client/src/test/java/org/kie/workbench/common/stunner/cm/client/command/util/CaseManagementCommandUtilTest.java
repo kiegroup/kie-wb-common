@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.cm.util;
+
+package org.kie.workbench.common.stunner.cm.client.command.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +51,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CaseManagementUtilsTest {
+public class CaseManagementCommandUtilTest {
 
     @Mock
     private Node parent;
@@ -62,7 +63,7 @@ public class CaseManagementUtilsTest {
     public void checkGetFirstDiagramNodeWithEmptyGraph() {
         final Graph graph = new GraphImpl<>("uuid",
                                             new GraphNodeStoreImpl());
-        final Node<Definition<CaseManagementDiagram>, ?> fNode = CaseManagementUtils.getFirstDiagramNode(graph);
+        final Node<Definition<CaseManagementDiagram>, ?> fNode = CaseManagementCommandUtil.getFirstDiagramNode(graph);
         assertNull(fNode);
     }
 
@@ -77,7 +78,7 @@ public class CaseManagementUtilsTest {
 
         graph.addNode(node);
 
-        final Node<Definition<CaseManagementDiagram>, ?> fNode = CaseManagementUtils.getFirstDiagramNode(graph);
+        final Node<Definition<CaseManagementDiagram>, ?> fNode = CaseManagementCommandUtil.getFirstDiagramNode(graph);
         assertNotNull(fNode);
         assertEquals("node-uuid",
                      fNode.getUUID());
@@ -86,68 +87,68 @@ public class CaseManagementUtilsTest {
     }
 
     @Test
-    public void testGetCanvasChildIndex_1() throws Exception {
+    public void testGetCanvasChildIndex() {
         final Edge edge = mock(Edge.class);
         when(edge.getTargetNode()).thenReturn(child);
         when(parent.getOutEdges()).thenReturn(Collections.singletonList(edge));
 
-        assertEquals(0, CaseManagementUtils.getCanvasChildIndex(parent, child));
+        assertEquals(0, CaseManagementCommandUtil.getChildCanvasIndex(parent, child));
     }
 
     @Test
-    public void testGetCanvasChildIndex_2() throws Exception {
+    public void testGetCanvasChildIndex_withStage() {
         setupForStage();
 
-        assertEquals(1, CaseManagementUtils.getCanvasChildIndex(parent, child));
+        assertEquals(1, CaseManagementCommandUtil.getChildCanvasIndex(parent, child));
     }
 
     @Test
-    public void testGetCanvasChildIndex_3() throws Exception {
+    public void testGetCanvasChildIndex_withSubStage() {
         setupForSubStage();
 
-        assertEquals(1, CaseManagementUtils.getCanvasChildIndex(parent, child));
+        assertEquals(1, CaseManagementCommandUtil.getChildCanvasIndex(parent, child));
     }
 
     @Test
-    public void testGetGraphIndex() throws Exception {
+    public void testGetGraphIndex() {
         final Edge edge = mock(Edge.class);
         when(edge.getTargetNode()).thenReturn(child);
         when(parent.getOutEdges()).thenReturn(Collections.singletonList(edge));
 
-        assertEquals(0, CaseManagementUtils.getGraphIndex(parent, child));
+        assertEquals(0, CaseManagementCommandUtil.getChildGraphIndex(parent, child));
     }
 
     @Test
-    public void testIsStage_1() throws Exception {
+    public void testIsStage_withStage() {
         setupForStage();
 
-        assertTrue(CaseManagementUtils.isStage(parent, child));
+        assertTrue(CaseManagementCommandUtil.isStage(parent, child));
     }
 
     @Test
-    public void testIsStage_2() throws Exception {
+    public void testIsStage_withSubStage() {
         setupForSubStage();
 
-        assertFalse(CaseManagementUtils.isStage(parent, child));
+        assertFalse(CaseManagementCommandUtil.isStage(parent, child));
     }
 
     @Test
-    public void testIsStageNode() throws Exception {
+    public void testIsStageNode() {
         setupForStage();
 
-        assertTrue(CaseManagementUtils.isStageNode(child));
+        assertTrue(CaseManagementCommandUtil.isStageNode(child));
     }
 
     @Test
-    public void testIsSubStageNode() throws Exception {
+    public void testIsSubStageNode() {
         setupForSubStage();
 
-        assertTrue(CaseManagementUtils.isSubStageNode(child));
+        assertTrue(CaseManagementCommandUtil.isSubStageNode(child));
     }
 
     @Test
-    public void testChildPredicate() throws Exception {
-        final Predicate<Edge> predicate = CaseManagementUtils.childPredicate();
+    public void testChildPredicate() {
+        final Predicate<Edge> predicate = CaseManagementCommandUtil.childPredicate();
 
         final Edge edge = mock(Edge.class);
         when(edge.getContent()).thenReturn(mock(Child.class));
@@ -156,8 +157,8 @@ public class CaseManagementUtilsTest {
     }
 
     @Test
-    public void testSequencePredicate() throws Exception {
-        final Predicate<Edge> predicate = CaseManagementUtils.sequencePredicate();
+    public void testSequencePredicate() {
+        final Predicate<Edge> predicate = CaseManagementCommandUtil.sequencePredicate();
 
         final Edge edge = mock(Edge.class);
         final ViewConnector viewConnector = mock(ViewConnector.class);
@@ -168,31 +169,31 @@ public class CaseManagementUtilsTest {
     }
 
     @Test
-    public void testGetCanvasNewChildIndex_1() throws Exception {
+    public void testGetCanvasNewChildIndex_withStage() {
         setupForStage();
 
-        assertEquals(2, CaseManagementUtils.getCanvasNewChildIndex(parent));
+        assertEquals(2, CaseManagementCommandUtil.getNewChildCanvasIndex(parent));
     }
 
     @Test
-    public void testGetCanvasNewChildIndex_2() throws Exception {
+    public void testGetCanvasNewChildIndex_withSubStage() {
         setupForSubStage();
 
-        assertEquals(2, CaseManagementUtils.getCanvasNewChildIndex(parent));
+        assertEquals(2, CaseManagementCommandUtil.getNewChildCanvasIndex(parent));
     }
 
     @Test
-    public void testGetGraphNewChildIndex_1() throws Exception {
-        setupForSubStage();
+    public void testGetGraphNewChildIndex_withStage() {
+        setupForStage();
 
-        assertEquals(2, CaseManagementUtils.getGraphNewChildIndex(parent));
+        assertEquals(2, CaseManagementCommandUtil.getNewChildGraphIndex(parent));
     }
 
     @Test
-    public void testGetGraphNewChildIndex_2() throws Exception {
+    public void testGetGraphNewChildIndex_withSubStage() {
         setupForSubStage();
 
-        assertEquals(2, CaseManagementUtils.getGraphNewChildIndex(parent));
+        assertEquals(2, CaseManagementCommandUtil.getNewChildGraphIndex(parent));
     }
 
     private void setupForStage() {

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 public class InstanceUtilsTest {
 
     @Test
-    public void testDestroy() throws Exception {
+    public void testDestroy() {
         final ManagedInstance managedInstance = mock(ManagedInstance.class);
         final Object control = mock(Object.class);
         final Consumer<Object> consumer = mock(Consumer.class);
@@ -38,6 +38,5 @@ public class InstanceUtilsTest {
 
         verify(consumer, times(1)).accept(eq(control));
         verify(managedInstance, times(1)).destroy(eq(control));
-        verify(managedInstance, times(1)).destroyAll();
     }
 }

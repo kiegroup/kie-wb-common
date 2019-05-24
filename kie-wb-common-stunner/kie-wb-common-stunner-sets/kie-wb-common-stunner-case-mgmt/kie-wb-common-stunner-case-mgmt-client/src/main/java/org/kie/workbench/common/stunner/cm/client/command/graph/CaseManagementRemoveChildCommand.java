@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.RemoveChildrenCo
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.getGraphIndex;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.getChildGraphIndex;
 
 @Portable
 public class CaseManagementRemoveChildCommand extends RemoveChildrenCommand {
@@ -43,7 +43,7 @@ public class CaseManagementRemoveChildCommand extends RemoveChildrenCommand {
     public CaseManagementRemoveChildCommand(Node<View<?>, Edge> parent,
                                             Node<View<?>, Edge> candidate) {
         super(parent, candidate);
-        this.index = getGraphIndex(parent, candidate);
+        this.index = getChildGraphIndex(parent, candidate);
     }
 
     public Node<?, Edge> getCandidate() {

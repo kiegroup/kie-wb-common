@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.cm.client.command.graph;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -43,14 +44,14 @@ import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.childPredicate;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.isStage;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.isStageNode;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.isSubStageNode;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.sequencePredicate;
 import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.CHILD_HEIGHT;
 import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.CHILD_WIDTH;
 import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.STAGE_GAP;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.childPredicate;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.isStage;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.isStageNode;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.isSubStageNode;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.sequencePredicate;
 
 public class CaseManagementSetChildNodeGraphCommand extends AbstractGraphCommand {
 
@@ -362,15 +363,34 @@ public class CaseManagementSetChildNodeGraphCommand extends AbstractGraphCommand
             originalBounds = Optional.of(Bounds.create(cBounds.getUpperLeft().getX(), cBounds.getUpperLeft().getY(),
                                                        cBounds.getLowerRight().getX(), cBounds.getLowerRight().getY()));
 
-            double parentHeight = pBounds.getLowerRight().getY() - pBounds.getUpperLeft().getY();
+            double childOY = getChildY();
 
-            Bounds childBounds = Bounds.create(STAGE_GAP, parentHeight, STAGE_GAP + CHILD_WIDTH, parentHeight + CHILD_HEIGHT);
+            Bounds childBounds = Bounds.create(STAGE_GAP, childOY, STAGE_GAP + CHILD_WIDTH, childOY + CHILD_HEIGHT);
             child.getContent().setBounds(childBounds);
 
+            double parentOH = pBounds.getHeight();
+            double childH = childOY + CHILD_HEIGHT + STAGE_GAP;
+            double parentH = parentOH > childH ? parentOH : childH;
+
+            double parentOW = pBounds.getWidth();
+            double childW = CHILD_WIDTH + STAGE_GAP * 2;
+            double parentW = parentOW > childW ? parentOW : childW;
+
             Bounds parentBounds = Bounds.create(pBounds.getUpperLeft().getX(), pBounds.getUpperLeft().getY(),
-                                                pBounds.getLowerRight().getX(), pBounds.getLowerRight().getY() + STAGE_GAP + CHILD_HEIGHT);
+                                                pBounds.getUpperLeft().getX() + parentW, pBounds.getUpperLeft().getY() + parentH);
             parent.getContent().setBounds(parentBounds);
         }
+    }
+
+    private double getChildY() {
+        final OptionalDouble maxY = parent.getOutEdges().stream()
+                .filter(childPredicate())
+                .filter(e -> !child.getUUID().equals(e.getTargetNode().getUUID()))
+                .mapToDouble(e -> ((View) e.getTargetNode().getContent())
+                        .getBounds().getLowerRight().getY())
+                .max();
+
+        return maxY.orElse(0.0) + STAGE_GAP;
     }
 
     void undoResizeNodes() {

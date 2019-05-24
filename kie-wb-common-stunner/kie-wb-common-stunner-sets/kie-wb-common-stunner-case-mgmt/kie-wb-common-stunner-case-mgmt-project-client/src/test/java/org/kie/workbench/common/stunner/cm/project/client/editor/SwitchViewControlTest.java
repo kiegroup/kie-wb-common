@@ -46,13 +46,13 @@ public class SwitchViewControlTest {
     private SwitchViewControl tested;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         tested = new SwitchViewControl("COLUMNS", "Case View", caseViewSwitchHandler,
                                        "SITEMAP", "Process View", processViewSwitchHandler);
     }
 
     @Test
-    public void testConfigureButton() throws Exception {
+    public void testConfigureButton() {
         final Button button = mock(Button.class);
         final Button otherButton = mock(Button.class);
         final Runnable runnable = mock(Runnable.class);

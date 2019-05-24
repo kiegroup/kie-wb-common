@@ -24,11 +24,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
+import org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.definition.UserTask;
-import org.kie.workbench.common.stunner.cm.util.CaseManagementUtils;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AddCanvasChildNodeCommand;
@@ -48,8 +48,8 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.A
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 
 import static java.util.function.Function.identity;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.childPredicate;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.sequencePredicate;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.childPredicate;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.sequencePredicate;
 
 /**
  * Draws the whole Case Management diagram. This implementation does not use Commands since loading cannot be "undone".
@@ -128,7 +128,7 @@ public class CaseManagementDrawCommand extends AbstractCanvasCommand {
                     .filter(childPredicate())
                     .map(Edge::getTargetNode).collect(Collectors.toList());
 
-            return childNodes.stream().allMatch(CaseManagementUtils::isSubStageNode);
+            return childNodes.stream().allMatch(CaseManagementCommandUtil::isSubStageNode);
         } else if (child.getContent().getDefinition() instanceof AdHocSubprocess) {
             // Draw Stages only if they are child of the diagram and only have children of UserTask and ReusableSubprocess
             if (!(parent.getContent().getDefinition() instanceof CaseManagementDiagram)) {
@@ -140,7 +140,7 @@ public class CaseManagementDrawCommand extends AbstractCanvasCommand {
                     .map(Edge::getTargetNode).collect(Collectors.toList());
 
             return childNodes.isEmpty()
-                    || childNodes.stream().allMatch(CaseManagementUtils::isSubStageNode);
+                    || childNodes.stream().allMatch(CaseManagementCommandUtil::isSubStageNode);
         }
 
         return true;
@@ -179,7 +179,7 @@ public class CaseManagementDrawCommand extends AbstractCanvasCommand {
 
             // Sort the child nodes in Stages by their coordinates
             Stream<Node<View<?>, Edge>> stageStream = root.getOutEdges().stream().filter(childPredicate()).map(Edge::getTargetNode);
-            stageStream.filter(CaseManagementUtils::isStageNode)
+            stageStream.filter(CaseManagementCommandUtil::isStageNode)
                     .forEach(n -> {
                         List<Edge> edges = n.getOutEdges().stream().filter(childPredicate()).collect(Collectors.toList());
                         Collections.sort(edges, (e1, e2) -> {

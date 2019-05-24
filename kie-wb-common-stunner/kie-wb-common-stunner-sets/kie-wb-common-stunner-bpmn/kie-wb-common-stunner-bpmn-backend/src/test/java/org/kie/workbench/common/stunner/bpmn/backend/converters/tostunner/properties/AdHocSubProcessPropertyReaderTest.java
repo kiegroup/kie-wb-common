@@ -111,7 +111,7 @@ public class AdHocSubProcessPropertyReaderTest {
     }
 
     @Test
-    public void testIsAdHocAutostart_true() throws Exception {
+    public void testIsAdHocAutostart_true() {
         String id = UUID.randomUUID().toString();
 
         AdHocSubProcess adHocSubProcess = bpmn2.createAdHocSubProcess();
@@ -126,7 +126,7 @@ public class AdHocSubProcessPropertyReaderTest {
     }
 
     @Test
-    public void testIsAdHocAutostart_false() throws Exception {
+    public void testIsAdHocAutostart_false() {
         String id = UUID.randomUUID().toString();
 
         AdHocSubProcess adHocSubProcess = bpmn2.createAdHocSubProcess();

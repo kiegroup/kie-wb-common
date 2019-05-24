@@ -16,6 +16,7 @@
 
 package com.kie.workbench.common.stunner.cm.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -64,12 +65,12 @@ public class CaseManagementSwitchViewServiceImplTest {
     private CaseManagementSwitchViewServiceImpl tested;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         tested = new CaseManagementSwitchViewServiceImpl(factoryManager, definitionSetServiceInstances);
     }
 
     @Test
-    public void testInit() throws Exception {
+    public void testInit() {
         final List<DefinitionSetService> definitionSetServices = new LinkedList<>();
 
         final DefinitionSetService definitionSetService1 = mock(DefinitionSetService.class);
@@ -97,7 +98,7 @@ public class CaseManagementSwitchViewServiceImplTest {
     }
 
     @Test
-    public void testSwitchView() throws Exception {
+    public void testSwitchView() throws IOException {
         final DefinitionSetService definitionSetService1 = mock(DefinitionSetService.class);
         String defSetId = "defSetId";
         when(definitionSetService1.accepts(eq(defSetId))).thenReturn(true);

@@ -18,7 +18,6 @@ package org.kie.workbench.common.widgets.metadata.client;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
@@ -67,7 +66,7 @@ public interface KieEditorWrapperView
 
     void addSourcePage(ViewDRLSourceWidget sourceWidget);
 
-    void addTabBarWidget(Widget customWidget);
+    void addTabBarWidget(IsWidget customWidget);
 
     String getNotAllowedSavingMessage();
 

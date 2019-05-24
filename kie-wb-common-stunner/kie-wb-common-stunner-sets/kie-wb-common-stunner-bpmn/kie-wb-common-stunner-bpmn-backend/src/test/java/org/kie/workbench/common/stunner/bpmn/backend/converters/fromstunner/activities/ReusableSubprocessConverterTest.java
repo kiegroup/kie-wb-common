@@ -186,7 +186,7 @@ public class ReusableSubprocessConverterTest {
             new ReusableSubprocessConverter(new PropertyWriterFactory());
 
     @Test
-    public void testToFlowElement_case() throws Exception {
+    public void testToFlowElement_case() {
         final BaseReusableSubprocess definition = new ReusableSubprocess();
         definition.getExecutionSet().setIsCase(new IsCase(true));
         final View<BaseReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
@@ -199,7 +199,7 @@ public class ReusableSubprocessConverterTest {
     }
 
     @Test
-    public void testToFlowElement_process() throws Exception {
+    public void testToFlowElement_process() {
         final BaseReusableSubprocess definition = new ReusableSubprocess();
         final View<BaseReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
         final Node<View<BaseReusableSubprocess>, ?> node = new NodeImpl<>(java.util.UUID.randomUUID().toString());
@@ -211,7 +211,7 @@ public class ReusableSubprocessConverterTest {
     }
 
     @Test
-    public void testToFlowElement_autostart() throws Exception {
+    public void testToFlowElement_autostart() {
         final ReusableSubprocess definition = new ReusableSubprocess();
         definition.getExecutionSet().setAdHocAutostart(new AdHocAutostart(true));
         final View<BaseReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());
@@ -224,7 +224,7 @@ public class ReusableSubprocessConverterTest {
     }
 
     @Test
-    public void testToFlowElement_notautostart() throws Exception {
+    public void testToFlowElement_notautostart() {
         final ReusableSubprocess definition = new ReusableSubprocess();
         definition.getExecutionSet().setAdHocAutostart(new AdHocAutostart(false));
         final View<BaseReusableSubprocess> view = new ViewImpl<>(definition, Bounds.create());

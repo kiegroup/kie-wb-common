@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
@@ -524,7 +523,7 @@ public abstract class KieEditor<T>
     public void onEditTabUnselected() {
     }
 
-    public void addTabBarWidget(final Widget customWidget) {
+    public void addTabBarWidget(final IsWidget customWidget) {
         kieView.addTabBarWidget(customWidget);
     }
 

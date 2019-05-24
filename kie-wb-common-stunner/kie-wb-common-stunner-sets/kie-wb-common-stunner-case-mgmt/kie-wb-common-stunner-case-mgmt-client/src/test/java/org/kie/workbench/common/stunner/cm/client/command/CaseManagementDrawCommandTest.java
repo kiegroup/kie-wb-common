@@ -108,7 +108,7 @@ public class CaseManagementDrawCommandTest {
     private ArgumentCaptor<CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>> commandsCapture;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.graphHolder = TestingGraphInstanceBuilder.newGraph4(new TestingGraphMockHandler());
 
         when(context.getGraphIndex()).thenReturn(graphIndex);
@@ -131,7 +131,7 @@ public class CaseManagementDrawCommandTest {
     }
 
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute() {
         tested.execute(context);
         verify(tested).executeCommands(eq(context), commandsCapture.capture());
 
@@ -147,27 +147,27 @@ public class CaseManagementDrawCommandTest {
     }
 
     @Test
-    public void testIsDrawable_Stage() throws Exception {
+    public void testIsDrawable_Stage() {
         testIsDrawable(CaseManagementDiagram.class, AdHocSubprocess.class, true);
     }
 
     @Test
-    public void testIsDrawable_UserTask() throws Exception {
+    public void testIsDrawable_UserTask() {
         testIsDrawable(AdHocSubprocess.class, UserTask.class, true);
     }
 
     @Test
-    public void testIsDrawable_ReusableSubprocess() throws Exception {
+    public void testIsDrawable_ReusableSubprocess() {
         testIsDrawable(AdHocSubprocess.class, ReusableSubprocess.class, true);
     }
 
     @Test
-    public void testIsDrawable_InvalidUserTask() throws Exception {
+    public void testIsDrawable_InvalidUserTask() {
         testIsDrawable(CaseManagementDiagram.class, UserTask.class, false);
     }
 
     @Test
-    public void testIsDrawable_InvalidReusableSubprocess() throws Exception {
+    public void testIsDrawable_InvalidReusableSubprocess() {
         testIsDrawable(CaseManagementDiagram.class, ReusableSubprocess.class, false);
     }
 
@@ -188,7 +188,7 @@ public class CaseManagementDrawCommandTest {
     }
 
     @Test
-    public void testSortNodes_Stage() throws Exception {
+    public void testSortNodes_Stage() {
         final Diagram<Graph<DefinitionSet, Node>, Metadata> diagram = mock(Diagram.class);
         final Graph<DefinitionSet, Node> graph = mock(Graph.class);
         when(diagram.getGraph()).thenReturn(graph);
@@ -226,7 +226,7 @@ public class CaseManagementDrawCommandTest {
     }
 
     @Test
-    public void testSortNodes_SubStage() throws Exception {
+    public void testSortNodes_SubStage() {
         final Diagram<Graph<DefinitionSet, Node>, Metadata> diagram = mock(Diagram.class);
         final Graph<DefinitionSet, Node> graph = mock(Graph.class);
         when(diagram.getGraph()).thenReturn(graph);

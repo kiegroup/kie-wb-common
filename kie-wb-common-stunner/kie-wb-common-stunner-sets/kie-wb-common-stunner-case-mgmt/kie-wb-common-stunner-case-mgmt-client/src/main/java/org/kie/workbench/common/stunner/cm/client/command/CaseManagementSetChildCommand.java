@@ -34,9 +34,9 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.getCanvasNewChildIndex;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.getGraphIndex;
-import static org.kie.workbench.common.stunner.cm.util.CaseManagementUtils.isStage;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.getChildGraphIndex;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.getNewChildCanvasIndex;
+import static org.kie.workbench.common.stunner.cm.client.command.util.CaseManagementCommandUtil.isStage;
 
 public class CaseManagementSetChildCommand extends org.kie.workbench.common.stunner.core.client.canvas.command.SetChildrenCommand {
 
@@ -50,7 +50,7 @@ public class CaseManagementSetChildCommand extends org.kie.workbench.common.stun
         this(parent,
              child,
              Optional.empty(),
-             OptionalInt.of(getCanvasNewChildIndex(parent)),
+             OptionalInt.of(getNewChildCanvasIndex(parent)),
              Optional.empty(),
              OptionalInt.empty());
     }
@@ -78,12 +78,12 @@ public class CaseManagementSetChildCommand extends org.kie.workbench.common.stun
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         // Get the original graph index
         OptionalInt originalIndex = originalParent
-                .map(p -> OptionalInt.of(getGraphIndex(p, getCandidate())))
+                .map(p -> OptionalInt.of(getChildGraphIndex(p, getCandidate())))
                 .orElseGet(OptionalInt::empty);
 
         OptionalInt index = last.map(s -> {
             // Get the index from the last node
-            int i = getGraphIndex(parent, s);
+            int i = getChildGraphIndex(parent, s);
             if (originalIndex.isPresent() && originalIndex.getAsInt() < i) {
                 // If move the node forward
                 return OptionalInt.of(i);
