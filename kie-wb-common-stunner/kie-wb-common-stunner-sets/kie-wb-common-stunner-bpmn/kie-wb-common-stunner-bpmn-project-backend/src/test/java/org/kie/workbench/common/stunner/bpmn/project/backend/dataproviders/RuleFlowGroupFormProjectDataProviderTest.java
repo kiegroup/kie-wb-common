@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.kie.workbench.common.services.refactoring.model.index.terms.valueterm
 import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueSharedPartIndexTerm;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.kie.workbench.common.services.refactoring.service.PartType;
-import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.RuleFlowGroupFormProvider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -103,7 +102,7 @@ public class RuleFlowGroupFormProjectDataProviderTest {
         RefactoringPageRow emptyRow2 = mock(RefactoringPageRow.class);
         when(emptyRow2.getValue()).thenReturn(asMap(""));
         List<RefactoringPageRow> rows = Arrays.asList(row1, row2, row3, row4, row4_2, emptyRow1, emptyRow2);
-        TreeMap<Object, String> result = RuleFlowGroupFormProvider.DEFAULT_RESULT_CONVERTER.apply(rows);
+        TreeMap<Object, String> result = RuleFlowGroupFormProjectDataProvider.DEFAULT_RESULT_CONVERTER.apply(rows);
         assertEquals(4, result.size());
         assertTrue(result.containsKey("row1"));
         assertTrue(result.containsKey("row2"));
