@@ -38,8 +38,6 @@ public abstract class DRGElement extends NamedElement implements DynamicReadOnly
 
     protected boolean allowOnlyVisualChange;
 
-    protected String namespace;
-
     public DRGElement() {
     }
 
@@ -76,13 +74,5 @@ public abstract class DRGElement extends NamedElement implements DynamicReadOnly
 
     protected boolean isReadonlyField(final String fieldName) {
         return Arrays.stream(READONLY_FIELDS).anyMatch(f -> f.equalsIgnoreCase(fieldName));
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
     }
 }

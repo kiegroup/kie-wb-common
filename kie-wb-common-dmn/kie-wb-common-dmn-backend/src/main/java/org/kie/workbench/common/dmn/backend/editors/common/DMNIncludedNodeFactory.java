@@ -46,7 +46,6 @@ public class DMNIncludedNodeFactory {
 
         final String modelName = includeModel.getModelName();
 
-        drgElement.setNamespace(includeModel.getNamespace());
         drgElement.setId(new Id(modelName + ":" + drgElement.getId().getValue()));
         drgElement.setName(new Name(modelName + "." + drgElement.getName().getValue()));
         drgElement.setAllowOnlyVisualChange(true);

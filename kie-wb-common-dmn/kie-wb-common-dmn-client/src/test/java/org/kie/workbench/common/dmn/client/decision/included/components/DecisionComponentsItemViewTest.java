@@ -206,8 +206,8 @@ public class DecisionComponentsItemViewTest {
         nsContext.put(alias1, namespace1);
         nsContext.put(alias2, namespace2);
 
-        when(drgElement1.getNamespace()).thenReturn(namespace1);
-        when(drgElement2.getNamespace()).thenReturn(namespace2);
+        when(drgElement1.getDefaultNamespace()).thenReturn(namespace1);
+        when(drgElement2.getDefaultNamespace()).thenReturn(namespace2);
         when(graph.nodes()).thenReturn(nodes);
         when(drgElement1.getId()).thenReturn(new Id(alias1 + ":" + id1));
         when(drgElement2.getId()).thenReturn(new Id(alias2 + ":" + id2));
@@ -279,9 +279,9 @@ public class DecisionComponentsItemViewTest {
         when(drgElement1.getId()).thenReturn(new Id(alias1 + ":" + id1));
         when(drgElement2.getId()).thenReturn(new Id(alias2 + ":" + id2));
         when(drgElement3.getId()).thenReturn(new Id(alias3 + ":" + id3));
-        when(drgElement1.getNamespace()).thenReturn(namespace1);
-        when(drgElement2.getNamespace()).thenReturn(namespace2);
-        when(drgElement3.getNamespace()).thenReturn(namespace3);
+        when(drgElement1.getDefaultNamespace()).thenReturn(namespace1);
+        when(drgElement2.getDefaultNamespace()).thenReturn(namespace2);
+        when(drgElement3.getDefaultNamespace()).thenReturn(namespace3);
 
         when(sessionManager.getCurrentSession()).thenReturn(currentSession);
         when(currentSession.getCanvasHandler()).thenReturn(canvasHandler);

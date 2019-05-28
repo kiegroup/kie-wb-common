@@ -55,11 +55,9 @@ public class DMNIncludedNodeFactoryTest {
         final String expectedImportedElementName = "model.Can Drive?";
         final String expectedImportedItemDefinitionName = "model.tCustomBoolean";
         final DRGElement importedElementId = makeDecision(drgElementId, drgElementName, "tCustomBoolean");
-        final String namespace = "http://github.com/kiegroup/_012345";
 
         when(path.getFileName()).thenReturn(expectedFileName);
         when(includedModel.getModelName()).thenReturn(expectedModelName);
-        when(includedModel.getNamespace()).thenReturn(namespace);
 
         final DMNIncludedNode node = factory.makeDMNIncludeModel(path, includedModel, importedElementId);
         final Decision drgElement = (Decision) node.getDrgElement();
@@ -69,7 +67,6 @@ public class DMNIncludedNodeFactoryTest {
         assertEquals(expectedImportedItemDefinitionName, drgElement.getVariable().getTypeRef().getLocalPart());
         assertEquals(expectedFileName, node.getFileName());
         assertTrue(drgElement.isAllowOnlyVisualChange());
-        assertEquals(namespace, drgElement.getNamespace());
     }
 
     private Decision makeDecision(final String id,

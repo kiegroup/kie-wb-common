@@ -150,7 +150,8 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
                                                 final ShapeFactory factory) {
 
         final Map<String, String> nsContext = getNsContext();
-        final String alias = NamespaceHandler.addIncludedNamespace(nsContext, drgElement.getNamespace());
+
+        final String alias = NamespaceHandler.addIncludedNamespace(nsContext, drgElement.getDefaultNamespace());
 
         final String currentId = drgElement.getId().getValue();
         final String id = currentId.split(":")[1];
@@ -225,7 +226,7 @@ public class DecisionComponentsItemView implements DecisionComponentsItem.View {
 
         private boolean isDuplicatedNode(final DRGElement drgElement) {
 
-            final Optional<Map.Entry<String, String>> existingAlias = NamespaceHandler.getAlias(getNsContext(), drgElement.getNamespace());
+            final Optional<Map.Entry<String, String>> existingAlias = NamespaceHandler.getAlias(getNsContext(), drgElement.getDefaultNamespace());
 
             if (existingAlias.isPresent()) {
 
