@@ -107,8 +107,17 @@ public class ItemDefinitionPropertyConverterTest {
         final String name = "name";
         final String typeLanguage = "typeLanguage";
         final boolean isCollection = true;
+        final boolean isOnlyVisualChanges = false;
         final String description = "description";
-        final ItemDefinition expectedWbChild = new ItemDefinition(new Id(id), new Description(description), new Name(name), null, null, null, typeLanguage, isCollection);
+        final ItemDefinition expectedWbChild = new ItemDefinition(new Id(id),
+                                                                  new Description(description),
+                                                                  new Name(name),
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  typeLanguage,
+                                                                  isCollection,
+                                                                  isOnlyVisualChanges);
         final ItemDefinition wb = new ItemDefinition();
         final org.kie.dmn.model.api.ItemDefinition dmn = mock(org.kie.dmn.model.api.ItemDefinition.class);
         final org.kie.dmn.model.api.ItemDefinition dmnChild = mock(org.kie.dmn.model.api.ItemDefinition.class);
@@ -215,9 +224,18 @@ public class ItemDefinitionPropertyConverterTest {
         final String name = "name";
         final String typeLanguage = "typeLanguage";
         final boolean isCollection = true;
+        final boolean isOnlyVisualChanges = false;
         final String description = "description";
         final ItemDefinition expectedWbParent = new ItemDefinition();
-        final ItemDefinition expectedWbChild = new ItemDefinition(new Id(id), new Description(description), new Name(name), null, null, null, typeLanguage, isCollection);
+        final ItemDefinition expectedWbChild = new ItemDefinition(new Id(id),
+                                                                  new Description(description),
+                                                                  new Name(name),
+                                                                  null,
+                                                                  null,
+                                                                  null,
+                                                                  typeLanguage,
+                                                                  isCollection,
+                                                                  isOnlyVisualChanges);
         final org.kie.dmn.model.api.ItemDefinition dmnChild = mock(org.kie.dmn.model.api.ItemDefinition.class);
 
         when(dmnChild.getId()).thenReturn(id);
