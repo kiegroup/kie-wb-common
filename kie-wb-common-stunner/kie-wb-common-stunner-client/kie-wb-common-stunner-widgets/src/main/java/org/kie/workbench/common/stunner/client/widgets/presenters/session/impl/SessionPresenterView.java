@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.widgets.presenters.session.impl;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
@@ -26,6 +28,7 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -59,7 +62,8 @@ import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.Stu
 public class SessionPresenterView extends Composite
         implements SessionPresenter.View {
 
-    private static final int DELAY = 1000;
+    protected static final int DELAY = 1000;
+    protected static final int NOTIFICATION_LOCK_TIMEOUT = DELAY + 1000;
 
     @Inject
     @DataField
@@ -90,6 +94,7 @@ public class SessionPresenterView extends Composite
     private double paletteInitialTop;
     private double paletteInitialLeft;
     private HandlerRegistration handlerRegistration;
+    private final AtomicBoolean notifying = new AtomicBoolean(false);
 
     @PostConstruct
     public void init() {
@@ -194,23 +199,39 @@ public class SessionPresenterView extends Composite
 
     @Override
     public SessionPresenterView showError(final String message) {
-        Notify.hideAll();
+
         getSettings().setType(kieNotificationCssClass(NotifyType.DANGER));
-        showNotification(translate(SessionPresenterView_Error),
-                         translate(SessionPresenterView_Notifications),
-                         IconType.EXCLAMATION_CIRCLE);
+        showNotification(translate(SessionPresenterView_Error), message, IconType.EXCLAMATION_CIRCLE);
 
         return this;
     }
 
     @Override
-    public SessionPresenter.View showWarning(final String message) {
-        Notify.hideAll();
-        getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
-        showNotification(translate(SessionPresenterView_Warning),
-                         translate(SessionPresenterView_Notifications),
-                         IconType.EXCLAMATION_TRIANGLE);
+    public SessionPresenter.View showWarning() {
+        singleNotify(() -> {
+            getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
+            showNotification(translate(SessionPresenterView_Warning),
+                             translate(SessionPresenterView_Notifications),
+                             IconType.EXCLAMATION_TRIANGLE);
+        });
         return this;
+    }
+
+    //show only one notification at a time
+    private void singleNotify(final Runnable notification) {
+        //check if any other notification is ongoing and set a lock
+        if (notifying.compareAndSet(false, true)) {
+            //timer to remove the lock on notification
+            new Timer() {
+                @Override
+                public void run() {
+                    notifying.set(false);
+                }
+            }.schedule(NOTIFICATION_LOCK_TIMEOUT);
+
+            Notify.hideAll();
+            notification.run();
+        }
     }
 
     @Override

@@ -239,7 +239,7 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
         view.showError(message);
 
         verify(settings).setType("danger kie-session-notification");
-        verify(view).showNotification(error, DETAILS_MESSAGE, IconType.EXCLAMATION_CIRCLE);
+        verify(view).showNotification(error, message, IconType.EXCLAMATION_CIRCLE);
     }
 
     @Test
@@ -253,7 +253,7 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
         when(view.getTranslationService()).thenReturn(translationService);
         when(view.getSettings()).thenReturn(settings);
 
-        view.showWarning(message);
+        view.showWarning();
 
         verify(settings).setType("warning kie-session-notification");
         verify(view).showNotification(warning, DETAILS_MESSAGE, IconType.EXCLAMATION_TRIANGLE);
