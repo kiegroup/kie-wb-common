@@ -27,11 +27,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class YearsMonthsValueConverterTest {
@@ -135,21 +131,24 @@ public class YearsMonthsValueConverterTest {
         final String input = "duration(\"P-12M\")";
         testFromDMNString(input, "", "-12");
     }
- @Ignore
+
+    @Ignore("DROOLS-4082")
     @Test
     public void testFromDMNStringWhiteSpacesStartAndEnd() {
 
         final String input = "duration( \"P1Y\" )";
         testFromDMNString(input, "1", "");
     }
-@Ignore
+
+    @Ignore("DROOLS-4082")
     @Test
     public void testFromDMNStringWhiteSpacesStart() {
 
         final String input = "duration( \"P1Y\")";
         testFromDMNString(input, "1", "");
     }
-@Ignore
+
+    @Ignore("DROOLS-4082")
     @Test
     public void testFromDMNStringWhiteSpacesEnd() {
 
