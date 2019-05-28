@@ -29,7 +29,7 @@ public class GenericServiceTaskEditorFieldProvider extends BasicTypeFieldProvide
 
     @Override
     public int getPriority() {
-        return 50335;
+        return 5044337;
     }
 
     @Override

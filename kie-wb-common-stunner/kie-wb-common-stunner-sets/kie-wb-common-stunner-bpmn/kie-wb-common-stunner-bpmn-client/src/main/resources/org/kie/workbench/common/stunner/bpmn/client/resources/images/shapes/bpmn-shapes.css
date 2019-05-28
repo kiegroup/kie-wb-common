@@ -121,7 +121,7 @@
 }
 
 .task_generic_service_icon {
-    opacity: 0;
+    fill: #393f44;
 }
 
 .task_business_rule_icon {

@@ -55,7 +55,7 @@ public class TaskShapeDef extends BaseDimensionedShapeDef
     public static final Map<Class<? extends BaseTask>, Glyph> GLYPHS =
             new Maps.Builder<Class<? extends BaseTask>, Glyph>()
                     .put(NoneTask.class, BPMNGlyphFactory.TASK)
-                    .put(GenericServiceTask.class, BPMNGlyphFactory.TASK_SERVICE)
+                    .put(GenericServiceTask.class, BPMNGlyphFactory.TASK_GENERIC_SERVICE)
                     .put(UserTask.class, BPMNGlyphFactory.TASK_USER)
                     .put(ScriptTask.class, BPMNGlyphFactory.TASK_SCRIPT)
                     .put(BusinessRuleTask.class, BPMNGlyphFactory.TASK_BUSINESS_RULE)
