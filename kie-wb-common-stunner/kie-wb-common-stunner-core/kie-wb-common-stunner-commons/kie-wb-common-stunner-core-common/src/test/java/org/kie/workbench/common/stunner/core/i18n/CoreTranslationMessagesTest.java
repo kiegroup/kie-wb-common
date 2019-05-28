@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.i18n;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
@@ -106,6 +107,7 @@ public class CoreTranslationMessagesTest {
         when(ruleViolation.getViolationType()).thenReturn(Violation.Type.WARNING);
         when(translationService.getViolationMessage(eq(ruleViolation))).thenReturn("rv1");
         when(translationService.getValue(eq("aKey"))).thenReturn("aValue");
+        when(translationService.getElementName("uuid1")).thenReturn(Optional.of("name"));
 
         String message = CoreTranslationMessages.getDiagramValidationsErrorMessage(translationService,
                                                                                    Collections.singleton(diagramViolation)).get();

@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.i18n;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -82,6 +83,7 @@ public class CoreTranslationMessages {
     public static final String CLOSE_BRA = "] ";
     public static final String OPEN_COMMENT = "'";
     public static final String CLOSE_COMMENT = "' ";
+    private Function<String, String> nameByIdResolver;
 
     public static Optional<String> getDiagramValidationsErrorMessage(final StunnerTranslationService translationService,
                                                                      final Collection<DiagramElementViolation<RuleViolation>> result) {
@@ -133,6 +135,11 @@ public class CoreTranslationMessages {
 
         return Optional.of(message)
                 .filter(StringUtils::nonEmpty)
-                .map(msg -> translationService.getValue(ELEMENT, uuid, msg));
+                .map(msg -> {
+                    final String name = translationService.getElementName(uuid)
+                            .filter(StringUtils::nonEmpty)
+                            .orElse(uuid);
+                    return translationService.getValue(ELEMENT, name, msg);
+                });
     }
 }

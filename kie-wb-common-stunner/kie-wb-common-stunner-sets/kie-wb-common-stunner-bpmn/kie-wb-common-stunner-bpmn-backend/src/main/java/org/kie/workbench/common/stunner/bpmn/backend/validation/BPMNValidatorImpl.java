@@ -82,16 +82,16 @@ public class BPMNValidatorImpl implements BPMNValidator {
     public void validate(Diagram diagram, Consumer<Collection<DomainViolation>> resultConsumer) {
         String rawContent = diagramService.getRawContent(diagram);
         if (Objects.nonNull(rawContent)) {
-            resultConsumer.accept(validate(rawContent).stream().collect(Collectors.toSet()));
+            resultConsumer.accept(validate(rawContent, diagram.getMetadata().getTitle()).stream().collect(Collectors.toSet()));
             return;
         }
 
         resultConsumer.accept(Collections.emptyList());
     }
 
-    protected Collection<BPMNViolation> validate(String serializedProcess) {
+    protected Collection<BPMNViolation> validate(String serializedProcess, String processUUID) {
         try {
-            List<Process> processes = parseProcess(serializedProcess);
+                List<Process> processes = parseProcess(serializedProcess);
             if (Objects.isNull(processes) || processes.size() == 0) {
                 return Collections.emptyList();
             }
@@ -115,15 +115,15 @@ public class BPMNValidatorImpl implements BPMNValidator {
                     .collect(Collectors.toSet());
         } catch (SAXException | IOException e) {
             LOG.error("Error parsing process", e);
-            return getBpmnViolationsFromException(() -> e.getMessage());
+            return getBpmnViolationsFromException(() -> e.getMessage(), processUUID);
         } catch (Exception e) {
             LOG.error("Error validating process", e);
-            return getBpmnViolationsFromException(() -> e.getMessage());
+            return getBpmnViolationsFromException(() -> e.getMessage(), processUUID);
         }
     }
 
-    private List<BPMNViolation> getBpmnViolationsFromException(Supplier<String> message) {
-        return Arrays.asList(new BPMNViolation(message.get(), Violation.Type.WARNING, "null"));
+    private List<BPMNViolation> getBpmnViolationsFromException(Supplier<String> message, String uuid) {
+        return Arrays.asList(new BPMNViolation(message.get(), Violation.Type.WARNING, uuid));
     }
 
     private List<Process> parseProcess(String serializedProcess) throws SAXException, IOException {
