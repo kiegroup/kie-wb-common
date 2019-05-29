@@ -125,8 +125,8 @@ public class DataTypeListItem {
         this.level = level;
 
         setupSelectComponent();
-        setupConstraintComponent();
         setupListComponent();
+        setupConstraintComponent();
         setupView();
     }
 

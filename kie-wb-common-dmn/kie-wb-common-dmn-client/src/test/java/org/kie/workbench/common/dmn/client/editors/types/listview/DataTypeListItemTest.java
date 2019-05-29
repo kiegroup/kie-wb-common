@@ -150,8 +150,8 @@ public class DataTypeListItemTest {
 
         final InOrder inOrder = inOrder(listItem);
         inOrder.verify(listItem).setupSelectComponent();
-        inOrder.verify(listItem).setupConstraintComponent();
         inOrder.verify(listItem).setupListComponent();
+        inOrder.verify(listItem).setupConstraintComponent();
         inOrder.verify(listItem).setupView();
 
         assertEquals(expectedDataType, listItem.getDataType());
