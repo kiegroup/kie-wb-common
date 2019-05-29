@@ -324,19 +324,21 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     private void doSave() {
-        stateHolder.saveFile(new ServiceCallback<String>() {
-            @Override
-            public void onSuccess(final String xml) {
-                resetContentHash();
-                notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
-                hideLoadingViews();
-            }
+        final Path path = getCanvasHandler().getDiagram().getMetadata().getPath();
+        stateHolder.saveFile(path,
+                             new ServiceCallback<String>() {
+                                 @Override
+                                 public void onSuccess(final String xml) {
+                                     resetContentHash();
+                                     notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
+                                     hideLoadingViews();
+                                 }
 
-            @Override
-            public void onError(final ClientRuntimeError error) {
-                onSaveError(error);
-            }
-        });
+                                 @Override
+                                 public void onError(final ClientRuntimeError error) {
+                                     onSaveError(error);
+                                 }
+                             });
     }
 
     @Override
