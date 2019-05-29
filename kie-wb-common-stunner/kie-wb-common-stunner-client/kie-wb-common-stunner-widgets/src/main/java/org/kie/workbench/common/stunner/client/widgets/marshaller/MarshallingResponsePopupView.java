@@ -50,46 +50,46 @@ public class MarshallingResponsePopupView
 
     @Inject
     @DataField("modal")
-    private Modal modal;
+    Modal modal;
 
     @Inject
     @Named("span")
     @DataField("popup-title")
-    private HTMLElement popupTitle;
+    HTMLElement popupTitle;
 
     @Inject
     @DataField("popup-inline-notification")
-    private InlineNotification popupInlineNotification;
+    InlineNotification popupInlineNotification;
 
     @DataField("popup-messages-table")
-    private UberfirePagedTable<MarshallingResponsePopup.Row> messagesTable = new UberfirePagedTable<>(10);
+    UberfirePagedTable<MarshallingResponsePopup.Row> messagesTable = new UberfirePagedTable<>(10, Object::hashCode, false);
 
-    private ListDataProvider<MarshallingResponsePopup.Row> messagesTableProvider = new ListDataProvider<>();
+    ListDataProvider<MarshallingResponsePopup.Row> messagesTableProvider = new ListDataProvider<>();
 
     @Inject
     @DataField("cancel-button")
-    private Button cancelButton;
+    Button cancelButton;
 
     @Inject
     @DataField("ok-button")
-    private Button okButton;
+    Button okButton;
 
     @Inject
     @DataField("clipboard-element")
-    private HTMLTextAreaElement clipboardElement;
+    HTMLTextAreaElement clipboardElement;
 
     @Inject
-    private Button copyToClipboardButton;
+    Button copyToClipboardButton;
 
     @Inject
-    private Clipboard clipboard;
+    Clipboard clipboard;
 
     @Inject
-    private ClientTranslationService translationService;
+    ClientTranslationService translationService;
 
-    private MarshallingResponsePopup presenter;
+    MarshallingResponsePopup presenter;
 
-    private Command okCommand;
+    Command okCommand;
 
     @PostConstruct
     void init() {
@@ -98,7 +98,7 @@ public class MarshallingResponsePopupView
         copyToClipboardButton.addIcon("fa", "fa-clipboard");
         copyToClipboardButton.setClickHandler(this::onCopyToClipboardClick);
         copyToClipboardButton.getElement().title = translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_CopyToClipboardActionTitle);
-        messagesTable.getRightActionsToolbar().add(ElementWrapperWidget.getWidget(copyToClipboardButton.getElement()));
+        messagesTable.getRightActionsToolbar().add(buildWrapperWidget(copyToClipboardButton.getElement()));
 
         okButton.setText(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_OkAction));
         okButton.setClickHandler(this::onOkButtonClick);
@@ -152,8 +152,7 @@ public class MarshallingResponsePopupView
     }
 
     private void initTable() {
-        messagesTable.pageSizesSelector.setVisible(false);
-        messagesTable.columnPickerButton.setVisible(true);
+        messagesTable.setColumnPickerButtonVisible(true);
         messagesTableProvider.addDataDisplay(messagesTable);
 
         final Column<MarshallingResponsePopup.Row, String> levelColumn = new TextColumn<MarshallingResponsePopup.Row>() {
@@ -201,7 +200,7 @@ public class MarshallingResponsePopupView
         presenter.onCopyToClipboard();
     }
 
-    private void onOkButtonClick() {
+    void onOkButtonClick() {
         onHide();
         if (okCommand != null) {
             okCommand.execute();
@@ -210,5 +209,12 @@ public class MarshallingResponsePopupView
 
     private void onHide() {
         modal.hide();
+    }
+
+    /**
+     * for testing purposes
+     */
+    ElementWrapperWidget buildWrapperWidget(final HTMLElement element) {
+        return ElementWrapperWidget.getWidget(element);
     }
 }
