@@ -23,18 +23,16 @@ import org.kie.workbench.common.dmn.showcase.client.services.SubmarineClientDiag
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.submarine.client.editor.BaseSubmarineEditor;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.PlaceManager;
 
 @ApplicationScoped
 public class DMNDiagramSubmarineWrapper {
 
-    @Inject
-    @DiagramEditor
-    private DMNDiagramEditor dmnDiagramEditor;
-
     private PlaceManager placeManager;
     private SubmarineClientDiagramServiceImpl clientDiagramService;
+    private BaseSubmarineEditor baseSubmarineEditor;
 
     public DMNDiagramSubmarineWrapper() {
         //CDI proxy
@@ -42,15 +40,17 @@ public class DMNDiagramSubmarineWrapper {
 
     @Inject
     public DMNDiagramSubmarineWrapper(final PlaceManager placeManager,
-                                      final SubmarineClientDiagramServiceImpl clientDiagramService) {
+                                      final SubmarineClientDiagramServiceImpl clientDiagramService,
+                                      final @DiagramEditor BaseSubmarineEditor baseSubmarineEditor) {
         this.placeManager = placeManager;
         this.clientDiagramService = clientDiagramService;
+        this.baseSubmarineEditor = baseSubmarineEditor;
     }
 
     public void newFile() {
         placeManager.registerOnOpenCallback(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR,
                                             () -> {
-                                                dmnDiagramEditor.setContent("");
+                                                baseSubmarineEditor.setContent("");
                                                 placeManager.unregisterOnOpenCallbacks(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
                                             });
 
@@ -64,7 +64,7 @@ public class DMNDiagramSubmarineWrapper {
                                                                                new ServiceCallback<String>() {
                                                                                    @Override
                                                                                    public void onSuccess(final String xml) {
-                                                                                       dmnDiagramEditor.setContent(xml);
+                                                                                       baseSubmarineEditor.setContent(xml);
                                                                                        placeManager.unregisterOnOpenCallbacks(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
                                                                                    }
 
@@ -79,9 +79,9 @@ public class DMNDiagramSubmarineWrapper {
     }
 
     @SuppressWarnings("unchecked")
-    public void saveFile(final ServiceCallback<String> callback) {
-        final Path path = dmnDiagramEditor.getCanvasHandler().getDiagram().getMetadata().getPath();
-        dmnDiagramEditor.getContent().then(xml -> {
+    public void saveFile(final Path path,
+                         final ServiceCallback<String> callback) {
+        baseSubmarineEditor.getContent().then(xml -> {
             clientDiagramService.saveAsXml(path,
                                            (String) xml,
                                            callback);

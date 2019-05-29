@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.client.widgets.event.LoadDiagramEvent;
 import org.kie.workbench.common.stunner.client.widgets.explorer.navigator.diagrams.DiagramsNavigator;
 import org.kie.workbench.common.stunner.client.widgets.menu.dev.ShapeSetsMenuItemsBuilder;
-import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -50,10 +49,6 @@ public class DMNDiagramsNavigatorScreen {
     private DiagramsNavigator diagramsNavigator;
     private ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder;
     private DMNDiagramSubmarineWrapper stateHolder;
-
-    @Inject
-    @DiagramEditor
-    private DMNDiagramEditor dmnDiagramEditor;
 
     private Menus menu = null;
     private LoadDiagramEvent selectedDiagramEvent = null;
