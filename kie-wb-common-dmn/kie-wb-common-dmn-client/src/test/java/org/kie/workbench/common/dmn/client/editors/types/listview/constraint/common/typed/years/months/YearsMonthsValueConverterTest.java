@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.co
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
@@ -136,7 +135,6 @@ public class YearsMonthsValueConverterTest {
         testFromDMNString(input, "", "-12");
     }
 
-    @Ignore("DROOLS-4082")
     @Test
     public void testFromDMNStringWhiteSpacesStartAndEnd() {
 
@@ -144,7 +142,6 @@ public class YearsMonthsValueConverterTest {
         testFromDMNString(input, "1", "");
     }
 
-    @Ignore("DROOLS-4082")
     @Test
     public void testFromDMNStringWhiteSpacesStart() {
 
@@ -152,7 +149,6 @@ public class YearsMonthsValueConverterTest {
         testFromDMNString(input, "1", "");
     }
 
-    @Ignore("DROOLS-4082")
     @Test
     public void testFromDMNStringWhiteSpacesEnd() {
 
