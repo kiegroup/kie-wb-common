@@ -105,6 +105,7 @@ public class CustomAttribute<T> {
 
     public static final AttributeDefinition<String> serviceOperation = new StringAttribute(droolsns, "serviceoperation", "");
     public static final AttributeDefinition<String> serviceImplementation = new StringAttribute(droolsns, "serviceimplementation", "");
+    public static final AttributeDefinition<String> serviceInterface = new StringAttribute(droolsns, "serviceinterface", "");
 
     private final AttributeDefinition<T> attributeDefinition;
     private final BaseElement element;

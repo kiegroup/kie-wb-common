@@ -79,7 +79,7 @@ public class GenericServiceTaskEditorWidget extends Composite implements HasValu
         serviceOperation.setDisabled(readOnly);
     }
 
-    private Option newOption(final String text,
+    Option newOption(final String text,
                              final String value) {
         final Option option = (Option) Window.getDocument().createElement("option");
         option.setTextContent(text);
@@ -87,7 +87,7 @@ public class GenericServiceTaskEditorWidget extends Composite implements HasValu
         return option;
     }
 
-    private void clearSelect(Select select) {
+    void clearSelect(Select select) {
         int options = select.getOptions().getLength();
         for (int i = 0; i < options; i++) {
             select.remove(0);
@@ -95,21 +95,21 @@ public class GenericServiceTaskEditorWidget extends Composite implements HasValu
     }
 
     @EventHandler("implementation")
-    private void onImplementationChange(@ForEvent("change") final Event event) {
+    void onImplementationChange(@ForEvent("change") final Event event) {
         onChange();
     }
 
     @EventHandler("serviceInterface")
-    private void onServiceInterfaceChange(@ForEvent("change") final Event event) {
+    void onServiceInterfaceChange(@ForEvent("change") final Event event) {
         onChange();
     }
 
     @EventHandler("serviceOperation")
-    private void onServiceOperationChange(@ForEvent("change") final Event event) {
+    void onServiceOperationChange(@ForEvent("change") final Event event) {
         onChange();
     }
 
-    private List<String> getImplementationOptions() {
+    List<String> getImplementationOptions() {
         List<String> options = new ArrayList<>();
         options.add(JAVA);
         options.add(WEBSERVICE);

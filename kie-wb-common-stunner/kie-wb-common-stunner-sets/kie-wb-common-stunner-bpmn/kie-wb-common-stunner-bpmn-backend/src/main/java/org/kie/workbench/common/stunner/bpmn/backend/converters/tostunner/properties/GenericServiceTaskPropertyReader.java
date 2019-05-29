@@ -33,9 +33,15 @@ public class GenericServiceTaskPropertyReader extends TaskPropertyReader {
 
     public GenericServiceTaskValue getGenericServiceTask() {
         GenericServiceTaskValue value = new GenericServiceTaskValue();
-        value.setServiceImplementation(task.getImplementation());
-        value.setServiceOperation(task.getOperationRef().getImplementationRef());
-        value.setServiceInterface(CustomAttribute.serviceImplementation.of(task).get());
+        if (CustomAttribute.serviceImplementation.of(task).get() != null) {
+            value.setServiceImplementation(CustomAttribute.serviceImplementation.of(task).get());
+        }
+        if (CustomAttribute.serviceOperation.of(task).get() != null) {
+            value.setServiceOperation(CustomAttribute.serviceOperation.of(task).get());
+        }
+        if (CustomAttribute.serviceInterface.of(task).get() != null) {
+            value.setServiceInterface(CustomAttribute.serviceInterface.of(task).get());
+        }
         return value;
     }
 }

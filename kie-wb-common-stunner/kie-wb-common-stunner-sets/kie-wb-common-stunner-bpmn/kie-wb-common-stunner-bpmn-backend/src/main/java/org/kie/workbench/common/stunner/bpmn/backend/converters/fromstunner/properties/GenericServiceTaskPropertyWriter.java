@@ -66,6 +66,7 @@ public class GenericServiceTaskPropertyWriter extends ActivityPropertyWriter {
     }
 
     public void setServiceInterface(String serviceInterface) {
+        CustomAttribute.serviceInterface.of(task).set(serviceInterface);
         iface.setImplementationRef(serviceInterface);
         iface.setName(serviceInterface);
         iface.setId(task.getId() + "_ServiceInterface");

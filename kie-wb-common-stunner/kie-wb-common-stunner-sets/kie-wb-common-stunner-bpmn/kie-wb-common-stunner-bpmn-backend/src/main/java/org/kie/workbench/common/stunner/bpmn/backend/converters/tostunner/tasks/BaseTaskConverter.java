@@ -79,7 +79,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
                 .when(org.eclipse.bpmn2.BusinessRuleTask.class, this::businessRuleTask)
                 .when(org.eclipse.bpmn2.ScriptTask.class, this::scriptTask)
                 .when(org.eclipse.bpmn2.UserTask.class, this::userTask)
-                .when(org.eclipse.bpmn2.ServiceTask.class, this::bpmnServiceTask)
+                .when(org.eclipse.bpmn2.ServiceTask.class, this::serviceTaskResolver)
                 .missing(org.eclipse.bpmn2.ManualTask.class)
                 .orElse(this::fallback)
                 .apply(task).value();
@@ -126,12 +126,15 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         return BpmnNode.of(node, p);
     }
 
-    private BpmnNode bpmnServiceTask(org.eclipse.bpmn2.ServiceTask task) {
-
+    BpmnNode bpmnServiceTask(org.eclipse.bpmn2.ServiceTask task) {
         Node<View<GenericServiceTask>, Edge> node = factoryManager.newNode(task.getId(), GenericServiceTask.class);
 
         GenericServiceTask definition = node.getContent().getDefinition();
         GenericServiceTaskPropertyReader p = propertyReaderFactory.of(task);
+
+        if(p == null) {
+            throw new NullPointerException(task.getClass().getCanonicalName());
+        }
 
         definition.setGeneral(new TaskGeneralSet(
                 new Name(p.getName()),
@@ -269,6 +272,14 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
                 .filter(name -> propertyReaderFactory.ofCustom(task).isPresent())
                 .map(name -> jbpmServiceTask(task))
                 .orElseGet(() -> noneTask(task));
+    }
+
+    BpmnNode serviceTaskResolver(org.eclipse.bpmn2.Task task) {
+        if (StringUtils.nonEmpty(CustomAttribute.serviceImplementation.of(task).get())) {
+            return bpmnServiceTask((org.eclipse.bpmn2.ServiceTask) task);
+        } else {
+            return jbpmServiceTask(task);
+        }
     }
 
     private BpmnNode noneTask(Task task) {
