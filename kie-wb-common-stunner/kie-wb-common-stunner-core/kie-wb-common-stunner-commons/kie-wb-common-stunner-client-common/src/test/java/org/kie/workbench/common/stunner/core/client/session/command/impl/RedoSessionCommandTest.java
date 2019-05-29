@@ -22,8 +22,10 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandlerImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandUndoneEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
+import org.kie.workbench.common.stunner.core.client.command.ClientRedoCommandHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
@@ -31,7 +33,6 @@ import org.kie.workbench.common.stunner.core.client.session.command.AbstractClie
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
-import org.kie.workbench.common.stunner.core.command.util.RedoCommandHandler;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -46,7 +47,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
 
     @Mock
-    private RedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler;
+    private ClientRedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler;
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -122,5 +123,42 @@ public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
         command.onCommandUndoExecuted(event);
 
         verify(redoCommandHandler, times(0)).onUndoCommandExecuted(event.getCommand());
+    }
+
+    @Test
+    public void testOnCommandExecutedSuccess() {
+        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler));
+
+        doCallRealMethod().when(command).onCommandExecuted(any(CanvasCommandExecutedEvent.class));
+        doCallRealMethod().when(command).bind(any(EditorSession.class));
+
+        when(session.getCanvasHandler()).thenReturn(canvasHandler);
+        when(session.getKeyboardControl()).thenReturn(keyboardControl);
+        when(keyboardControl.addKeyShortcutCallback(any(KeyboardControl.KeyShortcutCallback.class))).thenReturn(keyboardControl);
+        ((AbstractClientSessionCommand) command).bind(session);
+
+        CanvasCommandExecutedEvent event = new CanvasCommandExecutedEvent(canvasHandler,
+                                                                          new CompositeCommand(true),
+                                                                          null);
+        command.onCommandExecuted(event);
+        verify(redoCommandHandler, times(1)).onCommandExecuted(event.getCommand());
+    }
+
+    public void testOnCommandExecutedFails() {
+        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler));
+
+        doCallRealMethod().when(command).onCommandExecuted(any(CanvasCommandExecutedEvent.class));
+        doCallRealMethod().when(command).bind(any(EditorSession.class));
+
+        when(session.getCanvasHandler()).thenReturn(canvasHandler);
+        when(session.getKeyboardControl()).thenReturn(keyboardControl);
+        when(keyboardControl.addKeyShortcutCallback(any(KeyboardControl.KeyShortcutCallback.class))).thenReturn(keyboardControl);
+        ((AbstractClientSessionCommand) command).bind(session);
+
+        CanvasCommandExecutedEvent event = new CanvasCommandExecutedEvent(canvasHandler,
+                                                                          new CompositeCommand(true),
+                                                                          null);
+        command.onCommandExecuted(event);
+        verify(redoCommandHandler, times(0)).onCommandExecuted(event.getCommand());
     }
 }

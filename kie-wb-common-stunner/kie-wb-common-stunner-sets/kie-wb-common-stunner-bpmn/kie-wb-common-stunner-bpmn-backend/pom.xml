@@ -376,16 +376,4 @@
 
   </dependencies>
 
-  <!-- TODO: (Submarine) - Re-enable tests.. -->
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skipTests>true</skipTests>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>
