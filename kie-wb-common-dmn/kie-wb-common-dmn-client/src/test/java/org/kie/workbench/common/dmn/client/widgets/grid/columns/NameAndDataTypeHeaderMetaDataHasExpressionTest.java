@@ -44,7 +44,7 @@ public class NameAndDataTypeHeaderMetaDataHasExpressionTest extends BaseNameAndD
 
             @Override
             public Optional<String> getPlaceHolder() {
-                return Optional.of("placeholder");
+                return Optional.of(PLACEHOLDER);
             }
         };
     }
