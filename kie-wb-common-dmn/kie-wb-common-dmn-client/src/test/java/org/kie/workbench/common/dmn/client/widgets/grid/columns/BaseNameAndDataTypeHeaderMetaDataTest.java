@@ -62,6 +62,8 @@ public abstract class BaseNameAndDataTypeHeaderMetaDataTest {
 
     protected static final String FONT_STYLE_TYPE_REF = "italic";
 
+    protected final String PLACEHOLDER = "placeholder";
+
     @Mock
     protected HasTypeRef hasTypeRef;
 
@@ -250,7 +252,6 @@ public abstract class BaseNameAndDataTypeHeaderMetaDataTest {
     @Test
     public void testRenderPlaceHolder() {
 
-        final String placeHolder = "placeholder";
         final GridRenderer renderer = mock(GridRenderer.class);
         final GridRendererTheme theme = mock(GridRendererTheme.class);
         final Text text = mock(Text.class);
@@ -264,7 +265,7 @@ public abstract class BaseNameAndDataTypeHeaderMetaDataTest {
 
         verify(text).setX(BLOCK_WIDTH / 2);
         verify(text).setY(BLOCK_HEIGHT / 2);
-        verify(text).setText(placeHolder);
+        verify(text).setText(PLACEHOLDER);
         verify(text).setListening(false);
     }
 }

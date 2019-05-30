@@ -46,7 +46,7 @@ public class NameAndDataTypeHeaderMetaDataTest extends BaseNameAndDataTypeHeader
 
             @Override
             public Optional<String> getPlaceHolder() {
-                return Optional.of("placeholder");
+                return Optional.of(PLACEHOLDER);
             }
         };
     }
