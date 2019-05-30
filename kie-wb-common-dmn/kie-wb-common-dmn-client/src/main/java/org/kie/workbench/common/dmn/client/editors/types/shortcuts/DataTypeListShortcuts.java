@@ -122,6 +122,10 @@ public class DataTypeListShortcuts {
         view.focusIn();
     }
 
+    public void highlight(final Element dataTypeElement) {
+        view.highlight(dataTypeElement);
+    }
+
     public void reset() {
         view.reset();
     }

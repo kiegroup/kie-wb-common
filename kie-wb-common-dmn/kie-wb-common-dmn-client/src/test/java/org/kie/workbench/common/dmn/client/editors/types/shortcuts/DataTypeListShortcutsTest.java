@@ -220,6 +220,14 @@ public class DataTypeListShortcutsTest {
     }
 
     @Test
+    public void testHighlight() {
+        final Element element = mock(Element.class);
+        shortcuts.highlight(element);
+
+        verify(view).highlight(element);
+    }
+
+    @Test
     public void testOnCtrlEWhenDataTypeIsReadOnly() {
         when(listItem.isReadOnly()).thenReturn(true);
 
