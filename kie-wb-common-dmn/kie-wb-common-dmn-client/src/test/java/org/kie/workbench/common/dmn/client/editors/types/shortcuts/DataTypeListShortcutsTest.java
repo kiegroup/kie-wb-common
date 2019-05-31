@@ -146,7 +146,7 @@ public class DataTypeListShortcutsTest {
         shortcuts.onEscape();
 
         verify(listItem).disableEditMode();
-        verify(shortcuts).reset();
+        verify(shortcuts, never()).reset();
     }
 
     @Test
