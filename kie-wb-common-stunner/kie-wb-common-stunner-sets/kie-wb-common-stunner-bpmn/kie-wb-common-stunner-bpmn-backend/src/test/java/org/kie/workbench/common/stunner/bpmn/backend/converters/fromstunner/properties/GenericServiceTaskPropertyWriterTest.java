@@ -37,12 +37,23 @@ public class GenericServiceTaskPropertyWriterTest {
     }
 
     @Test
-    public void setAndTest() {
-        w.setServiceImplementation("setServiceImplementation");
+    public void setAndTestJava() {
+        w.setServiceImplementation("Java");
         w.setServiceOperation("setServiceOperation");
         w.setServiceInterface("setServiceInterface");
 
-        assertEquals("setServiceImplementation", CustomAttribute.serviceImplementation.of(serviceTask).get());
+        assertEquals("Java", CustomAttribute.serviceImplementation.of(serviceTask).get());
+        assertEquals("setServiceOperation", CustomAttribute.serviceOperation.of(serviceTask).get());
+        assertEquals("setServiceInterface", CustomAttribute.serviceInterface.of(serviceTask).get());
+    }
+
+    @Test
+    public void setAndTestWebService() {
+        w.setServiceImplementation("WebService");
+        w.setServiceOperation("setServiceOperation");
+        w.setServiceInterface("setServiceInterface");
+
+        assertEquals("##WebService", CustomAttribute.serviceImplementation.of(serviceTask).get());
         assertEquals("setServiceOperation", CustomAttribute.serviceOperation.of(serviceTask).get());
         assertEquals("setServiceInterface", CustomAttribute.serviceInterface.of(serviceTask).get());
     }

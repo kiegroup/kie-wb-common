@@ -29,6 +29,7 @@ public class GenericServiceTaskPropertyWriter extends ActivityPropertyWriter {
 
     private final ServiceTask task;
     private final Interface iface;
+    private Message message;
 
     public GenericServiceTaskPropertyWriter(ServiceTask task, VariableScope variableScope) {
         super(task, variableScope);
@@ -37,6 +38,10 @@ public class GenericServiceTaskPropertyWriter extends ActivityPropertyWriter {
     }
 
     public void setServiceImplementation(String serviceImplementation) {
+        if (!serviceImplementation.equals("Java")) {
+            serviceImplementation = "##WebService";
+        }
+        task.setImplementation(serviceImplementation);
         CustomAttribute.serviceImplementation.of(task).set(serviceImplementation);
     }
 
@@ -50,22 +55,20 @@ public class GenericServiceTaskPropertyWriter extends ActivityPropertyWriter {
 
         iface.getOperations().add(operation);
         task.setOperationRef(operation);
-        rootElements.add(iface);
-
-        Message message = bpmn2.createMessage();
-        message.setId(task.getId() +"_InMessage");
-
-        ItemDefinition itemDefinition = bpmn2.createItemDefinition();
-        itemDefinition.setId(task.getId()+"_InMessageType");
-        rootElements.add(itemDefinition);
-
-        message.setItemRef(itemDefinition);
-        rootElements.add(message);
-
+        addInterfaceDefinition(iface);
         operation.setInMessageRef(message);
     }
 
     public void setServiceInterface(String serviceInterface) {
+        message = bpmn2.createMessage();
+        message.setId(task.getId() + "_InMessage");
+        ItemDefinition itemDefinition = bpmn2.createItemDefinition();
+        itemDefinition.setId(task.getId() + "_InMessageType");
+        addItemDefinition(itemDefinition);
+
+        message.setItemRef(itemDefinition);
+        addRootElement(message);
+
         CustomAttribute.serviceInterface.of(task).set(serviceInterface);
         iface.setImplementationRef(serviceInterface);
         iface.setName(serviceInterface);

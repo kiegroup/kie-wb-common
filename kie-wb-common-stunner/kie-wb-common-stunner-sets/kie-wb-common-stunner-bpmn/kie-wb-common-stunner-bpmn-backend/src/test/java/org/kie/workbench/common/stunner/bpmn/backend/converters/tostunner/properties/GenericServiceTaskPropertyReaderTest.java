@@ -45,7 +45,7 @@ public class GenericServiceTaskPropertyReaderTest {
     public void setUp() {
         ServiceTask serviceTask = bpmn2.createServiceTask();
         GenericServiceTaskPropertyWriter writer = new GenericServiceTaskPropertyWriter(serviceTask, null);
-        writer.setServiceImplementation("setServiceImplementation");
+        writer.setServiceImplementation("WebService");
         writer.setServiceInterface("setServiceInterface");
         writer.setServiceOperation("setServiceOperation");
         reader = new GenericServiceTaskPropertyReader(serviceTask, diagram, definitionResolver);
@@ -56,6 +56,6 @@ public class GenericServiceTaskPropertyReaderTest {
         GenericServiceTaskValue task = reader.getGenericServiceTask();
         assertEquals("setServiceOperation", task.getServiceOperation());
         assertEquals("setServiceInterface", task.getServiceInterface());
-        assertEquals("setServiceImplementation", task.getServiceImplementation());
+        assertEquals("WebService", task.getServiceImplementation());
     }
 }
