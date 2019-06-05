@@ -23,7 +23,6 @@ import org.kie.workbench.common.stunner.core.command.CommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
-import org.kie.workbench.common.stunner.core.registry.impl.ClientCommandRegistry;
 
 /**
  * This handler is an util class that achieves command "re-do" features.
@@ -51,8 +50,8 @@ public class RedoCommandHandler<C extends Command> {
     }
 
     @Inject
-    public RedoCommandHandler(final ClientCommandRegistry<C> clientCommandRegistry) {
-        this.registry = clientCommandRegistry;
+    public RedoCommandHandler(final CommandRegistry<C> commandRegistry) {
+        this.registry = commandRegistry;
     }
 
     public boolean onUndoCommandExecuted(final C command) {
@@ -94,5 +93,9 @@ public class RedoCommandHandler<C extends Command> {
 
     public void clear() {
         registry.clear();
+    }
+
+    protected CommandRegistry<C> getRegistry() {
+        return registry;
     }
 }

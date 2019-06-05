@@ -59,4 +59,7 @@ public interface BPMNClientConstants {
 
     @TranslationKey(defaultValue = "An error was produced during migration")
     String EditorMigrateErrorGeneric = "editor.actions.migrateErrorGeneric";
+
+    @TranslationKey(defaultValue =  "An error was produced during diagram svg file generation")
+    String EditorGenerateSvgFileError = "editor.error.generateSvgFileError";
 }

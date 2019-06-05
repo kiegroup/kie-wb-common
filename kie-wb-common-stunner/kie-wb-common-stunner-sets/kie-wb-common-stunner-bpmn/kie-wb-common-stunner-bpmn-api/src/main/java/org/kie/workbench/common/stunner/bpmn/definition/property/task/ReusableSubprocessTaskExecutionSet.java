@@ -25,9 +25,11 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
+import org.kie.workbench.common.forms.adf.definitions.annotations.SkipFormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
 import org.kie.workbench.common.stunner.bpmn.forms.model.MultipleInstanceVariableFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
@@ -51,6 +53,11 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     protected CalledElement calledElement;
 
     @Property
+    @SkipFormField
+    @Valid
+    protected IsCase isCase;
+
+    @Property
     @FormField(
             afterElement = "calledElement"
     )
@@ -72,12 +79,28 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     private IsAsync isAsync;
 
     @Property
+    @SkipFormField
+    @Valid
+    private AdHocAutostart adHocAutostart;
+
+    @Property
     @Valid
     @FormField(afterElement = "isAsync")
     private IsMultipleInstance isMultipleInstance;
 
     @Property
-    @FormField(type = ListBoxFieldType.class, afterElement = "isMultipleInstance")
+    @Valid
+    @FormField(afterElement = "isMultipleInstance",
+            type = ListBoxFieldType.class,
+            settings = {@FieldParam(name = "addEmptyOption", value = "false")}
+    )
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.ExecutionOrderProvider")
+    private MultipleInstanceExecutionMode multipleInstanceExecutionMode;
+
+    @Property
+    @FormField(type = ListBoxFieldType.class, afterElement = "multipleInstanceExecutionMode")
     @SelectorDataProvider(
             type = SelectorDataProvider.ProviderType.CLIENT,
             className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.VariablesProvider"
@@ -138,10 +161,13 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
 
     public ReusableSubprocessTaskExecutionSet() {
         this(new CalledElement(),
+             new IsCase(),
              new Independent(),
              new WaitForCompletion(),
              new IsAsync(),
+             new AdHocAutostart(),
              new IsMultipleInstance(false),
+             new MultipleInstanceExecutionMode(false),
              new MultipleInstanceCollectionInput(),
              new MultipleInstanceDataInput(),
              new MultipleInstanceCollectionOutput(),
@@ -154,10 +180,13 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     }
 
     public ReusableSubprocessTaskExecutionSet(final @MapsTo("calledElement") CalledElement calledElement,
+                                              final @MapsTo("isCase") IsCase isCase,
                                               final @MapsTo("independent") Independent independent,
                                               final @MapsTo("waitForCompletion") WaitForCompletion waitForCompletion,
                                               final @MapsTo("isAsync") IsAsync isAsync,
+                                              final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
                                               final @MapsTo("isMultipleInstance") IsMultipleInstance isMultipleInstance,
+                                              final @MapsTo("multipleInstanceExecutionMode") MultipleInstanceExecutionMode multipleInstanceExecutionMode,
                                               final @MapsTo("multipleInstanceCollectionInput") MultipleInstanceCollectionInput multipleInstanceCollectionInput,
                                               final @MapsTo("multipleInstanceDataInput") MultipleInstanceDataInput multipleInstanceDataInput,
                                               final @MapsTo("multipleInstanceCollectionOutput") MultipleInstanceCollectionOutput multipleInstanceCollectionOutput,
@@ -166,10 +195,13 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
                                               final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
                                               final @MapsTo("onExitAction") OnExitAction onExitAction) {
         this.calledElement = calledElement;
+        this.isCase = isCase;
         this.independent = independent;
         this.waitForCompletion = waitForCompletion;
         this.isAsync = isAsync;
+        this.adHocAutostart = adHocAutostart;
         this.isMultipleInstance = isMultipleInstance;
+        this.multipleInstanceExecutionMode = multipleInstanceExecutionMode;
         this.multipleInstanceCollectionInput = multipleInstanceCollectionInput;
         this.multipleInstanceDataInput = multipleInstanceDataInput;
         this.multipleInstanceCollectionOutput = multipleInstanceCollectionOutput;
@@ -187,6 +219,16 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     @Override
     public Independent getIndependent() {
         return independent;
+    }
+
+    @Override
+    public IsCase getIsCase() {
+        return isCase;
+    }
+
+    @Override
+    public void setIsCase(final IsCase isCase) {
+        this.isCase = isCase;
     }
 
     @Override
@@ -219,12 +261,30 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         this.isAsync = isAsync;
     }
 
+    @Override
+    public AdHocAutostart getAdHocAutostart() {
+        return adHocAutostart;
+    }
+
+    @Override
+    public void setAdHocAutostart(AdHocAutostart adHocAutostart) {
+        this.adHocAutostart = adHocAutostart;
+    }
+
     public IsMultipleInstance getIsMultipleInstance() {
         return isMultipleInstance;
     }
 
     public void setIsMultipleInstance(IsMultipleInstance isMultipleInstance) {
         this.isMultipleInstance = isMultipleInstance;
+    }
+
+    public MultipleInstanceExecutionMode getMultipleInstanceExecutionMode() {
+        return multipleInstanceExecutionMode;
+    }
+
+    public void setMultipleInstanceExecutionMode(MultipleInstanceExecutionMode multipleInstanceExecutionMode) {
+        this.multipleInstanceExecutionMode = multipleInstanceExecutionMode;
     }
 
     public MultipleInstanceCollectionInput getMultipleInstanceCollectionInput() {
@@ -289,10 +349,13 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(calledElement),
+                                         Objects.hashCode(isCase),
                                          Objects.hashCode(independent),
                                          Objects.hashCode(waitForCompletion),
                                          Objects.hashCode(isAsync),
+                                         Objects.hashCode(adHocAutostart),
                                          Objects.hashCode(isMultipleInstance),
+                                         Objects.hashCode(multipleInstanceExecutionMode),
                                          Objects.hashCode(multipleInstanceCollectionInput),
                                          Objects.hashCode(multipleInstanceDataInput),
                                          Objects.hashCode(multipleInstanceCollectionOutput),
@@ -310,10 +373,13 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         if (o instanceof ReusableSubprocessTaskExecutionSet) {
             ReusableSubprocessTaskExecutionSet other = (ReusableSubprocessTaskExecutionSet) o;
             return Objects.equals(calledElement, other.calledElement) &&
+                    Objects.equals(isCase, other.isCase) &&
                     Objects.equals(independent, other.independent) &&
                     Objects.equals(waitForCompletion, other.waitForCompletion) &&
                     Objects.equals(isAsync, other.isAsync) &&
+                    Objects.equals(adHocAutostart, other.adHocAutostart) &&
                     Objects.equals(isMultipleInstance, other.isMultipleInstance) &&
+                    Objects.equals(multipleInstanceExecutionMode, other.multipleInstanceExecutionMode) &&
                     Objects.equals(multipleInstanceCollectionInput, other.multipleInstanceCollectionInput) &&
                     Objects.equals(multipleInstanceDataInput, other.multipleInstanceDataInput) &&
                     Objects.equals(multipleInstanceCollectionOutput, other.multipleInstanceCollectionOutput) &&

@@ -15,17 +15,15 @@
  */
 package org.kie.workbench.common.stunner.core.command.util;
 
-import javax.enterprise.event.Event;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
-import org.kie.workbench.common.stunner.core.registry.impl.ClientCommandRegistry;
+import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
+import org.kie.workbench.common.stunner.core.registry.impl.CommandRegistryImpl;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -50,27 +48,21 @@ public class RedoCommandHandlerTest {
     @Mock
     private Command command2;
 
-    @Mock
-    private ClientCommandRegistry clientCommandRegistry;
-
-    @Mock
-    private Event<RegisterChangedEvent> registerChangedEvent;
-
     private RedoCommandHandler tested;
+    private CommandRegistry commandRegistry;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        this.tested = new RedoCommandHandler(clientCommandRegistry);
+        this.commandRegistry = spy(new CommandRegistryImpl());
+        this.tested = new RedoCommandHandler(commandRegistry);
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testUndoCommandExecuted() {
-        ClientCommandRegistry realRegistry = spy(new ClientCommandRegistry(registerChangedEvent));
-        RedoCommandHandler tested = new RedoCommandHandler(realRegistry);
         assertTrue(tested.onUndoCommandExecuted(command1));
-        verify(realRegistry).register(eq(command1));
+        verify(commandRegistry).register(eq(command1));
         assertTrue(tested.isEnabled());
     }
 
@@ -80,9 +72,10 @@ public class RedoCommandHandlerTest {
         Object obj = mock(Object.class);
         CommandManager manager = mock(CommandManager.class);
         CommandResult expectedResult = mock(CommandResult.class);
-        when(clientCommandRegistry.peek()).thenReturn(command1);
-        when(manager.execute(obj,
-                             command1)).thenReturn(expectedResult);
+        when(commandRegistry.isEmpty()).thenReturn(false);
+        when(commandRegistry.peek()).thenReturn(command1);
+        when(manager.execute(anyObject(),
+                             eq(command1))).thenReturn(expectedResult);
 
         CommandResult actualResult = tested.execute(obj,
                                                     manager);
@@ -97,9 +90,9 @@ public class RedoCommandHandlerTest {
     public void testExecuteOnNull() {
         Object obj = mock(Object.class);
         CommandManager manager = mock(CommandManager.class);
-        when(clientCommandRegistry.isEmpty()).thenReturn(true);
+        when(commandRegistry.isEmpty()).thenReturn(true);
 
-        RedoCommandHandler tested = new RedoCommandHandler(clientCommandRegistry);
+        RedoCommandHandler tested = new RedoCommandHandler(commandRegistry);
 
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      tested.execute(obj, manager));
@@ -109,7 +102,6 @@ public class RedoCommandHandlerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testExecuteJustRecentRedoCommand() {
-        RedoCommandHandler tested = new RedoCommandHandler(spy(new ClientCommandRegistry(registerChangedEvent)));
         assertTrue(tested.onUndoCommandExecuted(command1));
         assertFalse(tested.onCommandExecuted(command1));
         assertFalse(tested.isEnabled());
@@ -118,7 +110,6 @@ public class RedoCommandHandlerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testExecuteRemoveRedoCommands() {
-        RedoCommandHandler tested = new RedoCommandHandler(spy(new ClientCommandRegistry(registerChangedEvent)));
         Command command3 = mock(Command.class);
         assertTrue(tested.onUndoCommandExecuted(command1));
         assertTrue(tested.onUndoCommandExecuted(command2));

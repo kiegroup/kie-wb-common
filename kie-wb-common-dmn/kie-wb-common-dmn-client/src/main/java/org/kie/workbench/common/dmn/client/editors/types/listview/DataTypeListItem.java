@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ConstraintType;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypeChangedEvent;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -39,6 +40,7 @@ import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.CONTEXT;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
@@ -62,6 +64,8 @@ public class DataTypeListItem {
     private final Event<DataTypeEditModeToggleEvent> editModeToggleEvent;
 
     private final DataTypeNameFormatValidator nameFormatValidator;
+
+    private final Event<DataTypeChangedEvent> dataTypeChangedEvent;
 
     private DataType dataType;
 
@@ -87,7 +91,8 @@ public class DataTypeListItem {
                             final DataTypeManager dataTypeManager,
                             final DataTypeConfirmation confirmation,
                             final DataTypeNameFormatValidator nameFormatValidator,
-                            final Event<DataTypeEditModeToggleEvent> editModeToggleEvent) {
+                            final Event<DataTypeEditModeToggleEvent> editModeToggleEvent,
+                            final Event<DataTypeChangedEvent> dataTypeChangedEvent) {
         this.view = view;
         this.dataTypeSelectComponent = dataTypeSelectComponent;
         this.dataTypeConstraintComponent = dataTypeConstraintComponent;
@@ -96,6 +101,8 @@ public class DataTypeListItem {
         this.confirmation = confirmation;
         this.nameFormatValidator = nameFormatValidator;
         this.editModeToggleEvent = editModeToggleEvent;
+        this.dataTypeChangedEvent = dataTypeChangedEvent;
+        this.dataTypeListComponent.setOnValueChanged(value -> refreshConstraintComponent());
     }
 
     @PostConstruct
@@ -118,8 +125,8 @@ public class DataTypeListItem {
         this.level = level;
 
         setupSelectComponent();
-        setupConstraintComponent();
         setupListComponent();
+        setupConstraintComponent();
         setupView();
     }
 
@@ -249,7 +256,12 @@ public class DataTypeListItem {
             final String newDataTypeHash = getNewDataTypeHash(dataType, referenceDataTypeHash);
             dataTypeList.fireOnDataTypeListItemUpdateCallback(newDataTypeHash);
             insertNewFieldIfDataTypeIsStructure(newDataTypeHash);
+            fireDataChangedEvent();
         };
+    }
+
+    void fireDataChangedEvent() {
+        dataTypeChangedEvent.fire(new DataTypeChangedEvent());
     }
 
     void insertNewFieldIfDataTypeIsStructure(final String hash) {
@@ -326,6 +338,8 @@ public class DataTypeListItem {
             destroyedDataTypes.removeAll(removedDataTypes);
 
             dataTypeList.refreshItemsByUpdatedDataTypes(destroyedDataTypes);
+
+            fireDataChangedEvent();
         };
     }
 
@@ -471,7 +485,7 @@ public class DataTypeListItem {
     }
 
     void refreshConstraintComponent() {
-        if (isBooleanType() || isStructureType()) {
+        if (isBooleanType() || isStructureType() || isContextType() || isList()) {
             dataTypeConstraintComponent.disable();
         } else {
             dataTypeConstraintComponent.enable();
@@ -484,6 +498,10 @@ public class DataTypeListItem {
 
     private boolean isStructureType() {
         return Objects.equals(dataTypeManager.structure(), getType());
+    }
+
+    private boolean isContextType() {
+        return Objects.equals(CONTEXT.getName(), getType());
     }
 
     public interface View extends UberElemental<DataTypeListItem> {

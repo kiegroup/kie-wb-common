@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -178,8 +179,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -1517,6 +1520,33 @@ public class DMNMarshallerTest {
     }
 
     @Test
+    //https://issues.jboss.org/browse/DROOLS-4107
+    public void test_decision_table_UnaryTestsParenthood() throws IOException {
+        roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/positive_or_negative.dmn"),
+                                               this::checkDecisionRuleInputUnaryTests);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void checkDecisionRuleInputUnaryTests(final Graph<?, Node<?, ?>> g) {
+        final Node<?, ?> decisionNode = g.getNode("_f9f209df-1d64-4c27-90e9-3ad42cb47c07");
+        assertNodeContentDefinitionIs(decisionNode,
+                                      Decision.class);
+
+        final Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph) g);
+        assertNotNull(rootNode);
+        assertRootNodeConnectedTo(rootNode,
+                                  decisionNode);
+        assertEquals("decisionNode parent is Definitions DMN root",
+                     "_f330b756-e84e-401d-ac3a-2e72e710d4ed",
+                     ((DMNElement) ((Decision) ((View<?>) decisionNode.getContent()).getDefinition()).getParent()).getId().getValue());
+
+        final org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable dtable = (org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable) ((Decision) ((View<?>) decisionNode.getContent()).getDefinition()).getExpression();
+        dtable.getRule().forEach(rule -> rule.getInputEntry().forEach(ie -> assertEquals(ie.getParent(), rule)));
+        dtable.getRule().forEach(rule -> rule.getOutputEntry().forEach(ie -> assertEquals(ie.getParent(), rule)));
+        dtable.getRule().forEach(rule -> assertEquals(rule.getParent(), dtable));
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void test_wrong_context() throws IOException {
         // DROOLS-2217
@@ -1829,6 +1859,7 @@ public class DMNMarshallerTest {
         final DMNMarshaller marshaller = spy(getDMNMarshaller());
         final List<org.kie.dmn.model.api.DRGElement> importedDRGElements = mock(List.class);
         final Map<Import, org.kie.dmn.model.api.Definitions> importDefinitions = mock(Map.class);
+        final org.kie.dmn.model.api.Definitions dmnXml = mock(org.kie.dmn.model.api.Definitions.class);
 
         final org.kie.dmn.model.api.DRGElement ref1 = mock(org.kie.dmn.model.api.DRGElement.class);
         final org.kie.dmn.model.api.DRGElement ref2 = mock(org.kie.dmn.model.api.DRGElement.class);
@@ -1848,11 +1879,12 @@ public class DMNMarshallerTest {
 
         when(dmnMarshallerImportsHelper.getImportedDRGElements(importDefinitions)).thenReturn(importedDRGElements);
 
+        doNothing().when(marshaller).updateIDsWithAlias(any(), any());
         doReturn(Optional.of(ref1)).when(marshaller).getReference(importedDRGElements, "REF1");
         doReturn(Optional.of(ref2)).when(marshaller).getReference(importedDRGElements, "REF2");
         doReturn(Optional.of(ref3)).when(marshaller).getReference(importedDRGElements, "REF3");
 
-        final List<DRGElement> actual = marshaller.getImportedDrgElementsByShape(dmnShapes, importDefinitions);
+        final List<DRGElement> actual = marshaller.getImportedDrgElementsByShape(dmnShapes, importDefinitions, dmnXml);
 
         assertEquals(ref1, actual.get(0));
         assertEquals(ref2, actual.get(1));
@@ -1968,6 +2000,97 @@ public class DMNMarshallerTest {
         final boolean actual = marshaller.isImportedDRGElement(importedDrgElements, drgElement);
 
         assertTrue(actual);
+    }
+
+    @Test
+    public void testUpdateIDsWithAlias() {
+
+        final DMNMarshaller marshaller = getDMNMarshaller();
+        final HashMap<String, String> indexByUri = new HashMap<>();
+        final String namespace1 = "https://kiegroup.org/dmn/_red";
+        final String namespace2 = "https://kiegroup.org/dmn/_blue";
+        final String namespace3 = "https://kiegroup.org/dmn/_yellow";
+        final String missingNamespace = "missing_namespace";
+
+        final String someWrongAlias = "some wrong alias";
+
+        final String include1 = "include1";
+        final String include2 = "include2";
+        final String include3 = "include3";
+
+        final String id1 = "id1";
+        final String id2 = "id2";
+        final String id3 = "id3";
+        final String id4 = "id4";
+
+        indexByUri.put(namespace1, include1);
+        indexByUri.put(namespace2, include2);
+        indexByUri.put(namespace3, include3);
+
+        final List<org.kie.dmn.model.api.DRGElement> importedDrgElements = new ArrayList<>();
+        final DRGElement element1 = createDRGElementWithNamespaceAndId(namespace1, someWrongAlias + ":" + id1);
+        importedDrgElements.add(element1);
+
+        final DRGElement element2 = createDRGElementWithNamespaceAndId(namespace2, someWrongAlias + ":" + id2);
+        importedDrgElements.add(element2);
+
+        final DRGElement element3 = createDRGElementWithNamespaceAndId(namespace3, someWrongAlias + ":" + id3);
+        importedDrgElements.add(element3);
+
+        final DRGElement element4 = createDRGElementWithNamespaceAndId(missingNamespace, id4);
+        importedDrgElements.add(element4);
+
+        marshaller.updateIDsWithAlias(indexByUri, importedDrgElements);
+
+        verify(element1).setId(include1 + ":" + id1);
+        verify(element2).setId(include2 + ":" + id2);
+        verify(element3).setId(include3 + ":" + id3);
+
+        verify(element4, never()).setId(any());
+    }
+
+    private org.kie.dmn.model.api.DRGElement createDRGElementWithNamespaceAndId(final String namespace,
+                                                                                final String id) {
+
+        final org.kie.dmn.model.api.DRGElement drgElement = mock(DRGElement.class);
+        final Map<QName, String> additionalAttributes = new HashMap<>();
+
+        additionalAttributes.put(new QName("Namespace"), namespace);
+
+        when(drgElement.getAdditionalAttributes()).thenReturn(additionalAttributes);
+        when(drgElement.getId()).thenReturn(id);
+
+        return drgElement;
+    }
+
+    @Test
+    public void testChangeAliasForImportedElement() {
+
+        final DMNMarshaller marshaller = getDMNMarshaller();
+        final org.kie.dmn.model.api.DRGElement drgElement = mock(org.kie.dmn.model.api.DRGElement.class);
+        final String alias = "include1";
+        final String id = "_01234567";
+
+        when(drgElement.getId()).thenReturn("some another alias:" + id);
+
+        marshaller.changeAlias(alias, drgElement);
+
+        verify(drgElement).setId(alias + ":" + id);
+    }
+
+    @Test
+    public void testChangeAliasForLocalElement() {
+
+        final DMNMarshaller marshaller = getDMNMarshaller();
+        final org.kie.dmn.model.api.DRGElement drgElement = mock(org.kie.dmn.model.api.DRGElement.class);
+        final String alias = "include1";
+        final String id = "_01234567";
+
+        when(drgElement.getId()).thenReturn(id);
+
+        marshaller.changeAlias(alias, drgElement);
+
+        verify(drgElement, never()).setId(any());
     }
 
     @Test

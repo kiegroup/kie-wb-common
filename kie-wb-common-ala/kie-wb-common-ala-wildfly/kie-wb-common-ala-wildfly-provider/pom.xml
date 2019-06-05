@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.kie.workbench</groupId>
     <artifactId>kie-wb-common-ala-wildfly</artifactId>
-    <version>7.23.0-SNAPSHOT</version>
+    <version>7.24.0-SNAPSHOT</version>
   </parent>
   <artifactId>kie-wb-common-ala-wildfly-provider</artifactId>
   <name>KIE Workbench Common ALA :: Wildfly Provider</name>
@@ -107,6 +107,10 @@
       <artifactId>arquillian-cube-docker</artifactId>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.glassfish.hk2.external</groupId>
           <artifactId>aopalliance-repackaged</artifactId>

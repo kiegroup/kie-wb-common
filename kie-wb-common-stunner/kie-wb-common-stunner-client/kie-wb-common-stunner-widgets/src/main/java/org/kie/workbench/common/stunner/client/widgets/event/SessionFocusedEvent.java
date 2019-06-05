@@ -16,18 +16,12 @@
 package org.kie.workbench.common.stunner.client.widgets.event;
 
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.uberfire.workbench.events.UberFireEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.BaseSessionEvent;
 
-public final class SessionFocusedEvent implements UberFireEvent {
-
-    private final ClientSession session;
+public final class SessionFocusedEvent extends BaseSessionEvent {
 
     public SessionFocusedEvent(final ClientSession session) {
-        this.session = session;
-    }
-
-    public ClientSession getSession() {
-        return session;
+        super(session);
     }
 
     @Override

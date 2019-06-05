@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.client.i18n;
 
-import java.util.Collection;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -25,8 +23,6 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import org.kie.workbench.common.stunner.core.i18n.StunnerTranslationService;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
-import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.core.validation.ModelBeanViolation;
 
 @ApplicationScoped
@@ -37,13 +33,6 @@ public class ClientTranslationMessages extends CoreTranslationMessages {
     @Inject
     public ClientTranslationMessages(final StunnerTranslationService translationService) {
         this.translationService = translationService;
-    }
-
-    public String getDiagramValidationsErrorMessage(final String key,
-                                                    final Collection<DiagramElementViolation<RuleViolation>> result) {
-        return getDiagramValidationsErrorMessage(translationService,
-                                                 key,
-                                                 result);
     }
 
     public String getCanvasValidationsErrorMessage(final String key,
@@ -58,6 +47,23 @@ public class ClientTranslationMessages extends CoreTranslationMessages {
                                                        result);
     }
 
+    public static String getCanvasValidationsErrorMessage(final StunnerTranslationService translationService,
+                                                          final String key,
+                                                          final Iterable<CanvasViolation> result) {
+        final String message = translationService.getValue(key) + DOT + NEW_LINE
+                + translationService.getValue(CoreTranslationMessages.REASON) + COLON + NEW_LINE
+                + getValidationMessages(translationService,
+                                        result);
+        return message;
+    }
+
+    public static String getCanvasCommandValidationsErrorMessage(final StunnerTranslationService translationService,
+                                                                 final Iterable<CanvasViolation> result) {
+        return getCanvasValidationsErrorMessage(translationService,
+                                                CoreTranslationMessages.COMMAND_FAILED,
+                                                result);
+    }
+
     public String getRuleValidationMessage(final RuleViolation violation) {
         return getRuleValidationMessage(translationService,
                                         violation);
@@ -68,8 +74,16 @@ public class ClientTranslationMessages extends CoreTranslationMessages {
                                         violation);
     }
 
-    public String getDomainValidationMessage(final DomainViolation violation) {
-        return getDomainValidationMessage(translationService,
-                                          violation);
+    private static String getValidationMessages(final StunnerTranslationService translationService,
+                                                final Iterable<CanvasViolation> violations) {
+        final StringBuilder message = new StringBuilder();
+        final int[] i = {1};
+        violations
+                .forEach(v -> message
+                        .append(OPEN_BRA).append(i[0]++).append(CLOSE_BRA)
+                        .append(getRuleValidationMessage(translationService,
+                                                         v))
+                        .append(NEW_LINE));
+        return message.toString();
     }
 }

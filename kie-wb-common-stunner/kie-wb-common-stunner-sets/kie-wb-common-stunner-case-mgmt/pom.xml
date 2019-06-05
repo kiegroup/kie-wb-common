@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kie.workbench.stunner</groupId>
     <artifactId>kie-wb-common-stunner-sets</artifactId>
-    <version>7.23.0-SNAPSHOT</version>
+    <version>7.24.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -36,6 +36,7 @@
     <module>kie-wb-common-stunner-case-mgmt-client</module>
     <module>kie-wb-common-stunner-case-mgmt-project-api</module>
     <module>kie-wb-common-stunner-case-mgmt-project-client</module>
+    <module>kie-wb-common-stunner-case-mgmt-project-backend</module>
   </modules>
 
 </project>

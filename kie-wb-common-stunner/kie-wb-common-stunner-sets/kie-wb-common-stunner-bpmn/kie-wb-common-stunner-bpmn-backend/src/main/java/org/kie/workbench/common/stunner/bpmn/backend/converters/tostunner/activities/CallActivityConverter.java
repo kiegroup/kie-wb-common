@@ -21,6 +21,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.CallActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -30,6 +32,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleIn
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCompletionCondition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataInput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceExecutionMode;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ReusableSubprocessTaskExecutionSet;
@@ -37,8 +40,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCom
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import static org.kie.workbench.common.stunner.core.util.StringUtils.hasNonEmpty;
 
 public class CallActivityConverter extends BaseCallActivityConverter<ReusableSubprocess, ReusableSubprocessTaskExecutionSet> {
 
@@ -55,25 +56,20 @@ public class CallActivityConverter extends BaseCallActivityConverter<ReusableSub
     @Override
     protected ReusableSubprocessTaskExecutionSet createReusableSubprocessTaskExecutionSet(CallActivity activity,
                                                                                           CallActivityPropertyReader p) {
-        ReusableSubprocessTaskExecutionSet executionSet = new ReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
-                                                                                                 new Independent(p.isIndependent()),
-                                                                                                 new WaitForCompletion(p.isWaitForCompletion()),
-                                                                                                 new IsAsync(p.isAsync()),
-                                                                                                 new IsMultipleInstance(),
-                                                                                                 new MultipleInstanceCollectionInput(p.getCollectionInput()),
-                                                                                                 new MultipleInstanceDataInput(p.getDataInput()),
-                                                                                                 new MultipleInstanceCollectionOutput(p.getCollectionOutput()),
-                                                                                                 new MultipleInstanceDataOutput(p.getDataOutput()),
-                                                                                                 new MultipleInstanceCompletionCondition(p.getCompletionCondition()),
-                                                                                                 new OnEntryAction(p.getOnEntryAction()),
-                                                                                                 new OnExitAction(p.getOnExitAction()));
-
-        boolean multipleInstance = hasNonEmpty(executionSet.getMultipleInstanceCollectionInput().getValue(),
-                                               executionSet.getMultipleInstanceDataInput().getValue(),
-                                               executionSet.getMultipleInstanceCollectionOutput().getValue(),
-                                               executionSet.getMultipleInstanceDataOutput().getValue(),
-                                               executionSet.getMultipleInstanceCompletionCondition().getValue());
-        executionSet.setIsMultipleInstance(new IsMultipleInstance(multipleInstance));
-        return executionSet;
+        return new ReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
+                                                      new IsCase(p.isCase()),
+                                                      new Independent(p.isIndependent()),
+                                                      new WaitForCompletion(p.isWaitForCompletion()),
+                                                      new IsAsync(p.isAsync()),
+                                                      new AdHocAutostart(p.isAdHocAutostart()),
+                                                      new IsMultipleInstance(p.isMultipleInstance()),
+                                                      new MultipleInstanceExecutionMode(p.isSequential()),
+                                                      new MultipleInstanceCollectionInput(p.getCollectionInput()),
+                                                      new MultipleInstanceDataInput(p.getDataInput()),
+                                                      new MultipleInstanceCollectionOutput(p.getCollectionOutput()),
+                                                      new MultipleInstanceDataOutput(p.getDataOutput()),
+                                                      new MultipleInstanceCompletionCondition(p.getCompletionCondition()),
+                                                      new OnEntryAction(p.getOnEntryAction()),
+                                                      new OnExitAction(p.getOnExitAction()));
     }
 }

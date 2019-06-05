@@ -62,6 +62,7 @@ public class ReusableSubprocessConverter {
         if (executionSet instanceof ReusableSubprocessTaskExecutionSet) {
             ReusableSubprocessTaskExecutionSet reusableExecutionSet = (ReusableSubprocessTaskExecutionSet) executionSet;
             if (Boolean.TRUE.equals(reusableExecutionSet.getIsMultipleInstance().getValue())) {
+                p.setIsSequential(reusableExecutionSet.getMultipleInstanceExecutionMode().isSequential());
                 p.setCollectionInput(reusableExecutionSet.getMultipleInstanceCollectionInput().getValue());
                 p.setInput(reusableExecutionSet.getMultipleInstanceDataInput().getValue());
                 p.setCollectionOutput(reusableExecutionSet.getMultipleInstanceCollectionOutput().getValue());
@@ -73,6 +74,9 @@ public class ReusableSubprocessConverter {
         p.setSimulationSet(definition.getSimulationSet());
 
         p.setAbsoluteBounds(n);
+
+        p.setCase(executionSet.getIsCase().getValue());
+        p.setAdHocAutostart(executionSet.getAdHocAutostart().getValue());
 
         return p;
     }

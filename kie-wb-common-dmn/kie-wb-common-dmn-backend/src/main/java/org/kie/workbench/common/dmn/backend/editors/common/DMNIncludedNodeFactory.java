@@ -44,10 +44,10 @@ public class DMNIncludedNodeFactory {
     private DRGElement withNamespace(final DRGElement drgElement,
                                      final DMNIncludedModel includeModel) {
 
-        final String namespace = includeModel.getModelName();
+        final String modelName = includeModel.getModelName();
 
-        drgElement.setId(new Id(namespace + ":" + drgElement.getId().getValue()));
-        drgElement.setName(new Name(namespace + "." + drgElement.getName().getValue()));
+        drgElement.setId(new Id(modelName + ":" + drgElement.getId().getValue()));
+        drgElement.setName(new Name(modelName + "." + drgElement.getName().getValue()));
         drgElement.setAllowOnlyVisualChange(true);
 
         if (drgElement instanceof HasVariable) {
@@ -58,7 +58,7 @@ public class DMNIncludedNodeFactory {
 
             if (qName != null && !isBuiltInType(qName.getLocalPart())) {
 
-                final QName typeRef = new QName(qName.getNamespaceURI(), namespace + "." + qName.getLocalPart(), qName.getPrefix());
+                final QName typeRef = new QName(qName.getNamespaceURI(), modelName + "." + qName.getLocalPart(), qName.getPrefix());
                 setVariable(hasVariable, variable, typeRef);
             }
         }
@@ -71,7 +71,7 @@ public class DMNIncludedNodeFactory {
                              final IsInformationItem variable,
                              final QName typeRef) {
         if (variable instanceof InformationItemPrimary) {
-            hasVariable.setVariable(new InformationItemPrimary(variable.getId(), typeRef));
+            hasVariable.setVariable(new InformationItemPrimary(variable.getId(), variable.getName(), typeRef));
         }
     }
 }

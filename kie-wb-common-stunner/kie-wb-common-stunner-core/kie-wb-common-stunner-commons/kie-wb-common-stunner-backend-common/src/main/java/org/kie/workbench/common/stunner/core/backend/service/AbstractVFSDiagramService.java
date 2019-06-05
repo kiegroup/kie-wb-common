@@ -39,6 +39,8 @@ import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingResponse;
 import org.kie.workbench.common.stunner.core.registry.BackendRegistryFactory;
 import org.kie.workbench.common.stunner.core.registry.diagram.DiagramRegistry;
 import org.kie.workbench.common.stunner.core.service.BaseDiagramService;
@@ -167,10 +169,18 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                 // Parse and load the diagram raw data.
                 final InputStream is = loadPath(file);
                 try {
-                    Graph<DefinitionSet, ?> graph = services.getDiagramMarshaller().unmarshall(metadata,
-                                                                                               is);
+                    final MarshallingResponse<Graph<DefinitionSet, ?>> marshallingResponse =
+                            services.getDiagramMarshaller().unmarshallWithValidation(MarshallingRequest.builder()
+                                                                                             .metadata(metadata)
+                                                                                             .input(is)
+                                                                                             .mode(MarshallingRequest.Mode.ERROR)
+                                                                                             .build());
+                    final Graph<DefinitionSet, ?> graph =
+                            marshallingResponse.getResult()
+                                    .orElseThrow(()-> new RuntimeException(marshallingResponse.getMessages().toString()));
 
-                    DiagramFactory<M, ?> factory = factoryManager.registry().getDiagramFactory(graph.getContent().getDefinition(),
+                    final DiagramFactory<M, ?> factory =
+                            factoryManager.registry().getDiagramFactory(graph.getContent().getDefinition(),
                                                                                                getMetadataType());
                     return (D) factory.build(name,
                                              metadata,
@@ -208,12 +218,16 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
 
     @Override
     public Path saveOrUpdateSvg(Path diagramPath, String rawDiagramSvg) {
-        final org.uberfire.java.nio.file.Path diagramFilePath = Paths.convert(diagramPath);
-        final String fileName = getDiagramSvgFileName(getDiagramByPath(diagramPath));
-        final org.uberfire.java.nio.file.Path svgPath = diagramFilePath.getParent().resolve(fileName);
+        final org.uberfire.java.nio.file.Path svgPath = getDiagramSvgFilePath(getDiagramByPath(diagramPath));
         LOG.info("Saving diagram SVG " + svgPath);
         getIoService().write(svgPath, rawDiagramSvg);
         return Paths.convert(svgPath);
+    }
+
+    protected org.uberfire.java.nio.file.Path getDiagramSvgFilePath(Diagram diagram) {
+        final org.uberfire.java.nio.file.Path diagramFilePath = Paths.convert(diagram.getMetadata().getPath());
+        final String fileName = getDiagramSvgFileName(diagram);
+        return diagramFilePath.getParent().resolve(fileName);
     }
 
     private String getDiagramSvgFileName(Diagram diagram) {
