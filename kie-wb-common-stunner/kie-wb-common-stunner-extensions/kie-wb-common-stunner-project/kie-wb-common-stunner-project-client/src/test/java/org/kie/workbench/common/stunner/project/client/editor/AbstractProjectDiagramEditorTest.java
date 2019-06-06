@@ -53,6 +53,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
@@ -122,8 +123,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-// TODO: (Submarine) Last commit merged is d4a65118454da8859ff57b1a2d6855c95f4721e7
 
 @RunWith(GwtMockitoTestRunner.class)
 public class AbstractProjectDiagramEditorTest {
@@ -241,7 +240,7 @@ public class AbstractProjectDiagramEditorTest {
     protected DefaultEditorDock defaultEditorDock;
 
     @Mock
-    private DocumentationView viewDocumentation;
+    protected DocumentationView documentationView;
 
     @Mock
     protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> presenterCore;
@@ -332,7 +331,7 @@ public class AbstractProjectDiagramEditorTest {
                                                                             notificationEvent,
                                                                             errorPopupPresenter,
                                                                             diagramClientErrorHandler,
-                                                                            viewDocumentation,
+                                                                            documentationView,
                                                                             (ClientResourceTypeMock) getResourceType(),
                                                                             getMenuSessionItems(),
                                                                             projectMessagesListener,
@@ -466,6 +465,7 @@ public class AbstractProjectDiagramEditorTest {
         verify(kieView).addMainEditorPage(eq(view));
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
+        verify(presenter).addDocumentationPage(diagram);
     }
 
     @Test
@@ -857,5 +857,20 @@ public class AbstractProjectDiagramEditorTest {
 
         verify(onDiagramFocusEvent).fire(any());
         verify(defaultEditorDock).show();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testAddDocumentationPage() {
+        when(documentationView.isEnabled()).thenReturn(Boolean.TRUE);
+        when(translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION)).thenReturn(DOC_LABEL);
+        when(documentationView.initialize(diagram)).thenReturn(documentationView);
+        ArgumentCaptor<DocumentationPage> documentationPageCaptor = ArgumentCaptor.forClass(DocumentationPage.class);
+        presenter.addDocumentationPage(diagram);
+        verify(translationService).getValue(StunnerProjectClientConstants.DOCUMENTATION);
+        verify(kieView).addPage(documentationPageCaptor.capture());
+        DocumentationPage documentationPage = documentationPageCaptor.getValue();
+        assertEquals(documentationPage.getDocumentationView(), documentationView);
+        assertEquals(documentationPage.getLabel(), DOC_LABEL);
     }
 }
