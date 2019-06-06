@@ -16,27 +16,36 @@
 
 package org.kie.workbench.common.stunner.project.client.screens;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.messageconsole.events.PublishMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
+import org.guvnor.messageconsole.events.UnpublishMessagesEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.client.widgets.notification.AbstractNotification;
 import org.kie.workbench.common.stunner.client.widgets.notification.CommandNotification;
 import org.kie.workbench.common.stunner.client.widgets.notification.Notification;
 import org.kie.workbench.common.stunner.client.widgets.notification.NotificationContext;
 import org.kie.workbench.common.stunner.client.widgets.notification.NotificationsObserver;
+import org.kie.workbench.common.stunner.client.widgets.notification.ValidationFailedNotification;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
+import org.kie.workbench.common.stunner.core.validation.DomainViolation;
+import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -45,7 +54,10 @@ import org.uberfire.mvp.ParameterizedCommand;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,9 +65,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectMessagesListenerTest {
 
+    public static final String PATH = "path";
     ProjectMessagesListener projectMessagesListener;
     @Mock
     private Event<PublishMessagesEvent> publishMessagesEvent;
+    @Mock
+    private Event<UnpublishMessagesEvent> unpublishMessagesEvent;
     @Mock
     private NotificationsObserver notificationsObserver;
     @Mock
@@ -76,22 +91,21 @@ public class ProjectMessagesListenerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        this.projectMessagesListener = new ProjectMessagesListener(notificationsObserver,
-                                                                   publishMessagesEvent,
-                                                                   clientSessionManager
-        );
+        this.projectMessagesListener = spy(new ProjectMessagesListener(notificationsObserver,
+                                                                       publishMessagesEvent,
+                                                                       unpublishMessagesEvent,
+                                                                       clientSessionManager));
         when(clientSessionManager.getCurrentSession()).thenReturn(session);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getPath()).thenReturn(path);
+        when(path.toURI()).thenReturn(PATH);
     }
 
     @Test
     public void testFireNotificationError() {
-        NotificationContext context = new NotificationContext.Builder().build("test",
-                                                                              "test",
-                                                                              "test");
+        NotificationContext context = buildNotificationContext();
         Command<?, CanvasViolation> source = mock(Command.class);
         CommandNotification commandNotification = CommandNotification.Builder.build(
                 context,
@@ -116,13 +130,14 @@ public class ProjectMessagesListenerTest {
                      "message");
         assertEquals(message.getLevel(),
                      level);
+        assertEquals(message.getText(), "message");
+        assertEquals(message.getLevel(), level);
+        assertEquals(message.getMessageType(), ProjectMessagesListener.MESSAGE_TYPE + PATH);
     }
 
     @Test
     public void testFireNotificationInfo() {
-        NotificationContext context = new NotificationContext.Builder().build("test",
-                                                                              "test",
-                                                                              "test");
+        NotificationContext context = buildNotificationContext();
         Command<?, CanvasViolation> source = mock(Command.class);
         CommandNotification commandNotification = CommandNotification.Builder.build(
                 context,
@@ -137,9 +152,7 @@ public class ProjectMessagesListenerTest {
 
     @Test
     public void testFireNotificationWarning() {
-        NotificationContext context = new NotificationContext.Builder().build("test",
-                                                                              "test",
-                                                                              "test");
+        NotificationContext context = buildNotificationContext();
         Command<?, CanvasViolation> source = mock(Command.class);
         CommandNotification commandNotification = CommandNotification.Builder.build(
                 context,
@@ -150,5 +163,55 @@ public class ProjectMessagesListenerTest {
         ArgumentCaptor<PublishMessagesEvent> eventCaptor = ArgumentCaptor.forClass(PublishMessagesEvent.class);
         verify(publishMessagesEvent, times(1)).fire(eventCaptor.capture());
         testMessageToPublish(eventCaptor.getValue(), Level.WARNING);
+    }
+
+    private NotificationContext buildNotificationContext() {
+        return new NotificationContext.Builder().build("test",
+                                                       "test",
+                                                       "test");
+    }
+
+    @Test
+    public void testClearMessages() {
+        final ArgumentCaptor<UnpublishMessagesEvent> eventCaptor = ArgumentCaptor.forClass(UnpublishMessagesEvent.class);
+        projectMessagesListener.clearMessages(mock(AbstractNotification.class));
+        verify(unpublishMessagesEvent).fire(eventCaptor.capture());
+        assertEquals(eventCaptor.getValue().getMessageType(), ProjectMessagesListener.MESSAGE_TYPE + PATH);
+    }
+
+    @Test
+    public void testEnable() {
+        projectMessagesListener.enable();
+        final ArgumentCaptor<ParameterizedCommand> callbackCaptor =
+                ArgumentCaptor.forClass(ParameterizedCommand.class);
+
+        //onCommandExecutionFailed
+        verify(notificationsObserver).onCommandExecutionFailed(callbackCaptor.capture());
+        callbackCaptor.getAllValues().get(0).execute(CommandNotification.Builder.build(buildNotificationContext(),
+                                                                                       mock(Command.class),
+                                                                                       Notification.Type.INFO,
+                                                                                       "message"));
+        verify(projectMessagesListener, times(1)).fireNotification(any());
+
+        //onValidationFailed
+        verify(notificationsObserver).onValidationFailed(callbackCaptor.capture());
+        final DiagramElementViolation diagramElementViolation = mock(DiagramElementViolation.class);
+        final DomainViolation domainViolation = mock(DomainViolation.class);
+        final ClientTranslationService translationService = mock(ClientTranslationService.class);
+
+        when(diagramElementViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
+        when(diagramElementViolation.getDomainViolations()).thenReturn(Arrays.asList(domainViolation));
+        when(domainViolation.getViolationType()).thenReturn(Violation.Type.ERROR);
+        when(translationService.getElementName(anyString())).thenReturn(Optional.of("name"));
+        when(translationService.getValue(anyString(), anyString(), anyString())).thenReturn("message");
+        when(domainViolation.getMessage()).thenReturn("message");
+
+        callbackCaptor.getAllValues().get(1).execute(ValidationFailedNotification.Builder.build(translationService, buildNotificationContext(), Arrays.asList(diagramElementViolation)).get());
+        verify(projectMessagesListener, times(2)).fireNotification(any());
+
+        //onValidationExecuted
+        verify(notificationsObserver).onValidationExecuted(callbackCaptor.capture());
+        callbackCaptor.getAllValues().get(2).execute(null);
+        verify(projectMessagesListener, times(1)).clearMessages(any());
     }
 }

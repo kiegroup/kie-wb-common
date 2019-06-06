@@ -80,6 +80,7 @@ public class ServiceTaskTest extends BPMNDiagramMarshallerBase {
         Diagram<Graph, Metadata> d2 = Unmarshalling.unmarshall(newMarshaller, new ByteArrayInputStream(marshall.getBytes(Charset.forName("UTF-8"))));
 
         Node<View<ServiceTask>, ?> node = d2.getGraph().getNode(SERVICE_TASK_ID);
+
         ServiceTask definition = node.getContent().getDefinition();
         assertEquals("Custom Email", definition.getGeneral().getName().getValue());
         assertEquals("This is an email task", definition.getGeneral().getDocumentation().getValue());

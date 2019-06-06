@@ -27,11 +27,11 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public class DefinitionsConverter {
 
-    private final BaseConverterFactory converterFactory;
+    private final ConverterFactory converterFactory;
     private final PropertyWriterFactory propertyWriterFactory;
     private final RootProcessConverter processConverter;
 
-    public DefinitionsConverter(BaseConverterFactory converterFactory, PropertyWriterFactory propertyWriterFactory) {
+    public DefinitionsConverter(ConverterFactory converterFactory, PropertyWriterFactory propertyWriterFactory) {
         this.propertyWriterFactory = propertyWriterFactory;
         this.converterFactory = converterFactory;
         this.processConverter = converterFactory.processConverter();
@@ -57,6 +57,7 @@ public class DefinitionsConverter {
         p.setRelationship(pp.getRelationship());
         p.addAllRootElements(pp.getItemDefinitions());
         p.addAllRootElements(pp.getRootElements());
+        p.addAllRootElements(pp.getInterfaces());
 
         return definitions;
     }

@@ -33,7 +33,10 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.stunner.client.widgets.presenters.Viewer;
+import org.kie.workbench.common.stunner.client.widgets.presenters.diagram.DiagramViewer;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.AbstractSessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
@@ -435,7 +438,6 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                 });
             }
         }
-
         return promises.resolve();
     }
 
@@ -572,6 +574,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     public void open(final ProjectDiagram diagram) {
         editor.open(diagram);
     }
+
 
     @Override
     public void initialiseKieEditorForSession(final ProjectDiagram diagram) {

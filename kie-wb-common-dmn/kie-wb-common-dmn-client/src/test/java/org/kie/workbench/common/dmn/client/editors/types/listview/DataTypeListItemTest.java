@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
+import org.kie.workbench.common.dmn.client.editors.types.DataTypeChangedEvent;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -48,6 +49,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.CONTEXT;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.STRING;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
@@ -97,6 +99,9 @@ public class DataTypeListItemTest {
     @Mock
     private DataTypeNameFormatValidator nameFormatValidator;
 
+    @Mock
+    private EventSourceMock<DataTypeChangedEvent> dataTypeChangedEvent;
+
     @Captor
     private ArgumentCaptor<DataTypeEditModeToggleEvent> eventArgumentCaptor;
 
@@ -110,7 +115,7 @@ public class DataTypeListItemTest {
     public void setup() {
 
         dataTypeManager = spy(new DataTypeManager(null, null, itemDefinitionStore, null, null, null, null, null));
-        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeListComponent, dataTypeManager, confirmation, nameFormatValidator, editModeToggleEvent));
+        listItem = spy(new DataTypeListItem(view, dataTypeSelectComponent, dataTypeConstraintComponent, dataTypeListComponent, dataTypeManager, confirmation, nameFormatValidator, editModeToggleEvent, dataTypeChangedEvent));
         listItem.init(dataTypeList);
 
         doReturn(structure).when(dataTypeManager).structure();
@@ -145,8 +150,8 @@ public class DataTypeListItemTest {
 
         final InOrder inOrder = inOrder(listItem);
         inOrder.verify(listItem).setupSelectComponent();
-        inOrder.verify(listItem).setupConstraintComponent();
         inOrder.verify(listItem).setupListComponent();
+        inOrder.verify(listItem).setupConstraintComponent();
         inOrder.verify(listItem).setupView();
 
         assertEquals(expectedDataType, listItem.getDataType());
@@ -425,6 +430,7 @@ public class DataTypeListItemTest {
         verify(listItem).closeEditMode();
         verify(dataTypeList).fireOnDataTypeListItemUpdateCallback(newDataTypeHash);
         verify(listItem).insertNewFieldIfDataTypeIsStructure(newDataTypeHash);
+        verify(listItem).fireDataChangedEvent();
     }
 
     @Test
@@ -666,6 +672,7 @@ public class DataTypeListItemTest {
         listItem.doRemove().execute();
 
         verify(dataTypeList).refreshItemsByUpdatedDataTypes(asList(dataType0, dataType3));
+        verify(listItem).fireDataChangedEvent();
     }
 
     @Test
@@ -898,6 +905,26 @@ public class DataTypeListItemTest {
     public void testRefreshConstraintComponentWhenSelectedTypeIsBoolean() {
 
         when(dataTypeSelectComponent.getValue()).thenReturn(BOOLEAN.getName());
+
+        listItem.refreshConstraintComponent();
+
+        verify(dataTypeConstraintComponent).disable();
+    }
+
+    @Test
+    public void testRefreshConstraintComponentWhenSelectedTypeIsContext() {
+
+        when(dataTypeSelectComponent.getValue()).thenReturn(CONTEXT.getName());
+
+        listItem.refreshConstraintComponent();
+
+        verify(dataTypeConstraintComponent).disable();
+    }
+
+    @Test
+    public void testRefreshConstraintComponentWhenSelectedTypeIsALIst() {
+
+        when(dataTypeListComponent.getValue()).thenReturn(true);
 
         listItem.refreshConstraintComponent();
 
