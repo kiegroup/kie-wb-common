@@ -52,7 +52,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
     private static final String FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID = "F50012CC-6345-489B-8052-6BB895163C20";
     private static final String FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID = "3B5B9E49-E238-485D-9303-8BD0B3310D94";
 
-    final String SLA_DUE_DATE = "12/25/1983";
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 45;
 
@@ -112,7 +112,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                HAS_NO_INCOME_EDGE,
                                                                                HAS_OUTGOING_EDGE);
         assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptyTopEvent.getExecutionSet(), CANCELLING, "");
+        assertTimerEventEmpty(emptyTopEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                             HAS_INCOME_EDGE,
                                                                             HAS_OUTGOING_EDGE);
         assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptyEvent.getExecutionSet(), CANCELLING, "");
+        assertTimerEventEmpty(emptyEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -240,7 +240,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                       HAS_NO_INCOME_EDGE,
                                                                                       HAS_OUTGOING_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING, "");
+        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                       HAS_INCOME_EDGE,
                                                                                       HAS_OUTGOING_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING, "");
+        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -374,15 +374,11 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         assertEquals(timerValue, executionSet.getTimerSettings().getValue().getTimeCycle());
         assertEquals(timeCycleLanguage, executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventAfterDuration(CancellingTimerEventExecutionSet executionSet, String timerValue, boolean isCancelling, String slaDueDate) {
@@ -392,16 +388,12 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         assertEquals(timerValue, executionSet.getTimerSettings().getValue().getTimeDuration());
         assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventSpecificDate(CancellingTimerEventExecutionSet executionSet, String dateValue, boolean isCancelling, String slaDueDate) {
@@ -411,16 +403,12 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         assertEquals(dateValue, executionSet.getTimerSettings().getValue().getTimeDate());
         assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventEmpty(CancellingTimerEventExecutionSet executionSet, boolean isCancelling, String slaDueDate) {
@@ -429,16 +417,26 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         assertNotNull(executionSet.getCancelActivity());
         assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
+    }
+
+    private void assertTimerEventSlaDueDate(CancellingTimerEventExecutionSet executionSet, String slaDueDate) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getSlaDueDate());
+            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
+        }
+    }
+
+    private void assertTimerEventCancelActivity(CancellingTimerEventExecutionSet executionSet, boolean isCancelling) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getCancelActivity());
+            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
+        }
     }
 }

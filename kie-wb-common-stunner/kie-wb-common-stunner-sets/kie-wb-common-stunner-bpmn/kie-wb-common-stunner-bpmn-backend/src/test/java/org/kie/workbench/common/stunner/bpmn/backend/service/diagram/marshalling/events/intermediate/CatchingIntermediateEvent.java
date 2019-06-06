@@ -19,11 +19,9 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBase;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
@@ -76,20 +74,6 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
         return Arrays.asList(new Object[][]{
                 {OLD}, {NEW}
         });
-    }
-
-    @Ignore("Test is ignored, because new and old marshaller differ over different process properties supported by " +
-            "them")
-    @Test
-    public void testMigration() throws Exception {
-        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnCatchingIntermediateEventFilePath());
-        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, getBpmnCatchingIntermediateEventFilePath());
-
-        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
-        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
-
-        // Let's check nodes only.
-        assertDiagramEquals(oldDiagram, newDiagram, getBpmnCatchingIntermediateEventFilePath());
     }
 
     @Test

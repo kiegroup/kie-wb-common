@@ -66,8 +66,7 @@ public class CatchingIntermediateEventFilterProvider implements StunnerFormEleme
     private boolean isBoundaryEvent(final String uuid) {
         final AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
         final Node node = canvasHandler.getGraphIndex().getNode(uuid);
-        boolean result = GraphUtils.isDockedNode(node);
-        return result;
+        return GraphUtils.isDockedNode(node);
     }
 
     @SuppressWarnings("unchecked")

@@ -52,7 +52,7 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
     private static final String FILLED_WITH_OUTGOING_EDGE_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID = "_3613674E-1331-4F26-8DF0-FDEAE44981A9";
     private static final String FILLED_WITH_OUTGOING_EDGE_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID = "_8B0BD7BC-32F1-42AA-8D5F-EF60E9AFB60D";
 
-    final String SLA_DUE_DATE = "12/25/1983";
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 47;
 
@@ -112,7 +112,7 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
                                                                                HAS_NO_INCOME_EDGE,
                                                                                HAS_NO_OUTGOING_EDGE);
         assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptyTopEvent.getExecutionSet(), NON_CANCELLING, "");
+        assertTimerEventEmpty(emptyTopEvent.getExecutionSet(), NON_CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
                                                                                       HAS_NO_INCOME_EDGE,
                                                                                       HAS_NO_OUTGOING_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), NON_CANCELLING, "");
+        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), NON_CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -224,7 +224,7 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
                                                                             HAS_NO_INCOME_EDGE,
                                                                             HAS_OUTGOING_EDGE);
         assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptyEvent.getExecutionSet(), NON_CANCELLING, "");
+        assertTimerEventEmpty(emptyEvent.getExecutionSet(), NON_CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -238,7 +238,7 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
                                                                                       HAS_NO_INCOME_EDGE,
                                                                                       HAS_OUTGOING_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), NON_CANCELLING, "");
+        assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), NON_CANCELLING, EMPTY_VALUE);
     }
 
     @Test
@@ -374,15 +374,11 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
         assertEquals(timerValue, executionSet.getTimerSettings().getValue().getTimeCycle());
         assertEquals(timeCycleLanguage, executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventAfterDuration(CancellingTimerEventExecutionSet executionSet, String timerValue, boolean isCancelling, String slaDueDate) {
@@ -390,16 +386,12 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
         assertNotNull(executionSet.getTimerSettings());
         assertEquals(timerValue, executionSet.getTimerSettings().getValue().getTimeDuration());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventSpecificDate(CancellingTimerEventExecutionSet executionSet, String dateValue, boolean isCancelling, String slaDueDate) {
@@ -407,32 +399,38 @@ public class BoundaryCatchingIntermediateTimerEventTest extends BoundaryCatching
         assertNotNull(executionSet.getTimerSettings());
         assertEquals(dateValue, executionSet.getTimerSettings().getValue().getTimeDate());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventEmpty(CancellingTimerEventExecutionSet executionSet, boolean isCancelling, String slaDueDate) {
         assertNotNull(executionSet);
         assertNotNull(executionSet.getTimerSettings());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+
+        assertTimerEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
+    }
+
+    private void assertTimerEventSlaDueDate(CancellingTimerEventExecutionSet executionSet, String slaDueDate) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getSlaDueDate());
+            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
+        }
+    }
+
+    private void assertTimerEventCancelActivity(CancellingTimerEventExecutionSet executionSet, boolean isCancelling) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getCancelActivity());
+            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
+        }
     }
 }

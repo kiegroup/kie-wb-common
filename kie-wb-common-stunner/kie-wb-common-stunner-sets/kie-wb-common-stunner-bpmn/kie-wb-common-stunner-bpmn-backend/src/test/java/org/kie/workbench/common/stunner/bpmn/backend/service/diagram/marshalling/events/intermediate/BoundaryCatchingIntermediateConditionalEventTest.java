@@ -92,7 +92,7 @@ public class BoundaryCatchingIntermediateConditionalEventTest extends BoundaryCa
                                            CONDITION_EXPRESSION_LANGUAGE,
                                            CONDITION_ERPRESSION_TYPE,
                                            NON_CANCELLING,
-                                           "");
+                                           EMPTY_VALUE);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class BoundaryCatchingIntermediateConditionalEventTest extends BoundaryCa
                                            CONDITION_EXPRESSION_LANGUAGE,
                                            CONDITION_ERPRESSION_TYPE,
                                            NON_CANCELLING,
-                                           "");
+                                           EMPTY_VALUE);
     }
 
     @Test
@@ -176,7 +176,7 @@ public class BoundaryCatchingIntermediateConditionalEventTest extends BoundaryCa
                                            CONDITION_EXPRESSION_LANGUAGE,
                                            CONDITION_ERPRESSION_TYPE,
                                            NON_CANCELLING,
-                                           "");
+                                           EMPTY_VALUE);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class BoundaryCatchingIntermediateConditionalEventTest extends BoundaryCa
                                            CONDITION_EXPRESSION_LANGUAGE,
                                            CONDITION_ERPRESSION_TYPE,
                                            NON_CANCELLING,
-                                           "");
+                                           EMPTY_VALUE);
     }
 
     @Test

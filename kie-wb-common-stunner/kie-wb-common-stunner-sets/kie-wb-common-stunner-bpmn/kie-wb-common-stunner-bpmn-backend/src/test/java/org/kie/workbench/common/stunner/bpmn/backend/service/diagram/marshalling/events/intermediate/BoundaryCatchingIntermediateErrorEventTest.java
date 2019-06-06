@@ -41,7 +41,7 @@ public class BoundaryCatchingIntermediateErrorEventTest extends BoundaryCatching
     private static final String EMPTY_WITH_OUTGOING_EDGE_SUBPROCESS_LEVEL_EVENT_ID = "_38C1EB4D-2196-487E-A1C6-C3BC16FDC5D6";
     private static final String FILLED_WITH_OUTGOING_EDGE_SUBPROCESS_LEVEL_EVENT_ID = "_00D797D8-20D0-4CF0-A6C0-B9FE3034FAE6";
 
-    final String SLA_DUE_DATE = "12/25/1983";
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 31;
 
@@ -80,7 +80,7 @@ public class BoundaryCatchingIntermediateErrorEventTest extends BoundaryCatching
                                                                                        HAS_NO_INCOME_EDGE,
                                                                                        HAS_NO_OUTGOING_EDGE);
         assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertErrorEventExecutionSet(emptyTopEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, "");
+        assertErrorEventExecutionSet(emptyTopEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, EMPTY_VALUE);
         assertDataIOSet(emptyTopEvent.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -115,7 +115,7 @@ public class BoundaryCatchingIntermediateErrorEventTest extends BoundaryCatching
                                                                                               HAS_NO_INCOME_EDGE,
                                                                                               HAS_NO_OUTGOING_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertErrorEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, "");
+        assertErrorEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, EMPTY_VALUE);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -150,7 +150,7 @@ public class BoundaryCatchingIntermediateErrorEventTest extends BoundaryCatching
                                                                                     HAS_NO_INCOME_EDGE,
                                                                                     HAS_OUTGOING_EDGE);
         assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertErrorEventExecutionSet(emptyEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, "");
+        assertErrorEventExecutionSet(emptyEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, EMPTY_VALUE);
         assertDataIOSet(emptyEvent.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -165,7 +165,7 @@ public class BoundaryCatchingIntermediateErrorEventTest extends BoundaryCatching
                                                                                               HAS_NO_INCOME_EDGE,
                                                                                               HAS_OUTGOING_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertErrorEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, "");
+        assertErrorEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING, EMPTY_VALUE);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
 
