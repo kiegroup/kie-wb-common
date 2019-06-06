@@ -36,10 +36,12 @@ import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHand
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorCore;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
 import org.kie.workbench.common.stunner.project.client.editor.ProjectDiagramEditorProxy;
+import org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientConstants;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramResource;
@@ -54,6 +56,7 @@ import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -91,8 +94,6 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         super.setUp();
         commandCaptor = ArgumentCaptor.forClass(Command.class);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
-
-        super.setUp();
     }
 
     @Override
@@ -182,6 +183,12 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         return diagramEditor;
     }
 
+    @Override
+    public void testOpen() {
+        super.testOpen();
+        // TODO (Submarine): verify(presenter).addDocumentationPage(diagram);
+    }
+
     @Test
     public void testInitWhenIntegrationIsPresent() {
         Optional<IntegrationHandler> optional = Optional.of(integrationHandler);
@@ -219,5 +226,20 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(bpmnMenuSessionItems).setOnMigrate(commandCaptor.capture());
         commandCaptor.getValue().execute();
         verify(integrationHandler).migrateFromStunnerToJBPMDesigner(eq(currentPath), eq(currentPlace), eq(isDirty), any(ParameterizedCommand.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testAddDocumentationPage() {
+        when(documentationView.isEnabled()).thenReturn(Boolean.TRUE);
+        when(translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION)).thenReturn(DOC_LABEL);
+        when(documentationView.initialize(diagram)).thenReturn(documentationView);
+        ArgumentCaptor<DocumentationPage> documentationPageCaptor = ArgumentCaptor.forClass(DocumentationPage.class);
+        presenter.addDocumentationPage(diagram);
+        verify(translationService).getValue(StunnerProjectClientConstants.DOCUMENTATION);
+        verify(kieView).addPage(documentationPageCaptor.capture());
+        DocumentationPage documentationPage = documentationPageCaptor.getValue();
+        assertEquals(documentationPage.getDocumentationView(), documentationView);
+        assertEquals(documentationPage.getLabel(), DOC_LABEL);
     }
 }

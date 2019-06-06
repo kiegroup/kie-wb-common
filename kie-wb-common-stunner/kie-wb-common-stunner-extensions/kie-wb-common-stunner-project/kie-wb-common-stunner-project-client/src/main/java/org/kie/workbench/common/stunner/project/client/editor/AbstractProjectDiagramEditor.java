@@ -587,7 +587,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     @SuppressWarnings("unchecked")
-    protected void addDocumentationPage(final ProjectDiagram diagram) {
+    public void addDocumentationPage(final ProjectDiagram diagram) {
         Optional.ofNullable(documentationView.isEnabled())
                 .filter(Boolean.TRUE::equals)
                 .ifPresent(enabled -> {
