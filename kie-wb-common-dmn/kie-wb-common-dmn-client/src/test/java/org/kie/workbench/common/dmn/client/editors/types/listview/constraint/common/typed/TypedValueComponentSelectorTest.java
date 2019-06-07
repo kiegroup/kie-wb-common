@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateSelector;
+import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.time.DateTimeSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time.DayTimeSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.generic.GenericSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.number.NumberSelector;
@@ -31,6 +32,11 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.com
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.*;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DATE;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DATE_TIME;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DURATION_DAYS_TIME;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.TIME;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class TypedValueComponentSelectorTest {
@@ -56,6 +62,9 @@ public class TypedValueComponentSelectorTest {
     @Mock
     private TimeSelector timeSelector;
 
+    @Mock
+    private DateTimeSelector dateTimeSelector;
+
     private TypedValueComponentSelector selector;
 
     @Before
@@ -66,13 +75,14 @@ public class TypedValueComponentSelectorTest {
                                                    yearsMosSelector,
                                                    stringSelector,
                                                    numberSelector,
-                                                   timeSelector);
+                                                   timeSelector,
+                                                   dateTimeSelector);
     }
 
     @Test
     public void testGetDateSelector() {
 
-        final TypedValueSelector actual = selector.makeSelectorForType(BuiltInType.DATE.getName());
+        final TypedValueSelector actual = selector.makeSelectorForType(DATE.getName());
 
         assertEquals(dateSelector, actual);
     }
@@ -80,7 +90,7 @@ public class TypedValueComponentSelectorTest {
     @Test
     public void testGetNumberSelector() {
 
-        final TypedValueSelector actual = selector.makeSelectorForType(BuiltInType.NUMBER.getName());
+        final TypedValueSelector actual = selector.makeSelectorForType(NUMBER.getName());
 
         assertEquals(numberSelector, actual);
     }
@@ -88,7 +98,7 @@ public class TypedValueComponentSelectorTest {
     @Test
     public void testGetStringSelector() {
 
-        final TypedValueSelector actual = selector.makeSelectorForType(BuiltInType.STRING.getName());
+        final TypedValueSelector actual = selector.makeSelectorForType(STRING.getName());
 
         assertEquals(stringSelector, actual);
     }
@@ -96,7 +106,7 @@ public class TypedValueComponentSelectorTest {
     @Test
     public void testGetDurationYearMonthSelector() {
 
-        final TypedValueSelector actual = selector.makeSelectorForType(BuiltInType.DURATION_YEAR_MONTH.getName());
+        final TypedValueSelector actual = selector.makeSelectorForType(DURATION_YEAR_MONTH.getName());
 
         assertEquals(yearsMosSelector, actual);
     }
@@ -104,7 +114,7 @@ public class TypedValueComponentSelectorTest {
     @Test
     public void testGetDurationDayTimeSelector() {
 
-        final TypedValueSelector actual = selector.makeSelectorForType(BuiltInType.DURATION_DAYS_TIME.getName());
+        final TypedValueSelector actual = selector.makeSelectorForType(DURATION_DAYS_TIME.getName());
 
         assertEquals(dayTimeSelector, actual);
     }
@@ -120,8 +130,16 @@ public class TypedValueComponentSelectorTest {
     @Test
     public void testGetTimeSelector() {
 
-        final TypedValueSelector actual = selector.makeSelectorForType(BuiltInType.TIME.getName());
+        final TypedValueSelector actual = selector.makeSelectorForType(TIME.getName());
 
         assertEquals(timeSelector, actual);
+    }
+
+    @Test
+    public void testGetDateTimeSelector() {
+
+        final TypedValueSelector actual = selector.makeSelectorForType(DATE_TIME.getName());
+
+        assertEquals(dateTimeSelector, actual);
     }
 }

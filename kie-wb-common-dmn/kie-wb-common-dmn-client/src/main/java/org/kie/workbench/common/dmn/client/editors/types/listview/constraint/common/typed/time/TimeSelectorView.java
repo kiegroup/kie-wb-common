@@ -360,10 +360,11 @@ public class TimeSelectorView implements TimeSelector.View {
         }
     }
 
-    boolean isChildrenOfView(final Element element) {
+    @Override
+    public boolean isChildrenOfView(final Object element) {
 
         final Element viewElement = getElement();
-        return viewElement.contains(element);
+        return viewElement.contains((Element)element);
     }
 
     @Override
