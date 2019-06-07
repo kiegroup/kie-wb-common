@@ -48,28 +48,6 @@ public class DateTimeSelectorTest {
     }
 
     @Test
-    public void testGetValueWhenDateAndTimeIsSet() {
-
-        final String convertedValue = "converted";
-        when(dateTime.isDateAndTimeSet()).thenReturn(true);
-        when(converter.toDMNString(dateTime)).thenReturn(convertedValue);
-
-        final String actual = selector.getValue();
-
-        assertEquals(convertedValue, actual);
-    }
-
-    @Test
-    public void testGetValueWhenDateAndTimeIsNotSet() {
-
-        final String actual = selector.getValue();
-
-        when(dateTime.isDateAndTimeSet()).thenReturn(false);
-
-        assertEquals("", actual);
-    }
-
-    @Test
     public void testSetValue() {
 
         final String dmnString = "dmnString";

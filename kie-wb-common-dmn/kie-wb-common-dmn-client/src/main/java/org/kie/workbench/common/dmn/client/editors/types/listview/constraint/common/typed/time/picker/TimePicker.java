@@ -138,8 +138,6 @@ public class TimePicker {
 
         onBlur(focusEvent, view.getElement());
 
-        refreshDateInPopup();
-
         return this;
     }
 

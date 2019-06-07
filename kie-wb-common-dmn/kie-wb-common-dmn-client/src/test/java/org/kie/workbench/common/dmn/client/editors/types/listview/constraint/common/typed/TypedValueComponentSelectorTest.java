@@ -20,7 +20,6 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.time.DateTimeSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.day.time.DayTimeSelector;
@@ -32,10 +31,12 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.com
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.*;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DATE;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DATE_TIME;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DURATION_DAYS_TIME;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.DURATION_YEAR_MONTH;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.NUMBER;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.STRING;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.TIME;
 
 @RunWith(GwtMockitoTestRunner.class)

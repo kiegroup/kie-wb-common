@@ -18,63 +18,96 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.constraint.co
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertFalse;
+import static org.jgroups.util.Util.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DateTimeValueTest {
 
-    @Mock
-    private DateTimeValue dateTimeValue;
+    @Test
+    public void testHasTimeWhenTimeIsNotSet() {
+
+        final DateTimeValue value = new DateTimeValue();
+
+        final boolean actual = value.hasTime();
+
+        assertFalse(actual);
+    }
 
     @Test
-    public void testIsDateAndTimeSetWhenBothAreSet() {
+    public void testHasTime() {
+        final DateTimeValue value = new DateTimeValue();
+        value.setTime("time");
 
-        final String date = "date";
-        final String time = "time";
+        final boolean actual = value.hasTime();
 
-        when(dateTimeValue.getDate()).thenReturn(date);
-        when(dateTimeValue.getTime()).thenReturn(time);
-
-        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
-        when(dateTimeValue.hasDate()).thenCallRealMethod();
-        when(dateTimeValue.hasTime()).thenCallRealMethod();
-
-        final boolean actual = dateTimeValue.isDateAndTimeSet();
         assertTrue(actual);
     }
 
     @Test
-    public void testIsDateAndTimeSetWhenTimeAreNotSet() {
+    public void testHasDateWhenDateIsNotSet() {
 
-        final String date = "date";
+        final DateTimeValue value = new DateTimeValue();
 
-        when(dateTimeValue.getDate()).thenReturn(date);
+        final boolean actual = value.hasDate();
 
-        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
-        when(dateTimeValue.hasDate()).thenCallRealMethod();
-        when(dateTimeValue.hasTime()).thenCallRealMethod();
-
-        final boolean actual = dateTimeValue.isDateAndTimeSet();
         assertFalse(actual);
     }
 
     @Test
-    public void testIsDateAndTimeSetWhenDateAreNotSet() {
+    public void testHasDate() {
 
-        final String time = "time";
+        final DateTimeValue value = new DateTimeValue();
+        value.setDate("date");
 
-        when(dateTimeValue.getTime()).thenReturn(time);
+        final boolean actual = value.hasDate();
 
-        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
-        when(dateTimeValue.hasDate()).thenCallRealMethod();
-        when(dateTimeValue.hasTime()).thenCallRealMethod();
-
-        final boolean actual = dateTimeValue.isDateAndTimeSet();
-        assertFalse(actual);
+        assertTrue(actual);
     }
+//
+//        final String date = "date";
+//        final String time = "time";
+//
+//        when(dateTimeValue.getDate()).thenReturn(date);
+//        when(dateTimeValue.getTime()).thenReturn(time);
+//
+//        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
+//        when(dateTimeValue.hasDate()).thenCallRealMethod();
+//        when(dateTimeValue.hasTime()).thenCallRealMethod();
+//
+//        final boolean actual = dateTimeValue.isDateAndTimeSet();
+//        assertTrue(actual);
+//    }
+//
+//    @Test
+//    public void testIsDateAndTimeSetWhenTimeAreNotSet() {
+//
+//        final String date = "date";
+//
+//        when(dateTimeValue.getDate()).thenReturn(date);
+//
+//        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
+//        when(dateTimeValue.hasDate()).thenCallRealMethod();
+//        when(dateTimeValue.hasTime()).thenCallRealMethod();
+//
+//        final boolean actual = dateTimeValue.isDateAndTimeSet();
+//        assertFalse(actual);
+//    }
+//
+//    @Test
+//    public void testIsDateAndTimeSetWhenDateAreNotSet() {
+//
+//        final String time = "time";
+//
+//        when(dateTimeValue.getTime()).thenReturn(time);
+//
+//        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
+//        when(dateTimeValue.hasDate()).thenCallRealMethod();
+//        when(dateTimeValue.hasTime()).thenCallRealMethod();
+//
+//        final boolean actual = dateTimeValue.isDateAndTimeSet();
+//        assertFalse(actual);
+//    }
 }

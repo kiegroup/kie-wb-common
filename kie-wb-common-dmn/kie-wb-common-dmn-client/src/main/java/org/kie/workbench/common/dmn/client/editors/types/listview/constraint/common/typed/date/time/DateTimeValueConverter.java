@@ -26,8 +26,8 @@ public class DateTimeValueConverter {
     static final String PREFIX = "date and time(\"";
     static final String SUFFIX = "\")";
 
-    private DateValueFormatter dateValueFormatter;
-    private TimeValueFormatter timeValueFormatter;
+    private final DateValueFormatter dateValueFormatter;
+    private final TimeValueFormatter timeValueFormatter;
 
     @Inject
     public DateTimeValueConverter(final DateValueFormatter dateValueFormatter,
@@ -38,13 +38,16 @@ public class DateTimeValueConverter {
 
     public String toDMNString(final DateTimeValue value) {
 
-        if (!value.isDateAndTimeSet()) {
+        if (!value.hasDate()) {
             return "";
         }
 
-        final String dmnString = appendPrefixAndSuffix(getDate(value) + "T" + getTime(value));
+        String dmnString = getDate(value);
+        if (value.hasTime()) {
+            dmnString += "T" + getTime(value);
+        }
 
-        return dmnString;
+        return appendPrefixAndSuffix(dmnString);
     }
 
     String appendPrefixAndSuffix(final String value) {
@@ -79,11 +82,15 @@ public class DateTimeValueConverter {
     }
 
     String extractTime(final String value) {
+
+        if (value.length() <= 11) {
+            return "";
+        }
         return value.substring(11);
     }
 
     String extractDate(final String value) {
-        return value.substring(0,10);
+        return value.substring(0, 10);
     }
 
     public String toDisplay(final String rawValue) {
@@ -91,8 +98,10 @@ public class DateTimeValueConverter {
         final DateTimeValue value = fromDMNString(rawValue);
 
         final String date = dateValueFormatter.toDisplay(value.getDate());
-        final String time = timeValueFormatter.toDisplay(value.getTime());
-
-        return date + ", " + time;
+        if (value.hasTime()) {
+            return date + ", " + timeValueFormatter.toDisplay(value.getTime());
+        } else {
+            return date;
+        }
     }
 }

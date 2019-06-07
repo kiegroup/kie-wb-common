@@ -44,7 +44,7 @@ public class DateTimeSelector implements TypedValueSelector {
     @Override
     public String getValue() {
         final DateTimeValue value = view.getValue();
-        return !value.isDateAndTimeSet() ? "" : converter.toDMNString(value);
+        return converter.toDMNString(value);
     }
 
     @Override

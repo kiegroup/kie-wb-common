@@ -28,15 +28,11 @@ public class DateTimeValue {
         time = "";
     }
 
-    public boolean isDateAndTimeSet() {
-        return hasDate() && hasTime();
-    }
-
-    public void setDate(String date) {
+    public void setDate(final String date) {
         this.date = date;
     }
 
-    public void setTime(String time) {
+    public void setTime(final String time) {
         this.time = time;
     }
 
