@@ -33,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -153,13 +154,7 @@ public class SetParametersCommandTest {
     }
 
     private void assertFormalParameters(final InformationItem... parameters) {
-        final int parameterCount = parameters.length;
-        assertEquals(parameterCount,
-                     function.getFormalParameter().size());
-        for (int i = 0; i < parameterCount; i++) {
-            assertEquals(parameters[i],
-                         function.getFormalParameter().get(i));
-        }
+        assertThat(function.getFormalParameter()).containsExactly(parameters);
     }
 
     @Test

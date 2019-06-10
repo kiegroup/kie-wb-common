@@ -39,7 +39,7 @@ import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.uberfire.client.mvp.UberElemental;
 
-import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportTypeType;
+import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportType;
 
 @Dependent
 public class DecisionComponents {
@@ -154,7 +154,7 @@ public class DecisionComponents {
                 .getDefinitions(diagram)
                 .getImport()
                 .stream()
-                .filter(anImport -> Objects.equals(DMNImportTypes.DMN, determineImportTypeType(anImport.getImportType())))
+                .filter(anImport -> Objects.equals(DMNImportTypes.DMN, determineImportType(anImport.getImportType())))
                 .map(this::asDMNIncludedModel)
                 .collect(Collectors.toList());
     }

@@ -27,7 +27,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.FilenameUtils;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.kie.workbench.common.dmn.backend.editors.included.query.AllModelsValueFileExtensionIndexTerm;
 import org.kie.workbench.common.dmn.backend.editors.included.query.PMMLValueFileExtensionIndexTerm;
@@ -36,6 +35,7 @@ import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueReposito
 import org.kie.workbench.common.services.refactoring.backend.server.query.RefactoringQueryServiceImpl;
 import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
+import org.uberfire.apache.commons.io.FilenameUtils;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
@@ -108,10 +108,12 @@ public class DMNPathsHelperImpl implements DMNPathsHelper {
 
         final org.uberfire.java.nio.file.Path nioDMN = convertPath(normalizePath(dmnModelPath));
         final org.uberfire.java.nio.file.Path nioIncluded = convertPath(normalizePath(includedModelPath));
-        //This can return Path like "../file" for files in the same folder so it needs to be normalised.
+        // This can return Path like "../file" for files in the same folder so it needs to be normalised.
+        // See https://issues.jboss.org/browse/AF-2045
         final org.uberfire.java.nio.file.Path nioRelative = nioDMN.relativize(nioIncluded);
 
-        //Path.normalise() has a bug for Paths prefixed "../" so strip it manually. toString() works better than toURI().toString()!
+        // Path.normalise() has a bug for Paths prefixed "../" so strip it manually. toString() works better than toURI().toString()!
+        // See https://issues.jboss.org/browse/AF-2046
         final String strRelative = FilenameUtils.separatorsToUnix(nioRelative.toString());
         if (strRelative.startsWith("../")) {
             return strRelative.substring(3);

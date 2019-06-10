@@ -44,7 +44,7 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.uberfire.backend.vfs.Path;
 
-import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportTypeType;
+import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportType;
 
 @ApplicationScoped
 public class PMMLDocumentMetadataProvider {
@@ -108,7 +108,7 @@ public class PMMLDocumentMetadataProvider {
                 .getDefinitions(diagram)
                 .getImport()
                 .stream()
-                .filter(anImport -> Objects.equals(DMNImportTypes.PMML, determineImportTypeType(anImport.getImportType())))
+                .filter(anImport -> Objects.equals(DMNImportTypes.PMML, determineImportType(anImport.getImportType())))
                 .map(this::asPMMLIncludedModel)
                 .collect(Collectors.toList());
     }

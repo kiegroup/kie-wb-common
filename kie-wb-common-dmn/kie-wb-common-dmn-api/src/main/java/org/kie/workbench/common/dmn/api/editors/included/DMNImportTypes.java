@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.api.editors.included;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class DMNImportTypes {
 
@@ -41,7 +42,7 @@ public class DMNImportTypes {
         return importType;
     }
 
-    public static DMNImportTypes determineImportTypeType(final String namespace) {
+    public static DMNImportTypes determineImportType(final String namespace) {
         return importTypes
                 .stream()
                 .filter(importType -> importType.matchesNamespace(namespace))
@@ -50,7 +51,7 @@ public class DMNImportTypes {
     }
 
     private boolean matchesNamespace(final String namespace) {
-        return namespaces.stream().anyMatch(ns -> ns.equals(namespace));
+        return namespaces.stream().anyMatch(ns -> Objects.equals(ns, namespace));
     }
 
     public String getFileExtension() {

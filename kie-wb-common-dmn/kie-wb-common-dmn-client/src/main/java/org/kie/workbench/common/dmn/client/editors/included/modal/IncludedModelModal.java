@@ -44,7 +44,7 @@ import org.kie.workbench.common.widgets.client.assets.dropdown.KieAssetsDropdown
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 import org.uberfire.mvp.Command;
 
-import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportTypeType;
+import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportType;
 import static org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.DMNAssetsDropdownItemsProvider.DRG_ELEMENT_COUNT_METADATA;
 import static org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.DMNAssetsDropdownItemsProvider.IMPORT_TYPE_METADATA;
 import static org.kie.workbench.common.dmn.client.editors.included.modal.dropdown.DMNAssetsDropdownItemsProvider.ITEM_DEFINITION_COUNT_METADATA;
@@ -159,12 +159,12 @@ public class IncludedModelModal extends Elemental2Modal<IncludedModelModal.View>
 
     BaseIncludedModelActiveRecord createIncludedModel(final Map<String, String> metaData) {
         final String importType = metaData.get(IMPORT_TYPE_METADATA);
-        if (Objects.equals(DMNImportTypes.DMN, determineImportTypeType(importType))) {
+        if (Objects.equals(DMNImportTypes.DMN, determineImportType(importType))) {
             final DMNIncludedModelActiveRecord dmnIncludedModel = new DMNIncludedModelActiveRecord(recordEngine);
             dmnIncludedModel.setDrgElementsCount(Integer.valueOf(metaData.get(DRG_ELEMENT_COUNT_METADATA)));
             dmnIncludedModel.setDataTypesCount(Integer.valueOf(metaData.get(ITEM_DEFINITION_COUNT_METADATA)));
             return dmnIncludedModel;
-        } else if (Objects.equals(DMNImportTypes.PMML, determineImportTypeType(importType))) {
+        } else if (Objects.equals(DMNImportTypes.PMML, determineImportType(importType))) {
             final PMMLIncludedModelActiveRecord pmmlIncludedModel = new PMMLIncludedModelActiveRecord(recordEngine);
             pmmlIncludedModel.setModelCount(Integer.valueOf(metaData.get(PMML_MODEL_COUNT_METADATA)));
             return pmmlIncludedModel;

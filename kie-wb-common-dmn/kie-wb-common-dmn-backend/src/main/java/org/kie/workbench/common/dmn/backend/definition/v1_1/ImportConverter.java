@@ -34,7 +34,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 
-import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportTypeType;
+import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportType;
 
 public final class ImportConverter {
 
@@ -63,12 +63,12 @@ public final class ImportConverter {
                                          final Definitions definitions,
                                          final PMMLDocumentMetadata pmmlDocument) {
         final LocationURI locationURI = new LocationURI(dmn.getLocationURI());
-        if (Objects.equals(DMNImportTypes.DMN, determineImportTypeType(dmn.getImportType()))) {
+        if (Objects.equals(DMNImportTypes.DMN, determineImportType(dmn.getImportType()))) {
             final ImportDMN result = new ImportDMN(dmn.getNamespace(), locationURI, dmn.getImportType());
             result.setDrgElementsCount(countDefinitionElement(definitions, () -> d -> d.getDrgElement().size()));
             result.setItemDefinitionsCount(countDefinitionElement(definitions, () -> d -> d.getItemDefinition().size()));
             return result;
-        } else if (Objects.equals(DMNImportTypes.PMML, determineImportTypeType(dmn.getImportType()))) {
+        } else if (Objects.equals(DMNImportTypes.PMML, determineImportType(dmn.getImportType()))) {
             final ImportPMML result = new ImportPMML(dmn.getNamespace(), locationURI, dmn.getImportType());
             result.setModelCount(pmmlDocument.getModels().size());
             return result;
