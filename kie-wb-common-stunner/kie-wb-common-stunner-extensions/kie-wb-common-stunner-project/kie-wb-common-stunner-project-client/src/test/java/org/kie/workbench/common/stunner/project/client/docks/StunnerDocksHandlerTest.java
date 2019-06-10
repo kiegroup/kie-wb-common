@@ -83,8 +83,8 @@ public class StunnerDocksHandlerTest {
     public void init() {
         handler = new StunnerDocksHandler(dockSuppliers);
 
-        when(dockSuppliers.select(DefinitionManager.DEFAULT_QUALIFIER)).thenReturn(defaultDockSupplier);
-        when(dockSuppliers.select(CUSTOM_QUALIFIER)).thenReturn(customDockSupplier);
+        when(dockSuppliers.select(StunnerDockSupplier.class, DefinitionManager.DEFAULT_QUALIFIER)).thenReturn(defaultDockSupplier);
+        when(dockSuppliers.select(StunnerDockSupplier.class, CUSTOM_QUALIFIER)).thenReturn(customDockSupplier);
         when(defaultDockSupplier.get()).thenReturn(new DefaultStunnerDockSupplierImpl());
         when(customDockSupplier.get()).thenReturn(customDock);
         when(customDock.getDocks(anyString())).thenReturn(Collections.singleton(uberfireDock));

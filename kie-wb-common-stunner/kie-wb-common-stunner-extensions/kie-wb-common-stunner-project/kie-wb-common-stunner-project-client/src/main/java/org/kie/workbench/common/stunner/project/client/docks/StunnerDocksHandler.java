@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
+import org.kie.workbench.common.stunner.core.client.session.impl.InstanceUtils;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.widgets.client.docks.AbstractWorkbenchDocksHandler;
@@ -49,7 +50,7 @@ public class StunnerDocksHandler extends AbstractWorkbenchDocksHandler {
 
     @Override
     public Collection<UberfireDock> provideDocks(final String perspectiveIdentifier) {
-        final StunnerDockSupplier dockSupplier = doLookup(qualifiers);
+        final StunnerDockSupplier dockSupplier = InstanceUtils.lookup(dockSuppliers, StunnerDockSupplier.class, qualifiers);
         return dockSupplier.getDocks(perspectiveIdentifier);
     }
 
@@ -70,12 +71,5 @@ public class StunnerDocksHandler extends AbstractWorkbenchDocksHandler {
             refreshDocks(true,
                          false);
         }
-    }
-
-    private StunnerDockSupplier doLookup(final Annotation[] qualifiers) {
-        final ManagedInstance<StunnerDockSupplier> i = dockSuppliers.select(qualifiers);
-        return i.isUnsatisfied() ?
-                dockSuppliers.select(DefinitionManager.DEFAULT_QUALIFIER).get() :
-                i.get();
     }
 }
