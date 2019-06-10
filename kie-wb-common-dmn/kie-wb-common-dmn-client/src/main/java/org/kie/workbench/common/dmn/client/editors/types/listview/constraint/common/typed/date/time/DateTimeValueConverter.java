@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.date.DateValueFormatter;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.time.picker.TimeValueFormatter;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class DateTimeValueConverter {
 
@@ -76,7 +77,9 @@ public class DateTimeValueConverter {
         final DateTimeValue dateTimeValue = new DateTimeValue();
 
         dateTimeValue.setDate(dateValueFormatter.addPrefixAndSuffix(date));
-        dateTimeValue.setTime(timeValueFormatter.appendPrefixAndSuffix(time));
+        if (!StringUtils.isEmpty(time)) {
+            dateTimeValue.setTime(timeValueFormatter.appendPrefixAndSuffix(time));
+        }
 
         return dateTimeValue;
     }
