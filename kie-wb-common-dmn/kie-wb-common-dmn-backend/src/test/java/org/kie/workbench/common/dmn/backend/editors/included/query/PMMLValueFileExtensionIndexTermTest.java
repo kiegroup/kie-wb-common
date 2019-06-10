@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.util;
+package org.kie.workbench.common.dmn.backend.editors.included.query;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PMMLValueUtilsTest {
+public class PMMLValueFileExtensionIndexTermTest {
 
-    @Test
-    public void testAddQuotes() {
-        assertThat(PMMLValueUtils.addQuotes("hello")).isEqualTo("\"hello\"");
-        assertThat(PMMLValueUtils.addQuotes("\"hello")).isEqualTo("\"hello\"");
-        assertThat(PMMLValueUtils.addQuotes("hello\"")).isEqualTo("\"hello\"");
+    private PMMLValueFileExtensionIndexTerm term;
+
+    @Before
+    public void setup() {
+        this.term = new PMMLValueFileExtensionIndexTerm();
     }
 
     @Test
-    public void testRemoveQuotes() {
-        assertThat(PMMLValueUtils.removeQuotes("\"hello\"")).isEqualTo("hello");
-        assertThat(PMMLValueUtils.removeQuotes("\"hello")).isEqualTo("hello");
-        assertThat(PMMLValueUtils.removeQuotes("hello\"")).isEqualTo("hello");
+    public void testValue() {
+        assertThat(term.getValue()).isEqualTo(PMMLValueFileExtensionIndexTerm.TERM_VALUE);
     }
 }

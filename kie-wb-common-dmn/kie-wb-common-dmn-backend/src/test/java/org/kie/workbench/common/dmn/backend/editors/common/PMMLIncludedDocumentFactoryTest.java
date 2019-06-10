@@ -28,6 +28,7 @@ import org.kie.dmn.core.pmml.PMMLInfo;
 import org.kie.dmn.core.pmml.PMMLModelInfo;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLModelMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLParameterMetadata;
 import org.mockito.Mock;
@@ -52,7 +53,11 @@ public class PMMLIncludedDocumentFactoryTest {
 
     private static final String NAMESPACE = DMNImportTypes.PMML.getDefaultNamespace();
 
+    private static final String DOCUMENT_NAME = "pmmlDocument";
+
     private static final String MODEL_NAME = "pmmlModel";
+
+    private static final String MODEL_PACKAGE = "pmmlModelPackage";
 
     private static final String INPUT_FIELD_PREFIX = "input";
 
@@ -91,6 +96,31 @@ public class PMMLIncludedDocumentFactoryTest {
     }
 
     @Test
+    public void testGetDocumentByPathWithKnownPathWithIncludedModel() {
+        final Path path = mock(Path.class);
+        final PMMLInfo<PMMLModelInfo> pmmlInfo = makePMMLInfo();
+        final PMMLIncludedModel includedModel = makePMMLIncludedModel();
+
+        when(path.toURI()).thenReturn(URI);
+        doReturn(pmmlInfo).when(factory).loadPMMLInfo(path);
+
+        final PMMLDocumentMetadata document = factory.getDocumentByPath(path,
+                                                                        includedModel);
+
+        assertThat(document).isNotNull();
+        assertThat(document.getPath()).isEqualTo(URI);
+        assertThat(document.getImportType()).isEqualTo(NAMESPACE);
+        assertThat(document.getName()).isEqualTo(DOCUMENT_NAME);
+        assertThat(document.getModels()).hasSize(1);
+
+        final PMMLModelMetadata model = document.getModels().get(0);
+        assertThat(model.getName()).isEqualTo(MODEL_NAME);
+        assertThat(model.getInputParameters()).hasSize(INPUT_FIELDS_COUNT);
+
+        assertThat(model.getInputParameters()).usingElementComparator(comparing(PMMLParameterMetadata::getName, naturalOrder())).containsExactlyInAnyOrder(expectedPMMLParameterMetadata());
+    }
+
+    @Test
     public void testGetDocumentByPathWithUnknownPath() {
         final Path path = mock(Path.class);
 
@@ -102,6 +132,24 @@ public class PMMLIncludedDocumentFactoryTest {
         assertThat(document).isNotNull();
         assertThat(document.getPath()).isEqualTo(URI);
         assertThat(document.getImportType()).isEqualTo(NAMESPACE);
+        assertThat(document.getModels()).isEmpty();
+    }
+
+    @Test
+    public void testGetDocumentByPathWithUnknownPathWithIncludedModel() {
+        final Path path = mock(Path.class);
+        final PMMLIncludedModel includedModel = makePMMLIncludedModel();
+
+        when(path.toURI()).thenReturn(URI);
+        when(ioService.newInputStream(any())).thenThrow(new NoSuchFileException());
+
+        final PMMLDocumentMetadata document = factory.getDocumentByPath(path,
+                                                                        includedModel);
+
+        assertThat(document).isNotNull();
+        assertThat(document.getPath()).isEqualTo(URI);
+        assertThat(document.getImportType()).isEqualTo(NAMESPACE);
+        assertThat(document.getName()).isEqualTo(DOCUMENT_NAME);
         assertThat(document.getModels()).isEmpty();
     }
 
@@ -123,5 +171,13 @@ public class PMMLIncludedDocumentFactoryTest {
 
     private PMMLParameterMetadata[] expectedPMMLParameterMetadata() {
         return IntStream.range(0, INPUT_FIELDS_COUNT).mapToObj(i -> new PMMLParameterMetadata(INPUT_FIELD_PREFIX + i)).collect(Collectors.toSet()).toArray(new PMMLParameterMetadata[]{});
+    }
+
+    private PMMLIncludedModel makePMMLIncludedModel() {
+        return new PMMLIncludedModel(DOCUMENT_NAME,
+                                     MODEL_PACKAGE,
+                                     URI,
+                                     NAMESPACE,
+                                     1);
     }
 }

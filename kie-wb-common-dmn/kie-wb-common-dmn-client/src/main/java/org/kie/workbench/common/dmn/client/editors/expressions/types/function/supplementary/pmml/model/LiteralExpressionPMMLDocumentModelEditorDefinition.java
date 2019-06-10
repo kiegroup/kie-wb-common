@@ -46,7 +46,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseEditorD
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.LiteralExpressionPMMLGrid;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.util.PMMLValueUtils;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
@@ -65,6 +64,7 @@ import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
@@ -175,7 +175,7 @@ public class LiteralExpressionPMMLDocumentModelEditorDefinition extends BaseEdit
                     //Command to set PMMLDocumentModel parameters
                     getParentFunctionGrid().ifPresent(parentFunctionGrid -> {
                         final String pmmlDocumentName = getExpressionPMMLValue(LiteralExpressionPMMLDocument.VARIABLE_DOCUMENT);
-                        final String pmmlDocumentModelName = PMMLValueUtils.removeQuotes((String) gridCellValueTuple.getValue().getValue());
+                        final String pmmlDocumentModelName = StringUtils.createUnquotedConstant((String) gridCellValueTuple.getValue().getValue());
                         final List<String> parameters = pmmlDocumentMetadataProvider.getPMMLDocumentModelParameterNames(pmmlDocumentName,
                                                                                                                         pmmlDocumentModelName);
 

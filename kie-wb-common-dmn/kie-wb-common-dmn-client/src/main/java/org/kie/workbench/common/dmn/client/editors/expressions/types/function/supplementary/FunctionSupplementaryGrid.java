@@ -38,7 +38,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.context.Con
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextUIModelMapperHelper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.util.PMMLValueUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
@@ -57,6 +56,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -173,7 +173,7 @@ public class FunctionSupplementaryGrid extends BaseExpressionGrid<Context, Funct
                     .map(ContextEntry::getExpression)
                     .filter(cee -> cee instanceof IsLiteralExpression)
                     .map(cee -> (IsLiteralExpression) cee)
-                    .map(ile -> PMMLValueUtils.removeQuotes(ile.getText().getValue()))
+                    .map(ile -> StringUtils.createUnquotedConstant(ile.getText().getValue()))
                     .orElse("");
         }
         return "";

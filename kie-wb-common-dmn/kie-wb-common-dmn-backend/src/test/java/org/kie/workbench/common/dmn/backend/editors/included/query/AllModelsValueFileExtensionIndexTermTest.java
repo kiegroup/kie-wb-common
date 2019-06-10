@@ -16,14 +16,22 @@
 
 package org.kie.workbench.common.dmn.backend.editors.included.query;
 
-import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueFileExtensionIndexTerm;
+import org.junit.Before;
+import org.junit.Test;
 
-public class PMMLValueFileExtensionIndexTerm extends DMNValueFileExtensionIndexTerm {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    static final String TERM_VALUE = ".*(pmml)";
+public class AllModelsValueFileExtensionIndexTermTest {
 
-    @Override
-    public String getValue() {
-        return TERM_VALUE;
+    private AllModelsValueFileExtensionIndexTerm term;
+
+    @Before
+    public void setup() {
+        this.term = new AllModelsValueFileExtensionIndexTerm();
+    }
+
+    @Test
+    public void testValue() {
+        assertThat(term.getValue()).isEqualTo(AllModelsValueFileExtensionIndexTerm.TERM_VALUE);
     }
 }

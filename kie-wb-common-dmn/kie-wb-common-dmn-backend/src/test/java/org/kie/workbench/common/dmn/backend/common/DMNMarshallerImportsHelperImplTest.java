@@ -149,6 +149,20 @@ public class DMNMarshallerImportsHelperImplTest {
     }
 
     @Test
+    public void testGetPMMLDocumentPaths() {
+        final Metadata metadata = mock(Metadata.class);
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final Path projectPath = mock(Path.class);
+
+        when(metadata.getPath()).thenReturn(projectPath);
+        when(projectService.resolveProject(any(Path.class))).thenReturn(project);
+
+        helper.getPMMLDocumentPaths(metadata);
+
+        verify(projectService).resolveProject(projectPath);
+    }
+
+    @Test
     public void testGetImportedDRGElements() {
 
         final Map<Import, Definitions> importDefinitions = new HashMap<>();

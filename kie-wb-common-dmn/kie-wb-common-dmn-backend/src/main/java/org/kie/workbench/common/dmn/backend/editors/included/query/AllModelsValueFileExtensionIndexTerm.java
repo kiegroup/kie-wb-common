@@ -20,8 +20,10 @@ import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueFileExte
 
 public class AllModelsValueFileExtensionIndexTerm extends DMNValueFileExtensionIndexTerm {
 
+    static final String TERM_VALUE = ".*(dmn|pmml)";
+
     @Override
     public String getValue() {
-        return ".*(dmn|pmml)";
+        return TERM_VALUE;
     }
 }

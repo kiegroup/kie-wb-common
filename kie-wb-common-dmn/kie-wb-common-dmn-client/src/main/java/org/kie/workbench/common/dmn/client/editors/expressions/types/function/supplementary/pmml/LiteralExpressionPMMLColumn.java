@@ -22,10 +22,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.google.gwt.user.client.ui.ListBox;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.util.PMMLValueUtils;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.ListBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.ListBoxDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNSimpleGridColumn;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
@@ -72,7 +72,7 @@ public class LiteralExpressionPMMLColumn extends DMNSimpleGridColumn<LiteralExpr
         final ListBox widget = e.getWidget();
         widget.clear();
         documentNames.forEach(documentName -> widget.addItem(documentName,
-                                                             PMMLValueUtils.addQuotes(documentName)));
+                                                             StringUtils.createQuotedConstant(documentName)));
         e.setValue(assertCellValue(assertCell(cell).getValue()).getValue());
     }
 

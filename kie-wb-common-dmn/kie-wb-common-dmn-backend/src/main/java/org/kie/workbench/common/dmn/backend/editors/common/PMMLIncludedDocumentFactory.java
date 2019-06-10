@@ -57,6 +57,12 @@ public class PMMLIncludedDocumentFactory {
         return Optional.ofNullable(loadPMMLInfo(path)).map(pmml -> convertPMMLInfo(path, pmml)).orElse(emptyPMMLDocumentMetadata(path));
     }
 
+    public PMMLDocumentMetadata getDocumentByPath(final Path path,
+                                                  final PMMLIncludedModel includeModel) {
+        final String modelName = includeModel.getModelName();
+        return Optional.ofNullable(loadPMMLInfo(path)).map(pmml -> convertPMMLInfo(path, pmml, modelName)).orElse(emptyPMMLDocumentMetadata(path, modelName));
+    }
+
     PMMLInfo<PMMLModelInfo> loadPMMLInfo(final Path path) {
         try (InputStream io = ioService.newInputStream(Paths.convert(path))) {
             return PMMLInfo.from(io);
@@ -67,6 +73,14 @@ public class PMMLIncludedDocumentFactory {
 
     private PMMLDocumentMetadata emptyPMMLDocumentMetadata(final Path path) {
         return new PMMLDocumentMetadata(path.toURI(),
+                                        DMNImportTypes.PMML.getDefaultNamespace(),
+                                        Collections.emptyList());
+    }
+
+    private PMMLDocumentMetadata emptyPMMLDocumentMetadata(final Path path,
+                                                           final String modelName) {
+        return new PMMLDocumentMetadata(path.toURI(),
+                                        modelName,
                                         DMNImportTypes.PMML.getDefaultNamespace(),
                                         Collections.emptyList());
     }
@@ -102,21 +116,5 @@ public class PMMLIncludedDocumentFactory {
 
     private PMMLParameterMetadata convertInputFieldName(final String name) {
         return new PMMLParameterMetadata(name);
-    }
-
-    public PMMLDocumentMetadata getDocumentByPath(final Path path,
-                                                  final PMMLIncludedModel includeModel) {
-        final String modelName = includeModel.getModelName();
-
-        try (InputStream io = ioService.newInputStream(Paths.convert(path))) {
-
-            final PMMLInfo<PMMLModelInfo> pmml = PMMLInfo.from(io);
-            return convertPMMLInfo(path, pmml, modelName);
-        } catch (Exception e) {
-            return new PMMLDocumentMetadata(path.toURI(),
-                                            modelName,
-                                            DMNImportTypes.PMML.getDefaultNamespace(),
-                                            Collections.emptyList());
-        }
     }
 }
