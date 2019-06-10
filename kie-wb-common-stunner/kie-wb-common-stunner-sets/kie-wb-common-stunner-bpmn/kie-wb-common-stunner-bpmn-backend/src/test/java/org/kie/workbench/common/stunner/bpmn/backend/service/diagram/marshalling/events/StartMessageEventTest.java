@@ -69,7 +69,7 @@ public class StartMessageEventTest extends StartEvent<StartMessageEvent> {
 
         StartMessageEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartMessageEvent.class);
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertMessageEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, "");
+        assertMessageEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, EMPTY_VALUE);
         assertDataIOSet(emptyTop.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -98,7 +98,7 @@ public class StartMessageEventTest extends StartEvent<StartMessageEvent> {
 
         StartMessageEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartMessageEvent.class);
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertMessageEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, "");
+        assertMessageEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, EMPTY_VALUE);
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 

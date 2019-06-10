@@ -69,7 +69,7 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
 
         if (getMarshallerType() == Marshaller.NEW) {
-            assertEquals(emptyTop.getExecutionSet().getSlaDueDate().getValue(), "");
+            assertEquals(emptyTop.getExecutionSet().getSlaDueDate().getValue(), EMPTY_VALUE);
         }
     }
 
@@ -100,7 +100,7 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
 
         if (getMarshallerType() == Marshaller.NEW) {
-            assertEquals(emptySubprocess.getExecutionSet().getSlaDueDate().getValue(), "");
+            assertEquals(emptySubprocess.getExecutionSet().getSlaDueDate().getValue(), EMPTY_VALUE);
         }
     }
 

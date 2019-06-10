@@ -101,6 +101,9 @@ public class StartCompensationEvent extends BaseStartEvent {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
         if (o instanceof StartCompensationEvent) {
             StartCompensationEvent other = (StartCompensationEvent) o;
             return super.equals(other) &&

@@ -81,7 +81,7 @@ public class StartConditionalEventTest extends StartEvent<StartConditionalEvent>
                                            CONDITION_EXPRESSION_LANGUAGE,
                                            CONDITION_ERPRESSION_TYPE,
                                            INTERRUPTING,
-                                           "");
+                                           EMPTY_VALUE);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class StartConditionalEventTest extends StartEvent<StartConditionalEvent>
                                            CONDITION_EXPRESSION_LANGUAGE,
                                            CONDITION_ERPRESSION_TYPE,
                                            NON_INTERRUPTING,
-                                           "");
+                                           EMPTY_VALUE);
     }
 
     @Override

@@ -56,9 +56,12 @@ public class StartEventFilterProvider implements StunnerFormElementFilterProvide
     @Override
     @SuppressWarnings("unchecked")
     public Collection<FormElementFilter> provideFilters(String elementUUID, Object definition) {
-        Predicate predicate = o -> isParentAnEventSubProcess(elementUUID) && isInterruptingEnabled(elementUUID);
+        Predicate parentPredicate = o -> isParentAnEventSubProcess(elementUUID);
+        Predicate isInterruptingPredicate = o -> isInterruptingEnabled(elementUUID);
+        Predicate predicate = parentPredicate.and(isInterruptingPredicate);
+
         FormElementFilter isInterruptingFilter = new FormElementFilter("executionSet.isInterrupting",
-                                                                       predicate);
+                                                                       parentPredicate.and(predicate));
         return Collections.singletonList(isInterruptingFilter);
     }
 

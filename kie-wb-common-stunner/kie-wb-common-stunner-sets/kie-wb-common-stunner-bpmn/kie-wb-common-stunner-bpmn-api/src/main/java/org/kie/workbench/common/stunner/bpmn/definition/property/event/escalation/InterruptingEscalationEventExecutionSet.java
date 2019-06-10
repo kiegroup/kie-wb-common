@@ -79,6 +79,9 @@ public class InterruptingEscalationEventExecutionSet extends BaseStartEventExecu
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
         if (o instanceof InterruptingEscalationEventExecutionSet) {
             InterruptingEscalationEventExecutionSet other = (InterruptingEscalationEventExecutionSet) o;
             return super.equals(other) &&

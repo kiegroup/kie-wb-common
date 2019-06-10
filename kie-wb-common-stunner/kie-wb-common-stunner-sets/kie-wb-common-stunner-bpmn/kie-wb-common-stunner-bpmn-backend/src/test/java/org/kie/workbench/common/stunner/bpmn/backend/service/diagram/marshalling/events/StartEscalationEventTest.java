@@ -69,7 +69,7 @@ public class StartEscalationEventTest extends StartEvent<StartEscalationEvent> {
 
         StartEscalationEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartEscalationEvent.class);
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertEscalationEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, INTERRUPTING, "");
+        assertEscalationEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, INTERRUPTING, EMPTY_VALUE);
         assertDataIOSet(emptyTop.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -98,7 +98,7 @@ public class StartEscalationEventTest extends StartEvent<StartEscalationEvent> {
 
         StartEscalationEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartEscalationEvent.class);
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertEscalationEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, "");
+        assertEscalationEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, EMPTY_VALUE);
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 

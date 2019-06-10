@@ -101,7 +101,7 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
 
         StartTimerEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartTimerEvent.class);
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptyTop.getExecutionSet(), NON_INTERRUPTING, "");
+        assertTimerEventEmpty(emptyTop.getExecutionSet(), NON_INTERRUPTING, EMPTY_VALUE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
@@ -159,7 +159,7 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
 
         StartTimerEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartTimerEvent.class);
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertTimerEventEmpty(emptySubprocess.getExecutionSet(), NON_INTERRUPTING, "");
+        assertTimerEventEmpty(emptySubprocess.getExecutionSet(), NON_INTERRUPTING, EMPTY_VALUE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
@@ -221,12 +221,8 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertTimerEventIsInterrupting(executionSet, isInterrupting);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventAfterDuration(InterruptingTimerEventExecutionSet executionSet, String timerValue, boolean isInterrupting, String slaDueDate) {
@@ -238,12 +234,8 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertTimerEventIsInterrupting(executionSet, isInterrupting);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventSpecificDate(InterruptingTimerEventExecutionSet executionSet, String dateValue, boolean isInterrupting, String slaDueDate) {
@@ -255,12 +247,8 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertTimerEventIsInterrupting(executionSet, isInterrupting);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventEmpty(InterruptingTimerEventExecutionSet executionSet, boolean isInterrupting, String slaDueDate) {
@@ -272,11 +260,21 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
+        assertTimerEventIsInterrupting(executionSet, isInterrupting);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
+    }
+
+    private void assertTimerEventSlaDueDate(InterruptingTimerEventExecutionSet executionSet, String slaDueDate) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getSlaDueDate());
+            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
+        }
+    }
+
+    private void assertTimerEventIsInterrupting(InterruptingTimerEventExecutionSet executionSet, boolean isInterrupting) {
         if (getMarshallerType() == Marshaller.NEW) {
             assertNotNull(executionSet.getIsInterrupting());
             assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
         }
     }
 }
