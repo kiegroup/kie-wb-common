@@ -44,8 +44,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNValidatorImplTest {
 
+    private static final String WRONG_PATH = "wrongPath";
     private static final String BPMN_VALID = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/valid.bpmn";
     private static final String BPMN_VALIDATION_ISSUES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/validation_issues.bpmn";
+    public static final String PROCESS_UUID = "id";
 
     private BPMNValidatorImpl bpmnValidador;
 
@@ -71,8 +73,30 @@ public class BPMNValidatorImplTest {
 
     @Test
     public void validateSerialized() {
-        Collection<BPMNViolation> violations = bpmnValidador.validate(getSerializedProcess(BPMN_VALID), "id");
+        Collection<BPMNViolation> violations = bpmnValidador.validate(getSerializedProcess(BPMN_VALID), PROCESS_UUID);
         assertTrue(violations.isEmpty());
+    }
+
+    @Test
+    public void validateWithExceptionsOnParsingXML() {
+        final Collection<BPMNViolation> violations = bpmnValidador.validate("INVALID_XML", PROCESS_UUID);
+        assertProcessException(violations);
+    }
+
+    private void assertProcessException(Collection<BPMNViolation> violations) {
+        assertEquals(violations.size(), 1);
+        assertEquals(1, violations.stream()
+                .map(BPMNViolation::getUUID)
+                .filter(PROCESS_UUID::equals)
+                .count());
+    }
+
+    @Test
+    public void validateWithException() {
+        when(diagram.getMetadata()).thenThrow(new RuntimeException());
+
+        final Collection<BPMNViolation> violations = bpmnValidador.validate(null, PROCESS_UUID);
+        assertProcessException(violations);
     }
 
     private String getSerializedProcess(String path) {

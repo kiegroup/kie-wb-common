@@ -139,10 +139,10 @@ public class ValidationServiceImplTest {
         when(first.getUUID()).thenReturn(UUID_0);
 
         DomainViolation last1 = violations.get(violations.size() - 2);
-        when(last1.getUUID()).thenReturn("null");
+        when(last1.getUUID()).thenReturn(null);
 
         DomainViolation last = violations.get(violations.size() - 1);
-        when(last.getUUID()).thenReturn(null);
+        when(last.getUUID()).thenReturn("null");
     }
 
     @Test

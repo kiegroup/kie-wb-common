@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.validation.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.junit.Before;
@@ -27,11 +28,13 @@ import org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder;
 import org.kie.workbench.common.stunner.core.TestingGraphMockHandler;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
 import org.kie.workbench.common.stunner.core.rule.RuleSet;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.rule.violations.DefaultRuleViolations;
+import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.ModelBeanViolation;
 import org.kie.workbench.common.stunner.core.validation.ModelValidator;
@@ -189,5 +192,14 @@ public class DiagramValidatorlTest {
                            .map(DiagramElementViolation::getGraphViolations)
                            .flatMap(Collection::stream)
                            .allMatch(v -> v.getMessage().equals(RULE_VIOLATION)));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testValidateDiagramWithNullBean() {
+        final Node nullNode = graphTestHandler.newNode(UUID.uuid(), Optional.empty());
+        nullNode.setContent(null);
+        when(diagram.getGraph()).thenReturn(graphTestHandler.graph);
+        tested.validate(diagram, this::assertNoErrors);
     }
 }
