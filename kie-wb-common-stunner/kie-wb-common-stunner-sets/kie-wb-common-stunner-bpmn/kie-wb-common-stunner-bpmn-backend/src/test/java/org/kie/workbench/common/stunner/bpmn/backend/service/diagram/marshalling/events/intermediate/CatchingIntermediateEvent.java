@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseCancellingEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -209,5 +210,19 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     protected Marshaller getMarshallerType() {
         return this.marshallerType;
+    }
+
+    protected void assertTimerEventSlaDueDate(BaseCancellingEventExecutionSet executionSet, String slaDueDate) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getSlaDueDate());
+            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
+        }
+    }
+
+    protected void assertEventCancelActivity(BaseCancellingEventExecutionSet executionSet, boolean isCancelling) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getCancelActivity());
+            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
+        }
     }
 }

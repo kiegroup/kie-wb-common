@@ -239,16 +239,12 @@ public class BoundaryCatchingIntermediateSignalEventTest extends BoundaryCatchin
         return EMPTY_WITH_OUTGOING_EDGE_SUBPROCESS_LEVEL_EVENT_ID;
     }
 
-    private void assertSignalEventExecutionSet(CancellingSignalEventExecutionSet executionSet, String eventName, boolean isCancelling, String slaDueData) {
+    private void assertSignalEventExecutionSet(CancellingSignalEventExecutionSet executionSet, String eventName, boolean isCancelling, String slaDueDate) {
         assertNotNull(executionSet);
         assertNotNull(executionSet.getSignalRef());
         assertEquals(eventName, executionSet.getSignalRef().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueData, executionSet.getSlaDueDate().getValue());
-        }
+        assertEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 }

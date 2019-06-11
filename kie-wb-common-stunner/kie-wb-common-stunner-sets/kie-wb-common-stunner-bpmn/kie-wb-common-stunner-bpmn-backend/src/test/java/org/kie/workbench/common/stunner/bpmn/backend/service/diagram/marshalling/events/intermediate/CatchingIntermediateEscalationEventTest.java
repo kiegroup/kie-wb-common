@@ -244,11 +244,7 @@ public class CatchingIntermediateEscalationEventTest extends CatchingIntermediat
         assertNotNull(executionSet.getEscalationRef());
         assertEquals(escalationRef, executionSet.getEscalationRef().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getCancelActivity());
-            assertEquals(isCancelling, executionSet.getCancelActivity().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertEventCancelActivity(executionSet, isCancelling);
+        assertTimerEventSlaDueDate(executionSet, slaDueDate);
     }
 }
