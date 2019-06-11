@@ -27,6 +27,8 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.SkipFormField;
+import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
@@ -41,6 +43,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceExecutionMode;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
@@ -50,6 +59,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeEditorFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssignmentsEditorFieldType;
+import org.kie.workbench.common.stunner.bpmn.forms.model.MultipleInstanceVariableFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.NotificationsEditorFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ReassignmentsEditorFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -155,7 +165,69 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
     private AdHocAutostart adHocAutostart;
 
     @Property
-    @FormField(afterElement = "adHocAutostart",
+    @Valid
+    @FormField(afterElement = "adHocAutostart")
+    private IsMultipleInstance isMultipleInstance;
+
+    @Property
+    @Valid
+    @FormField(afterElement = "isMultipleInstance",
+            type = ListBoxFieldType.class,
+            settings = {@FieldParam(name = "addEmptyOption", value = "false")}
+    )
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.ExecutionOrderProvider")
+    private MultipleInstanceExecutionMode multipleInstanceExecutionMode;
+
+    @Property
+    @FormField(type = ListBoxFieldType.class, afterElement = "multipleInstanceExecutionMode")
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.VariablesProvider"
+    )
+    @Valid
+    private MultipleInstanceCollectionInput multipleInstanceCollectionInput;
+
+    @Property
+    @FormField(
+            type = MultipleInstanceVariableFieldType.class,
+            afterElement = "multipleInstanceCollectionInput"
+    )
+    @Valid
+    private MultipleInstanceDataInput multipleInstanceDataInput;
+
+    @Property
+    @FormField(
+            type = ListBoxFieldType.class,
+            afterElement = "multipleInstanceDataInput"
+    )
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.VariablesProvider"
+    )
+    @Valid
+    private MultipleInstanceCollectionOutput multipleInstanceCollectionOutput;
+
+    @Property
+    @FormField(
+            type = MultipleInstanceVariableFieldType.class,
+            afterElement = "multipleInstanceCollectionOutput"
+    )
+    @Valid
+    private MultipleInstanceDataOutput multipleInstanceDataOutput;
+
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "multipleInstanceDataOutput",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private MultipleInstanceCompletionCondition multipleInstanceCompletionCondition;
+
+    @Property
+    @FormField(afterElement = "multipleInstanceCompletionCondition",
             settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")})
     @Valid
     private OnEntryAction onEntryAction;
@@ -193,6 +265,13 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
              new Description(""),
              new CreatedBy(),
              new AdHocAutostart(),
+             new IsMultipleInstance(false),
+             new MultipleInstanceExecutionMode(false),
+             new MultipleInstanceCollectionInput(),
+             new MultipleInstanceDataInput(),
+             new MultipleInstanceCollectionOutput(),
+             new MultipleInstanceDataOutput(),
+             new MultipleInstanceCompletionCondition(),
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
@@ -214,6 +293,13 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
                                 final @MapsTo("description") Description description,
                                 final @MapsTo("createdBy") CreatedBy createdBy,
                                 final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
+                                final @MapsTo("isMultipleInstance") IsMultipleInstance isMultipleInstance,
+                                final @MapsTo("multipleInstanceExecutionMode") MultipleInstanceExecutionMode multipleInstanceExecutionMode,
+                                final @MapsTo("multipleInstanceCollectionInput") MultipleInstanceCollectionInput multipleInstanceCollectionInput,
+                                final @MapsTo("multipleInstanceDataInput") MultipleInstanceDataInput multipleInstanceDataInput,
+                                final @MapsTo("multipleInstanceCollectionOutput") MultipleInstanceCollectionOutput multipleInstanceCollectionOutput,
+                                final @MapsTo("multipleInstanceDataOutput") MultipleInstanceDataOutput multipleInstanceDataOutput,
+                                final @MapsTo("multipleInstanceCompletionCondition") MultipleInstanceCompletionCondition multipleInstanceCompletionCondition,
                                 final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
                                 final @MapsTo("onExitAction") OnExitAction onExitAction,
                                 final @MapsTo("content") Content content,
@@ -231,6 +317,13 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
         this.description = description;
         this.createdBy = createdBy;
         this.adHocAutostart = adHocAutostart;
+        this.isMultipleInstance = isMultipleInstance;
+        this.multipleInstanceExecutionMode = multipleInstanceExecutionMode;
+        this.multipleInstanceCollectionInput = multipleInstanceCollectionInput;
+        this.multipleInstanceDataInput = multipleInstanceDataInput;
+        this.multipleInstanceCollectionOutput = multipleInstanceCollectionOutput;
+        this.multipleInstanceDataOutput = multipleInstanceDataOutput;
+        this.multipleInstanceCompletionCondition = multipleInstanceCompletionCondition;
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
         this.content = content;
@@ -355,6 +448,69 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
     }
 
     @Override
+    public IsMultipleInstance getIsMultipleInstance() {
+        return isMultipleInstance;
+    }
+
+    @Override
+    public MultipleInstanceExecutionMode getMultipleInstanceExecutionMode() {
+        return multipleInstanceExecutionMode;
+    }
+
+    public void setMultipleInstanceExecutionMode(MultipleInstanceExecutionMode multipleInstanceExecutionMode) {
+        this.multipleInstanceExecutionMode = multipleInstanceExecutionMode;
+    }
+
+    public void setIsMultipleInstance(IsMultipleInstance isMultipleInstance) {
+        this.isMultipleInstance = isMultipleInstance;
+    }
+
+    @Override
+    public MultipleInstanceCollectionInput getMultipleInstanceCollectionInput() {
+        return multipleInstanceCollectionInput;
+    }
+
+    public void setMultipleInstanceCollectionInput(MultipleInstanceCollectionInput multipleInstanceCollectionInput) {
+        this.multipleInstanceCollectionInput = multipleInstanceCollectionInput;
+    }
+
+    @Override
+    public MultipleInstanceDataInput getMultipleInstanceDataInput() {
+        return multipleInstanceDataInput;
+    }
+
+    public void setMultipleInstanceDataInput(MultipleInstanceDataInput multipleInstanceDataInput) {
+        this.multipleInstanceDataInput = multipleInstanceDataInput;
+    }
+
+    @Override
+    public MultipleInstanceCollectionOutput getMultipleInstanceCollectionOutput() {
+        return multipleInstanceCollectionOutput;
+    }
+
+    public void setMultipleInstanceCollectionOutput(MultipleInstanceCollectionOutput multipleInstanceCollectionOutput) {
+        this.multipleInstanceCollectionOutput = multipleInstanceCollectionOutput;
+    }
+
+    @Override
+    public MultipleInstanceDataOutput getMultipleInstanceDataOutput() {
+        return multipleInstanceDataOutput;
+    }
+
+    public void setMultipleInstanceDataOutput(MultipleInstanceDataOutput multipleInstanceDataOutput) {
+        this.multipleInstanceDataOutput = multipleInstanceDataOutput;
+    }
+
+    @Override
+    public MultipleInstanceCompletionCondition getMultipleInstanceCompletionCondition() {
+        return multipleInstanceCompletionCondition;
+    }
+
+    public void setMultipleInstanceCompletionCondition(MultipleInstanceCompletionCondition multipleInstanceCompletionCondition) {
+        this.multipleInstanceCompletionCondition = multipleInstanceCompletionCondition;
+    }
+
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
@@ -405,6 +561,13 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
                                          Objects.hashCode(description),
                                          Objects.hashCode(createdBy),
                                          Objects.hashCode(adHocAutostart),
+                                         Objects.hashCode(isMultipleInstance),
+                                         Objects.hashCode(multipleInstanceExecutionMode),
+                                         Objects.hashCode(multipleInstanceCollectionInput),
+                                         Objects.hashCode(multipleInstanceDataInput),
+                                         Objects.hashCode(multipleInstanceCollectionOutput),
+                                         Objects.hashCode(multipleInstanceDataOutput),
+                                         Objects.hashCode(multipleInstanceCompletionCondition),
                                          Objects.hashCode(onEntryAction),
                                          Objects.hashCode(onExitAction),
                                          Objects.hashCode(content),
@@ -441,6 +604,20 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
                                    other.createdBy) &&
                     Objects.equals(adHocAutostart,
                                    other.adHocAutostart) &&
+                    Objects.equals(isMultipleInstance,
+                                   other.isMultipleInstance) &&
+                    Objects.equals(multipleInstanceExecutionMode,
+                                   other.multipleInstanceExecutionMode) &&
+                    Objects.equals(multipleInstanceCollectionInput,
+                                   other.multipleInstanceCollectionInput) &&
+                    Objects.equals(multipleInstanceDataInput,
+                                   other.multipleInstanceDataInput) &&
+                    Objects.equals(multipleInstanceCollectionOutput,
+                                   other.multipleInstanceCollectionOutput) &&
+                    Objects.equals(multipleInstanceDataOutput,
+                                   other.multipleInstanceDataOutput) &&
+                    Objects.equals(multipleInstanceCompletionCondition,
+                                   other.multipleInstanceCompletionCondition) &&
                     Objects.equals(onEntryAction,
                                    other.onEntryAction) &&
                     Objects.equals(onExitAction,
