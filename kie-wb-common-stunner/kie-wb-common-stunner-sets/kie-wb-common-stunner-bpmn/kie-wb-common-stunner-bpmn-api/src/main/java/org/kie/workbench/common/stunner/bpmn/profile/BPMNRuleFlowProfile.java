@@ -24,7 +24,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
-import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
@@ -47,8 +46,9 @@ public class BPMNRuleFlowProfile implements DomainProfile {
                                                                                            EndNoneEvent.class,
                                                                                            EndTerminateEvent.class,
                                                                                            ParallelGateway.class,
-                                                                                           ExclusiveGateway.class,
-                                                                                           GenericServiceTask.class);
+                                                                                           ExclusiveGateway.class
+                                                                                           // TODO: Temporary disabled - see RHPAM-2183.
+                                                                                           /*GenericServiceTask.class*/);
 
     @Override
     public String getProfileId() {
