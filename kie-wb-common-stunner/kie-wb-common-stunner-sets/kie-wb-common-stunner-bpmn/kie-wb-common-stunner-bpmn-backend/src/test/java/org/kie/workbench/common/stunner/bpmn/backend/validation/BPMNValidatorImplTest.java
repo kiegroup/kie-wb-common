@@ -44,7 +44,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNValidatorImplTest {
 
-    private static final String WRONG_PATH = "wrongPath";
     private static final String BPMN_VALID = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/valid.bpmn";
     private static final String BPMN_VALIDATION_ISSUES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/validation/validation_issues.bpmn";
     public static final String PROCESS_UUID = "id";
