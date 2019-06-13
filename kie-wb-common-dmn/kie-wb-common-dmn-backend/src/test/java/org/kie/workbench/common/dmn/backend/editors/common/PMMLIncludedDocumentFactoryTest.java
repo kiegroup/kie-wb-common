@@ -162,6 +162,7 @@ public class PMMLIncludedDocumentFactoryTest {
     private PMMLModelInfo makePMMLModelInfo() {
         return new PMMLModelInfo(MODEL_NAME,
                                  makePMMLModelInputFieldNames(),
+                                 Collections.emptyList(),
                                  Collections.emptyList());
     }
 
