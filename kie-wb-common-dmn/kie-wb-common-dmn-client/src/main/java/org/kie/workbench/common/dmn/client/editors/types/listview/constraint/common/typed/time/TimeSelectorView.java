@@ -327,7 +327,7 @@ public class TimeSelectorView implements TimeSelector.View {
         final Object target = getEventTarget(blurEvent);
         if (!Objects.isNull(getOnValueInputBlur())
                 && !Objects.isNull(target)
-                && !isChildrenOfView(target)) {
+                && !isChildOfView(target)) {
             getOnValueInputBlur().accept(blurEvent);
         }
     }
@@ -361,7 +361,7 @@ public class TimeSelectorView implements TimeSelector.View {
     }
 
     @Override
-    public boolean isChildrenOfView(final Object element) {
+    public boolean isChildOfView(final Object element) {
 
         final Element viewElement = getElement();
         return viewElement.contains((Element)element);

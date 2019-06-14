@@ -86,8 +86,8 @@ public class DateTimeSelectorView implements DateTimeSelector.View {
 
             final Object eventTarget = getEventTarget(blurEvent);
             if (!Objects.isNull(eventTarget)
-                    && !dateSelector.isChildren(eventTarget)
-                    && !timeSelector.isChildren(eventTarget)) {
+                    && !dateSelector.isChild(eventTarget)
+                    && !timeSelector.isChild(eventTarget)) {
                 getOnValueInputBlur().accept(blurEvent);
             }
         }

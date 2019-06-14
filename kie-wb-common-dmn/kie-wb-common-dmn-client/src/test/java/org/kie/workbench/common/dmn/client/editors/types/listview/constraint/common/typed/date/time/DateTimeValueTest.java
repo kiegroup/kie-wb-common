@@ -66,48 +66,4 @@ public class DateTimeValueTest {
 
         assertTrue(actual);
     }
-//
-//        final String date = "date";
-//        final String time = "time";
-//
-//        when(dateTimeValue.getDate()).thenReturn(date);
-//        when(dateTimeValue.getTime()).thenReturn(time);
-//
-//        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
-//        when(dateTimeValue.hasDate()).thenCallRealMethod();
-//        when(dateTimeValue.hasTime()).thenCallRealMethod();
-//
-//        final boolean actual = dateTimeValue.isDateAndTimeSet();
-//        assertTrue(actual);
-//    }
-//
-//    @Test
-//    public void testIsDateAndTimeSetWhenTimeAreNotSet() {
-//
-//        final String date = "date";
-//
-//        when(dateTimeValue.getDate()).thenReturn(date);
-//
-//        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
-//        when(dateTimeValue.hasDate()).thenCallRealMethod();
-//        when(dateTimeValue.hasTime()).thenCallRealMethod();
-//
-//        final boolean actual = dateTimeValue.isDateAndTimeSet();
-//        assertFalse(actual);
-//    }
-//
-//    @Test
-//    public void testIsDateAndTimeSetWhenDateAreNotSet() {
-//
-//        final String time = "time";
-//
-//        when(dateTimeValue.getTime()).thenReturn(time);
-//
-//        when(dateTimeValue.isDateAndTimeSet()).thenCallRealMethod();
-//        when(dateTimeValue.hasDate()).thenCallRealMethod();
-//        when(dateTimeValue.hasTime()).thenCallRealMethod();
-//
-//        final boolean actual = dateTimeValue.isDateAndTimeSet();
-//        assertFalse(actual);
-//    }
 }

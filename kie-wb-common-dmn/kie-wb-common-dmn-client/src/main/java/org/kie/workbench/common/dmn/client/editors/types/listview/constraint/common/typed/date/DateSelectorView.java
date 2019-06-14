@@ -122,7 +122,7 @@ public class DateSelectorView implements DateSelector.View {
     }
 
     @Override
-    public boolean isChildrenOfView(final Object element) {
+    public boolean isChildOfView(final Object element) {
 
         final Element viewElement = getElement();
         return viewElement.contains((Element) element);

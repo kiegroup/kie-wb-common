@@ -103,8 +103,8 @@ public class DateTimeSelectorViewTest {
         doReturn(eventConsumer).when(view).getOnValueInputBlur();
         doReturn(target).when(view).getEventTarget(blurEvent);
 
-        when(dateSelector.isChildren(target)).thenReturn(false);
-        when(timeSelector.isChildren(target)).thenReturn(false);
+        when(dateSelector.isChild(target)).thenReturn(false);
+        when(timeSelector.isChild(target)).thenReturn(false);
 
         view.onBlurCallback(blurEvent);
 
@@ -121,8 +121,8 @@ public class DateTimeSelectorViewTest {
         doReturn(eventConsumer).when(view).getOnValueInputBlur();
         doReturn(target).when(view).getEventTarget(blurEvent);
 
-        when(dateSelector.isChildren(target)).thenReturn(true);
-        when(timeSelector.isChildren(target)).thenReturn(false);
+        when(dateSelector.isChild(target)).thenReturn(true);
+        when(timeSelector.isChild(target)).thenReturn(false);
 
         view.onBlurCallback(blurEvent);
 
@@ -139,8 +139,8 @@ public class DateTimeSelectorViewTest {
         doReturn(eventConsumer).when(view).getOnValueInputBlur();
         doReturn(target).when(view).getEventTarget(blurEvent);
 
-        when(dateSelector.isChildren(target)).thenReturn(false);
-        when(timeSelector.isChildren(target)).thenReturn(true);
+        when(dateSelector.isChild(target)).thenReturn(false);
+        when(timeSelector.isChild(target)).thenReturn(true);
 
         view.onBlurCallback(blurEvent);
 

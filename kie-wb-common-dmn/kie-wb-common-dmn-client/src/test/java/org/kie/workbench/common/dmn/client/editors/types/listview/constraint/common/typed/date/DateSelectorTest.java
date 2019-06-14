@@ -117,7 +117,7 @@ public class DateSelectorTest {
     public void testIsChildren() {
 
         final Object object = mock(Object.class);
-        dateSelector.isChildren(object);
-        verify(view).isChildrenOfView(object);
+        dateSelector.isChild(object);
+        verify(view).isChildOfView(object);
     }
 }
