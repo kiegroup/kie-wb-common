@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.project.backend.dataproviders;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Specializes;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.kie.soup.commons.util.Sets;
@@ -33,35 +31,32 @@ import org.kie.workbench.common.services.refactoring.model.index.terms.valueterm
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.kie.workbench.common.services.refactoring.service.PartType;
 import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
-import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.RuleFlowGroupFormDataProvider;
 
-@Dependent
-@Specializes
-public class RuleFlowGroupFormProjectDataProvider extends RuleFlowGroupFormDataProvider {
+@ApplicationScoped
+public class RuleFlowGroupQueryService {
 
     private final RefactoringQueryService queryService;
-    private final Function<List<RefactoringPageRow>, TreeMap> resultToSelectorData;
+    private final Function<List<RefactoringPageRow>, List<String>> resultToSelectorData;
 
-    // CDI Proxy.
-    protected RuleFlowGroupFormProjectDataProvider() {
-        this(null, null);
+    //CDI proxy.
+    public RuleFlowGroupQueryService() {
+        this(null);
     }
 
     @Inject
-    public RuleFlowGroupFormProjectDataProvider(final RefactoringQueryService queryService) {
+    public RuleFlowGroupQueryService(final RefactoringQueryService queryService) {
         this(queryService,
              DEFAULT_RESULT_CONVERTER);
     }
 
-    RuleFlowGroupFormProjectDataProvider(final RefactoringQueryService queryService,
-                                         final Function<List<RefactoringPageRow>, TreeMap> resultToSelectorData) {
+    RuleFlowGroupQueryService(final RefactoringQueryService queryService,
+                              final Function<List<RefactoringPageRow>, List<String>> resultToSelectorData) {
         this.queryService = queryService;
         this.resultToSelectorData = resultToSelectorData;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public Map<Object, String> getRuleFlowGroupNames() {
+    public List<String> getRuleFlowGroupNames() {
         List<RefactoringPageRow> queryResult = queryService.query(
                 FindRuleFlowNamesQuery.NAME,
                 new Sets.Builder<ValueIndexTerm>()
@@ -72,12 +67,6 @@ public class RuleFlowGroupFormProjectDataProvider extends RuleFlowGroupFormDataP
         return resultToSelectorData.apply(queryResult);
     }
 
-    public static Function<List<RefactoringPageRow>, TreeMap> DEFAULT_RESULT_CONVERTER =
-            rows -> rows.stream()
-                    .map(RuleFlowGroupFormProjectDataProvider::getValue)
-                    .filter(RuleFlowGroupFormProjectDataProvider::isNotEmpty)
-                    .collect(Collectors.toMap(name -> name, name -> name, (oldValue, newValue) -> oldValue, TreeMap::new));
-
     @SuppressWarnings("unchecked")
     private static String getValue(final RefactoringPageRow row) {
         return ((Map<String, String>) row.getValue()).get("name");
@@ -86,4 +75,11 @@ public class RuleFlowGroupFormProjectDataProvider extends RuleFlowGroupFormDataP
     private static boolean isNotEmpty(final String s) {
         return null != s && s.trim().length() > 0;
     }
+
+    public static Function<List<RefactoringPageRow>, List<String>> DEFAULT_RESULT_CONVERTER =
+            rows -> rows.stream()
+                    .map(RuleFlowGroupQueryService::getValue)
+                    .filter(RuleFlowGroupQueryService::isNotEmpty)
+                    .distinct()
+                    .collect(Collectors.toList());
 }

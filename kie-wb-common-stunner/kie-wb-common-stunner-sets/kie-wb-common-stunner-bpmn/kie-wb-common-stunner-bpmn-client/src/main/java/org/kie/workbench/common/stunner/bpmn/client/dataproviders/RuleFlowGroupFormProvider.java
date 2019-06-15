@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
+package org.kie.workbench.common.stunner.bpmn.client.dataproviders;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
+@Dependent
 public class RuleFlowGroupFormProvider implements SelectorDataProvider {
 
     @Inject
-    private RuleFlowGroupFormDataProvider dataProvider;
+    RuleFlowGroupDataProvider dataProvider;
 
     @Override
     public String getProviderName() {
@@ -35,6 +41,10 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @Override
     @SuppressWarnings("unchecked")
     public SelectorData getSelectorData(final FormRenderingContext context) {
-        return new SelectorData(dataProvider.getRuleFlowGroupNames(), null);
+        return new SelectorData(toMap(dataProvider.getRuleFlowGroupNames()), null);
+    }
+
+    private static Map<String, String> toMap(final Iterable<String> items) {
+        return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(s -> s, s -> s));
     }
 }

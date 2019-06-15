@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.project.backend.dataproviders;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.FindRuleFlowNamesQuery;
@@ -37,7 +36,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RuleFlowGroupFormProjectDataProviderTest {
+public class RuleFlowGroupQueryServiceTest {
 
     private final static String ERROR_MSG = PartType.ACTIVATION_GROUP.toString() + "' can not be used";
 
@@ -102,12 +101,12 @@ public class RuleFlowGroupFormProjectDataProviderTest {
         RefactoringPageRow emptyRow2 = mock(RefactoringPageRow.class);
         when(emptyRow2.getValue()).thenReturn(asMap(""));
         List<RefactoringPageRow> rows = Arrays.asList(row1, row2, row3, row4, row4_2, emptyRow1, emptyRow2);
-        TreeMap<Object, String> result = RuleFlowGroupFormProjectDataProvider.DEFAULT_RESULT_CONVERTER.apply(rows);
+        List<String> result = RuleFlowGroupQueryService.DEFAULT_RESULT_CONVERTER.apply(rows);
         assertEquals(4, result.size());
-        assertTrue(result.containsKey("row1"));
-        assertTrue(result.containsKey("row2"));
-        assertTrue(result.containsKey("row3"));
-        assertTrue(result.containsKey("row4"));
+        assertTrue(result.contains("row1"));
+        assertTrue(result.contains("row2"));
+        assertTrue(result.contains("row3"));
+        assertTrue(result.contains("row4"));
     }
 
     private static Map<String, String> asMap(String s) {

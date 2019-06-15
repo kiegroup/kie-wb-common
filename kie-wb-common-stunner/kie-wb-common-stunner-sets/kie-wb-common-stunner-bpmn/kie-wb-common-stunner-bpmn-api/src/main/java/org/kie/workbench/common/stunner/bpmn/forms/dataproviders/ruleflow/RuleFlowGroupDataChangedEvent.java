@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
+package org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ruleflow;
 
-import java.util.Collections;
-import java.util.Map;
+import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import javax.enterprise.context.Dependent;
+@Portable
+public class RuleFlowGroupDataChangedEvent {
 
-@Dependent
-public class RuleFlowGroupFormDataProvider {
+    private final String[] groupNames;
 
-    public Map<Object, String> getRuleFlowGroupNames() {
-        return Collections.emptyMap();
+    public RuleFlowGroupDataChangedEvent(final @MapsTo("groupNames") String[] groupNames) {
+        this.groupNames = groupNames;
+    }
+
+    public String[] getGroupNames() {
+        return groupNames;
     }
 }
