@@ -24,7 +24,7 @@ import javax.enterprise.event.Event;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ruleflow.RuleFlowGroupDataChangedEvent;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RuleFlowGroupDataEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -32,27 +32,25 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RuleFlowGroupDataServiceImplTest {
+public class RuleFlowGroupDataServiceTest {
 
     @Mock
     private RuleFlowGroupQueryService queryService;
 
     @Mock
-    private Event<RuleFlowGroupDataChangedEvent> groupNamesChangedEvent;
+    private Event<RuleFlowGroupDataEvent> dataChangedEvent;
 
-    private RuleFlowGroupDataServiceImpl tested;
+    private RuleFlowGroupDataService tested;
 
     @Before
     public void setUp() {
         when(queryService.getRuleFlowGroupNames()).thenReturn(Arrays.asList("g1", "g2"));
-        tested = new RuleFlowGroupDataServiceImpl(queryService, groupNamesChangedEvent);
+        tested = new RuleFlowGroupDataService(queryService, dataChangedEvent);
     }
 
     @Test
@@ -62,27 +60,12 @@ public class RuleFlowGroupDataServiceImplTest {
     }
 
     @Test
-    public void testCheckForUpdates() {
-        tested.checkForUpdates();
-        ArgumentCaptor<RuleFlowGroupDataChangedEvent> ec = ArgumentCaptor.forClass(RuleFlowGroupDataChangedEvent.class);
-        verify(groupNamesChangedEvent, times(1)).fire(ec.capture());
-        RuleFlowGroupDataChangedEvent event = ec.getValue();
+    public void testFireData() {
+        tested.fireData();
+        ArgumentCaptor<RuleFlowGroupDataEvent> ec = ArgumentCaptor.forClass(RuleFlowGroupDataEvent.class);
+        verify(dataChangedEvent, times(1)).fire(ec.capture());
+        RuleFlowGroupDataEvent event = ec.getValue();
         assertRightRuleFlowGroupNames(event.getGroupNames());
-    }
-
-    @Test
-    public void testCheckForUpdatesAlreadyCached() {
-        tested.groupNames.add("g1");
-        tested.groupNames.add("g2");
-        tested.checkForUpdates();
-        verify(groupNamesChangedEvent, never()).fire(any(RuleFlowGroupDataChangedEvent.class));
-    }
-
-    @Test
-    public void testDestroy() {
-        tested.groupNames.add("g1");
-        tested.destroy();
-        assertTrue(tested.groupNames.isEmpty());
     }
 
     private static void assertRightRuleFlowGroupNames(String[] names) {

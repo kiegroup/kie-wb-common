@@ -25,40 +25,40 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RuleFlowGroupDataEvent;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ProcessDataEvent;
 import org.kie.workbench.common.stunner.forms.client.session.StunnerFormsHandler;
 
 import static java.util.Arrays.stream;
 
 @ApplicationScoped
-public class RuleFlowGroupDataProvider {
+public class ProcessesDataProvider {
 
     private final StunnerFormsHandler formsHandler;
-    final List<String> groupNames;
+    final List<String> processIds;
 
     // CDI proxy.
-    public RuleFlowGroupDataProvider() {
+    public ProcessesDataProvider() {
         this(null);
     }
 
     @Inject
-    public RuleFlowGroupDataProvider(final StunnerFormsHandler formsHandler) {
+    public ProcessesDataProvider(final StunnerFormsHandler formsHandler) {
         this.formsHandler = formsHandler;
-        this.groupNames = new LinkedList<>();
+        this.processIds = new LinkedList<>();
     }
 
-    public List<String> getRuleFlowGroupNames() {
-        return groupNames;
+    public List<String> getProcessIds() {
+        return processIds;
     }
 
-    void onRuleFlowGroupDataChanged(final @Observes RuleFlowGroupDataEvent event) {
-        setRuleFlowGroupNames(toList(event.getGroupNames()));
+    void onProcessesUpdatedEvent(final @Observes ProcessDataEvent event) {
+        setProcessIds(toList(event.getProcessIds()));
     }
 
-    private void setRuleFlowGroupNames(final List<String> names) {
-        if (!groupNames.equals(names)) {
-            groupNames.clear();
-            groupNames.addAll(names);
+    private void setProcessIds(final List<String> ids) {
+        if (!processIds.equals(ids)) {
+            processIds.clear();
+            processIds.addAll(ids);
             formsHandler.refreshCurrentSessionForms(BPMNDefinitionSet.class);
         }
     }

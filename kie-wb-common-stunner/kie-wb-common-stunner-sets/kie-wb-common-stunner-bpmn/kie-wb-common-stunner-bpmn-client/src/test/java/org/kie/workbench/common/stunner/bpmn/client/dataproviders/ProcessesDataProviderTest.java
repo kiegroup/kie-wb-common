@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RuleFlowGroupDataEvent;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ProcessDataEvent;
 import org.kie.workbench.common.stunner.forms.client.session.StunnerFormsHandler;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -39,38 +39,38 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RuleFlowGroupDataProviderTest {
+public class ProcessesDataProviderTest {
 
     @Mock
     private StunnerFormsHandler formsHandler;
 
-    private RuleFlowGroupDataProvider tested;
+    private ProcessesDataProvider tested;
 
     @Before
     public void setup() {
-        tested = new RuleFlowGroupDataProvider(formsHandler);
+        tested = new ProcessesDataProvider(formsHandler);
     }
 
     @Test
-    public void testOnRuleFlowGroupDataChanged() {
-        RuleFlowGroupDataEvent event = mock(RuleFlowGroupDataEvent.class);
-        when(event.getGroupNames()).thenReturn(new String[]{"g1", "g2"});
-        tested.onRuleFlowGroupDataChanged(event);
+    public void testOnProcessesUpdatedEvent() {
+        ProcessDataEvent event = mock(ProcessDataEvent.class);
+        when(event.getProcessIds()).thenReturn(new String[]{"p1", "p2"});
+        tested.onProcessesUpdatedEvent(event);
         verify(formsHandler, times(1)).refreshCurrentSessionForms(eq(BPMNDefinitionSet.class));
-        List<String> values = tested.getRuleFlowGroupNames();
+        List<String> values = tested.getProcessIds();
         assertNotNull(values);
         assertEquals(2, values.size());
-        assertTrue(values.contains("g1"));
-        assertTrue(values.contains("g2"));
+        assertTrue(values.contains("p1"));
+        assertTrue(values.contains("p2"));
     }
 
     @Test
-    public void testOnRuleFlowGroupDataNotChanged() {
-        tested.groupNames.add("g1");
-        tested.groupNames.add("g2");
-        RuleFlowGroupDataEvent event = mock(RuleFlowGroupDataEvent.class);
-        when(event.getGroupNames()).thenReturn(new String[]{"g1", "g2"});
-        tested.onRuleFlowGroupDataChanged(event);
+    public void testOnProcessesNOTUpdatedEvent() {
+        tested.processIds.add("p1");
+        tested.processIds.add("p2");
+        ProcessDataEvent event = mock(ProcessDataEvent.class);
+        when(event.getProcessIds()).thenReturn(new String[]{"p1", "p2"});
+        tested.onProcessesUpdatedEvent(event);
         verify(formsHandler, never()).refreshCurrentSessionForms(any(Class.class));
     }
 }

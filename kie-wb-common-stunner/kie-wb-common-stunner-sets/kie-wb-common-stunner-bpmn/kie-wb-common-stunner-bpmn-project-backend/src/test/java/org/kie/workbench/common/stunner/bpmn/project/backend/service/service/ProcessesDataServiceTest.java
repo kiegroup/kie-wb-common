@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.project.backend.service.dataprovider;
+package org.kie.workbench.common.stunner.bpmn.project.backend.service.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.event.Event;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
-import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringMapPageRow;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
-import org.kie.workbench.common.stunner.bpmn.backend.dataproviders.CalledElementFormProvider;
-import org.kie.workbench.common.stunner.bpmn.project.backend.dataproviders.CalledElementFormProjectDataProvider;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ProcessDataEvent;
+import org.kie.workbench.common.stunner.bpmn.project.backend.service.ProcessesDataService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -42,32 +43,27 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CalledElementFormProviderTest {
+public class ProcessesDataServiceTest {
 
     private static final String ID1 = "P1.Process1";
     private static final String ID2 = "P1.Process2";
 
     @Mock
-    FormRenderingContext context;
+    private RefactoringQueryService queryService;
 
     @Mock
-    RefactoringQueryService queryService;
+    private Event<ProcessDataEvent> processesUpdatedEvent;
 
     @Mock
-    Path path1;
+    private Path path1;
 
     @Mock
-    Path path2;
+    private Path path2;
 
-    private CalledElementFormProvider calledElementFormProvider;
-    private CalledElementFormProjectDataProvider projectDataProvider;
+    private ProcessesDataService tested;
 
     @Before
     public void setup() {
-        calledElementFormProvider = new CalledElementFormProvider();
-        projectDataProvider = new CalledElementFormProjectDataProvider();
-        calledElementFormProvider.setDataProvider(projectDataProvider);
-        projectDataProvider.setQueryService(queryService);
         List<RefactoringPageRow> results = new ArrayList<RefactoringPageRow>();
         RefactoringMapPageRow refactoringMapPageRow = new RefactoringMapPageRow();
         Map<String, Path> map = new HashMap<String, Path>();
@@ -79,26 +75,14 @@ public class CalledElementFormProviderTest {
         results.add(refactoringMapPageRow);
         when(queryService.query(anyString(),
                                 anyObject())).thenReturn(results);
+        tested = new ProcessesDataService(queryService, processesUpdatedEvent);
     }
 
     @Test
-    public void getBusinessProcessIDsTest() {
-        Map<Object, String> results = projectDataProvider.getBusinessProcessIDs();
-        assertEquals(results.size(),
-                     2);
-        assertTrue(results.keySet().contains(ID1));
-        assertTrue(results.keySet().contains(ID2));
-        assertEquals(results.get(ID1),
-                     ID1);
-        assertEquals(results.get(ID1),
-                     ID1);
-    }
-
-    @Test
-    public void getSelectorDataTest() {
-        SelectorData selectorData = calledElementFormProvider.getSelectorData(context);
-
-        assertEquals(selectorData.getValues().size(),
-                     2);
+    public void testGetBusinessProcessIDs() {
+        Collection<String> results = tested.getBusinessProcessIDs();
+        assertEquals(results.size(), 2);
+        assertTrue(results.contains(ID1));
+        assertTrue(results.contains(ID2));
     }
 }

@@ -21,7 +21,9 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 
 @ApplicationScoped
@@ -43,9 +45,28 @@ public class StunnerFormsHandler {
     }
 
     public void refreshCurrentSessionForms() {
+        refreshCurrentSessionForms(null);
+    }
+
+    public void refreshCurrentSessionForms(final Class<?> defSetType) {
         final ClientSession session = sessionManager.getCurrentSession();
+        boolean fireEvent = false;
         if (null != session) {
-            refreshFormsEvent.fire(new RefreshFormPropertiesEvent(session));
+            if (null != defSetType) {
+                final CanvasHandler canvasHandler = session.getCanvasHandler();
+                if (null != canvasHandler) {
+                    final String id = canvasHandler.getDiagram().getMetadata().getDefinitionSetId();
+                    final String expected = BindableAdapterUtils.getDefinitionSetId(defSetType);
+                    if (id.equals(expected)) {
+                        fireEvent = true;
+                    }
+                }
+            } else {
+                fireEvent = true;
+            }
+            if (fireEvent) {
+                refreshFormsEvent.fire(new RefreshFormPropertiesEvent(session));
+            }
         }
     }
 }

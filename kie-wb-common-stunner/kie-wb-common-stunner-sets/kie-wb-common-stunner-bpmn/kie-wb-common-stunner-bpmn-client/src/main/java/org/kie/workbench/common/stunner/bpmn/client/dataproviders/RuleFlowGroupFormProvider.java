@@ -21,14 +21,19 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
 
 @Dependent
 public class RuleFlowGroupFormProvider implements SelectorDataProvider {
+
+    @Inject
+    Event<RequestRuleFlowGroupDataEvent> requestRuleFlowGroupDataEvent;
 
     @Inject
     RuleFlowGroupDataProvider dataProvider;
@@ -41,6 +46,7 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @Override
     @SuppressWarnings("unchecked")
     public SelectorData getSelectorData(final FormRenderingContext context) {
+        requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent());
         return new SelectorData(toMap(dataProvider.getRuleFlowGroupNames()), null);
     }
 

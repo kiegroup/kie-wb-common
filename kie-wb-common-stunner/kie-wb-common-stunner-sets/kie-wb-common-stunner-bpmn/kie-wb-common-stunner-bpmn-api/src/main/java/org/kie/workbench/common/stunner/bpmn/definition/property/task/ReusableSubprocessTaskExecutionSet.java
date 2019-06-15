@@ -45,8 +45,8 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
 
     @Property
     @SelectorDataProvider(
-            type = SelectorDataProvider.ProviderType.REMOTE,
-            className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.CalledElementFormProvider")
+            type = SelectorDataProvider.ProviderType.CLIENT,
+            className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.CalledElementFormProvider")
     @FormField(type = ListBoxFieldType.class
     )
     @Valid

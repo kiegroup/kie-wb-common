@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestProcessDataEvent;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.EventSourceMock;
@@ -40,21 +40,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RuleFlowGroupFormProviderTest {
+public class CalledElementFormProviderTest {
 
     @Mock
-    private RuleFlowGroupDataProvider dataProvider;
+    private ProcessesDataProvider dataProvider;
 
     @Mock
-    private EventSourceMock<RequestRuleFlowGroupDataEvent> requestRuleFlowGroupDataEvent;
+    private EventSourceMock<RequestProcessDataEvent> event;
 
-    private RuleFlowGroupFormProvider tested;
+    private CalledElementFormProvider tested;
 
     @Before
     public void setup() {
-        tested = new RuleFlowGroupFormProvider();
+        tested = new CalledElementFormProvider();
         tested.dataProvider = dataProvider;
-        tested.requestRuleFlowGroupDataEvent = requestRuleFlowGroupDataEvent;
+        tested.requestProcessDataEvent = event;
     }
 
     @Test
@@ -64,16 +64,16 @@ public class RuleFlowGroupFormProviderTest {
 
     @Test
     public void testGetSelectorData() {
-        List<String> names = Arrays.asList("g1", "g2", "g3");
-        when(dataProvider.getRuleFlowGroupNames()).thenReturn(names);
+        List<String> names = Arrays.asList("p1", "p2", "p3");
+        when(dataProvider.getProcessIds()).thenReturn(names);
         FormRenderingContext context = mock(FormRenderingContext.class);
         SelectorData data = tested.getSelectorData(context);
         Map values = data.getValues();
         assertNotNull(values);
         assertEquals(3, values.size());
-        assertTrue(values.containsKey("g1"));
-        assertTrue(values.containsKey("g2"));
-        assertTrue(values.containsKey("g3"));
-        verify(requestRuleFlowGroupDataEvent, times(1)).fire(any(RequestRuleFlowGroupDataEvent.class));
+        assertTrue(values.containsKey("p1"));
+        assertTrue(values.containsKey("p2"));
+        assertTrue(values.containsKey("p3"));
+        verify(event, times(1)).fire(any(RequestProcessDataEvent.class));
     }
 }

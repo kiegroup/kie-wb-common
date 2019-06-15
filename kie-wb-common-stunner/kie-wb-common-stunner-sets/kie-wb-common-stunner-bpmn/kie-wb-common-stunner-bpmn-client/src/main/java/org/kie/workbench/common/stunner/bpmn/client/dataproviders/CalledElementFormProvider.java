@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
+package org.kie.workbench.common.stunner.bpmn.client.dataproviders;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestProcessDataEvent;
 
 public class CalledElementFormProvider implements SelectorDataProvider {
 
     @Inject
-    private CalledElementFormDataProvider dataProvider;
+    ProcessesDataProvider dataProvider;
 
-    public void setDataProvider(final CalledElementFormDataProvider dataProvider) {
-        this.dataProvider = dataProvider;
-    }
+    @Inject
+    Event<RequestProcessDataEvent> requestProcessDataEvent;
 
     @Override
     public String getProviderName() {
@@ -38,6 +43,11 @@ public class CalledElementFormProvider implements SelectorDataProvider {
     @Override
     @SuppressWarnings("unchecked")
     public SelectorData getSelectorData(final FormRenderingContext context) {
-        return new SelectorData(dataProvider.getBusinessProcessIDs(), null);
+        requestProcessDataEvent.fire(new RequestProcessDataEvent());
+        return new SelectorData(toMap(dataProvider.getProcessIds()), null);
+    }
+
+    private static Map<Object, String> toMap(final Iterable<String> items) {
+        return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(s -> s, s -> s));
     }
 }

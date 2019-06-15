@@ -15,22 +15,39 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.dataproviders;
 
-import javax.enterprise.inject.Typed;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.kie.workbench.common.stunner.bpmn.project.backend.dataproviders.CalledElementFormProjectDataProvider;
+import org.kie.workbench.common.stunner.bpmn.project.backend.service.ProcessesDataService;
 import org.kie.workbench.common.stunner.cm.backend.query.FindCaseManagementIdsQuery;
 
-@Typed(CaseCalledElementFormDataProvider.class)
-public class CaseCalledElementFormDataProvider extends CalledElementFormProjectDataProvider {
+@Dependent
+public class CaseCalledElementFormDataProvider {
 
-    @Override
-    public ResourceType getProcessIdResourceType() {
-        return ResourceType.BPMN_CM;
+    private final ProcessesDataService dataService;
+
+    @Inject
+    public CaseCalledElementFormDataProvider(final ProcessesDataService dataService) {
+        this.dataService = dataService;
     }
 
-    @Override
-    public String getQueryName() {
-        return FindCaseManagementIdsQuery.NAME;
+    @PostConstruct
+    public void init() {
+        dataService.setQueryName(() -> FindCaseManagementIdsQuery.NAME);
+        dataService.setResourceType(() -> ResourceType.BPMN_CM);
+    }
+
+    public Map<Object, String> getBusinessProcessIDs() {
+        return toMap(dataService.getBusinessProcessIDs());
+    }
+
+    private static Map<Object, String> toMap(final Iterable<String> items) {
+        return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(s -> s, s -> s));
     }
 }

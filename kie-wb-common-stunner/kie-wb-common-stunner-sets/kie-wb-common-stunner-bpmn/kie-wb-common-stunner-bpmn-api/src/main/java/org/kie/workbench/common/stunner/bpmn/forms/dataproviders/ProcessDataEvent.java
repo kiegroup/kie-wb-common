@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ruleflow;
+package org.kie.workbench.common.stunner.bpmn.forms.dataproviders;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class RuleFlowGroupDataChangedEvent {
+public class ProcessDataEvent {
 
-    private final String[] groupNames;
+    private final String[] processIds;
 
-    public RuleFlowGroupDataChangedEvent(final @MapsTo("groupNames") String[] groupNames) {
-        this.groupNames = groupNames;
+    public ProcessDataEvent(final @MapsTo("processIds") String[] processIds) {
+        this.processIds = processIds;
     }
 
-    public String[] getGroupNames() {
-        return groupNames;
+    public String[] getProcessIds() {
+        return processIds;
     }
 }

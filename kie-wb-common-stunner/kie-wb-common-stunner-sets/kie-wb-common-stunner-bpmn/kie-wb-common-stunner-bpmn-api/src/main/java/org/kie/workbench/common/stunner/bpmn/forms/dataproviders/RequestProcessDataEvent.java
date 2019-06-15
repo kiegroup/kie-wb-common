@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.project.service;
+package org.kie.workbench.common.stunner.bpmn.forms.dataproviders;
 
-import java.util.List;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.bus.server.annotations.Remote;
+@Portable
+public class RequestProcessDataEvent {
 
-@Remote
-public interface RuleFlowGroupDataService {
-
-    void checkForUpdates();
-
-    List<String> getRuleFlowGroupNames();
 }
