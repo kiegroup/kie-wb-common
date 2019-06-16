@@ -20,6 +20,7 @@ import javax.enterprise.event.Event;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.HTMLDivElement;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -210,6 +211,16 @@ public class CanvasInPlaceTextEditorControlInLineTest {
         control.onCanvasSelectionEvent(new CanvasSelectionEvent(canvasHandler, UUID));
 
         verify(control).flush();
+    }
+
+    @Test
+    public void testGetCanvasSelectionEvent() {
+        Assert.assertEquals(canvasSelectionEvent , control.getCanvasSelectionEvent());
+    }
+
+    @Test
+    public void testGetFloatingView() {
+        Assert.assertEquals(floatingView , control.getFloatingView());
     }
 
     private void assertShow() {

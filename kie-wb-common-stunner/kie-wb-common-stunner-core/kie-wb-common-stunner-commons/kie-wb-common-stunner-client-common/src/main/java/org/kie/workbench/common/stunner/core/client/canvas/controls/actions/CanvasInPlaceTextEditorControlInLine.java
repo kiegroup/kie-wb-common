@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingView;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.uberfire.client.views.pfly.selectpicker.JQueryElementOffset;
@@ -57,6 +58,7 @@ public class CanvasInPlaceTextEditorControlInLine extends AbstractCanvasInPlaceT
     public CanvasInPlaceTextEditorControl<AbstractCanvasHandler, EditorSession, Element> show(final Element item,
                                                                                               final double x,
                                                                                               final double y) {
+
         if (getTextEditorBox().isVisible()) {
             flush();
         }
@@ -69,23 +71,33 @@ public class CanvasInPlaceTextEditorControlInLine extends AbstractCanvasInPlaceT
 
         enableShapeEdit();
         getTextEditorBox().show(item);
-        final double offsetX = getTextEditorBox().getDisplayOffsetX();
-        final double offsetY = getTextEditorBox().getDisplayOffsetY();
 
         double translateX = canvasHandler.getCanvas().getTransform().getTranslate().getX();
         double translateY = canvasHandler.getCanvas().getTransform().getTranslate().getY();
         double scale = canvasHandler.getCanvas().getTransform().getScale().getX();
 
+        HasTitle hasTitle = ((HasTitle)shapeView);
+
+        getTextEditorBox().setFontSize(defaultFontSize * scale);
+        getTextEditorBox().setFontX(hasTitle.getTitleFontX());
+        getTextEditorBox().setFontY(hasTitle.getTitleFontY());
+        getTextEditorBox().setOrientation(hasTitle.getOrientation());
+        getTextEditorBox().setFontPosition(hasTitle.getFontPosition());
+        getTextEditorBox().setFontAlignment(hasTitle.getFontAlignment());
+        getTextEditorBox().setFontSize(defaultFontSize * scale);
+        getTextEditorBox().setWidth(shapeView.getBoundingBox().getWidth() * scale);
+        getTextEditorBox().setHeight(shapeView.getBoundingBox().getHeight() * scale);
+
+        final double offsetX = getTextEditorBox().getDisplayOffsetX();
+        final double offsetY = getTextEditorBox().getDisplayOffsetY();
+
         getFloatingView()
-                .setX(shapeView.getShapeX() * scale)
-                .setY(shapeView.getShapeY() * scale)
+                .setX((hasTitle.getFontPosition().equals("OUTSIDE") ? hasTitle.getTitleFontX() : shapeView.getShapeX()) * scale)
+                .setY((hasTitle.getFontPosition().equals("OUTSIDE") ? hasTitle.getTitleFontY() : shapeView.getShapeY()) * scale)
                 .setOffsetX(((offset.left + offsetX) * scale) + translateX)
                 .setOffsetY(((offset.top + offsetY) * scale) + translateY)
                 .show();
 
-        getTextEditorBox().setWidth(shapeView.getBoundingBox().getWidth() * scale);
-        getTextEditorBox().setHeight(shapeView.getBoundingBox().getHeight() * scale);
-        getTextEditorBox().setFontSize(defaultFontSize * scale);
         return this;
     }
 
@@ -103,4 +115,6 @@ public class CanvasInPlaceTextEditorControlInLine extends AbstractCanvasInPlaceT
     protected Event<CanvasSelectionEvent> getCanvasSelectionEvent() {
         return canvasSelectionEvent;
     }
+
+
 }

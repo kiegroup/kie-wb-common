@@ -21,6 +21,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.Div;
@@ -38,6 +39,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -89,6 +91,9 @@ public class TextEditorInLineBoxViewTest {
 
     private TextEditorInLineBoxView tested;
 
+    @Mock
+    private CSSProperties.WidthUnionType widthUnionType;
+
     @Before
     @SuppressWarnings("unchecked")
     public void init() {
@@ -100,7 +105,29 @@ public class TextEditorInLineBoxViewTest {
         doCallRealMethod().when(tested).show(anyString());
         doCallRealMethod().when(tested).editNameBoxEsc(any(Event.class));
         doCallRealMethod().when(tested).onChangeName(any(Event.class));
+
+        doCallRealMethod().when(tested).setWidth(any(double.class));
+        doCallRealMethod().when(tested).setHeight(any(double.class));
+
+        doCallRealMethod().when(tested).setOrientation(any(String.class));
+        doCallRealMethod().when(tested).setFontAlignment(any(String.class));
+        doCallRealMethod().when(tested).setFontPosition(any(String.class));
+        doCallRealMethod().when(tested).setFontSize(any(double.class));
+        doCallRealMethod().when(tested).onInputChange();
+        doCallRealMethod().when(tested).setHeight(any(double.class));
+        doCallRealMethod().when(tested).getDisplayOffsetY();
+        doCallRealMethod().when(tested).getDisplayOffsetX();
+        doCallRealMethod().when(tested).setFontX(any(double.class));
+        doCallRealMethod().when(tested).setFontY(any(double.class));
+        doCallRealMethod().when(tested).setWidthUnionType(any(elemental2.dom.CSSStyleDeclaration.class), any(double.class));
+
         when(nameField.getAttribute(anyString())).thenReturn("placeHolder");
+        when(editNameBox.getStyle()).thenReturn(style);
+        when(style.getPropertyValue("width")).thenReturn("300");
+        doNothing().when(tested).setWidthUnionType(any(), any(double.class));
+        doNothing().when(tested).setMaxWidthUnionType(any(), any(double.class));
+        doNothing().when(tested).onResize();
+        doNothing().when(tested).fireTitleChangeEvent();
 
         doAnswer(i -> {
             ((Scheduler.ScheduledCommand) i.getArguments()[0]).execute();
@@ -159,13 +186,88 @@ public class TextEditorInLineBoxViewTest {
     @Test
     public void testShowTags() {
         tested.show("AAA\nBBBB\nZZZZ");
-        Assert.assertEquals("AAA<br>BBBB<br>ZZZZ", nameField.innerHTML);
+        Assert.assertEquals("AAA\nBBBB\nZZZZ", nameField.innerHTML);
         tested.show("AAA\nBBBB\nZZZZ  OLOLO");
-        Assert.assertEquals("AAA<br>BBBB<br>ZZZZ&nbsp;&nbsp;OLOLO", nameField.innerHTML);
+        Assert.assertEquals("AAA\nBBBB\nZZZZ  OLOLO", nameField.innerHTML);
     }
 
     @Test
-    public void testGetInnerHTMLValue() {
+    public void setWidth() {
+        tested.setOrientation("HORIZONTAL");
+        tested.setFontPosition("INSIDE");
+        tested.setFontAlignment("TOP");
+        tested.setWidth(300);
+        verify(tested, times(1)).setWidthUnionType(any(), eq(300.0));
+        verify(tested, times(1)).setMaxWidthUnionType(any(), eq(300.0));
+    }
 
+    @Test
+    public void setHeight() {
+        tested.setFontPosition("OUTSIDE");
+        tested.setFontAlignment("TOP");
+        tested.setOrientation("HORIZONTAL");
+        tested.setHeight(300);
+
+        Assert.assertEquals(20.0, tested.defaultHeight, 0.0001);
+
+        verify(tested, times(1)).setStyleProperty(any(), eq("height"), eq(20.0));
+        verify(tested, times(1)).setStyleProperty(any(), eq("min-height"), eq(20.0));
+
+        tested.setFontPosition("INSIDE");
+        tested.setFontAlignment("HORIZONTAL");
+        tested.setHeight(300);
+        verify(tested, times(1)).setStyleProperty(any(), eq("height"), eq(20.0));
+        tested.setOrientation("VERTICAL");
+        tested.setHeight(300);
+        verify(tested, times(2)).setStyleProperty(any(), eq("min-height"), eq(300.0));
+    }
+
+    @Test
+    public void testSetFontAlignment() {
+        final String position = "position";
+        tested.setFontAlignment(position);
+        Assert.assertEquals(position, tested.fontAlignment);
+    }
+
+    @Test
+    public void testSetFontPosition() {
+        final String position = "position";
+        tested.setFontPosition(position);
+        Assert.assertEquals(position, tested.fontPosition);
+    }
+
+    @Test
+    public void testOnInputChange() {
+        tested.onInputChange();
+        //tested.onNodeTitleChangeEvent = onNodeTitleChangeEvent;
+        verify(tested, times(1)).onResize();
+        verify(tested, times(1)).fireTitleChangeEvent();
+    }
+
+    @Test
+    public void testGetDisplayOffsetY() {
+        tested.setFontPosition("INSIDE");
+        Assert.assertEquals(0, tested.getDisplayOffsetX(), 0.0001);
+    }
+
+    @Test
+    public void testGetDisplayOffsetX() {
+        tested.setFontPosition("INSIDE");
+        Assert.assertEquals(0, tested.getDisplayOffsetX(), 0.0001);
+        tested.setFontPosition("OUTSIDE");
+        nameField.innerHTML = "";
+        Assert.assertEquals(-30.0, tested.getDisplayOffsetX(), 0.0001);
+    }
+
+    @Test
+    public void testSetFontX() {
+        tested.setFontY(30.00);
+        Assert.assertEquals(30, tested.fontY, 0.1);
+    }
+
+    @Test
+    public void testSetFontY() {
+        tested.setFontX(30.00);
+        Assert.assertEquals(30, tested.fontX, 0.1);
     }
 }

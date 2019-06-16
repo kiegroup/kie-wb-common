@@ -46,12 +46,12 @@ public class TextEditorInLineBox extends AbstractTextEditorBox {
 
     @Override
     public double getDisplayOffsetX() {
-        return OFFSET_X;
+        return view.getDisplayOffsetX();
     }
 
     @Override
     public double getDisplayOffsetY() {
-        return OFFSET_Y;
+        return view.getDisplayOffsetY();
     }
 
     @Override
@@ -67,6 +67,31 @@ public class TextEditorInLineBox extends AbstractTextEditorBox {
     @Override
     public void setFontSize(double size) {
         view.setFontSize(size);
+    }
+
+    @Override
+    public void setFontX(final double size) {
+        view.setFontX(size);
+    }
+
+    @Override
+    public void setFontY(final double size) {
+        view.setFontY(size);
+    }
+
+    @Override
+    public void setFontPosition(final String position) {
+        view.setFontPosition(position);
+    }
+
+    @Override
+    public void setFontAlignment(final String position) {
+        view.setFontAlignment(position);
+    }
+
+    @Override
+    public void setOrientation(String orientation) {
+        view.setOrientation(orientation);
     }
 
     @Override

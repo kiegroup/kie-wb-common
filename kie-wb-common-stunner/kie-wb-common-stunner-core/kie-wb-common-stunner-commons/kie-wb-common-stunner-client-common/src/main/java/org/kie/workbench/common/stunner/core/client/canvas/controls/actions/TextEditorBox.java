@@ -50,6 +50,17 @@ public interface TextEditorBox<C extends CanvasHandler, E extends Element>
     void setHeight(final double height);
 
     void setFontSize(final double size);
+
+    void setFontX(final double size);
+
+    void setFontY(final double size);
+
+    void setFontPosition(final String position);
+
+    void setFontAlignment(final String position);
+
+    void setOrientation(final String orientation);
+
 }
 
 

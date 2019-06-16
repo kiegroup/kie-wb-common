@@ -19,10 +19,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Specializes;
 
 import org.gwtbootstrap3.extras.animate.client.ui.Animate;
 import org.gwtbootstrap3.extras.animate.client.ui.constants.Animation;
+import org.kie.workbench.common.stunner.client.widgets.canvas.actions.OnNodeTitleChangeEvent;
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingWidgetView;
 
 /**
@@ -62,4 +64,10 @@ public class AnimatedFloatingWidgetView extends FloatingWidgetView {
         }
         super.doHide();
     }
+
+    void onNodeTitleChangeEvent(final @Observes OnNodeTitleChangeEvent event) {
+        stopTimeout();
+        startTimeout();
+    }
+
 }

@@ -257,6 +257,56 @@ public class WiresTextDecorator implements HasTitle<WiresTextDecorator> {
         return text.getFontSize();
     }
 
+    @Override
+    public double getTitleFontX() {
+        return text.getAbsoluteLocation().getX();
+    }
+
+    @Override
+    public double getTitleFontY() {
+        return text.getAbsoluteLocation().getY();
+    }
+
+    @Override
+    public double getTitleWidth() {
+        return text.getBoundingBox().getWidth();
+    }
+
+    @Override
+    public double getTitleHeight() {
+        return text.getBoundingBox().getHeight();
+    }
+
+    @Override
+    public String getTitlePosition() {
+        return getLabelLayout()
+                .getDirectionLayout()
+                .getReferencePosition()
+                .toString();
+    }
+
+    @Override
+    public String getFontPosition() {
+        return getLabelLayout()
+                .getDirectionLayout()
+                .getReferencePosition()
+                .name();
+    }
+
+    @Override
+    public String getFontAlignment() {
+        return getLabelLayout()
+                .getDirectionLayout()
+                .getVerticalAlignment()
+                .name();
+    }
+
+    public String getOrientation() {
+        return getLabelLayout()
+                .getDirectionLayout()
+                .getOrientation().name();
+    }
+
     public WiresTextDecorator setTitleStrokeAlpha(final double strokeAlpha) {
         text.setStrokeAlpha(strokeAlpha);
         return this;

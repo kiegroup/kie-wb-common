@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
 import elemental2.dom.CSSProperties;
+import elemental2.dom.CSSStyleDeclaration;
 import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.HTMLElement;
@@ -35,6 +36,10 @@ import org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWid
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.InLineTextEditorBox;
 import org.uberfire.mvp.Command;
 
+import static elemental2.dom.CSSProperties.MaxWidthUnionType;
+import static elemental2.dom.CSSProperties.WidthUnionType;
+
+
 @Templated(value = "TextEditorInLineBox.html", stylesheet = "TextEditorInLineBox.css")
 @InLineTextEditorBox
 public class TextEditorInLineBoxView
@@ -42,13 +47,26 @@ public class TextEditorInLineBoxView
         implements TextEditorBoxView,
                    IsElement {
 
-    private double defaultWidth = 100.0;
+    protected double defaultWidth = 100.0;
 
-    private double defaultHeight = 100.0;
+    protected double defaultHeight = 20.0;
+
+    protected String fontPosition;
+
+    protected String fontAlignment;
+
+    protected String orientation;
+
+    protected double fontX = 0;
+
+    protected double fontY = 0;
 
     @Inject
     @DataField
-    private HTMLDivElement nameField;
+    protected HTMLDivElement nameField;
+
+    @Inject
+    public javax.enterprise.event.Event<OnNodeTitleChangeEvent> onNodeTitleChangeEvent;
 
     @Inject
     public TextEditorInLineBoxView(final TranslationService translationService) {
@@ -74,6 +92,28 @@ public class TextEditorInLineBoxView
         super.initialize();
         nameField.setAttribute("data-text",
                                translationService.getTranslation(StunnerWidgetsConstants.NameEditBoxWidgetViewImp_name));
+        nameField.addEventListener("input", event -> onInputChange());
+    }
+
+    protected void onInputChange(){
+        onResize();
+        fireTitleChangeEvent();
+    }
+
+    protected void fireTitleChangeEvent() {
+        onNodeTitleChangeEvent.fire(new OnNodeTitleChangeEvent());
+    }
+
+    protected void onResize() {
+        double outer = ((HTMLDivElement) editNameBox).clientHeight;
+        double inner = nameField.clientHeight;
+        if (inner < outer) {
+            nameField.style.borderLeft = "";
+            nameField.style.borderRight = "";
+        } else {
+            nameField.style.borderLeft = "1px solid #0099d3";
+            nameField.style.borderRight = "1px solid #0099d3";
+        }
     }
 
     @Override
@@ -83,6 +123,8 @@ public class TextEditorInLineBoxView
 
     @Override
     public void show(final String name) {
+        nameField.textContent = "";
+        nameField.innerHTML = "";
         nameField.innerHTML = name;
         setVisible();
     }
@@ -121,20 +163,86 @@ public class TextEditorInLineBoxView
         return nameField.innerHTML.replaceAll("<br>", "\n").replaceAll("&nbsp;", " ");
     }
 
-    public void setWidth(final double width) {
-        if (width > defaultWidth) {
+    public void setWidth(double width) {
+        if (!orientation.equals("VERTICAL")) {
+            if (width < defaultWidth) {
+                width = defaultWidth;
+            }
             editNameBox.getStyle().setProperty("width", width + "px");
-            nameField.style.width = CSSProperties.WidthUnionType.of(width - 2 + "px");
+            setWidthUnionType(nameField.style, width);
+            if(fontPosition.equals("INSIDE") && fontAlignment.equals("TOP") && orientation.equals("HORIZONTAL")) {
+                setMaxWidthUnionType(nameField.style, width);
+            }
         }
     }
 
-    public void setHeight(final double height) {
-        if (height > defaultHeight) {
-            editNameBox.getStyle().setProperty("min-height", height + "px");
+    protected void setWidthUnionType(CSSStyleDeclaration style, double width) {
+        style.width = WidthUnionType.of(width - 2 + "px");
+    }
+
+    protected void setMaxWidthUnionType(CSSStyleDeclaration style, double width) {
+        style.maxWidth = MaxWidthUnionType.of(width - 2 + "px");
+    }
+
+    public void setHeight(double height) {
+        if (fontPosition.equals("OUTSIDE") || fontAlignment.equals("TOP")) {
+            height = defaultHeight;
+            setStyleProperty(editNameBox, "height", height);
+        } else {
+            if (height < defaultHeight) {
+                height = defaultHeight;
+            }
         }
+        setStyleProperty(editNameBox, "min-height", height);
+        if (orientation.equals("VERTICAL")) {
+            double width = 350;
+            double maxWidth = (height *35)/100;
+            setStyleProperty(editNameBox, "width", (width > maxWidth ? width : maxWidth));
+            setStyleProperty(editNameBox, "max-width", (width > maxWidth ? width : maxWidth));
+
+            setWidthUnionType(nameField.style, (width > maxWidth ? width : maxWidth) - 2);
+            setMaxWidthUnionType(nameField.style, (width > maxWidth ? width : maxWidth) - 2);
+        }
+    }
+
+    protected void setStyleProperty(Div div, String property, double height){
+        div.getStyle().setProperty(property, height + "px");
     }
 
     public void setFontSize(double size) {
         nameField.style.fontSize = CSSProperties.FontSizeUnionType.of(size + "px");
+    }
+
+    public void setFontX(final double x) {
+        this.fontX = x;
+    }
+
+    public void setFontY(final double y) {
+        this.fontY = y;
+    }
+
+    public void setFontPosition(final String position) {
+        this.fontPosition = position;
+    }
+
+    public void setFontAlignment(final String position) {
+        this.fontAlignment = position;
+    }
+
+    public void setOrientation(final String orientation) {
+        this.orientation = orientation;
+    }
+
+    public double getDisplayOffsetX() {
+        if (fontPosition.equals("OUTSIDE")) {
+            if (nameField.innerHTML != null && nameField.innerHTML.isEmpty()) {
+                return -30;
+            }
+        }
+        return 0;
+    }
+
+    public double getDisplayOffsetY() {
+        return 0;
     }
 }

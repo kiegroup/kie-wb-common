@@ -146,6 +146,46 @@ public class ShapeViewExtStub
     }
 
     @Override
+    public double getTitleFontX() {
+        return 0;
+    }
+
+    @Override
+    public double getTitleFontY() {
+        return 0;
+    }
+
+    @Override
+    public double getTitleWidth() {
+        return 0;
+    }
+
+    @Override
+    public double getTitleHeight() {
+        return 0;
+    }
+
+    @Override
+    public String getTitlePosition() {
+        return null;
+    }
+
+    @Override
+    public String getFontPosition() {
+        return null;
+    }
+
+    @Override
+    public String getFontAlignment() {
+        return null;
+    }
+
+    @Override
+    public String getOrientation() {
+        return null;
+    }
+
+    @Override
     public Object setTitleAlpha(final double alpha) {
         return this;
     }

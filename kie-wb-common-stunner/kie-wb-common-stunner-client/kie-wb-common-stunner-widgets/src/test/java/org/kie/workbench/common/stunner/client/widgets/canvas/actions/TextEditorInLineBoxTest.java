@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.client.widgets.canvas.actions;
 
 import com.google.gwt.event.dom.client.KeyCodes;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,7 @@ import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -86,6 +88,18 @@ public class TextEditorInLineBoxTest {
         when(commandProvider.getCommandManager()).thenReturn(canvasCommandManager);
         when(canvasHandler.getTextPropertyProviderFactory()).thenReturn(textPropertyProviderFactory);
         when(textPropertyProviderFactory.getProvider(any(Element.class))).thenReturn(textPropertyProvider);
+
+        doCallRealMethod().when(view).setOrientation(any(String.class));
+        doCallRealMethod().when(view).setFontAlignment(any(String.class));
+        doCallRealMethod().when(view).setFontPosition(any(String.class));
+        doCallRealMethod().when(view).setFontSize(any(double.class));
+        doCallRealMethod().when(view).onInputChange();
+        doCallRealMethod().when(view).setHeight(any(double.class));
+        doCallRealMethod().when(view).getDisplayOffsetY();
+        doCallRealMethod().when(view).getDisplayOffsetX();
+        doCallRealMethod().when(view).setFontX(any(double.class));
+        doCallRealMethod().when(view).setFontY(any(double.class));
+        doCallRealMethod().when(view).setFontSize(any(double.class));
 
         presenter = new TextEditorInLineBox(view);
 
@@ -142,6 +156,44 @@ public class TextEditorInLineBoxTest {
         presenter.flush();
 
         verifyNameFlushed();
+    }
+
+    @Test
+    public void testPrepareNodeNameToShow() {
+        Assert.assertEquals("AAAA<br>B<br>BB", presenter.prepareNodeNameToShow("AAAA\nB\nBB"));
+        Assert.assertEquals("AAAA<br>B<br>BB&nbsp;&nbsp;ololo", presenter.prepareNodeNameToShow("AAAA\nB\nBB  ololo"));
+    }
+
+    @Test
+    public void testSetOrientation() {
+        presenter.setOrientation("VERTICAL");
+        Assert.assertEquals("VERTICAL", view.orientation);
+    }
+
+    @Test
+    public void testSetFontAlignment() {
+        final String position = "position";
+        presenter.setFontAlignment(position);
+        Assert.assertEquals(position, view.fontAlignment);
+    }
+
+    @Test
+    public void testSetFontPosition() {
+        final String position = "position";
+        presenter.setFontPosition(position);
+        Assert.assertEquals(position, view.fontPosition);
+    }
+
+    @Test
+    public void testSetFontX() {
+        presenter.setFontX(11);
+        Assert.assertEquals(11, view.fontX, 0.001);
+    }
+
+    @Test
+    public void testSetFontY() {
+        presenter.setFontY(11);
+        Assert.assertEquals(11, view.fontY, 0.001);
     }
 
     @SuppressWarnings("unchecked")

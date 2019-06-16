@@ -204,6 +204,64 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     }
 
     @Override
+    public double getTitleFontX() {
+        return textViewDecorator.getTitleFontX();
+    }
+
+    @Override
+    public double getTitleFontY() {
+        return textViewDecorator.getTitleFontY();
+    }
+
+    @Override
+    public double getTitleWidth() {
+        return textViewDecorator
+                .getView()
+                .getBoundingBox()
+                .getWidth();
+    }
+
+    @Override
+    public double getTitleHeight() {
+        return textViewDecorator
+                .getView()
+                .getBoundingBox()
+                .getHeight();
+    }
+
+    @Override
+    public String getTitlePosition() {
+        return textViewDecorator.getLabelLayout()
+                .getDirectionLayout()
+                .getReferencePosition()
+                .toString();
+    }
+
+    @Override
+    public String getFontPosition() {
+        return textViewDecorator.getLabelLayout()
+                .getDirectionLayout()
+                .getReferencePosition()
+                .name();
+    }
+
+    @Override
+    public String getFontAlignment() {
+        return textViewDecorator.getLabelLayout()
+                .getDirectionLayout()
+                .getVerticalAlignment()
+                .name();
+    }
+
+    @Override
+    public String getOrientation() {
+        return textViewDecorator.getLabelLayout()
+                .getDirectionLayout()
+                .getOrientation()
+                .name();
+    }
+
+    @Override
     public T setTitleStrokeAlpha(final double strokeAlpha) {
         textViewDecorator.setTitleStrokeAlpha(strokeAlpha);
         return cast();

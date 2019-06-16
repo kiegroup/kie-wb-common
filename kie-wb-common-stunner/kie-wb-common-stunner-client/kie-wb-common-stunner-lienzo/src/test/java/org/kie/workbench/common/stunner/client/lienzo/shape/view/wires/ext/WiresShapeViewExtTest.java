@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -97,4 +98,58 @@ public class WiresShapeViewExtTest extends AbstractWiresShapeViewText {
         tested.setTextWrapper(wrapperStrategy);
         verify(textDecorator).setTextWrapper(wrapperStrategy);
     }
+
+    @Test
+    public void testGetFontPosition() {
+        assertEquals("INSIDE", tested.getFontPosition());
+    }
+
+    @Test
+    public void testGetOrientation() {
+        assertEquals("HORIZONTAL", tested.getOrientation());
+    }
+
+    @Test
+    public void testGetFontAlignment() {
+        assertEquals("MIDDLE", tested.getFontAlignment());
+    }
+
+    @Test
+    public void testGetTitleFontSize() {
+        assertEquals(0.0, tested.getTitleFontSize(), 0.001);
+    }
+
+    @Test
+    public void testGetTitleFontX() {
+        assertEquals(0.0, tested.getTitleFontX(), 0.001);
+
+    }
+    @Test
+    public void testGetTitleFontY() {
+        assertEquals(0.0, tested.getTitleFontY(), 0.001);
+
+    }
+
+    @Test
+    public void testGetTitleFontFamily() {
+        assertEquals(null, tested.getTitleFontFamily());
+
+    }
+
+    @Test
+    public void testGetTitlePosition() {
+        assertEquals("INSIDE", tested.getTitlePosition());
+
+    }
+
+    @Test
+    public void testGetTitleHeight() {
+        assertEquals(0, tested.getTitleHeight(), 0.001);
+    }
+
+    @Test
+    public void testGetTitleWidth() {
+        assertEquals(0, tested.getTitleWidth(), 0.001);
+    }
+
 }

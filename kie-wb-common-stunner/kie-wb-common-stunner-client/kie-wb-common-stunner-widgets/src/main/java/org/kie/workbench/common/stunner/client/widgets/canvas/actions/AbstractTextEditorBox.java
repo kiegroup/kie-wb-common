@@ -176,6 +176,31 @@ public abstract class AbstractTextEditorBox implements TextEditorBoxView.Present
 
     }
 
+    @Override
+    public void setFontX(final double size) {
+
+    }
+
+    @Override
+    public void setFontY(final double size) {
+
+    }
+
+    @Override
+    public void setFontPosition(final String position) {
+
+    }
+
+    @Override
+    public void setFontAlignment(final String position) {
+
+    }
+
+    @Override
+    public void setOrientation(String orientation) {
+
+    }
+
     public void setElement(Element<? extends Definition> element) {
         this.element = element;
     }
