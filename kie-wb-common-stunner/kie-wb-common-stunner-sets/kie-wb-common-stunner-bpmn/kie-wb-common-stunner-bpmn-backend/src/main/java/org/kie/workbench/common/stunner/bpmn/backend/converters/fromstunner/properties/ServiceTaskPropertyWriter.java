@@ -56,4 +56,6 @@ public class ServiceTaskPropertyWriter extends ActivityPropertyWriter {
     public void setTaskName(String value) {
         CustomInput.taskName.of(task).set(value);
     }
+
+    public void setSlaDueDate(String value) { CustomElement.slaDueDate.of(baseElement).set(value); }
 }
