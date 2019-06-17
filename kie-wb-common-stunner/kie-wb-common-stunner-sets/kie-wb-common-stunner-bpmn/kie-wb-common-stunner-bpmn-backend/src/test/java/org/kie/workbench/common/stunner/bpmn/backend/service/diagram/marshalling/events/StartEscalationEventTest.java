@@ -137,11 +137,7 @@ public class StartEscalationEventTest extends StartEvent<StartEscalationEvent> {
         assertNotNull(executionSet.getEscalationRef());
         assertEquals(escalationRef, executionSet.getEscalationRef().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 }

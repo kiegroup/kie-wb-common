@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseStartEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -155,5 +156,19 @@ public abstract class StartEvent<T extends BaseStartEvent> extends BPMNDiagramMa
 
     protected Marshaller getMarshallerType() {
         return this.marshallerType;
+    }
+
+    protected void assertStartEventSlaDueDate(BaseStartEventExecutionSet executionSet, String slaDueDate) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getSlaDueDate());
+            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
+        }
+    }
+
+    protected void assertStartEventIsInterrupting(BaseStartEventExecutionSet executionSet, boolean isInterrupting) {
+        if (getMarshallerType() == Marshaller.NEW) {
+            assertNotNull(executionSet.getIsInterrupting());
+            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
+        }
     }
 }

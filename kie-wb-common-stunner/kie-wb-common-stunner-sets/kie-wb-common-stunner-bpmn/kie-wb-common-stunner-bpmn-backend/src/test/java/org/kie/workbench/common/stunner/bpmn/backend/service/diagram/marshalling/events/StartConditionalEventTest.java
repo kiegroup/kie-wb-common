@@ -165,11 +165,7 @@ public class StartConditionalEventTest extends StartEvent<StartConditionalEvent>
         assertEquals(conditionExpressionScript, executionSet.getConditionExpression().getValue().getScript());
         assertEquals(conditionExpressionType, executionSet.getConditionExpression().getType().getName());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 }

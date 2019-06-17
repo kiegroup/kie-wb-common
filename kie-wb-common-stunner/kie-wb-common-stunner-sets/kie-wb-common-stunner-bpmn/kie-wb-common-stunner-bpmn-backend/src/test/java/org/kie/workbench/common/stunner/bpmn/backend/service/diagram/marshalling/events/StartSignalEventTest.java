@@ -137,11 +137,7 @@ public class StartSignalEventTest extends StartEvent<StartSignalEvent> {
         assertNotNull(executionSet.getSignalRef());
         assertEquals(eventName, executionSet.getSignalRef().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 }

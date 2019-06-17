@@ -137,11 +137,7 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
         assertNotNull(executionSet.getErrorRef());
         assertEquals(eventName, executionSet.getErrorRef().getValue());
 
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 }

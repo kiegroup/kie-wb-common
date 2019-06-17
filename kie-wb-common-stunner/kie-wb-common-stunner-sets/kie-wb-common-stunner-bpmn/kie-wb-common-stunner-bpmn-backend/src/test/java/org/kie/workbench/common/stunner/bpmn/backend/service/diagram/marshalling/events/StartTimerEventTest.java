@@ -221,8 +221,8 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeDate());
 
-        assertTimerEventIsInterrupting(executionSet, isInterrupting);
-        assertTimerEventSlaDueDate(executionSet, slaDueDate);
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventAfterDuration(InterruptingTimerEventExecutionSet executionSet, String timerValue, boolean isInterrupting, String slaDueDate) {
@@ -234,8 +234,8 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycle());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        assertTimerEventIsInterrupting(executionSet, isInterrupting);
-        assertTimerEventSlaDueDate(executionSet, slaDueDate);
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventSpecificDate(InterruptingTimerEventExecutionSet executionSet, String dateValue, boolean isInterrupting, String slaDueDate) {
@@ -247,8 +247,8 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        assertTimerEventIsInterrupting(executionSet, isInterrupting);
-        assertTimerEventSlaDueDate(executionSet, slaDueDate);
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 
     private void assertTimerEventEmpty(InterruptingTimerEventExecutionSet executionSet, boolean isInterrupting, String slaDueDate) {
@@ -260,21 +260,7 @@ public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
         assertNull(executionSet.getTimerSettings().getValue().getTimeDuration());
         assertNull(executionSet.getTimerSettings().getValue().getTimeCycleLanguage());
 
-        assertTimerEventIsInterrupting(executionSet, isInterrupting);
-        assertTimerEventSlaDueDate(executionSet, slaDueDate);
-    }
-
-    private void assertTimerEventSlaDueDate(InterruptingTimerEventExecutionSet executionSet, String slaDueDate) {
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getSlaDueDate());
-            assertEquals(slaDueDate, executionSet.getSlaDueDate().getValue());
-        }
-    }
-
-    private void assertTimerEventIsInterrupting(InterruptingTimerEventExecutionSet executionSet, boolean isInterrupting) {
-        if (getMarshallerType() == Marshaller.NEW) {
-            assertNotNull(executionSet.getIsInterrupting());
-            assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
-        }
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 }
