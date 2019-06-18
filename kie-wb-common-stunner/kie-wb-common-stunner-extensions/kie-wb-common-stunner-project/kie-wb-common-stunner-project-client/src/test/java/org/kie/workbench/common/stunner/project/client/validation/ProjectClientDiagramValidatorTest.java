@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.client.validation;
+package org.kie.workbench.common.stunner.project.client.validation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,8 +32,8 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.ModelValidator;
-import org.kie.workbench.common.stunner.core.validation.ValidationService;
 import org.kie.workbench.common.stunner.core.validation.impl.ElementViolationImpl;
+import org.kie.workbench.common.stunner.project.service.ProjectValidationService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
@@ -43,9 +43,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ClientDiagramValidatorTest {
+public class ProjectClientDiagramValidatorTest {
 
-    private ClientDiagramValidator clientDiagramValidator;
+    private ProjectClientDiagramValidator clientDiagramValidator;
 
     @Mock
     private TreeWalkTraverseProcessor treeWalkTraverseProcessor;
@@ -54,7 +54,7 @@ public class ClientDiagramValidatorTest {
     private ModelValidator modelValidator;
 
     @Mock
-    private ValidationService validationService;
+    private ProjectValidationService validationService;
 
     @Mock
     private Diagram diagram;
@@ -77,8 +77,8 @@ public class ClientDiagramValidatorTest {
         when(diagram.getName()).thenReturn("Test diagram");
         when(diagram.getMetadata()).thenReturn(metadata);
         when(validationService.validate(diagram)).thenReturn(violations);
-        clientDiagramValidator = new ClientDiagramValidator(graphTestHandler.definitionManager, graphTestHandler.ruleManager,
-                                                            treeWalkTraverseProcessor, modelValidator, new CallerMock<>(validationService));
+        clientDiagramValidator = new ProjectClientDiagramValidator(graphTestHandler.definitionManager, graphTestHandler.ruleManager,
+                                                                   treeWalkTraverseProcessor, modelValidator, new CallerMock<>(validationService));
     }
 
     @Test

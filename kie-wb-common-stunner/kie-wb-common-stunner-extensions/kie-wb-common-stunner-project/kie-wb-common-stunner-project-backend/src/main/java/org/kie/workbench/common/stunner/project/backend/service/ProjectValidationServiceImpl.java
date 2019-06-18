@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.backend.service;
+package org.kie.workbench.common.stunner.project.backend.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,31 +34,26 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DomainValidator;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
-import org.kie.workbench.common.stunner.core.validation.ValidationService;
 import org.kie.workbench.common.stunner.core.validation.impl.ElementViolationImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.kie.workbench.common.stunner.project.service.ProjectValidationService;
 
 @ApplicationScoped
 @Service
-public class ValidationServiceImpl implements ValidationService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceImpl.class.getName());
+public class ProjectValidationServiceImpl implements ProjectValidationService {
 
     private final Instance<DomainValidator> validators;
 
-    protected ValidationServiceImpl() {
+    protected ProjectValidationServiceImpl() {
         this(null);
     }
 
     @Inject
-    public ValidationServiceImpl(Instance<DomainValidator> validators) {
+    public ProjectValidationServiceImpl(Instance<DomainValidator> validators) {
         this.validators = validators;
     }
 
     @Override
     public Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram) {
-        //handle domain violations (BPMN, DMN, CM...)
         return domainViolations(diagram).stream()
                 .filter(v -> !"null".equals(v.getUUID()))
                 .collect(Collectors.groupingBy(DomainViolation::getUUID))
@@ -74,7 +69,7 @@ public class ValidationServiceImpl implements ValidationService {
                 .findFirst()
                 .map(validator -> {
                     final List<DomainViolation> domainViolations = new ArrayList<>();
-                    validator.validate(diagram, violations -> domainViolations.addAll(violations));
+                    validator.validate(diagram, domainViolations::addAll);
                     return domainViolations;
                 }).orElseGet(Collections::emptyList);
     }
