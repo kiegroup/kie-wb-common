@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.impl.ServiceTaskImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
@@ -29,6 +30,8 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 
 import static junit.framework.TestCase.assertEquals;
 
+// TODO: Temporary disabled - see RHPAM-2183.
+@Ignore
 public class GenericServiceTaskTest extends BPMNDiagramMarshallerBase {
 
     private static final String BPMN_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/genericServiceTasks.bpmn";

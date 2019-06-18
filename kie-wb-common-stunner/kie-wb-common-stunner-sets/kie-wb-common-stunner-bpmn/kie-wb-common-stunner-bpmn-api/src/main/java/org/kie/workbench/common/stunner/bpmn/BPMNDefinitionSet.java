@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
-import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEventThrowing;
@@ -82,7 +81,8 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 NoneTask.class,
                 UserTask.class,
                 ScriptTask.class,
-                GenericServiceTask.class,
+                // TODO: Temporary disabled - see RHPAM-2183.
+                // GenericServiceTask.class,
                 BusinessRuleTask.class,
                 StartNoneEvent.class,
                 StartMessageEvent.class,
