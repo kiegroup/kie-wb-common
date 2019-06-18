@@ -27,6 +27,8 @@ public class DateTimeValueConverter {
     static final String PREFIX = "date and time(\"";
     static final String SUFFIX = "\")";
 
+    private static final int DATE_LENGTH = 10;
+
     private final DateValueFormatter dateValueFormatter;
     private final TimeValueFormatter timeValueFormatter;
 
@@ -86,14 +88,14 @@ public class DateTimeValueConverter {
 
     String extractTime(final String value) {
 
-        if (value.length() <= 11) {
+        if (value.length() <= DATE_LENGTH + 1) {
             return "";
         }
-        return value.substring(11);
+        return value.substring(DATE_LENGTH + 1);
     }
 
     String extractDate(final String value) {
-        return value.substring(0, 10);
+        return value.substring(0, DATE_LENGTH);
     }
 
     public String toDisplay(final String rawValue) {
