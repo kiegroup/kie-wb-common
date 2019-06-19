@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.submarine.client.editor;
 
+import java.lang.annotation.Annotation;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -43,6 +45,8 @@ public interface DiagramEditorCore<M extends Metadata, D extends Diagram<Graph, 
     }
 
     void open(final D diagram);
+
+    Annotation[] getDockQualifiers();
 
     void initialiseKieEditorForSession(final D diagram);
 

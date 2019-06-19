@@ -55,6 +55,7 @@ public class ProjectValidationServiceImpl implements ProjectValidationService {
     @Override
     public Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram) {
         return domainViolations(diagram).stream()
+                .filter(v -> Objects.nonNull(v.getUUID()))
                 .filter(v -> !"null".equals(v.getUUID()))
                 .collect(Collectors.groupingBy(DomainViolation::getUUID))
                 .entrySet()

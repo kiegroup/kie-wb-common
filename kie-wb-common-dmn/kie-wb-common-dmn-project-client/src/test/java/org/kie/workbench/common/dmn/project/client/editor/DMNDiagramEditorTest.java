@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.project.client.editor;
 
+import java.lang.annotation.Annotation;
+
 import javax.enterprise.event.Event;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -24,6 +26,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -34,6 +37,7 @@ import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
+import org.kie.workbench.common.dmn.project.client.resources.i18n.DMNProjectClientConstants;
 import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
@@ -58,6 +62,7 @@ import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramRes
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.kie.workbench.common.widgets.client.docks.DefaultEditorDock;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -69,8 +74,11 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -275,6 +283,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Test
     public void testOnDiagramLoadWhenCanvasHandlerIsNotNull() {
+        when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
+        when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(importsPageProvider.withDiagram(diagram)).thenReturn(importsPageProvider);
 
         open();
@@ -322,6 +333,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Test
     public void testOnEditExpressionEvent() {
         when(editExpressionEvent.getSession()).thenReturn(dmnEditorSession);
+        when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
+        when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
 
         open();
 
@@ -377,5 +390,29 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(decisionNavigatorDock).close();
         verify(decisionNavigatorDock).resetContent();
         verify(docks).hide();
+    }
+
+    @Override
+    public void testDocksQualifiers() {
+        final Annotation[] qualifiers = presenter.getDockQualifiers();
+        assertEquals(1, qualifiers.length);
+        assertEquals(DMNEditor.class, qualifiers[0].annotationType());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testParsingErrorMessage() {
+        doAnswer(i -> i.getArguments()[0]).when(translationService).getValue(anyString());
+
+        final String xml = "xml";
+
+        openInvalidBPMNFile(xml);
+
+        final ArgumentCaptor<NotificationEvent> notificationEventCaptor = ArgumentCaptor.forClass(NotificationEvent.class);
+        verify(notificationEvent).fire(notificationEventCaptor.capture());
+
+        final NotificationEvent notificationEvent = notificationEventCaptor.getValue();
+        assertEquals(DMNProjectClientConstants.DMNDiagramParsingErrorMessage,
+                     notificationEvent.getNotification());
     }
 }

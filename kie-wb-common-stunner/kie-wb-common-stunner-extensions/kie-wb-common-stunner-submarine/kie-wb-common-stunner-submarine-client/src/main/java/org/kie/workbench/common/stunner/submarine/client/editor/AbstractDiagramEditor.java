@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.submarine.client.editor;
 
+import java.lang.annotation.Annotation;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -31,6 +32,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
@@ -115,6 +117,11 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         @Override
         protected DiagramEditorProxy<SubmarineDiagramResourceImpl> makeEditorProxy() {
             return new DiagramEditorProxy<>();
+        }
+
+        @Override
+        public Annotation[] getDockQualifiers() {
+            return AbstractDiagramEditor.this.getDockQualifiers();
         }
 
         @Override
@@ -291,6 +298,11 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
     }
 
     @Override
+    public Annotation[] getDockQualifiers() {
+        return new Annotation[]{DefinitionManager.DEFAULT_QUALIFIER};
+    }
+
+    @Override
     public void initialiseKieEditorForSession(final SubmarineDiagram diagram) {
         resetEditorPages();
         updateTitle(diagram.getMetadata().getTitle());
@@ -318,7 +330,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
                     addPage(new DocumentationPage(documentationView.initialize(diagram),
                                                   label,
                                                   //firing the OnDiagramFocusEvent will force the docks to be minimized
-                                                  () -> onDiagramFocusEvent.fire(new OnDiagramFocusEvent()),
+                                                  () -> onDiagramFocusEvent.fire(new OnDiagramFocusEvent(getDockQualifiers())),
                                                   //check the DocumentationPage is active, the index is 2
                                                   () -> Objects.equals(2, getSelectedTabIndex())));
                 });

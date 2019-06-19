@@ -15,6 +15,21 @@
  */
 package org.kie.workbench.common.stunner.submarine.client.editor.event;
 
+import java.lang.annotation.Annotation;
+
 public class OnDiagramFocusEvent {
 
+    private final Annotation[] qualifiers;
+
+    public OnDiagramFocusEvent(final Annotation qualifier) {
+        this.qualifiers = new Annotation[]{qualifier};
+    }
+
+    public OnDiagramFocusEvent(final Annotation[] qualifiers) {
+        this.qualifiers = qualifiers;
+    }
+
+    public Annotation[] getQualifiers() {
+        return qualifiers;
+    }
 }

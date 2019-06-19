@@ -336,8 +336,10 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                              kind,
                                                              expression,
                                                              (editor) -> {
-                                                                 resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
-                                                                 editor.ifPresent(BaseExpressionGrid::selectFirstCell);
+                                                                 editor.ifPresent(e -> {
+                                                                     e.resize(BaseExpressionGrid.RESIZE_EXISTING);
+                                                                     e.selectFirstCell();
+                                                                 });
                                                              },
                                                              () -> {
                                                                  resize(BaseExpressionGrid.RESIZE_EXISTING_MINIMUM);
@@ -374,12 +376,6 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
                                                                              selectExpressionEditorFirstCell(0, 1);
                                                                          }));
         });
-    }
-
-    @Override
-    public void doAfterSelectionChange(final int uiRowIndex,
-                                       final int uiColumnIndex) {
-        selectExpressionEditorFirstCell(0, 1);
     }
 
     @Override

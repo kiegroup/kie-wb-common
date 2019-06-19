@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.project.client.editor;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
@@ -53,6 +55,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
+import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
@@ -79,6 +82,7 @@ import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateValidator;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -240,6 +244,9 @@ public class AbstractProjectDiagramEditorTest {
 
     @Mock
     protected DocumentationView documentationView;
+
+    @Captor
+    protected ArgumentCaptor<DocumentationPage> documentationPageCaptor;
 
     @Mock
     protected AbstractProjectDiagramEditorCore<ProjectMetadata, ProjectDiagram, ProjectDiagramResource, ProjectDiagramEditorProxy<ProjectDiagramResource>> presenterCore;
@@ -855,5 +862,27 @@ public class AbstractProjectDiagramEditorTest {
 
         verify(onDiagramFocusEvent).fire(any());
         verify(defaultEditorDock).show();
+    }
+
+    @Test
+    public void testDocksQualifiers() {
+        final Annotation[] qualifiers = presenter.getDockQualifiers();
+        assertEquals(1, qualifiers.length);
+        assertEquals(DefinitionManager.DEFAULT_QUALIFIER, qualifiers[0]);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testAddDocumentationPage() {
+        when(documentationView.isEnabled()).thenReturn(Boolean.TRUE);
+        when(translationService.getValue(StunnerProjectClientConstants.DOCUMENTATION)).thenReturn(DOC_LABEL);
+        when(documentationView.initialize(diagram)).thenReturn(documentationView);
+
+        presenter.addDocumentationPage(diagram);
+        verify(translationService).getValue(StunnerProjectClientConstants.DOCUMENTATION);
+        verify(kieView).addPage(documentationPageCaptor.capture());
+        final DocumentationPage documentationPage = documentationPageCaptor.getValue();
+        assertEquals(documentationPage.getDocumentationView(), documentationView);
+        assertEquals(documentationPage.getLabel(), DOC_LABEL);
     }
 }

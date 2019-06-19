@@ -47,6 +47,7 @@ import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueComman
 import org.kie.workbench.common.dmn.client.commands.general.SetTypeRefCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.ListBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -248,6 +249,16 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                                                       newCellHasValueCommand());
     }
 
+    public ListBoxSingletonDOMElementFactory getBodyListBoxFactory() {
+        return new ListBoxSingletonDOMElementFactory(gridPanel,
+                                                     gridLayer,
+                                                     this,
+                                                     sessionManager,
+                                                     sessionCommandManager,
+                                                     newCellHasNoValueCommand(),
+                                                     newCellHasValueCommand());
+    }
+
     protected Function<GridCellTuple, Command> newCellHasNoValueCommand() {
         return (gridCellTuple) -> new DeleteCellValueCommand(gridCellTuple,
                                                              () -> uiModelMapper,
@@ -307,7 +318,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     }
 
     @Override
-    protected List<NodeMouseEventHandler> getNodeMouseClickEventHandlers(final GridSelectionManager selectionManager) {
+    public List<NodeMouseEventHandler> getNodeMouseClickEventHandlers(final GridSelectionManager selectionManager) {
         final List<NodeMouseEventHandler> handlers = new ArrayList<>();
         handlers.add(new DefaultGridWidgetCellSelectorMouseEventHandler(selectionManager));
         handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler());
@@ -315,8 +326,8 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     }
 
     @Override
-    protected List<NodeMouseEventHandler> getNodeMouseDoubleClickEventHandlers(final GridSelectionManager selectionManager,
-                                                                               final GridPinnedModeManager pinnedModeManager) {
+    public List<NodeMouseEventHandler> getNodeMouseDoubleClickEventHandlers(final GridSelectionManager selectionManager,
+                                                                            final GridPinnedModeManager pinnedModeManager) {
         final List<NodeMouseEventHandler> handlers = new ArrayList<>();
         handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler());
         return handlers;
@@ -325,6 +336,10 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     @Override
     public boolean onDragHandle(final INodeXYEvent event) {
         return false;
+    }
+
+    public DMNGridPanel getGridPanel() {
+        return gridPanel;
     }
 
     @Override
@@ -409,23 +424,24 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
         doResize(new GridLayerRedrawManager.PrioritizedCommand(0) {
                      @Override
                      public void execute() {
-                         gridLayer.draw();
+                         getLayer().draw();
                      }
                  },
                  requiredWidthSupplier);
     }
 
-    protected void doResize(final GridLayerRedrawManager.PrioritizedCommand command,
-                            final Function<BaseExpressionGrid, Double> requiredWidthSupplier) {
+    public void doResize(final GridLayerRedrawManager.PrioritizedCommand command,
+                         final Function<BaseExpressionGrid, Double> requiredWidthSupplier) {
         final double proposedWidth = getWidth() + getPadding() * 2;
-        parent.proposeContainingColumnWidth(proposedWidth, requiredWidthSupplier);
+        getParentInformation().proposeContainingColumnWidth(proposedWidth, requiredWidthSupplier);
 
-        gridPanel.refreshScrollPosition();
-        gridPanel.updatePanelSize();
-        gridPanel.setFocus(true);
-        parent.onResize();
+        getGridPanel().refreshScrollPosition();
+        getGridPanel().updatePanelSize();
+        getGridPanel().setFocus(true);
+        getParentInformation().onResize();
 
-        gridLayer.batch(command);
+        //This cast is safe as the constructor expects a DMNGridLayer.
+        ((DMNGridLayer) getLayer()).batch(command);
     }
 
     public void selectFirstCell() {
