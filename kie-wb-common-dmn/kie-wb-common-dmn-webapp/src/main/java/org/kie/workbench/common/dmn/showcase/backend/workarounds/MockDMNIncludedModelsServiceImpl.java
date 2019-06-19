@@ -22,18 +22,45 @@ import java.util.List;
 import javax.enterprise.inject.Specializes;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
+import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.backend.editors.included.DMNIncludedModelsServiceImpl;
+import org.uberfire.backend.vfs.Path;
 
 @Specializes
 public class MockDMNIncludedModelsServiceImpl extends DMNIncludedModelsServiceImpl {
 
     public MockDMNIncludedModelsServiceImpl() {
-        super(null, null, null, null);
+        super(null, null, null, null, null);
     }
 
     @Override
-    public List<DMNIncludedModel> loadModels(final WorkspaceProject workspaceProject) {
+    public List<IncludedModel> loadModels(final Path path,
+                                          final WorkspaceProject workspaceProject) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<DMNIncludedNode> loadNodesFromImports(final WorkspaceProject workspaceProject,
+                                                      final List<DMNIncludedModel> includedModels) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<PMMLDocumentMetadata> loadPMMLDocumentsFromImports(final Path path,
+                                                                   final WorkspaceProject workspaceProject,
+                                                                   final List<PMMLIncludedModel> includedModels) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<ItemDefinition> loadItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
+                                                               final String modelName,
+                                                               final String namespace) {
         return Collections.emptyList();
     }
 }
