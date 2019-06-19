@@ -31,10 +31,10 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSe
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToRawFormatSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
@@ -108,12 +108,12 @@ public abstract class AbstractDiagramEditorMenuSessionItems<BUILDER extends Abst
                                                                  this::export_imageJPG,
                                                                  this::export_imageSVG,
                                                                  this::export_imagePDF,
-                                                                 this::export_fileBPMN);
+                                                                 this::export_fileRaw);
         menuItems.put(ExportToPngSessionCommand.class, exportsItem);
         menuItems.put(ExportToJpgSessionCommand.class, exportsItem);
         menuItems.put(ExportToSvgSessionCommand.class, exportsItem);
         menuItems.put(ExportToPdfSessionCommand.class, exportsItem);
-        menuItems.put(ExportToBpmnSessionCommand.class, exportsItem);
+        menuItems.put(ExportToRawFormatSessionCommand.class, exportsItem);
         final MenuItem pasteItem = itemsBuilder.newPasteItem(this::paste);
         menuItems.put(PasteSelectionSessionCommand.class, pasteItem);
         final MenuItem copyItem = itemsBuilder.newCopyItem(this::menu_copy);
@@ -157,8 +157,7 @@ public abstract class AbstractDiagramEditorMenuSessionItems<BUILDER extends Abst
         setItemEnabled(ExportToPngSessionCommand.class, enabled);
         setItemEnabled(ExportToSvgSessionCommand.class, enabled);
         setItemEnabled(ExportToPdfSessionCommand.class, enabled);
-        setItemEnabled(ExportToBpmnSessionCommand.class, enabled);
-
+        setItemEnabled(ExportToRawFormatSessionCommand.class, enabled);
         setItemEnabled(DeleteSelectionSessionCommand.class, false);
         setItemEnabled(UndoSessionCommand.class, false);
         setItemEnabled(RedoSessionCommand.class, false);
@@ -262,8 +261,8 @@ public abstract class AbstractDiagramEditorMenuSessionItems<BUILDER extends Abst
         sessionCommands.getExportToSvgSessionCommand().execute();
     }
 
-    private void export_fileBPMN() {
-        sessionCommands.getExportToBpmnSessionCommand().execute();
+    private void export_fileRaw() {
+        sessionCommands.getExportToRawFormatSessionCommand().execute();
     }
 
     private void menu_copy() {

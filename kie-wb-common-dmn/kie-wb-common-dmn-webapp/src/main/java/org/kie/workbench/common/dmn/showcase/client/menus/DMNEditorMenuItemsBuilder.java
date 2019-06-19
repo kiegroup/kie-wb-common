@@ -19,7 +19,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.showcase.client.resources.i18n.SubmarineClientConstants;
 import org.kie.workbench.common.stunner.client.widgets.popups.PopupUtil;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuItemsBuilder;
@@ -39,10 +38,5 @@ public class DMNEditorMenuItemsBuilder extends AbstractDiagramEditorMenuItemsBui
                                      final PopupUtil popupUtil) {
         super(translationService,
               popupUtil);
-    }
-
-    @Override
-    protected String getExportAsRawLabel() {
-        return translationService.getValue(SubmarineClientConstants.DMNDiagramResourceTypeDownload);
     }
 }

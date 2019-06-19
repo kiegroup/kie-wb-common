@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.stunner.submarine.client.editor;
 
+import java.util.Optional;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
@@ -206,8 +208,8 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
                                           exportSVGCommand));
         menu.add(makeExportMenuItemWidget(translationService.getValue(CoreTranslationMessages.EXPORT_PDF),
                                           exportPDFCommand));
-        menu.add(makeExportMenuItemWidget(getExportAsRawLabel(),
-                                          exportAsRawCommand));
+        getExportLabelToRawFormatIfSupported().ifPresent(label -> menu.add(makeExportMenuItemWidget(label,
+                                                                                                    exportAsRawCommand)));
 
         final Button button = GWT.create(Button.class);
         final ButtonGroup buttonGroup = GWT.create(ButtonGroup.class);
@@ -235,7 +237,9 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
         return exportMenuItemWidget;
     }
 
-    protected abstract String getExportAsRawLabel();
+    protected Optional<String> getExportLabelToRawFormatIfSupported() {
+        return Optional.empty();
+    }
 
     public MenuItem newValidateItem(final Command command) {
         return buildItem(buildValidateItem(command));

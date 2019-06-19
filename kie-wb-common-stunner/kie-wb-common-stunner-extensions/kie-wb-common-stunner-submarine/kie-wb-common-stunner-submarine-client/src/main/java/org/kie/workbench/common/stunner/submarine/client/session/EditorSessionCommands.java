@@ -27,10 +27,10 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSe
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToRawFormatSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
@@ -67,7 +67,7 @@ public class EditorSessionCommands {
                 .register(ExportToJpgSessionCommand.class)
                 .register(ExportToPdfSessionCommand.class)
                 .register(ExportToSvgSessionCommand.class)
-                .register(ExportToBpmnSessionCommand.class)
+                .register(ExportToRawFormatSessionCommand.class)
                 .register(CopySelectionSessionCommand.class)
                 .register(PasteSelectionSessionCommand.class)
                 .register(CutSelectionSessionCommand.class)
@@ -84,70 +84,70 @@ public class EditorSessionCommands {
     }
 
     public VisitGraphSessionCommand getVisitGraphSessionCommand() {
-        return commands.get(0);
+        return commands.get(VisitGraphSessionCommand.class);
     }
 
     public SwitchGridSessionCommand getSwitchGridSessionCommand() {
-        return commands.get(1);
+        return commands.get(SwitchGridSessionCommand.class);
     }
 
     public ClearSessionCommand getClearSessionCommand() {
-        return commands.get(2);
+        return commands.get(ClearSessionCommand.class);
     }
 
     public DeleteSelectionSessionCommand getDeleteSelectionSessionCommand() {
-        return commands.get(3);
+        return commands.get(DeleteSelectionSessionCommand.class);
     }
 
     public UndoSessionCommand getUndoSessionCommand() {
-        return commands.get(4);
+        return commands.get(UndoSessionCommand.class);
     }
 
     public RedoSessionCommand getRedoSessionCommand() {
-        return commands.get(5);
+        return commands.get(RedoSessionCommand.class);
     }
 
     public ValidateSessionCommand getValidateSessionCommand() {
-        return commands.get(6);
+        return commands.get(ValidateSessionCommand.class);
     }
 
     public ExportToPngSessionCommand getExportToPngSessionCommand() {
-        return commands.get(7);
+        return commands.get(ExportToPngSessionCommand.class);
     }
 
     public ExportToJpgSessionCommand getExportToJpgSessionCommand() {
-        return commands.get(8);
+        return commands.get(ExportToJpgSessionCommand.class);
     }
 
     public ExportToPdfSessionCommand getExportToPdfSessionCommand() {
-        return commands.get(9);
+        return commands.get(ExportToPdfSessionCommand.class);
     }
 
     public ExportToSvgSessionCommand getExportToSvgSessionCommand() {
-        return commands.get(10);
+        return commands.get(ExportToSvgSessionCommand.class);
     }
 
-    public ExportToBpmnSessionCommand getExportToBpmnSessionCommand() {
-        return commands.get(11);
+    public ExportToRawFormatSessionCommand getExportToRawFormatSessionCommand() {
+        return commands.get(ExportToRawFormatSessionCommand.class);
     }
 
     public CopySelectionSessionCommand getCopySelectionSessionCommand() {
-        return commands.get(12);
+        return commands.get(CopySelectionSessionCommand.class);
     }
 
     public PasteSelectionSessionCommand getPasteSelectionSessionCommand() {
-        return commands.get(13);
+        return commands.get(PasteSelectionSessionCommand.class);
     }
 
     public CutSelectionSessionCommand getCutSelectionSessionCommand() {
-        return commands.get(14);
+        return commands.get(CutSelectionSessionCommand.class);
     }
 
     public SaveDiagramSessionCommand getSaveDiagramSessionCommand() {
-        return commands.get(15);
+        return commands.get(SaveDiagramSessionCommand.class);
     }
 
-    public <S extends ClientSessionCommand> S get(final int index) {
-        return commands.get(index);
+    public <S extends ClientSessionCommand> S get(final Class<? extends ClientSessionCommand> type) {
+        return commands.get(type);
     }
 }

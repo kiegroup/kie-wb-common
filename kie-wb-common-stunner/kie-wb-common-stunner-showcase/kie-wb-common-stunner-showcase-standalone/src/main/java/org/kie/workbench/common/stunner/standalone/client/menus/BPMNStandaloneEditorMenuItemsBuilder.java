@@ -40,9 +40,4 @@ public class BPMNStandaloneEditorMenuItemsBuilder extends AbstractDiagramEditorM
         super(translationService,
               popupUtil);
     }
-
-    @Override
-    protected String getExportAsRawLabel() {
-        return translationService.getValue("Download BPMN");
-    }
 }

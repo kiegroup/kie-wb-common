@@ -21,8 +21,9 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+
+// TODO: (kogito) Remove class?
 
 @Dependent
 @Typed(BPMNStandaloneEditorMenuSessionItems.class)
@@ -33,15 +34,5 @@ public class BPMNStandaloneEditorMenuSessionItems extends AbstractDiagramEditorM
                                                 final @BPMN BPMNStandaloneEditorSessionCommands sessionCommands) {
         super(itemsBuilder,
               sessionCommands);
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        superSetEnabled(enabled);
-        setItemEnabled(PerformAutomaticLayoutCommand.class, enabled);
-    }
-
-    void superSetEnabled(final boolean enabled) {
-        super.setEnabled(enabled);
     }
 }

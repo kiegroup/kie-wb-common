@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.stunner.cm.project.client.editor;
 
+import java.util.Optional;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
@@ -41,7 +43,7 @@ public class CaseManagementProjectDiagramEditorMenuItemsBuilder extends Abstract
     }
 
     @Override
-    protected String getExportAsRawLabel() {
-        return translationService.getValue(CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeDownload);
+    protected Optional<String> getExportLabelToRawFormatIfSupported() {
+        return Optional.of(translationService.getValue(CaseManagementProjectClientConstants.CaseManagementDiagramResourceTypeDownload));
     }
 }

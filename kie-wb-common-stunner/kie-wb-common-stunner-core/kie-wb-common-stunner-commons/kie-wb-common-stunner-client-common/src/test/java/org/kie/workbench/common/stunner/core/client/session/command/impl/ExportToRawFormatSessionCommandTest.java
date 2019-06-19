@@ -38,7 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class ExportToBpmnSessionCommandTest extends AbstractExportSessionCommandTest {
+public class ExportToRawFormatSessionCommandTest extends AbstractExportSessionCommandTest {
 
     private static final String FILE_RAW_CONTENT = "FILE_RAW_CONTENT";
 
@@ -53,7 +53,7 @@ public class ExportToBpmnSessionCommandTest extends AbstractExportSessionCommand
     @Mock
     private TextFileExport textFileExport;
 
-    private ExportToBpmnSessionCommand command;
+    private ExportToRawFormatSessionCommand command;
 
     private ArgumentCaptor<ServiceCallback> callbackCaptor;
 
@@ -64,9 +64,9 @@ public class ExportToBpmnSessionCommandTest extends AbstractExportSessionCommand
         super.setup();
         callbackCaptor = ArgumentCaptor.forClass(ServiceCallback.class);
         textContentCaptor = ArgumentCaptor.forClass(TextContent.class);
-        command = new ExportToBpmnSessionCommand(clientDiagramService,
-                                                 errorPopupPresenter,
-                                                 textFileExport);
+        command = new ExportToRawFormatSessionCommand(clientDiagramService,
+                                                      errorPopupPresenter,
+                                                      textFileExport);
         command.bind(session);
     }
 

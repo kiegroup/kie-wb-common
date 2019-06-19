@@ -29,22 +29,22 @@ import org.uberfire.ext.editor.commons.client.file.exports.TextFileExport;
 
 @Dependent
 @Default
-public class ExportToBpmnSessionCommand extends AbstractExportSessionCommand {
+public class ExportToRawFormatSessionCommand extends AbstractExportSessionCommand {
 
     private final ClientDiagramService clientDiagramService;
     private final ErrorPopupPresenter errorPopupPresenter;
     private final TextFileExport textFileExport;
 
-    protected ExportToBpmnSessionCommand() {
+    protected ExportToRawFormatSessionCommand() {
         this(null,
              null,
              null);
     }
 
     @Inject
-    public ExportToBpmnSessionCommand(final ClientDiagramService clientDiagramService,
-                                      final ErrorPopupPresenter errorPopupPresenter,
-                                      final TextFileExport textFileExport) {
+    public ExportToRawFormatSessionCommand(final ClientDiagramService clientDiagramService,
+                                           final ErrorPopupPresenter errorPopupPresenter,
+                                           final TextFileExport textFileExport) {
         super(true);
         this.clientDiagramService = clientDiagramService;
         this.errorPopupPresenter = errorPopupPresenter;

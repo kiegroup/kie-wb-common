@@ -23,10 +23,10 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSe
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToRawFormatSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
@@ -67,7 +67,7 @@ public class DMNEditorSessionCommandsTest extends EditorSessionCommandsTest {
         inOrder.verify(commands).register(ExportToJpgSessionCommand.class);
         inOrder.verify(commands).register(ExportToPdfSessionCommand.class);
         inOrder.verify(commands).register(ExportToSvgSessionCommand.class);
-        inOrder.verify(commands).register(ExportToBpmnSessionCommand.class);
+        inOrder.verify(commands).register(ExportToRawFormatSessionCommand.class);
         inOrder.verify(commands).register(CopySelectionSessionCommand.class);
         inOrder.verify(commands).register(PasteSelectionSessionCommand.class);
         inOrder.verify(commands).register(CutSelectionSessionCommand.class);

@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.stunner.submarine.client.session;
 
-import java.util.stream.IntStream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +24,10 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSe
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToRawFormatSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
@@ -44,6 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -88,7 +87,7 @@ public class EditorSessionCommandsTest {
         inOrder.verify(commands).register(ExportToJpgSessionCommand.class);
         inOrder.verify(commands).register(ExportToPdfSessionCommand.class);
         inOrder.verify(commands).register(ExportToSvgSessionCommand.class);
-        inOrder.verify(commands).register(ExportToBpmnSessionCommand.class);
+        inOrder.verify(commands).register(ExportToRawFormatSessionCommand.class);
         inOrder.verify(commands).register(CopySelectionSessionCommand.class);
         inOrder.verify(commands).register(PasteSelectionSessionCommand.class);
         inOrder.verify(commands).register(CutSelectionSessionCommand.class);
@@ -111,119 +110,111 @@ public class EditorSessionCommandsTest {
     public void testGetVisitGraphSessionCommand() {
         editorSessionCommands.getVisitGraphSessionCommand();
 
-        verify(commands).get(0);
+        verify(commands).get(eq(VisitGraphSessionCommand.class));
     }
 
     @Test
     public void testGetSwitchGridSessionCommand() {
         editorSessionCommands.getSwitchGridSessionCommand();
 
-        verify(commands).get(1);
+        verify(commands).get(eq(SwitchGridSessionCommand.class));
     }
 
     @Test
     public void testGetClearSessionCommand() {
         editorSessionCommands.getClearSessionCommand();
 
-        verify(commands).get(2);
+        verify(commands).get(eq(ClearSessionCommand.class));
     }
 
     @Test
     public void testGetDeleteSelectionSessionCommand() {
         editorSessionCommands.getDeleteSelectionSessionCommand();
 
-        verify(commands).get(3);
+        verify(commands).get(eq(DeleteSelectionSessionCommand.class));
     }
 
     @Test
     public void testGetUndoSessionCommand() {
         editorSessionCommands.getUndoSessionCommand();
 
-        verify(commands).get(4);
+        verify(commands).get(eq(UndoSessionCommand.class));
     }
 
     @Test
     public void testGetRedoSessionCommand() {
         editorSessionCommands.getRedoSessionCommand();
 
-        verify(commands).get(5);
+        verify(commands).get(eq(RedoSessionCommand.class));
     }
 
     @Test
     public void testGetValidateSessionCommand() {
         editorSessionCommands.getValidateSessionCommand();
 
-        verify(commands).get(6);
+        verify(commands).get(eq(ValidateSessionCommand.class));
     }
 
     @Test
     public void testGetExportToPngSessionCommand() {
         editorSessionCommands.getExportToPngSessionCommand();
 
-        verify(commands).get(7);
+        verify(commands).get(eq(ExportToPngSessionCommand.class));
     }
 
     @Test
     public void testGetExportToJpgSessionCommand() {
         editorSessionCommands.getExportToJpgSessionCommand();
 
-        verify(commands).get(8);
+        verify(commands).get(eq(ExportToJpgSessionCommand.class));
     }
 
     @Test
     public void testGetExportToPdfSessionCommand() {
         editorSessionCommands.getExportToPdfSessionCommand();
 
-        verify(commands).get(9);
+        verify(commands).get(eq(ExportToPdfSessionCommand.class));
     }
 
     @Test
     public void testGetExportToSvgSessionCommand() {
         editorSessionCommands.getExportToSvgSessionCommand();
 
-        verify(commands).get(10);
+        verify(commands).get(eq(ExportToSvgSessionCommand.class));
     }
 
     @Test
-    public void testGetExportToBpmnSessionCommand() {
-        editorSessionCommands.getExportToBpmnSessionCommand();
+    public void testGetExportToRawSessionCommand() {
+        editorSessionCommands.getExportToRawFormatSessionCommand();
 
-        verify(commands).get(11);
+        verify(commands).get(eq(ExportToRawFormatSessionCommand.class));
     }
 
     @Test
     public void testGetCopySelectionSessionCommand() {
         editorSessionCommands.getCopySelectionSessionCommand();
 
-        verify(commands).get(12);
+        verify(commands).get(eq(CopySelectionSessionCommand.class));
     }
 
     @Test
     public void testGetPasteSelectionSessionCommand() {
         editorSessionCommands.getPasteSelectionSessionCommand();
 
-        verify(commands).get(13);
+        verify(commands).get(eq(PasteSelectionSessionCommand.class));
     }
 
     @Test
     public void testGetCutSelectionSessionCommand() {
         editorSessionCommands.getCutSelectionSessionCommand();
 
-        verify(commands).get(14);
+        verify(commands).get(eq(CutSelectionSessionCommand.class));
     }
 
     @Test
     public void testGetSaveDiagramSessionCommand() {
         editorSessionCommands.getSaveDiagramSessionCommand();
 
-        verify(commands).get(15);
-    }
-
-    @Test
-    public void testGet() {
-        IntStream.range(0, 15).forEach(i -> {
-            editorSessionCommands.get(i);
-            verify(commands).get(i);
-        });
+        verify(commands).get(eq(SaveDiagramSessionCommand.class));
     }
 }

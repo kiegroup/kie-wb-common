@@ -49,6 +49,6 @@ public class DMNProjectDiagramEditorMenuItemsBuilderTest {
     @Test
     public void testExportAsRawLabel() {
         assertEquals(DMNProjectClientConstants.DMNDiagramResourceTypeDownload,
-                     builder.getExportAsRawLabel());
+                     builder.getExportLabelToRawFormatIfSupported().get());
     }
 }

@@ -25,13 +25,12 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSe
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToRawFormatSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchGridSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
@@ -39,7 +38,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.Validat
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
 
-// TODO: (Submarine) Really need for this class?
+// TODO: (kogito) Remove class?
 
 @Dependent
 @BPMN
@@ -63,14 +62,10 @@ public class BPMNStandaloneEditorSessionCommands extends EditorSessionCommands {
                 .register(ExportToJpgSessionCommand.class)
                 .register(ExportToPdfSessionCommand.class)
                 .register(ExportToSvgSessionCommand.class)
-                .register(ExportToBpmnSessionCommand.class)
+                .register(ExportToRawFormatSessionCommand.class)
                 .register(CopySelectionSessionCommand.class)
                 .register(PasteSelectionSessionCommand.class)
                 .register(CutSelectionSessionCommand.class)
                 .register(SaveDiagramSessionCommand.class);
-    }
-
-    public PerformAutomaticLayoutCommand getPerformAutomaticLayoutCommand() {
-        return getCommands().get(16);
     }
 }

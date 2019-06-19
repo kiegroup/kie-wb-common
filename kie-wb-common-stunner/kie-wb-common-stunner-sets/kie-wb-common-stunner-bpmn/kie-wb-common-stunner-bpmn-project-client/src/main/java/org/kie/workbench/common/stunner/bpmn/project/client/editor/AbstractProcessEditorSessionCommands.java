@@ -31,8 +31,8 @@ public abstract class AbstractProcessEditorSessionCommands extends EditorSession
     }
 
     @Override
-    public void init() {
-        super.init();
+    protected void registerCommands() {
+        super.registerCommands();
         getCommands()
                 .register(GenerateProcessFormsSessionCommand.class)
                 .register(GenerateDiagramFormsSessionCommand.class)
@@ -48,14 +48,14 @@ public abstract class AbstractProcessEditorSessionCommands extends EditorSession
     }
 
     public GenerateProcessFormsSessionCommand getGenerateProcessFormsSessionCommand() {
-        return get(16);
+        return get(GenerateProcessFormsSessionCommand.class);
     }
 
     public GenerateDiagramFormsSessionCommand getGenerateDiagramFormsSessionCommand() {
-        return get(17);
+        return get(GenerateDiagramFormsSessionCommand.class);
     }
 
     public GenerateSelectedFormsSessionCommand getGenerateSelectedFormsSessionCommand() {
-        return get(18);
+        return get(GenerateSelectedFormsSessionCommand.class);
     }
 }

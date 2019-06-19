@@ -20,22 +20,7 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.client.session.command.ManagedClientSessionCommands;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchGridSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ValidateSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
 
 @Dependent
@@ -49,26 +34,11 @@ public class DMNEditorSessionCommands extends EditorSessionCommands {
 
     @Override
     protected void registerCommands() {
-        getCommands().register(VisitGraphSessionCommand.class)
-                .register(SwitchGridSessionCommand.class)
-                .register(ClearSessionCommand.class)
-                .register(DeleteSelectionSessionCommand.class)
-                .register(UndoSessionCommand.class)
-                .register(RedoSessionCommand.class)
-                .register(ValidateSessionCommand.class)
-                .register(ExportToPngSessionCommand.class)
-                .register(ExportToJpgSessionCommand.class)
-                .register(ExportToPdfSessionCommand.class)
-                .register(ExportToSvgSessionCommand.class)
-                .register(ExportToBpmnSessionCommand.class)
-                .register(CopySelectionSessionCommand.class)
-                .register(PasteSelectionSessionCommand.class)
-                .register(CutSelectionSessionCommand.class)
-                .register(SaveDiagramSessionCommand.class)
-                .register(PerformAutomaticLayoutCommand.class);
+        super.registerCommands();
+        getCommands().register(PerformAutomaticLayoutCommand.class);
     }
 
     public PerformAutomaticLayoutCommand getPerformAutomaticLayoutCommand() {
-        return getCommands().get(16);
+        return get(PerformAutomaticLayoutCommand.class);
     }
 }

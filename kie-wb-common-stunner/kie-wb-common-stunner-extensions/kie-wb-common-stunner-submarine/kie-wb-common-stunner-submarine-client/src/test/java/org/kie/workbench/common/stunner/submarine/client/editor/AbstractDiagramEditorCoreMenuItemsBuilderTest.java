@@ -16,6 +16,7 @@
 package org.kie.workbench.common.stunner.submarine.client.editor;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -88,8 +89,8 @@ public class AbstractDiagramEditorCoreMenuItemsBuilderTest {
 
         this.menuItemsBuilder = new AbstractDiagramEditorMenuItemsBuilder(translationService, popupUtil) {
             @Override
-            protected String getExportAsRawLabel() {
-                return EXPORT_RAW;
+            protected Optional<String> getExportLabelToRawFormatIfSupported() {
+                return Optional.of(EXPORT_RAW);
             }
         };
 

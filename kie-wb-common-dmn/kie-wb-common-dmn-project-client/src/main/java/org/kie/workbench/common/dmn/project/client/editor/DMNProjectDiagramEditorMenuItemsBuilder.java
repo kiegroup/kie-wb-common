@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.project.client.editor;
 
+import java.util.Optional;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
@@ -43,7 +45,7 @@ public class DMNProjectDiagramEditorMenuItemsBuilder extends AbstractDiagramEdit
     }
 
     @Override
-    protected String getExportAsRawLabel() {
-        return translationService.getValue(DMNProjectClientConstants.DMNDiagramResourceTypeDownload);
+    protected Optional<String> getExportLabelToRawFormatIfSupported() {
+        return Optional.of(translationService.getValue(DMNProjectClientConstants.DMNDiagramResourceTypeDownload));
     }
 }
