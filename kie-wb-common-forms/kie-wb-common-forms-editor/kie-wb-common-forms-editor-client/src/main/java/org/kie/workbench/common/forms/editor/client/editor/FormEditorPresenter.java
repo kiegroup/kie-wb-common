@@ -513,7 +513,8 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
             ComponentColumn componentColumn = (ComponentColumn) element;
             LayoutComponent layoutComponent = componentColumn.getLayoutComponent();
             LayoutDragComponent layoutDragComponent = componentColumn.getLayoutDragComponent();
-            if (layoutDragComponent instanceof EditorFieldLayoutComponent) {
+            boolean containsElement = getFormDefinition().getLayoutTemplate().contains(layoutComponent);
+            if (layoutDragComponent instanceof EditorFieldLayoutComponent && containsElement) {
                 ((EditorFieldLayoutComponent) layoutDragComponent).addComponentParts(layoutComponent);
             }
             componentColumn.setupParts();
