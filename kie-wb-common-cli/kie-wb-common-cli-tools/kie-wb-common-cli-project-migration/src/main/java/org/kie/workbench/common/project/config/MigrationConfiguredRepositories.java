@@ -17,14 +17,13 @@
 package org.kie.workbench.common.project.config;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 
 import org.guvnor.structure.backend.repositories.ConfiguredRepositoriesImpl;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.server.repositories.RepositoryFactory;
 
-@Alternative
+@Migration
 @ApplicationScoped
 public class MigrationConfiguredRepositories extends ConfiguredRepositoriesImpl {
 

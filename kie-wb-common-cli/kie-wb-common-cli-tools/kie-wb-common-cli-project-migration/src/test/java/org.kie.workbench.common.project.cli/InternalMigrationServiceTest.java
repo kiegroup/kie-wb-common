@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
+import org.guvnor.structure.contributors.Contributor;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorage;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.server.config.ConfigGroup;
@@ -36,7 +38,9 @@ import org.kie.workbench.common.project.config.MigrationRepositoryServiceImpl;
 import org.kie.workbench.common.project.config.MigrationWorkspaceProjectMigrationServiceImpl;
 import org.kie.workbench.common.project.config.MigrationWorkspaceProjectServiceImpl;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -48,6 +52,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InternalMigrationServiceTest {
+
+    private static final String SPACE_CONTRIBUTORS = "space-contributors";
+    private static final String SECURITY_GROUPS = "security:groups";
 
     @Mock
     private MigrationWorkspaceProjectServiceImpl projectService;
@@ -65,21 +72,22 @@ public class InternalMigrationServiceTest {
     private SystemAccess system;
 
     @Mock
-    private ConfigGroupToSpaceInfoConverter configGroupToSpaceInfoConverter;
-
-    @Mock
     private SpaceConfigStorage spaceConfigStorage;
 
     @Mock
     private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
+
+    @Mock
+    private BackwardCompatibleUtil backwardCompatibleUtil;
 
     private InternalMigrationService internalMigrationService;
 
     @Before
     public void init() {
         when(spaceConfigStorageRegistry.get(anyString())).thenReturn(spaceConfigStorage);
+        when(backwardCompatibleUtil.compat(any())).thenAnswer((Answer<ConfigGroup>) invocationOnMock -> (ConfigGroup) invocationOnMock.getArguments()[0]);
 
-        internalMigrationService = new InternalMigrationService(projectService, configService, projectMigrationService, repoService, system, configGroupToSpaceInfoConverter, spaceConfigStorageRegistry);
+        internalMigrationService = new InternalMigrationService(projectService, configService, projectMigrationService, repoService, system, spaceConfigStorageRegistry, backwardCompatibleUtil);
     }
 
     @Test
@@ -131,13 +139,23 @@ public class InternalMigrationServiceTest {
                 firstOuName = "firstOrgUnit",
                 secondOuName = "secondOrgUnit";
 
-        final int expectedCreatedDirs = 2;
+        ConfigItem<List<Contributor>> contributors = new ConfigItem<>();
+        contributors.setName(SPACE_CONTRIBUTORS);
+        contributors.setValue(new ArrayList<>());
+
+        ConfigItem<List<String>> groups = new ConfigItem<>();
+        groups.setName(SECURITY_GROUPS);
+        groups.setValue(new ArrayList<>());
 
         ConfigGroup firstOuConfig = new ConfigGroup();
         firstOuConfig.setName(firstOuName);
+        firstOuConfig.addConfigItem(contributors);
+        firstOuConfig.addConfigItem(groups);
 
         ConfigGroup secondOuConfig = new ConfigGroup();
         secondOuConfig.setName(secondOuName);
+        secondOuConfig.addConfigItem(contributors);
+        secondOuConfig.addConfigItem(groups);
 
         List<ConfigGroup> orgUnitConfigs = new ArrayList<>();
         orgUnitConfigs.add(firstOuConfig);
@@ -153,9 +171,8 @@ public class InternalMigrationServiceTest {
 
         verify(mockPath).resolve(firstOuName);
         verify(mockPath).resolve(secondOuName);
-        verify(mockFile, times(expectedCreatedDirs)).mkdir();
-        verify(configGroupToSpaceInfoConverter, times(expectedCreatedDirs)).toSpaceInfo(any());
-        verify(spaceConfigStorageRegistry, times(expectedCreatedDirs)).get(anyString());
-        verify(spaceConfigStorage, times(expectedCreatedDirs)).saveSpaceInfo(any());
+        verify(mockFile, times(2)).mkdir();
+        verify(spaceConfigStorageRegistry, times(4)).get(anyString());
+        verify(spaceConfigStorage, times(2)).saveSpaceInfo(any());
     }
 }

@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 
 import org.assertj.core.api.Assertions;
 import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
+import org.guvnor.structure.backend.config.ConfigurationServiceImpl;
 import org.guvnor.structure.contributors.ContributorType;
 import org.guvnor.structure.organizationalunit.config.RepositoryInfo;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
@@ -70,7 +71,7 @@ public class ConfigGroupsMigrationServiceTest {
 
     private WeldContainer weldContainer;
 
-    private ConfigurationService configurationService;
+    private ConfigurationServiceImpl configurationService;
     private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
     private BackwardCompatibleUtil backwardCompatibleUtil;
     private ConfigGroupToSpaceInfoConverter configGroupToSpaceInfoConverter;
@@ -83,7 +84,7 @@ public class ConfigGroupsMigrationServiceTest {
 
         weldContainer = new Weld().initialize();
 
-        configurationService = spy(weldContainer.instance().select(ConfigurationService.class).get());
+        configurationService = spy(weldContainer.instance().select(ConfigurationServiceImpl.class).get());
         spaceConfigStorageRegistry = weldContainer.instance().select(SpaceConfigStorageRegistry.class).get();
         backwardCompatibleUtil = spy(weldContainer.instance().select(BackwardCompatibleUtil.class).get());
         configGroupToSpaceInfoConverter = new ConfigGroupToSpaceInfoConverter(configurationService, backwardCompatibleUtil, spaceConfigStorageRegistry);

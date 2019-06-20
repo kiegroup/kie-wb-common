@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -46,6 +47,7 @@ public class ConfigGroupToSpaceInfoConverter {
     private static final String CONTRIBUTORS = "contributors";
     private static final String SPACE_CONTRIBUTORS = "space-contributors";
     private static final String SECURITY_GROUPS = "security:groups";
+
     private ConfigurationService configurationService;
     private BackwardCompatibleUtil backwardCompatibleUtil;
     private SpaceConfigStorageRegistry spaceConfigStorageRegistry;

@@ -18,13 +18,14 @@ package org.kie.workbench.common.project.config;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.guvnor.common.services.project.events.RepositoryContributorsUpdatedEvent;
 import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
+import org.guvnor.structure.backend.repositories.ConfiguredRepositories;
 import org.guvnor.structure.backend.repositories.RepositoryServiceImpl;
+import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorage;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.organizationalunit.config.SpaceInfo;
@@ -33,6 +34,8 @@ import org.guvnor.structure.repositories.GitMetadataStore;
 import org.guvnor.structure.repositories.NewRepositoryEvent;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
+import org.guvnor.structure.server.config.ConfigurationFactory;
+import org.guvnor.structure.server.config.ConfigurationService;
 import org.guvnor.structure.server.repositories.RepositoryFactory;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
@@ -43,7 +46,7 @@ import org.uberfire.spaces.SpacesAPI;
 
 import static org.uberfire.backend.server.util.Paths.convert;
 
-@Alternative
+@Migration
 @Service
 @ApplicationScoped
 public class MigrationRepositoryServiceImpl extends RepositoryServiceImpl {
@@ -58,14 +61,14 @@ public class MigrationRepositoryServiceImpl extends RepositoryServiceImpl {
     @Inject
     public MigrationRepositoryServiceImpl(@Named("ioStrategy") final IOService ioService,
                                           final GitMetadataStore metadataStore,
-                                          final MigrationConfigurationServiceImpl configurationService,
-                                          final MigrationOrganizationalUnitServiceImpl organizationalUnitService,
-                                          final MigrationConfigurationFactoryImpl configurationFactory,
+                                          final @Migration ConfigurationService configurationService,
+                                          final @Migration OrganizationalUnitService organizationalUnitService,
+                                          final @Migration ConfigurationFactory configurationFactory,
                                           final RepositoryFactory repositoryFactory,
                                           final Event<NewRepositoryEvent> event,
                                           final Event<RepositoryRemovedEvent> repositoryRemovedEvent,
                                           final BackwardCompatibleUtil backward,
-                                          final MigrationConfiguredRepositories configuredRepositories,
+                                          final @Migration ConfiguredRepositories configuredRepositories,
                                           final AuthorizationManager authorizationManager,
                                           final User user,
                                           final SpacesAPI spacesAPI,

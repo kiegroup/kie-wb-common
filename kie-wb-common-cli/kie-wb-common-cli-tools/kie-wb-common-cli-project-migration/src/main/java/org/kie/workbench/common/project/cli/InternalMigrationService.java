@@ -25,10 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.project.WorkspaceProjectMigrationService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
+import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.organizationalunit.config.SpaceInfo;
 import org.guvnor.structure.repositories.EnvironmentParameters;
@@ -36,12 +40,11 @@ import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.server.config.ConfigGroup;
 import org.guvnor.structure.server.config.ConfigItem;
 import org.guvnor.structure.server.config.ConfigType;
+import org.guvnor.structure.server.config.ConfigurationService;
 import org.kie.workbench.common.migration.cli.SystemAccess;
 import org.kie.workbench.common.project.cli.util.ConfigGroupToSpaceInfoConverter;
-import org.kie.workbench.common.project.config.MigrationConfigurationServiceImpl;
+import org.kie.workbench.common.project.config.Migration;
 import org.kie.workbench.common.project.config.MigrationRepositoryServiceImpl;
-import org.kie.workbench.common.project.config.MigrationWorkspaceProjectMigrationServiceImpl;
-import org.kie.workbench.common.project.config.MigrationWorkspaceProjectServiceImpl;
 
 /**
  * <p>
@@ -51,28 +54,28 @@ import org.kie.workbench.common.project.config.MigrationWorkspaceProjectServiceI
 @ApplicationScoped
 public class InternalMigrationService {
 
-    private MigrationWorkspaceProjectServiceImpl projectService;
-    private MigrationConfigurationServiceImpl configService;
-    private MigrationWorkspaceProjectMigrationServiceImpl projectMigrationService;
+    private WorkspaceProjectService projectService;
+    private ConfigurationService configService;
+    private WorkspaceProjectMigrationService projectMigrationService;
     private MigrationRepositoryServiceImpl repoService;
     private SystemAccess system;
     private ConfigGroupToSpaceInfoConverter configGroupToSpaceInfoConverter;
     private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
 
     @Inject
-    public InternalMigrationService(MigrationWorkspaceProjectServiceImpl projectService,
-                                    MigrationConfigurationServiceImpl configService,
-                                    MigrationWorkspaceProjectMigrationServiceImpl projectMigrationService,
-                                    MigrationRepositoryServiceImpl repoService,
-                                    SystemAccess system,
-                                    ConfigGroupToSpaceInfoConverter configGroupToSpaceInfoConverter,
-                                    SpaceConfigStorageRegistry spaceConfigStorageRegistry) {
+    public InternalMigrationService(final @Migration WorkspaceProjectService projectService,
+                                    final @Migration ConfigurationService configService,
+                                    final @Migration WorkspaceProjectMigrationService projectMigrationService,
+                                    final @Migration MigrationRepositoryServiceImpl repoService,
+                                    final SystemAccess system,
+                                    final SpaceConfigStorageRegistry spaceConfigStorageRegistry,
+                                    final BackwardCompatibleUtil backwardCompatibleUtil) {
         this.projectService = projectService;
         this.configService = configService;
         this.projectMigrationService = projectMigrationService;
         this.repoService = repoService;
         this.system = system;
-        this.configGroupToSpaceInfoConverter = configGroupToSpaceInfoConverter;
+        this.configGroupToSpaceInfoConverter = new ConfigGroupToSpaceInfoConverter(configService, backwardCompatibleUtil,spaceConfigStorageRegistry);
         this.spaceConfigStorageRegistry = spaceConfigStorageRegistry;
     }
 
