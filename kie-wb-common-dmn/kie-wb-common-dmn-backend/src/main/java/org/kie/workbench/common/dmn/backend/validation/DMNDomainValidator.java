@@ -92,8 +92,8 @@ public class DMNDomainValidator implements DomainValidator {
     @SuppressWarnings("unchecked")
     public void validate(final Diagram diagram,
                          final Consumer<Collection<DomainViolation>> resultConsumer) {
+        final List<Reader> dmnXMLReaders = new ArrayList<>();
         try {
-            final List<Reader> dmnXMLReaders = new ArrayList<>();
 
             // The Definitions contained within the diagram do not contain DRGElements therefore marshall
             // the diagram to XML that then builds a fully enriched representation of the DMN model.
@@ -118,6 +118,14 @@ public class DMNDomainValidator implements DomainValidator {
         } catch (IOException ioe) {
             LOGGER.error("Error while converting diagram with UUID [" + diagram.getName() + "] to XML.",
                          ioe);
+        } finally {
+            dmnXMLReaders.forEach(reader -> {
+                try {
+                    reader.close();
+                } catch (IOException ioe) {
+                    //Swallow. The Reader is already closed.
+                }
+            });
         }
     }
 

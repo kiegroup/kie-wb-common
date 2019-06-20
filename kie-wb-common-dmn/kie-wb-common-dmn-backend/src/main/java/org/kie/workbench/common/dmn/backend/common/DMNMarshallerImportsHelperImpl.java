@@ -131,10 +131,12 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
         if (imports.size() > 0) {
             for (final String xml : getOtherDMNDiagramsXML(metadata)) {
-                final Definitions definitions = marshaller.unmarshal(toStringReader(xml));
-                findImportByDefinitions(definitions, imports).ifPresent(anImport -> {
-                    importXML.put(anImport, xml);
-                });
+                try (StringReader sr = toStringReader(xml)) {
+                    final Definitions definitions = marshaller.unmarshal(sr);
+                    findImportByDefinitions(definitions, imports).ifPresent(anImport -> {
+                        importXML.put(anImport, xml);
+                    });
+                }
             }
         }
 
@@ -291,15 +293,30 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     List<Definitions> getOtherDMNDiagramsDefinitions(final Metadata metadata) {
-
         final List<Path> diagramPaths = pathsHelper.getDMNModelsPaths(getProject(metadata));
-
         return diagramPaths
                 .stream()
                 .filter(path -> !Objects.equals(metadata.getPath(), path))
-                .map(path -> loadPath(path).map(this::toInputStreamReader).map(marshaller::unmarshal).orElse(null))
+                .map(path -> loadPath(path).orElse(null))
+                .filter(Objects::nonNull)
+                .map(this::toDefinitions)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    Definitions toDefinitions(final InputStream inputStream) {
+        try (InputStreamReader reader = toInputStreamReader(inputStream)) {
+            return marshaller.unmarshal(reader);
+        } catch (IOException ioe) {
+            //Swallow. null is returned by default.
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ioe) {
+                //Swallow. The Reader is already closed.
+            }
+        }
+        return null;
     }
 
     List<Path> getPMMLDocumentPaths(final Metadata metadata) {
@@ -311,9 +328,7 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     List<String> getOtherDMNDiagramsXML(final Metadata metadata) {
-
         final List<Path> diagramPaths = pathsHelper.getDMNModelsPaths(getProject(metadata));
-
         return diagramPaths
                 .stream()
                 .filter(path -> !Objects.equals(metadata.getPath(), path))
@@ -325,7 +340,6 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     Optional<InputStream> loadPath(final Path path) {
-
         try {
             return Optional.ofNullable(ioService.newInputStream(convertPath(path)));
         } catch (final Exception e) {
@@ -334,8 +348,7 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     String toString(final InputStream inputStream) {
-        try {
-            final ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
             final byte[] buffer = new byte[1024];
             int length;
             while ((length = inputStream.read(buffer)) != -1) {
@@ -345,6 +358,12 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
             return result.toString(StandardCharsets.UTF_8.name());
         } catch (IOException ioe) {
             //Swallow. null is returned by default.
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ioe) {
+                //Swallow. The Reader is already closed.
+            }
         }
         return null;
     }
