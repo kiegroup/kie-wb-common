@@ -59,7 +59,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class DRGElementHandlerTest {
+public class DMNIncludedModelHandlerTest {
 
     @Mock
     private DMNGraphUtils dmnGraphUtils;
@@ -79,11 +79,11 @@ public class DRGElementHandlerTest {
     @Mock
     private CompositeCommand<AbstractCanvasHandler, CanvasViolation> compositeCommand;
 
-    private DRGElementHandler handler;
+    private DMNIncludedModelHandler handler;
 
     @Before
     public void setup() {
-        handler = spy(new DRGElementHandler(dmnGraphUtils, canvasCommandFactory, sessionCommandManager, definitionUtils));
+        handler = spy(new DMNIncludedModelHandler(dmnGraphUtils, canvasCommandFactory, sessionCommandManager, definitionUtils));
     }
 
     @Test
