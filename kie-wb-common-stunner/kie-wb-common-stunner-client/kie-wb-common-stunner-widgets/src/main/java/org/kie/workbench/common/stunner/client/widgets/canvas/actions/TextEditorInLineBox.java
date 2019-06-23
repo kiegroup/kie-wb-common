@@ -19,13 +19,16 @@ package org.kie.workbench.common.stunner.client.widgets.canvas.actions;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.HasSize;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.HasTitle;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.InLineTextEditorBox;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
 @Dependent
 @InLineTextEditorBox
-public class TextEditorInLineBox extends AbstractTextEditorBox {
+public class TextEditorInLineBox extends AbstractTextEditorBox implements HasSize,
+                                                                          HasTitle {
 
     private static final double OFFSET_X = 0.0;
 
@@ -70,29 +73,30 @@ public class TextEditorInLineBox extends AbstractTextEditorBox {
     }
 
     @Override
-    public void setFontX(final double size) {
-        view.setFontX(size);
-    }
-
-    @Override
-    public void setFontY(final double size) {
-        view.setFontY(size);
-    }
-
-    @Override
-    public void setFontPosition(final String position) {
+    public void setTitlePosition(String position) {
         view.setFontPosition(position);
     }
 
     @Override
-    public void setFontAlignment(final String position) {
+    public void setTitleAlignment(String position) {
         view.setFontAlignment(position);
     }
 
     @Override
-    public void setOrientation(String orientation) {
+    public void setTitleOrientation(String orientation) {
         view.setOrientation(orientation);
     }
+
+    @Override
+    public void setTitleX(final double size) {
+        view.setFontX(size);
+    }
+
+    @Override
+    public void setTitleY(final double size) {
+        view.setFontY(size);
+    }
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -106,4 +110,5 @@ public class TextEditorInLineBox extends AbstractTextEditorBox {
     String prepareNodeNameToShow(String name){
         return name.replaceAll("\\n", "<br>").replaceAll("\\s", "&nbsp;");
     }
+
 }

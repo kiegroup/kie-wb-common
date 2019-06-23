@@ -166,33 +166,33 @@ public class TextEditorInLineBoxTest {
 
     @Test
     public void testSetOrientation() {
-        presenter.setOrientation("VERTICAL");
+        presenter.setTitleOrientation("VERTICAL");
         Assert.assertEquals("VERTICAL", view.orientation);
     }
 
     @Test
     public void testSetFontAlignment() {
         final String position = "position";
-        presenter.setFontAlignment(position);
+        presenter.setTitleAlignment(position);
         Assert.assertEquals(position, view.fontAlignment);
     }
 
     @Test
     public void testSetFontPosition() {
         final String position = "position";
-        presenter.setFontPosition(position);
+        presenter.setTitlePosition(position);
         Assert.assertEquals(position, view.fontPosition);
     }
 
     @Test
     public void testSetFontX() {
-        presenter.setFontX(11);
+        presenter.setTitleX(11);
         Assert.assertEquals(11, view.fontX, 0.001);
     }
 
     @Test
     public void testSetFontY() {
-        presenter.setFontY(11);
+        presenter.setTitleY(11);
         Assert.assertEquals(11, view.fontY, 0.001);
     }
 

@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingView;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.uberfire.client.views.pfly.selectpicker.JQueryElementOffset;
@@ -76,17 +75,18 @@ public class CanvasInPlaceTextEditorControlInLine extends AbstractCanvasInPlaceT
         double translateY = canvasHandler.getCanvas().getTransform().getTranslate().getY();
         double scale = canvasHandler.getCanvas().getTransform().getScale().getX();
 
-        HasTitle hasTitle = ((HasTitle)shapeView);
+        org.kie.workbench.common.stunner.core.client.shape.view.HasTitle hasTitle
+                = ((org.kie.workbench.common.stunner.core.client.shape.view.HasTitle)shapeView);
 
-        getTextEditorBox().setFontSize(defaultFontSize * scale);
-        getTextEditorBox().setFontX(hasTitle.getTitleFontX());
-        getTextEditorBox().setFontY(hasTitle.getTitleFontY());
-        getTextEditorBox().setOrientation(hasTitle.getOrientation());
-        getTextEditorBox().setFontPosition(hasTitle.getFontPosition());
-        getTextEditorBox().setFontAlignment(hasTitle.getFontAlignment());
-        getTextEditorBox().setFontSize(defaultFontSize * scale);
-        getTextEditorBox().setWidth(shapeView.getBoundingBox().getWidth() * scale);
-        getTextEditorBox().setHeight(shapeView.getBoundingBox().getHeight() * scale);
+        ((HasTitle)getTextEditorBox()).setFontSize(defaultFontSize * scale);
+        ((HasTitle)getTextEditorBox()).setTitleX(hasTitle.getTitleFontX());
+        ((HasTitle)getTextEditorBox()).setTitleY(hasTitle.getTitleFontY());
+        ((HasTitle)getTextEditorBox()).setTitleOrientation(hasTitle.getOrientation());
+        ((HasTitle)getTextEditorBox()).setTitlePosition(hasTitle.getFontPosition());
+        ((HasTitle)getTextEditorBox()).setTitleAlignment(hasTitle.getFontAlignment());
+        ((HasTitle)getTextEditorBox()).setFontSize(defaultFontSize * scale);
+        ((HasSize)getTextEditorBox()).setWidth(shapeView.getBoundingBox().getWidth() * scale);
+        ((HasSize)getTextEditorBox()).setHeight(shapeView.getBoundingBox().getHeight() * scale);
 
         final double offsetX = getTextEditorBox().getDisplayOffsetX();
         final double offsetY = getTextEditorBox().getDisplayOffsetY();

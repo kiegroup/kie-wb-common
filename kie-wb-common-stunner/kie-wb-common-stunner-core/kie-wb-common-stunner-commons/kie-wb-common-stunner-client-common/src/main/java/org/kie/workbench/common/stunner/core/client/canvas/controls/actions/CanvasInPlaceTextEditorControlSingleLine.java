@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.core.client.canvas.controls.actions;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -29,7 +28,6 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 
 @Dependent
 @SingleLineTextEditorBox
-@Default
 public class CanvasInPlaceTextEditorControlSingleLine
         extends AbstractCanvasInPlaceTextEditorControl {
 
