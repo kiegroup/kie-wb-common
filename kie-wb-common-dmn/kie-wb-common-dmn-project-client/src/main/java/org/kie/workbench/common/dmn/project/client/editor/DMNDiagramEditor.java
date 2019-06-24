@@ -94,7 +94,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
-    private static final int DATA_TYPES_PAGE_INDEX = 2;
+    private static final int DATA_TYPES_PAGE_INDEX = 3;
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -118,7 +118,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final Event<NotificationEvent> notificationEvent,
                             final ErrorPopupPresenter errorPopupPresenter,
                             final DiagramClientErrorHandler diagramClientErrorHandler,
-                            final DocumentationView documentationView,
+                            final @DMNEditor DocumentationView documentationView,
                             final DMNDiagramResourceType resourceType,
                             final DMNProjectEditorMenuSessionItems menuSessionItems,
                             final ProjectMessagesListener projectMessagesListener,

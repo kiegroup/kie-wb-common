@@ -83,6 +83,10 @@ public class DateSelector implements TypedValueSelector {
         return dateValueFormatter.toDisplay(rawValue);
     }
 
+    public boolean isChild(final Object element) {
+        return view.isChildOfView(element);
+    }
+
     public interface View extends UberElemental<DateSelectorView>,
                                   IsElement {
 
@@ -97,5 +101,7 @@ public class DateSelector implements TypedValueSelector {
         void select();
 
         void onValueInputBlur(final Consumer<BlurEvent> blurEvent);
+
+        boolean isChildOfView(final Object element);
     }
 }
