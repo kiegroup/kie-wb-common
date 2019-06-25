@@ -633,7 +633,7 @@
       <exclusions>
         <exclusion>
           <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-security-management-api</artifactId>
+          <artifactId>uberfire-servlet-security</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
