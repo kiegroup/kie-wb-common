@@ -305,16 +305,11 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     Definitions toDefinitions(final InputStream inputStream) {
-        try (InputStreamReader reader = toInputStreamReader(inputStream)) {
+        try (InputStream inputStreamAutoClosable = inputStream;
+             InputStreamReader reader = toInputStreamReader(inputStreamAutoClosable)) {
             return marshaller.unmarshal(reader);
         } catch (IOException ioe) {
             //Swallow. null is returned by default.
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException ioe) {
-                //Swallow. The Reader is already closed.
-            }
         }
         return null;
     }
@@ -348,22 +343,17 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     String toString(final InputStream inputStream) {
-        try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
+        try (InputStream inputStreamAutoClosable = inputStream;
+             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
             final byte[] buffer = new byte[1024];
             int length;
-            while ((length = inputStream.read(buffer)) != -1) {
+            while ((length = inputStreamAutoClosable.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
 
             return result.toString(StandardCharsets.UTF_8.name());
         } catch (IOException ioe) {
             //Swallow. null is returned by default.
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException ioe) {
-                //Swallow. The Reader is already closed.
-            }
         }
         return null;
     }
