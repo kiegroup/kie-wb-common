@@ -100,7 +100,7 @@ public class BoxedExpressionHelperTest {
     }
 
     @Test
-    public void testGetOptionalExpressionWhenIsPresent() {
+    public void testGetOptionalExpressionWhenIsNotPresent() {
 
         final View content = mock(View.class);
         final Decision decision = mock(Decision.class);
@@ -115,7 +115,7 @@ public class BoxedExpressionHelperTest {
     }
 
     @Test
-    public void testGetOptionalExpressionWhenIsNotPresent() {
+    public void testGetOptionalExpressionWhenIsPresent() {
 
         final View content = mock(View.class);
         final Decision decision = mock(Decision.class);
