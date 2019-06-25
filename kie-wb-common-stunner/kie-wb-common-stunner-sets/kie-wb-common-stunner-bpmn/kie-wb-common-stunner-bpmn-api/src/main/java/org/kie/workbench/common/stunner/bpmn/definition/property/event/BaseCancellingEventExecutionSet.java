@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "cancelActivity")
-public class BaseCancellingEventExecutionSet  implements BPMNPropertySet {
+public class BaseCancellingEventExecutionSet implements BPMNPropertySet {
 
     @Property
     @FormField
@@ -85,7 +85,7 @@ public class BaseCancellingEventExecutionSet  implements BPMNPropertySet {
         if (o instanceof BaseCancellingEventExecutionSet) {
             BaseCancellingEventExecutionSet other = (BaseCancellingEventExecutionSet) o;
             return Objects.equals(cancelActivity, other.cancelActivity) &&
-                   Objects.equals(slaDueDate, other.slaDueDate);
+                    Objects.equals(slaDueDate, other.slaDueDate);
         }
         return false;
     }

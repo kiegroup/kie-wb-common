@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.filters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Predicate;
@@ -38,6 +39,13 @@ import org.kie.workbench.common.stunner.forms.client.formFilters.StunnerFormElem
 
 public class CatchingIntermediateEventFilterProvider implements StunnerFormElementFilterProvider {
 
+    private static final ArrayList cancelActivityEnabledClasses = new ArrayList(
+            Arrays.asList(IntermediateSignalEventCatching.class,
+                          IntermediateTimerEvent.class,
+                          IntermediateConditionalEvent.class,
+                          IntermediateMessageEventCatching.class,
+                          IntermediateEscalationEvent.class));
+
     private final SessionManager sessionManager;
     private final Supplier<Class<?>> definitionSupplier;
 
@@ -56,7 +64,9 @@ public class CatchingIntermediateEventFilterProvider implements StunnerFormEleme
     @SuppressWarnings("unchecked")
     public Collection<FormElementFilter> provideFilters(final String uuid,
                                                         final Object definition) {
-        final Predicate predicate = o -> isBoundaryEvent(uuid) && isCancelActivityEnabled(uuid);
+        Predicate predicate = o -> isBoundaryEvent(uuid);
+        predicate = predicate.and(o -> isCancelActivityEnabled(uuid));
+
         final FormElementFilter isInterruptingFilter = new FormElementFilter("executionSet.cancelActivity",
                                                                              predicate);
         return Collections.singletonList(isInterruptingFilter);
@@ -71,26 +81,18 @@ public class CatchingIntermediateEventFilterProvider implements StunnerFormEleme
 
     @SuppressWarnings("unchecked")
     private boolean isCancelActivityEnabled(final String uuid) {
-        ArrayList cancelActivityEnabledClasses = new ArrayList();
-        cancelActivityEnabledClasses.add(IntermediateSignalEventCatching.class);
-        cancelActivityEnabledClasses.add(IntermediateTimerEvent.class);
-        cancelActivityEnabledClasses.add(IntermediateConditionalEvent.class);
-        cancelActivityEnabledClasses.add(IntermediateMessageEventCatching.class);
-        cancelActivityEnabledClasses.add(IntermediateEscalationEvent.class);
-
         AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
         Node<View<?>, Edge> node = canvasHandler.getGraphIndex().getNode(uuid);
 
         if (null != node &&
-            null != node.getContent() &&
-            node.getContent() instanceof View) {
+                null != node.getContent() &&
+                node.getContent() instanceof View) {
             Class intermediateEventClass = ((Node<View<?>, Edge>) node)
                     .getContent()
                     .getDefinition()
                     .getClass();
 
-            boolean result = cancelActivityEnabledClasses.contains(intermediateEventClass);
-            return result;
+            return cancelActivityEnabledClasses.contains(intermediateEventClass);
         }
 
         return false;

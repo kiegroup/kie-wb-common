@@ -59,7 +59,7 @@ public class CancellingTimerEventExecutionSet extends BaseCancellingEventExecuti
         return timerSettings;
     }
 
-    public void setTimerSettings(TimerSettings timerSettings) {
+    public void setTimerSettings(final TimerSettings timerSettings) {
         this.timerSettings = timerSettings;
     }
 
