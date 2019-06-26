@@ -20,11 +20,13 @@ import java.util.List;
 
 import javax.enterprise.inject.Specializes;
 
+import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.services.refactoring.backend.server.query.assetUsages.AssetsUsageServiceImpl;
 import org.kie.workbench.common.services.refactoring.service.PartType;
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.uberfire.backend.vfs.Path;
 
+@Service
 @Specializes
 public class MockAssetsUsageServiceImpl extends AssetsUsageServiceImpl {
 

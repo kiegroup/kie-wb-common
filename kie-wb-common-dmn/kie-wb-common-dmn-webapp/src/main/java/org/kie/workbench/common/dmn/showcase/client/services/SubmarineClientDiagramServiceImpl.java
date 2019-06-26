@@ -32,15 +32,12 @@ import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
 import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.promise.Promises;
 
 @ApplicationScoped
 public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagramService {
 
     private ShapeManager shapeManager;
-    private Caller<VFSService> vfsServiceCaller;
     private Caller<SubmarineDiagramService> submarineDiagramServiceCaller;
     private Promises promises;
 
@@ -50,30 +47,11 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
 
     @Inject
     public SubmarineClientDiagramServiceImpl(final ShapeManager shapeManager,
-                                             final Caller<VFSService> vfsServiceCaller,
                                              final Caller<SubmarineDiagramService> submarineDiagramServiceCaller,
                                              final Promises promises) {
         this.shapeManager = shapeManager;
-        this.vfsServiceCaller = vfsServiceCaller;
         this.submarineDiagramServiceCaller = submarineDiagramServiceCaller;
         this.promises = promises;
-    }
-
-    //DMNDiagramSubmarineWrapper requirements
-
-    public void saveAsXml(final Path path,
-                          final String xml,
-                          final ServiceCallback<String> callback) {
-        vfsServiceCaller.call((Path p) -> {
-            callback.onSuccess(xml);
-        }).write(path, xml);
-    }
-
-    public void loadAsXml(final Path path,
-                          final ServiceCallback<String> callback) {
-        vfsServiceCaller.call((String x) -> {
-            callback.onSuccess(x);
-        }).readAllString(path);
     }
 
     //Submarine requirements

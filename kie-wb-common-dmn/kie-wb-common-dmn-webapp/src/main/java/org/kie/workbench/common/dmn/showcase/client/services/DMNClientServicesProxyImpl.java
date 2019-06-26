@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.showcase.client.service;
+package org.kie.workbench.common.dmn.showcase.client.services;
 
 import java.util.List;
 
