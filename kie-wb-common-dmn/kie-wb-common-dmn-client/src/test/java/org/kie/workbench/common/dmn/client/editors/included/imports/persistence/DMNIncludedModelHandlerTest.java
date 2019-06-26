@@ -23,11 +23,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.NamedElement;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
@@ -93,6 +95,7 @@ public class DMNIncludedModelHandlerTest {
         final Decision drgElement2 = makeDecision("model1.imported person", "model1.tPerson", true);
         final InputData drgElement3 = makeInputData("local person", "model1.tPerson", false);
         final InputData drgElement4 = makeInputData("regular DRG Element", "boolean", false);
+        setId(drgElement2, "model1.uuid");
 
         final List<DRGElement> drgElements = asList(drgElement1, drgElement2, drgElement3, drgElement4);
 
@@ -105,6 +108,7 @@ public class DMNIncludedModelHandlerTest {
         verify(handler).updateDRGElementName(drgElement2, "model2.imported person");
 
         assertEquals("string", drgElement1.getVariable().getTypeRef().getLocalPart());
+        assertEquals("model2.uuid", drgElement2.getId().getValue());
         assertEquals("model2.tPerson", drgElement2.getVariable().getTypeRef().getLocalPart());
         assertEquals("model2.tPerson", drgElement3.getVariable().getTypeRef().getLocalPart());
         assertEquals("boolean", drgElement4.getVariable().getTypeRef().getLocalPart());
@@ -251,6 +255,12 @@ public class DMNIncludedModelHandlerTest {
         inputData.setAllowOnlyVisualChange(allowOnlyVisualChange);
 
         return inputData;
+    }
+
+    private void setId(final DMNElement dmnElement,
+                       final String name) {
+
+        dmnElement.setId(new Id(name));
     }
 
     private void setName(final NamedElement namedElement,

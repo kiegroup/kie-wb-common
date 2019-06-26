@@ -62,6 +62,12 @@ public class PMMLIncludedModelHandlerTest {
 
     private static final String DOCUMENT_NAME_UPDATED = "document-updated";
 
+    private static final String MODEL_NAME = "model";
+
+    private static final String UNAFFECTED_DOCUMENT = "unaffected-document";
+
+    private static final String UNAFFECTED_MODEL = "unaffected-model";
+
     @Mock
     private DMNGraphUtils dmnGraphUtils;
 
@@ -107,10 +113,10 @@ public class PMMLIncludedModelHandlerTest {
         assertTopLevelLiteralExpression(decisions.get(0));
         assertTopLevelFunctionDefinition(decisions.get(1),
                                          DOCUMENT_NAME_UPDATED,
-                                         DOCUMENT_NAME_ORIGINAL);
+                                         MODEL_NAME);
         assertTopLevelFunctionDefinition(decisions.get(2),
-                                         "do-not-change",
-                                         "do-not-change");
+                                         UNAFFECTED_DOCUMENT,
+                                         UNAFFECTED_MODEL);
 
         verify(expressionGrid1).initialiseUiCells();
         verify(expressionGrid2).initialiseUiCells();
@@ -126,10 +132,10 @@ public class PMMLIncludedModelHandlerTest {
         assertNestedLiteralExpression(decisions.get(0));
         assertNestedFunctionDefinition(decisions.get(1),
                                        DOCUMENT_NAME_UPDATED,
-                                       DOCUMENT_NAME_ORIGINAL);
+                                       MODEL_NAME);
         assertNestedFunctionDefinition(decisions.get(2),
-                                       "do-not-change",
-                                       "do-not-change");
+                                       UNAFFECTED_DOCUMENT,
+                                       UNAFFECTED_MODEL);
 
         verify(expressionGrid1, never()).initialiseUiCells();
         verify(expressionGrid2, never()).initialiseUiCells();
@@ -145,10 +151,10 @@ public class PMMLIncludedModelHandlerTest {
         assertTopLevelLiteralExpression(bkms.get(0));
         assertPMMLContextDefinition(bkms.get(1).getEncapsulatedLogic(),
                                     DOCUMENT_NAME_UPDATED,
-                                    DOCUMENT_NAME_ORIGINAL);
+                                    MODEL_NAME);
         assertPMMLContextDefinition(bkms.get(2).getEncapsulatedLogic(),
-                                    "do-not-change",
-                                    "do-not-change");
+                                    UNAFFECTED_DOCUMENT,
+                                    UNAFFECTED_MODEL);
 
         verify(expressionGrid1).initialiseUiCells();
         verify(expressionGrid2).initialiseUiCells();
@@ -164,10 +170,10 @@ public class PMMLIncludedModelHandlerTest {
         assertNestedLiteralExpression(bkms.get(0));
         assertNestedFunctionDefinition(bkms.get(1),
                                        DOCUMENT_NAME_UPDATED,
-                                       DOCUMENT_NAME_ORIGINAL);
+                                       MODEL_NAME);
         assertNestedFunctionDefinition(bkms.get(2),
-                                       "do-not-change",
-                                       "do-not-change");
+                                       UNAFFECTED_DOCUMENT,
+                                       UNAFFECTED_MODEL);
 
         verify(expressionGrid1, never()).initialiseUiCells();
         verify(expressionGrid2, never()).initialiseUiCells();
@@ -185,8 +191,8 @@ public class PMMLIncludedModelHandlerTest {
                                          "",
                                          "");
         assertTopLevelFunctionDefinition(decisions.get(2),
-                                         "do-not-change",
-                                         "do-not-change");
+                                         UNAFFECTED_DOCUMENT,
+                                         UNAFFECTED_MODEL);
 
         verify(expressionGrid1).initialiseUiCells();
         verify(expressionGrid2).initialiseUiCells();
@@ -204,8 +210,8 @@ public class PMMLIncludedModelHandlerTest {
                                        "",
                                        "");
         assertNestedFunctionDefinition(decisions.get(2),
-                                       "do-not-change",
-                                       "do-not-change");
+                                       UNAFFECTED_DOCUMENT,
+                                       UNAFFECTED_MODEL);
 
         verify(expressionGrid1, never()).initialiseUiCells();
         verify(expressionGrid2, never()).initialiseUiCells();
@@ -223,8 +229,8 @@ public class PMMLIncludedModelHandlerTest {
                                     "",
                                     "");
         assertPMMLContextDefinition(bkms.get(2).getEncapsulatedLogic(),
-                                    "do-not-change",
-                                    "do-not-change");
+                                    UNAFFECTED_DOCUMENT,
+                                    UNAFFECTED_MODEL);
 
         verify(expressionGrid1).initialiseUiCells();
         verify(expressionGrid2).initialiseUiCells();
@@ -242,8 +248,8 @@ public class PMMLIncludedModelHandlerTest {
                                        "",
                                        "");
         assertNestedFunctionDefinition(bkms.get(2),
-                                       "do-not-change",
-                                       "do-not-change");
+                                       UNAFFECTED_DOCUMENT,
+                                       UNAFFECTED_MODEL);
 
         verify(expressionGrid1, never()).initialiseUiCells();
         verify(expressionGrid2, never()).initialiseUiCells();
@@ -256,10 +262,10 @@ public class PMMLIncludedModelHandlerTest {
         decision1.setExpression(new LiteralExpression());
 
         final Decision decision2 = new Decision();
-        decision2.setExpression(makeTopLevelPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL));
+        decision2.setExpression(makeTopLevelPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL, MODEL_NAME));
 
         final Decision decision3 = new Decision();
-        decision3.setExpression(makeTopLevelPMMLFunctionDefinition("do-not-change"));
+        decision3.setExpression(makeTopLevelPMMLFunctionDefinition(UNAFFECTED_DOCUMENT, UNAFFECTED_MODEL));
 
         decision1.getId().setValue(NODE1_UUID);
         decision2.getId().setValue(NODE2_UUID);
@@ -280,10 +286,10 @@ public class PMMLIncludedModelHandlerTest {
         decision1.setExpression(makeNestedLiteralExpression());
 
         final Decision decision2 = new Decision();
-        decision2.setExpression(makeNestedPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL));
+        decision2.setExpression(makeNestedPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL, MODEL_NAME));
 
         final Decision decision3 = new Decision();
-        decision3.setExpression(makeNestedPMMLFunctionDefinition("do-not-change"));
+        decision3.setExpression(makeNestedPMMLFunctionDefinition(UNAFFECTED_DOCUMENT, UNAFFECTED_MODEL));
 
         drgElements.add(decision1);
         drgElements.add(decision2);
@@ -303,10 +309,10 @@ public class PMMLIncludedModelHandlerTest {
         bkm1.setEncapsulatedLogic(bkm1Function);
 
         final BusinessKnowledgeModel bkm2 = new BusinessKnowledgeModel();
-        bkm2.setEncapsulatedLogic(makeTopLevelPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL));
+        bkm2.setEncapsulatedLogic(makeTopLevelPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL, MODEL_NAME));
 
         final BusinessKnowledgeModel bkm3 = new BusinessKnowledgeModel();
-        bkm3.setEncapsulatedLogic(makeTopLevelPMMLFunctionDefinition("do-not-change"));
+        bkm3.setEncapsulatedLogic(makeTopLevelPMMLFunctionDefinition(UNAFFECTED_DOCUMENT, UNAFFECTED_MODEL));
 
         bkm1.getId().setValue(NODE1_UUID);
         bkm2.getId().setValue(NODE2_UUID);
@@ -332,13 +338,13 @@ public class PMMLIncludedModelHandlerTest {
         final BusinessKnowledgeModel bkm2 = new BusinessKnowledgeModel();
         final FunctionDefinition bkm2Function = new FunctionDefinition();
         bkm2Function.setKind(FunctionDefinition.Kind.FEEL);
-        bkm2Function.setExpression(makeNestedPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL));
+        bkm2Function.setExpression(makeNestedPMMLFunctionDefinition(DOCUMENT_NAME_ORIGINAL, MODEL_NAME));
         bkm2.setEncapsulatedLogic(bkm2Function);
 
         final BusinessKnowledgeModel bkm3 = new BusinessKnowledgeModel();
         final FunctionDefinition bkm3Function = new FunctionDefinition();
         bkm3Function.setKind(FunctionDefinition.Kind.FEEL);
-        bkm3Function.setExpression(makeNestedPMMLFunctionDefinition("do-not-change"));
+        bkm3Function.setExpression(makeNestedPMMLFunctionDefinition(UNAFFECTED_DOCUMENT, UNAFFECTED_MODEL));
         bkm3.setEncapsulatedLogic(bkm3Function);
 
         drgElements.add(bkm1);
@@ -362,19 +368,21 @@ public class PMMLIncludedModelHandlerTest {
         return context;
     }
 
-    private Context makeNestedPMMLFunctionDefinition(final String documentName) {
+    private Context makeNestedPMMLFunctionDefinition(final String documentName,
+                                                     final String modelName) {
         final Context context = new Context();
         final ContextEntry contextEntry = new ContextEntry();
         final InformationItem variable = new InformationItem();
         variable.getName().setValue("variable");
         contextEntry.setVariable(variable);
-        contextEntry.setExpression(makeTopLevelPMMLFunctionDefinition(documentName));
+        contextEntry.setExpression(makeTopLevelPMMLFunctionDefinition(documentName, modelName));
         context.getContextEntry().add(contextEntry);
 
         return context;
     }
 
-    private FunctionDefinition makeTopLevelPMMLFunctionDefinition(final String documentName) {
+    private FunctionDefinition makeTopLevelPMMLFunctionDefinition(final String documentName,
+                                                                  final String modelName) {
         final FunctionDefinition function = new FunctionDefinition();
         function.setKind(FunctionDefinition.Kind.PMML);
 
@@ -394,7 +402,7 @@ public class PMMLIncludedModelHandlerTest {
         final LiteralExpressionPMMLDocumentModel functionContextEntry2Value = new LiteralExpressionPMMLDocumentModel();
         functionContextEntry2Variable.getName().setValue(LiteralExpressionPMMLDocumentModel.VARIABLE_MODEL);
         functionContextEntry2.setVariable(functionContextEntry2Variable);
-        functionContextEntry2Value.getText().setValue("\"" + documentName + "\"");
+        functionContextEntry2Value.getText().setValue("\"" + modelName + "\"");
         functionContextEntry2.setExpression(functionContextEntry2Value);
 
         functionExpression.getContextEntry().add(functionContextEntry1);
