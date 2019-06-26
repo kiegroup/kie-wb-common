@@ -18,10 +18,12 @@ package org.kie.workbench.common.dmn.showcase.backend.workarounds;
 
 import javax.enterprise.context.Dependent;
 
+import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.security.shared.api.identity.UserImpl;
 import org.jboss.errai.security.shared.service.AuthenticationService;
 
+@Service
 @Dependent
 public class DummyAuthenticationService implements AuthenticationService {
 
