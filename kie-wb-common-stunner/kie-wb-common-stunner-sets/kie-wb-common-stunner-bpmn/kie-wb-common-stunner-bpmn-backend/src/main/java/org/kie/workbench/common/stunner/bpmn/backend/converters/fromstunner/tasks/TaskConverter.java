@@ -90,6 +90,7 @@ public class TaskConverter {
         p.setServiceOperation(executionSet.getGenericServiceTaskInfo()
                                       .getValue()
                                       .getServiceOperation());
+        p.setSlaDueDate(executionSet.getSlaDueDate().getValue());
         return p;
     }
 

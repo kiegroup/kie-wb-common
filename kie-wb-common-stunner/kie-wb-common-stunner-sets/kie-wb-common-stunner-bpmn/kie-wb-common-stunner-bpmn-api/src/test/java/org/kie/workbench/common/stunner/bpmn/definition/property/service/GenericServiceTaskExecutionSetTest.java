@@ -19,11 +19,16 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 
 public class GenericServiceTaskExecutionSetTest {
+
+    private final static String SLA_DUE_DATE_1 = "02/17/2013";
+    private final static String SLA_DUE_DATE_2 = "07/12/2017";
+
 
     @Before
     public void setUp() {
@@ -36,6 +41,13 @@ public class GenericServiceTaskExecutionSetTest {
         GenericServiceTaskExecutionSet b = new GenericServiceTaskExecutionSet();
         assertEquals(a.hashCode(),
                      b.hashCode());
+
+        GenericServiceTaskExecutionSet c = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+        GenericServiceTaskExecutionSet d = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+        assertEquals(c.hashCode(),
+                     d.hashCode());
     }
 
     @Test
@@ -43,6 +55,12 @@ public class GenericServiceTaskExecutionSetTest {
         GenericServiceTaskExecutionSet a = new GenericServiceTaskExecutionSet();
         GenericServiceTaskExecutionSet b = new GenericServiceTaskExecutionSet();
         Assert.assertTrue(a.equals(b));
+
+        GenericServiceTaskExecutionSet c = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+        GenericServiceTaskExecutionSet d = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+        Assert.assertTrue(c.equals(d));
     }
 
     @Test
@@ -53,6 +71,12 @@ public class GenericServiceTaskExecutionSetTest {
         a.setGenericServiceTaskInfo(null);
 
         Assert.assertFalse(a.equals(b));
+
+        GenericServiceTaskExecutionSet c = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+        GenericServiceTaskExecutionSet d = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_2));
+        Assert.assertFalse(c.equals(d));
     }
 
     @Test
@@ -61,11 +85,26 @@ public class GenericServiceTaskExecutionSetTest {
         GenericServiceTaskExecutionSet b = new GenericServiceTaskExecutionSet();
         a.setGenericServiceTaskInfo(new GenericServiceTaskInfo());
         Assert.assertTrue(a.equals(b));
+
+        GenericServiceTaskExecutionSet c = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+        GenericServiceTaskExecutionSet d = new GenericServiceTaskExecutionSet(new GenericServiceTaskInfo(),
+                                                                              new SLADueDate(SLA_DUE_DATE_1));
+
+        Assert.assertTrue(c.equals(d));
     }
 
     @Test
     public void testGetGenericServiceTaskInfo() {
         GenericServiceTaskExecutionSet a = new GenericServiceTaskExecutionSet();
         Assert.assertTrue(a.getGenericServiceTaskInfo().equals(new GenericServiceTaskInfo()));
+    }
+
+    @Test
+    public void testGetSlaDueDate() {
+        GenericServiceTaskExecutionSet a = new GenericServiceTaskExecutionSet(
+                new GenericServiceTaskInfo(),
+                new SLADueDate(SLA_DUE_DATE_1));
+        Assert.assertTrue(a.getSlaDueDate().getValue().equals(SLA_DUE_DATE_1));
     }
 }
