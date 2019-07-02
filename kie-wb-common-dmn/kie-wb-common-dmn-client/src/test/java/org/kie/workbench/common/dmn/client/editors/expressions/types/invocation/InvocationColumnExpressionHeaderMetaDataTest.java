@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import com.google.gwtmockito.WithClassesToStub;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +40,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
-@WithClassesToStub(Text.class)
 public class InvocationColumnExpressionHeaderMetaDataTest extends BaseColumnHeaderMetaDataContextMenuTest<InvocationColumnExpressionHeaderMetaData> {
 
     private static final double BLOCK_WIDTH = 10.0;
