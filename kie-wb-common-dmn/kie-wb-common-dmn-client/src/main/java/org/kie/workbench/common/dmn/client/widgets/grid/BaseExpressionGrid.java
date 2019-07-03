@@ -155,14 +155,17 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
         this.uiModelMapper = makeUiModelMapper();
 
         initialiseUiColumns();
-        initialiseUiModel();
+        initialiseUiRows();
+        initialiseUiCells();
     }
 
     protected abstract M makeUiModelMapper();
 
     protected abstract void initialiseUiColumns();
 
-    protected abstract void initialiseUiModel();
+    protected abstract void initialiseUiRows();
+
+    public abstract void initialiseUiCells();
 
     @SuppressWarnings("unchecked")
     public Consumer<HasName> clearDisplayNameConsumer(final boolean updateStunnerTitle) {
@@ -399,11 +402,6 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     @Override
     public boolean isCacheable() {
         return true;
-    }
-
-    //Package protected getter for Unit Tests.
-    Optional<String> getNodeUUID() {
-        return nodeUUID;
     }
 
     public double getMinimumWidth() {
