@@ -113,6 +113,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public static final String ALERTS = MessageConsoleScreen.ALERTS;
     public static final String REPOSITORY_STRUCTURE_SCREEN = "repositoryStructureScreen";
     public static final String ADD_ASSET_SCREEN = "AddAssetsScreen";
+    public static final String SUBMIT_CHANGE_REQUEST = "SubmitChangeRequestScreen";
+    public static final String CHANGE_REQUEST_REVIEW = "ChangeRequestReviewScreen";
 
     public static final List<String> LIBRARY_PLACES = Arrays.asList(
             LIBRARY_SCREEN,
@@ -123,6 +125,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             ORGANIZATIONAL_UNITS_SCREEN,
             PROJECT_SETTINGS,
             ADD_ASSET_SCREEN,
+            SUBMIT_CHANGE_REQUEST,
+            CHANGE_REQUEST_REVIEW,
             IMPORT_PROJECTS_SCREEN,
             IMPORT_SAMPLE_PROJECTS_SCREEN,
             PreferencesRootScreen.IDENTIFIER
@@ -268,7 +272,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         }
     }-*/;
 
-
     public static boolean nativeUserCanCreateOrganizationalUnit() {
         return self.userCanCreateOrganizationalUnit();
     }
@@ -282,8 +285,12 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             final PlaceRequest place = placeGainFocusEvent.getPlace();
 
             if (place instanceof PathPlaceRequest) {
-                libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
-                                                 ((PathPlaceRequest) place).getPath());
+                boolean isEmbedded = place.getParameter("embedded",
+                                                        null) != null;
+                if (!isEmbedded){
+                    libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
+                                                     ((PathPlaceRequest) place).getPath());
+                }
             } else if (!place.getIdentifier().equals(ALERTS) && isLibraryPlace(place)) {
                 if (projectContext.getActiveWorkspaceProject().isPresent()
                         && place.getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)) {
@@ -560,6 +567,25 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         part.setSelectable(false);
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
+    }
+
+    public void goToSubmitChangeRequestScreen() {
+        final PlaceRequest submitChangeRequestScreen = new DefaultPlaceRequest(LibraryPlaces.SUBMIT_CHANGE_REQUEST);
+        final PartDefinitionImpl part = new PartDefinitionImpl(submitChangeRequestScreen);
+        part.setSelectable(false);
+        placeManager.goTo(part,
+                          libraryPerspective.getRootPanel());
+        libraryBreadcrumbs.setupForSubmitChangeRequest(getActiveWorkspace());
+    }
+
+    public void goToChangeRequestReviewScreen(final String changeRequestTitle) {
+        final PlaceRequest changeRequestReviewScreen = new DefaultPlaceRequest(LibraryPlaces.CHANGE_REQUEST_REVIEW);
+        final PartDefinitionImpl part = new PartDefinitionImpl(changeRequestReviewScreen);
+        part.setSelectable(false);
+        placeManager.goTo(part,
+                          libraryPerspective.getRootPanel());
+        libraryBreadcrumbs.setupForChangeRequestReview(getActiveWorkspace(),
+                                                       changeRequestTitle);
     }
 
     public void goToTrySamples() {

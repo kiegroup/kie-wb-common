@@ -122,6 +122,7 @@ public abstract class KieEditor<T>
     protected PerspectiveManager perspectiveManager;
     private ViewDRLSourceWidget sourceWidget;
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
+    private boolean hiddenDocks;
 
     protected KieEditor() {
     }
@@ -171,6 +172,10 @@ public abstract class KieEditor<T>
                         final boolean displayShowMoreVersions,
                         final MenuItems... menuItems) {
         kieView.setPresenter(this);
+
+        this.hiddenDocks = place.getParameter("hiddenDocks",
+                                              null) != null;
+
         super.init(path,
                    place,
                    type,
@@ -181,7 +186,7 @@ public abstract class KieEditor<T>
 
     public void onShowDiagramEditorDocks(@Observes PlaceGainFocusEvent event) {
 
-        if (verifyEventIdentifier(event)) {
+        if (!this.hiddenDocks && verifyEventIdentifier(event)) {
             if (!docks.isSetup()) {
                 docks.setup(perspectiveManager.getCurrentPerspective().getIdentifier(),
                             new DefaultPlaceRequest("org.kie.guvnor.explorer"));
@@ -191,17 +196,21 @@ public abstract class KieEditor<T>
     }
 
     public void onHideDocks(@Observes PlaceHiddenEvent event) {
-        if (verifyEventIdentifier(event)) {
+        if (!this.hiddenDocks && verifyEventIdentifier(event)) {
             hideDocks();
         }
     }
 
     public void showDocks() {
-        docks.show();
+        if (!this.hiddenDocks) {
+            docks.show();
+        }
     }
 
     public void hideDocks() {
-        docks.hide();
+        if (!this.hiddenDocks) {
+            docks.hide();
+        }
     }
 
     public boolean verifyEventIdentifier(AbstractPlaceEvent event) {

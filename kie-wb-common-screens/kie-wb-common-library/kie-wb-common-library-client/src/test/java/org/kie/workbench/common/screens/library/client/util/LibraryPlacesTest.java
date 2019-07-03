@@ -506,6 +506,32 @@ public class LibraryPlacesTest {
     }
 
     @Test
+    public void goToSubmitChangeRequestScreenTest() {
+        final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.SUBMIT_CHANGE_REQUEST);
+        final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
+        final LibraryPerspective libraryPerspective = mock(LibraryPerspective.class);
+
+        libraryPlaces.goToSubmitChangeRequestScreen();
+
+        verify(placeManager).goTo(part, libraryPerspective.getRootPanel());
+        verify(libraryBreadcrumbs).setupForSubmitChangeRequest(activeProject);
+    }
+
+    @Test
+    public void goToChangeRequestReviewScreenTest() {
+        final String changeRequestTitle = "title";
+
+        final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.CHANGE_REQUEST_REVIEW);
+        final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
+        final LibraryPerspective libraryPerspective = mock(LibraryPerspective.class);
+
+        libraryPlaces.goToChangeRequestReviewScreen(changeRequestTitle);
+
+        verify(placeManager).goTo(part, libraryPerspective.getRootPanel());
+        verify(libraryBreadcrumbs).setupForChangeRequestReview(activeProject, changeRequestTitle);
+    }
+
+    @Test
     public void goToAssetTestWithPackage() {
 
         final ObservablePath path = mock(ObservablePath.class);

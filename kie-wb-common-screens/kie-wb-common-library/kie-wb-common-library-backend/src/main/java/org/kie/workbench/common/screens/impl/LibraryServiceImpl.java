@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -53,6 +54,7 @@ import org.guvnor.structure.repositories.NewBranchEvent;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.RepositoryUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.security.OrganizationalUnitAction;
 import org.guvnor.structure.security.RepositoryAction;
 import org.jboss.errai.bus.server.annotations.Service;
@@ -126,6 +128,7 @@ public class LibraryServiceImpl implements LibraryService {
     private Event<RepositoryUpdatedEvent> repositoryUpdatedEvent;
     private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
     private ClusterService clusterService;
+    private ChangeRequestService changeRequestService;
 
     public LibraryServiceImpl() {
     }
@@ -150,7 +153,8 @@ public class LibraryServiceImpl implements LibraryService {
                               final ConfiguredRepositories configuredRepositories,
                               final Event<RepositoryUpdatedEvent> repositoryUpdatedEvent,
                               final SpaceConfigStorageRegistry spaceConfigStorageRegistry,
-                              final ClusterService clusterService) {
+                              final ClusterService clusterService,
+                              final ChangeRequestService changeRequestService) {
         this.ouService = ouService;
         this.refactoringQueryService = refactoringQueryService;
         this.preferences = preferences;
@@ -171,6 +175,7 @@ public class LibraryServiceImpl implements LibraryService {
         this.repositoryUpdatedEvent = repositoryUpdatedEvent;
         this.spaceConfigStorageRegistry = spaceConfigStorageRegistry;
         this.clusterService = clusterService;
+        this.changeRequestService = changeRequestService;
     }
 
     @Override
@@ -464,6 +469,9 @@ public class LibraryServiceImpl implements LibraryService {
         deleteBranchPermissions(project.getSpace().getName(),
                                 project.getRepository().getIdentifier(),
                                 branch.getName());
+        deleteAssociatedChangeRequests(project.getSpace().getName(),
+                                       project.getRepository().getAlias(),
+                                       branch.getName());
         this.repositoryUpdatedEvent.fire(new RepositoryUpdatedEvent(repoService.getRepositoryFromSpace(project.getSpace(),
                                                                                                        project.getRepository().getAlias())));
     }
@@ -496,6 +504,14 @@ public class LibraryServiceImpl implements LibraryService {
                                          final String branchName) {
         spaceConfigStorageRegistry.get(spaceName).deleteBranchPermissions(branchName,
                                                                           projectIdentifier);
+    }
+
+    private void deleteAssociatedChangeRequests(final String spaceName,
+                                                final String repositoryAlias,
+                                                final String associatedBranchName) {
+        changeRequestService.deleteChangeRequests(spaceName,
+                                                  repositoryAlias,
+                                                  associatedBranchName);
     }
 
     private void fireNewBranchEvent(final Path targetRoot,

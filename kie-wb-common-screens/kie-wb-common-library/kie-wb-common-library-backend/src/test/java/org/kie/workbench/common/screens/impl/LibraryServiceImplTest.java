@@ -46,6 +46,7 @@ import org.guvnor.structure.repositories.NewBranchEvent;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.RepositoryUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.security.RepositoryAction;
 import org.junit.Before;
 import org.junit.Test;
@@ -158,6 +159,9 @@ public class LibraryServiceImplTest {
     private ClusterService clusterService;
 
     @Mock
+    private ChangeRequestService changeRequestService;
+
+    @Mock
     private Event<NewBranchEvent> newBranchEvent;
 
     @Mock
@@ -234,7 +238,8 @@ public class LibraryServiceImplTest {
                                                     configuredRepositories,
                                                     repositoryUpdatedEvent,
                                                     spaceConfigStorageRegistry,
-                                                    clusterService
+                                                    clusterService,
+                                                    changeRequestService
         ));
     }
 
