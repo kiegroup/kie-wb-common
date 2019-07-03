@@ -23,6 +23,8 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 
+import static org.junit.Assert.assertNotNull;
+
 public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/startNoneEvents.bpmn";
@@ -50,8 +52,10 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartNoneEvent.class);
+
         assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
 
+        assertNotNull(filledTop.getExecutionSet());
         assertStartEventSlaDueDate(filledTop.getExecutionSet(), SLA_DUE_DATE);
     }
 
@@ -64,6 +68,7 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
         StartNoneEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
 
+        assertNotNull(emptyTop.getExecutionSet());
         assertStartEventSlaDueDate(emptyTop.getExecutionSet(), EMPTY_VALUE);
     }
 
@@ -79,6 +84,7 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
         StartNoneEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
 
+        assertNotNull(filledSubprocess.getExecutionSet());
         assertStartEventSlaDueDate(filledSubprocess.getExecutionSet(), SLA_DUE_DATE);
     }
 
@@ -91,6 +97,7 @@ public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
         StartNoneEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartNoneEvent.class);
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
 
+        assertNotNull(emptySubprocess.getExecutionSet());
         assertStartEventSlaDueDate(emptySubprocess.getExecutionSet(), EMPTY_VALUE);
     }
 
