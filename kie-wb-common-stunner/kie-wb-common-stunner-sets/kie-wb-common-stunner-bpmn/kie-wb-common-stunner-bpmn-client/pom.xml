@@ -150,24 +150,6 @@
       <artifactId>kie-wb-common-stunner-forms-client</artifactId>
     </dependency>
 
-    <!-- TODO: Really necessary? . -->
-
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- GWT and GWT Extensions -->
 
     <dependency>
@@ -354,6 +336,7 @@
       <artifactId>powermock-api-mockito</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
 </project>

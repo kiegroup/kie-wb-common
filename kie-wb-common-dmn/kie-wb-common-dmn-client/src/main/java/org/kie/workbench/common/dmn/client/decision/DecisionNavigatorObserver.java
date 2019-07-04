@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.decision;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -74,16 +73,16 @@ public class DecisionNavigatorObserver {
     }
 
     private void updateNode(final Graph graph) {
-        final DecisionNavigatorItem activeParent = getActiveParent();
-        if (Objects.isNull(activeParent)) {
-            return;
-        }
-        final String activeParentUUID = activeParent.getUUID();
-        final Node node = graph.getNode(activeParentUUID);
 
-        presenter.updateElement(node);
+        getActiveParent().ifPresent(activeParent -> {
 
-        activeParent.getChildren().forEach(e -> getTreePresenter().selectItem(e.getUUID()));
+            final String activeParentUUID = activeParent.getUUID();
+            final Node node = graph.getNode(activeParentUUID);
+
+            presenter.updateElement(node);
+
+            activeParent.getChildren().forEach(e -> getTreePresenter().selectItem(e.getUUID()));
+        });
     }
 
     void onNestedElementLostFocus(final @Observes CanvasFocusedShapeEvent event) {
@@ -101,8 +100,8 @@ public class DecisionNavigatorObserver {
         });
     }
 
-    DecisionNavigatorItem getActiveParent() {
-        return getTreePresenter().getActiveParent();
+    Optional<DecisionNavigatorItem> getActiveParent() {
+        return Optional.ofNullable(getTreePresenter().getActiveParent());
     }
 
     void setActiveParent(final EditExpressionEvent event) {
