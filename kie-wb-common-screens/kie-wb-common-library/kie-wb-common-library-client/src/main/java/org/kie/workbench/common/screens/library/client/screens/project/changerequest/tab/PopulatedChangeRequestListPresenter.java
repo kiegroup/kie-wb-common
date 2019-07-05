@@ -93,7 +93,7 @@ public class PopulatedChangeRequestListPresenter {
     private int totalPages;
     private String filterType;
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 15;
 
     private static final String FILTER_OPEN = "OPEN";
     private static final String FILTER_CLOSED = "CLOSED";
@@ -284,8 +284,6 @@ public class PopulatedChangeRequestListPresenter {
     private void update(Runnable runnable) {
         this.resolveChangeRequestsCount();
         this.setupListItems();
-        this.view.setCurrentPage(this.currentPage);
-        this.checkPaginationButtons();
 
         runnable.run();
     }
@@ -325,6 +323,9 @@ public class PopulatedChangeRequestListPresenter {
                                                         0));
         this.totalPages = (int) Math.ceil(count / (float) PAGE_SIZE);
         this.view.setTotalPages(Math.max(this.totalPages, 1));
+
+        this.view.setCurrentPage(this.currentPage);
+        this.checkPaginationButtons();
     }
 
     private ChangeRequestStatus getStatusByFilterType() {
