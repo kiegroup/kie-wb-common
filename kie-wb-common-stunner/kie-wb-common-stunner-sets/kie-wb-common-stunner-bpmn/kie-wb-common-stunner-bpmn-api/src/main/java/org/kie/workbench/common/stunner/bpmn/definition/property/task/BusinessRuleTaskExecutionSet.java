@@ -136,16 +136,16 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
              new SLADueDate());
     }
 
-    public BusinessRuleTaskExecutionSet(final @MapsTo("ruleLanguage") RuleLanguage ruleLanguage,
-                                        final @MapsTo("ruleFlowGroup") RuleFlowGroup ruleFlowGroup,
-                                        final @MapsTo("namespace") Namespace namespace,
-                                        final @MapsTo("decisionName") DecisionName decisionName,
-                                        final @MapsTo("dmnModelName") DmnModelName dmnModelName,
-                                        final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
-                                        final @MapsTo("onExitAction") OnExitAction onExitAction,
-                                        final @MapsTo("isAsync") IsAsync isAsync,
-                                        final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
-                                        final @MapsTo("slaDueDate") SLADueDate slaDueDate) {
+    public BusinessRuleTaskExecutionSet(final @MapsTo("RULE_LANGUAGE") RuleLanguage ruleLanguage,
+                                        final @MapsTo("RULE_FLOW_GROUP") RuleFlowGroup ruleFlowGroup,
+                                        final @MapsTo("NAMESPACE") Namespace namespace,
+                                        final @MapsTo("DECISON_NAME") DecisionName decisionName,
+                                        final @MapsTo("DMN_MODEL_NAME") DmnModelName dmnModelName,
+                                        final @MapsTo("ON_ENTRY_ACTION") OnEntryAction onEntryAction,
+                                        final @MapsTo("ON_EXIT_ACTION") OnExitAction onExitAction,
+                                        final @MapsTo("ASYNC") IsAsync isAsync,
+                                        final @MapsTo("ADHOC_AUTOSTART") AdHocAutostart adHocAutostart,
+                                        final @MapsTo("SLA_DUE_DATE") SLADueDate slaDueDate) {
         this.ruleLanguage = ruleLanguage;
         this.ruleFlowGroup = ruleFlowGroup;
         this.namespace = namespace;
