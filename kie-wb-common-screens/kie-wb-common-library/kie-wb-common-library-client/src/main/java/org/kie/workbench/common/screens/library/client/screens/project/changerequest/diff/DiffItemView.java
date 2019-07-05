@@ -20,12 +20,15 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.ext.widgets.common.client.diff2html.Diff2Html;
 import org.uberfire.ext.widgets.common.client.diff2html.DiffOutputFormat;
@@ -36,6 +39,8 @@ public class DiffItemView implements DiffItemPresenter.View,
                                      IsElement {
 
     private static int nextId = 0;
+
+    private static final String SIZE_100P = "100%";
 
     private DiffItemPresenter presenter;
 
@@ -72,11 +77,14 @@ public class DiffItemView implements DiffItemPresenter.View,
 
     @Inject
     @DataField("left-container")
-    private HTMLDivElement leftContainer;
+    private HTMLDivElement customLeftContainer;
 
     @Inject
     @DataField("right-container")
-    private HTMLDivElement rightContainer;
+    private HTMLDivElement customRightContainer;
+
+    @Inject
+    private Elemental2DomUtil domUtil;
 
     private Diff2Html diff2Html;
 
@@ -86,11 +94,11 @@ public class DiffItemView implements DiffItemPresenter.View,
     }
 
     @Override
-    public void setupTextual(final String filename,
-                             final String changeType,
-                             final String diffText,
-                             final boolean isUnified,
-                             final boolean conflict) {
+    public void setupTextualContent(final String filename,
+                                    final String changeType,
+                                    final String diffText,
+                                    final boolean isUnified,
+                                    final boolean conflict) {
         this.setup(filename, changeType, conflict);
 
         this.textualDiffContainer.hidden = false;
@@ -102,26 +110,49 @@ public class DiffItemView implements DiffItemPresenter.View,
     }
 
     @Override
-    public void setupCustom(final String filename,
-                            final String changeType,
-                            final boolean conflict) {
+    public void setupCustomContent(final String filename,
+                                   final String changeType,
+                                   final boolean conflict) {
         this.setup(filename, changeType, conflict);
 
         this.customDiffContainer.hidden = false;
     }
 
     @Override
-    public HTMLElement getLeftContainer() {
-        return leftContainer;
+    public HTMLElement getCustomLeftContainer() {
+        return customLeftContainer;
     }
 
     @Override
-    public HTMLElement getRightContainer() {
-        return rightContainer;
+    public HTMLElement getCustomRightContainer() {
+        return customRightContainer;
     }
 
     @Override
-    public void drawTextual() {
+    public void clearCustomLeftContainer() {
+        domUtil.removeAllElementChildren(customLeftContainer);
+    }
+
+    @Override
+    public void clearCustomRightContainer() {
+        domUtil.removeAllElementChildren(customRightContainer);
+    }
+
+    @Override
+    public void expandCollapsibleContainer(boolean isOpened) {
+        if (isOpened) {
+            collapseLink.classList.remove("collapsed");
+            collapseContainer.classList.add("in");
+            collapseContainer.setAttribute("aria-expanded", String.valueOf(true));
+        } else {
+            collapseLink.classList.add("collapsed");
+            collapseContainer.classList.remove("in");
+            collapseContainer.setAttribute("aria-expanded", String.valueOf(false));
+        }
+    }
+
+    @Override
+    public void drawTextualContent() {
         if (this.diff2Html != null) {
             this.diff2Html.draw();
         }
@@ -129,27 +160,23 @@ public class DiffItemView implements DiffItemPresenter.View,
 
     @Override
     public void expandCustomLeftContainer() {
-        this.leftContainer.hidden = false;
-        this.leftContainer.style.width = CSSProperties.WidthUnionType.of("100%");
+        this.customLeftContainer.hidden = false;
+        this.customLeftContainer.style.width = CSSProperties.WidthUnionType.of(SIZE_100P);
 
-        this.rightContainer.hidden = true;
+        this.customRightContainer.hidden = true;
     }
 
     @Override
     public void expandCustomRightContainer() {
-        this.leftContainer.hidden = true;
+        this.customLeftContainer.hidden = true;
 
-        this.rightContainer.hidden = false;
-        this.rightContainer.style.width = CSSProperties.WidthUnionType.of("100%");
+        this.customRightContainer.hidden = false;
+        this.customRightContainer.style.width = CSSProperties.WidthUnionType.of(SIZE_100P);
     }
 
-    @Override
-    public void resetCustomContainers() {
-        this.leftContainer.hidden = false;
-        this.leftContainer.style.width = CSSProperties.WidthUnionType.of("50%");
-
-        this.rightContainer.hidden = false;
-        this.rightContainer.style.width = CSSProperties.WidthUnionType.of("50%");
+    @EventHandler("collapse-link")
+    public void onCollapseLinkClicked(final ClickEvent event) {
+        presenter.toggleCollapsibleContainerState();
     }
 
     private void setup(final String filename,

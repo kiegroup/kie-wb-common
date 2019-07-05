@@ -40,7 +40,6 @@ import org.uberfire.workbench.type.ResourceTypeDefinition;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -108,9 +107,10 @@ public class DiffItemPresenterTest {
     @Test
     public void preDestroyVisualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestLeft")).set(mock(PlaceRequest.class));
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestRight")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomRight")).set(mock(PlaceRequest.class));
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
         presenter.preDestroy();
 
@@ -120,8 +120,9 @@ public class DiffItemPresenterTest {
     @Test
     public void preDestroyVisualDiffOnlyLeftTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestLeft")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft")).set(mock(PlaceRequest.class));
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
         presenter.preDestroy();
 
@@ -131,8 +132,9 @@ public class DiffItemPresenterTest {
     @Test
     public void preDestroyVisualDiffOnlyRightTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestRight")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomRight")).set(mock(PlaceRequest.class));
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
         presenter.preDestroy();
 
@@ -146,24 +148,26 @@ public class DiffItemPresenterTest {
 
         presenter.draw();
 
-        verify(view, never()).drawTextual();
+        verify(view, never()).drawTextualContent();
     }
 
     @Test
     public void drawWhenTextualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
 
         presenter.draw();
 
-        verify(view).drawTextual();
+        verify(view).drawTextualContent();
     }
 
     @Test
     public void drawWhenVisualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
 
         doReturn(mock(PathPlaceRequest.class)).when(presenter).createPlaceRequest(oldFilePath);
@@ -171,8 +175,8 @@ public class DiffItemPresenterTest {
 
         presenter.draw();
 
-        verify(view).getLeftContainer();
-        verify(view).getRightContainer();
+        verify(view).getCustomLeftContainer();
+        verify(view).getCustomRightContainer();
         verify(placeManager, times(2)).goTo(any(PlaceRequest.class), any(HTMLElement.class));
     }
 
@@ -180,6 +184,7 @@ public class DiffItemPresenterTest {
     public void drawWhenAddTypeAndVisualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
 
         doReturn(ChangeType.ADD).when(diff).getChangeType();
@@ -189,8 +194,8 @@ public class DiffItemPresenterTest {
 
         presenter.draw();
 
-        verify(view, never()).getLeftContainer();
-        verify(view).getRightContainer();
+        verify(view, never()).getCustomLeftContainer();
+        verify(view).getCustomRightContainer();
         verify(placeManager, times(1)).goTo(any(PlaceRequest.class), any(HTMLElement.class));
     }
 
@@ -198,6 +203,7 @@ public class DiffItemPresenterTest {
     public void drawWhenDeleteTypeAndVisualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
 
         doReturn(ChangeType.DELETE).when(diff).getChangeType();
@@ -207,8 +213,8 @@ public class DiffItemPresenterTest {
 
         presenter.draw();
 
-        verify(view).getLeftContainer();
-        verify(view,  never()).getRightContainer();
+        verify(view).getCustomLeftContainer();
+        verify(view, never()).getCustomRightContainer();
         verify(placeManager, times(1)).goTo(any(PlaceRequest.class), any(HTMLElement.class));
     }
 
@@ -218,11 +224,11 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff);
 
-        verify(view, times(1)).setupTextual(anyString(),
-                                            anyString(),
-                                            anyString(),
-                                            anyBoolean(),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(anyString(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   anyBoolean(),
+                                                   anyBoolean());
     }
 
     @Test
@@ -235,11 +241,11 @@ public class DiffItemPresenterTest {
         verify(diff, times(1)).getOldFilePath();
         verify(diff, times(2)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextual(eq("my/new/file"),
-                                            eq("Added"),
-                                            anyString(),
-                                            eq(true),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(eq("my/new/file"),
+                                                   eq("Added"),
+                                                   anyString(),
+                                                   eq(true),
+                                                   anyBoolean());
     }
 
     @Test
@@ -252,11 +258,11 @@ public class DiffItemPresenterTest {
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextual(eq("my/old/file"),
-                                            eq("Deleted"),
-                                            anyString(),
-                                            eq(true),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(eq("my/old/file"),
+                                                   eq("Deleted"),
+                                                   anyString(),
+                                                   eq(true),
+                                                   anyBoolean());
     }
 
     @Test
@@ -268,11 +274,11 @@ public class DiffItemPresenterTest {
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextual(eq("my/old/file"),
-                                            eq("Updated"),
-                                            anyString(),
-                                            eq(false),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(eq("my/old/file"),
+                                                   eq("Updated"),
+                                                   anyString(),
+                                                   eq(false),
+                                                   anyBoolean());
     }
 
     @Test
@@ -285,11 +291,11 @@ public class DiffItemPresenterTest {
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextual(eq("my/old/file -> my/new/file"),
-                                            eq("Copied"),
-                                            anyString(),
-                                            eq(false),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(eq("my/old/file -> my/new/file"),
+                                                   eq("Copied"),
+                                                   anyString(),
+                                                   eq(false),
+                                                   anyBoolean());
     }
 
     @Test
@@ -302,11 +308,11 @@ public class DiffItemPresenterTest {
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextual(eq("my/old/file -> my/new/file"),
-                                            eq("Renamed"),
-                                            anyString(),
-                                            eq(false),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(eq("my/old/file -> my/new/file"),
+                                                   eq("Renamed"),
+                                                   anyString(),
+                                                   eq(false),
+                                                   anyBoolean());
     }
 
     @Test
@@ -325,10 +331,10 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff);
 
-        verify(view, times(1)).setupTextual(anyString(),
-                                            anyString(),
-                                            anyString(),
-                                            anyBoolean(),
-                                            anyBoolean());
+        verify(view, times(1)).setupTextualContent(anyString(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   anyBoolean(),
+                                                   anyBoolean());
     }
 }

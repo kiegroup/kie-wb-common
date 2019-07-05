@@ -45,27 +45,31 @@ public class DiffItemPresenter {
 
     public interface View extends UberElemental<DiffItemPresenter> {
 
-        void setupTextual(final String filename,
-                          final String changeType,
-                          final String diffText,
-                          final boolean isUnified,
-                          final boolean conflict);
+        void setupTextualContent(final String filename,
+                                 final String changeType,
+                                 final String diffText,
+                                 final boolean isUnified,
+                                 final boolean conflict);
 
-        void drawTextual();
+        void drawTextualContent();
 
-        void setupCustom(final String filename,
-                         final String changeType,
-                         final boolean conflict);
+        void setupCustomContent(final String filename,
+                                final String changeType,
+                                final boolean conflict);
 
         void expandCustomLeftContainer();
 
         void expandCustomRightContainer();
 
-        void resetCustomContainers();
+        HTMLElement getCustomLeftContainer();
 
-        HTMLElement getLeftContainer();
+        HTMLElement getCustomRightContainer();
 
-        HTMLElement getRightContainer();
+        void clearCustomLeftContainer();
+
+        void clearCustomRightContainer();
+
+        void expandCollapsibleContainer(final boolean isOpened);
     }
 
     private final View view;
@@ -74,10 +78,11 @@ public class DiffItemPresenter {
     private final TranslationService ts;
 
     private DiffMode diffMode;
-    private PlaceRequest placeRequestLeft;
-    private PlaceRequest placeRequestRight;
+    private PlaceRequest placeRequestCustomLeft;
+    private PlaceRequest placeRequestCustomRight;
     private ChangeRequestDiff diff;
     private boolean ready;
+    private boolean open;
 
     @Inject
     public DiffItemPresenter(final View view,
@@ -97,16 +102,8 @@ public class DiffItemPresenter {
 
     @PreDestroy
     public void preDestroy() {
-        if (ready) {
-            if (diffMode == DiffMode.VISUAL) {
-                if (placeRequestLeft != null) {
-                    placeManager.closePlace(placeRequestLeft);
-                }
-
-                if (placeRequestRight != null) {
-                    placeManager.closePlace(placeRequestRight);
-                }
-            }
+        if (ready && open && diffMode == DiffMode.VISUAL) {
+            closeVisualContent();
         }
     }
 
@@ -114,10 +111,10 @@ public class DiffItemPresenter {
         return view;
     }
 
-    public void setup(final ChangeRequestDiff diff) {
+    public void setup(final ChangeRequestDiff changeRequestDiff) {
 
-        this.diff = diff;
-        this.diffMode = resolveDiffMode(diff);
+        diff = changeRequestDiff;
+        diffMode = resolveDiffMode(diff);
 
         final String resolveDiffFilename = resolveDiffFilename(diff.getChangeType(),
                                                                diff.getOldFilePath().getFileName(),
@@ -131,34 +128,76 @@ public class DiffItemPresenter {
                                resolveDiffFilename);
         }
 
-        this.ready = true;
+        ready = true;
+
+        view.expandCollapsibleContainer(open);
     }
 
     public void draw() {
         if (ready) {
-            if (diffMode == DiffMode.VISUAL) {
-                if (diff.getChangeType() != ChangeType.ADD) {
-                    placeRequestLeft = createPlaceRequest(diff.getOldFilePath());
-                    placeManager.goTo(placeRequestLeft,
-                                      view.getLeftContainer());
+            if (open) {
+                if (diffMode == DiffMode.VISUAL) {
+                    drawVisualContent();
+                } else {
+                    drawTextualContent();
                 }
-
-                if (diff.getChangeType() != ChangeType.DELETE) {
-                    placeRequestRight = createPlaceRequest(diff.getNewFilePath());
-                    placeManager.goTo(placeRequestRight,
-                                      view.getRightContainer());
-                }
-            } else {
-                view.drawTextual();
             }
         } else {
             throw new IllegalStateException("Item not ready - setup first.");
         }
     }
 
+    public void toggleCollapsibleContainerState() {
+        if (ready) {
+            if (diffMode == DiffMode.VISUAL) {
+                if (open) {
+                    closeVisualContent();
+                } else {
+                    drawVisualContent();
+                }
+            } else {
+                if (!open) {
+                    drawTextualContent();
+                }
+            }
+        }
+
+        open = !open;
+    }
+
     PlaceRequest createPlaceRequest(final Path path) {
         return new PathPlaceRequest(path,
                                     createPathPlaceRequestParameters());
+    }
+
+    private void drawTextualContent() {
+        view.drawTextualContent();
+    }
+
+    private void drawVisualContent() {
+        if (diff.getChangeType() != ChangeType.ADD) {
+            placeRequestCustomLeft = createPlaceRequest(diff.getOldFilePath());
+            placeManager.goTo(placeRequestCustomLeft,
+                              view.getCustomLeftContainer());
+        }
+
+        if (diff.getChangeType() != ChangeType.DELETE) {
+            placeRequestCustomRight = createPlaceRequest(diff.getNewFilePath());
+            placeManager.goTo(placeRequestCustomRight,
+                              view.getCustomRightContainer());
+        }
+    }
+
+    private void closeVisualContent() {
+        if (placeRequestCustomLeft != null) {
+            view.clearCustomLeftContainer();
+            placeManager.closePlace(placeRequestCustomLeft);
+        }
+
+        if (placeRequestCustomRight != null) {
+            view.clearCustomRightContainer();
+            placeManager.closePlace(placeRequestCustomRight);
+        }
     }
 
     private void prepareView() {
@@ -195,29 +234,27 @@ public class DiffItemPresenter {
         final boolean isUnified = diff.getChangeType() == ChangeType.ADD
                 || diff.getChangeType() == ChangeType.DELETE;
 
-        view.setupTextual(filename,
-                          resolveChangeTypeText(diff.getChangeType()),
-                          diff.getDiffText(),
-                          isUnified,
-                          diff.isConflict());
+        view.setupTextualContent(filename,
+                                 resolveChangeTypeText(diff.getChangeType()),
+                                 diff.getDiffText(),
+                                 isUnified,
+                                 diff.isConflict());
     }
 
     private void prepareVisualDiff(final ChangeRequestDiff diff,
                                    final String filename) {
-        view.setupCustom(filename,
-                         resolveChangeTypeText(diff.getChangeType()),
-                         diff.isConflict());
+        view.setupCustomContent(filename,
+                                resolveChangeTypeText(diff.getChangeType()),
+                                diff.isConflict());
 
         if (diff.getChangeType() == ChangeType.ADD) {
             view.expandCustomRightContainer();
         } else if (diff.getChangeType() == ChangeType.DELETE) {
             view.expandCustomLeftContainer();
-        } else {
-            view.resetCustomContainers();
         }
     }
 
-    private DiffMode resolveDiffMode(ChangeRequestDiff diff) {
+    private DiffMode resolveDiffMode(final ChangeRequestDiff diff) {
         final Path filePath = diff.getChangeType() == ChangeType.ADD ? diff.getNewFilePath() : diff.getOldFilePath();
 
         Optional<ResourceTypeDefinition> resourceTypeDefinition = resourceTypeManagerCache
