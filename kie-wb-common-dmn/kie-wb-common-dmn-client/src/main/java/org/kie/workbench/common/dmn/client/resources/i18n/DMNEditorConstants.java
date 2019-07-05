@@ -407,6 +407,21 @@ public class DMNEditorConstants {
     public static final String DMNDocumentationI18n_DiagramDoesNotHaveElements = "DMNDocumentationI18n.DiagramDoesNotHaveElements";
 
     @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_Add = "DMNDocumentationI18n.Add";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_Name = "DMNDocumentationI18n.Name";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_NamePlaceholder = "DMNDocumentationI18n.NamePlaceholder";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_URL = "DMNDocumentationI18n.URL";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_URLPlaceholder = "DMNDocumentationI18n.URLPlaceholder";
+
+    @TranslationKey(defaultValue = "")
     public static final String DMNDocumentationFactory_NoFileName = "DMNDocumentationFactory.NoFileName";
 
     @TranslationKey(defaultValue = "")
