@@ -148,7 +148,8 @@ public class DiffItemPresenterTest {
 
         presenter.draw();
 
-        verify(view, never()).drawTextualContent();
+        verify(view, never()).drawTextualContent(anyString(),
+                                                 anyBoolean());
     }
 
     @Test
@@ -160,7 +161,8 @@ public class DiffItemPresenterTest {
 
         presenter.draw();
 
-        verify(view).drawTextualContent();
+        verify(view).drawTextualContent(anyString(),
+                                        anyBoolean());
     }
 
     @Test
@@ -226,8 +228,6 @@ public class DiffItemPresenterTest {
 
         verify(view, times(1)).setupTextualContent(anyString(),
                                                    anyString(),
-                                                   anyString(),
-                                                   anyBoolean(),
                                                    anyBoolean());
     }
 
@@ -243,8 +243,6 @@ public class DiffItemPresenterTest {
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
         verify(view, times(1)).setupTextualContent(eq("my/new/file"),
                                                    eq("Added"),
-                                                   anyString(),
-                                                   eq(true),
                                                    anyBoolean());
     }
 
@@ -260,8 +258,6 @@ public class DiffItemPresenterTest {
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
         verify(view, times(1)).setupTextualContent(eq("my/old/file"),
                                                    eq("Deleted"),
-                                                   anyString(),
-                                                   eq(true),
                                                    anyBoolean());
     }
 
@@ -276,8 +272,6 @@ public class DiffItemPresenterTest {
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
         verify(view, times(1)).setupTextualContent(eq("my/old/file"),
                                                    eq("Updated"),
-                                                   anyString(),
-                                                   eq(false),
                                                    anyBoolean());
     }
 
@@ -293,8 +287,6 @@ public class DiffItemPresenterTest {
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
         verify(view, times(1)).setupTextualContent(eq("my/old/file -> my/new/file"),
                                                    eq("Copied"),
-                                                   anyString(),
-                                                   eq(false),
                                                    anyBoolean());
     }
 
@@ -310,8 +302,6 @@ public class DiffItemPresenterTest {
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
         verify(view, times(1)).setupTextualContent(eq("my/old/file -> my/new/file"),
                                                    eq("Renamed"),
-                                                   anyString(),
-                                                   eq(false),
                                                    anyBoolean());
     }
 
@@ -333,8 +323,6 @@ public class DiffItemPresenterTest {
 
         verify(view, times(1)).setupTextualContent(anyString(),
                                                    anyString(),
-                                                   anyString(),
-                                                   anyBoolean(),
                                                    anyBoolean());
     }
 }

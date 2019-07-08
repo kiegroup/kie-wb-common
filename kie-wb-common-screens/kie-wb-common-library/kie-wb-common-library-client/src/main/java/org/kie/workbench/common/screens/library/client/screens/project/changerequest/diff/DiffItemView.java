@@ -96,17 +96,10 @@ public class DiffItemView implements DiffItemPresenter.View,
     @Override
     public void setupTextualContent(final String filename,
                                     final String changeType,
-                                    final String diffText,
-                                    final boolean isUnified,
                                     final boolean conflict) {
         this.setup(filename, changeType, conflict);
 
         this.textualDiffContainer.hidden = false;
-
-        this.diff2Html = new Diff2Html(this.textualDiffContainer.id,
-                                       isUnified ? DiffOutputFormat.LINE_BY_LINE : DiffOutputFormat.SIDE_BY_SIDE,
-                                       diffText,
-                                       true);
     }
 
     @Override
@@ -152,8 +145,13 @@ public class DiffItemView implements DiffItemPresenter.View,
     }
 
     @Override
-    public void drawTextualContent() {
-        if (this.diff2Html != null) {
+    public void drawTextualContent(final String diffText,
+                                   final boolean isUnified) {
+        if (this.diff2Html == null) {
+            this.diff2Html = new Diff2Html(this.textualDiffContainer.id,
+                                           isUnified ? DiffOutputFormat.LINE_BY_LINE : DiffOutputFormat.SIDE_BY_SIDE,
+                                           diffText,
+                                           true);
             this.diff2Html.draw();
         }
     }

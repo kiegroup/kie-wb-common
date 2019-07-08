@@ -47,11 +47,10 @@ public class DiffItemPresenter {
 
         void setupTextualContent(final String filename,
                                  final String changeType,
-                                 final String diffText,
-                                 final boolean isUnified,
                                  final boolean conflict);
 
-        void drawTextualContent();
+        void drawTextualContent(final String diffText,
+                                final boolean isUnified);
 
         void setupCustomContent(final String filename,
                                 final String changeType,
@@ -171,7 +170,11 @@ public class DiffItemPresenter {
     }
 
     private void drawTextualContent() {
-        view.drawTextualContent();
+        final boolean isUnified = diff.getChangeType() == ChangeType.ADD
+                || diff.getChangeType() == ChangeType.DELETE;
+
+        view.drawTextualContent(diff.getDiffText(),
+                                isUnified);
     }
 
     private void drawVisualContent() {
@@ -231,13 +234,8 @@ public class DiffItemPresenter {
 
     private void prepareTextualDiff(final ChangeRequestDiff diff,
                                     final String filename) {
-        final boolean isUnified = diff.getChangeType() == ChangeType.ADD
-                || diff.getChangeType() == ChangeType.DELETE;
-
         view.setupTextualContent(filename,
                                  resolveChangeTypeText(diff.getChangeType()),
-                                 diff.getDiffText(),
-                                 isUnified,
                                  diff.isConflict());
     }
 

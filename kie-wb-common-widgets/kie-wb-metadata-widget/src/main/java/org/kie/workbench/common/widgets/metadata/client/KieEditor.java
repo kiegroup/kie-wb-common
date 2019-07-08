@@ -173,8 +173,7 @@ public abstract class KieEditor<T>
                         final MenuItems... menuItems) {
         kieView.setPresenter(this);
 
-        this.hiddenDocks = place.getParameter("hiddenDocks",
-                                              null) != null;
+        this.hiddenDocks = Boolean.valueOf(place.getParameter("hiddenDocks", "false"));
 
         super.init(path,
                    place,
