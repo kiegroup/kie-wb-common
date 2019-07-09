@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,6 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
+import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.client.mvp.UberElemental;
 
 @Templated
@@ -49,13 +51,17 @@ public class DocumentationLinkItem implements UberElemental<DMNExternalLink> {
 
     private DMNExternalLink externalLink;
 
+    private final Event<LockRequiredEvent> locker;
+
     @Inject
     public DocumentationLinkItem(final HTMLDivElement item,
                                  final HTMLAnchorElement link,
-                                 final HTMLAnchorElement deleteLink) {
+                                 final HTMLAnchorElement deleteLink,
+                                 final Event<LockRequiredEvent> locker) {
         this.item = item;
         this.link = link;
         this.deleteLink = deleteLink;
+        this.locker = locker;
     }
 
     @Override
@@ -73,6 +79,7 @@ public class DocumentationLinkItem implements UberElemental<DMNExternalLink> {
     @SuppressWarnings("unused")
     @EventHandler("deleteLink")
     public void onDeleteLinkClick(final ClickEvent clickEvent) {
+        locker.fire(new LockRequiredEvent());
         if (!Objects.isNull(getOnDeleted())) {
             getOnDeleted().accept(externalLink);
         }

@@ -31,8 +31,10 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.client.views.pfly.widgets.JQueryProducer;
 import org.uberfire.client.views.pfly.widgets.Popover;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_Name;
@@ -81,6 +83,9 @@ public class NameAndUrlPopoverViewImplTest {
 
     private NameAndUrlPopoverViewImpl popover;
 
+    @Mock
+    private EventSourceMock<LockRequiredEvent> locker;
+
     @Before
     public void setup() {
         popover = spy(new NameAndUrlPopoverViewImpl(popoverElement,
@@ -92,7 +97,8 @@ public class NameAndUrlPopoverViewImplTest {
                                                     urlInput,
                                                     attachmentNameInput,
                                                     urlLabel,
-                                                    attachmentName));
+                                                    attachmentName,
+                                                    locker));
     }
 
     @Test
@@ -138,6 +144,7 @@ public class NameAndUrlPopoverViewImplTest {
         assertEquals(url, externalLink.getUrl());
 
         verify(popover).hide();
+        verify(locker).fire(any());
     }
 
     @Test

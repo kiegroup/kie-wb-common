@@ -48,6 +48,7 @@ import org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_Add;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_None;
 
 @Dependent
 @Templated
@@ -60,11 +61,14 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
     @DataField("none-container")
     private final HTMLDivElement noneContainer;
 
-    @DataField("addButton")
+    @DataField("add-button")
     private final HTMLAnchorElement addButton;
 
-    @DataField("addLink")
+    @DataField("add-link")
     private final HTMLElement addLink;
+
+    @DataField("no-link")
+    private final HTMLElement noLink;
 
     private final CellEditorControlsView cellEditor;
     private final ManagedInstance<DocumentationLinkItem> listItems;
@@ -83,7 +87,8 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
                                     final HTMLAnchorElement addButton,
                                     final NameAndUrlPopoverView.Presenter nameAndUrlPopover,
                                     final CellEditorControlsView cellEditor,
-                                    @Named("span") final HTMLElement addLink) {
+                                    @Named("span") final HTMLElement addLink,
+                                    @Named("span") final HTMLElement noLink) {
 
         this.listItems = listItems;
         this.linksContainer = linksContainer;
@@ -92,6 +97,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
         this.nameAndUrlPopover = nameAndUrlPopover;
         this.cellEditor = cellEditor;
         this.addLink = addLink;
+        this.noLink = noLink;
         this.value = new DocumentationLinks();
         this.enabled = true;
         this.translationService = translationService;
@@ -101,6 +107,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
     public void init() {
         nameAndUrlPopover.setOnExternalLinkCreated(this::onDMNExternalLinkCreated);
         addLink.textContent = translationService.getTranslation(DMNDocumentationI18n_Add);
+        noLink.textContent = translationService.getTranslation(DMNDocumentationI18n_None);
     }
 
     void onDMNExternalLinkCreated(final DMNExternalLink externalLink) {
@@ -124,7 +131,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
         value = documentationLinks;
     }
 
-    @EventHandler("addButton")
+    @EventHandler("add-button")
     @SuppressWarnings("unused")
     public void onClickTypeButton(final ClickEvent clickEvent) {
         cellEditor.show(nameAndUrlPopover,

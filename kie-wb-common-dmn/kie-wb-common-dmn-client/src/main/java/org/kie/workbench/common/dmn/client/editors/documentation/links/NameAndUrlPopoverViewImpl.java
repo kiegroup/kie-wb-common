@@ -22,10 +22,12 @@ import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
@@ -36,6 +38,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.popover.AbstractPopoverViewImpl;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
+import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.client.views.pfly.widgets.JQueryProducer;
 import org.uberfire.client.views.pfly.widgets.Popover;
 
@@ -72,6 +76,8 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
 
     private TranslationService translationService;
 
+    private Event<LockRequiredEvent> locker;
+
     public NameAndUrlPopoverViewImpl() {
         //CDI proxy
     }
@@ -86,7 +92,8 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
                                      final HTMLInputElement urlInput,
                                      final HTMLInputElement attachmentNameInput,
                                      @Named("span") final HTMLElement urlLabel,
-                                     @Named("span") final HTMLElement attachmentName) {
+                                     @Named("span") final HTMLElement attachmentName,
+                                     final Event<LockRequiredEvent> locker) {
         super(popoverElement,
               popoverContentElement,
               jQueryPopover);
@@ -97,14 +104,29 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
         this.urlInput = urlInput;
         this.attachmentNameInput = attachmentNameInput;
         this.translationService = translationService;
+        this.locker = locker;
     }
 
     @PostConstruct
     public void init() {
+        okButton.disabled = true;
         urlLabel.textContent = translationService.getTranslation(DMNDocumentationI18n_URL);
         attachmentName.textContent = translationService.getTranslation(DMNDocumentationI18n_Name);
         urlInput.placeholder = translationService.getTranslation(DMNDocumentationI18n_URLPlaceholder);
         attachmentNameInput.placeholder = translationService.getTranslation(DMNDocumentationI18n_NamePlaceholder);
+        setOnChangedHandlers();
+    }
+
+    private void setOnChangedHandlers() {
+        urlInput.onkeyup = getOnKeyUpHandler();
+        attachmentNameInput.onkeyup = getOnKeyUpHandler();
+    }
+
+    Element.OnkeyupCallbackFn getOnKeyUpHandler() {
+        return e -> {
+            okButton.disabled = StringUtils.isEmpty(urlInput.value) || StringUtils.isEmpty(attachmentNameInput.value);
+            return true;
+        };
     }
 
     @EventHandler("okButton")
@@ -120,6 +142,8 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
                                                                      description);
             consumer.accept(externalLink);
         }
+
+        locker.fire(new LockRequiredEvent());
 
         hide();
     }

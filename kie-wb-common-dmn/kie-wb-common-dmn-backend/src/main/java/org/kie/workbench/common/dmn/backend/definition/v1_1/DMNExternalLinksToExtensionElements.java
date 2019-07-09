@@ -42,8 +42,7 @@ class DMNExternalLinksToExtensionElements {
     static void loadExternalLinksIntoExtensionElements(final org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement source,
                                                        final org.kie.dmn.model.api.DRGElement target) {
 
-        if (Objects.isNull(source.getLinksHolder())
-                || Objects.isNull(source.getLinksHolder().getValue())) {
+        if (Objects.isNull(source.getLinksHolder()) || Objects.isNull(source.getLinksHolder().getValue())) {
             return;
         }
 

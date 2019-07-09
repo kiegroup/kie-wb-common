@@ -62,6 +62,9 @@ public class DocumentationLinksWidgetTest {
     private HTMLElement addLink;
 
     @Mock
+    private HTMLElement noLink;
+
+    @Mock
     private CellEditorControlsView cellEditor;
 
     @Mock
@@ -94,7 +97,8 @@ public class DocumentationLinksWidgetTest {
                                                   addButton,
                                                   nameAndUrlPopover,
                                                   cellEditor,
-                                                  addLink));
+                                                  addLink,
+                                                  noLink));
     }
 
     @Test

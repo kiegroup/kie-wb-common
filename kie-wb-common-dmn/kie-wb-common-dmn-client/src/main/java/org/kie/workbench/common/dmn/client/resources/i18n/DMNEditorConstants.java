@@ -410,6 +410,9 @@ public class DMNEditorConstants {
     public static final String DMNDocumentationI18n_Add = "DMNDocumentationI18n.Add";
 
     @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_None = "DMNDocumentationI18n.None";
+
+    @TranslationKey(defaultValue = "")
     public static final String DMNDocumentationI18n_Name = "DMNDocumentationI18n.Name";
 
     @TranslationKey(defaultValue = "")
