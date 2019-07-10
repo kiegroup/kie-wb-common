@@ -285,12 +285,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             final PlaceRequest place = placeGainFocusEvent.getPlace();
 
             if (place instanceof PathPlaceRequest) {
-                boolean isEmbedded = place.getParameter("embedded",
-                                                        null) != null;
-                if (!isEmbedded){
-                    libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
-                                                     ((PathPlaceRequest) place).getPath());
-                }
+                libraryBreadcrumbs.setupForAsset(getActiveWorkspace(),
+                                                 ((PathPlaceRequest) place).getPath());
             } else if (!place.getIdentifier().equals(ALERTS) && isLibraryPlace(place)) {
                 if (projectContext.getActiveWorkspaceProject().isPresent()
                         && place.getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)) {
