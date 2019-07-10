@@ -43,7 +43,8 @@
     <module>kie-wb-common-dmn-backend</module>
     <module>kie-wb-common-dmn-project-api</module>
     <module>kie-wb-common-dmn-project-client</module>
-    <module>kie-wb-common-dmn-webapp</module>
+    <module>kie-wb-common-dmn-webapp-standalone</module>
+    <module>kie-wb-common-dmn-webapp-kogito-testing</module>
   </modules>
 
 </project>

@@ -25,8 +25,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>kie-wb-common-dmn-webapp</artifactId>
-  <name>Kie Workbench - Common - DMN - Showcase webapp</name>
-  <description>Kie Workbench - Common - DMN - Showcase webapp</description>
+  <name>Kie Workbench - Common - DMN - Kogito Showcase webapp</name>
+  <description>Kie Workbench - Common - DMN - Kogito Showcase webapp</description>
   <packaging>war</packaging>
 
   <properties>
@@ -1035,6 +1035,7 @@
         </pluginManagement>
       </build>
     </profile>
+
     <!-- profile to disable GWT compilation of showcase (useful in full downstream builds) -->
     <profile>
       <id>no-showcase</id>
