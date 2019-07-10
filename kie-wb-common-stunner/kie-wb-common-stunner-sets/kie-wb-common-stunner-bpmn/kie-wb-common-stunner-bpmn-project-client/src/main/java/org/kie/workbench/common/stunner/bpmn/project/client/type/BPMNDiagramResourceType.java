@@ -70,6 +70,6 @@ public class BPMNDiagramResourceType extends BPMNDefinitionSetResourceType imple
 
     @Override
     public DiffMode getDiffMode() {
-        return DiffMode.VISUAL;
+        return DiffMode.TEXTUAL;
     }
 }

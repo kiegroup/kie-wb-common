@@ -64,6 +64,6 @@ public class DMNDiagramResourceType extends DMNDefinitionSetResourceType impleme
 
     @Override
     public DiffMode getDiffMode() {
-        return DiffMode.VISUAL;
+        return DiffMode.TEXTUAL;
     }
 }

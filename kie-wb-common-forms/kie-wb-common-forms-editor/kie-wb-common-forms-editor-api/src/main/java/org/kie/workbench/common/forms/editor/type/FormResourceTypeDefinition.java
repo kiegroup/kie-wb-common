@@ -85,6 +85,6 @@ public class FormResourceTypeDefinition implements ResourceTypeDefinition {
 
     @Override
     public DiffMode getDiffMode() {
-        return DiffMode.VISUAL;
+        return DiffMode.TEXTUAL;
     }
 }
