@@ -135,7 +135,7 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode eventGateway(EventBasedGateway eventGateway) {
+    private Result<BpmnNode> eventGateway(EventBasedGateway eventGateway) {
         Node<View<EventGateway>, Edge> node = factoryManager.newNode(eventGateway.getId(), EventGateway.class);
         GatewayPropertyReader p = propertyReaderFactory.of(eventGateway);
 

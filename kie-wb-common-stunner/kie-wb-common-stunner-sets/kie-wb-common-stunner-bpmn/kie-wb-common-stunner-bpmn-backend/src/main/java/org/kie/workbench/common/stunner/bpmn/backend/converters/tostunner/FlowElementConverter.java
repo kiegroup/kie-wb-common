@@ -62,7 +62,7 @@ public class FlowElementConverter extends AbstractConverter {
                 .ignore(DataObject.class)
                 .ignore(TextAnnotation.class)
                 .ignore(Group.class)
-                .defaultValue(Result.ignored("FlowElement not found"))
+                .defaultValue(Result.ignored("FlowElement not found", getNotFoundMessage(flowElement)))
                 .inputDecorator(BPMNElementDecorators.flowElementDecorator())
                 .outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
                 .mode(getMode())

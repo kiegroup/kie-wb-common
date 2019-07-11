@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner;
 
+import org.eclipse.bpmn2.BaseElement;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNElementDecorators;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessage;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageKeys;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest.Mode;
 
 public abstract class AbstractConverter {
@@ -28,5 +32,12 @@ public abstract class AbstractConverter {
 
     public Mode getMode() {
         return mode;
+    }
+
+    protected MarshallingMessage getNotFoundMessage(BaseElement baseElement) {
+        return MarshallingMessage.builder()
+                .messageKey(MarshallingMessageKeys.ignoredUnknownElement)
+                .messageArguments(BPMNElementDecorators.baseElementDecorator().getName(baseElement))
+                .build();
     }
 }

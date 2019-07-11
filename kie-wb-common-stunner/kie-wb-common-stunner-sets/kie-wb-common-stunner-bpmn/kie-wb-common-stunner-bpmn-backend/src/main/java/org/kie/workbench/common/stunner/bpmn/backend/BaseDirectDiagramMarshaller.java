@@ -200,15 +200,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
                             commandManager);
             graphBuilder.render(diagramRoot);
 
-            LOG.debug("Diagram drawing completed successfully.");
-
-            LOG.warn("Marshalling Messages " + result.messages()
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(MarshallingMessage::getMessage)
-                    .filter(Objects::nonNull).map(String::valueOf)
-                    .collect(Collectors.joining("\n")));
-
+            LOG.debug("Diagram drawing completed successfully for:" + request);
             return MarshallingResponse.builder()
                     .state(MarshallingResponse.State.SUCCESS)
                     .messages(result.messages())
@@ -220,6 +212,12 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
                     .state(MarshallingResponse.State.ERROR)
                     .addMessage(MarshallingMessage.builder().message(e.getMessage()).build())
                     .build();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException("Error closing inputStream for: " + request, e);
+            }
         }
     }
 

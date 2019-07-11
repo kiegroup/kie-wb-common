@@ -173,7 +173,7 @@ public class MarshallingResponsePopupTest {
     }
 
     private Object[] toArray(List<?> messageArguments) {
-        return messageArguments.stream().toArray(Object[]::new);
+        return messageArguments.toArray(new Object[0]);
     }
 
     @Test

@@ -140,7 +140,7 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                                  final ResourceTypeDefinition resourceType) {
         final String suffix = resourceType.getSuffix();
         final String prefix = resourceType.getPrefix();
-        final String extension = !(suffix == null || "" .equals(suffix)) ? "." + resourceType.getSuffix() : "";
+        final String extension = !(suffix == null || "".equals(suffix)) ? "." + resourceType.getSuffix() : "";
         if (baseFileName.endsWith(extension)) {
             return prefix + baseFileName;
         }
@@ -183,10 +183,7 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                             factoryManager.registry().getDiagramFactory(graph.getContent().getDefinition(),
                                                                         getMetadataType());
 
-                    D diagram = (D) factory.build(name,
-                                                  metadata,
-                                                  graph);
-                    return diagram;
+                    return (D) factory.build(name, metadata, graph);
                 } catch (Exception e) {
                     LOG.error("Cannot unmarshall diagram for diagram's path [" + file + "]", e);
                     final String xml = getIoService().readAllString(Paths.convert(file));

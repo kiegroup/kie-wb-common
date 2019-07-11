@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.FlowElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageDecorator;
@@ -27,24 +28,23 @@ public class BPMNElementDecorators {
 
     public static <T extends FlowElement> MarshallingMessageDecorator<T> flowElementDecorator() {
         return MarshallingMessageDecorator.of(o -> Optional.ofNullable(o.getName())
-                                                      .orElseGet(() -> o.getId()),
+                                                      .orElseGet(o::getId),
                                               g -> g.getClass().getSimpleName());
     }
 
     public static <T extends BaseElement> MarshallingMessageDecorator<T> baseElementDecorator() {
-        return MarshallingMessageDecorator.of(o -> o.getId(),
+        return MarshallingMessageDecorator.of(BaseElement::getId,
                                               g -> g.getClass().getSimpleName());
     }
 
     public static <T extends BpmnNode> MarshallingMessageDecorator<T> bpmnNodeDecorator() {
         return MarshallingMessageDecorator.of(o ->
-                                                      Optional.ofNullable(
-                                                              o.value()
-                                                                      .getContent()
-                                                                      .getDefinition()
-                                                                      .getGeneral()
-                                                                      .getName()
-                                                                      .getValue())
+                                                      Optional.ofNullable(o.value()
+                                                                                  .getContent()
+                                                                                  .getDefinition()
+                                                                                  .getGeneral()
+                                                                                  .getName()
+                                                                                  .getValue())
                                                               .orElseGet(() -> o.value().getUUID()),
                                               bpmnNode -> bpmnNode.value()
                                                       .getContent()
@@ -59,8 +59,7 @@ public class BPMNElementDecorators {
                                                   BpmnNode o = (BpmnNode) r.value()
                                                           .map(BpmnNode.class::cast)
                                                           .get();
-                                                  return Optional.ofNullable(o
-                                                                                     .value()
+                                                  return Optional.ofNullable(o.value()
                                                                                      .getContent()
                                                                                      .getDefinition()
                                                                                      .getGeneral()

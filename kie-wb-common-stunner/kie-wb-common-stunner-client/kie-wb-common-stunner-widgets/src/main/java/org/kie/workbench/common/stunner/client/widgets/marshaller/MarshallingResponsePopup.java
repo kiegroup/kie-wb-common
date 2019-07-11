@@ -134,7 +134,7 @@ public class MarshallingResponsePopup {
         if (StringUtils.nonEmpty(message.getMessageKey())) {
             final List<?> arguments = Optional.ofNullable(message.getMessageArguments()).orElse(Collections.emptyList());
             String translation =
-                    translationService.getValue(message.getMessageKey(), arguments.stream().toArray(Object[]::new));
+                    translationService.getValue(message.getMessageKey(), arguments.toArray(new Object[0]));
             if (!erraiDefaultValue(message.getMessageKey()).equals(translation)) {
                 return translation;
             }

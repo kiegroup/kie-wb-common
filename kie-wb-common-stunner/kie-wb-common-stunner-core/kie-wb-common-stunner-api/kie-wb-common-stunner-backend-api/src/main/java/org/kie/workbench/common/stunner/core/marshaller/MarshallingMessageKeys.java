@@ -26,6 +26,7 @@ public final class MarshallingMessageKeys {
 
     public static final String ignoredElement = "MarshallingMessage.ignoredElement";
     public static final String ignoredUnknownElement = "MarshallingMessage.ignoredUnknownElement";
+
     public static final String childLaneSetConverted = "MarshallingMessage.childLaneSetConverted";
     public static final String convertedElement = "MarshallingMessage.convertedElement";
 
