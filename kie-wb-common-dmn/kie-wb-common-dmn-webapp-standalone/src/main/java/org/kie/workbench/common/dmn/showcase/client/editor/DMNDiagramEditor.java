@@ -101,10 +101,10 @@ import org.uberfire.workbench.model.menu.Menus;
 @WorkbenchScreen(identifier = DMNDiagramEditor.EDITOR_ID)
 public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPresenter {
 
-    public static final String EDITOR_ID = "DMNDiagramEditor";
+    static final String EDITOR_ID = "DMNDiagramEditor";
 
     //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
-    private static final int DATA_TYPES_PAGE_INDEX = 2;
+    static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private static Logger LOGGER = Logger.getLogger(DMNDiagramEditor.class.getName());
 

@@ -16,28 +16,21 @@
 
 package org.kie.workbench.common.dmn.showcase.client.services;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
-import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
-import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
-import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModelsService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
-import org.kie.workbench.common.dmn.api.editors.types.DMNParseService;
 import org.kie.workbench.common.dmn.api.editors.types.DMNSimpleTimeZone;
-import org.kie.workbench.common.dmn.api.editors.types.DMNValidationService;
 import org.kie.workbench.common.dmn.api.editors.types.RangeValue;
-import org.kie.workbench.common.dmn.api.editors.types.TimeZoneService;
 import org.kie.workbench.common.dmn.client.service.DMNClientServicesProxy;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
@@ -46,77 +39,52 @@ import org.uberfire.backend.vfs.Path;
 @Dependent
 public class DMNClientServicesProxyImpl implements DMNClientServicesProxy {
 
-    private final WorkspaceProjectContext projectContext;
-    private final Caller<DMNIncludedModelsService> includedModelsService;
-    private final Caller<DMNParseService> parserService;
-    private final Caller<DMNValidationService> validationService;
-    private final Caller<TimeZoneService> timeZoneService;
-
-    @Inject
-    public DMNClientServicesProxyImpl(final WorkspaceProjectContext projectContext,
-                                      final Caller<DMNIncludedModelsService> includedModelsService,
-                                      final Caller<DMNParseService> parserService,
-                                      final Caller<DMNValidationService> validationService,
-                                      final Caller<TimeZoneService> timeZoneService) {
-        this.projectContext = projectContext;
-        this.includedModelsService = includedModelsService;
-        this.parserService = parserService;
-        this.validationService = validationService;
-        this.timeZoneService = timeZoneService;
-    }
-
     @Override
     public void loadModels(final Path path,
                            final ServiceCallback<List<IncludedModel>> callback) {
-        includedModelsService.call(onSuccess(callback), onError(callback)).loadModels(path,
-                                                                                      getWorkspaceProject());
+        callback.onSuccess(Collections.emptyList());
     }
 
     @Override
     public void loadNodesFromImports(final List<DMNIncludedModel> includedModels,
                                      final ServiceCallback<List<DMNIncludedNode>> callback) {
-        includedModelsService.call(onSuccess(callback), onError(callback)).loadNodesFromImports(getWorkspaceProject(),
-                                                                                                includedModels);
+        callback.onSuccess(Collections.emptyList());
     }
 
     @Override
     public void loadPMMLDocumentsFromImports(final Path path,
                                              final List<PMMLIncludedModel> includedModels,
                                              final ServiceCallback<List<PMMLDocumentMetadata>> callback) {
-        includedModelsService.call(onSuccess(callback), onError(callback)).loadPMMLDocumentsFromImports(path,
-                                                                                                        getWorkspaceProject(),
-                                                                                                        includedModels);
+        callback.onSuccess(Collections.emptyList());
     }
 
     @Override
     public void loadItemDefinitionsByNamespace(final String modelName, String namespace,
                                                final ServiceCallback<List<ItemDefinition>> callback) {
-        includedModelsService.call(onSuccess(callback), onError(callback)).loadItemDefinitionsByNamespace(getWorkspaceProject(),
-                                                                                                          modelName,
-                                                                                                          namespace);
+        callback.onSuccess(Collections.emptyList());
     }
 
     @Override
     public void parseFEELList(final String source,
                               final ServiceCallback<List<String>> callback) {
-        parserService.call(onSuccess(callback), onError(callback)).parseFEELList(source);
+        callback.onSuccess(Collections.emptyList());
     }
 
     @Override
     public void parseRangeValue(final String source,
                                 final ServiceCallback<RangeValue> callback) {
-        parserService.call(onSuccess(callback), onError(callback)).parseRangeValue(source);
+        callback.onSuccess(new RangeValue());
     }
 
     @Override
     public void isValidVariableName(final String source,
                                     final ServiceCallback<Boolean> callback) {
-        validationService.call(onSuccess(callback), onError(callback)).isValidVariableName(source);
+        callback.onSuccess(true);
     }
 
     @Override
     public void getTimeZones(final ServiceCallback<List<DMNSimpleTimeZone>> callback) {
-        timeZoneService.call(onSuccess(callback), onError(callback)).getTimeZones();
+        callback.onSuccess(Collections.emptyList());
     }
 
     <T> RemoteCallback<T> onSuccess(final ServiceCallback<T> callback) {
@@ -128,9 +96,5 @@ public class DMNClientServicesProxyImpl implements DMNClientServicesProxy {
             callback.onError(new ClientRuntimeError(throwable));
             return false;
         };
-    }
-
-    private WorkspaceProject getWorkspaceProject() {
-        return projectContext.getActiveWorkspaceProject().orElse(null);
     }
 }

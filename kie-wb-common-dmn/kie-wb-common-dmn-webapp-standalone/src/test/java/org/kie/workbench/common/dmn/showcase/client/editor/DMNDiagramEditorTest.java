@@ -209,8 +209,8 @@ public class DMNDiagramEditorTest {
         final InOrder inOrder = inOrder(decisionNavigatorDock, diagramPreviewAndExplorerDock, diagramPropertiesDock);
         inOrder.verify(decisionNavigatorDock).setupCanvasHandler(canvasHandler);
         inOrder.verify(decisionNavigatorDock).open();
-        inOrder.verify(diagramPreviewAndExplorerDock).open();
         inOrder.verify(diagramPropertiesDock).open();
+        inOrder.verify(diagramPreviewAndExplorerDock).open();
 
         verify(dataTypesPage).reload();
         verify(dataTypesPage).enableShortcuts();
@@ -261,7 +261,7 @@ public class DMNDiagramEditorTest {
 
         editor.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
 
-        verify(multiPageEditor).selectPage(1);
+        verify(multiPageEditor).selectPage(DMNDiagramEditor.DATA_TYPES_PAGE_INDEX);
     }
 
     @Test

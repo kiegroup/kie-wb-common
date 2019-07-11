@@ -24,7 +24,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kie-wb-common-dmn-webapp</artifactId>
+  <artifactId>kie-wb-common-dmn-webapp-kogito-testing</artifactId>
   <name>Kie Workbench - Common - DMN - Kogito Showcase webapp</name>
   <description>Kie Workbench - Common - DMN - Kogito Showcase webapp</description>
   <packaging>war</packaging>
