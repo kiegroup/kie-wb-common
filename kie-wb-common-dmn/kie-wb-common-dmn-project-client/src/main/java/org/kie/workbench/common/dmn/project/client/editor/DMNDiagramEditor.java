@@ -94,6 +94,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
+    //Editor tabs: [0] Main editor, [1] Overview, [2] Documentation, [3] Data-Types, [4] Imported Models
     private static final int DATA_TYPES_PAGE_INDEX = 3;
 
     private final SessionManager sessionManager;

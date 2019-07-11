@@ -103,7 +103,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
-    private static final int DATA_TYPES_PAGE_INDEX = 1;
+    //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
+    private static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private static Logger LOGGER = Logger.getLogger(DMNDiagramEditor.class.getName());
 
@@ -115,8 +116,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private final Event<SessionFocusedEvent> sessionFocusedEvent;
 
     private final DecisionNavigatorDock decisionNavigatorDock;
-    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
+    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
 
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor layoutExecutor;
@@ -146,8 +147,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
                             final Event<SessionFocusedEvent> sessionFocusedEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
-                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,
+                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                             final LayoutHelper layoutHelper,
                             final OpenDiagramLayoutExecutor layoutExecutor,
                             final DataTypesPage dataTypesPage,
@@ -169,8 +170,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         this.sessionFocusedEvent = sessionFocusedEvent;
 
         this.decisionNavigatorDock = decisionNavigatorDock;
-        this.diagramPreviewAndExplorerDock=diagramPreviewAndExplorerDock;
-        this.diagramPropertiesDock=diagramPropertiesDock;
+        this.diagramPropertiesDock = diagramPropertiesDock;
+        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
 
         this.layoutHelper = layoutHelper;
         this.layoutExecutor = layoutExecutor;
@@ -192,15 +193,15 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     @PostConstruct
     public void init() {
         decisionNavigatorDock.init(AuthoringPerspective.PERSPECTIVE_ID);
-        diagramPreviewAndExplorerDock.init(AuthoringPerspective.PERSPECTIVE_ID);
         diagramPropertiesDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+        diagramPreviewAndExplorerDock.init(AuthoringPerspective.PERSPECTIVE_ID);
 
         kieView.setPresenter(this);
         kieView.clear();
         kieView.addMainEditorPage(screenPanelView.asWidget());
-        kieView.getMultiPage().addPage(dataTypesPage);
-        kieView.getMultiPage().addPage(includedModelsPage);
         kieView.getMultiPage().addPage(getDocumentationPage());
+        kieView.getMultiPage().addPage(includedModelsPage);
+        kieView.getMultiPage().addPage(dataTypesPage);
     }
 
     DocumentationPage getDocumentationPage() {
@@ -432,13 +433,15 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     void openDock() {
         decisionNavigatorDock.open();
-        diagramPreviewAndExplorerDock.open();
         diagramPropertiesDock.open();
+        diagramPreviewAndExplorerDock.open();
     }
 
     void destroyDock() {
         decisionNavigatorDock.close();
         decisionNavigatorDock.resetContent();
+        diagramPropertiesDock.close();
+        diagramPreviewAndExplorerDock.close();
     }
 
     void destroySession() {

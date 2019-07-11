@@ -87,10 +87,10 @@ public class DMNDiagramEditorTest {
     private DecisionNavigatorDock decisionNavigatorDock;
 
     @Mock
-    private DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+    private DiagramEditorPropertiesDock diagramPropertiesDock;
 
     @Mock
-    private DiagramEditorPropertiesDock diagramPropertiesDock;
+    private DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
 
     @Mock
     private LayoutHelper layoutHelper;
@@ -151,8 +151,8 @@ public class DMNDiagramEditorTest {
                                           null,
                                           null,
                                           decisionNavigatorDock,
-                                          diagramPreviewAndExplorerDock,
                                           diagramPropertiesDock,
+                                          diagramPreviewAndExplorerDock,
                                           layoutHelper,
                                           layoutExecutor,
                                           dataTypesPage,

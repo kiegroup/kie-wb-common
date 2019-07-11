@@ -101,7 +101,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
-    private static final int DATA_TYPES_PAGE_INDEX = 1;
+    //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
+    private static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -109,8 +110,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
     private final Event<NotificationEvent> notificationEvent;
 
     private final DecisionNavigatorDock decisionNavigatorDock;
-    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
+    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
 
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
@@ -142,8 +143,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
-                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,
+                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                             final LayoutHelper layoutHelper,
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
                             final DataTypesPage dataTypesPage,
@@ -172,8 +173,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         this.notificationEvent = notificationEvent;
 
         this.decisionNavigatorDock = decisionNavigatorDock;
-        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
         this.diagramPropertiesDock = diagramPropertiesDock;
+        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
 
         this.layoutHelper = layoutHelper;
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
@@ -239,8 +240,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         decisionNavigatorDock.close();
         decisionNavigatorDock.resetContent();
 
-        diagramPreviewAndExplorerDock.close();
         diagramPropertiesDock.close();
+        diagramPreviewAndExplorerDock.close();
 
         dataTypesPage.disableShortcuts();
     }
@@ -263,8 +264,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
             decisionNavigatorDock.setupCanvasHandler(c);
             decisionNavigatorDock.open();
 
-            diagramPreviewAndExplorerDock.open();
             diagramPropertiesDock.open();
+            diagramPreviewAndExplorerDock.open();
 
             dataTypesPage.reload();
 
