@@ -69,7 +69,7 @@ final class ProcessConverterDelegate {
             List<LaneSet> laneSets) {
 
         final Result<Map<String, BpmnNode>> flowElementsResult = convertFlowElements(flowElements);
-        final Map<String, BpmnNode> freeFloatingNodes = flowElementsResult.value().get();
+        final Map<String, BpmnNode> freeFloatingNodes = flowElementsResult.value();
 
         freeFloatingNodes
                 .values()
@@ -88,8 +88,7 @@ final class ProcessConverterDelegate {
 
         boolean value = results.stream()
                 .map(Result::value)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(Objects::nonNull)
                 .map(processRoot::addEdge)
                 .allMatch(Boolean.TRUE::equals);
 
@@ -104,8 +103,7 @@ final class ProcessConverterDelegate {
 
         final Map<String, BpmnNode> resultMap = results.stream()
                 .map(Result::value)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toMap(n -> n.value().getUUID(), n -> n));
 
         return ResultComposer.compose(resultMap, results);
@@ -131,8 +129,9 @@ final class ProcessConverterDelegate {
             } else {
                 laneResult = converterFactory.laneConverter().convert(lane);
             }
-            laneResult.value().ifPresent(laneNode -> laneNode.setParent(firstDiagramNode));
-            laneResult.value().ifPresent(laneNode -> lane.getFlowNodeRefs()
+            final Optional<BpmnNode> value = Optional.ofNullable(laneResult.value());
+            value.ifPresent(laneNode -> laneNode.setParent(firstDiagramNode));
+            value.ifPresent(laneNode -> lane.getFlowNodeRefs()
                     .forEach(node -> freeFloatingNodes.get(node.getId()).setParent(laneNode)));
             return laneResult;
         }

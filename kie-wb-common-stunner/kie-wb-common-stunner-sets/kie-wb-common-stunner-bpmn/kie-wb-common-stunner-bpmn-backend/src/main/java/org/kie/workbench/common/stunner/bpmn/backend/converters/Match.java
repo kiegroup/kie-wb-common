@@ -181,8 +181,8 @@ public class Match<In, Out> {
                     .filter(Result::isIgnored)
                     .map(r -> {
                         //handling value as Result adding the ignore message
-                        if (r.value().get() instanceof Result) {
-                            ((Result) r.value().get())
+                        if (r.value() instanceof Result) {
+                            ((Result) r.value())
                                     .messages()
                                     .add(getIgnoreMessage(value));
                         }

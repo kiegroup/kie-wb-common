@@ -47,7 +47,7 @@ public class IntermediateThrowEventConverter {
                 .when(IntermediateSignalEventThrowing.class, this::signalEvent)
                 .when(IntermediateEscalationEventThrowing.class, this::escalationEvent)
                 .when(IntermediateCompensationEventThrowing.class, this::compensationEvent)
-                .apply(node).value().get();
+                .apply(node).value();
     }
 
     private PropertyWriter signalEvent(Node<View<IntermediateSignalEventThrowing>, ?> n) {

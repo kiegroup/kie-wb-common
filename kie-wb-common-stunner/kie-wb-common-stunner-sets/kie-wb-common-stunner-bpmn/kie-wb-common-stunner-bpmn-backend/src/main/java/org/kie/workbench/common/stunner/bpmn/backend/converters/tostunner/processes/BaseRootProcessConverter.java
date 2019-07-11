@@ -66,7 +66,7 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P>,
         Result<Map<String, BpmnNode>> nodesResult = delegate.convertChildNodes(processRoot,
                                                                              process.getFlowElements(),
                                                                              process.getLaneSets());
-        Map<String, BpmnNode> nodes = nodesResult.value().get();
+        Map<String, BpmnNode> nodes = nodesResult.value();
 
         Result<Boolean> edgesResult = delegate.convertEdges(processRoot,
                                                               Stream.concat(process.getFlowElements().stream(),

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.inject.Instance;
@@ -176,7 +177,7 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                                                                                              .mode(MarshallingRequest.Mode.AUTO)
                                                                                              .build());
                     final Graph<DefinitionSet, ?> graph =
-                            marshallingResponse.getResult()
+                            Optional.ofNullable(marshallingResponse.getResult())
                                     .orElseThrow(() -> new RuntimeException(marshallingResponse.getMessages().toString()));
 
                     final DiagramFactory<M, ?> factory =

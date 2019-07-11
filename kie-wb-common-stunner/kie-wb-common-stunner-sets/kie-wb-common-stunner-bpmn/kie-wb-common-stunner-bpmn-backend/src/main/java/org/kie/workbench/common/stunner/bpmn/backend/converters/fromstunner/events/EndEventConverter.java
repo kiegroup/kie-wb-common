@@ -55,7 +55,7 @@ public class EndEventConverter {
                 .when(EndErrorEvent.class, this::errorEvent)
                 .when(EndEscalationEvent.class, this::escalationEvent)
                 .when(EndCompensationEvent.class, this::compensationEvent)
-                .apply(node).value().get();
+                .apply(node).value();
     }
 
     private PropertyWriter errorEvent(Node<View<EndErrorEvent>, ?> n) {

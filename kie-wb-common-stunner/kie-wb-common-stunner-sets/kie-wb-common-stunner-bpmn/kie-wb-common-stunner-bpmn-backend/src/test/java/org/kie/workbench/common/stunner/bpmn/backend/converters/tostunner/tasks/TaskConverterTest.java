@@ -138,7 +138,7 @@ public class TaskConverterTest extends BaseTaskConverterTest {
     @Test
     public void testConvertUserTaskMI() {
         when(userTaskPropertyReader.isMultipleInstance()).thenReturn(true);
-        BpmnNode node = (BpmnNode) tested.convert(userTask).value().get();
+        BpmnNode node = (BpmnNode) tested.convert(userTask).value();
         UserTask result = (UserTask) node.value().getContent().getDefinition();
         assertCommonValues(result);
         assertTrue(result.getExecutionSet().getIsMultipleInstance().getValue());
@@ -159,7 +159,7 @@ public class TaskConverterTest extends BaseTaskConverterTest {
         when(userTaskPropertyReader.getCollectionOutput()).thenReturn(null);
         when(userTaskPropertyReader.getDataOutput()).thenReturn(null);
         when(userTaskPropertyReader.getCompletionCondition()).thenReturn(null);
-        BpmnNode node = (BpmnNode) tested.convert(userTask).value().get();
+        BpmnNode node = (BpmnNode) tested.convert(userTask).value();
         UserTask result = (UserTask) node.value().getContent().getDefinition();
         assertCommonValues(result);
         assertFalse(result.getExecutionSet().getIsMultipleInstance().getValue());

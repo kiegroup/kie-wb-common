@@ -143,7 +143,7 @@ public class ProcessConverterDelegateTest {
                                                        task3_1_1_2_1, task3_1_2_1, task3_2_1, task3_2_2);
         List<LaneSet> laneSets = Arrays.asList(laneSet1, laneSet2);
 
-        Map<String, BpmnNode> nodes = converterDelegate.convertChildNodes(parentNode, flowElements, laneSets).value().get();
+        Map<String, BpmnNode> nodes = converterDelegate.convertChildNodes(parentNode, flowElements, laneSets).value();
         assertEquals(10, nodes.size());
 
         assertEquals(9, parentNode.getChildren().size());

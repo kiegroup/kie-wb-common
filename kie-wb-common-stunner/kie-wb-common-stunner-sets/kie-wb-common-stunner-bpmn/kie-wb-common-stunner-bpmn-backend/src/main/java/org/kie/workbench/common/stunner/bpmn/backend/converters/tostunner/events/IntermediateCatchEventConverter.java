@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.events;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BoundaryEvent;
@@ -102,8 +103,7 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
                         .defaultValue(Result.ignored("Ignored IntermediateCatchEvent", getNotFoundMessage(event)))
                         .mode(getMode())
                         .apply(eventDefinitions.get(0))
-                        .value()
-                        .get();
+                        .value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate catch event");
         }
@@ -129,12 +129,10 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
                         .defaultValue(Result.ignored("BoundaryEvent ignored", getNotFoundMessage(event)))
                         .mode(getMode())
                         .apply(eventDefinitions.get(0))
-                        .value()
-                        .get();
+                        .value();
                 return Optional.of(result)
                         .map(Result::value)
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
+                        .filter(Objects::nonNull)
                         .map(BpmnNode.class::cast)
                         .map(BpmnNode::docked)
                         .map(node -> Result.success(node))

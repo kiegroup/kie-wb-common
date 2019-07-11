@@ -58,7 +58,6 @@ public class EdgeConverterManager extends AbstractConverter {
                 .when(Association.class, e -> associationConverter.convertEdge(e, nodes))
                 .defaultValue(Result.ignored("Not an Edge element", getNotFoundMessage(baseElement)))
                 .apply(baseElement)
-                .value()
-                .get();
+                .value();
     }
 }

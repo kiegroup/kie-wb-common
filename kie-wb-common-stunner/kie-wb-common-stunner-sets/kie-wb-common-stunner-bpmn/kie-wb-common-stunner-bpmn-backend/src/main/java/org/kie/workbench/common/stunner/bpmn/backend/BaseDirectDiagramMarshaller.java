@@ -143,13 +143,13 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
     }
 
     @Override
-    public Graph unmarshall(Metadata metadata, InputStream input) throws IOException {
+    public Graph unmarshall(Metadata metadata, InputStream input) {
         MarshallingResponse<Graph> marshallingResponse = unmarshallWithValidation(MarshallingRequest.builder()
                                                                                           .metadata(metadata)
                                                                                           .input(input)
                                                                                           .mode(MarshallingRequest.Mode.ERROR)
                                                                                           .build());
-        return marshallingResponse.getResult().get();
+        return marshallingResponse.getResult();
     }
 
     @Override
@@ -176,7 +176,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
             // perform actual conversion. Process is the root of the diagram
             Result<BpmnNode> result = converterFactory.rootProcessConverter().convertProcess();
 
-            BpmnNode diagramRoot = result.value().get();
+            BpmnNode diagramRoot = result.value();
 
             LOG.debug("Diagram unmarshalling completed successfully.");
 

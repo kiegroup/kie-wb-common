@@ -126,7 +126,7 @@ public class AssociationConverterTest {
 
         assertEquals(ASSOCIATION_DOCUMENTATION, generalSetCaptor.getValue().getDocumentation().getValue());
 
-        BpmnEdge.Simple result = (BpmnEdge.Simple) associationConverter.convertEdge(association, nodes).value().get();
+        BpmnEdge.Simple result = (BpmnEdge.Simple) associationConverter.convertEdge(association, nodes).value();
         assertEquals(sourceNode, result.getSource());
         assertEquals(targetNode, result.getTarget());
         assertEquals(sourceConnection, result.getSourceConnection());

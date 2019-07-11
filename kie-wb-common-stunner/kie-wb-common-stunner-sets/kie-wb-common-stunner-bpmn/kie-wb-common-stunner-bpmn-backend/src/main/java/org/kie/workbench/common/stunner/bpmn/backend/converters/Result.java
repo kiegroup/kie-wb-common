@@ -65,12 +65,12 @@ public interface Result<T> {
         return !isIgnored();
     }
 
-    Optional<T> value();
+    T value();
 
     List<MarshallingMessage> messages();
 
     default void ifSuccess(Consumer<T> consumer) {
-        value().ifPresent(consumer::accept);
+        Optional.ofNullable(value()).ifPresent(consumer::accept);
     }
 
     default void ifFailure(Consumer<String> consumer) {
@@ -109,8 +109,8 @@ public interface Result<T> {
             this.value = value;
         }
 
-        public Optional<T> value() {
-            return Optional.ofNullable(value);
+        public T value() {
+            return value;
         }
 
         public Success<T> asSuccess() {
@@ -142,7 +142,7 @@ public interface Result<T> {
     class Ignored<T> extends AbstractResult<T> {
 
         private final String reason;
-        private final Optional<T> defaultValue;
+        private final T defaultValue;
 
         Ignored(String reason, MarshallingMessage... messages) {
             this(reason, null, messages);
@@ -151,7 +151,7 @@ public interface Result<T> {
         Ignored(String reason, T defaultValue, MarshallingMessage... messages) {
             super(messages);
             this.reason = reason;
-            this.defaultValue = Optional.ofNullable(defaultValue);
+            this.defaultValue = defaultValue;
         }
 
         public String reason() {
@@ -184,7 +184,7 @@ public interface Result<T> {
         }
 
         @Override
-        public Optional<T> value() {
+        public T value() {
             return defaultValue;
         }
     }
@@ -192,7 +192,7 @@ public interface Result<T> {
     class Failure<T> extends AbstractResult<T> {
 
         private final String reason;
-        private final Optional<T> defaultValue;
+        private final T defaultValue;
 
         Failure(String reason, MarshallingMessage... messages) {
             this(reason, null, messages);
@@ -201,7 +201,7 @@ public interface Result<T> {
         Failure(String reason, T defaultValue, MarshallingMessage... messages) {
             super(messages);
             this.reason = reason;
-            this.defaultValue = Optional.ofNullable(defaultValue);
+            this.defaultValue = defaultValue;
         }
 
         public String reason() {
@@ -234,7 +234,7 @@ public interface Result<T> {
         }
 
         @Override
-        public Optional<T> value() {
+        public T value() {
             return defaultValue;
         }
     }

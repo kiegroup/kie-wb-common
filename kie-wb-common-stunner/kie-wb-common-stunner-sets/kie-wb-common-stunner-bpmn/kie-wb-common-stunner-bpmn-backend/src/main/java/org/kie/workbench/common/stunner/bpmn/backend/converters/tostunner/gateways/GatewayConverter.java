@@ -64,8 +64,7 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
                 .outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
                 .mode(getMode())
                 .apply(gateway)
-                .value()
-                .get();
+                .value();
     }
 
     private Result<BpmnNode> inclusiveGateway(Gateway gateway) {

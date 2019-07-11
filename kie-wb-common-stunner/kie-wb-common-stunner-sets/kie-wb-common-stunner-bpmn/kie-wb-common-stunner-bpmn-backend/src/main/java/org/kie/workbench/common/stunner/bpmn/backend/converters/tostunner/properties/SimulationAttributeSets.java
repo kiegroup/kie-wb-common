@@ -58,7 +58,10 @@ public class SimulationAttributeSets {
                     simulationSet.getMean().setValue(pdt.getMean());
                     simulationSet.getDistributionType().setValue("poisson");
                     return simulationSet;
-                }).apply(paramValue).asSuccess().value().get();
+                })
+                .apply(paramValue)
+                .asSuccess()
+                .value();
     }
 
     public static ElementParameters toElementParameters(SimulationAttributeSet simulationSet) {

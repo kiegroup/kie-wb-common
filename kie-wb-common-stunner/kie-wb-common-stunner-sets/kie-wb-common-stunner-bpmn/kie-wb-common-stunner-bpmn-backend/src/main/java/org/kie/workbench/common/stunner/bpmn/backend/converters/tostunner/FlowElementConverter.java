@@ -67,7 +67,6 @@ public class FlowElementConverter extends AbstractConverter {
                 .outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
                 .mode(getMode())
                 .apply(flowElement)
-                .value()
-                .get();
+                .value();
     }
 }

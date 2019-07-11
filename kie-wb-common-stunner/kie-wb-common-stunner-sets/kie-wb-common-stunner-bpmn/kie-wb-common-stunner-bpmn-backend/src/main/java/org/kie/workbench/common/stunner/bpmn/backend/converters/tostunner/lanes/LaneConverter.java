@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.lanes;
 
+import java.util.Optional;
+
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
@@ -49,7 +51,7 @@ public class LaneConverter implements NodeConverter<org.eclipse.bpmn2.Lane> {
 
     public Result<BpmnNode> convert(org.eclipse.bpmn2.Lane lane, org.eclipse.bpmn2.Lane parent) {
         final Result<BpmnNode> result = convert(lane, propertyReaderFactory.of(lane, parent));
-        return result.value()
+        return Optional.ofNullable(result.value())
                 .map(value -> Result.success(value, MarshallingMessage.builder()
                         .message("Child Lane Set Converted to Lane "+ lane.getName())
                         .messageKey(MarshallingMessageKeys.childLaneSetConverted)

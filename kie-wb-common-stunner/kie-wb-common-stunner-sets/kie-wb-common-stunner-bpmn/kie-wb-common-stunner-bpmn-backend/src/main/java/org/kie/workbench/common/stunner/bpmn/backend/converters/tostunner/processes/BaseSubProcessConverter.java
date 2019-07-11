@@ -88,7 +88,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         Result<Map<String, BpmnNode>> nodesResult = delegate.convertChildNodes(subProcessRoot,
                                                                                subProcess.getFlowElements(),
                                                                                subProcess.getLaneSets());
-        Map<String, BpmnNode> nodes = nodesResult.value().get();
+        Map<String, BpmnNode> nodes = nodesResult.value();
 
         Result<Boolean> edgesResult = delegate.convertEdges(subProcessRoot,
                                                             Stream.concat(subProcess.getFlowElements().stream(),

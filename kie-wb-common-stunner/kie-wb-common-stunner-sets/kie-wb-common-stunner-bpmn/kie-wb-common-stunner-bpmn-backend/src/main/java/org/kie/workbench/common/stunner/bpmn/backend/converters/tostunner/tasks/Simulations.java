@@ -106,7 +106,10 @@ public class Simulations {
                     simulationSet.getMean().setValue(pdt.getMean());
                     simulationSet.getDistributionType().setValue("poisson");
                     return simulationSet;
-                }).apply(paramValue).asSuccess().value().get();
+                })
+                .apply(paramValue)
+                .asSuccess()
+                .value();
     }
 
     private static Double extractDouble(Parameter parameter) {

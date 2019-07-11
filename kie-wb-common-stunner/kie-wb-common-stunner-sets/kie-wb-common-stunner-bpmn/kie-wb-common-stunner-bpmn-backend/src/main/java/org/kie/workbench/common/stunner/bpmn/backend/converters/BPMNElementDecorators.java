@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
-import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.FlowElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageDecorator;
@@ -56,9 +55,7 @@ public class BPMNElementDecorators {
     public static MarshallingMessageDecorator<Result> resultBpmnDecorator() {
         return MarshallingMessageDecorator.of(r ->
                                               {
-                                                  BpmnNode o = (BpmnNode) r.value()
-                                                          .map(BpmnNode.class::cast)
-                                                          .get();
+                                                  BpmnNode o = (BpmnNode) r.value();
                                                   return Optional.ofNullable(o.value()
                                                                                      .getContent()
                                                                                      .getDefinition()
@@ -68,7 +65,7 @@ public class BPMNElementDecorators {
                                                           .orElseGet(() -> o.value().getUUID());
                                               },
                                               r -> {
-                                                  BpmnNode o1 = (BpmnNode) r.value().get();
+                                                  BpmnNode o1 = (BpmnNode) r.value();
                                                   return o1.value()
                                                           .getContent()
                                                           .getDefinition()
