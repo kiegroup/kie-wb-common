@@ -33,16 +33,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectToolbarStateHandlerTest {
+public class DMNProjectToolbarStateHandlerTest {
 
     @Mock
-    private DMNProjectEditorMenuSessionItems editorMenuSessionItems;
+    private DMNEditorMenuSessionItems editorMenuSessionItems;
 
-    private ProjectToolbarStateHandler toolbarStateHandler;
+    private DMNProjectToolbarStateHandler toolbarStateHandler;
 
     @Before
     public void setup() {
-        this.toolbarStateHandler = new ProjectToolbarStateHandler(editorMenuSessionItems);
+        this.toolbarStateHandler = new DMNProjectToolbarStateHandler(editorMenuSessionItems);
 
         when(editorMenuSessionItems.isItemEnabled(ClearSessionCommand.class)).thenReturn(true);
         when(editorMenuSessionItems.isItemEnabled(SwitchGridSessionCommand.class)).thenReturn(true);

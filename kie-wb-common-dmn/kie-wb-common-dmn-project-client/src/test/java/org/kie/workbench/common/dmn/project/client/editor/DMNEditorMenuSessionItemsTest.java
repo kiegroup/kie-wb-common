@@ -33,13 +33,13 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class DMNProjectEditorMenuSessionItemsTest {
+public class DMNEditorMenuSessionItemsTest {
 
     @Mock
     private FileMenuBuilder fileMenuBuilder;
 
     @Mock
-    private DMNProjectDiagramEditorMenuItemsBuilder builder;
+    private DMNEditorMenuItemsBuilder builder;
 
     @Mock
     private DMNEditorSessionCommands sessionCommands;
@@ -47,7 +47,7 @@ public class DMNProjectEditorMenuSessionItemsTest {
     @Test
     public void testPopulateMenu() {
 
-        final DMNProjectEditorMenuSessionItems menuItems = spy(new DMNProjectEditorMenuSessionItems(builder, sessionCommands));
+        final DMNEditorMenuSessionItems menuItems = spy(new DMNEditorMenuSessionItems(builder, sessionCommands));
         final MenuItem menuItem = mock(MenuItem.class);
         doNothing().when(menuItems).superPopulateMenu(any());
         doReturn(menuItem).when(menuItems).newPerformAutomaticLayout();
@@ -68,7 +68,7 @@ public class DMNProjectEditorMenuSessionItemsTest {
 
     private void testMenu(final boolean enabled) {
 
-        final DMNProjectEditorMenuSessionItems menuItems = spy(new DMNProjectEditorMenuSessionItems(builder, sessionCommands));
+        final DMNEditorMenuSessionItems menuItems = spy(new DMNEditorMenuSessionItems(builder, sessionCommands));
         doNothing().when(menuItems).superSetEnabled(enabled);
 
         menuItems.setEnabled(enabled);

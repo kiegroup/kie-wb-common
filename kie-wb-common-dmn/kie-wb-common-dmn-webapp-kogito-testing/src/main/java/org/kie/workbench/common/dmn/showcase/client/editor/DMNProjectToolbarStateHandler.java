@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.project.client.editor;
+package org.kie.workbench.common.dmn.showcase.client.editor;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,11 +27,12 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySel
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchGridSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 
-public class ProjectToolbarStateHandler implements ToolbarStateHandler {
+public class DMNProjectToolbarStateHandler implements ToolbarStateHandler {
 
     private static final Class[] COMMAND_CLASSES = {
             ClearSessionCommand.class,
@@ -40,7 +41,8 @@ public class ProjectToolbarStateHandler implements ToolbarStateHandler {
             DeleteSelectionSessionCommand.class,
             CutSelectionSessionCommand.class,
             CopySelectionSessionCommand.class,
-            PasteSelectionSessionCommand.class
+            PasteSelectionSessionCommand.class,
+            PerformAutomaticLayoutCommand.class
     };
 
     private final Map<Class<? extends ClientSessionCommand>, Boolean> commandStates = new HashMap<>();
@@ -48,7 +50,7 @@ public class ProjectToolbarStateHandler implements ToolbarStateHandler {
     private final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems;
 
     @SuppressWarnings("unchecked")
-    public ProjectToolbarStateHandler(final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems) {
+    public DMNProjectToolbarStateHandler(final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems) {
         this.projectEditorMenuSessionItems = projectEditorMenuSessionItems;
 
         Arrays.asList(COMMAND_CLASSES).forEach(clazz -> commandStates.put(clazz, false));

@@ -129,6 +129,10 @@ public class DMNEditorToolbar
         return (SaveToolbarCommand) toolbar.getCommand(13);
     }
 
+    public PerformAutomaticLayoutToolbarCommand getPerformAutomaticLayoutToolbarCommand() {
+        return (PerformAutomaticLayoutToolbarCommand) toolbar.getCommand(14);
+    }
+
     @Override
     protected ManagedToolbar<EditorSession> getDelegate() {
         return toolbar;

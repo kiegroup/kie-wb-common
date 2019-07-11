@@ -46,6 +46,8 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
+import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -73,34 +75,28 @@ import static org.mockito.Mockito.when;
 public class DMNDiagramEditorTest {
 
     @Mock
-    private DecisionNavigatorDock decisionNavigatorDock;
-
-    @Mock
-    private ScreenPanelView screenPanelView;
+    private SessionManager sessionManager;
 
     @Mock
     private SessionEditorPresenter<EditorSession> presenter;
 
     @Mock
-    private ExpressionEditorView.Presenter expressionEditor;
-
-    @Mock
-    private SessionManager sessionManager;
-
-    @Mock
-    private DMNEditorSession session;
-
-    @Mock
     private EventSourceMock<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
+
+    @Mock
+    private DecisionNavigatorDock decisionNavigatorDock;
+
+    @Mock
+    private DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+
+    @Mock
+    private DiagramEditorPropertiesDock diagramPropertiesDock;
 
     @Mock
     private LayoutHelper layoutHelper;
 
     @Mock
     private OpenDiagramLayoutExecutor layoutExecutor;
-
-    @Mock
-    private KieEditorWrapperView kieView;
 
     @Mock
     private DataTypesPage dataTypesPage;
@@ -113,6 +109,18 @@ public class DMNDiagramEditorTest {
 
     @Mock
     private DocumentationView<Diagram> documentationView;
+
+    @Mock
+    private ScreenPanelView screenPanelView;
+
+    @Mock
+    private KieEditorWrapperView kieView;
+
+    @Mock
+    private ExpressionEditorView.Presenter expressionEditor;
+
+    @Mock
+    private DMNEditorSession session;
 
     private DMNDiagramEditor editor;
 
@@ -136,26 +144,28 @@ public class DMNDiagramEditorTest {
         }).when(presenter).open(any(Diagram.class),
                                 any(SessionPresenter.SessionPresenterCallback.class));
 
-        editor = spy(new DMNDiagramEditor(null,
-                                          null,
-                                          null,
-                                          sessionManager,
+        editor = spy(new DMNDiagramEditor(sessionManager,
                                           null,
                                           presenter,
-                                          null,
-                                          null,
                                           refreshFormPropertiesEvent,
+                                          null,
+                                          null,
+                                          decisionNavigatorDock,
+                                          diagramPreviewAndExplorerDock,
+                                          diagramPropertiesDock,
+                                          layoutHelper,
+                                          layoutExecutor,
+                                          dataTypesPage,
+                                          includedModelsPage,
+                                          importsPageProvider,
+                                          documentationView,
+                                          null,
+                                          null,
+                                          null,
                                           null,
                                           screenPanelView,
                                           null,
-                                          decisionNavigatorDock,
-                                          layoutHelper,
-                                          kieView,
-                                          dataTypesPage,
-                                          layoutExecutor,
-                                          includedModelsPage,
-                                          importsPageProvider,
-                                          documentationView));
+                                          kieView));
     }
 
     @Test
@@ -172,6 +182,8 @@ public class DMNDiagramEditorTest {
         editor.init();
 
         verify(decisionNavigatorDock).init(AuthoringPerspective.PERSPECTIVE_ID);
+        verify(diagramPreviewAndExplorerDock).init(AuthoringPerspective.PERSPECTIVE_ID);
+        verify(diagramPropertiesDock).init(AuthoringPerspective.PERSPECTIVE_ID);
         verify(kieView).setPresenter(editor);
         verify(kieView).clear();
         verify(kieView).addMainEditorPage(screenPanelWidget);
@@ -194,9 +206,11 @@ public class DMNDiagramEditorTest {
 
         editor.open(diagram, callback);
 
-        final InOrder inOrder = inOrder(decisionNavigatorDock);
+        final InOrder inOrder = inOrder(decisionNavigatorDock, diagramPreviewAndExplorerDock, diagramPropertiesDock);
         inOrder.verify(decisionNavigatorDock).setupCanvasHandler(canvasHandler);
         inOrder.verify(decisionNavigatorDock).open();
+        inOrder.verify(diagramPreviewAndExplorerDock).open();
+        inOrder.verify(diagramPropertiesDock).open();
 
         verify(dataTypesPage).reload();
         verify(dataTypesPage).enableShortcuts();

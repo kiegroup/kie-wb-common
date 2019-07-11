@@ -118,7 +118,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private EditExpressionEvent editExpressionEvent;
 
     @Mock
-    private DMNProjectEditorMenuSessionItems dmnProjectMenuSessionItems;
+    private DMNEditorMenuSessionItems dmnProjectMenuSessionItems;
 
     @Mock
     private LayoutHelper layoutHelper;
@@ -180,7 +180,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  diagramClientErrorHandler,
                                                  documentationView,
                                                  (DMNDiagramResourceType) getResourceType(),
-                                                 (DMNProjectEditorMenuSessionItems) getMenuSessionItems(),
+                                                 (DMNEditorMenuSessionItems) getMenuSessionItems(),
                                                  projectMessagesListener,
                                                  translationService,
                                                  clientProjectDiagramService,
@@ -289,7 +289,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         final InOrder inOrder = inOrder(decisionNavigatorDock);
         inOrder.verify(decisionNavigatorDock).setupCanvasHandler(eq(canvasHandler));
 
-        verify(expressionEditor).setToolbarStateHandler(any(ProjectToolbarStateHandler.class));
+        verify(expressionEditor).setToolbarStateHandler(any(DMNProjectToolbarStateHandler.class));
         verify(dataTypesPage).reload();
         verify(layoutHelper).applyLayout(diagram, layoutExecutor);
         verify(includedModelsPage).setup(importsPageProvider);
@@ -300,7 +300,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     public void testOnDiagramLoadWhenCanvasHandlerIsNull() {
         diagramEditor.onDiagramLoad();
 
-        verify(expressionEditor, never()).setToolbarStateHandler(any(ProjectToolbarStateHandler.class));
+        verify(expressionEditor, never()).setToolbarStateHandler(any(DMNProjectToolbarStateHandler.class));
         verify(decisionNavigatorDock, never()).setupCanvasHandler(any());
         verify(decisionNavigatorDock, never()).open();
         verify(dataTypesPage, never()).reload();
