@@ -19,6 +19,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.eclipse.bpmn2.ManualTask;
+import org.eclipse.bpmn2.ReceiveTask;
+import org.eclipse.bpmn2.SendTask;
+import org.eclipse.bpmn2.Task;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.junit.Before;
@@ -68,17 +72,31 @@ public abstract class BaseTaskConverterTest {
 
     protected NoneTask noneTaskDefinition;
     @Mock
-    protected View<ServiceTask> serviceTaskContent;
-    @Mock
-    protected View<GenericServiceTask> genericServiceTaskContent;
+    protected TaskPropertyReader taskPropertyReader;
+
     @Mock
     private Node<View<NoneTask>, Edge> noneTaskNode;
+
+    @Mock
+    private Node<View<org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask>, Edge> serviceTaskNode;
+
+    @Mock
+    private View<org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask> serviceTaskContent;
+
+    @Mock
+    protected View<GenericServiceTask> genericServiceTaskContent;
+
     @Mock
     private Node<View<BusinessRuleTask>, Edge> businessRuleTaskNode;
-    @Mock
-    private Node<View<ServiceTask>, Edge> serviceTaskNode;
+
     @Mock
     private Node<View<GenericServiceTask>, Edge> genericServiceTaskNode;
+
+    @Mock
+    private FeatureMap featureMap;
+
+    @Mock
+    private FeatureMap.Entry entry;
 
     @Before
     public void setUp() {
@@ -87,6 +105,8 @@ public abstract class BaseTaskConverterTest {
         when(factoryManager.newNode(anyString(), eq(NoneTask.class))).thenReturn(noneTaskNode);
         when(noneTaskNode.getContent()).thenReturn(noneTaskContent);
         when(noneTaskContent.getDefinition()).thenReturn(noneTaskDefinition);
+        when(entry.getEStructuralFeature()).thenReturn(mock(EStructuralFeature.class));
+        when(featureMap.stream()).thenReturn(Arrays.asList(entry).stream());
 
         tested = createTaskConverter();
     }
@@ -170,5 +190,34 @@ public abstract class BaseTaskConverterTest {
         final BpmnNode converted = tested.convert(task).value();
         assertNotEquals(converted.value(), noneTaskNode);
         assertEquals(converted.value(), genericServiceTaskNode);
+    }
+
+    @Test
+    public void convertManualTask() {
+        testTaskToNoneTask(ManualTask.class);
+    }
+
+    @Test
+    public void convertReceiveTask() {
+        testTaskToNoneTask(ReceiveTask.class);
+    }
+
+    @Test
+    public void convertSendTask() {
+        testTaskToNoneTask(SendTask.class);
+    }
+
+    @Test
+    public void convertDefaultTask() {
+        testTaskToNoneTask(Task.class);
+    }
+
+    private <T extends Task> void testTaskToNoneTask(Class<T> taskType) {
+        final T task = mock(taskType);
+        when(task.getAnyAttribute()).thenReturn(featureMap);
+        when(propertyReaderFactory.of(task)).thenReturn(taskPropertyReader);
+
+        final BpmnNode converted = (BpmnNode) tested.convert(task).value();
+        assertEquals(converted.value(), noneTaskNode);
     }
 }
