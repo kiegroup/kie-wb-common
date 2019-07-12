@@ -159,6 +159,8 @@ public class DiffItemPresenterTest {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
 
+        doReturn(10).when(diff).getAddedLinesCount();
+
         presenter.draw();
 
         verify(view).drawTextualContent(anyString(),
