@@ -200,8 +200,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         kieView.clear();
         kieView.addMainEditorPage(screenPanelView.asWidget());
         kieView.getMultiPage().addPage(getDocumentationPage());
-        kieView.getMultiPage().addPage(includedModelsPage);
         kieView.getMultiPage().addPage(dataTypesPage);
+        kieView.getMultiPage().addPage(includedModelsPage);
     }
 
     DocumentationPage getDocumentationPage() {
