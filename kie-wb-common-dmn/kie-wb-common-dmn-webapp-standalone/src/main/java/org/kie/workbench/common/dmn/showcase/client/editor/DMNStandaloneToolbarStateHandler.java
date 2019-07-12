@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.showcase.client.toolbar;
+package org.kie.workbench.common.dmn.showcase.client.editor;
 
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
 import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNEditorToolbar;
@@ -38,6 +38,7 @@ public class DMNStandaloneToolbarStateHandler implements ToolbarStateHandler {
     private boolean cutCommandEnabled = false;
     private boolean pasteCommandEnabled = false;
     private boolean saveCommandEnabled = false;
+    private boolean automaticLayoutCommandEnabled = false;
 
     public DMNStandaloneToolbarStateHandler(final DMNEditorToolbar toolbar) {
         this.toolbar = toolbar;
@@ -59,6 +60,7 @@ public class DMNStandaloneToolbarStateHandler implements ToolbarStateHandler {
         this.cutCommandEnabled = toolbar.isEnabled(toolbar.getCutToolbarCommand());
         this.pasteCommandEnabled = toolbar.isEnabled(toolbar.getPasteToolbarCommand());
         this.saveCommandEnabled = toolbar.isEnabled(toolbar.getSaveToolbarCommand());
+        this.automaticLayoutCommandEnabled = toolbar.isEnabled(toolbar.getPerformAutomaticLayoutToolbarCommand());
 
         enableToolbarCommand(toolbar.getVisitGraphToolbarCommand(),
                              false);
@@ -85,6 +87,8 @@ public class DMNStandaloneToolbarStateHandler implements ToolbarStateHandler {
         enableToolbarCommand(toolbar.getPasteToolbarCommand(),
                              false);
         enableToolbarCommand(toolbar.getSaveToolbarCommand(),
+                             false);
+        enableToolbarCommand(toolbar.getPerformAutomaticLayoutToolbarCommand(),
                              false);
     }
 
@@ -116,6 +120,8 @@ public class DMNStandaloneToolbarStateHandler implements ToolbarStateHandler {
                              pasteCommandEnabled);
         enableToolbarCommand(toolbar.getSaveToolbarCommand(),
                              saveCommandEnabled);
+        enableToolbarCommand(toolbar.getPerformAutomaticLayoutToolbarCommand(),
+                             automaticLayoutCommandEnabled);
     }
 
     @SuppressWarnings("unchecked")

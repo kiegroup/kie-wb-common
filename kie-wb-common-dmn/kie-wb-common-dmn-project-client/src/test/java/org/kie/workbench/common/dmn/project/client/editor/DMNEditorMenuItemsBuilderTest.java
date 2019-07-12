@@ -29,7 +29,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DMNProjectDiagramEditorMenuItemsBuilderTest {
+public class DMNEditorMenuItemsBuilderTest {
 
     @Mock
     private ClientTranslationService translationService;
@@ -37,11 +37,11 @@ public class DMNProjectDiagramEditorMenuItemsBuilderTest {
     @Mock
     private PopupUtil popupUtil;
 
-    private DMNProjectDiagramEditorMenuItemsBuilder builder;
+    private DMNEditorMenuItemsBuilder builder;
 
     @Before
     public void setup() {
-        this.builder = new DMNProjectDiagramEditorMenuItemsBuilder(translationService, popupUtil);
+        this.builder = new DMNEditorMenuItemsBuilder(translationService, popupUtil);
 
         when(translationService.getValue(anyString())).thenAnswer(i -> i.getArguments()[0].toString());
     }

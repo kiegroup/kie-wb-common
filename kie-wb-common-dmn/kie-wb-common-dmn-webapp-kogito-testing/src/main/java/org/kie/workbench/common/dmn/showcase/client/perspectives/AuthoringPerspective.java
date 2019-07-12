@@ -17,7 +17,7 @@ package org.kie.workbench.common.dmn.showcase.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.dmn.showcase.client.editor.DMNDiagramsNavigatorScreen;
+import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramsNavigatorScreen;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kie.workbench.common.dmn.project.client.editor;
+package org.kie.workbench.common.dmn.showcase.client.editor;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
@@ -24,7 +23,7 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
-import org.kie.workbench.common.dmn.project.client.session.DMNEditorSessionCommands;
+import org.kie.workbench.common.dmn.showcase.client.session.DMNEditorSessionCommands;
 import org.kie.workbench.common.stunner.client.widgets.menu.MenuUtils;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
@@ -33,12 +32,12 @@ import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.workbench.model.menu.MenuItem;
 
 @Dependent
-@Typed(DMNProjectEditorMenuSessionItems.class)
-public class DMNProjectEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<DMNProjectDiagramEditorMenuItemsBuilder> {
+@Typed(DMNEditorMenuSessionItems.class)
+public class DMNEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<DMNEditorMenuItemsBuilder> {
 
     @Inject
-    public DMNProjectEditorMenuSessionItems(final DMNProjectDiagramEditorMenuItemsBuilder itemsBuilder,
-                                            final @DMNEditor DMNEditorSessionCommands sessionCommands) {
+    public DMNEditorMenuSessionItems(final DMNEditorMenuItemsBuilder itemsBuilder,
+                                     final @DMNEditor DMNEditorSessionCommands sessionCommands) {
         super(itemsBuilder,
               sessionCommands);
     }

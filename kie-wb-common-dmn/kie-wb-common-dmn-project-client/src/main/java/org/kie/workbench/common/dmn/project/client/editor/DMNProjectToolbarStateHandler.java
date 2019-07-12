@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.showcase.client.toolbar;
+package org.kie.workbench.common.dmn.project.client.editor;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchG
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 
-public class ProjectToolbarStateHandler implements ToolbarStateHandler {
+public class DMNProjectToolbarStateHandler implements ToolbarStateHandler {
 
     private static final Class[] COMMAND_CLASSES = {
             ClearSessionCommand.class,
@@ -50,7 +50,7 @@ public class ProjectToolbarStateHandler implements ToolbarStateHandler {
     private final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems;
 
     @SuppressWarnings("unchecked")
-    public ProjectToolbarStateHandler(final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems) {
+    public DMNProjectToolbarStateHandler(final AbstractDiagramEditorMenuSessionItems projectEditorMenuSessionItems) {
         this.projectEditorMenuSessionItems = projectEditorMenuSessionItems;
 
         Arrays.asList(COMMAND_CLASSES).forEach(clazz -> commandStates.put(clazz, false));

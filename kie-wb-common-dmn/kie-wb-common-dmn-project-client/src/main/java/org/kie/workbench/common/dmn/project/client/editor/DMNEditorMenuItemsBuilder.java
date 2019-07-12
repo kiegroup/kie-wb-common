@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.showcase.client.menus;
+
+package org.kie.workbench.common.dmn.project.client.editor;
+
+import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.dmn.project.client.resources.i18n.DMNProjectClientConstants;
 import org.kie.workbench.common.stunner.client.widgets.popups.PopupUtil;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuItemsBuilder;
@@ -38,5 +42,10 @@ public class DMNEditorMenuItemsBuilder extends AbstractDiagramEditorMenuItemsBui
                                      final PopupUtil popupUtil) {
         super(translationService,
               popupUtil);
+    }
+
+    @Override
+    protected Optional<String> getExportLabelToRawFormatIfSupported() {
+        return Optional.of(translationService.getValue(DMNProjectClientConstants.DMNDiagramResourceTypeDownload));
     }
 }

@@ -43,7 +43,6 @@ import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNEditorToolbar;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.dmn.showcase.client.services.DMNShowcaseDiagramService;
-import org.kie.workbench.common.dmn.showcase.client.toolbar.DMNStandaloneToolbarStateHandler;
 import org.kie.workbench.common.stunner.client.widgets.event.SessionFocusedEvent;
 import org.kie.workbench.common.stunner.client.widgets.menu.dev.MenuDevCommandsBuilder;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
@@ -68,7 +67,6 @@ import org.kie.workbench.common.stunner.core.client.session.event.OnSessionError
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -78,6 +76,9 @@ import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
+import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
+import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -100,86 +101,107 @@ import org.uberfire.workbench.model.menu.Menus;
 @WorkbenchScreen(identifier = DMNDiagramEditor.EDITOR_ID)
 public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPresenter {
 
-    public static final String EDITOR_ID = "DMNDiagramEditor";
-    private static final int DATA_TYPES_PAGE_INDEX = 1;
+    static final String EDITOR_ID = "DMNDiagramEditor";
+
+    //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
+    static final int DATA_TYPES_PAGE_INDEX = 2;
+
     private static Logger LOGGER = Logger.getLogger(DMNDiagramEditor.class.getName());
-    private final DefinitionManager definitionManager;
-    private final ClientFactoryService clientFactoryServices;
-    private final DMNShowcaseDiagramService diagramService;
+
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final SessionEditorPresenter<EditorSession> presenter;
+    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final Event<SessionFocusedEvent> sessionFocusedEvent;
-    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
-    private final MenuDevCommandsBuilder menuDevCommandsBuilder;
-    private final ScreenPanelView screenPanelView;
-    private final ScreenErrorView screenErrorView;
+
     private final DecisionNavigatorDock decisionNavigatorDock;
+    private final DiagramEditorPropertiesDock diagramPropertiesDock;
+    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor layoutExecutor;
-    private final KieEditorWrapperView kieView;
+
     private final DataTypesPage dataTypesPage;
     private final IncludedModelsPage includedModelsPage;
     private final IncludedModelsPageStateProviderImpl importsPageProvider;
     private final DocumentationView<Diagram> documentationView;
+
+    private final DefinitionManager definitionManager;
+    private final ClientFactoryService clientFactoryServices;
+    private final DMNShowcaseDiagramService diagramService;
+    private final MenuDevCommandsBuilder menuDevCommandsBuilder;
+    private final ScreenPanelView screenPanelView;
+    private final ScreenErrorView screenErrorView;
+    private final KieEditorWrapperView kieView;
 
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
     private Menus menu = null;
 
     @Inject
-    public DMNDiagramEditor(final DefinitionManager definitionManager,
-                            final ClientFactoryService clientFactoryServices,
-                            final DMNShowcaseDiagramService diagramService,
-                            final SessionManager sessionManager,
+    public DMNDiagramEditor(final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final SessionEditorPresenter<EditorSession> presenter,
+                            final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
                             final Event<SessionFocusedEvent> sessionFocusedEvent,
-                            final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
+                            final DecisionNavigatorDock decisionNavigatorDock,
+                            final DiagramEditorPropertiesDock diagramPropertiesDock,
+                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
+                            final LayoutHelper layoutHelper,
+                            final OpenDiagramLayoutExecutor layoutExecutor,
+                            final DataTypesPage dataTypesPage,
+                            final IncludedModelsPage includedModelsPage,
+                            final IncludedModelsPageStateProviderImpl importsPageProvider,
+                            final @DMNEditor DocumentationView<Diagram> documentationView,
+                            final DefinitionManager definitionManager,
+                            final ClientFactoryService clientFactoryServices,
+                            final DMNShowcaseDiagramService diagramService,
                             final MenuDevCommandsBuilder menuDevCommandsBuilder,
                             final ScreenPanelView screenPanelView,
                             final ScreenErrorView screenErrorView,
-                            final DecisionNavigatorDock decisionNavigatorDock,
-                            final LayoutHelper layoutHelper,
-                            final KieEditorWrapperView kieView,
-                            final DataTypesPage dataTypesPage,
-                            final OpenDiagramLayoutExecutor layoutExecutor,
-                            final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider,
-                            final @DMNEditor DocumentationView<Diagram> documentationView) {
-        this.definitionManager = definitionManager;
-        this.clientFactoryServices = clientFactoryServices;
-        this.diagramService = diagramService;
+                            final KieEditorWrapperView kieView) {
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.presenter = presenter;
+        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.changeTitleNotificationEvent = changeTitleNotificationEvent;
         this.sessionFocusedEvent = sessionFocusedEvent;
-        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
-        this.menuDevCommandsBuilder = menuDevCommandsBuilder;
-        this.screenPanelView = screenPanelView;
-        this.screenErrorView = screenErrorView;
+
         this.decisionNavigatorDock = decisionNavigatorDock;
+        this.diagramPropertiesDock = diagramPropertiesDock;
+        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
+
         this.layoutHelper = layoutHelper;
-        this.kieView = kieView;
-        this.dataTypesPage = dataTypesPage;
         this.layoutExecutor = layoutExecutor;
+
+        this.dataTypesPage = dataTypesPage;
         this.includedModelsPage = includedModelsPage;
         this.importsPageProvider = importsPageProvider;
         this.documentationView = documentationView;
+
+        this.definitionManager = definitionManager;
+        this.clientFactoryServices = clientFactoryServices;
+        this.diagramService = diagramService;
+        this.menuDevCommandsBuilder = menuDevCommandsBuilder;
+        this.screenPanelView = screenPanelView;
+        this.screenErrorView = screenErrorView;
+        this.kieView = kieView;
     }
 
     @PostConstruct
     public void init() {
         decisionNavigatorDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+        diagramPropertiesDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+        diagramPreviewAndExplorerDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+
         kieView.setPresenter(this);
         kieView.clear();
         kieView.addMainEditorPage(screenPanelView.asWidget());
+        kieView.getMultiPage().addPage(getDocumentationPage());
         kieView.getMultiPage().addPage(dataTypesPage);
         kieView.getMultiPage().addPage(includedModelsPage);
-        kieView.getMultiPage().addPage(getDocumentationPage());
     }
 
     DocumentationPage getDocumentationPage() {
@@ -337,8 +359,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private Metadata buildMetadata(final String defSetId,
                                    final String shapeSetId,
                                    final String title) {
-        return new MetadataImpl.MetadataImplBuilder(defSetId,
-                                                    definitionManager)
+        return new SubmarineMetadataImpl.SubmarineMetadataBuilder(defSetId,
+                                                                  definitionManager)
                 .setTitle(title)
                 .setShapeSetId(shapeSetId)
                 .build();
@@ -411,11 +433,15 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     void openDock() {
         decisionNavigatorDock.open();
+        diagramPropertiesDock.open();
+        diagramPreviewAndExplorerDock.open();
     }
 
     void destroyDock() {
         decisionNavigatorDock.close();
         decisionNavigatorDock.resetContent();
+        diagramPropertiesDock.close();
+        diagramPreviewAndExplorerDock.close();
     }
 
     void destroySession() {

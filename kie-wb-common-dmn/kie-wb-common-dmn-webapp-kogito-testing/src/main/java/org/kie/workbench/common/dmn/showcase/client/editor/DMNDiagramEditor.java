@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -37,9 +38,8 @@ import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
-import org.kie.workbench.common.dmn.showcase.client.menus.DMNEditorMenuSessionItems;
+import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramSubmarineWrapper;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.dmn.showcase.client.toolbar.ProjectToolbarStateHandler;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
@@ -56,6 +56,7 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
@@ -100,7 +101,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
-    private static final int DATA_TYPES_PAGE_INDEX = 1;
+    //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
+    private static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -108,8 +110,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
     private final Event<NotificationEvent> notificationEvent;
 
     private final DecisionNavigatorDock decisionNavigatorDock;
-    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
+    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
 
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
@@ -136,13 +138,13 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
                             final ErrorPopupPresenter errorPopupPresenter,
                             final DiagramClientErrorHandler diagramClientErrorHandler,
                             final ClientTranslationService translationService,
-                            final DocumentationView documentationView,
+                            final @DMNEditor DocumentationView<Diagram> documentationView,
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
-                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,
+                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                             final LayoutHelper layoutHelper,
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
                             final DataTypesPage dataTypesPage,
@@ -171,8 +173,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         this.notificationEvent = notificationEvent;
 
         this.decisionNavigatorDock = decisionNavigatorDock;
-        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
         this.diagramPropertiesDock = diagramPropertiesDock;
+        this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
 
         this.layoutHelper = layoutHelper;
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
@@ -238,8 +240,8 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
         decisionNavigatorDock.close();
         decisionNavigatorDock.resetContent();
 
-        diagramPreviewAndExplorerDock.close();
         diagramPropertiesDock.close();
+        diagramPreviewAndExplorerDock.close();
 
         dataTypesPage.disableShortcuts();
     }
@@ -257,13 +259,13 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
             metadata.setPath(makeMetadataPath(metadata.getRoot(), metadata.getTitle()));
 
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
-            expressionEditor.setToolbarStateHandler(new ProjectToolbarStateHandler(getMenuSessionItems()));
+            expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
 
             decisionNavigatorDock.setupCanvasHandler(c);
             decisionNavigatorDock.open();
 
-            diagramPreviewAndExplorerDock.open();
             diagramPropertiesDock.open();
+            diagramPreviewAndExplorerDock.open();
 
             dataTypesPage.reload();
 

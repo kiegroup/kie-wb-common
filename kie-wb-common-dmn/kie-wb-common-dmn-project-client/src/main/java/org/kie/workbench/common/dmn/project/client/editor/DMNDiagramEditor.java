@@ -94,6 +94,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
+    //Editor tabs: [0] Main editor, [1] Overview, [2] Documentation, [3] Data-Types, [4] Imported Models
     private static final int DATA_TYPES_PAGE_INDEX = 3;
 
     private final SessionManager sessionManager;
@@ -120,7 +121,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final DiagramClientErrorHandler diagramClientErrorHandler,
                             final @DMNEditor DocumentationView documentationView,
                             final DMNDiagramResourceType resourceType,
-                            final DMNProjectEditorMenuSessionItems menuSessionItems,
+                            final DMNEditorMenuSessionItems menuSessionItems,
                             final ProjectMessagesListener projectMessagesListener,
                             final ClientTranslationService translationService,
                             final ClientProjectDiagramService projectDiagramServices,
@@ -237,7 +238,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
         canvasHandler.ifPresent(c -> {
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
-            expressionEditor.setToolbarStateHandler(new ProjectToolbarStateHandler(getMenuSessionItems()));
+            expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.setupCanvasHandler(c);
             dataTypesPage.reload();
             includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
