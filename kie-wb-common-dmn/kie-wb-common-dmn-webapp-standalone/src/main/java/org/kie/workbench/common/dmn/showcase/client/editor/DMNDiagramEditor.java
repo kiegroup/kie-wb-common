@@ -30,7 +30,8 @@ import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
-import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -77,7 +78,6 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.uberfire.client.annotations.WorkbenchContextId;
@@ -117,7 +117,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     private final DecisionNavigatorDock decisionNavigatorDock;
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
-    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+    private final PreviewDiagramDock diagramPreviewAndExplorerDock;
 
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor layoutExecutor;
@@ -148,7 +148,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final Event<SessionFocusedEvent> sessionFocusedEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,
-                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
+                            final PreviewDiagramDock diagramPreviewAndExplorerDock,
                             final LayoutHelper layoutHelper,
                             final OpenDiagramLayoutExecutor layoutExecutor,
                             final DataTypesPage dataTypesPage,

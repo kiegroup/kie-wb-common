@@ -24,7 +24,8 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -46,7 +47,6 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.mockito.InOrder;
@@ -90,7 +90,7 @@ public class DMNDiagramEditorTest {
     private DiagramEditorPropertiesDock diagramPropertiesDock;
 
     @Mock
-    private DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+    private PreviewDiagramDock diagramPreviewAndExplorerDock;
 
     @Mock
     private LayoutHelper layoutHelper;

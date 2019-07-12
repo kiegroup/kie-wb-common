@@ -23,7 +23,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.project.client.docks.screens.PreviewDiagramScreen;
+import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramScreen;
 import org.kie.workbench.common.stunner.submarine.client.screens.DiagramEditorPropertiesScreen;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.workbench.docks.UberfireDock;
