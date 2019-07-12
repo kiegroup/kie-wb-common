@@ -93,7 +93,7 @@ public class DiagramEditorPropertiesDock {
     }
 
     private String icon() {
-        return IconType.COMPRESS.toString();
+        return IconType.PENCIL_SQUARE_O.toString();
     }
 
     private DefaultPlaceRequest placeRequest() {

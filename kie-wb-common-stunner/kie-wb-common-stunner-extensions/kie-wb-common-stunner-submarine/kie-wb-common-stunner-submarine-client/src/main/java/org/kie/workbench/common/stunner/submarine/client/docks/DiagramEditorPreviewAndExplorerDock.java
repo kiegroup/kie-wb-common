@@ -93,7 +93,7 @@ public class DiagramEditorPreviewAndExplorerDock {
     }
 
     private String icon() {
-        return IconType.PAPERCLIP.toString();
+        return IconType.EYE.toString();
     }
 
     private DefaultPlaceRequest placeRequest() {
