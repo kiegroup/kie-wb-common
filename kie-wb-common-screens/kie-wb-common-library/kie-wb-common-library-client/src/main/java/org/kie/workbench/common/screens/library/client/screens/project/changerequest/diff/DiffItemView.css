@@ -42,16 +42,22 @@
     display: flex;
 }
 
+.textual-diff-container {
+    width: 100%;
+    overflow: hidden;
+}
+
 .left-container {
     width: 50%;
-    height: 400px;
 }
 
 .right-container {
     width: 50%;
-    height: 400px;
 }
 
-.conflict {
-    color: coral;
+.textual-diff-info {
+    font-family: "FontAwesome";
+    font-size: 14px;
+    display: inline-block;
+    padding: 5px;
 }

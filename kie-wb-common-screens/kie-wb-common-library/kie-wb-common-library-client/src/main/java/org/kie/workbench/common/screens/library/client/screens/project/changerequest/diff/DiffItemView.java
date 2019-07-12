@@ -41,6 +41,8 @@ public class DiffItemView implements DiffItemPresenter.View,
     private static int nextId = 0;
 
     private static final String SIZE_100P = "100%";
+    private static final int DIFF_CONTAINER_HEIGHT = 396;
+    private static final String DIFF_CONTAINER_HEIGHT_PX = DIFF_CONTAINER_HEIGHT + "px";
 
     private DiffItemPresenter presenter;
 
@@ -82,6 +84,14 @@ public class DiffItemView implements DiffItemPresenter.View,
     @Inject
     @DataField("right-container")
     private HTMLDivElement customRightContainer;
+
+    @Inject
+    @DataField("unmodified-file")
+    private HTMLDivElement unmodifiedFile;
+
+    @Inject
+    @DataField("binary-file")
+    private HTMLDivElement binaryFile;
 
     @Inject
     private Elemental2DomUtil domUtil;
@@ -145,14 +155,30 @@ public class DiffItemView implements DiffItemPresenter.View,
     }
 
     @Override
+    public void drawBinaryContent() {
+        binaryFile.hidden = false;
+    }
+
+    @Override
+    public void drawUnmodifiedContent() {
+        unmodifiedFile.hidden = false;
+    }
+
+    @Override
+    public void removeTextualContent() {
+        domUtil.removeAllElementChildren(textualDiffContainer);
+        this.diff2Html = null;
+    }
+
+    @Override
     public void drawTextualContent(final String diffText,
                                    final boolean isUnified) {
         if (this.diff2Html == null) {
             this.diff2Html = new Diff2Html(this.textualDiffContainer.id,
                                            isUnified ? DiffOutputFormat.LINE_BY_LINE : DiffOutputFormat.SIDE_BY_SIDE,
-                                           diffText,
-                                           true);
+                                           diffText);
             this.diff2Html.draw();
+            this.diff2Html.configContainerHeight(DIFF_CONTAINER_HEIGHT);
         }
     }
 
@@ -187,10 +213,17 @@ public class DiffItemView implements DiffItemPresenter.View,
         this.changeType.textContent = changeType + " - ";
 
         this.textualDiffContainer.id = "_textual-diff-container" + elementId;
+        this.textualDiffContainer.style.maxHeight = CSSProperties.MaxHeightUnionType.of(DIFF_CONTAINER_HEIGHT_PX);
+
         this.customDiffContainer.id = "_custom-diff-container" + elementId;
+        this.customLeftContainer.style.height = CSSProperties.HeightUnionType.of(DIFF_CONTAINER_HEIGHT_PX);
+        this.customRightContainer.style.height = CSSProperties.HeightUnionType.of(DIFF_CONTAINER_HEIGHT_PX);
 
         this.textualDiffContainer.hidden = true;
         this.customDiffContainer.hidden = true;
+
+        this.binaryFile.hidden = true;
+        this.unmodifiedFile.hidden = true;
 
         this.collapseContainer.id = containerId;
         this.collapseLink.href = "#" + containerId;

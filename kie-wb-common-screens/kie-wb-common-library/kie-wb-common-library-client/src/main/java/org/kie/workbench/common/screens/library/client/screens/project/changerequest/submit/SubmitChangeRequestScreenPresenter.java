@@ -158,6 +158,8 @@ public class SubmitChangeRequestScreenPresenter {
         final PlaceRequest place = selectPlaceEvent.getPlace();
         if (workspaceProject != null && workspaceProject.getMainModule() != null && place.getIdentifier().equals(LibraryPlaces.SUBMIT_CHANGE_REQUEST)) {
             reset();
+        } else {
+            destroyDiffItems();
         }
     }
 

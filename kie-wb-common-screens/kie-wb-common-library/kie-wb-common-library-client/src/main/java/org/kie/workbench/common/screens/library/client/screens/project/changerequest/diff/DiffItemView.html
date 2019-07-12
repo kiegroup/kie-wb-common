@@ -20,15 +20,22 @@
             <div>
                 <div class="panel-title">
                     <a data-field="collapse-link" data-toggle="collapse">
-                        <span data-field="conflict-label" data-i18n-key="Conflict" class="conflict"></span>
                         <span data-field="change-type"></span>
                         <span data-field="filename"></span>
+                        <span data-field="conflict-label" class="pficon pficon-warning-triangle-o"></span>
                     </a>
                 </div>
             </div>
         </div>
         <div data-field="collapse-container" class="panel-collapse collapse in" aria-expanded="true">
-            <div data-field="textual-diff-container" class="panel-body"></div>
+            <div data-field="textual-diff-container" class="panel-body textual-diff-container">
+                <div data-field="unmodified-file" class="textual-diff-info">
+                    <span data-i18n-key="FileWithoutChanges"></span>
+                </div>
+                <div data-field="binary-file" class="textual-diff-info">
+                    <span data-i18n-key="BinaryFilesDiffer"></span>
+                </div>
+            </div>
             <div data-field="custom-diff-container" class="panel-body custom-diff-container">
                 <div data-field="left-container" class="left-container"></div>
                 <div data-field="right-container" class="right-container"></div>

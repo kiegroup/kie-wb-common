@@ -69,6 +69,12 @@ public class DiffItemPresenter {
         void clearCustomRightContainer();
 
         void expandCollapsibleContainer(final boolean isOpened);
+
+        void drawBinaryContent();
+
+        void drawUnmodifiedContent();
+
+        void removeTextualContent();
     }
 
     private final View view;
@@ -101,8 +107,12 @@ public class DiffItemPresenter {
 
     @PreDestroy
     public void preDestroy() {
-        if (ready && open && diffMode == DiffMode.VISUAL) {
-            closeVisualContent();
+        if (ready && open) {
+            if (diffMode == DiffMode.VISUAL) {
+                closeVisualContent();
+            } else {
+                closeTextualContent();
+            }
         }
     }
 
@@ -148,14 +158,16 @@ public class DiffItemPresenter {
 
     public void toggleCollapsibleContainerState() {
         if (ready) {
-            if (diffMode == DiffMode.VISUAL) {
-                if (open) {
+            if (open) {
+                if (diffMode == DiffMode.VISUAL) {
                     closeVisualContent();
                 } else {
-                    drawVisualContent();
+                    closeTextualContent();
                 }
             } else {
-                if (!open) {
+                if (diffMode == DiffMode.VISUAL) {
+                    drawVisualContent();
+                } else {
                     drawTextualContent();
                 }
             }
@@ -170,11 +182,25 @@ public class DiffItemPresenter {
     }
 
     private void drawTextualContent() {
-        final boolean isUnified = diff.getChangeType() == ChangeType.ADD
-                || diff.getChangeType() == ChangeType.DELETE;
+        final DiffPrintState diffPrintState = resolvePrintState(diff);
 
-        view.drawTextualContent(diff.getDiffText(),
-                                isUnified);
+        switch (diffPrintState) {
+            case BINARY:
+                view.drawBinaryContent();
+                break;
+
+            case UNMODIFIED:
+                view.drawUnmodifiedContent();
+                break;
+
+            case REGULAR:
+            default:
+                final boolean isUnified = diff.getChangeType() == ChangeType.ADD
+                        || diff.getChangeType() == ChangeType.DELETE;
+                view.drawTextualContent(diff.getDiffText(),
+                                        isUnified);
+                break;
+        }
     }
 
     private void drawVisualContent() {
@@ -203,6 +229,10 @@ public class DiffItemPresenter {
         }
     }
 
+    private void closeTextualContent() {
+        view.removeTextualContent();
+    }
+
     private void prepareView() {
         view.init(this);
     }
@@ -210,8 +240,6 @@ public class DiffItemPresenter {
     private Map<String, String> createPathPlaceRequestParameters() {
         return new HashMap<String, String>() {{
             put("readOnly", "true");
-            put("hiddenDocks", "true");
-            put("embedded", "true");
             put("hash", generateRandomHash());
         }};
     }
@@ -234,6 +262,7 @@ public class DiffItemPresenter {
 
     private void prepareTextualDiff(final ChangeRequestDiff diff,
                                     final String filename) {
+
         view.setupTextualContent(filename,
                                  resolveChangeTypeText(diff.getChangeType()),
                                  diff.isConflict());
@@ -295,5 +324,17 @@ public class DiffItemPresenter {
             default:
                 return ts.getTranslation(LibraryConstants.Updated);
         }
+    }
+
+    private DiffPrintState resolvePrintState(final ChangeRequestDiff changeRequestDiff) {
+        if (changeRequestDiff.getAddedLinesCount() == 0 && changeRequestDiff.getDeletedLinesCount() == 0) {
+            if (changeRequestDiff.getDiffText().contains("Binary files differ")) {
+                return DiffPrintState.BINARY;
+            } else {
+                return DiffPrintState.UNMODIFIED;
+            }
+        }
+
+        return DiffPrintState.REGULAR;
     }
 }
