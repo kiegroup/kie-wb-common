@@ -29,7 +29,8 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
-import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -61,7 +62,6 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditor;
 import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
@@ -111,7 +111,7 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
 
     private final DecisionNavigatorDock decisionNavigatorDock;
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
-    private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
+    private final PreviewDiagramDock diagramPreviewAndExplorerDock;
 
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
@@ -144,7 +144,7 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,
-                            final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
+                            final PreviewDiagramDock diagramPreviewAndExplorerDock,
                             final LayoutHelper layoutHelper,
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
                             final DataTypesPage dataTypesPage,
