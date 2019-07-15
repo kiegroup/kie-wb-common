@@ -24,10 +24,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.workbench.common.dmn.showcase.client.editor.DMNDiagramEditor;
+import org.kie.workbench.common.dmn.webapp.common.client.navigator.BaseDMNDiagramsNavigatorScreen;
 import org.kie.workbench.common.stunner.client.widgets.event.LoadDiagramEvent;
 import org.kie.workbench.common.stunner.client.widgets.explorer.navigator.diagrams.DiagramsNavigator;
 import org.kie.workbench.common.stunner.client.widgets.menu.dev.ShapeSetsMenuItemsBuilder;
+import org.kie.workbench.common.stunner.core.client.ShapeSet;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -35,24 +36,13 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
-@WorkbenchScreen(identifier = DMNDiagramsNavigatorScreen.SCREEN_ID)
-public class DMNDiagramsNavigatorScreen {
+@WorkbenchScreen(identifier = BaseDMNDiagramsNavigatorScreen.SCREEN_ID)
+public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
 
-    public static final String SCREEN_ID = "DMNDiagramsNavigatorScreen";
-
-    public static final PlaceRequest DIAGRAM_EDITOR = new DefaultPlaceRequest(DMNDiagramEditor.EDITOR_ID);
-
-    private DiagramsNavigator diagramsNavigator;
-    private ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder;
     private DMNDiagramSubmarineWrapper stateHolder;
-
-    private Menus menu = null;
-    private LoadDiagramEvent selectedDiagramEvent = null;
 
     public DMNDiagramsNavigatorScreen() {
         //CDI proxy
@@ -62,68 +52,62 @@ public class DMNDiagramsNavigatorScreen {
     public DMNDiagramsNavigatorScreen(final DiagramsNavigator diagramsNavigator,
                                       final ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder,
                                       final DMNDiagramSubmarineWrapper stateHolder) {
-        this.diagramsNavigator = diagramsNavigator;
-        this.newDiagramMenuItemsBuilder = newDiagramMenuItemsBuilder;
+        super(diagramsNavigator,
+              newDiagramMenuItemsBuilder);
         this.stateHolder = stateHolder;
     }
 
+    @Override
     @PostConstruct
     public void init() {
-        this.selectedDiagramEvent = null;
+        super.init();
     }
 
+    @Override
     @OnStartup
     @SuppressWarnings("unused")
     public void onStartup(final PlaceRequest placeRequest) {
-        this.menu = makeMenuBar();
-        clear();
+        super.onStartup(placeRequest);
     }
 
-    private Menus makeMenuBar() {
-        final MenuFactory.TopLevelMenusBuilder<MenuFactory.MenuBuilder> m =
-                MenuFactory
-                        .newTopLevelMenu("Load diagrams from server")
-                        .respondsWith(() -> diagramsNavigator.show())
-                        .endMenu()
-                        .newTopLevelMenu("Edit")
-                        .respondsWith(() -> {
-                            if (Objects.nonNull(selectedDiagramEvent)) {
-                                stateHolder.openFile(selectedDiagramEvent.getPath());
-                            }
-                        })
-                        .endMenu();
-        m.newTopLevelMenu(newDiagramMenuItemsBuilder.build("Create",
-                                                           "Create a new",
-                                                           (shapeSet) -> stateHolder.newFile())).endMenu();
-        return m.build();
+    @Override
+    public void edit() {
+        if (Objects.nonNull(selectedDiagramEvent)) {
+            stateHolder.openFile(selectedDiagramEvent.getPath());
+        }
     }
 
-    private void clear() {
-        diagramsNavigator.clear();
-        selectedDiagramEvent = null;
+    @Override
+    public void create(final ShapeSet shapeSet) {
+        stateHolder.newFile();
     }
 
+    @Override
     @OnClose
     public void onClose() {
-        clear();
+        super.onClose();
     }
 
+    @Override
     @WorkbenchMenu
     public void getMenus(final Consumer<Menus> menusConsumer) {
-        menusConsumer.accept(menu);
+        super.getMenus(menusConsumer);
     }
 
+    @Override
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Diagrams Navigator";
+        return super.getTitle();
     }
 
+    @Override
     @WorkbenchPartView
     public IsWidget getWidget() {
-        return diagramsNavigator.asWidget();
+        return super.getWidget();
     }
 
-    private void onLoadDiagramEvent(final @Observes LoadDiagramEvent loadDiagramEvent) {
-        this.selectedDiagramEvent = loadDiagramEvent;
+    @Override
+    public void onLoadDiagramEvent(final @Observes LoadDiagramEvent loadDiagramEvent) {
+        super.onLoadDiagramEvent(loadDiagramEvent);
     }
 }

@@ -31,7 +31,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
-import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -44,6 +43,7 @@ import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNEditorToolbar;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.dmn.showcase.client.services.DMNShowcaseDiagramService;
+import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.stunner.client.widgets.event.SessionFocusedEvent;
 import org.kie.workbench.common.stunner.client.widgets.menu.dev.MenuDevCommandsBuilder;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
@@ -101,10 +101,10 @@ import org.uberfire.workbench.model.menu.Menus;
 @WorkbenchScreen(identifier = DMNDiagramEditor.EDITOR_ID)
 public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPresenter {
 
-    static final String EDITOR_ID = "DMNDiagramEditor";
+    public static final String EDITOR_ID = "DMNDiagramEditor";
 
     //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
-    static final int DATA_TYPES_PAGE_INDEX = 2;
+    public static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private static Logger LOGGER = Logger.getLogger(DMNDiagramEditor.class.getName());
 

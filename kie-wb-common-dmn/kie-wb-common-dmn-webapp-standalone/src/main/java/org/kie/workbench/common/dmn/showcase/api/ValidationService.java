@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.dmn.showcase.api;
 
-package org.kie.workbench.common.dmn.showcase.client;
+import java.util.Collection;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 
-@EntryPoint
-@Bundle("resources/i18n/SubmarineClientConstants.properties")
-public class ShowcaseEntryPoint {
+@Remote
+public interface ValidationService {
+
+    Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram);
 
 }

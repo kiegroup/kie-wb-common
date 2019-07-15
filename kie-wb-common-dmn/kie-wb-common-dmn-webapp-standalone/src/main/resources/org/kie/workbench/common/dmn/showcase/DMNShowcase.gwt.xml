@@ -47,6 +47,7 @@
 
   <!-- DMN Editor -->
   <inherits name="org.kie.workbench.common.dmn.DMNClient"/>
+  <inherits name="org.kie.workbench.common.dmn.webapp.common.DMNWebappCommon"/>
 
   <extend-property name="locale" values="es"/>
   <extend-property name="locale" values="fr"/>
@@ -65,6 +66,7 @@
   <set-property name="gwt.logging.enabled" value="TRUE"/>
 
   <!-- Specify the paths for translatable code -->
+  <source path="api"/>
   <source path="client"/>
 
 </module>

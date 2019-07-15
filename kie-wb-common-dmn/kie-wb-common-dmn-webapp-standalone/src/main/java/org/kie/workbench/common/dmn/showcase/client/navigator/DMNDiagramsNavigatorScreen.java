@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.showcase.client.editor;
+package org.kie.workbench.common.dmn.showcase.client.navigator;
 
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +26,8 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.soup.commons.util.Maps;
+import org.kie.workbench.common.dmn.showcase.client.editor.DMNDiagramEditor;
+import org.kie.workbench.common.dmn.webapp.common.client.navigator.BaseDMNDiagramsNavigatorScreen;
 import org.kie.workbench.common.stunner.client.widgets.event.LoadDiagramEvent;
 import org.kie.workbench.common.stunner.client.widgets.explorer.navigator.diagrams.DiagramsNavigator;
 import org.kie.workbench.common.stunner.client.widgets.menu.dev.ShapeSetsMenuItemsBuilder;
@@ -39,21 +41,13 @@ import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
 @WorkbenchScreen(identifier = DMNDiagramsNavigatorScreen.SCREEN_ID)
-public class DMNDiagramsNavigatorScreen {
+public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
 
-    public static final String SCREEN_ID = "DMNDiagramsNavigatorScreen";
-
-    private DiagramsNavigator diagramsNavigator;
-    private ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder;
     private PlaceManager placeManager;
-
-    private Menus menu = null;
-    private LoadDiagramEvent selectedDiagramEvent = null;
 
     public DMNDiagramsNavigatorScreen() {
         //CDI proxy
@@ -63,39 +57,26 @@ public class DMNDiagramsNavigatorScreen {
     public DMNDiagramsNavigatorScreen(final DiagramsNavigator diagramsNavigator,
                                       final ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder,
                                       final PlaceManager placeManager) {
-        this.diagramsNavigator = diagramsNavigator;
-        this.newDiagramMenuItemsBuilder = newDiagramMenuItemsBuilder;
+        super(diagramsNavigator,
+              newDiagramMenuItemsBuilder);
         this.placeManager = placeManager;
     }
 
+    @Override
     @PostConstruct
     public void init() {
-        this.selectedDiagramEvent = null;
+        super.init();
     }
 
+    @Override
     @OnStartup
     @SuppressWarnings("unused")
     public void onStartup(final PlaceRequest placeRequest) {
-        this.menu = makeMenuBar();
-        clear();
+        super.onStartup(placeRequest);
     }
 
-    private Menus makeMenuBar() {
-        final MenuFactory.TopLevelMenusBuilder<MenuFactory.MenuBuilder> m =
-                MenuFactory
-                        .newTopLevelMenu("Load diagrams from server")
-                        .respondsWith(() -> diagramsNavigator.show())
-                        .endMenu()
-                        .newTopLevelMenu("Edit")
-                        .respondsWith(this::edit)
-                        .endMenu();
-        m.newTopLevelMenu(newDiagramMenuItemsBuilder.build("Create",
-                                                           "Create a new",
-                                                           this::create)).endMenu();
-        return m.build();
-    }
-
-    private void edit() {
+    @Override
+    public void edit() {
         if (Objects.nonNull(selectedDiagramEvent)) {
             final Maps.Builder<String, String> builder = new Maps.Builder<>();
             builder.put("name", selectedDiagramEvent.getName());
@@ -103,7 +84,8 @@ public class DMNDiagramsNavigatorScreen {
         }
     }
 
-    private void create(final ShapeSet shapeSet) {
+    @Override
+    public void create(final ShapeSet shapeSet) {
         final String shapeSetName = shapeSet.getDescription();
         final String defSetId = shapeSet.getDefinitionSetId();
         final Maps.Builder<String, String> builder = new Maps.Builder<>();
@@ -118,32 +100,32 @@ public class DMNDiagramsNavigatorScreen {
         placeManager.goTo(diagramScreenPlaceRequest);
     }
 
-    private void clear() {
-        diagramsNavigator.clear();
-        selectedDiagramEvent = null;
-    }
-
+    @Override
     @OnClose
     public void onClose() {
-        clear();
+        super.onClose();
     }
 
+    @Override
     @WorkbenchMenu
     public void getMenus(final Consumer<Menus> menusConsumer) {
-        menusConsumer.accept(menu);
+        super.getMenus(menusConsumer);
     }
 
+    @Override
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Diagrams Navigator";
+        return super.getTitle();
     }
 
+    @Override
     @WorkbenchPartView
     public IsWidget getWidget() {
-        return diagramsNavigator.asWidget();
+        return super.getWidget();
     }
 
-    private void onLoadDiagramEvent(final @Observes LoadDiagramEvent loadDiagramEvent) {
-        this.selectedDiagramEvent = loadDiagramEvent;
+    @Override
+    public void onLoadDiagramEvent(final @Observes LoadDiagramEvent loadDiagramEvent) {
+        super.onLoadDiagramEvent(loadDiagramEvent);
     }
 }

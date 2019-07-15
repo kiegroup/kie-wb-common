@@ -17,12 +17,16 @@ package org.kie.workbench.common.dmn.showcase.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.dmn.showcase.client.editor.DMNDiagramsNavigatorScreen;
+import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramsNavigatorScreen;
+import org.kie.workbench.common.dmn.showcase.client.notifications.NotificationsScreen;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.CompassPosition;
+import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.PerspectiveDefinition;
+import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
@@ -37,14 +41,15 @@ public class AuthoringPerspective {
         final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
         perspective.setName("Authoring");
         perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(DMNDiagramsNavigatorScreen.SCREEN_ID)));
+
+        final PanelDefinition notificationsPanel = new PanelDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+        notificationsPanel.setWidth(400);
+        notificationsPanel.setHeight(100);
+        notificationsPanel.addPart(new PartDefinitionImpl(new DefaultPlaceRequest(NotificationsScreen.SCREEN_ID)));
+
+        perspective.getRoot().insertChild(CompassPosition.SOUTH,
+                                          notificationsPanel);
+
         return perspective;
     }
-
-//    @Perspective
-//    public PerspectiveDefinition buildSubmarinePerspective() {
-//        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleNoExpandWorkbenchPanelPresenter.class.getName());
-//        perspective.setName("Authoring");
-//        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(DMNDiagramEditor.EDITOR_ID)));
-//        return perspective;
-//    }
 }

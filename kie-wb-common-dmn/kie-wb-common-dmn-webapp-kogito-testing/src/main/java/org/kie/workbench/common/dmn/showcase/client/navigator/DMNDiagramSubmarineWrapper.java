@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.kie.workbench.common.dmn.showcase.client.editor.DMNDiagramEditor;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.submarine.client.editor.BaseSubmarineEditor;
@@ -27,9 +28,13 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.promise.Promises;
+import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 @ApplicationScoped
 public class DMNDiagramSubmarineWrapper {
+
+    private static final PlaceRequest DIAGRAM_EDITOR = new DefaultPlaceRequest(DMNDiagramEditor.EDITOR_ID);
 
     private PlaceManager placeManager;
     private Caller<VFSService> vfsServiceCaller;
@@ -52,28 +57,28 @@ public class DMNDiagramSubmarineWrapper {
     }
 
     public void newFile() {
-        placeManager.registerOnOpenCallback(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR,
+        placeManager.registerOnOpenCallback(DIAGRAM_EDITOR,
                                             () -> {
                                                 baseSubmarineEditor.setContent("");
-                                                placeManager.unregisterOnOpenCallbacks(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
+                                                placeManager.unregisterOnOpenCallbacks(DIAGRAM_EDITOR);
                                             });
 
-        placeManager.goTo(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
+        placeManager.goTo(DIAGRAM_EDITOR);
     }
 
     public void openFile(final Path path) {
-        placeManager.registerOnOpenCallback(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR,
+        placeManager.registerOnOpenCallback(DIAGRAM_EDITOR,
                                             () -> {
                                                 vfsServiceCaller.call((String xml) -> {
                                                     baseSubmarineEditor.setContent(xml);
-                                                    placeManager.unregisterOnOpenCallbacks(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
+                                                    placeManager.unregisterOnOpenCallbacks(DIAGRAM_EDITOR);
                                                 }, (m, t) -> {
-                                                    placeManager.unregisterOnOpenCallbacks(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
+                                                    placeManager.unregisterOnOpenCallbacks(DIAGRAM_EDITOR);
                                                     return false;
                                                 }).readAllString(path);
                                             });
 
-        placeManager.goTo(DMNDiagramsNavigatorScreen.DIAGRAM_EDITOR);
+        placeManager.goTo(DIAGRAM_EDITOR);
     }
 
     @SuppressWarnings("unchecked")

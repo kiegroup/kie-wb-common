@@ -45,6 +45,7 @@
 
   <!-- DMN Editor -->
   <inherits name="org.kie.workbench.common.dmn.DMNClient"/>
+  <inherits name="org.kie.workbench.common.dmn.webapp.common.DMNWebappCommon"/>
 
   <extend-property name="locale" values="es"/>
   <extend-property name="locale" values="fr"/>

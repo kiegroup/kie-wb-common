@@ -40,11 +40,4 @@ public class AuthoringPerspective {
         return perspective;
     }
 
-//    @Perspective
-//    public PerspectiveDefinition buildSubmarinePerspective() {
-//        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleNoExpandWorkbenchPanelPresenter.class.getName());
-//        perspective.setName("Authoring");
-//        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(DMNDiagramEditor.EDITOR_ID)));
-//        return perspective;
-//    }
 }

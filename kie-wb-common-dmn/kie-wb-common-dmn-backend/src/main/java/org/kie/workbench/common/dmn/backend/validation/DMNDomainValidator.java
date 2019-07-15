@@ -65,6 +65,10 @@ public class DMNDomainValidator implements DomainValidator {
     private DMNDiagramUtils dmnDiagramUtils;
     private DMNMarshallerImportsHelper importsHelper;
 
+    public DMNDomainValidator() {
+        //CDI proxy
+    }
+
     @Inject
     public DMNDomainValidator(final DMNMarshaller dmnMarshaller,
                               final DMNDiagramUtils dmnDiagramUtils,
