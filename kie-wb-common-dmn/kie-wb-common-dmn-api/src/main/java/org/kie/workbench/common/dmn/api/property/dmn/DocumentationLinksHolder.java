@@ -26,7 +26,6 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
@@ -73,6 +72,6 @@ public class DocumentationLinksHolder implements DMNProperty {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(value != null ? value.hashCode() : 0);
+        return value != null ? value.hashCode() : 0;
     }
 }

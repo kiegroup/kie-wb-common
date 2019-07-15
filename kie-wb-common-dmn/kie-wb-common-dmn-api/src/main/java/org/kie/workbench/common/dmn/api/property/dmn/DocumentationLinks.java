@@ -42,4 +42,23 @@ public class DocumentationLinks implements DMNProperty {
     public void addLink(final DMNExternalLink dmnExternalLink) {
         getLinks().add(dmnExternalLink);
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DocumentationLinks)) {
+            return false;
+        }
+
+        final DocumentationLinks that = (DocumentationLinks) o;
+
+        return links != null ? links.equals(that.links) : that.links == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return links != null ? links.hashCode() : 0;
+    }
 }

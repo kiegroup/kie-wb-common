@@ -22,14 +22,14 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.dmn.model.api.DMNElement;
-import org.kie.dmn.model.api.DMNExternalLink;
 import org.kie.dmn.model.api.DRGElement;
 import org.kie.workbench.common.dmn.api.property.dmn.DocumentationLinks;
 import org.kie.workbench.common.dmn.api.property.dmn.DocumentationLinksHolder;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ExternalLink;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.jgroups.util.Util.assertEquals;
-import static org.jgroups.util.Util.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.DMNExternalLinksToExtensionElements.getOrCreateExtensionElements;
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.DMNExternalLinksToExtensionElements.loadExternalLinksFromExtensionElements;
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements;
@@ -46,19 +46,19 @@ public class DMNExternalLinksToExtensionElementsTest {
         final org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement target = mock(org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement.class);
 
         final DMNElement.ExtensionElements extensionElements = mock(DMNElement.ExtensionElements.class);
-        final List<DMNExternalLink> externalLinks = new ArrayList<>();
+        final List<Object> externalLinks = new ArrayList<>();
 
         final String linkDescription1 = "l1";
         final String url1 = "url1";
-        final DMNExternalLink external1 = createExternalLinkMock(linkDescription1, url1);
+        final ExternalLink external1 = createExternalLinkMock(linkDescription1, url1);
         externalLinks.add(external1);
 
         final String linkDescription2 = "l2";
         final String url2 = "url2";
-        final DMNExternalLink external2 = createExternalLinkMock(linkDescription2, url2);
+        final ExternalLink external2 = createExternalLinkMock(linkDescription2, url2);
         externalLinks.add(external2);
 
-        when(extensionElements.getExternalLinks()).thenReturn(externalLinks);
+        when(extensionElements.getAny()).thenReturn(externalLinks);
         when(source.getExtensionElements()).thenReturn(extensionElements);
 
         final DocumentationLinksHolder linksHolder = mock(DocumentationLinksHolder.class);
@@ -82,11 +82,11 @@ public class DMNExternalLinksToExtensionElementsTest {
         assertEquals(description, converted.getDescription());
     }
 
-    private DMNExternalLink createExternalLinkMock(final String description, final String url) {
+    private ExternalLink createExternalLinkMock(final String description, final String url) {
 
-        final DMNExternalLink external = mock(DMNExternalLink.class);
-        when(external.getLinkDescription()).thenReturn(description);
-        when(external.getURL()).thenReturn(url);
+        final ExternalLink external = mock(ExternalLink.class);
+        when(external.getName()).thenReturn(description);
+        when(external.getUrl()).thenReturn(url);
         return external;
     }
 
@@ -113,23 +113,23 @@ public class DMNExternalLinksToExtensionElementsTest {
         when(linksHolder.getValue()).thenReturn(documentationLinks);
         final DMNElement.ExtensionElements extensionElements = mock(DMNElement.ExtensionElements.class);
         when(target.getExtensionElements()).thenReturn(extensionElements);
-        final List<DMNExternalLink> externalLinks = new ArrayList<>();
-        when(extensionElements.getExternalLinks()).thenReturn(externalLinks);
+        final List<Object> externalLinks = new ArrayList<>();
+        when(extensionElements.getAny()).thenReturn(externalLinks);
 
         loadExternalLinksIntoExtensionElements(source, target);
 
         assertEquals(2, externalLinks.size());
 
-        compare(externalLinks.get(0), description1, url1);
-        compare(externalLinks.get(1), description2, url2);
+        compare((ExternalLink) externalLinks.get(0), description1, url1);
+        compare((ExternalLink) externalLinks.get(1), description2, url2);
     }
 
-    private void compare(final DMNExternalLink converted,
+    private void compare(final ExternalLink converted,
                          final String description,
                          final String url) {
 
-        assertEquals(url, converted.getURL());
-        assertEquals(description, converted.getLinkDescription());
+        assertEquals(url, converted.getUrl());
+        assertEquals(description, converted.getName());
     }
 
     private static org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink createWBExternalLinkMock(final String description,
