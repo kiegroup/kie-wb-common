@@ -262,7 +262,6 @@ public class DiffItemPresenter {
 
     private void prepareTextualDiff(final ChangeRequestDiff diff,
                                     final String filename) {
-
         view.setupTextualContent(filename,
                                  resolveChangeTypeText(diff.getChangeType()),
                                  diff.isConflict());

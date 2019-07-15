@@ -97,11 +97,14 @@ public class DiffItemPresenterTest {
 
     @Test
     public void preDestroyTextualDiffTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
 
         presenter.preDestroy();
 
         verify(placeManager, never()).closePlace(any(PlaceRequest.class));
+        verify(view).removeTextualContent();
     }
 
     @Test
@@ -153,18 +156,104 @@ public class DiffItemPresenterTest {
     }
 
     @Test
-    public void drawWhenTextualDiffTest() throws NoSuchFieldException {
+    public void drawWhenRegularTextualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
 
         doReturn(10).when(diff).getAddedLinesCount();
+        doReturn(5).when(diff).getDeletedLinesCount();
 
         presenter.draw();
 
         verify(view).drawTextualContent(anyString(),
                                         anyBoolean());
+    }
+
+    @Test
+    public void drawWhenAddAndRegularTextualDiffTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn(10).when(diff).getAddedLinesCount();
+        doReturn(5).when(diff).getDeletedLinesCount();
+
+        doReturn(ChangeType.ADD).when(diff).getChangeType();
+        doReturn("Added").when(ts).getTranslation(LibraryConstants.Added);
+
+        presenter.draw();
+
+        verify(view).drawTextualContent(anyString(),
+                                        eq(true));
+    }
+
+    @Test
+    public void drawWhenDeleteAndRegularTextualDiffTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn(10).when(diff).getAddedLinesCount();
+        doReturn(5).when(diff).getDeletedLinesCount();
+
+        doReturn(ChangeType.DELETE).when(diff).getChangeType();
+        doReturn("Deleted").when(ts).getTranslation(LibraryConstants.Deleted);
+
+        presenter.draw();
+
+        verify(view).drawTextualContent(anyString(),
+                                        eq(true));
+    }
+
+    @Test
+    public void drawWhenUpdateAndRegularTextualDiffTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn(10).when(diff).getAddedLinesCount();
+        doReturn(5).when(diff).getDeletedLinesCount();
+
+        doReturn(ChangeType.MODIFY).when(diff).getChangeType();
+        doReturn("Updated").when(ts).getTranslation(LibraryConstants.Updated);
+
+        presenter.draw();
+
+        verify(view).drawTextualContent(anyString(),
+                                        eq(false));
+    }
+
+    @Test
+    public void drawWhenBinaryTextualDiffTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn("Binary files differ").when(diff).getDiffText();
+
+        presenter.draw();
+
+        verify(view).drawBinaryContent();
+    }
+
+    @Test
+    public void drawWhenUnmodifiedTextualDiffTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn("Diff header only").when(diff).getDiffText();
+
+        presenter.draw();
+
+        verify(view).drawUnmodifiedContent();
     }
 
     @Test
@@ -326,5 +415,61 @@ public class DiffItemPresenterTest {
         verify(view, times(1)).setupTextualContent(anyString(),
                                                    anyString(),
                                                    anyBoolean());
+    }
+
+    @Test
+    public void toggleCollapsibleContainerStateWhenReadyOpenVisualTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft")).set(mock(PlaceRequest.class));
+
+        presenter.toggleCollapsibleContainerState();
+
+        verify(placeManager).closePlace(any(PlaceRequest.class));
+    }
+
+    @Test
+    public void toggleCollapsibleContainerStateWhenReadyOpenTextualTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+
+        presenter.toggleCollapsibleContainerState();
+
+        verify(view).removeTextualContent();
+    }
+
+    @Test
+    public void toggleCollapsibleContainerStateWhenReadyClosedVisualTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(false);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn(ChangeType.ADD).when(diff).getChangeType();
+        doReturn("Added").when(ts).getTranslation(LibraryConstants.Added);
+
+        doReturn(mock(PathPlaceRequest.class)).when(presenter).createPlaceRequest(newFilePath);
+
+        presenter.toggleCollapsibleContainerState();
+
+        verify(placeManager).goTo(any(PlaceRequest.class), any(HTMLElement.class));
+    }
+
+    @Test
+    public void toggleCollapsibleContainerStateWhenReadyClosedTextualTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(false);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diff")).set(diff);
+
+        doReturn(10).when(diff).getAddedLinesCount();
+        doReturn(5).when(diff).getDeletedLinesCount();
+
+        presenter.toggleCollapsibleContainerState();
+
+        verify(view).drawTextualContent(anyString(),
+                                        anyBoolean());
     }
 }

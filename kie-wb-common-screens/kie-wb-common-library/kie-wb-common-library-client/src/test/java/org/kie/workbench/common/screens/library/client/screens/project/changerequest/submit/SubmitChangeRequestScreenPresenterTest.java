@@ -154,6 +154,20 @@ public class SubmitChangeRequestScreenPresenterTest {
     }
 
     @Test
+    public void refreshOnFocusWhenOtherPlaceTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+
+        PlaceRequest place = mock(PlaceRequest.class);
+        doReturn(LibraryPlaces.PROJECT_SCREEN).when(place).getIdentifier();
+
+        presenter.refreshOnFocus(new SelectPlaceEvent(place));
+
+        verify(diffItemPresenterInstances).destroyAll();
+    }
+
+    @Test
     public void cancelTest() throws NoSuchFieldException {
         new FieldSetter(presenter,
                         SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))
