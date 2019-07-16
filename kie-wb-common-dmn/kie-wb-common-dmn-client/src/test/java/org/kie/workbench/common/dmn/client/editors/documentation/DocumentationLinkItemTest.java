@@ -26,11 +26,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.mockito.Mock;
-import org.uberfire.client.mvp.LockRequiredEvent;
-import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -48,15 +45,11 @@ public class DocumentationLinkItemTest {
 
     private DocumentationLinkItem documentationLinkItem;
 
-    @Mock
-    private EventSourceMock<LockRequiredEvent> locker;
-
     @Before
     public void setup() {
         documentationLinkItem = new DocumentationLinkItem(item,
                                                           link,
-                                                          deleteLink,
-                                                          locker);
+                                                          deleteLink);
     }
 
     @Test
@@ -86,6 +79,5 @@ public class DocumentationLinkItemTest {
         documentationLinkItem.onDeleteLinkClick(null);
 
         verify(onDelete).accept(externalLink);
-        verify(locker).fire(any());
     }
 }

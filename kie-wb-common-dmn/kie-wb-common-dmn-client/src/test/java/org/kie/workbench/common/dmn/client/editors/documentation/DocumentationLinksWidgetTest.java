@@ -39,8 +39,11 @@ import org.kie.workbench.common.dmn.client.editors.documentation.links.NameAndUr
 import org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.mockito.Mock;
+import org.uberfire.client.mvp.LockRequiredEvent;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -80,6 +83,9 @@ public class DocumentationLinksWidgetTest {
     private DOMTokenList noneContainerClassList;
 
     @Mock
+    private EventSourceMock<LockRequiredEvent> locker;
+
+    @Mock
     private DOMTokenList linksContainerClassList;
 
     private DocumentationLinksWidget widget;
@@ -98,7 +104,8 @@ public class DocumentationLinksWidgetTest {
                                                   nameAndUrlPopover,
                                                   cellEditor,
                                                   addLink,
-                                                  noLink));
+                                                  noLink,
+                                                  locker));
     }
 
     @Test
@@ -191,6 +198,22 @@ public class DocumentationLinksWidgetTest {
         widget.onExternalLinkDeleted(externalLink);
 
         assertFalse(links.contains(externalLink));
+        verify(widget).refresh();
+        verify(locker).fire(any());
+    }
+
+    @Test
+    public void testOnDMNExternalLinkCreated() {
+
+        final DMNExternalLink createdLink = mock(DMNExternalLink.class);
+        final DocumentationLinks value = mock(DocumentationLinks.class);
+
+        widget.setValue(value);
+
+        widget.onDMNExternalLinkCreated(createdLink);
+
+        verify(value).addLink(createdLink);
+        verify(locker).fire(any());
         verify(widget).refresh();
     }
 }

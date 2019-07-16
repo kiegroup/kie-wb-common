@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -46,6 +47,7 @@ import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.documentation.links.NameAndUrlPopoverView;
 import org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
+import org.uberfire.client.mvp.LockRequiredEvent;
 
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_Add;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_None;
@@ -74,6 +76,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
     private final ManagedInstance<DocumentationLinkItem> listItems;
     private final NameAndUrlPopoverView.Presenter nameAndUrlPopover;
     private final TranslationService translationService;
+    private final Event<LockRequiredEvent> locker;
 
     private boolean enabled;
 
@@ -88,7 +91,8 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
                                     final NameAndUrlPopoverView.Presenter nameAndUrlPopover,
                                     final CellEditorControlsView cellEditor,
                                     @Named("span") final HTMLElement addLink,
-                                    @Named("span") final HTMLElement noLink) {
+                                    @Named("span") final HTMLElement noLink,
+                                    final Event<LockRequiredEvent> locker) {
 
         this.listItems = listItems;
         this.linksContainer = linksContainer;
@@ -101,6 +105,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
         this.value = new DocumentationLinks();
         this.enabled = true;
         this.translationService = translationService;
+        this.locker = locker;
     }
 
     @PostConstruct
@@ -111,6 +116,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
     }
 
     void onDMNExternalLinkCreated(final DMNExternalLink externalLink) {
+        locker.fire(new LockRequiredEvent());
         getValue().addLink(externalLink);
         refresh();
     }
@@ -187,6 +193,7 @@ public class DocumentationLinksWidget extends Composite implements HasValue<Docu
     }
 
     void onExternalLinkDeleted(final DMNExternalLink externalLink) {
+        locker.fire(new LockRequiredEvent());
         getValue().getLinks().remove(externalLink);
         refresh();
     }
