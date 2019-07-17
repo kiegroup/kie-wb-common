@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.documentation.common.DMNDocumentationService;
+import org.kie.workbench.common.dmn.client.editors.documentation.common.HTMLDownloadHelper;
 import org.kie.workbench.common.stunner.core.client.util.PrintHelper;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput;
@@ -33,6 +34,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.editors.documentation.DMNDocumentationView.DOCUMENTATION_FILENAME;
 import static org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput.EMPTY;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -61,11 +63,14 @@ public class DMNDocumentationViewTest {
     @Mock
     private Diagram diagram;
 
+    @Mock
+    private HTMLDownloadHelper downloadHelper;
+
     private DMNDocumentationView view;
 
     @Before
     public void setup() {
-        view = spy(new DMNDocumentationView(documentationPanel, documentationContent, printButton, printHelper, documentationService));
+        view = spy(new DMNDocumentationView(documentationPanel, documentationContent, printButton, null, printHelper, documentationService, downloadHelper));
     }
 
     @Test
@@ -111,5 +116,15 @@ public class DMNDocumentationViewTest {
     public void testOnPrintButtonClick() {
         view.onPrintButtonClick(mock(ClickEvent.class));
         verify(printHelper).print(documentationContent);
+    }
+
+    @Test
+    public void testOnDownloadHtmlFile() {
+        final String html = "<html><body>Hi</body></html>";
+        doReturn(html).when(view).getCurrentDocumentationHTML();
+
+        view.onDownloadHtmlFile(mock(ClickEvent.class));
+
+        verify(downloadHelper).download(DOCUMENTATION_FILENAME, html);
     }
 }
