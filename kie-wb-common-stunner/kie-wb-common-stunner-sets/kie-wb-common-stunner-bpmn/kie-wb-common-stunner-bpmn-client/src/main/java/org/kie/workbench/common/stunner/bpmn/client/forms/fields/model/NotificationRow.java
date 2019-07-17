@@ -37,7 +37,7 @@ public class NotificationRow {
     private long id;
     private String body = "";
 
-    private String expiresAt = "0h";
+    private String expiresAt = "";
 
     private String from = "";
 
@@ -50,6 +50,8 @@ public class NotificationRow {
     private List<String> users = new ArrayList<>();
 
     private NotificationType type = NotificationType.NotCompletedNotify;
+
+    private Expiration expiration = Expiration.TIMEPERIOD;
 
     public NotificationRow() {
         this.id = lastId++;
@@ -152,6 +154,14 @@ public class NotificationRow {
         this.type = type;
     }
 
+    public Expiration getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(Expiration expiration) {
+        this.expiration = expiration;
+    }
+
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
@@ -184,6 +194,7 @@ public class NotificationRow {
         clone.setReplyTo(getReplyTo());
         clone.setSubject(getSubject());
         clone.setBody(getBody());
+        clone.setExpiration(getExpiration());
         return clone;
     }
 

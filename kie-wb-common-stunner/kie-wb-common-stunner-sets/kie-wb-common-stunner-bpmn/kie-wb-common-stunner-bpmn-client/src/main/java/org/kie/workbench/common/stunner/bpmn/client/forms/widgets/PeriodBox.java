@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLLabelElement;
 import elemental2.dom.Node;
 import org.gwtbootstrap3.client.ui.HelpBlock;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
@@ -54,6 +55,10 @@ public class PeriodBox extends Composite implements IsWidget,
     @Inject
     private HTMLInputElement numberPeriod;
 
+    @Inject
+    @DataField
+    private HTMLLabelElement inputPeriodLabel;
+
     @DataField
     @Inject
     private HelpBlock error;
@@ -62,14 +67,12 @@ public class PeriodBox extends Composite implements IsWidget,
     private Select unitPeriod = new Select();
 
     @Inject
-    @DataField
     private HTMLDivElement divPeriodInputGroup;
 
     private HandlerManager handlerManager = createHandlerManager();
 
     @PostConstruct
     public void init() {
-        //numberPeriod.setMaxLength(10);
         initTypeSelector();
         initChangeHandlers();
     }
@@ -77,13 +80,14 @@ public class PeriodBox extends Composite implements IsWidget,
     private void initChangeHandlers() {
         numberPeriod.addEventListener("change", event -> {
             String value = numberPeriod.value;
-            if (value.startsWith("-")) {
+            if(value.startsWith("-")){
                 addStyleName(ValidationState.ERROR.getCssName());
-            } else if (value.matches("[0-9]*")) {
+            } else if(value.matches("[0-9]*")){
                 if (getStyleName().contains(ValidationState.ERROR.getCssName())) {
                     removeStyleName(ValidationState.ERROR.getCssName());
                     error.setText("");
                 }
+
             } else {
                 value = "0";
             }
@@ -120,6 +124,10 @@ public class PeriodBox extends Composite implements IsWidget,
         setValue(value, false);
     }
 
+    public void showLabel(boolean show) {
+        inputPeriodLabel.style.display = show ? "block" : "none";
+     }
+
     private void parse(String value) {
         if (value != null && value.length() >= 2) {
             setNumberPeriod(value.substring(0, value.length() - 1));
@@ -145,6 +153,7 @@ public class PeriodBox extends Composite implements IsWidget,
                 // nothing to do here, here 0 as value
             }
 
+
             numberPeriod.value = (intValue < 0 ? 0 : intValue) + "";
         } else {
             numberPeriod.value = "0";
@@ -156,7 +165,7 @@ public class PeriodBox extends Composite implements IsWidget,
     }
 
     public void onShow() {
-        unitPeriodSelectorWidth();
+        //unitPeriodSelectorWidth();
     }
 
     private void unitPeriodSelectorWidth() {
@@ -170,7 +179,7 @@ public class PeriodBox extends Composite implements IsWidget,
     }
 
     public void clear() {
-        setValue("1h");
+        setValue("1H");
         if (this.getStyleName().contains(ValidationState.ERROR.getCssName())) {
             this.removeStyleName(ValidationState.ERROR.getCssName());
         }

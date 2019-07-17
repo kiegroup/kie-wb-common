@@ -74,6 +74,385 @@ public class NotificationValueValidatorTest extends GWTTestCase {
     @Test
     public void testEmptyNotificationValue() {
         boolean result = validator.isValid(new NotificationValue(), context);
+        assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601DataTimeRepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/2019-07-14T13:34-02/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ02ZRepeatable1AndPeriodValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R1/2019-07-14T13:34-02/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ02ZRepeatable1AndPeriodTooBigValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R1/2019-07-14T13:34-02/PT3333333333333333333M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithTZ02ZRepeatableTooBigValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R13333333333333333/2019-07-14T13:34-02/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithTZ02Repeatable1AndPeriodAndWrongYearValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R1/1919-07-14T13:34-02/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatable1AndPeriodAndWrongTZ002Value() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R1/1919-07-14T13:34-002/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatable1AndPeriodAndTZ02Value() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R1/2019-07-14T13:34-02/P33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatable10AndPeriodAndTZ0230Value() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R10/2019-07-14T13:34+02:30/P33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatable10AndPeriodValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R10/2019-07-14T13:34:00Z/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatableUntilStateChangesAndPeriodValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/2019-07-14T13:34:00Z/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatableUntilStateChangesValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/2019-07-14T13:34:00Z/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WrongWithTZ00ZRepeatableUntilStateChangesValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/1819-07-14T13:34:00Z/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WrongWithTZ00ZRepeatableUntilStateChangesAndPeriodZeroValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/2019-07-14T13:34:00Z/PT0M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WrongWithTZ00ZRepeatableZeroUntilStateChangesAndPeriodZeroValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R0/2019-07-14T13:34:00Z/PT0M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WrongWithTZ00ZRepeatableZeroUntilStateChangesValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R0/2019-07-14T13:34:00Z/PT22M");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithTZ02RepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14T13:34-02");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601DataTimeValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14T13:34-02");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithWrongDelimiterRepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14W13:34-02");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithWrongYearRepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithWrongYearAndTZRepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("1819-07-14T13:34-022");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testISO8601WithTZ00ZRepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14T13:34:00Z");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601WithTZ0245RepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14T13:34-02:45");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testISO8601RepeatableValue() {
+        NotificationValue notification = new NotificationValue();
+
+        notification.setExpiresAt("R/PT33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testMonthRepeatableUntilStateChangesNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/P33M");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testDayRepeatableUntilStateChangesNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/PT33D");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testWrongYearRepeatableUntilStateChangesNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/PT33Y");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testWrongHourRepeatableUntilStateChangesNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/PT33H");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testWrongDayRepeatableUntilNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/P33D");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongYearRepeatableUntilNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/P33Y");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongHourRepeatableUntilNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/P33H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongTimesZeroRepeatableUntilNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R/PT0H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongTimesZeroRepeatable1UntilNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R1/PT0H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongPeriodNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("PT0H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongTimesZeroRepeatableZeroNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R0/PT0H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongDayRepeatableNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R44/P33D");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongYearRepeatableNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R44/P33Y");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongHourRepeatableNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R44/P33H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongHourRepeatableZeroNotification() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("R0/P33H");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongYearNotificationAndTZ02() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("1819-07-14T13:34-02");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testWrongNotificationAndTZ022() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("1819-07-14T13:34-022");
+        boolean result = validator.isValid(notification, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+    }
+
+    @Test
+    public void testNotificationAndTZ0245() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14T13:34-02:45");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testNotificationAndTZ002() {
+        NotificationValue notification = new NotificationValue();
+        notification.setExpiresAt("2019-07-14T13:34:00Z");
+        boolean result = validator.isValid(notification, context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
     }
@@ -129,6 +508,7 @@ public class NotificationValueValidatorTest extends GWTTestCase {
         value.setExpiresAt("1111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
     }
 
     @Test
@@ -146,6 +526,16 @@ public class NotificationValueValidatorTest extends GWTTestCase {
         value.setExpiresAt("1111111111d");
         boolean result = validator.isValid(value, context);
         assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testZAnd10DigExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
+        value.setExpiresAt("Z1111111111d");
+        boolean result = validator.isValid(value, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
     }
 
     @Test
@@ -164,5 +554,14 @@ public class NotificationValueValidatorTest extends GWTTestCase {
         boolean result = validator.isValid(value, context);
         assertFalse(result);
         assertFalse(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testZeroExpiresAtNotificationValue() {
+        NotificationValue value = new NotificationValue();
+        value.setExpiresAt("0d");
+        boolean result = validator.isValid(value, context);
+        assertFalse(result);
+        assertEquals(NotificationValueValidator.NOT_NEGATIVE, errorMessages.get(0));
     }
 }

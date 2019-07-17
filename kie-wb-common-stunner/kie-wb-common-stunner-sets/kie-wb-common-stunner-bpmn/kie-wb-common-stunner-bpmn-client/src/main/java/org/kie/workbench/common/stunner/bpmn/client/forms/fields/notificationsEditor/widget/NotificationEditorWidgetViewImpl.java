@@ -17,7 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.widget;
 
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -26,16 +30,27 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.Composite;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLInputElement;
 import org.gwtbootstrap3.client.ui.ModalSize;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.extras.datetimepicker.client.ui.DateTimePicker;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
+import org.gwtbootstrap3.extras.toggleswitch.client.ui.ToggleSwitch;
+import org.gwtbootstrap3.extras.toggleswitch.client.ui.base.constants.ColorType;
+import org.gwtbootstrap3.extras.toggleswitch.client.ui.base.constants.SizeType;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.ui.shared.api.annotations.AutoBound;
 import org.jboss.errai.ui.shared.api.annotations.Bound;
@@ -43,10 +58,12 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.selector.input.MultipleSelectorInput;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.widget.AssigneeLiveSearchService;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.event.NotificationEvent;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.PeriodBox;
+import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.TimeZonePicker;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeType;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
@@ -58,78 +75,109 @@ import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelection
 @Templated("NotificationEditorWidgetViewImpl.html#container")
 public class NotificationEditorWidgetViewImpl extends Composite implements NotificationEditorWidgetView {
 
-    private Presenter presenter;
-
-    private BaseModal modal = new BaseModal();
-
-    private NotificationRow current;
-
+    public static final String ISO_DATA_TIME = "(2[0-9][0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})([:|+|-]([0-9]{2}:[0-9]{2}|[0-9]{2}|00Z))";
+    public static final String REPEATABLE = "R([0-9]*)";
+    public static final String PERIOD = "P(T?)([0-9]*)([MHDY])";
+    protected Map<String, HTMLDivElement> panels = new HashMap<>();
+    @DataField
+    @Inject
+    protected HTMLInputElement repeatCount;
+    @Inject
+    @DataField
+    protected HTMLDivElement timeperiodDiv;
+    @Inject
+    @DataField
+    protected HTMLDivElement expressionDiv;
+    @Inject
+    @DataField
+    protected HTMLDivElement datatimeDiv;
+    @Inject
+    @DataField
+    protected HTMLDivElement notifyEveryPanelDiv;
+    @Inject
+    @DataField
+    protected HTMLDivElement repeatNotificationsDiv;
+    @Inject
+    @DataField
+    protected HTMLDivElement repeatNotificationPanelDiv;
+    @Inject
+    @DataField
+    protected HTMLDivElement errorDivPanel;
+    @Inject
+    @DataField
+    protected ToggleSwitch repeatNotification;
+    @Inject
+    @DataField
+    protected DateTimePicker dateTimePicker;
+    @Inject
+    @DataField
+    protected TimeZonePicker timeZonePicker;
+    @Inject
+    @DataField
+    protected HTMLInputElement taskStateChanges;
+    @Inject
+    @DataField
+    protected HTMLInputElement repeatCountReaches;
+    @Inject
+    @DataField
+    protected HTMLInputElement notStartedInput;
+    protected DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm");
+    protected Presenter presenter;
+    protected BaseModal modal = new BaseModal();
+    protected NotificationRow current;
     @Inject
     @AutoBound
-    private DataBinder<NotificationRow> customerBinder;
-
+    protected DataBinder<NotificationRow> customerBinder;
     @Inject
-    private Event<NotificationEvent> notificationEvent;
-
-    private AssigneeLiveSearchService assigneeLiveSearchServiceFrom;
-
-    private AssigneeLiveSearchService assigneeLiveSearchServiceReplyTo;
-
-    private AssigneeLiveSearchService assigneeLiveSearchServiceUsers;
-
-    private AssigneeLiveSearchService assigneeLiveSearchServiceGroups;
-
+    protected Event<NotificationEvent> notificationEvent;
+    protected AssigneeLiveSearchService assigneeLiveSearchServiceFrom;
+    protected AssigneeLiveSearchService assigneeLiveSearchServiceReplyTo;
+    protected AssigneeLiveSearchService assigneeLiveSearchServiceUsers;
+    protected AssigneeLiveSearchService assigneeLiveSearchServiceGroups;
     @DataField
     @Bound(property = "users")
-    private MultipleSelectorInput<String> multipleSelectorInputUsers;
-
+    protected MultipleSelectorInput<String> multipleSelectorInputUsers;
     @DataField
     @Bound(property = "groups")
-    private MultipleSelectorInput<String> multipleSelectorInputGroups;
-
-    @DataField
+    protected MultipleSelectorInput<String> multipleSelectorInputGroups;
     @Bound(property = "type")
-    private Select typeSelect = new Select();
+    protected Select typeSelect = new Select();
+    protected Option notStarted = new Option();
+    protected Option notCompleted = new Option();
 
     @DataField
-    private LiveSearchDropDown<String> liveSearchFromDropDown;
+    protected Select taskExpiration = new Select();
 
     @DataField
-    private LiveSearchDropDown<String> liveSearchReplyToDropDown;
-
+    protected LiveSearchDropDown<String> liveSearchFromDropDown;
+    @DataField
+    protected LiveSearchDropDown<String> liveSearchReplyToDropDown;
     @Inject
     @DataField
-    @Bound(property = "expiresAt")
-    private PeriodBox periodBox;
-
-    private Option notStarted = new Option();
-
-    private Option notCompleted = new Option();
-
+    protected PeriodBox periodBox;
+    @Inject
+    @DataField
+    protected PeriodBox repeatBox;
     @Inject
     @DataField
     @Bound(property = "subject")
-    private TextBox subject;
-
+    protected TextBox subject;
     @Inject
     @DataField
     @Bound(property = "body")
-    private TextArea body;
-
+    protected TextArea body;
     @Inject
-    private Validator validator;
-
-    private MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerUsers = new MultipleLiveSearchSelectionHandler();
-
-    private MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerGroups = new MultipleLiveSearchSelectionHandler();
-
-    private SingleLiveSearchSelectionHandler<String> searchSelectionFromHandler = new SingleLiveSearchSelectionHandler<>();
-
-    private SingleLiveSearchSelectionHandler<String> searchSelectionReplyToHandler = new SingleLiveSearchSelectionHandler<>();
-
+    @DataField
+    protected TextArea expressionTextArea;
+    @Inject
+    protected Validator validator;
+    protected MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerUsers = new MultipleLiveSearchSelectionHandler();
+    protected MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerGroups = new MultipleLiveSearchSelectionHandler();
+    protected SingleLiveSearchSelectionHandler<String> searchSelectionFromHandler = new SingleLiveSearchSelectionHandler<>();
+    protected SingleLiveSearchSelectionHandler<String> searchSelectionReplyToHandler = new SingleLiveSearchSelectionHandler<>();
     @DataField
     @Inject
-    private HTMLButtonElement closeButton, saveButton;
+    protected HTMLButtonElement closeButton, saveButton;
 
     @Inject
     public NotificationEditorWidgetViewImpl(final MultipleSelectorInput multipleSelectorInputUsers,
@@ -151,18 +199,33 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                                     assigneeLiveSearchServiceReplyTo,
                                     assigneeLiveSearchServiceUsers,
                                     assigneeLiveSearchServiceGroups);
+        initTaskExpirationSelector();
         initTypeSelector();
     }
 
-    private void initTextBoxes() {
+    protected void initTextBoxes() {
         subject.setMaxLength(100);
-
+        periodBox.showLabel(false);
         body.setMaxLength(500);
-        body.setWidth("350px");
         body.setHeight("70px");
+
+        dateTimePicker.setValue(new Date());
+        repeatBox.showLabel(false);
+
+        notStartedInput.checked = true;
+        notStartedInput.type = "radio";
+
+        taskStateChanges.addEventListener("change", event -> onTaskStateChanges());
+        repeatCountReaches.addEventListener("change", event -> onTaskStateChanges());
+
+        repeatNotification.setValue(false, true);
+        repeatNotification.setSize(SizeType.MINI);
+        repeatNotification.setOnColor(ColorType.INFO);
+        repeatNotification.setOnColor(ColorType.PRIMARY);
+        repeatNotification.addValueChangeHandler(event -> onRepeatNotification(event.getValue()));
     }
 
-    private void initUsersAndGroupsDropdowns(MultipleSelectorInput multipleSelectorInputUsers,
+    protected void initUsersAndGroupsDropdowns(MultipleSelectorInput multipleSelectorInputUsers,
                                              MultipleSelectorInput multipleSelectorInputGroups,
                                              LiveSearchDropDown<String> liveSearchFromDropDown,
                                              LiveSearchDropDown<String> liveSearchReplyToDropDown,
@@ -192,6 +255,17 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         this.liveSearchReplyToDropDown.init(assigneeLiveSearchServiceReplyTo, searchSelectionReplyToHandler);
     }
 
+    void initTaskExpirationSelector() {
+        for (Expiration value : Expiration.values()) {
+            Option option = new Option();
+            option.setText(value.getName());
+            option.setValue(value.getName());
+            taskExpiration.add(option);
+        }
+
+        taskExpiration.setWidth("200px");
+    }
+
     void initTypeSelector() {
         notStarted.setValue(NotificationType.NotStartedNotify.getAlias());
         notStarted.setText(NotificationType.NotStartedNotify.getType());
@@ -202,10 +276,46 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         typeSelect.add(notCompleted);
     }
 
+    protected void onTaskExpressionChange(ValueChangeEvent<String> event) {
+        panels.values().forEach(div -> div.style.display = Style.Display.NONE.getCssName());
+        panels.get(event.getValue()).style.display = Style.Display.BLOCK.getCssName();
+        if (event.getValue().equals(Expiration.EXPRESSION.getName())) {
+            repeatNotificationsDiv.style.display = Style.Display.NONE.getCssName();
+        } else {
+            repeatNotificationsDiv.style.display = Style.Display.BLOCK.getCssName();
+        }
+        checkNotifyEveryPanelDivVisible();
+    }
+
+    protected void onTaskStateChanges() {
+        repeatCount.disabled = taskStateChanges.checked;
+    }
+
+    protected void onRepeatNotification(Boolean show) {
+        if (show) {
+            repeatNotificationPanelDiv.style.display = Style.Display.BLOCK.getCssName();
+        } else {
+            repeatNotificationPanelDiv.style.display = Style.Display.NONE.getCssName();
+            repeatCount.value = "1";
+        }
+    }
+
+    protected void checkNotifyEveryPanelDivVisible() {
+        notifyEveryPanelDiv.style.display = taskExpiration.getValue().equals(Expiration.DATATIME.getName())
+                ? Style.Display.BLOCK.getCssName()
+                : Style.Display.NONE.getCssName();
+    }
+
     @PostConstruct
     public void init() {
         closeButton.addEventListener("click", event -> close(), false);
         saveButton.addEventListener("click", event -> save(), false);
+        taskExpiration.addValueChangeHandler(event -> onTaskExpressionChange(event));
+
+        panels.put("Time period", timeperiodDiv);
+        panels.put("Expression", expressionDiv);
+        panels.put("Data/time", datatimeDiv);
+        repeatCount.value = "1";
     }
 
     @Override
@@ -216,7 +326,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         initTextBoxes();
     }
 
-    private void initModel() {
+    protected void initModel() {
         modal.setTitle(presenter.getNameHeader());
         modal.setSize(ModalSize.MEDIUM);
         modal.setBody(this);
@@ -244,7 +354,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
             row.getUsers().forEach(u -> assigneeLiveSearchServiceUsers.addCustomEntry(u));
             multipleSelectorInputUsers.setValue(row.getUsers());
         }
-
         if (row.getGroups() != null && row.getGroups().size() > 0) {
             row.getGroups().forEach(u -> assigneeLiveSearchServiceGroups.addCustomEntry(u));
             multipleSelectorInputGroups.setValue(row.getGroups());
@@ -269,12 +378,149 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                 notCompleted.setSelected(false);
             }
         }
+
+        if (row.getExpiration() != null) {
+            setExpiration(row);
+        }
         modal.show();
+    }
+
+    protected void setExpiration(NotificationRow row) {
+        Expiration expiration = row.getExpiration() != null ? row.getExpiration()
+                : guessExpirationType(row.getExpiresAt());
+        taskExpiration.setValue(expiration.getName(), true);
+
+        if (expiration.equals(Expiration.EXPRESSION)) {
+            expressionTextArea.setValue(row.getExpiresAt());
+        } else if (expiration.equals(Expiration.DATATIME)) {
+            setExpirationDataTime(row);
+        } else if (expiration.equals(Expiration.TIMEPERIOD)) {
+            setExpirationTimeperiod(row.getExpiresAt());
+        }
+    }
+
+    protected void setExpirationDataTime(NotificationRow row) {
+        MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATA_TIME + "/" + PERIOD).exec(row.getExpiresAt());
+        if (result != null) {
+            repeatNotification.setValue(true, true);
+            Date dataTime = dateTimeFormat.parse(result.getGroup(2));
+            String tz = result.getGroup(3);
+            setPeriod(row.getExpiresAt().split("/")[2], repeatBox);
+            dateTimePicker.setValue(dataTime);
+            setTimeZonePickerValue(tz.equals("00Z") ? "0" : tz);
+            setTaskStateOrRepeatCountValue(getRepeatCount(row.getExpiresAt().split("/")[0]));
+        } else {
+            result = RegExp.compile(ISO_DATA_TIME).exec(row.getExpiresAt());
+            if (result != null) {
+                repeatNotification.setValue(false);
+                Date dataTime = dateTimeFormat.parse(result.getGroup(1));
+                String tz = result.getGroup(2);
+                dateTimePicker.setValue(dataTime);
+                setTimeZonePickerValue(tz);
+            }
+        }
+    }
+
+    protected void setTimeZonePickerValue(String value) {
+        timeZonePicker.setValue(value.equals("00Z") ? "0" : value);
     }
 
     @Override
     public void setReadOnly(boolean readOnly) {
         saveButton.disabled = readOnly;
+    }
+
+    protected String combineISO8601String() {
+        if (taskExpiration.getValue().equals(Expiration.EXPRESSION.getName())) {
+            return expressionTextArea.getValue();
+        } else {
+            ISO8601Builder builder = ISO8601Builder.get();
+            builder.setRepeatable(repeatNotification.getValue())
+                    .setType(taskExpiration.getValue())
+                    .setRepeat(repeatBox.getValue())
+                    .setUntil(repeatCountReaches.checked)
+                    .setDate(dateTimePicker.getValue())
+                    .setTz(timeZonePicker.getValue())
+                    .setRepeatCount(Integer.parseInt(repeatCount.value))
+                    .setPeriod(periodBox.getValue());
+            return builder.build();
+        }
+    }
+
+    protected Expiration guessExpirationType(String maybeIso) {
+        if (maybeIso == null || maybeIso.isEmpty()) {
+            return Expiration.TIMEPERIOD;
+        }
+        MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATA_TIME + "/" + PERIOD).exec(maybeIso);
+        if (result != null) {
+            return Expiration.DATATIME;
+        }
+        result = RegExp.compile(ISO_DATA_TIME).exec(maybeIso);
+        if (result != null) {
+            return Expiration.DATATIME;
+        }
+        result = RegExp.compile(REPEATABLE + "/" + PERIOD).exec(maybeIso);
+        if (result != null) {
+            return Expiration.TIMEPERIOD;
+        }
+        result = RegExp.compile(PERIOD).exec(maybeIso);
+        if (result != null) {
+            return Expiration.TIMEPERIOD;
+        }
+        return Expiration.EXPRESSION;
+    }
+
+    protected void setExpirationTimeperiod(String iso) {
+        MatchResult result = RegExp.compile(REPEATABLE + "/" + PERIOD).exec(iso);
+        if (result != null) {
+            if (isRepeatable(iso.split("/")[0])) {
+                repeatNotification.setValue(true, true);
+                setPeriod(iso.split("/")[1], periodBox);
+                setTaskStateOrRepeatCountValue(getRepeatCount(iso.split("/")[0]));
+            }
+        } else {
+            result = RegExp.compile(PERIOD).exec(iso);
+            if (result != null) {
+                setPeriod(result.getGroup(0), periodBox);
+                repeatNotification.setValue(false, true);
+            }
+        }
+    }
+
+    protected void setTaskStateOrRepeatCountValue(String count) {
+        if (count == null || count.isEmpty() || count.equals("0")) {
+            taskStateOrRepeatCount(true);
+        } else {
+            taskStateOrRepeatCount(false);
+            repeatCount.value = count;
+        }
+    }
+
+    protected void setPeriod(String period, PeriodBox box) {
+        MatchResult match = RegExp.compile(PERIOD).exec(period);
+        String duration = match.getGroup(2);
+        StringBuffer result = new StringBuffer();
+        result.append(duration);
+        result.append(minuteOrMonth(match));
+        box.setValue(result.toString());
+    }
+
+    protected String minuteOrMonth(MatchResult match) {
+        String _T = match.getGroup(1);
+        return ((match.getGroup(3).equals("M") && !_T.isEmpty()) ? "m" : match.getGroup(3));
+    }
+
+    protected boolean isRepeatable(String repeatable) {
+        MatchResult matcher = RegExp.compile(REPEATABLE).exec(repeatable);
+        if (matcher == null) {
+            return false;
+        }
+        return true;
+    }
+
+    protected String getRepeatCount(String repeatable) {
+        MatchResult matcher = RegExp.compile(REPEATABLE).exec(repeatable);
+        return matcher.getGroup(1);
     }
 
     void save() {
@@ -285,8 +531,9 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         current.setSubject(subject.getValue());
         current.setFrom(searchSelectionFromHandler.getSelectedValue() != null ? searchSelectionFromHandler.getSelectedValue() : "");
         current.setReplyTo(searchSelectionReplyToHandler.getSelectedValue() != null ? searchSelectionReplyToHandler.getSelectedValue() : "");
-        current.setExpiresAt(customerBinder.getModel().getExpiresAt());
+        current.setExpiresAt(combineISO8601String());
         current.setType(NotificationType.get(typeSelect.getSelectedItem().getValue()));
+        current.setExpiration(Expiration.get(taskExpiration.getValue()));
 
         Set<ConstraintViolation<NotificationValue>> violations = validator.validate(current.toNotificationValue());
         if (violations.isEmpty()) {
@@ -302,8 +549,8 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         hide();
     }
 
-    private void onViolationError(Set<ConstraintViolation<NotificationValue>> violations) {
-        violations.stream().forEach(error -> periodBox.setErrorText(error.getMessage()));
+    protected void onViolationError(Set<ConstraintViolation<NotificationValue>> violations) {
+        errorDivPanel.innerHTML = violations.stream().map(v -> "* " + v.getMessage()).collect(Collectors.joining("\n"));
     }
 
     void hide() {
@@ -316,6 +563,137 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         liveSearchFromDropDown.clearSelection();
         liveSearchReplyToDropDown.clearSelection();
         notStarted.setSelected(true);
+        repeatBox.clear();
+        repeatNotification.setValue(false, true);
+        taskExpiration.setValue(Expiration.TIMEPERIOD.getName(), true);
+        repeatBox.setValue("1");
+        errorDivPanel.innerHTML = "";
+
+        dateTimePicker.setValue(new Date());
+        timeZonePicker.setValue("0");
+
+        onRepeatNotification(false);
+
+        taskStateOrRepeatCount(true);
         modal.hide();
+    }
+
+    protected void taskStateOrRepeatCount(boolean state) {
+        if (state) {
+            taskStateChanges.checked = true;
+            repeatCountReaches.checked = false;
+            repeatCount.disabled = true;
+        } else {
+            taskStateChanges.checked = false;
+            repeatCountReaches.checked = true;
+            repeatCount.disabled = false;
+            repeatCount.value = "1";
+        }
+    }
+
+    static class ISO8601Builder {
+
+        protected boolean repeatable, until;
+
+        protected String type;
+
+        protected String period, repeat, tz;
+
+        protected int repeatCount;
+
+        protected Date date;
+
+        protected ISO8601Builder() {
+
+        }
+
+        static ISO8601Builder get() {
+            return new ISO8601Builder();
+        }
+
+        public ISO8601Builder setRepeatable(boolean repeatable) {
+            this.repeatable = repeatable;
+            return this;
+        }
+
+        public ISO8601Builder setUntil(boolean until) {
+            this.until = until;
+            return this;
+        }
+
+        public ISO8601Builder setType(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public ISO8601Builder setPeriod(String period) {
+            this.period = period;
+            return this;
+        }
+
+        public ISO8601Builder setRepeat(String repeat) {
+            this.repeat = repeat;
+            return this;
+        }
+
+        public ISO8601Builder setRepeatCount(int repeatCount) {
+            this.repeatCount = repeatCount;
+            return this;
+        }
+
+        public ISO8601Builder setDate(Date date) {
+            this.date = date;
+            return this;
+        }
+
+        public ISO8601Builder setTz(String tz) {
+            this.tz = tz;
+            return this;
+        }
+
+        public String build() {
+            StringBuffer sb = new StringBuffer();
+
+            if (repeatable) {
+                sb.append("R");
+                if (until) {
+                    sb.append(repeatCount);
+                }
+                sb.append("/");
+            }
+
+            if (type.equals(Expiration.TIMEPERIOD.getName())) {
+                // Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
+                sb.append(period.contains("M") ? "P" : "PT");
+                sb.append(period.toUpperCase());
+            } else {
+                DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm");
+
+                String strFormat = dateTimeFormat.format(date);
+                sb.append(strFormat);
+                sb.append(tz.equals("0") ? ":00Z" : tz);
+                if (repeatable) {
+                    if (type.equals(Expiration.DATATIME.getName())) {
+                        sb.append("/");
+                    }
+                    if (repeat.contains("M")) { // Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
+                        sb.append("P");
+                    } else {
+                        sb.append("PT");
+                    }
+                    sb.append(repeat.toUpperCase());
+                }
+            }
+            return sb.toString();
+        }
+
+        protected int tzToOffset(String tz) {
+            if (tz.contains(":")) {
+                int hours = Integer.parseInt(tz.split(":")[0]);
+                int minutes = Integer.parseInt(tz.split(":")[1]);
+                return hours * 60 + ((hours < 0) ? -minutes : minutes);
+            }
+            return Integer.parseInt(tz) * 60;
+        }
     }
 }
