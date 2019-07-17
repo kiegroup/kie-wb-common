@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ Copyright 2019 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<jaxb:bindings
+    version="2.1"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:jsonix="http://jsonix.highsource.org/customizations"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    jaxb:extensionBindingPrefixes="jsonix">
+
+  <!-- DC -->
+  <jaxb:bindings schemaLocation="DC.xsd" node="/xs:schema">
+    <jaxb:schemaBindings>
+      <jaxb:package name="org.kie.workbench.common.dmn.kogito.marshaller.js.model.dc"/>
+    </jaxb:schemaBindings>
+    <jsonix:packageMapping
+        packageName="org.kie.workbench.common.dmn.kogito.marshaller.js.model.dc"
+        spaceName="DC"/>
+  </jaxb:bindings>
+
+  <!-- DI -->
+  <jaxb:bindings schemaLocation="DI.xsd" node="/xs:schema">
+    <jaxb:schemaBindings>
+      <jaxb:package name="org.kie.workbench.common.dmn.kogito.marshaller.js.model.di"/>
+    </jaxb:schemaBindings>
+    <jsonix:packageMapping
+        packageName="org.kie.workbench.common.dmn.kogito.marshaller.js.model.di"
+        spaceName="DI"/>
+  </jaxb:bindings>
+
+  <!-- DMN1.2 -->
+  <jaxb:bindings schemaLocation="DMN12.xsd" node="/xs:schema">
+    <jaxb:schemaBindings>
+      <jaxb:package name="org.kie.workbench.common.dmn.kogito.marshaller.js.model.dmn12"/>
+    </jaxb:schemaBindings>
+    <jsonix:packageMapping
+        packageName="org.kie.workbench.common.dmn.kogito.marshaller.js.model.dmn12"
+        spaceName="DMNMarshaller"/>
+  </jaxb:bindings>
+
+</jaxb:bindings>
