@@ -273,7 +273,6 @@
     <dependency>
       <groupId>org.kie.workbench</groupId>
       <artifactId>kie-wb-common-dmn-webapp-kogito-common</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
