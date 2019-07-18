@@ -1,5 +1,5 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" targetNamespace="http://www.omg.org/spec/DMN/20180521/DMNDI/" elementFormDefault="qualified" attributeFormDefault="unqualified">
-  <xsd:import namespace="http://www.omg.org/spec/DMN/20180521/DC/" schemaLocation="DC.xsd"/>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:dc="DC._xsd" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" targetNamespace="http://www.omg.org/spec/DMN/20180521/DMNDI/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:import namespace="DC._xsd" schemaLocation="DC._xsd"/>
   <xsd:import namespace="http://www.omg.org/spec/DMN/20180521/DI/" schemaLocation="DI.xsd"/>
   <xsd:element name="DMNDI" type="dmndi:DMNDI"/>
   <xsd:element name="DMNDiagram" type="dmndi:DMNDiagram"/>

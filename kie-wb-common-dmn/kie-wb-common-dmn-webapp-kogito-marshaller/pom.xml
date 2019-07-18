@@ -84,6 +84,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
+          <failOnError>false</failOnError>
           <filesets>
             <fileset>
               <directory>src/main/java/org/kie/workbench/common/dmn/kogito/marshaller/js/model</directory>
@@ -164,6 +165,7 @@
             <id>move-generated-sources</id>
             <phase>process-sources</phase>
             <configuration>
+              <failOnError>false</failOnError>
               <target>
                 <copy file="${project.build.directory}/generated-sources/xjc/DC.js" tofile="${js.destination}/DC.js"/>
                 <copy file="${project.build.directory}/generated-sources/xjc/DI.js" tofile="${js.destination}/DI.js"/>
