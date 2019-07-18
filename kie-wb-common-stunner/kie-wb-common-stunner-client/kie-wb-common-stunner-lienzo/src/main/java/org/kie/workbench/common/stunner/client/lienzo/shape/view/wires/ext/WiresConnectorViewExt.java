@@ -198,34 +198,32 @@ public class WiresConnectorViewExt<T>
 
     @Override
     public String getTitleFontFamily() {
-        // Do not apply here...
-        return null;
+        return label.isPresent() ? label.get().getText().getFontFamily() : null;
     }
 
     @Override
     public double getTitleFontSize() {
-        // Do not apply here...
-        return 0;
+        return label.isPresent() ? label.get().getText().getFontSize() : 0;
     }
 
     @Override
     public double getTitleFontX() {
-        return 0;
+        return label.isPresent() ? label.get().getText().getBoundingBox().getX() : 0;
     }
 
     @Override
     public double getTitleFontY() {
-        return 0;
+        return label.isPresent() ? label.get().getText().getBoundingBox().getY() : 0;
     }
 
     @Override
     public double getTitleWidth() {
-        return 0;
+        return label.isPresent() ? label.get().getText().getBoundingBox().getWidth() : 0;
     }
 
     @Override
     public double getTitleHeight() {
-        return 0;
+        return label.isPresent() ? label.get().getText().getBoundingBox().getHeight() : 0;
     }
 
     @Override
@@ -240,7 +238,7 @@ public class WiresConnectorViewExt<T>
 
     @Override
     public String getFontAlignment() {
-        return null;
+        return label.isPresent() ? label.get().getText().getTextAlign().getValue() : null;
     }
 
     @Override
