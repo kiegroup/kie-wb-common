@@ -29,7 +29,6 @@ import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEv
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
-import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramSubmarineWrapper;
 import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
@@ -41,8 +40,6 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
-import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
-import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
@@ -54,8 +51,7 @@ import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramF
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.annotations.WorkbenchClientEditor;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -64,11 +60,8 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 @ApplicationScoped
 @DiagramEditor
-@WorkbenchScreen(identifier = BaseKogitoDMNDiagramEditor.EDITOR_ID)
+@WorkbenchClientEditor(identifier = BaseKogitoDMNDiagramEditor.EDITOR_ID)
 public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
-
-    private final Event<NotificationEvent> notificationEvent;
-    private final DMNDiagramSubmarineWrapper stateHolder;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -97,8 +90,7 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
-                            final SubmarineClientDiagramService diagramServices,
-                            final DMNDiagramSubmarineWrapper stateHolder) {
+                            final SubmarineClientDiagramService diagramServices) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -126,41 +118,11 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
               includedModelsPage,
               importsPageProvider,
               diagramServices);
-        this.notificationEvent = notificationEvent;
-        this.stateHolder = stateHolder;
     }
 
     @Override
     public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
         super.onDataTypePageNavTabActiveEvent(event);
-    }
-
-    @Override
-    protected void makeMenuBar() {
-        if (!menuBarInitialized) {
-            getFileMenuBuilder().addSave(this::doSave);
-            getMenuSessionItems().populateMenu(getFileMenuBuilder());
-            makeAdditionalStunnerMenus(getFileMenuBuilder());
-            menuBarInitialized = true;
-        }
-    }
-
-    private void doSave() {
-        final Path path = getCanvasHandler().getDiagram().getMetadata().getPath();
-        stateHolder.saveFile(path,
-                             new ServiceCallback<String>() {
-                                 @Override
-                                 public void onSuccess(final String xml) {
-                                     resetContentHash();
-                                     notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
-                                     hideLoadingViews();
-                                 }
-
-                                 @Override
-                                 public void onError(final ClientRuntimeError error) {
-                                     onSaveError(error);
-                                 }
-                             });
     }
 
     @Override

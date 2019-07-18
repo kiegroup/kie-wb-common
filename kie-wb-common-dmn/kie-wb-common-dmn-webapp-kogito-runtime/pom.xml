@@ -24,9 +24,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kie-wb-common-dmn-webapp-kogito-testing</artifactId>
-  <name>Kie Workbench - Common - DMN - Kogito testing webapp</name>
-  <description>Kie Workbench - Common - DMN - Kogito testing webapp</description>
+  <artifactId>kie-wb-common-dmn-webapp-kogito-runtime</artifactId>
+  <name>Kie Workbench - Common - DMN - Kogito runtime webapp</name>
+  <description>Kie Workbench - Common - DMN - Kogito runtime webapp</description>
   <packaging>war</packaging>
 
   <properties>
@@ -762,7 +762,7 @@
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <draftCompile>true</draftCompile>
           <extraJvmArgs>-Xmx4096m -Xms1024m -Xss1M -XX:CompileThreshold=7000 -Derrai.dynamic_validation.enabled=true -Derrai.jboss.home=${errai.jboss.home}</extraJvmArgs>
-          <module>org.kie.workbench.common.dmn.showcase.FastCompiledDMNKogitoTestingWebapp</module>
+          <module>org.kie.workbench.common.dmn.showcase.FastCompiledDMNKogitoRuntimeWebapp</module>
           <logLevel>INFO</logLevel>
           <noServer>false</noServer>
           <server>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</server>
