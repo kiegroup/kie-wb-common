@@ -18,10 +18,9 @@ package org.kie.workbench.common.dmn.showcase.client.perspectives;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.kie.workbench.common.dmn.showcase.client.editor.BaseKogitoDMNDiagramEditor;
-import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramsNavigatorScreen;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
-import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.SimpleNoExpandWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
@@ -33,9 +32,9 @@ public class AuthoringPerspective {
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleNoExpandWorkbenchPanelPresenter.class.getName());
         perspective.setName("Authoring");
-        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(DMNDiagramsNavigatorScreen.SCREEN_ID)));
+        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BaseKogitoDMNDiagramEditor.EDITOR_ID)));
         return perspective;
     }
 }
