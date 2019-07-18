@@ -133,7 +133,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         GenericServiceTask definition = node.getContent().getDefinition();
         GenericServiceTaskPropertyReader p = propertyReaderFactory.of(task);
 
-        if(p == null) {
+        if (p == null) {
             throw new NullPointerException(task.getClass().getCanonicalName());
         }
 

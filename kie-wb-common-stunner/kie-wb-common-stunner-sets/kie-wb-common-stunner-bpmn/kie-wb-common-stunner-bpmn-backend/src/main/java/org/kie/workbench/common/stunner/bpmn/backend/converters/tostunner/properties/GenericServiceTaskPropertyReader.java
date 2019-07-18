@@ -50,5 +50,7 @@ public class GenericServiceTaskPropertyReader extends TaskPropertyReader {
         return value;
     }
 
-    public String getSlaDueDate() { return CustomElement.slaDueDate.of(element).get(); }
+    public String getSlaDueDate() {
+        return CustomElement.slaDueDate.of(element).get();
+    }
 }

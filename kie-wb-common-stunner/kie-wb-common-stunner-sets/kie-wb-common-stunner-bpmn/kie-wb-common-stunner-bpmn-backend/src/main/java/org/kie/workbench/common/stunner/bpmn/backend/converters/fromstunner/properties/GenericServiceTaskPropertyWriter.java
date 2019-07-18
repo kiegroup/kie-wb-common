@@ -76,5 +76,7 @@ public class GenericServiceTaskPropertyWriter extends ActivityPropertyWriter {
         iface.setId(task.getId() + "_ServiceInterface");
     }
 
-    public void setSlaDueDate(String value) { CustomElement.slaDueDate.of(baseElement).set(value); }
+    public void setSlaDueDate(String value) {
+        CustomElement.slaDueDate.of(baseElement).set(value);
+    }
 }

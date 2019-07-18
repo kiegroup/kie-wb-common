@@ -227,6 +227,7 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String BPMN_LOG_TASK_JBPM_DESIGNER = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/logtask.bpmn";
     private static final String BPMN_SERVICETASKS_JBPM_DESIGNER = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/serviceTasksJBPMDeginer.bpmn";
     private static final String BPMN_EVENT_GATEWAY = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/eventGateway.bpmn";
+    private static final String BPMN_GENERIC_SERVICE_TASK = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/genericServiceTasks.bpmn";
 
     private static final String NEW_LINE = System.lineSeparator();
 
