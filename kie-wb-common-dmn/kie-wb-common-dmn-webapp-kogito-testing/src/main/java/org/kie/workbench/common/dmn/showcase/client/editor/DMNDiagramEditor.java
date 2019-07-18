@@ -80,6 +80,7 @@ import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
+import org.uberfire.lifecycle.GetContent;
 import org.uberfire.lifecycle.IsDirty;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnFocus;
@@ -87,6 +88,7 @@ import org.uberfire.lifecycle.OnLostFocus;
 import org.uberfire.lifecycle.OnMayClose;
 import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.lifecycle.OnStartup;
+import org.uberfire.lifecycle.SetContent;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
@@ -394,7 +396,7 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    //@GetContent
+    @GetContent
     public Promise getContent() {
         return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
@@ -406,7 +408,7 @@ public class DMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    //@SetContent
+    @SetContent
     public void setContent(final String value) {
         diagramServices.transform(value,
                                   new ServiceCallback<SubmarineDiagram>() {
