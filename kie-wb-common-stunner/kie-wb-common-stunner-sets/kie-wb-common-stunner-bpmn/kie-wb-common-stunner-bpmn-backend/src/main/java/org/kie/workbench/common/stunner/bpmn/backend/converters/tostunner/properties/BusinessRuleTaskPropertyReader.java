@@ -68,7 +68,9 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
         return CustomElement.autoStart.of(element).get();
     }
 
-    public String getSlaDueDate() { return CustomElement.slaDueDate.of(element).get(); }
+    public String getSlaDueDate() {
+        return CustomElement.slaDueDate.of(element).get();
+    }
 
     @Override
     protected List<DataInput> getDataInputs() {

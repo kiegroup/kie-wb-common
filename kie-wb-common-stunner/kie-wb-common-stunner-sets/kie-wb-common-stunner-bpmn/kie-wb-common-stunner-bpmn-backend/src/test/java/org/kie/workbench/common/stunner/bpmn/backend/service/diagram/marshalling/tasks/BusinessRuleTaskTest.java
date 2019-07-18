@@ -249,7 +249,7 @@ public class BusinessRuleTaskTest extends TaskTest<BusinessRuleTask> {
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            IS_ASYNC,
-                                           AD_HOC_AUTOSTART,SLA_DUE_DATE);
+                                           AD_HOC_AUTOSTART, SLA_DUE_DATE);
         assertDataIOSet(filledSubprocessLevelTaskJavascript.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
 
         BusinessRuleTask filledSubprocessLevelTaskMvel = getTaskNodeById(getDiagram(),
@@ -268,7 +268,7 @@ public class BusinessRuleTaskTest extends TaskTest<BusinessRuleTask> {
                                            TASK_ON_EXIT_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            IS_ASYNC,
-                                           AD_HOC_AUTOSTART,SLA_DUE_DATE);
+                                           AD_HOC_AUTOSTART, SLA_DUE_DATE);
         assertDataIOSet(filledSubprocessLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 

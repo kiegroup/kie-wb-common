@@ -169,7 +169,7 @@ public class ServiceTaskExecutionSet implements BPMNPropertySet {
                     Objects.equals(adHocAutostart, other.adHocAutostart) &&
                     Objects.equals(onEntryAction, other.onEntryAction) &&
                     Objects.equals(onExitAction, other.onExitAction) &&
-                    Objects.equals(slaDueDate, other.slaDueDate) ;
+                    Objects.equals(slaDueDate, other.slaDueDate);
         }
         return false;
     }

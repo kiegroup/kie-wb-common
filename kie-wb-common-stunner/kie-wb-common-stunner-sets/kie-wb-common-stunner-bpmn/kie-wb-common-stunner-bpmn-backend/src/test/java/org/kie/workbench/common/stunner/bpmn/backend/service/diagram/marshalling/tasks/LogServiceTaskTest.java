@@ -226,7 +226,7 @@ public class LogServiceTaskTest extends BaseServiceTaskTest<ServiceTask> {
                                       TASK_SCRIPT_MVEL_LANGUAGE,
                                       IS_ASYNC,
                                       AD_HOC_AUTOSTART,
-                                      SLA_DUE_DATE );
+                                      SLA_DUE_DATE);
         assertDataIOSet(filledSubprocessLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 

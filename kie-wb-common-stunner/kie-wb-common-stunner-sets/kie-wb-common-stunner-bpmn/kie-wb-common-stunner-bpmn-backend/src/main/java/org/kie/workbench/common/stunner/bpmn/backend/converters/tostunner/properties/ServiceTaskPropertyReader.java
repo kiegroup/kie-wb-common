@@ -82,5 +82,7 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
         return workItemDefinition.getDescription();
     }
 
-    public String getSlaDueDate() { return CustomElement.slaDueDate.of(element).get(); }
+    public String getSlaDueDate() {
+        return CustomElement.slaDueDate.of(element).get();
+    }
 }

@@ -398,9 +398,7 @@ public class BPMNDirectDiagramMarshallerTest {
 
         ServiceTask serviceTask = (ServiceTask) log.getContent().getDefinition();
 
-        ServiceTaskExecutionSet executionSet = serviceTask.getExecutionSet();
-        assertNotNull(executionSet.getSlaDueDate());
-        assertEquals(executionSet.getSlaDueDate().getValue(), "12/25/1983");
+        validateServiceTask(serviceTask, "12/25/1983");
     }
 
     @Test
@@ -424,21 +422,17 @@ public class BPMNDirectDiagramMarshallerTest {
         ServiceTask wsTask = (ServiceTask) ws.getContent().getDefinition();
         ServiceTask logTask = (ServiceTask) log.getContent().getDefinition();
 
-        ServiceTaskExecutionSet emailSet = emailTask.getExecutionSet();
+        validateServiceTask(emailTask, "12/25/1983");
+        validateServiceTask(restTask, "12/25/1983");
+        validateServiceTask(wsTask, "12/25/1983");
+        validateServiceTask(logTask, "12/25/1983");
+    }
+
+    private void validateServiceTask(ServiceTask serviceTask,
+                                     String slaDueDate) {
+        ServiceTaskExecutionSet emailSet = serviceTask.getExecutionSet();
         assertNotNull(emailSet.getSlaDueDate());
-        assertEquals(emailSet.getSlaDueDate().getValue(), "12/25/1983");
-
-        ServiceTaskExecutionSet restSet = restTask.getExecutionSet();
-        assertNotNull(restSet.getSlaDueDate());
-        assertEquals(restSet.getSlaDueDate().getValue(), "12/25/1983");
-
-        ServiceTaskExecutionSet wsSet = wsTask.getExecutionSet();
-        assertNotNull(wsSet.getSlaDueDate());
-        assertEquals(wsSet.getSlaDueDate().getValue(), "12/25/1983");
-
-        ServiceTaskExecutionSet logSet = logTask.getExecutionSet();
-        assertNotNull(logSet.getSlaDueDate());
-        assertEquals(logSet.getSlaDueDate().getValue(), "12/25/1983");
+        assertEquals(emailSet.getSlaDueDate().getValue(), slaDueDate);
     }
 
     @Test

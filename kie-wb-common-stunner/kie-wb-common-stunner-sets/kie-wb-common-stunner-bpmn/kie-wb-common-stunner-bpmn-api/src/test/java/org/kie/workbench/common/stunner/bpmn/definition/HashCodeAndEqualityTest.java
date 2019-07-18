@@ -1931,9 +1931,9 @@ public class HashCodeAndEqualityTest {
                                                               "c1",
                                                               "d1");
         TimerSettingsValue TIMER_REF_1 = new TimerSettingsValue("a2",
-                                                              "b2",
-                                                              "c2",
-                                                              "d2");
+                                                                "b2",
+                                                                "c2",
+                                                                "d2");
         TestCaseBuilder.newTestCase()
                 .addTrueCase(new CancellingTimerEventExecutionSet(),
                              new CancellingTimerEventExecutionSet())

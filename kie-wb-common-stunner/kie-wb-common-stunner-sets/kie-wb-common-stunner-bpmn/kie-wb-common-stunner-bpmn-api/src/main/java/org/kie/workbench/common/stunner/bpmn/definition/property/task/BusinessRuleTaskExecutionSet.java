@@ -259,7 +259,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
                     Objects.equals(onEntryAction, other.onEntryAction) &&
                     Objects.equals(onExitAction, other.onExitAction) &&
                     Objects.equals(isAsync, other.isAsync) &&
-                    Objects.equals(adHocAutostart, other.adHocAutostart)&&
+                    Objects.equals(adHocAutostart, other.adHocAutostart) &&
                     Objects.equals(slaDueDate, other.slaDueDate);
         }
         return false;

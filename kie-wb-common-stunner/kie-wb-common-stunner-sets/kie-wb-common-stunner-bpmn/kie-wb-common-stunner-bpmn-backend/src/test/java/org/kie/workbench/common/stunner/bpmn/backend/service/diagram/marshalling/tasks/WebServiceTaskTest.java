@@ -318,7 +318,7 @@ public class WebServiceTaskTest extends BaseServiceTaskTest<ServiceTask> {
                                       TASK_ON_EXIT_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
                                       IS_ASYNC,
-                                      AD_HOC_AUTOSTART,SLA_DUE_DATE);
+                                      AD_HOC_AUTOSTART, SLA_DUE_DATE);
         assertDataIOSet(filledTopLevelTaskMvel.getDataIOSet(), TASK_DATA_INPUT_OUTPUT);
     }
 
