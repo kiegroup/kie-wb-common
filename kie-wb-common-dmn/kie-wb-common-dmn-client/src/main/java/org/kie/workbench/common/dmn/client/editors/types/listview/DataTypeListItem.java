@@ -485,7 +485,7 @@ public class DataTypeListItem {
     }
 
     void refreshConstraintComponent() {
-        if (isBooleanType() || isStructureType() || isContextType() || isList()) {
+        if (isBooleanType() || isStructureType() || isContextType() || isList() || isIndirectBooleanOrStructure()) {
             dataTypeConstraintComponent.disable();
         } else {
             dataTypeConstraintComponent.enable();
@@ -494,6 +494,10 @@ public class DataTypeListItem {
 
     private boolean isBooleanType() {
         return Objects.equals(BOOLEAN.getName(), getType());
+    }
+
+    private boolean isIndirectBooleanOrStructure() {
+        return dataTypeSelectComponent.isIndirectBooleanOrStructure();
     }
 
     private boolean isStructureType() {

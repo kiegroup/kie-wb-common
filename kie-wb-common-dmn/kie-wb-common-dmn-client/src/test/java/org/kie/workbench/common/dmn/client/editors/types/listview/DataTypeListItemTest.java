@@ -922,7 +922,7 @@ public class DataTypeListItemTest {
     }
 
     @Test
-    public void testRefreshConstraintComponentWhenSelectedTypeIsALIst() {
+    public void testRefreshConstraintComponentWhenSelectedTypeIsAList() {
 
         when(dataTypeListComponent.getValue()).thenReturn(true);
 
@@ -939,6 +939,16 @@ public class DataTypeListItemTest {
         listItem.refreshConstraintComponent();
 
         verify(dataTypeConstraintComponent).enable();
+    }
+
+    @Test
+    public void testRefreshConstraintComponentWhenTypeIsIndirectBooleanOrStructure() {
+
+        when(dataTypeSelectComponent.isIndirectBooleanOrStructure()).thenReturn(true);
+
+        listItem.refreshConstraintComponent();
+
+        verify(dataTypeConstraintComponent).disable();
     }
 
     @Test
