@@ -78,6 +78,12 @@ public class IntermediateConditionalEvent extends BaseCatchingIntermediateEvent 
         this.executionSet = executionSet;
     }
 
+    @Override
+    protected void initLabels() {
+        super.initLabels();
+        labels.add("FromEventbasedGateway");
+    }
+
     public CancellingConditionalEventExecutionSet getExecutionSet() {
         return executionSet;
     }
