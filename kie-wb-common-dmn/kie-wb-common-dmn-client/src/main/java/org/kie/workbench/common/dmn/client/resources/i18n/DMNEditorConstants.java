@@ -419,6 +419,15 @@ public class DMNEditorConstants {
     public static final String DMNDocumentationI18n_NamePlaceholder = "DMNDocumentationI18n.NamePlaceholder";
 
     @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_Ok = "DMNDocumentationI18n.Ok";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_Cancel = "DMNDocumentationI18n.Cancel";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DMNDocumentationI18n_AttachmentTip = "DMNDocumentationI18n.AttachmentTip";
+
+    @TranslationKey(defaultValue = "")
     public static final String DMNDocumentationI18n_URL = "DMNDocumentationI18n.URL";
 
     @TranslationKey(defaultValue = "")

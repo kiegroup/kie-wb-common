@@ -41,8 +41,11 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.client.views.pfly.widgets.JQueryProducer;
 import org.uberfire.client.views.pfly.widgets.Popover;
 
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_AttachmentTip;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_Cancel;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_Name;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_NamePlaceholder;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_Ok;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_URL;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DMNDocumentationI18n_URLPlaceholder;
 
@@ -57,6 +60,9 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
 
     @DataField("nameLabel")
     private HTMLElement attachmentName;
+
+    @DataField("attachmentTip")
+    private HTMLElement attachmentTip;
 
     @DataField("cancelButton")
     private HTMLButtonElement cancelButton;
@@ -88,7 +94,8 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
                                      final HTMLInputElement urlInput,
                                      final HTMLInputElement attachmentNameInput,
                                      @Named("span") final HTMLElement urlLabel,
-                                     @Named("span") final HTMLElement attachmentName) {
+                                     @Named("span") final HTMLElement attachmentName,
+                                     @Named("span") final HTMLElement attachmentTip) {
         super(popoverElement,
               popoverContentElement,
               jQueryPopover);
@@ -99,6 +106,7 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
         this.urlInput = urlInput;
         this.attachmentNameInput = attachmentNameInput;
         this.translationService = translationService;
+        this.attachmentTip = attachmentTip;
     }
 
     @PostConstruct
@@ -108,6 +116,9 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
         attachmentName.textContent = translationService.getTranslation(DMNDocumentationI18n_Name);
         urlInput.placeholder = translationService.getTranslation(DMNDocumentationI18n_URLPlaceholder);
         attachmentNameInput.placeholder = translationService.getTranslation(DMNDocumentationI18n_NamePlaceholder);
+        okButton.textContent =  translationService.getTranslation(DMNDocumentationI18n_Ok);
+        cancelButton.textContent =  translationService.getTranslation(DMNDocumentationI18n_Cancel);
+        attachmentTip.textContent = translationService.getTranslation(DMNDocumentationI18n_AttachmentTip);
         setOnChangedHandlers();
     }
 

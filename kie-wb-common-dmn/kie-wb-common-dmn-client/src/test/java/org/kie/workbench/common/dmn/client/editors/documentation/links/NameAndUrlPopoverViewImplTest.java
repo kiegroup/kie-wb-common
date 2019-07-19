@@ -79,6 +79,9 @@ public class NameAndUrlPopoverViewImplTest {
     @Mock
     private HTMLElement attachmentName;
 
+    @Mock
+    private HTMLElement attachmentTip;
+
     private NameAndUrlPopoverViewImpl popover;
 
     @Before
@@ -92,7 +95,8 @@ public class NameAndUrlPopoverViewImplTest {
                                                     urlInput,
                                                     attachmentNameInput,
                                                     urlLabel,
-                                                    attachmentName));
+                                                    attachmentName,
+                                                    attachmentTip));
     }
 
     @Test
