@@ -24,8 +24,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndEscalationEvent;
@@ -286,11 +288,11 @@ public class VariableUtilsTest {
         return result;
     }
 
-    private UserTask mockUserTask(String name, String assignmentsInfoValue) {
+    private BaseUserTask mockUserTask(String name, String assignmentsInfoValue) {
         return mockUserTask(name, assignmentsInfoValue, null, null);
     }
 
-    private UserTask mockUserTask(String name, String assignmentsInfoValue, String inputCollection, String outputCollection) {
+    private BaseUserTask mockUserTask(String name, String assignmentsInfoValue, String inputCollection, String outputCollection) {
         UserTask result = mock(UserTask.class);
         TaskGeneralSet generalSet = mockTaskGeneralSet(name);
         when(result.getGeneral()).thenReturn(generalSet);
@@ -482,11 +484,11 @@ public class VariableUtilsTest {
         return result;
     }
 
-    private ReusableSubprocess mockReusableSubprocess(String name, String assignmentsInfoValue) {
+    private BaseReusableSubprocess mockReusableSubprocess(String name, String assignmentsInfoValue) {
         return mockReusableSubprocess(name, assignmentsInfoValue, null, null);
     }
 
-    private ReusableSubprocess mockReusableSubprocess(String name, String assignmentsInfoValue, String inputCollection, String outputCollection) {
+    private BaseReusableSubprocess mockReusableSubprocess(String name, String assignmentsInfoValue, String inputCollection, String outputCollection) {
         ReusableSubprocess result = mock(ReusableSubprocess.class);
         BPMNGeneralSet generalSet = mockGeneralSet(name);
         when(result.getGeneral()).thenReturn(generalSet);

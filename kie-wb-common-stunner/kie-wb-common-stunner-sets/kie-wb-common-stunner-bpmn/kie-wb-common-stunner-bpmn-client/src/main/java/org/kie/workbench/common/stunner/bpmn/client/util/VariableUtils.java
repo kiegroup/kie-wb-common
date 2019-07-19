@@ -33,6 +33,8 @@ import java.util.stream.StreamSupport;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseAdHocSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -48,12 +50,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEvent
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -120,7 +120,7 @@ public class VariableUtils {
         return result;
     }
 
-    private static Collection<VariableUsage> findVariableUsages(String variableName, UserTask userTask, Node<View<BPMNDefinition>, Edge> node) {
+    private static Collection<VariableUsage> findVariableUsages(String variableName, BaseUserTask userTask, Node<View<BPMNDefinition>, Edge> node) {
         final String displayName = getDisplayName(userTask);
         final Collection<VariableUsage> result = findVariableUsages(variableName, userTask.getExecutionSet().getAssignmentsinfo(), displayName, node);
         addVariableUsages(result, variableName,
@@ -130,7 +130,7 @@ public class VariableUtils {
         return result;
     }
 
-    private static Collection<VariableUsage> findVariableUsages(String variableName, ReusableSubprocess subprocess, Node<View<BPMNDefinition>, Edge> node) {
+    private static Collection<VariableUsage> findVariableUsages(String variableName, BaseReusableSubprocess subprocess, Node<View<BPMNDefinition>, Edge> node) {
         final String displayName = getDisplayName(subprocess);
         final Collection<VariableUsage> result = findVariableUsages(variableName, subprocess.getDataIOSet().getAssignmentsinfo(), displayName, node);
         addVariableUsages(result, variableName,
@@ -285,7 +285,7 @@ public class VariableUtils {
     private static Map<Predicate<BPMNDefinition>, BiFunction<String, Pair<BPMNDefinition, Node<View<BPMNDefinition>, Edge>>, Collection<VariableUsage>>> buildFindFunctions() {
         Map<Predicate<BPMNDefinition>, BiFunction<String, Pair<BPMNDefinition, Node<View<BPMNDefinition>, Edge>>, Collection<VariableUsage>>> findFunctions = new HashMap<>();
         findFunctions.put(d -> d instanceof BusinessRuleTask, (s, pair) -> findVariableUsages(s, ((BusinessRuleTask) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
-        findFunctions.put(d -> d instanceof UserTask, (s, pair) -> findVariableUsages(s, ((UserTask) pair.getK1()), pair.getK2()));
+        findFunctions.put(d -> d instanceof BaseUserTask, (s, pair) -> findVariableUsages(s, ((BaseUserTask) pair.getK1()), pair.getK2()));
         findFunctions.put(d -> d instanceof ServiceTask, (s, pair) -> findVariableUsages(s, ((ServiceTask) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
         findFunctions.put(d -> d instanceof EndErrorEvent, (s, pair) -> findVariableUsages(s, ((EndErrorEvent) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
         findFunctions.put(d -> d instanceof EndEscalationEvent, (s, pair) -> findVariableUsages(s, ((EndEscalationEvent) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
@@ -302,7 +302,7 @@ public class VariableUtils {
         findFunctions.put(d -> d instanceof StartEscalationEvent, (s, pair) -> findVariableUsages(s, ((StartEscalationEvent) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
         findFunctions.put(d -> d instanceof StartMessageEvent, (s, pair) -> findVariableUsages(s, ((StartMessageEvent) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
         findFunctions.put(d -> d instanceof StartSignalEvent, (s, pair) -> findVariableUsages(s, ((StartSignalEvent) pair.getK1()).getDataIOSet().getAssignmentsinfo(), getDisplayName(pair.getK1()), pair.getK2()));
-        findFunctions.put(d -> d instanceof ReusableSubprocess, (s, pair) -> findVariableUsages(s, (ReusableSubprocess) pair.getK1(), pair.getK2()));
+        findFunctions.put(d -> d instanceof BaseReusableSubprocess, (s, pair) -> findVariableUsages(s, (BaseReusableSubprocess) pair.getK1(), pair.getK2()));
         findFunctions.put(d -> d instanceof MultipleInstanceSubprocess, (s, pair) -> findVariableUsages(s, (MultipleInstanceSubprocess) pair.getK1(), pair.getK2()));
         return findFunctions;
     }
