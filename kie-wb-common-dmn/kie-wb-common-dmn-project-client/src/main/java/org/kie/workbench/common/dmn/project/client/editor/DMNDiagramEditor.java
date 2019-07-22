@@ -185,6 +185,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         decisionNavigatorDock.init(PerspectiveIds.LIBRARY);
     }
 
+    @Override
     protected String getDiagramParsingErrorMessage(final DiagramParsingException e) {
         return getTranslationService().getValue(DMNProjectClientConstants.DMNDiagramParsingErrorMessage);
     }
@@ -235,6 +236,14 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         super.open(diagram);
     }
 
+    /**
+     * Stunner validates diagrams before saving them. If a {@see Violation.Type.ERROR} is reported by the underlying
+     * validation implementation Stunner prevents saving of the diagram. DMN's validation reports errors for states
+     * that can be successfully saved as they represent a partially authored diagram. Therefore override Stunners
+     * behavior and prevent saving of DMN diagrams containing errors.
+     * @param continueSaveOnceValid
+     * @return
+     */
     @Override
     protected ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>> getSaveAfterValidationCallback(final Command continueSaveOnceValid) {
         return new ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>>() {
