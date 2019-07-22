@@ -24,12 +24,10 @@ import java.util.stream.Collectors;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
-import org.kie.workbench.common.stunner.bpmn.forms.validation.notification.ValidNotificationValue;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
-@ValidNotificationValue
 public class NotificationValue {
 
     private String body;

@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsE
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +29,7 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -62,87 +62,115 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiratio
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.event.NotificationEvent;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.PeriodBox;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.TimeZonePicker;
-import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeType;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
 import org.uberfire.ext.widgets.common.client.dropdown.MultipleLiveSearchSelectionHandler;
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATA_TIME;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
+
 @Dependent
 @Templated("NotificationEditorWidgetViewImpl.html#container")
 public class NotificationEditorWidgetViewImpl extends Composite implements NotificationEditorWidgetView {
 
-    public static final String ISO_DATA_TIME = "(2[0-9][0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})([:|+|-]([0-9]{2}:[0-9]{2}|[0-9]{2}|00Z))";
-    public static final String REPEATABLE = "R([0-9]*)";
-    public static final String PERIOD = "P(T?)([0-9]*)([MHDY])";
-    protected Map<String, HTMLDivElement> panels = new HashMap<>();
     @DataField
     @Inject
     protected HTMLInputElement repeatCount;
+
     @Inject
     @DataField
     protected HTMLDivElement timeperiodDiv;
+
     @Inject
     @DataField
     protected HTMLDivElement expressionDiv;
+
     @Inject
     @DataField
     protected HTMLDivElement datatimeDiv;
+
     @Inject
     @DataField
     protected HTMLDivElement notifyEveryPanelDiv;
+
     @Inject
     @DataField
     protected HTMLDivElement repeatNotificationsDiv;
+
     @Inject
     @DataField
     protected HTMLDivElement repeatNotificationPanelDiv;
+
     @Inject
     @DataField
     protected HTMLDivElement errorDivPanel;
+
     @Inject
     @DataField
     protected ToggleSwitch repeatNotification;
+
     @Inject
     @DataField
     protected DateTimePicker dateTimePicker;
+
     @Inject
     @DataField
     protected TimeZonePicker timeZonePicker;
+
     @Inject
     @DataField
     protected HTMLInputElement taskStateChanges;
+
     @Inject
     @DataField
     protected HTMLInputElement repeatCountReaches;
+
     @Inject
     @DataField
     protected HTMLInputElement notStartedInput;
+
     protected DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm");
+
     protected Presenter presenter;
+
     protected BaseModal modal = new BaseModal();
+
     protected NotificationRow current;
+
     @Inject
     @AutoBound
     protected DataBinder<NotificationRow> customerBinder;
+
     @Inject
     protected Event<NotificationEvent> notificationEvent;
+
     protected AssigneeLiveSearchService assigneeLiveSearchServiceFrom;
+
     protected AssigneeLiveSearchService assigneeLiveSearchServiceReplyTo;
+
     protected AssigneeLiveSearchService assigneeLiveSearchServiceUsers;
+
     protected AssigneeLiveSearchService assigneeLiveSearchServiceGroups;
+
     @DataField
     @Bound(property = "users")
     protected MultipleSelectorInput<String> multipleSelectorInputUsers;
+
     @DataField
     @Bound(property = "groups")
     protected MultipleSelectorInput<String> multipleSelectorInputGroups;
+
     @Bound(property = "type")
     protected Select typeSelect = new Select();
+
     protected Option notStarted = new Option();
+
     protected Option notCompleted = new Option();
 
     @DataField
@@ -150,34 +178,48 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
     @DataField
     protected LiveSearchDropDown<String> liveSearchFromDropDown;
+
     @DataField
     protected LiveSearchDropDown<String> liveSearchReplyToDropDown;
+
     @Inject
     @DataField
     protected PeriodBox periodBox;
+
     @Inject
     @DataField
     protected PeriodBox repeatBox;
+
     @Inject
     @DataField
     @Bound(property = "subject")
     protected TextBox subject;
+
     @Inject
     @DataField
     @Bound(property = "body")
     protected TextArea body;
+
     @Inject
     @DataField
     protected TextArea expressionTextArea;
+
     @Inject
     protected Validator validator;
+
     protected MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerUsers = new MultipleLiveSearchSelectionHandler();
+
     protected MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerGroups = new MultipleLiveSearchSelectionHandler();
+
     protected SingleLiveSearchSelectionHandler<String> searchSelectionFromHandler = new SingleLiveSearchSelectionHandler<>();
+
     protected SingleLiveSearchSelectionHandler<String> searchSelectionReplyToHandler = new SingleLiveSearchSelectionHandler<>();
+
     @DataField
     @Inject
     protected HTMLButtonElement closeButton, saveButton;
+
+    protected Map<String, HTMLDivElement> panels;
 
     @Inject
     public NotificationEditorWidgetViewImpl(final MultipleSelectorInput multipleSelectorInputUsers,
@@ -188,9 +230,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceFrom,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceReplyTo,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceUsers,
-                                            final AssigneeLiveSearchService assigneeLiveSearchServiceGroups,
-
-                                            final AssigneeLiveSearchService groupLiveSearchService) {
+                                            final AssigneeLiveSearchService assigneeLiveSearchServiceGroups) {
         initUsersAndGroupsDropdowns(multipleSelectorInputUsers,
                                     multipleSelectorInputGroups,
                                     liveSearchFromDropDown,
@@ -199,7 +239,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                                     assigneeLiveSearchServiceReplyTo,
                                     assigneeLiveSearchServiceUsers,
                                     assigneeLiveSearchServiceGroups);
-        initTaskExpirationSelector();
         initTypeSelector();
     }
 
@@ -226,14 +265,14 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     }
 
     protected void initUsersAndGroupsDropdowns(MultipleSelectorInput multipleSelectorInputUsers,
-                                             MultipleSelectorInput multipleSelectorInputGroups,
-                                             LiveSearchDropDown<String> liveSearchFromDropDown,
-                                             LiveSearchDropDown<String> liveSearchReplyToDropDown,
+                                               MultipleSelectorInput multipleSelectorInputGroups,
+                                               LiveSearchDropDown<String> liveSearchFromDropDown,
+                                               LiveSearchDropDown<String> liveSearchReplyToDropDown,
 
-                                             AssigneeLiveSearchService liveSearchServiceFrom,
-                                             AssigneeLiveSearchService liveSearchServiceReplyTo,
-                                             AssigneeLiveSearchService liveSearchServiceUsers,
-                                             AssigneeLiveSearchService liveSearchServiceGroups) {
+                                               AssigneeLiveSearchService liveSearchServiceFrom,
+                                               AssigneeLiveSearchService liveSearchServiceReplyTo,
+                                               AssigneeLiveSearchService liveSearchServiceUsers,
+                                               AssigneeLiveSearchService liveSearchServiceGroups) {
         this.assigneeLiveSearchServiceFrom = liveSearchServiceFrom;
         this.assigneeLiveSearchServiceReplyTo = liveSearchServiceReplyTo;
         this.assigneeLiveSearchServiceUsers = liveSearchServiceUsers;
@@ -258,12 +297,10 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     void initTaskExpirationSelector() {
         for (Expiration value : Expiration.values()) {
             Option option = new Option();
-            option.setText(value.getName());
+            option.setText(presenter.getExpirationLabel(value.toString()));
             option.setValue(value.getName());
             taskExpiration.add(option);
         }
-
-        taskExpiration.setWidth("200px");
     }
 
     void initTypeSelector() {
@@ -311,11 +348,11 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         closeButton.addEventListener("click", event -> close(), false);
         saveButton.addEventListener("click", event -> save(), false);
         taskExpiration.addValueChangeHandler(event -> onTaskExpressionChange(event));
-
-        panels.put("Time period", timeperiodDiv);
-        panels.put("Expression", expressionDiv);
-        panels.put("Data/time", datatimeDiv);
         repeatCount.value = "1";
+
+        panels = ImmutableMap.of(Expiration.TIMEPERIOD.getName(), timeperiodDiv,
+                                 Expiration.EXPRESSION.getName(), expressionDiv,
+                                 Expiration.DATATIME.getName(), datatimeDiv);
     }
 
     @Override
@@ -324,6 +361,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
         initModel();
         initTextBoxes();
+        initTaskExpirationSelector();
     }
 
     protected void initModel() {
@@ -378,18 +416,19 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                 notCompleted.setSelected(false);
             }
         }
-
-        if (row.getExpiration() != null) {
-            setExpiration(row);
-        }
+        setExpiration(row);
         modal.show();
     }
 
     protected void setExpiration(NotificationRow row) {
-        Expiration expiration = row.getExpiration() != null ? row.getExpiration()
-                : guessExpirationType(row.getExpiresAt());
+        Expiration expiration;
+        if (row.getExpiresAt().isEmpty()) {
+            expiration = Expiration.TIMEPERIOD;
+        } else {
+            expiration = row.getExpiration() != null ? row.getExpiration()
+                    : new ExpirationTypeOracle().guess(row.getExpiresAt());
+        }
         taskExpiration.setValue(expiration.getName(), true);
-
         if (expiration.equals(Expiration.EXPRESSION)) {
             expressionTextArea.setValue(row.getExpiresAt());
         } else if (expiration.equals(Expiration.DATATIME)) {
@@ -447,29 +486,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         }
     }
 
-    protected Expiration guessExpirationType(String maybeIso) {
-        if (maybeIso == null || maybeIso.isEmpty()) {
-            return Expiration.TIMEPERIOD;
-        }
-        MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATA_TIME + "/" + PERIOD).exec(maybeIso);
-        if (result != null) {
-            return Expiration.DATATIME;
-        }
-        result = RegExp.compile(ISO_DATA_TIME).exec(maybeIso);
-        if (result != null) {
-            return Expiration.DATATIME;
-        }
-        result = RegExp.compile(REPEATABLE + "/" + PERIOD).exec(maybeIso);
-        if (result != null) {
-            return Expiration.TIMEPERIOD;
-        }
-        result = RegExp.compile(PERIOD).exec(maybeIso);
-        if (result != null) {
-            return Expiration.TIMEPERIOD;
-        }
-        return Expiration.EXPRESSION;
-    }
-
     protected void setExpirationTimeperiod(String iso) {
         MatchResult result = RegExp.compile(REPEATABLE + "/" + PERIOD).exec(iso);
         if (result != null) {
@@ -524,7 +540,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     }
 
     void save() {
-        // TODO looks like errai data binder doenst support liststore widgets.
+        // TODO looks like errai data binder doesn't support liststore widgets.
         current.setUsers(multipleLiveSearchSelectionHandlerUsers.getSelectedValues());
         current.setGroups(multipleLiveSearchSelectionHandlerGroups.getSelectedValues());
         current.setBody(body.getValue());
@@ -535,7 +551,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         current.setType(NotificationType.get(typeSelect.getSelectedItem().getValue()));
         current.setExpiration(Expiration.get(taskExpiration.getValue()));
 
-        Set<ConstraintViolation<NotificationValue>> violations = validator.validate(current.toNotificationValue());
+        Set<ConstraintViolation<NotificationRow>> violations = validator.validate(current);
         if (violations.isEmpty()) {
             notificationEvent.fire(new NotificationEvent(current));
             hide();
@@ -549,7 +565,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         hide();
     }
 
-    protected void onViolationError(Set<ConstraintViolation<NotificationValue>> violations) {
+    protected void onViolationError(Set<ConstraintViolation<NotificationRow>> violations) {
         errorDivPanel.innerHTML = violations.stream().map(v -> "* " + v.getMessage()).collect(Collectors.joining("\n"));
     }
 

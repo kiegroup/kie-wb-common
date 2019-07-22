@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 
-import static org.mockito.Matchers.any;
 import static org.powermock.api.mockito.PowerMockito.doCallRealMethod;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -56,7 +55,6 @@ public class NotificationEditorWidgetViewImplTest extends GWTTestCase {
         super.gwtSetUp();
         GwtMockito.initMocks(this);
 
-        doCallRealMethod().when(test).guessExpirationType(any(String.class));
         doCallRealMethod().when(test).getEscDomHandler();
     }
 
@@ -77,16 +75,6 @@ public class NotificationEditorWidgetViewImplTest extends GWTTestCase {
     @Test
     public void testGetEscDomHandler() {
         Assert.assertNotNull(test.getEscDomHandler());
-    }
-
-    @Test
-    public void guessExpirationType() {
-        Assert.assertEquals(Expiration.DATATIME, test.guessExpirationType("R/2019-07-14T13:34-02/PT33M"));
-        Assert.assertEquals(Expiration.DATATIME, test.guessExpirationType("R1/2019-07-14T13:34-02/PT33M"));
-        Assert.assertEquals(Expiration.TIMEPERIOD, test.guessExpirationType("2R1//PT1M"));
-        Assert.assertEquals(Expiration.TIMEPERIOD, test.guessExpirationType("PT1M"));
-        Assert.assertEquals(Expiration.EXPRESSION, test.guessExpirationType("2m"));
-        Assert.assertEquals(Expiration.EXPRESSION, test.guessExpirationType("2d"));
     }
 
     @Test

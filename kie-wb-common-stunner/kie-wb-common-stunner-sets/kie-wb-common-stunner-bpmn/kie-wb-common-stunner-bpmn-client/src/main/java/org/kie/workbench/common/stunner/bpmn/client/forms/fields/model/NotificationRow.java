@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ValidNotificationValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
@@ -29,6 +30,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
  * Class which is bound to rows in the NotificationEditor
  */
 @Bindable
+@ValidNotificationValue
 public class NotificationRow {
 
     // Field which is incremented for each row.
@@ -51,7 +53,7 @@ public class NotificationRow {
 
     private NotificationType type = NotificationType.NotCompletedNotify;
 
-    private Expiration expiration = Expiration.TIMEPERIOD;
+    private Expiration expiration;
 
     public NotificationRow() {
         this.id = lastId++;
