@@ -4,7 +4,7 @@ MainJs = {
     unmarshall: function (text, callback) {
         console.log("out unmarshall");
         // Create Jsonix context
-        var context = new Jsonix.Context([DMNMarshaller]);
+        var context = new Jsonix.Context([DMN12]);
 
         // Create unmarshaller
         var unmarshaller = context.createUnmarshaller();
@@ -14,7 +14,7 @@ MainJs = {
 
     marshall: function (value, callback) {
         console.log("outer marshall");
-        var context = new Jsonix.Context([DMNMarshaller]);
+        var context = new Jsonix.Context([DMN12]);
 
         // Create unmarshaller
         var marshaller = context.createMarshaller();

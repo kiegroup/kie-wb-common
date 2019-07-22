@@ -97,7 +97,8 @@
               <includes>
                 <include>DC.js</include>
                 <include>DI.js</include>
-                <include>DMNMarshaller.js</include>
+                <include>DMNDI12.js</include>
+                <include>DMN12.js</include>
               </includes>
             </fileset>
           </filesets>
@@ -169,7 +170,8 @@
               <target>
                 <copy file="${project.build.directory}/generated-sources/xjc/DC.js" tofile="${js.destination}/DC.js"/>
                 <copy file="${project.build.directory}/generated-sources/xjc/DI.js" tofile="${js.destination}/DI.js"/>
-                <copy file="${project.build.directory}/generated-sources/xjc/DMNMarshaller.js" tofile="${js.destination}/DMNMarshaller.js"/>
+                <copy file="${project.build.directory}/generated-sources/xjc/DMNDI12.js" tofile="${js.destination}/DMNDI12.js"/>
+                <copy file="${project.build.directory}/generated-sources/xjc/DMN12.js" tofile="${js.destination}/DMN12.js"/>
               </target>
             </configuration>
             <goals>
