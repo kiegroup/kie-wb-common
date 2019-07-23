@@ -4,10 +4,11 @@
 /src/main/gwt-unitCache/
 
 # Generated files
-/src/main/java/org/kie/workbench/common/dmn/kogito/marshaller/js/model/
-/src/main/resources/org/kie/workbench/common/dmn/kogito/marshaller/js/DC.js
-/src/main/resources/org/kie/workbench/common/dmn/kogito/marshaller/js/DI.js
-/src/main/resources/org/kie/workbench/common/dmn/kogito/marshaller/js/DMNMarshaller.js
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/
+/src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DC.js
+/src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DI.js
+/src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DMNDI12.js
+/src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DMN12.js
 
 # Eclipse, Netbeans and IntelliJ files
 /.*
