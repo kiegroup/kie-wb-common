@@ -17,8 +17,8 @@ package org.kie.workbench.common.dmn.showcase.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.dmn.showcase.client.editor.BaseKogitoDMNDiagramEditor;
 import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramsNavigatorScreen;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.BaseKogitoDMNDiagramEditor;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;

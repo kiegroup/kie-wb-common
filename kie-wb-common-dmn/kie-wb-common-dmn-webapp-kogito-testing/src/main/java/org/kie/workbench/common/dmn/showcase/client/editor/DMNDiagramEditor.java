@@ -31,6 +31,8 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTyp
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramSubmarineWrapper;
 import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.BaseKogitoDMNDiagramEditor;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.DMNEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
@@ -169,7 +171,7 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
     }
 
     @Override
-    void onEditExpressionEvent(final @Observes EditExpressionEvent event) {
+    public void onEditExpressionEvent(final @Observes EditExpressionEvent event) {
         super.onEditExpressionEvent(event);
     }
 }
