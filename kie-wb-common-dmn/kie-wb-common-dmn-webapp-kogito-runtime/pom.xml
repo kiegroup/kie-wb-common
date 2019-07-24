@@ -950,6 +950,48 @@
               </artifactItems>
             </configuration>
           </execution>
+          <execution>
+            <id>Unpack DMNMarshaller JS from dependency</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.kie.workbench</groupId>
+                  <artifactId>kie-wb-common-dmn-webapp-kogito-marshaller</artifactId>
+                  <version>${version.org.kie}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/DMNMarshaller</outputDirectory>
+                  <includes>**/*.js</includes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Copy DMNMarshaller JS to WAR</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy todir="${project.build.directory}/${project.artifactId}/model" flatten="true">
+                  <fileset dir="${project.build.directory}/DMNMarshaller">
+                    <include name="**/*.js"/>
+                  </fileset>
+                </copy>
+              </target>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
