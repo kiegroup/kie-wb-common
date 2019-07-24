@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -69,9 +70,14 @@ import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.commons.data.Pair;
 
+import static org.kie.workbench.common.stunner.bpmn.client.util.VariableUtils.FindVariableUsagesFlag.CASE_FILE_VARIABLE;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 public class VariableUtils {
+
+    public enum FindVariableUsagesFlag {
+        CASE_FILE_VARIABLE
+    }
 
     private static final String PROPERTY_IN_PREFIX = "[din]";
     private static final String PROPERTY_OUT_PREFIX = "[dout]";
@@ -79,7 +85,12 @@ public class VariableUtils {
     private final static Map<Predicate<BPMNDefinition>, BiFunction<String, Pair<BPMNDefinition, Node<View<BPMNDefinition>, Edge>>, Collection<VariableUsage>>> findFunctions = buildFindFunctions();
 
     @SuppressWarnings("unchecked")
-    public static Collection<VariableUsage> findVariableUsages(Graph graph, String variableName) {
+    public static Collection<VariableUsage> findVariableUsages(Graph graph, String variableName,
+                                                               Set<FindVariableUsagesFlag> flags) {
+        if (flags.contains(CASE_FILE_VARIABLE)) {
+            variableName = CaseFileVariables.CASE_FILE_PREFIX + variableName;
+        }
+
         return findVariableUsages(graph.nodes(), variableName);
     }
 

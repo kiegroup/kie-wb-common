@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -68,6 +69,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.stunner.bpmn.client.util.VariableUtils.FindVariableUsagesFlag;
+import static org.kie.workbench.common.stunner.bpmn.client.util.VariableUtils.findVariableUsages;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -244,7 +247,35 @@ public class VariableUtilsTest {
 
     private void testFindVariableUsages(String variableName, List<Node> nodes, List<VariableUsage> expectedUsages) {
         when(graph.nodes()).thenReturn(nodes);
-        Collection<VariableUsage> result = VariableUtils.findVariableUsages(graph, variableName);
+        Collection<VariableUsage> result = findVariableUsages(graph, variableName, EnumSet.noneOf(FindVariableUsagesFlag.class));
+        assertEquals(expectedUsages, result);
+    }
+
+    @Test
+    public void testFindVariableUsagesForMultipleInstanceSubProcessWithOnlyInput_caseFileVariable() {
+        List<Node> nodes = mockNodeList(mockMultipleInstanceSubprocess(NODE_NAME, "caseFile_var1", null));
+        List<VariableUsage> expectedUsages = Arrays.asList(new VariableUsage("caseFile_var1", VariableUsage.USAGE_TYPE.MULTIPLE_INSTANCE_INPUT_COLLECTION, nodes.get(0), NODE_NAME));
+        testFindVariableUsages_caseFileVariable("var1", nodes, expectedUsages);
+    }
+
+    @Test
+    public void testFindVariableUsagesForMultipleInstanceSubProcessWithOnlyOutput_caseFileVariable() {
+        List<Node> nodes = mockNodeList(mockMultipleInstanceSubprocess(NODE_NAME, null, "caseFile_var1"));
+        List<VariableUsage> expectedUsages = Arrays.asList(new VariableUsage("caseFile_var1", VariableUsage.USAGE_TYPE.MULTIPLE_INSTANCE_OUTPUT_COLLECTION, nodes.get(0), NODE_NAME));
+        testFindVariableUsages_caseFileVariable("var1", nodes, expectedUsages);
+    }
+
+    @Test
+    public void testFindVariableUsagesForMultipleInstanceSubProcessWithInputAndOutput_caseFileVariable() {
+        List<Node> nodes = mockNodeList(mockMultipleInstanceSubprocess(NODE_NAME, "caseFile_var1", "caseFile_var1"));
+        List<VariableUsage> expectedUsages = Arrays.asList(new VariableUsage("caseFile_var1", VariableUsage.USAGE_TYPE.MULTIPLE_INSTANCE_INPUT_COLLECTION, nodes.get(0), NODE_NAME),
+                                                           new VariableUsage("caseFile_var1", VariableUsage.USAGE_TYPE.MULTIPLE_INSTANCE_OUTPUT_COLLECTION, nodes.get(0), NODE_NAME));
+        testFindVariableUsages_caseFileVariable("var1", nodes, expectedUsages);
+    }
+
+    private void testFindVariableUsages_caseFileVariable(String variableName, List<Node> nodes, List<VariableUsage> expectedUsages) {
+        when(graph.nodes()).thenReturn(nodes);
+        Collection<VariableUsage> result = findVariableUsages(graph, variableName, EnumSet.of(FindVariableUsagesFlag.CASE_FILE_VARIABLE));
         assertEquals(expectedUsages, result);
     }
 
