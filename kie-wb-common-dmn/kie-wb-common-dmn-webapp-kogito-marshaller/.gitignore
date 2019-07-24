@@ -10,6 +10,9 @@
 /src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DMNDI12.js
 /src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DMN12.js
 
+# Copied from dependencies when packaged
+/src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/Jsonix-all.js
+
 # Eclipse, Netbeans and IntelliJ files
 /.*
 /**/.*
