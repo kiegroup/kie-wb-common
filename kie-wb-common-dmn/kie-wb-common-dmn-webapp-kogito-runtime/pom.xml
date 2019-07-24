@@ -984,7 +984,7 @@
             </goals>
             <configuration>
               <target>
-                <copy todir="${project.build.directory}/${project.artifactId}/model" flatten="true">
+                <copy todir="${basedir}/src/main/webapp/model" flatten="true">
                   <fileset dir="${project.build.directory}/DMNMarshaller">
                     <include name="**/*.js"/>
                   </fileset>

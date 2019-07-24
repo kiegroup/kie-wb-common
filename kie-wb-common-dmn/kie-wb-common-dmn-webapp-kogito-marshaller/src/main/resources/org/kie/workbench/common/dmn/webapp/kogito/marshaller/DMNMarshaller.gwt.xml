@@ -25,6 +25,10 @@
   <set-property name="user.agent" value="gecko1_8,safari"/>
 
   <!-- Specify the paths for translatable code -->
-  <source path="js"/>
+  <source path="js">
+    <exclude name="jre"/>
+  </source>
+
+  <super-source path="jre"/>
 
 </module>
