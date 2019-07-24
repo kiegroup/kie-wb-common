@@ -84,13 +84,16 @@ final class ProcessConverterDelegate {
 
         List<Result<BpmnEdge>> results = flowElements.stream()
                 .map(e -> converterFactory.edgeConverter().convertEdge(e, nodes))
+                .filter(Result::isSuccess)
                 .collect(Collectors.toList());
 
-        boolean value = results.stream()
-                .map(Result::value)
-                .filter(Objects::nonNull)
-                .map(processRoot::addEdge)
-                .allMatch(Boolean.TRUE::equals);
+        boolean value = results.size() > 0 ?
+                results.stream()
+                        .map(Result::value)
+                        .filter(Objects::nonNull)
+                        .map(processRoot::addEdge)
+                        .allMatch(Boolean.TRUE::equals)
+                : false;
 
         return ResultComposer.compose(value, results);
     }

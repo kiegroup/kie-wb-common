@@ -35,9 +35,9 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 public class BoundaryEventConverter implements EdgeConverter<BoundaryEvent> {
 
     @Override
-    public Result<BpmnEdge> convertEdge(BoundaryEvent e, Map<String, BpmnNode> nodes) {
-        String parentId = e.getAttachedToRef().getId();
-        String childId = e.getId();
+    public Result<BpmnEdge> convertEdge(BoundaryEvent event, Map<String, BpmnNode> nodes) {
+        String parentId = event.getAttachedToRef().getId();
+        String childId = event.getId();
         return valid(nodes, parentId, childId)
                 ? Result.success(BpmnEdge.docked(nodes.get(parentId), nodes.get(childId)))
                 : Result.ignored("Boundary ignored",

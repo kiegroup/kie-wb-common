@@ -59,6 +59,19 @@ public class AssociationList {
         this.outputs = new ArrayList<>();
     }
 
+    public static AssociationList fromString2(String encoded) {
+        if (encoded.isEmpty()) {
+            return new AssociationList();
+        } else {
+            return new AssociationList(
+                    Arrays.stream(encoded.split(","))
+                            .map(AssociationDeclaration::fromString)
+                            .collect(toList()));
+        }
+    }
+
+
+
     public static AssociationList fromString(String encoded) {
         return Optional.ofNullable(encoded)
                 .filter(StringUtils::nonEmpty)

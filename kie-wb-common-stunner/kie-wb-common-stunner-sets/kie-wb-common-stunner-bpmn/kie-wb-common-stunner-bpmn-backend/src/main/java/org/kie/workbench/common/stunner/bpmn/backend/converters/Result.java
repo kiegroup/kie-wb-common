@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessage;
 
@@ -69,6 +71,8 @@ public interface Result<T> {
 
     List<MarshallingMessage> messages();
 
+    Result<T> setMessages(MarshallingMessage ... messages);
+
     default void ifSuccess(Consumer<T> consumer) {
         Optional.ofNullable(value()).ifPresent(consumer::accept);
     }
@@ -87,7 +91,7 @@ public interface Result<T> {
 
     abstract class AbstractResult<T> implements Result<T> {
 
-        private final List<MarshallingMessage> messages;
+        private List<MarshallingMessage> messages;
 
         AbstractResult(MarshallingMessage... messages) {
             this.messages = new ArrayList<>();
@@ -97,6 +101,12 @@ public interface Result<T> {
         @Override
         public List<MarshallingMessage> messages() {
             return messages;
+        }
+
+        @Override
+        public Result<T> setMessages(MarshallingMessage... messages) {
+            this.messages = Stream.of(messages).collect(Collectors.toList());
+            return this;
         }
     }
 

@@ -22,7 +22,6 @@ import org.eclipse.bpmn2.Association;
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.SequenceFlow;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNElementDecorators;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -30,9 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.associ
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.events.BoundaryEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.sequenceflows.SequenceFlowConverter;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessage;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageDecorator;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageKeys;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest.Mode;
 
 public class EdgeConverterManager extends AbstractConverter {

@@ -17,9 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -160,12 +162,21 @@ public class Match<In, Out> {
         return this;
     }
 
-    public Result<Out> apply(In value) {
-        return Stream.concat(cases.stream(), strictCases.stream())
+    private Result<Out> apply(In value, List<Case<?>> cases, Supplier<Result<Out>> fallback) {
+        return cases.stream()
                 .map(c -> c.match(value))
                 .filter(Result::isSuccess)
                 .findFirst()
-                .orElseGet(() -> applyFallback(value));
+                .orElseGet(fallback);
+    }
+
+    public Result<Out> apply(In value) {
+        //First apply strict cases if matches, Second the generic cases, and as default the fallback
+        return apply(value,
+                     strictCases,
+                     () -> apply(value,
+                                 cases,
+                                 () -> applyFallback(value)));
     }
 
     private Result<Out> applyFallback(In value) {
@@ -180,11 +191,9 @@ public class Match<In, Out> {
                     .map(c -> c.match(value))
                     .filter(Result::isIgnored)
                     .map(r -> {
-                        //handling value as Result adding the ignore message
+                        //handling value as Result setting the specific ignore message
                         if (r.value() instanceof Result) {
-                            ((Result) r.value())
-                                    .messages()
-                                    .add(getIgnoreMessage(value));
+                            ((Result) r.value()).setMessages(getIgnoreMessage(value));
                         }
                         return r;
                     })
@@ -228,7 +237,12 @@ public class Match<In, Out> {
     }
 
     private <T> String getValueType(T value, Optional<MarshallingMessageDecorator<T>> decorator) {
-        return decorator.map(d -> d.getType(value)).orElseGet(() -> value.getClass().getSimpleName());
+        return decorator
+                .map(d -> d.getType(value))
+                .orElseGet(() -> Optional.ofNullable(value)
+                        .map(Object::getClass)
+                        .map(Class::getSimpleName)
+                        .orElse(""));
     }
 
     private <T> String getValueName(T value, Optional<MarshallingMessageDecorator<T>> decorator) {

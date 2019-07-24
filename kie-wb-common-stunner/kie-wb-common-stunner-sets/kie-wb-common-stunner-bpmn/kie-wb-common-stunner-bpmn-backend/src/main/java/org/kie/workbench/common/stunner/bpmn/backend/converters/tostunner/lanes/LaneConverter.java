@@ -53,7 +53,8 @@ public class LaneConverter implements NodeConverter<org.eclipse.bpmn2.Lane> {
         final Result<BpmnNode> result = convert(lane, propertyReaderFactory.of(lane, parent));
         return Optional.ofNullable(result.value())
                 .map(value -> Result.success(value, MarshallingMessage.builder()
-                        .message("Child Lane Set Converted to Lane "+ lane.getName())
+                        .message(String.format("Child Lane Set %s Converted to Lane %s", parent.getName(),
+                                               lane.getName()))
                         .messageKey(MarshallingMessageKeys.childLaneSetConverted)
                         .messageArguments(lane.getName(), parent.getName())
                         .type(Violation.Type.WARNING)
