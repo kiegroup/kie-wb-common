@@ -21,8 +21,12 @@ import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import elemental2.promise.Promise;
 import org.jboss.errai.common.client.api.Caller;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12UnmarshallCallback;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -60,20 +64,22 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
     public void transform(final String xml,
                           final ServiceCallback<SubmarineDiagram> callback) {
 
+        clientSideMarshaller(xml);
+
         submarineDiagramServiceCaller.call((SubmarineDiagram d) -> {
             updateClientMetadata(d);
             callback.onSuccess(d);
         }).transform(xml);
     }
 
-//    private void clientSideMarshaller(final String xml) {
-//        DMN12UnmarshallCallback callback = dmn12 -> {
-//            final JSITDMNElement element = dmn12.getValue();
-//            GWT.log("break point!");
-//        };
-//
-//        MainJs.unmarshall(xml, callback);
-//    }
+    private void clientSideMarshaller(final String xml) {
+        final DMN12UnmarshallCallback callback = dmn12 -> {
+            final JSITDMNElement element = dmn12.getValue();
+            GWT.log("break point!");
+        };
+
+        MainJs.unmarshall(xml, callback);
+    }
 
     @Override
     public Promise<String> transform(final SubmarineDiagramResourceImpl resource) {

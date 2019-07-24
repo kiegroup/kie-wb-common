@@ -47,7 +47,7 @@
   <!-- DMN Editor -->
   <inherits name="org.kie.workbench.common.dmn.DMNClient"/>
   <inherits name="org.kie.workbench.common.dmn.webapp.common.DMNWebappCommon"/>
-  <!--<inherits name="org.kie.workbench.common.dmn.webapp.kogito.marshaller.DMNMarshaller"/>-->
+  <inherits name="org.kie.workbench.common.dmn.webapp.kogito.marshaller.DMNMarshaller"/>
 
   <!-- Specify the paths for translatable code -->
   <source path="client"/>
