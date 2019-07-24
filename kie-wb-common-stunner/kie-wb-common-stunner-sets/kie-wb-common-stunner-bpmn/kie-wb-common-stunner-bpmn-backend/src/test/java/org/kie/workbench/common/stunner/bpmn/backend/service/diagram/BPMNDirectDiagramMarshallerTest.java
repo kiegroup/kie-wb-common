@@ -107,6 +107,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Si
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentValue;
@@ -429,10 +430,13 @@ public class BPMNDirectDiagramMarshallerTest {
     }
 
     private void validateServiceTask(ServiceTask serviceTask,
-                                     String slaDueDate) {
-        ServiceTaskExecutionSet emailSet = serviceTask.getExecutionSet();
-        assertNotNull(emailSet.getSlaDueDate());
-        assertEquals(emailSet.getSlaDueDate().getValue(), slaDueDate);
+                                     String slaDueDateValue) {
+        ServiceTaskExecutionSet serviceTaskExecutionSet = serviceTask.getExecutionSet();
+        assertNotNull(serviceTaskExecutionSet);
+
+        SLADueDate slaDueDate = serviceTaskExecutionSet.getSlaDueDate();
+        assertNotNull(slaDueDate);
+        assertEquals(slaDueDate.getValue(), slaDueDateValue);
     }
 
     @Test
