@@ -78,12 +78,13 @@
               </includes>
             </fileset>
             <fileset>
-              <directory>src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js</directory>
+              <directory>${js.destination}</directory>
               <includes>
                 <include>DC.js</include>
                 <include>DI.js</include>
                 <include>DMNDI12.js</include>
                 <include>DMN12.js</include>
+                <include>Jsonix-all.js</include>
               </includes>
             </fileset>
           </filesets>
