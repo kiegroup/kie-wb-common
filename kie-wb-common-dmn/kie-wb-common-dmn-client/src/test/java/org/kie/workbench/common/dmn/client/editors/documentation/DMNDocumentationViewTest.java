@@ -34,7 +34,6 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.dmn.client.editors.documentation.DMNDocumentationView.DOCUMENTATION_FILENAME;
 import static org.kie.workbench.common.stunner.core.documentation.model.DocumentationOutput.EMPTY;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -121,10 +120,13 @@ public class DMNDocumentationViewTest {
     @Test
     public void testOnDownloadHtmlFile() {
         final String html = "<html><body>Hi</body></html>";
+        final String fileName = "file name";
+        doReturn(fileName).when(view).getCurrentDocumentationFilename();
         doReturn(html).when(view).getCurrentDocumentationHTML();
 
         view.onDownloadHtmlFile(mock(ClickEvent.class));
 
-        verify(downloadHelper).download(DOCUMENTATION_FILENAME, html);
+        verify(view).getCurrentDocumentationHTML();
+        verify(downloadHelper).download(fileName, html);
     }
 }

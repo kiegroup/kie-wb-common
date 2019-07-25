@@ -97,7 +97,7 @@ public class DMNDocumentationView extends DefaultDiagramDocumentationView {
     @EventHandler("download-html-file")
     public void onDownloadHtmlFile(final ClickEvent e) {
         final String html = getCurrentDocumentationHTML();
-        downloadHelper.download(DOCUMENTATION_FILENAME, html);
+        downloadHelper.download(getCurrentDocumentationFilename(), html);
     }
 
     String getCurrentDocumentationHTML() {
@@ -109,5 +109,12 @@ public class DMNDocumentationView extends DefaultDiagramDocumentationView {
                 .map(documentationService::generate)
                 .map(DocumentationOutput::getValue)
                 .orElse(EMPTY.getValue());
+    }
+
+    String getCurrentDocumentationFilename() {
+        return getDiagram()
+                .map(diagram -> documentationService.processDocumentation(diagram))
+                .map(dmnDocumentation -> DOCUMENTATION_FILENAME + "-" + dmnDocumentation.getFileName())
+                .orElse(DOCUMENTATION_FILENAME);
     }
 }
