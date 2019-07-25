@@ -1,10 +1,16 @@
-
+/**
+ * == READ ME ==
+ * 
+ * This file has been manually modified to include *ALL* mappings (and not just DMN12)
+ *
+ * @type {{marshall: MainJs.marshall, unmarshall: MainJs.unmarshall}}
+ */
 MainJs = {
 
     unmarshall: function (text, callback) {
         console.log("out unmarshall");
         // Create Jsonix context
-        var context = new Jsonix.Context([DMN12]);
+        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12]);
 
         // Create unmarshaller
         var unmarshaller = context.createUnmarshaller();
@@ -14,7 +20,7 @@ MainJs = {
 
     marshall: function (value, callback) {
         console.log("outer marshall");
-        var context = new Jsonix.Context([DMN12]);
+        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12]);
 
         // Create unmarshaller
         var marshaller = context.createMarshaller();
