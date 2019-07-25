@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.dmn.showcase.client.editor;
 
+import java.util.function.Consumer;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -57,12 +59,14 @@ import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClient
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.workbench.events.NotificationEvent;
+import org.uberfire.workbench.model.menu.Menus;
 
 @ApplicationScoped
 @DiagramEditor
@@ -145,6 +149,13 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
             makeAdditionalStunnerMenus(getFileMenuBuilder());
             menuBarInitialized = true;
         }
+    }
+
+    @Override
+    @WorkbenchMenu
+    //AppFormer does not generate menus when the @WorkbenchMenu annotation is on the super class
+    public void getMenus(final Consumer<Menus> menusConsumer) {
+        super.getMenus(menusConsumer);
     }
 
     private void doSave() {

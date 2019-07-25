@@ -64,21 +64,34 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
     public void transform(final String xml,
                           final ServiceCallback<SubmarineDiagram> callback) {
 
-        clientSideMarshaller(xml);
+        //TODO {manstis} XML->model marshalling...
+        //Stage 1 client-side marshalling
+        // - Stage 1 is XML -> generic POJO model
+        // - Stage 2 is generic POJO model to DMN editor UI model
+        testClientSideMarshaller(xml);
 
+        //Legacy server-side marshalling
         submarineDiagramServiceCaller.call((SubmarineDiagram d) -> {
             updateClientMetadata(d);
             callback.onSuccess(d);
         }).transform(xml);
     }
 
-    private void clientSideMarshaller(final String xml) {
+    private void testClientSideMarshaller(final String xml) {
+        if (StringUtils.isEmpty(xml)) {
+            return;
+        }
+
         final DMN12UnmarshallCallback callback = dmn12 -> {
             final JSITDMNElement element = dmn12.getValue();
-            GWT.log("break point!");
+            GWT.log("break point -- check element is correct!");
         };
 
-        MainJs.unmarshall(xml, callback);
+        try {
+            MainJs.unmarshall(xml, callback);
+        } catch (Exception e) {
+            GWT.log(e.getMessage());
+        }
     }
 
     @Override
