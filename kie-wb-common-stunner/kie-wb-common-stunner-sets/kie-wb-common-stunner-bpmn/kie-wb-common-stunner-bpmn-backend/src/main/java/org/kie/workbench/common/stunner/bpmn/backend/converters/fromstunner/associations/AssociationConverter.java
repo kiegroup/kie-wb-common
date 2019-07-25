@@ -64,7 +64,8 @@ public class AssociationConverter {
 
         BPMNGeneralSet general = definition.getGeneral();
         p.setDocumentation(general.getDocumentation().getValue());
-        p.setOneDirectionAssociation();
+
+        p.setDirectionAssociation(definition);
 
         return Result.of(p);
     }

@@ -21,9 +21,9 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnectorDef;
-import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.DirectionalAssociation;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -225,7 +225,7 @@ public class CaseManagementShapeFactory implements ShapeFactory<BPMNDefinition, 
                 .delegate(IntermediateCompensationEventThrowing.class,
                           new CaseManagementSvgNullShapeDef(),
                           () -> shapeDefFactory)
-                .delegate(Association.class,
+                .delegate(DirectionalAssociation.class,
                           new CaseManagementSvgNullShapeDef(),
                           () -> shapeDefFactory);
     }
