@@ -37,6 +37,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.diff.DiffItemPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.services.datamodel.util.SortHelper;
@@ -49,8 +50,8 @@ import org.uberfire.client.workbench.events.SelectPlaceEvent;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.lifecycle.OnClose;
+import org.uberfire.lifecycle.OnLostFocus;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.rpc.SessionInfo;
 
 @WorkbenchScreen(identifier = LibraryPlaces.SUBMIT_CHANGE_REQUEST,
         owningPerspective = LibraryPerspective.class)
@@ -94,16 +95,15 @@ public class SubmitChangeRequestScreenPresenter {
     private final LibraryPlaces libraryPlaces;
     private final ManagedInstance<DiffItemPresenter> diffItemPresenterInstances;
     private final Caller<ChangeRequestService> changeRequestService;
-    private final SessionInfo sessionInfo;
     private final ProjectController projectController;
     private final Promises promises;
     private final BusyIndicatorView busyIndicatorView;
+    private final ChangeRequestUtils changeRequestUtils;
 
     private WorkspaceProject workspaceProject;
     private String currentBranchName;
     private Branch defaultBranch;
     private String destinationBranch;
-    private int changedFilesCount;
 
     @Inject
     public SubmitChangeRequestScreenPresenter(final View view,
@@ -111,19 +111,19 @@ public class SubmitChangeRequestScreenPresenter {
                                               final LibraryPlaces libraryPlaces,
                                               final ManagedInstance<DiffItemPresenter> diffItemPresenterInstances,
                                               final Caller<ChangeRequestService> changeRequestService,
-                                              final SessionInfo sessionInfo,
                                               final ProjectController projectController,
                                               final Promises promises,
-                                              final BusyIndicatorView busyIndicatorView) {
+                                              final BusyIndicatorView busyIndicatorView,
+                                              final ChangeRequestUtils changeRequestUtils) {
         this.view = view;
         this.ts = ts;
         this.libraryPlaces = libraryPlaces;
         this.diffItemPresenterInstances = diffItemPresenterInstances;
         this.changeRequestService = changeRequestService;
-        this.sessionInfo = sessionInfo;
         this.projectController = projectController;
         this.promises = promises;
         this.busyIndicatorView = busyIndicatorView;
+        this.changeRequestUtils = changeRequestUtils;
     }
 
     @PostConstruct
@@ -154,12 +154,19 @@ public class SubmitChangeRequestScreenPresenter {
         destroyDiffItems();
     }
 
+    @OnLostFocus
+    public void onLostFocus() {
+        destroyDiffItems();
+    }
+
     public void refreshOnFocus(@Observes final SelectPlaceEvent selectPlaceEvent) {
-        final PlaceRequest place = selectPlaceEvent.getPlace();
-        if (workspaceProject != null && workspaceProject.getMainModule() != null && place.getIdentifier().equals(LibraryPlaces.SUBMIT_CHANGE_REQUEST)) {
-            reset();
-        } else {
-            destroyDiffItems();
+        if (workspaceProject != null && workspaceProject.getMainModule() != null) {
+            final PlaceRequest place = selectPlaceEvent.getPlace();
+            if (place.getIdentifier().equals(LibraryPlaces.SUBMIT_CHANGE_REQUEST) ||
+                    libraryPlaces.isSubmitChangeRequestScreenOpen()) {
+                this.reset();
+                this.setup();
+            }
         }
     }
 
@@ -172,16 +179,20 @@ public class SubmitChangeRequestScreenPresenter {
             return;
         }
 
-        changeRequestService.call((ChangeRequest item) -> {
-            this.libraryPlaces.goToChangeRequestReviewScreen(item.toString());
-        }).createChangeRequest(workspaceProject.getSpace().getName(),
-                               workspaceProject.getRepository().getAlias(),
-                               currentBranchName,
-                               destinationBranch,
-                               sessionInfo.getIdentity().getIdentifier(),
-                               view.getSummary(),
-                               view.getDescription(),
-                               changedFilesCount);
+        projectController.canSubmitChangeRequest(workspaceProject,
+                                                 destinationBranch).then(userCanSubmitChangeRequest -> {
+            if (userCanSubmitChangeRequest) {
+                changeRequestService.call((ChangeRequest item) -> {
+                    this.libraryPlaces.goToProject(workspaceProject);
+                }).createChangeRequest(workspaceProject.getSpace().getName(),
+                                       workspaceProject.getRepository().getAlias(),
+                                       currentBranchName,
+                                       destinationBranch,
+                                       view.getSummary(),
+                                       view.getDescription());
+            }
+            return promises.resolve();
+        });
     }
 
     public void selectBranch(String branchName) {
@@ -212,8 +223,8 @@ public class SubmitChangeRequestScreenPresenter {
         }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                 .getDiff(workspaceProject.getSpace().getName(),
                          workspaceProject.getRepository().getAlias(),
-                         destinationBranch,
-                         currentBranchName);
+                         currentBranchName,
+                         destinationBranch);
     }
 
     private void destroyDiffItems() {
@@ -227,6 +238,9 @@ public class SubmitChangeRequestScreenPresenter {
 
     private void reset() {
         view.clearInputFields();
+    }
+
+    private void setup() {
         updateDestinationBranchList();
         updateDiffContainer();
     }
@@ -259,20 +273,19 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     private void setupPopulatedDiffList(final List<ChangeRequestDiff> diffList) {
-        changedFilesCount = diffList.size();
-
-        int addedLinesCount = diffList.stream().mapToInt(elem -> elem.getAddedLinesCount()).sum();
-        int deletedLinesCount = diffList.stream().mapToInt(elem -> elem.getDeletedLinesCount()).sum();
+        final int changedFilesCount = diffList.size();
+        final int addedLinesCount = diffList.stream().mapToInt(elem -> elem.getAddedLinesCount()).sum();
+        final int deletedLinesCount = diffList.stream().mapToInt(elem -> elem.getDeletedLinesCount()).sum();
 
         view.showWarning(diffList.stream().anyMatch(elem -> elem.isConflict()));
         view.enableSubmitButton(true);
-        view.setFilesSummary(prepareFilesSummary(changedFilesCount,
-                                                 addedLinesCount,
-                                                 deletedLinesCount));
+        view.setFilesSummary(changeRequestUtils.formatFilesSummary(changedFilesCount,
+                                                                   addedLinesCount,
+                                                                   deletedLinesCount));
 
         diffList.forEach(diff -> {
             DiffItemPresenter item = diffItemPresenterInstances.get();
-            item.setup(diff);
+            item.setup(diff, true);
             this.view.addDiffItem(item.getView(), () -> item.draw());
         });
     }
@@ -293,63 +306,5 @@ public class SubmitChangeRequestScreenPresenter {
 
             return promises.resolve();
         });
-    }
-
-    private String prepareFilesSummary(final int changedFiles,
-                                       final int addedLines,
-                                       final int deletedLines) {
-        if (changedFiles == 1) {
-            if (addedLines == 0) {
-                if (deletedLines == 0) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFile);
-                } else if (deletedLines == 1) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneDeletion);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyDeletions, deletedLines);
-                }
-            } else if (addedLines == 1) {
-                if (deletedLines == 0) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAddition);
-                } else if (deletedLines == 1) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionOneDeletion);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionManyDeletions, deletedLines);
-                }
-            } else {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditions, addedLines);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsOneDeletion, addedLines);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsManyDeletions, addedLines, deletedLines);
-                }
-            }
-        } else {
-            if (addedLines == 0) {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFiles, changedFiles);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneDeletion, changedFiles);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyDeletions, changedFiles, deletedLines);
-                }
-            } else if (addedLines == 1) {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAddition, changedFiles);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionOneDeletion, changedFiles);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionManyDeletions, changedFiles, deletedLines);
-                }
-            } else {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditions, changedFiles, addedLines);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsOneDeletion, changedFiles, addedLines);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsManyDeletions, changedFiles, addedLines, deletedLines);
-                }
-            }
-        }
     }
 }

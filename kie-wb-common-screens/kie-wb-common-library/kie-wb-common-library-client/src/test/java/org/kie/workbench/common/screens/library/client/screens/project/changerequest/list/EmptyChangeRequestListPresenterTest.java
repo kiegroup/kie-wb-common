@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab;
+package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.junit.Before;

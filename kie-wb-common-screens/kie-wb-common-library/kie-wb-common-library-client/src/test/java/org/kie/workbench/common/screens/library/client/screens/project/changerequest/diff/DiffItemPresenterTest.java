@@ -315,7 +315,7 @@ public class DiffItemPresenterTest {
     public void setupTextualDiffTest() {
         doReturn(ChangeType.ADD).when(diff).getChangeType();
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
 
         verify(view, times(1)).setupTextualContent(anyString(),
                                                    anyString(),
@@ -323,11 +323,58 @@ public class DiffItemPresenterTest {
     }
 
     @Test
+    public void setupTextualDiffWhenWarnConflictDisabledTest() {
+        doReturn(ChangeType.ADD).when(diff).getChangeType();
+
+        presenter.setup(diff, false);
+
+        verify(view, times(1)).setupTextualContent(anyString(),
+                                                   anyString(),
+                                                   eq(false));
+    }
+
+    @Test
+    public void setupTextualDiffWhenNoConflictTest() {
+        doReturn(ChangeType.ADD).when(diff).getChangeType();
+        doReturn(false).when(diff).isConflict();
+
+        presenter.setup(diff, true);
+
+        verify(view, times(1)).setupTextualContent(anyString(),
+                                                   anyString(),
+                                                   eq(false));
+    }
+
+    @Test
+    public void setupTextualDiffWhenHasConflictTest() {
+        doReturn(ChangeType.ADD).when(diff).getChangeType();
+        doReturn(true).when(diff).isConflict();
+
+        presenter.setup(diff, true);
+
+        verify(view, times(1)).setupTextualContent(anyString(),
+                                                   anyString(),
+                                                   eq(true));
+    }
+
+    @Test
+    public void setupTextualDiffWhenHasConflictButWarnConflictDisabledTest() {
+        doReturn(ChangeType.ADD).when(diff).getChangeType();
+        doReturn(true).when(diff).isConflict();
+
+        presenter.setup(diff, false);
+
+        verify(view, times(1)).setupTextualContent(anyString(),
+                                                   anyString(),
+                                                   eq(false));
+    }
+
+    @Test
     public void setupTextualDiffWhenAddTypeTest() {
         doReturn(ChangeType.ADD).when(diff).getChangeType();
         doReturn("Added").when(ts).getTranslation(LibraryConstants.Added);
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
 
         verify(diff, times(1)).getOldFilePath();
         verify(diff, times(2)).getNewFilePath();
@@ -342,7 +389,7 @@ public class DiffItemPresenterTest {
         doReturn(ChangeType.DELETE).when(diff).getChangeType();
         doReturn("Deleted").when(ts).getTranslation(LibraryConstants.Deleted);
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
 
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
@@ -357,7 +404,7 @@ public class DiffItemPresenterTest {
         doReturn(ChangeType.MODIFY).when(diff).getChangeType();
         doReturn("Updated").when(ts).getTranslation(LibraryConstants.Updated);
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
@@ -371,7 +418,7 @@ public class DiffItemPresenterTest {
         doReturn(ChangeType.COPY).when(diff).getChangeType();
         doReturn("Copied").when(ts).getTranslation(LibraryConstants.Copied);
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
 
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
@@ -386,7 +433,7 @@ public class DiffItemPresenterTest {
         doReturn(ChangeType.RENAME).when(diff).getChangeType();
         doReturn("Renamed").when(ts).getTranslation(LibraryConstants.Renamed);
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
 
         verify(diff, times(2)).getOldFilePath();
         verify(diff, times(1)).getNewFilePath();
@@ -410,7 +457,7 @@ public class DiffItemPresenterTest {
 
         doReturn(resourceTypeDefinitions).when(resourceTypeManagerCache).getResourceTypeDefinitions();
 
-        presenter.setup(diff);
+        presenter.setup(diff, true);
 
         verify(view, times(1)).setupTextualContent(anyString(),
                                                    anyString(),

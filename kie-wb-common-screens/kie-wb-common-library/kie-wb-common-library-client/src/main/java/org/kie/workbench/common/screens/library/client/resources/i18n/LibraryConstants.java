@@ -93,6 +93,18 @@ public class LibraryConstants {
     public static final String Summary = "Summary";
 
     @TranslationKey(defaultValue = "")
+    public static final String CommentCount = "CommentCount";
+
+    @TranslationKey(defaultValue = "")
+    public static final String CommentsCount = "CommentsCount";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddComment = "AddComment";
+
+    @TranslationKey(defaultValue = "")
+    public static final String LeaveAComment = "LeaveAComment";
+
+    @TranslationKey(defaultValue = "")
     public static final String DeleteOrganizationalUnitSuccess = "DeleteOrganizationalUnitSuccess";
 
     @TranslationKey(defaultValue = "")
@@ -369,6 +381,21 @@ public class LibraryConstants {
     public static final String BranchesAreEven = "BranchesAreEven";
 
     @TranslationKey(defaultValue = "")
+    public static final String OpenStatus = "OpenStatus";
+
+    @TranslationKey(defaultValue = "")
+    public static final String RejectedStatus = "RejectedStatus";
+
+    @TranslationKey(defaultValue = "")
+    public static final String RevertFailedStatus = "RevertFailedStatus";
+
+    @TranslationKey(defaultValue = "")
+    public static final String RevertedStatus = "RevertedStatus";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AcceptedStatus = "AcceptedStatus";
+
+    @TranslationKey(defaultValue = "")
     public static final String ChangeRequestFilesSummaryOneFile = "ChangeRequestFilesSummaryOneFile";
 
     @TranslationKey(defaultValue = "")
@@ -427,6 +454,12 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String MissingDescriptionForChangeRequestHelp = "MissingDescriptionForChangeRequestHelp";
+
+    @TranslationKey(defaultValue = "")
+    public static final String MissingCommentText = "MissingCommentText";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SearchByIdOrSummary = "SearchByIdOrSummary";
 
     @TranslationKey(defaultValue = "")
     public static final String Of = "Of";
@@ -598,6 +631,12 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String SubmitChangeRequest = "SubmitChangeRequest";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequest = "ChangeRequest";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestAndId = "ChangeRequestAndId";
 
     @TranslationKey(defaultValue = "")
     public static final String BranchDeleted = "BranchDeleted";

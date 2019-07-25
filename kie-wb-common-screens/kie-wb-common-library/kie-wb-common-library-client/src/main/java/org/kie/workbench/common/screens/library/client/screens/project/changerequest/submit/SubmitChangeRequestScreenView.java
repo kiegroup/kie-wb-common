@@ -19,13 +19,12 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLLabelElement;
 import elemental2.dom.HTMLOptionElement;
 import elemental2.dom.HTMLSelectElement;
 import elemental2.dom.HTMLTextAreaElement;
@@ -93,8 +92,7 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
 
     @Inject
     @DataField("files-summary")
-    @Named("span")
-    private HTMLElement filesSummary;
+    private HTMLLabelElement filesSummary;
 
     @Inject
     @DataField("diff-list")

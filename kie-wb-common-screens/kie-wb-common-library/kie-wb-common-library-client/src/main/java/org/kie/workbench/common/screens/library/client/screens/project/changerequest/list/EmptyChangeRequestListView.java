@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab;
+package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
 import javax.inject.Inject;
 

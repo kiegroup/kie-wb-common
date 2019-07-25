@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab;
+package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
 import java.util.List;
 
@@ -37,13 +37,15 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab.listitem.ChangeRequestListItemView;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
 import org.uberfire.ext.widgets.common.client.select.SelectComponent;
 import org.uberfire.ext.widgets.common.client.select.SelectOption;
 
 @Templated
 public class PopulatedChangeRequestListView implements IsElement,
                                                        PopulatedChangeRequestListPresenter.View {
+
+    private static final String PLACE_HOLDER = "placeholder";
 
     @Inject
     @DataField("indexing-info")
@@ -204,6 +206,11 @@ public class PopulatedChangeRequestListView implements IsElement,
         emptyState.clear();
         indexingInfo.className = "";
         indexingInfo.innerHTML = "";
+    }
+
+    @Override
+    public void setFilterTextPlaceHolder(final String placeHolder) {
+        filterText.setAttribute(PLACE_HOLDER, placeHolder);
     }
 
     private void doSearch() {

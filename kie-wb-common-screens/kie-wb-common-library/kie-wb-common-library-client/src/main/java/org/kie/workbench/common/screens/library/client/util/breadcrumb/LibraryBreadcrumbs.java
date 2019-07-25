@@ -120,12 +120,12 @@ public class LibraryBreadcrumbs {
                                   () -> libraryPlaces.goToSubmitChangeRequestScreen());
     }
 
-    // Spaces -> {spaceName} -> {projectName} -> {branchName} -> {changeRequestSummary}
+    // Spaces -> {spaceName} -> {projectName} -> {branchName} -> Change Request {#id}
     public void setupForChangeRequestReview(final WorkspaceProject project,
-                                            final String changeRequestTitle) {
+                                            final long changeRequestId) {
         setupForProject(project);
         breadcrumbs.addBreadCrumb(LIBRARY_PERSPECTIVE,
-                                  changeRequestTitle,
-                                  () -> libraryPlaces.goToChangeRequestReviewScreen(changeRequestTitle));
+                                  ts.format(LibraryConstants.ChangeRequestAndId, changeRequestId),
+                                  () -> libraryPlaces.goToChangeRequestReviewScreen(changeRequestId));
     }
 }

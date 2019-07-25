@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab;
+package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -98,7 +98,9 @@ public class ChangeRequestListPresenter {
 
         changeRequestService.call((Integer count) -> {
                                       this.empty = count == 0;
-                                      final HTMLElement element = (empty) ? emptyChangeRequestsScreen.getView().getElement() : populatedChangeRequestsScreen.getView().getElement();
+                                      final HTMLElement element = (empty) ?
+                                              emptyChangeRequestsScreen.getView().getElement() :
+                                              populatedChangeRequestsScreen.getView().getElement();
                                       ensureContentSet(element);
                                       busyIndicatorView.hideBusyIndicator();
                                   },

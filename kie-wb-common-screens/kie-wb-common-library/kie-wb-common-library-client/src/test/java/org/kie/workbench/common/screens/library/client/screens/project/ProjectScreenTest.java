@@ -42,7 +42,7 @@ import org.kie.workbench.common.screens.library.client.screens.organizationaluni
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ProjectContributorsListServiceImpl;
 import org.kie.workbench.common.screens.library.client.screens.project.actions.ProjectMainActions;
 import org.kie.workbench.common.screens.library.client.screens.project.branch.delete.DeleteBranchPopUpScreen;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab.ChangeRequestListPresenter;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.ChangeRequestListPresenter;
 import org.kie.workbench.common.screens.library.client.screens.project.delete.DeleteProjectPopUpScreen;
 import org.kie.workbench.common.screens.library.client.screens.project.rename.RenameProjectPopUpScreen;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;

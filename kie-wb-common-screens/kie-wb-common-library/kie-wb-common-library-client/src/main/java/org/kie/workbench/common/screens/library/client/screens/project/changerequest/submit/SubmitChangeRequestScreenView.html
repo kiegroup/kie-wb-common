@@ -30,12 +30,12 @@
             <div class="row">
                 <div class="col-md-6">
                     <div data-field="summary-group" class="form-group">
-                        <label for="summaryInput" class="form-control-label required" data-i18n-key="Summary"></label>
-                        <input type="text" class="form-control" data-field="summary" id="summaryInput"/>
+                        <label for="summaryInput" class="required" data-i18n-key="Summary"></label>
+                        <input type="text" class="form-control" data-field="summary" id="summaryInput" autocomplete="off"/>
                         <div class="help-block" data-field="summary-help-inline"></div>
                     </div>
                     <div data-field="description-group" class="form-group">
-                        <label for="descriptionTextArea" class="form-control-label required" data-i18n-key="Description"></label>
+                        <label for="descriptionTextArea" class="required" data-i18n-key="Description"></label>
                         <textarea class="form-control" data-field="description" id="descriptionTextArea" rows="8"></textarea>
                         <div class="help-block" data-field="description-help-inline"></div>
                     </div>
@@ -49,8 +49,8 @@
                         <span class="pficon pficon-warning-triangle-o"></span>
                         <span data-i18n-key="ConflictWarning"></span>
                     </div>
-                    <div class="form-group field-div">
-                        <span data-field="files-summary" class="field-label"></span>
+                    <div class="form-group">
+                        <label data-field="files-summary"></label>
                     </div>
                 </div>
             </div>

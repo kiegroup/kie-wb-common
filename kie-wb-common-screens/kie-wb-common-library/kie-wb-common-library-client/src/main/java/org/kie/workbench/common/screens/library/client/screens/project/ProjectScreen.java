@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.screens.project;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +35,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.ChangeRequestUpdatedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -46,7 +48,7 @@ import org.kie.workbench.common.screens.library.client.screens.organizationaluni
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ProjectContributorsListServiceImpl;
 import org.kie.workbench.common.screens.library.client.screens.project.actions.ProjectMainActions;
 import org.kie.workbench.common.screens.library.client.screens.project.branch.delete.DeleteBranchPopUpScreen;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab.ChangeRequestListPresenter;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.ChangeRequestListPresenter;
 import org.kie.workbench.common.screens.library.client.screens.project.delete.DeleteProjectPopUpScreen;
 import org.kie.workbench.common.screens.library.client.screens.project.rename.RenameProjectPopUpScreen;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
@@ -285,6 +287,12 @@ public class ProjectScreen {
         }
     }
 
+    public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
+        if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
+            resolveChangeRequestsCount();
+        }
+    }
+
     public void onAssetsUpdated(@Observes UpdatedAssetsEvent event) {
         resolveAssetsCount();
     }
@@ -309,10 +317,12 @@ public class ProjectScreen {
     }
 
     private void resolveChangeRequestsCount() {
+        final List<ChangeRequestStatus> statusList = Collections.singletonList(ChangeRequestStatus.OPEN);
+
         this.changeRequestService.call((Integer count) -> this.setChangeRequestsCount(count))
                 .countChangeRequests(this.workspaceProject.getSpace().getName(),
                                      this.workspaceProject.getRepository().getAlias(),
-                                     ChangeRequestStatus.OPEN);
+                                     statusList);
     }
 
     public void showAssets() {

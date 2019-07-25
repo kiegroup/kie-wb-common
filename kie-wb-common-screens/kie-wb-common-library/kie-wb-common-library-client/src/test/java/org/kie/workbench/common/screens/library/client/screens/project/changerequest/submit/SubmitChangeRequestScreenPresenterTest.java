@@ -29,12 +29,12 @@ import org.guvnor.structure.repositories.changerequest.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestDiff;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.diff.DiffItemPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.services.shared.project.KieModule;
@@ -48,11 +48,9 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.promise.SyncPromises;
-import org.uberfire.rpc.SessionInfo;
 import org.uberfire.spaces.Space;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -82,13 +80,13 @@ public class SubmitChangeRequestScreenPresenterTest {
     private ChangeRequestService changeRequestService;
 
     @Mock
-    private SessionInfo sessionInfo;
-
-    @Mock
     private ProjectController projectController;
 
     @Mock
     private BusyIndicatorView busyIndicatorView;
+
+    @Mock
+    private ChangeRequestUtils changeRequestUtils;
 
     @Mock
     private WorkspaceProject workspaceProject;
@@ -112,7 +110,6 @@ public class SubmitChangeRequestScreenPresenterTest {
         doReturn(Optional.of(new Branch("defaultBranch", mock(Path.class)))).when(repository).getDefaultBranch();
         doReturn(repository).when(workspaceProject).getRepository();
         doReturn(mock(Space.class)).when(workspaceProject).getSpace();
-        doReturn(mock(User.class)).when(sessionInfo).getIdentity();
         doReturn(LibraryConstants.LoadingChangeRequests).when(ts).getTranslation(LibraryConstants.LoadingChangeRequests);
         doReturn(mock(DiffItemPresenter.class)).when(diffItemPresenterInstances).get();
 
@@ -121,10 +118,10 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                                     libraryPlaces,
                                                                     diffItemPresenterInstances,
                                                                     new CallerMock<>(changeRequestService),
-                                                                    sessionInfo,
                                                                     projectController,
                                                                     promises,
-                                                                    busyIndicatorView));
+                                                                    busyIndicatorView,
+                                                                    changeRequestUtils));
     }
 
     @Test
@@ -133,6 +130,13 @@ public class SubmitChangeRequestScreenPresenterTest {
 
         verify(view).init(presenter);
         verify(view).setTitle(anyString());
+    }
+
+    @Test
+    public void onLostFocusTest() {
+        presenter.onLostFocus();
+
+        verify(diffItemPresenterInstances).destroyAll();
     }
 
     @Test
@@ -164,7 +168,7 @@ public class SubmitChangeRequestScreenPresenterTest {
 
         presenter.refreshOnFocus(new SelectPlaceEvent(place));
 
-        verify(diffItemPresenterInstances).destroyAll();
+        verify(projectController, never()).getReadableBranches(workspaceProject);
     }
 
     @Test
@@ -193,9 +197,7 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                                   anyString(),
                                                                   anyString(),
                                                                   anyString(),
-                                                                  anyString(),
-                                                                  anyString(),
-                                                                  anyInt());
+                                                                  anyString());
     }
 
     @Test
@@ -213,9 +215,7 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                                   anyString(),
                                                                   anyString(),
                                                                   anyString(),
-                                                                  anyString(),
-                                                                  anyString(),
-                                                                  anyInt());
+                                                                  anyString());
     }
 
     @Test
@@ -233,19 +233,53 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                                   anyString(),
                                                                   anyString(),
                                                                   anyString(),
+                                                                  anyString());
+    }
+
+    @Test
+    public void submitWhenCannotUpdateBranchTest() throws NoSuchFieldException {
+        final String destinationBranch = "destinationBranch";
+
+        new FieldSetter(presenter,
+                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+        new FieldSetter(presenter,
+                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("destinationBranch"))
+                .set(destinationBranch);
+
+        doReturn("summary").when(view).getSummary();
+        doReturn("description").when(view).getDescription();
+
+        doReturn(promises.resolve(false)).when(projectController)
+                .canSubmitChangeRequest(workspaceProject,
+                                        destinationBranch);
+        presenter.submit();
+
+        verify(changeRequestService, never()).createChangeRequest(anyString(),
                                                                   anyString(),
                                                                   anyString(),
-                                                                  anyInt());
+                                                                  anyString(),
+                                                                  anyString(),
+                                                                  anyString());
     }
 
     @Test
     public void submitSuccessTest() throws NoSuchFieldException {
+        final String destinationBranch = "destinationBranch";
+
         new FieldSetter(presenter,
                         SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
+        new FieldSetter(presenter,
+                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("destinationBranch"))
+                .set(destinationBranch);
 
         doReturn("summary").when(view).getSummary();
         doReturn("description").when(view).getDescription();
+
+        doReturn(promises.resolve(true)).when(projectController)
+                .canSubmitChangeRequest(workspaceProject,
+                                        destinationBranch);
 
         ChangeRequest cr = mock(ChangeRequest.class);
         doReturn(cr).when(changeRequestService).createChangeRequest(anyString(),
@@ -253,9 +287,7 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                                     anyString(),
                                                                     anyString(),
                                                                     anyString(),
-                                                                    anyString(),
-                                                                    anyString(),
-                                                                    anyInt());
+                                                                    anyString());
         presenter.submit();
 
         verify(view).clearErrors();
@@ -266,10 +298,8 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                          anyString(),
                                                          anyString(),
                                                          anyString(),
-                                                         anyString(),
-                                                         anyString(),
-                                                         anyInt());
-        verify(libraryPlaces).goToChangeRequestReviewScreen(anyString());
+                                                         anyString());
+        verify(libraryPlaces).goToProject(workspaceProject);
     }
 
     @Test

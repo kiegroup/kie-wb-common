@@ -120,7 +120,8 @@ public class DiffItemPresenter {
         return view;
     }
 
-    public void setup(final ChangeRequestDiff changeRequestDiff) {
+    public void setup(final ChangeRequestDiff changeRequestDiff,
+                      final boolean warnConflict) {
 
         diff = changeRequestDiff;
         diffMode = resolveDiffMode(diff);
@@ -131,10 +132,12 @@ public class DiffItemPresenter {
 
         if (diffMode == DiffMode.VISUAL) {
             prepareVisualDiff(diff,
-                              resolveDiffFilename);
+                              resolveDiffFilename,
+                              warnConflict);
         } else {
             prepareTextualDiff(diff,
-                               resolveDiffFilename);
+                               resolveDiffFilename,
+                               warnConflict);
         }
 
         ready = true;
@@ -261,17 +264,19 @@ public class DiffItemPresenter {
     }
 
     private void prepareTextualDiff(final ChangeRequestDiff diff,
-                                    final String filename) {
+                                    final String filename,
+                                    final boolean warnConflict) {
         view.setupTextualContent(filename,
                                  resolveChangeTypeText(diff.getChangeType()),
-                                 diff.isConflict());
+                                 warnConflict && diff.isConflict());
     }
 
     private void prepareVisualDiff(final ChangeRequestDiff diff,
-                                   final String filename) {
+                                   final String filename,
+                                   final boolean warnConflict) {
         view.setupCustomContent(filename,
                                 resolveChangeTypeText(diff.getChangeType()),
-                                diff.isConflict());
+                                warnConflict && diff.isConflict());
 
         if (diff.getChangeType() == ChangeType.ADD) {
             view.expandCustomRightContainer();

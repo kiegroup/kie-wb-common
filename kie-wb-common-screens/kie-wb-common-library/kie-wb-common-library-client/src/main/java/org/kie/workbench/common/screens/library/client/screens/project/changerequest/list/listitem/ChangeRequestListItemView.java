@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab.listitem;
+package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -54,10 +54,6 @@ public class ChangeRequestListItemView implements IsElement {
     private HTMLElement fileCounter;
 
     @Inject
-    @DataField("change-request-comment-counter-link")
-    private HTMLAnchorElement commentCounterLink;
-
-    @Inject
     @DataField("change-request-comment-counter")
     @Named("span")
     private HTMLElement commentCounter;
@@ -84,10 +80,6 @@ public class ChangeRequestListItemView implements IsElement {
         this.fileCounter.textContent = fileCounter;
         this.commentCounter.textContent = commentCounter;
         this.titleLink.onclick = e -> {
-            select.execute();
-            return null;
-        };
-        this.commentCounterLink.onclick = e -> {
             select.execute();
             return null;
         };

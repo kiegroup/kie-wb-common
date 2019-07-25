@@ -166,8 +166,10 @@ public class DiffItemView implements DiffItemPresenter.View,
 
     @Override
     public void removeTextualContent() {
-        domUtil.removeAllElementChildren(textualDiffContainer);
-        this.diff2Html = null;
+        if (this.diff2Html != null) {
+            domUtil.removeAllElementChildren(textualDiffContainer);
+            this.diff2Html = null;
+        }
     }
 
     @Override

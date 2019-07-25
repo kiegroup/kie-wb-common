@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab;
+package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
 import java.util.Collections;
 import java.util.Date;
@@ -34,7 +34,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.tab.listitem.ChangeRequestListItemView;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
+import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.mockito.Mock;
@@ -89,6 +90,9 @@ public class PopulatedChangeRequestListPresenterTest {
     private BusyIndicatorView busyIndicatorView;
 
     @Mock
+    private ChangeRequestUtils changeRequestUtils;
+
+    @Mock
     private WorkspaceProject workspaceProject;
 
     private Promises promises;
@@ -110,7 +114,8 @@ public class PopulatedChangeRequestListPresenterTest {
                                                                      ts,
                                                                      changeRequestListItemViewInstances,
                                                                      new CallerMock<>(changeRequestService),
-                                                                     busyIndicatorView));
+                                                                     busyIndicatorView,
+                                                                     changeRequestUtils));
 
         new FieldSetter(presenter,
                         PopulatedChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
@@ -135,7 +140,7 @@ public class PopulatedChangeRequestListPresenterTest {
                 .when(projectController).canSubmitChangeRequest(workspaceProject);
         doReturn(10).when(changeRequestService).countChangeRequests(anyString(),
                                                                     anyString(),
-                                                                    any(ChangeRequestStatus.class),
+                                                                    anyListOf(ChangeRequestStatus.class),
                                                                     anyString());
 
         presenter.postConstruct();
@@ -154,15 +159,17 @@ public class PopulatedChangeRequestListPresenterTest {
 
         ChangeRequest cr = mock(ChangeRequest.class);
         doReturn(ChangeRequestStatus.OPEN).when(cr).getStatus();
-        doReturn(Collections.emptyList()).when(cr).getComments();
+        doReturn(0).when(cr).getCommentsCount();
         doReturn(new Date()).when(cr).getCreatedDate();
         List<ChangeRequest> crList = Collections.nCopies(10, cr);
+
+        doReturn("Open").when(changeRequestUtils).formatStatus(ChangeRequestStatus.OPEN);
 
         doReturn(crList).when(changeRequestService).getChangeRequests(anyString(),
                                                                       anyString(),
                                                                       anyInt(),
                                                                       anyInt(),
-                                                                      any(ChangeRequestStatus.class),
+                                                                      anyListOf(ChangeRequestStatus.class),
                                                                       anyString());
 
         presenter.postConstruct();
@@ -291,7 +298,7 @@ public class PopulatedChangeRequestListPresenterTest {
                                                        anyString(),
                                                        anyInt(),
                                                        anyInt(),
-                                                       any(ChangeRequestStatus.class),
+                                                       anyListOf(ChangeRequestStatus.class),
                                                        anyString());
     }
 
