@@ -107,7 +107,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Si
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentValue;
@@ -399,7 +398,7 @@ public class BPMNDirectDiagramMarshallerTest {
 
         ServiceTask serviceTask = (ServiceTask) log.getContent().getDefinition();
 
-        validateServiceTask(serviceTask, "12/25/1983");
+        validateServiceTask(serviceTask.getExecutionSet(), "12/25/1983");
     }
 
     @Test
@@ -423,20 +422,18 @@ public class BPMNDirectDiagramMarshallerTest {
         ServiceTask wsTask = (ServiceTask) ws.getContent().getDefinition();
         ServiceTask logTask = (ServiceTask) log.getContent().getDefinition();
 
-        validateServiceTask(emailTask, "12/25/1983");
-        validateServiceTask(restTask, "12/25/1983");
-        validateServiceTask(wsTask, "12/25/1983");
-        validateServiceTask(logTask, "12/25/1983");
+        validateServiceTask(emailTask.getExecutionSet(), "12/25/1983");
+        validateServiceTask(restTask.getExecutionSet(), "12/25/1983");
+        validateServiceTask(wsTask.getExecutionSet(), "12/25/1983");
+        validateServiceTask(logTask.getExecutionSet(), "12/25/1983");
     }
 
-    private void validateServiceTask(ServiceTask serviceTask,
+    private void validateServiceTask(ServiceTaskExecutionSet serviceTaskExecutionSet,
                                      String slaDueDateValue) {
-        ServiceTaskExecutionSet serviceTaskExecutionSet = serviceTask.getExecutionSet();
         assertNotNull(serviceTaskExecutionSet);
 
-        SLADueDate slaDueDate = serviceTaskExecutionSet.getSlaDueDate();
-        assertNotNull(slaDueDate);
-        assertEquals(slaDueDate.getValue(), slaDueDateValue);
+        assertNotNull(serviceTaskExecutionSet.getSlaDueDate());
+        assertEquals(serviceTaskExecutionSet.getSlaDueDate().getValue(), slaDueDateValue);
     }
 
     @Test
