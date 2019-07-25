@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.InterruptingErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -27,7 +26,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
+public class StartErrorEventTest extends StartEventTest<StartErrorEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/startErrorEvents.bpmn";
 
@@ -36,11 +35,9 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
     private static final String FILLED_SUBPROCESS_LEVEL_EVENT_ID = "25676AF3-FD4D-4A07-BA58-4D0E331D0579";
     private static final String EMPTY_SUBPROCESS_LEVEL_EVENT_ID = "1BB182E3-B7B9-45DB-8579-66A2F1B4DC53";
 
-    private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 11;
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
-    public StartErrorEventTest(Marshaller marshallerType) {
-        super(marshallerType);
-    }
+    private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 11;
 
     @Test
     @Override
@@ -55,7 +52,7 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
 
         StartErrorEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, getStartEventType());
         assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
-        assertErrorEventExecutionSet(filledTop.getExecutionSet(), ERROR_REF, INTERRUPTING);
+        assertErrorEventExecutionSet(filledTop.getExecutionSet(), ERROR_REF, INTERRUPTING, SLA_DUE_DATE);
         assertDataIOSet(filledTop.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
@@ -67,7 +64,7 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
 
         StartErrorEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, getStartEventType());
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertErrorEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING);
+        assertErrorEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, EMPTY_VALUE);
         assertDataIOSet(emptyTop.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -84,7 +81,7 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
 
         StartErrorEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, getStartEventType());
         assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
-        assertErrorEventExecutionSet(filledSubprocess.getExecutionSet(), EVENT_REF, INTERRUPTING);
+        assertErrorEventExecutionSet(filledSubprocess.getExecutionSet(), EVENT_REF, INTERRUPTING, SLA_DUE_DATE);
         assertDataIOSet(filledSubprocess.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
@@ -96,7 +93,7 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
 
         StartErrorEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, getStartEventType());
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertErrorEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING);
+        assertErrorEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING, EMPTY_VALUE);
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 
@@ -130,10 +127,12 @@ public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
         return EMPTY_SUBPROCESS_LEVEL_EVENT_ID;
     }
 
-    private void assertErrorEventExecutionSet(InterruptingErrorEventExecutionSet executionSet, String eventName, boolean isInterrupting) {
+    private void assertErrorEventExecutionSet(InterruptingErrorEventExecutionSet executionSet, String eventName, boolean isInterrupting, String slaDueDate) {
         assertNotNull(executionSet);
         assertNotNull(executionSet.getErrorRef());
         assertEquals(eventName, executionSet.getErrorRef().getValue());
-        assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
+
+        assertStartEventIsInterrupting(executionSet, isInterrupting);
+        assertStartEventSlaDueDate(executionSet, slaDueDate);
     }
 }

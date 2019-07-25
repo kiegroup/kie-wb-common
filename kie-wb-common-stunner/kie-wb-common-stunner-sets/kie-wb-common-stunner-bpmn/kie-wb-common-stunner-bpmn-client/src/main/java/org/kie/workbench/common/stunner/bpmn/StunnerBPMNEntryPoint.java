@@ -25,15 +25,19 @@ import org.jboss.errai.ui.shared.api.annotations.Bundle;
 import org.kie.workbench.common.stunner.bpmn.client.forms.filters.AssociationFilterProvider;
 import org.kie.workbench.common.stunner.bpmn.client.forms.filters.CatchingIntermediateEventFilterProvider;
 import org.kie.workbench.common.stunner.bpmn.client.forms.filters.StartEventFilterProvider;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateConditionalEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.StartCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -56,17 +60,21 @@ public class StunnerBPMNEntryPoint {
 
     @PostConstruct
     public void init() {
+        FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartNoneEvent.class));
+        FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartCompensationEvent.class));
         FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartSignalEvent.class));
         FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartMessageEvent.class));
         FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartErrorEvent.class));
         FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartTimerEvent.class));
         FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartConditionalEvent.class));
         FormFiltersProviderFactory.registerProvider(new StartEventFilterProvider(sessionManager, StartEscalationEvent.class));
-        FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateSignalEventCatching.class));
         FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateTimerEvent.class));
+        FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateErrorEventCatching.class));
         FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateConditionalEvent.class));
-        FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateMessageEventCatching.class));
+        FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateCompensationEvent.class));
+        FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateSignalEventCatching.class));
         FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateEscalationEvent.class));
+        FormFiltersProviderFactory.registerProvider(new CatchingIntermediateEventFilterProvider(sessionManager, IntermediateMessageEventCatching.class));
         FormFiltersProviderFactory.registerProvider(new AssociationFilterProvider());
 
         //registering managed filters instances

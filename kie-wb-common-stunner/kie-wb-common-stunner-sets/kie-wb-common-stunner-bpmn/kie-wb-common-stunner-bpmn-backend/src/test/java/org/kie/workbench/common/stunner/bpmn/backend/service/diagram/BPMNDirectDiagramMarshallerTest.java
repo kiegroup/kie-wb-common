@@ -47,9 +47,9 @@ import org.jboss.drools.MetaDataType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.BPMNTestDefinitionFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.workitem.service.WorkItemDefinitionBackendService;
@@ -66,6 +66,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EventGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
@@ -120,26 +121,15 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
-import org.kie.workbench.common.stunner.core.api.DefinitionManager;
-import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionSetAdapter;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertyAdapter;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertySetAdapter;
+import org.kie.workbench.common.stunner.core.StunnerTestingGraphAPI;
+import org.kie.workbench.common.stunner.core.backend.StunnerTestingGraphBackendAPI;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
-import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
-import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.factory.impl.EdgeFactoryImpl;
-import org.kie.workbench.common.stunner.core.factory.impl.GraphFactoryImpl;
-import org.kie.workbench.common.stunner.core.factory.impl.NodeFactoryImpl;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
-import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -152,13 +142,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
-import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
-import org.kie.workbench.common.stunner.core.rule.RuleManager;
-import org.kie.workbench.common.stunner.core.rule.RuleSet;
-import org.kie.workbench.common.stunner.core.rule.violations.DefaultRuleViolations;
-import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -174,8 +157,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNDirectDiagramMarshallerTest {
-
-    static final String BPMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
 
     private static final String BPMN_BASIC = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/basic.bpmn";
     private static final String BPMN_EVALUATION = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/evaluation.bpmn";
@@ -245,101 +226,37 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String ARIS_COLLAPSED_SUBPROCESS_IN_LANE = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/aris/ARIS_COLLAPSED_SUBPROCESS_IN_LANE.bpmn";
     private static final String BPMN_LOG_TASK_JBPM_DESIGNER = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/logtask.bpmn";
     private static final String BPMN_SERVICETASKS_JBPM_DESIGNER = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/serviceTasksJBPMDeginer.bpmn";
+    private static final String BPMN_EVENT_GATEWAY = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/eventGateway.bpmn";
 
     private static final String NEW_LINE = System.lineSeparator();
 
-    @Mock
-    private DefinitionManager definitionManager;
-
-    @Mock
-    private AdapterManager adapterManager;
-
-    @Mock
-    private AdapterRegistry adapterRegistry;
-
-    @Mock
-    private RuleManager rulesManager;
-
-    private BackendFactoryManager applicationFactoryManager;
-
-    private WorkItemDefinitionRegistry workItemDefinitionMockRegistry;
+    private StunnerTestingGraphAPI stunnerAPI;
+    private XMLEncoderDiagramMetadataMarshaller xmlEncoder;
+    private WorkItemDefinitionRegistry widRegistry;
+    private WorkItemDefinitionBackendService widService;
 
     private BPMNDirectDiagramMarshaller tested;
 
-    private Diagram<Graph, Metadata> unmarshall(String s) throws Exception {
-        return Unmarshalling.unmarshall(tested, s);
-    }
-
-    private Diagram<Graph, Metadata> unmarshall(ByteArrayInputStream s) throws Exception {
-        return Unmarshalling.unmarshall(tested, s);
-    }
-
     @Before
     @SuppressWarnings("unchecked")
-    public void setup() {
-        // Work Items.
-        workItemDefinitionMockRegistry = new WorkItemDefinitionMockRegistry();
-
-        // Graph utils.
-        when(definitionManager.adapters()).thenReturn(adapterManager);
-        when(adapterManager.registry()).thenReturn(adapterRegistry);
-        // initApplicationFactoryManagerAlt();
-        when(rulesManager.evaluate(any(RuleSet.class),
-                                   any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
-
-        DefinitionUtils definitionUtils = new DefinitionUtils(definitionManager,
-                                                              null); // TODO!
-        TestScopeModelFactory testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
-        // Definition manager.
-        final BackendDefinitionAdapter definitionAdapter = new BackendDefinitionAdapter(definitionUtils);
-        final BackendDefinitionSetAdapter definitionSetAdapter = new BackendDefinitionSetAdapter(definitionAdapter);
-        final BackendPropertySetAdapter propertySetAdapter = new BackendPropertySetAdapter();
-        final BackendPropertyAdapter propertyAdapter = new BackendPropertyAdapter();
-        mockAdapterManager(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
-        mockAdapterRegistry(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
-        applicationFactoryManager = new MockApplicationFactoryManager(
-                definitionManager,
-                new GraphFactoryImpl(definitionManager),
-                testScopeModelFactory,
-                new EdgeFactoryImpl(definitionManager),
-                new NodeFactoryImpl(definitionUtils)
-        );
-
-        GraphCommandManagerImpl commandManager = new GraphCommandManagerImpl(null,
-                                                                             null,
-                                                                             null);
-        GraphCommandFactory commandFactory = new GraphCommandFactory();
-
-        // The work item definition service.
-        WorkItemDefinitionBackendService widService = mock(WorkItemDefinitionBackendService.class);
-        when(widService.execute(any(Metadata.class))).thenReturn(workItemDefinitionMockRegistry.items());
-
-        // The tested BPMN marshaller.
-        tested = new BPMNDirectDiagramMarshaller(
-                new XMLEncoderDiagramMetadataMarshaller(),
-                definitionManager,
-                rulesManager,
-                widService,
-                applicationFactoryManager,
-                commandFactory,
-                commandManager);
+    public void setup() throws Exception {
+        // Setup context.
+        widRegistry = new WorkItemDefinitionMockRegistry();
+        widService = mock(WorkItemDefinitionBackendService.class);
+        when(widService.execute(any(Metadata.class))).thenReturn(widRegistry.items());
+        stunnerAPI = StunnerTestingGraphBackendAPI.build(BPMNDefinitionSet.class,
+                                                         new BPMNTestDefinitionFactory(widRegistry));
+        xmlEncoder = new XMLEncoderDiagramMetadataMarshaller();
+        // Setup tested instance.
+        tested = new BPMNDirectDiagramMarshaller(xmlEncoder,
+                                                 stunnerAPI.getDefinitionManager(),
+                                                 stunnerAPI.getRuleManager(),
+                                                 widService,
+                                                 stunnerAPI.getFactoryManager(),
+                                                 stunnerAPI.commandFactory,
+                                                 stunnerAPI.commandManager);
     }
 
-    private void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
-        when(adapterRegistry.getDefinitionSetAdapter(any(Class.class))).thenReturn(definitionSetAdapter);
-        when(adapterRegistry.getDefinitionAdapter(any(Class.class))).thenReturn(definitionAdapter);
-        when(adapterRegistry.getPropertySetAdapter(any(Class.class))).thenReturn(propertySetAdapter);
-        when(adapterRegistry.getPropertyAdapter(any(Class.class))).thenReturn(propertyAdapter);
-    }
-
-    private void mockAdapterManager(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
-        when(adapterManager.forDefinitionSet()).thenReturn(definitionSetAdapter);
-        when(adapterManager.forDefinition()).thenReturn(definitionAdapter);
-        when(adapterManager.forPropertySet()).thenReturn(propertySetAdapter);
-        when(adapterManager.forProperty()).thenReturn(propertyAdapter);
-    }
-
-    // 4 nodes expected: BPMNDiagram, StartNode, Task and EndNode
     @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallBasic() throws Exception {
@@ -597,6 +514,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      startNoneEvent.getGeneral().getName().getValue());
         assertEquals("MyStartNoneEventDocumentation",
                      startNoneEvent.getGeneral().getDocumentation().getValue());
+        assertEquals("12/25/1983", startNoneEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -610,8 +528,8 @@ public class BPMNDirectDiagramMarshallerTest {
         Node<? extends Definition, ?> startTimerEventNode = diagram.getGraph().getNode("_49ADC988-B63D-4AEB-B811-67969F305FD0");
         StartTimerEvent startTimerEvent = (StartTimerEvent) startTimerEventNode.getContent().getDefinition();
         IsInterrupting isInterrupting = startTimerEvent.getExecutionSet().getIsInterrupting();
-        assertEquals(false,
-                     isInterrupting.getValue());
+        assertEquals(false, isInterrupting.getValue());
+        assertEquals("12/25/1983", startTimerEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -628,6 +546,7 @@ public class BPMNDirectDiagramMarshallerTest {
         SignalRef signalRef = startSignalEvent.getExecutionSet().getSignalRef();
         assertEquals("sig1",
                      signalRef.getValue());
+        assertEquals("12/25/1983", startSignalEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -648,6 +567,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(startErrorEvent.getExecutionSet().getErrorRef());
         assertEquals("MyError",
                      startErrorEvent.getExecutionSet().getErrorRef().getValue());
+        assertEquals("12/25/1983", startErrorEvent.getExecutionSet().getSlaDueDate().getValue());
 
         DataIOSet dataIOSet = startErrorEvent.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
@@ -672,6 +592,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      messageRef.getValue());
         assertEquals(true,
                      isInterrupting.getValue());
+        assertEquals("12/25/1983", startMessageEvent.getExecutionSet().getSlaDueDate().getValue());
         DataIOSet dataIOSet = startMessageEvent.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertEquals("||StartMessageEventOutputVar1:String||[dout]StartMessageEventOutputVar1->var1",
@@ -702,6 +623,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      startConditionalEvent.getExecutionSet().getConditionExpression().getValue().getScript());
         assertEquals(true,
                      startConditionalEvent.getExecutionSet().getIsInterrupting().getValue());
+        assertEquals("12/25/1983", startConditionalEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -726,6 +648,8 @@ public class BPMNDirectDiagramMarshallerTest {
                      startEscalationEvent.getExecutionSet().getEscalationRef().getValue());
         assertEquals(true,
                      startEscalationEvent.getExecutionSet().getIsInterrupting().getValue());
+        assertEquals("12/25/1983", startEscalationEvent.getExecutionSet().getSlaDueDate().getValue());
+
         DataIOSet dataIOSet = startEscalationEvent.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertEquals("||escalationOutput:String||[dout]escalationOutput->processVar1",
@@ -749,7 +673,8 @@ public class BPMNDirectDiagramMarshallerTest {
                      startCompensationEvent.getGeneral().getName().getValue());
         assertEquals("StartCompensationEventDocumentation",
                      startCompensationEvent.getGeneral().getDocumentation().getValue());
-        assertFalse(startCompensationEvent.getIsInterrupting().getValue());
+        assertFalse(startCompensationEvent.getExecutionSet().getIsInterrupting().getValue());
+        assertEquals("12/25/1983", startCompensationEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -774,6 +699,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      intermediateTimerEvent.getExecutionSet().getTimerSettings().getValue().getTimeDate());
         assertEquals("abc",
                      intermediateTimerEvent.getExecutionSet().getTimerSettings().getValue().getTimeDuration());
+        assertEquals("12/25/1983", intermediateTimerEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -800,6 +726,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      catchingConditionalEvent.getExecutionSet().getConditionExpression().getValue().getScript());
         assertEquals(true,
                      catchingConditionalEvent.getExecutionSet().getCancelActivity().getValue());
+        assertEquals("12/25/1983", catchingConditionalEvent.getExecutionSet().getSlaDueDate().getValue());
 
         Node<? extends Definition, ?> boundaryEventNode = diagram.getGraph().getNode("_FD2DB546-4A85-4C50-9003-548A9A354F97");
         assertNotNull(boundaryEventNode);
@@ -817,6 +744,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      boundaryConditionalEvent.getExecutionSet().getConditionExpression().getValue().getScript());
         assertEquals(true,
                      boundaryConditionalEvent.getExecutionSet().getCancelActivity().getValue());
+        assertEquals("12/25/1983", boundaryConditionalEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -845,6 +773,7 @@ public class BPMNDirectDiagramMarshallerTest {
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertEquals("||escalationOutput:String||[dout]escalationOutput->processVar1",
                      assignmentsInfo.getValue());
+        assertEquals("12/25/1983", intermediateEscalationEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -864,6 +793,9 @@ public class BPMNDirectDiagramMarshallerTest {
                      intermediateCompensationEvent.getGeneral().getName().getValue());
         assertEquals("IntermediateCompensationEventDocumentation",
                      intermediateCompensationEvent.getGeneral().getDocumentation().getValue());
+        assertEquals("IntermediateCompensationEventDocumentation",
+                     intermediateCompensationEvent.getGeneral().getDocumentation().getValue());
+        assertEquals("12/25/1983", intermediateCompensationEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -885,6 +817,8 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("IntermediateCompensationEventDocumentation",
                      intermediateCompensationEvent.getGeneral().getDocumentation().getValue());
 
+        assertEquals("12/25/1983", intermediateCompensationEvent.getExecutionSet().getSlaDueDate().getValue());
+
         Node<? extends Definition, ?> userTask1Node = diagram.getGraph().getNode("_C18CC8D2-D7CA-457D-9258-01D1E6973A86");
         assertNotNull(userTask1Node);
         UserTask userTask1 = (UserTask) userTask1Node.getContent().getDefinition();
@@ -905,7 +839,7 @@ public class BPMNDirectDiagramMarshallerTest {
 
         Edge associationEdge = userTask2Node.getInEdges().stream()
                 .filter(edge -> edge.getUUID().equals("_B41D28D1-FC39-40E8-BF89-C57649989014"))
-                .map(Element::asEdge)
+                .map(e -> ((Element) e).asEdge())
                 .findFirst().orElse(null);
         assertNotNull(associationEdge);
         assertNotNull(associationEdge.getContent());
@@ -939,6 +873,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      intermediateSignalEventCatching.getExecutionSet().getCancelActivity().getValue());
         assertEquals("MySignal",
                      intermediateSignalEventCatching.getExecutionSet().getSignalRef().getValue());
+        assertEquals("12/25/1983", intermediateSignalEventCatching.getExecutionSet().getSlaDueDate().getValue());
 
         DataIOSet dataIOSet = intermediateSignalEventCatching.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
@@ -966,6 +901,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      intermediateErrorEventCatching.getExecutionSet().getCancelActivity().getValue());
         assertEquals("MyError",
                      intermediateErrorEventCatching.getExecutionSet().getErrorRef().getValue());
+        assertEquals("12/25/1983", intermediateErrorEventCatching.getExecutionSet().getSlaDueDate().getValue());
 
         DataIOSet dataIOSet = intermediateErrorEventCatching.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
@@ -1067,6 +1003,7 @@ public class BPMNDirectDiagramMarshallerTest {
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertEquals("||IntermediateMessageEventCatchingOutputVar1:String||[dout]IntermediateMessageEventCatchingOutputVar1->var1",
                      assignmentsInfo.getValue());
+        assertEquals("12/25/1983", intermediateMessageEventCatching.getExecutionSet().getSlaDueDate().getValue());
     }
 
     @Test
@@ -1127,6 +1064,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(eventExecutionSet.getErrorRef());
         assertEquals("Error1", eventExecutionSet.getErrorRef().getValue());
         assertEquals(true, eventExecutionSet.getIsInterrupting().getValue());
+        assertEquals("12/25/1983", eventExecutionSet.getSlaDueDate().getValue());
 
         DataIOSet eventDataIOSet = startErrorEvent.getDataIOSet();
         AssignmentsInfo assignmentsInfo = eventDataIOSet.getAssignmentsinfo();
@@ -1145,6 +1083,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(emptyExecutionSet.getErrorRef());
         assertEquals("", emptyExecutionSet.getErrorRef().getValue());
         assertEquals(false, emptyExecutionSet.getIsInterrupting().getValue());
+        assertEquals("", emptyExecutionSet.getSlaDueDate().getValue());
 
         DataIOSet emptyDataIOSet = emptyErrorEvent.getDataIOSet();
         AssignmentsInfo emptyAssignmentsInfo = emptyDataIOSet.getAssignmentsinfo();
@@ -2365,6 +2304,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<drools:metaValue><![CDATA[MyStartNoneEvent]]></drools:metaValue>"));
         assertTrue(result.contains("<![CDATA[MyStartNoneEventDocumentation]]></bpmn2:documentation>"));
         assertTrue(result.contains("</bpmn2:startEvent>"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2379,6 +2322,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("name=\"StartTimer\" isInterrupting=\"false\">"));
         assertTrue(result.contains("P4H</bpmn2:timeDuration>"));
         assertTrue(result.contains("language=\"cron\">*/2 * * * *</bpmn2:timeCycle>"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2395,6 +2342,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:signal id=\"_47718ea6-a6a4-3ceb-9e93-2111bdad0b8c\" name=\"sig1\"/>"));
         assertTrue(result.contains("<bpmn2:signalEventDefinition"));
         assertTrue(result.contains("signalRef=\"_47718ea6-a6a4-3ceb-9e93-2111bdad0b8c\"/>"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2415,6 +2366,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("![CDATA[StartConditionalEventConditionExpression]]></bpmn2:condition>"));
         assertTrue(result.contains("</bpmn2:condition>"));
         assertTrue(result.contains("</bpmn2:conditionalEventDefinition>"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2434,6 +2389,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("drools:esccode=\"EscalationCode\""));
         assertTrue(result.contains("<bpmn2:escalation"));
         assertTrue(result.contains("escalationCode=\"EscalationCode\""));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2451,6 +2410,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<drools:metaValue><![CDATA[StartCompensationEventName]]></drools:metaValue>"));
         assertTrue(result.contains("<![CDATA[StartCompensationEventDocumentation]]></bpmn2:documentation>"));
         assertTrue(result.contains("<bpmn2:compensateEventDefinition"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2470,6 +2433,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:error"));
         assertTrue(result.contains("id=\"MyError\""));
         assertTrue(result.contains("errorCode=\"MyError\""));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2502,6 +2469,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:message "));
         assertTrue(result.contains(" name=\"msgref\""));
         assertTrue(result.contains("<bpmn2:messageEventDefinition"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2534,6 +2505,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:timeDate"));
         assertTrue(result.contains("<bpmn2:timeDuration"));
         assertTrue(result.contains("<bpmn2:timeCycle"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2551,6 +2526,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains(" signalRef=\"_3b677877-9be0-3fe7-bfc4-94a862fdc919\""));
         assertTrue(result.contains("<bpmn2:signal"));
         assertTrue(result.contains("name=\"MySignal\""));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2569,6 +2548,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:error"));
         assertTrue(result.contains("id=\"MyError\""));
         assertTrue(result.contains("errorCode=\"MyError\""));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -2656,6 +2639,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:message "));
         assertTrue(result.contains(" name=\"msgref1\""));
         assertTrue(result.contains("<bpmn2:messageEventDefinition"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -3189,6 +3176,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("![CDATA[BoundaryConditionalEventCompletionCondition]]></bpmn2:condition>"));
         assertTrue(result.contains("</bpmn2:condition>"));
         assertTrue(result.contains("</bpmn2:conditionalEventDefinition>"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -3209,6 +3200,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("drools:esccode=\"EscalationCode\""));
         assertTrue(result.contains("<bpmn2:escalation"));
         assertTrue(result.contains("escalationCode=\"EscalationCode\""));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -3226,6 +3221,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<drools:metaValue><![CDATA[IntermediateCompensationEventName]]></drools:metaValue>"));
         assertTrue(result.contains("<![CDATA[IntermediateCompensationEventDocumentation]]></bpmn2:documentation>"));
         assertTrue(result.contains("<bpmn2:compensateEventDefinition"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -3250,6 +3249,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("targetRef=\"_7EF24042-BD4E-4843-9874-8AC3F7AFF3CD\""));
         assertTrue(result.contains("<![CDATA[AssociationDocumentation]]></bpmn2:documentation>"));
         assertTrue(result.contains("</bpmn2:association>"));
+
+        assertTrue(result.contains("<drools:metaData name=\"customSLADueDate\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[12/25/1983]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
     }
 
     @Test
@@ -3810,6 +3813,59 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("NotCompletedReassign", reassignment.getType());
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallEventGateway() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_GATEWAY);
+        assertDiagram(diagram, 7);
+        assertEquals(diagram.getMetadata().getTitle(), "TestEventGateway");
+        Graph graph = diagram.getGraph();
+        Node<? extends Definition, ?> gatewayNode = graph.getNode("_AFDF2596-C521-4753-AC22-2DCCAD391F98");
+        assertTrue(gatewayNode.getContent().getDefinition() instanceof EventGateway);
+        EventGateway eventGateway = (EventGateway) gatewayNode.getContent().getDefinition();
+        assertEquals("EventGatewayName", eventGateway.getGeneral().getName().getValue());
+        assertEquals("EventGatewayDocumentation", eventGateway.getGeneral().getDocumentation().getValue());
+        SequenceFlow inSequenceFlow = gatewayNode.getInEdges().stream()
+                .filter(edge -> "_E805280D-5862-4F56-B02A-E34F7D519050".equals(edge.getUUID()))
+                .map(edge -> (SequenceFlow) ((ViewConnector) edge.getContent()).getDefinition())
+                .findFirst().orElseThrow(() -> new Exception("Expected sequenceFlow: _E805280D-5862-4F56-B02A-E34F7D519050 was not found"));
+        SequenceFlow outSequenceFlow1 = gatewayNode.getOutEdges().stream()
+                .filter(edge -> "_CCEF6352-760D-4641-B9C9-0B01FD4DD704".equals(edge.getUUID()))
+                .map(edge -> (SequenceFlow) ((ViewConnector) edge.getContent()).getDefinition())
+                .findFirst().orElseThrow(() -> new Exception("Expected sequenceFlow: _CCEF6352-760D-4641-B9C9-0B01FD4DD704 was not found"));
+        SequenceFlow outSequenceFlow2 = gatewayNode.getOutEdges().stream()
+                .filter(edge -> "_1CD28E0D-1910-45FE-9AEC-932FA28C77AA".equals(edge.getUUID()))
+                .map(edge -> (SequenceFlow) ((ViewConnector) edge.getContent()).getDefinition())
+                .findFirst().orElseThrow(() -> new Exception("Expected sequenceFlow: _1CD28E0D-1910-45FE-9AEC-932FA28C77AA was not found"));
+
+        assertNotNull(inSequenceFlow);
+        assertEquals("inSequence", inSequenceFlow.getGeneral().getName().getValue());
+        assertNotNull(outSequenceFlow1);
+        assertEquals("outSequence1", outSequenceFlow1.getGeneral().getName().getValue());
+        assertNotNull(outSequenceFlow2);
+        assertEquals("outSequence2", outSequenceFlow2.getGeneral().getName().getValue());
+    }
+
+    @Test
+    public void testMarshallEventGateway() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_GATEWAY);
+        assertDiagram(diagram, 7);
+
+        String result = tested.marshall(diagram);
+        assertDiagram(result, 1, 6, 5);
+
+        assertTrue(result.contains("<bpmn2:eventBasedGateway id=\"_AFDF2596-C521-4753-AC22-2DCCAD391F98\" name=\"EventGatewayName\" gatewayDirection=\"Diverging\">"));
+        assertTrue(result.contains("<![CDATA[EventGatewayDocumentation]]></bpmn2:documentation>"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[EventGatewayName]]></drools:metaValue>"));
+        assertTrue(result.contains("<bpmn2:incoming>_E805280D-5862-4F56-B02A-E34F7D519050</bpmn2:incoming>"));
+        assertTrue(result.contains("<bpmn2:outgoing>_1CD28E0D-1910-45FE-9AEC-932FA28C77AA</bpmn2:outgoing>"));
+        assertTrue(result.contains("<bpmn2:outgoing>_CCEF6352-760D-4641-B9C9-0B01FD4DD704</bpmn2:outgoing>"));
+        assertTrue(result.contains("</bpmn2:eventBasedGateway>"));
+        assertTrue(result.contains("<bpmn2:sequenceFlow id=\"_E805280D-5862-4F56-B02A-E34F7D519050\" name=\"inSequence\" sourceRef=\"_FC7A4CF4-08CC-4F85-A518-34E67416160C\" targetRef=\"_AFDF2596-C521-4753-AC22-2DCCAD391F98\">"));
+        assertTrue(result.contains("<bpmn2:sequenceFlow id=\"_CCEF6352-760D-4641-B9C9-0B01FD4DD704\" name=\"outSequence1\" sourceRef=\"_AFDF2596-C521-4753-AC22-2DCCAD391F98\" targetRef=\"_F2D949C2-84FE-4AF9-A4B2-C2DC917C1050\">"));
+        assertTrue(result.contains("<bpmn2:sequenceFlow id=\"_1CD28E0D-1910-45FE-9AEC-932FA28C77AA\" name=\"outSequence2\" sourceRef=\"_AFDF2596-C521-4753-AC22-2DCCAD391F98\" targetRef=\"_19AA4F91-684B-495F-9880-DA506E0696FE\">"));
+    }
+
     private List<Node> getNodes(Diagram<Graph, Metadata> diagram) {
         Graph graph = diagram.getGraph();
         assertNotNull(graph);
@@ -4018,5 +4074,13 @@ public class BPMNDirectDiagramMarshallerTest {
             }
         }
         return null;
+    }
+
+    private Diagram<Graph, Metadata> unmarshall(String s) throws Exception {
+        return Unmarshalling.unmarshall(tested, s);
+    }
+
+    private Diagram<Graph, Metadata> unmarshall(ByteArrayInputStream s) throws Exception {
+        return Unmarshalling.unmarshall(tested, s);
     }
 }

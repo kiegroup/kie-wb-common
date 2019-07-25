@@ -43,6 +43,7 @@ import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.organizationalunit.config.RepositoryInfo;
+import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryCopier;
 import org.guvnor.structure.server.repositories.RepositoryFactory;
@@ -93,14 +94,16 @@ public class ExamplesServiceImpl extends BaseProjectImportService implements Exa
                                final MetadataService metadataService,
                                final Event<NewProjectEvent> newProjectEvent,
                                final ProjectScreenService projectScreenService,
-                               final ImportProjectValidators validators) {
+                               final ImportProjectValidators validators,
+                               final SpaceConfigStorageRegistry spaceConfigStorageRegistry) {
 
         super(ioService,
               metadataService,
               validators,
               moduleService,
               projectService,
-              projectScreenService);
+              projectScreenService,
+              spaceConfigStorageRegistry);
 
         this.ioService = ioService;
         this.repositoryFactory = repositoryFactory;
@@ -327,32 +330,35 @@ public class ExamplesServiceImpl extends BaseProjectImportService implements Exa
     protected WorkspaceProjectContextChangeEvent importProjects(OrganizationalUnit targetOU,
                                                                 List<ImportProject> projects) {
 
-        WorkspaceProject firstExampleProject = null;
+        return spaceConfigStorageRegistry.getBatch(targetOU.getSpace().getName())
+                .run(context -> {
+                    WorkspaceProject firstExampleProject = null;
 
-        for (final ImportProject importProject : projects) {
-            try {
-                final Repository targetRepository = repositoryCopier.copy(targetOU,
-                                                                          "example-" + importProject.getName(),
-                                                                          importProject.getRoot());
+                    for (final ImportProject importProject : projects) {
+                        try {
+                            final Repository targetRepository = repositoryCopier.copy(targetOU,
+                                                                                      "example-" + importProject.getName(),
+                                                                                      importProject.getRoot());
 
-                // Signal creation of new Project (Creation of OU and Repository, if applicable,
-                // are already handled in the corresponding services).
-                WorkspaceProject project = projectService.resolveProject(targetRepository);
-                project = renameIfNecessary(targetOU,
-                                            project);
-                newProjectEvent.fire(new NewProjectEvent(project));
+                            // Signal creation of new Project (Creation of OU and Repository, if applicable,
+                            // are already handled in the corresponding services).
+                            WorkspaceProject project = projectService.resolveProject(targetRepository);
+                            project = renameIfNecessary(targetOU,
+                                                        project);
+                            newProjectEvent.fire(new NewProjectEvent(project));
 
-                //Store first new example project
-                if (firstExampleProject == null) {
-                    firstExampleProject = project;
-                }
-            } catch (IOException ioe) {
-                logger.error("Unable to create Example(s).",
-                             ioe);
-            }
-        }
+                            //Store first new example project
+                            if (firstExampleProject == null) {
+                                firstExampleProject = project;
+                            }
+                        } catch (IOException ioe) {
+                            logger.error("Unable to create Example(s).",
+                                         ioe);
+                        }
+                    }
 
-        return new WorkspaceProjectContextChangeEvent(firstExampleProject,
-                                                      firstExampleProject.getMainModule());
+                    return new WorkspaceProjectContextChangeEvent(firstExampleProject,
+                                                                  firstExampleProject.getMainModule());
+                });
     }
 }

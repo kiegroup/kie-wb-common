@@ -20,7 +20,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-case-mgmt</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.24.0-SNAPSHOT</version>
+    <version>7.25.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -279,7 +279,7 @@
 
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-backend</artifactId>
+      <artifactId>kie-wb-common-stunner-backend-common</artifactId>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>

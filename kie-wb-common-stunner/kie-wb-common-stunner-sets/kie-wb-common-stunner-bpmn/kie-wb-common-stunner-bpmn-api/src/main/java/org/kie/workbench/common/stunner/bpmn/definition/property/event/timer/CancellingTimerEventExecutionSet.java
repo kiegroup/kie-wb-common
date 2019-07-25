@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.stunner.bpmn.definition.property.event.timer;
 
+import java.util.Objects;
+
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
@@ -22,8 +24,9 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseCancellingEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -32,11 +35,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "cancelActivity")
-public class CancellingTimerEventExecutionSet implements BPMNPropertySet {
-
-    @Property
-    @FormField
-    private CancelActivity cancelActivity;
+public class CancellingTimerEventExecutionSet extends BaseCancellingEventExecutionSet {
 
     @Property
     @FormField(afterElement = "cancelActivity")
@@ -45,43 +44,37 @@ public class CancellingTimerEventExecutionSet implements BPMNPropertySet {
 
     public CancellingTimerEventExecutionSet() {
         this(new CancelActivity(),
+             new SLADueDate(),
              new TimerSettings());
     }
 
     public CancellingTimerEventExecutionSet(final @MapsTo("cancelActivity") CancelActivity cancelActivity,
+                                            final @MapsTo("slaDueDate") SLADueDate slaDueDate,
                                             final @MapsTo("timerSettings") TimerSettings timerSettings) {
-        this.cancelActivity = cancelActivity;
+        super(cancelActivity, slaDueDate);
         this.timerSettings = timerSettings;
-    }
-
-    public CancelActivity getCancelActivity() {
-        return cancelActivity;
-    }
-
-    public void setCancelActivity(CancelActivity cancelActivity) {
-        this.cancelActivity = cancelActivity;
     }
 
     public TimerSettings getTimerSettings() {
         return timerSettings;
     }
 
-    public void setTimerSettings(TimerSettings timerSettings) {
+    public void setTimerSettings(final TimerSettings timerSettings) {
         this.timerSettings = timerSettings;
     }
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(cancelActivity.hashCode(),
-                                         timerSettings.hashCode());
+        return HashUtil.combineHashCodes(super.hashCode(),
+                                         Objects.hashCode(timerSettings));
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof CancellingTimerEventExecutionSet) {
             CancellingTimerEventExecutionSet other = (CancellingTimerEventExecutionSet) o;
-            return cancelActivity.equals(other.cancelActivity) &&
-                    timerSettings.equals(other.timerSettings);
+            return super.equals(other) &&
+                    Objects.equals(timerSettings, other.timerSettings);
         }
         return false;
     }
