@@ -51,6 +51,7 @@ import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.CONTEXT;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.STRING;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItem.CAN_NOT_HAVE_CONSTRAINT;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
@@ -942,9 +943,9 @@ public class DataTypeListItemTest {
     }
 
     @Test
-    public void testRefreshConstraintComponentWhenTypeIsIndirectBooleanOrStructure() {
+    public void testRefreshConstraintComponentWhenTypeIsIndirectTypeOfCanNotHaveConstraints() {
 
-        when(dataTypeSelectComponent.isIndirectBooleanOrStructure()).thenReturn(true);
+        when(dataTypeSelectComponent.isIndirectTypeOf(CAN_NOT_HAVE_CONSTRAINT)).thenReturn(true);
 
         listItem.refreshConstraintComponent();
 

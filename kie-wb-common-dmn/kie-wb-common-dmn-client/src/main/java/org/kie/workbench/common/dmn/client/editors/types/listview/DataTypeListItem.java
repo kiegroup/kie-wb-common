@@ -41,6 +41,7 @@ import org.uberfire.mvp.Command;
 
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.CONTEXT;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeSelect.STRUCTURE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.ABOVE;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.BELOW;
 import static org.kie.workbench.common.dmn.client.editors.types.persistence.CreationType.NESTED;
@@ -82,6 +83,11 @@ public class DataTypeListItem {
     private boolean oldIsList;
 
     private ConstraintType oldConstraintType;
+
+    static final String[] CAN_NOT_HAVE_CONSTRAINT = {
+            BOOLEAN.getName(),
+            STRUCTURE,
+            CONTEXT.getName()};
 
     @Inject
     public DataTypeListItem(final View view,
@@ -485,7 +491,8 @@ public class DataTypeListItem {
     }
 
     void refreshConstraintComponent() {
-        if (isBooleanType() || isStructureType() || isContextType() || isList() || isIndirectBooleanOrStructure()) {
+        if (isBooleanType() || isStructureType() || isContextType() || isList()
+                || isIndirectTypeOf(CAN_NOT_HAVE_CONSTRAINT)) {
             dataTypeConstraintComponent.disable();
         } else {
             dataTypeConstraintComponent.enable();
@@ -496,8 +503,8 @@ public class DataTypeListItem {
         return Objects.equals(BOOLEAN.getName(), getType());
     }
 
-    private boolean isIndirectBooleanOrStructure() {
-        return dataTypeSelectComponent.isIndirectBooleanOrStructure();
+    private boolean isIndirectTypeOf(final String... types) {
+        return dataTypeSelectComponent.isIndirectTypeOf(types);
     }
 
     private boolean isStructureType() {

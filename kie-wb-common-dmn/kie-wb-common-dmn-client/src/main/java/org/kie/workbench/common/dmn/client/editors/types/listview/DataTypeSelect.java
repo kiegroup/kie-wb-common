@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,8 +32,6 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeUtils;
 import org.uberfire.client.mvp.UberElemental;
-
-import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
 
 @Dependent
 public class DataTypeSelect {
@@ -112,20 +111,20 @@ public class DataTypeSelect {
         listItem.refreshConstraintComponent();
     }
 
-    boolean isIndirectBooleanOrStructure() {
+    boolean isIndirectTypeOf(final String... types) {
         final String currentValue = getValue();
-        return isIndirectBooleanOrStructure(currentValue);
+        return isIndirectTypeOf(currentValue, types);
     }
 
-    boolean isIndirectBooleanOrStructure(final String currentValue) {
+    boolean isIndirectTypeOf(final String currentValue, final String... types) {
         final List<DataType> customDataTypes = getCustomDataTypes();
         final Optional<DataType> customType = customDataTypes.stream()
-                                                             .filter(d -> d.getName().equals(currentValue))
-                                                             .findFirst();
+                .filter(d -> d.getName().equals(currentValue))
+                .findFirst();
 
         if (customType.isPresent()) {
             final String type = customType.get().getType();
-            return (type.equals(BOOLEAN.getName()) || type.equals(STRUCTURE)) || isIndirectBooleanOrStructure(type);
+            return Arrays.stream(types).anyMatch(t -> t.equals(type)) || isIndirectTypeOf(type, types);
         }
 
         return false;

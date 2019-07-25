@@ -36,7 +36,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.BOOLEAN;
+import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.CONTEXT;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.STRING;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItem.CAN_NOT_HAVE_CONSTRAINT;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeSelect.STRUCTURE;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -188,7 +190,7 @@ public class DataTypeSelectTest {
     }
 
     @Test
-    public void testIsIndirectBooleanOrStructureWhenIsBoolean() {
+    public void testIsIndirectTypeOfWhenIsBoolean() {
 
         final String currentValue = "tIndirectBoolean";
         final DataType dataType1 = mock(DataType.class);
@@ -198,13 +200,13 @@ public class DataTypeSelectTest {
         when(dataType1.getType()).thenReturn(BOOLEAN.getName());
         doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
 
-        final boolean actual = dataTypeSelect.isIndirectBooleanOrStructure(currentValue);
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(currentValue, CAN_NOT_HAVE_CONSTRAINT);
 
         assertTrue(actual);
     }
 
     @Test
-    public void testIsIndirectBooleanOrStructureWhenIsBooleanRecursive() {
+    public void testIsIndirectTypeOfWhenIsBooleanRecursive() {
 
         // some(tIndirectType) -> tIndirectType(tIndirectBoolean) -> tIndirectBoolean(boolean)
         final String indirectType = "tIndirectType";
@@ -220,13 +222,13 @@ public class DataTypeSelectTest {
 
         doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
 
-        final boolean actual = dataTypeSelect.isIndirectBooleanOrStructure(indirectType);
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(indirectType, CAN_NOT_HAVE_CONSTRAINT);
 
         assertTrue(actual);
     }
 
     @Test
-    public void testIsIndirectBooleanOrStructureWhenIsStructureRecursive() {
+    public void testIsIndirectTypeOfWhenIsStructureRecursive() {
 
         // some(tIndirectType) -> tIndirectType(tIndirectStructure) -> tIndirectStructure(Structure)
         final String indirectType = "tIndirectType";
@@ -242,13 +244,13 @@ public class DataTypeSelectTest {
 
         doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
 
-        final boolean actual = dataTypeSelect.isIndirectBooleanOrStructure(indirectType);
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(indirectType, CAN_NOT_HAVE_CONSTRAINT);
 
         assertTrue(actual);
     }
 
     @Test
-    public void testIsIndirectBooleanOrStructureWhenIsStructure() {
+    public void testIsIndirectTypeOfWhenIsStructure() {
 
         final String currentValue = "tIndirectStructure";
         final DataType dataType1 = mock(DataType.class);
@@ -258,13 +260,52 @@ public class DataTypeSelectTest {
         when(dataType1.getType()).thenReturn(STRUCTURE);
         doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
 
-        final boolean actual = dataTypeSelect.isIndirectBooleanOrStructure(currentValue);
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(currentValue, CAN_NOT_HAVE_CONSTRAINT);
+
+        assertTrue(actual);
+    }
+
+
+    @Test
+    public void testIsIndirectTypeOfWhenIsContextRecursive() {
+
+        // some(tIndirectType) -> tIndirectType(tIndirectContext) -> tIndirectContext(Context)
+        final String indirectType = "tIndirectType";
+        final String tIndirectContext = "tIndirectContext";
+        final DataType dataType1 = mock(DataType.class);
+        final DataType dataType2 = mock(DataType.class);
+        final List<DataType> customDataTypes = asList(dataType1, dataType2);
+
+        when(dataType1.getName()).thenReturn(indirectType);
+        when(dataType1.getType()).thenReturn(tIndirectContext);
+        when(dataType2.getName()).thenReturn(tIndirectContext);
+        when(dataType2.getType()).thenReturn(CONTEXT.getName());
+
+        doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
+
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(indirectType, CAN_NOT_HAVE_CONSTRAINT);
 
         assertTrue(actual);
     }
 
     @Test
-    public void testIsIndirectBooleanOrStructureWhenIsOtherType() {
+    public void testIsIndirectTypeOfWhenIsContext() {
+
+        final String currentValue = "tIndirectContext";
+        final DataType dataType1 = mock(DataType.class);
+        final List<DataType> customDataTypes = asList(dataType1);
+
+        when(dataType1.getName()).thenReturn(currentValue);
+        when(dataType1.getType()).thenReturn(CONTEXT.getName());
+        doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
+
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(currentValue, CAN_NOT_HAVE_CONSTRAINT);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testIsIndirectTypeOfWhenIsOtherType() {
 
         final String currentValue = "tIndirectOtherType";
         final DataType dataType1 = mock(DataType.class);
@@ -274,7 +315,7 @@ public class DataTypeSelectTest {
         when(dataType1.getType()).thenReturn(STRING.getName());
         doReturn(customDataTypes).when(dataTypeSelect).getCustomDataTypes();
 
-        final boolean actual = dataTypeSelect.isIndirectBooleanOrStructure(currentValue);
+        final boolean actual = dataTypeSelect.isIndirectTypeOf(currentValue, CAN_NOT_HAVE_CONSTRAINT);
 
         assertFalse(actual);
     }
