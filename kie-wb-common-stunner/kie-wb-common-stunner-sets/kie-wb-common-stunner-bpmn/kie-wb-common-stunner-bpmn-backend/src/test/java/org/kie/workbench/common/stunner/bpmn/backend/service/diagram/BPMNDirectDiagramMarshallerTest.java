@@ -124,7 +124,6 @@ import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry
 import org.kie.workbench.common.stunner.core.StunnerTestingGraphAPI;
 import org.kie.workbench.common.stunner.core.backend.StunnerTestingGraphBackendAPI;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
-import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -159,8 +158,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNDirectDiagramMarshallerTest {
-
-    static final String BPMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
 
     private static final String PATH_DIAGRAM = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram";
 
@@ -368,8 +365,6 @@ public class BPMNDirectDiagramMarshallerTest {
     //END Unsupported nodes
 
     // 4 nodes expected: BPMNDiagram, StartNode, Task and EndNode
-
-
     @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallBasic() throws Exception {

@@ -84,6 +84,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         this.propertyReaderFactory = propertyReaderFactory;
     }
 
+    @Override
     public Result<BpmnNode> convert(org.eclipse.bpmn2.Task task) {
         return Match.of(Task.class, BpmnNode.class)
                 .when(org.eclipse.bpmn2.BusinessRuleTask.class, this::businessRuleTask)

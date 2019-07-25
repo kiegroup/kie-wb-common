@@ -42,14 +42,17 @@ public class AssociationPropertyReader extends BasePropertyReader implements Edg
         this.definitionResolver = definitionResolver;
     }
 
+    @Override
     public String getSourceId() {
         return association.getSourceRef().getId();
     }
 
+    @Override
     public String getTargetId() {
         return association.getTargetRef().getId();
     }
 
+    @Override
     public Connection getSourceConnection() {
         Point2D sourcePosition = PropertyReaderUtils.getSourcePosition(definitionResolver,
                                                                        element.getId(),
@@ -60,6 +63,7 @@ public class AssociationPropertyReader extends BasePropertyReader implements Edg
                 .setAuto(PropertyReaderUtils.isAutoConnectionSource(element));
     }
 
+    @Override
     public Connection getTargetConnection() {
         Point2D targetPosition = PropertyReaderUtils.getTargetPosition(definitionResolver,
                                                                        element.getId(),
@@ -70,6 +74,7 @@ public class AssociationPropertyReader extends BasePropertyReader implements Edg
                 .setAuto(PropertyReaderUtils.isAutoConnectionTarget(element));
     }
 
+    @Override
     public List<Point2D> getControlPoints() {
         return PropertyReaderUtils.getControlPoints(definitionResolver,
                                                     element.getId());
