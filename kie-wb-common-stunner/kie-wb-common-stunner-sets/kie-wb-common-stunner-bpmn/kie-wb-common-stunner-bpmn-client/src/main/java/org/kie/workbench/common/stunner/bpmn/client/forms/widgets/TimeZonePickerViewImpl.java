@@ -39,13 +39,18 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated(value = "TimeZonePicker.html")
 public class TimeZonePickerViewImpl extends Composite implements TimeZonePickerView {
 
-    protected Presenter presenter;
-    double defaultOffset = new Date().getTimezoneOffset();
+    private Presenter presenter;
+
+    private final double defaultOffset = new Date().getTimezoneOffset();
+
     @DataField
     private Select tzSelect = new Select();
+
     private List<TimeZonePicker.TimeZoneDTO> zones;
+
     @DataField
     private Button tzSwitch = new Button();
+
     private TZSelectType tzSelectType = TZSelectType.TZ;
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {

@@ -101,10 +101,10 @@ public class TimeZonePicker implements IsWidget,
 
     static class TimeZoneDTO {
 
-        String name;
+        final String name;
         String code;
-        double offsetAsDouble;
-        String offsetAsString;
+        final  double offsetAsDouble;
+        final  String offsetAsString;
 
         TimeZoneDTO(String code, JSONObject json) {
 
