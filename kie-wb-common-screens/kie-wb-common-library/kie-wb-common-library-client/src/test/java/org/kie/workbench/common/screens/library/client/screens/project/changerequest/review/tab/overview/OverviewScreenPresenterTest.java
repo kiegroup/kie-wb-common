@@ -112,19 +112,6 @@ public class OverviewScreenPresenterTest {
     }
 
     @Test
-    public void addCommentNotAuthorTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        OverviewScreenPresenter.class.getDeclaredField("changeRequestAuthorId")).set("user");
-
-        presenter.addComment();
-
-        verify(changeRequestService, never()).addComment(anyString(),
-                                                         anyString(),
-                                                         anyLong(),
-                                                         anyString());
-    }
-
-    @Test
     public void addCommentInvalidTextTest() throws NoSuchFieldException {
         new FieldSetter(presenter,
                         OverviewScreenPresenter.class.getDeclaredField("changeRequestAuthorId")).set("admin");
@@ -143,8 +130,6 @@ public class OverviewScreenPresenterTest {
     public void addCommentSuccessTest() throws NoSuchFieldException {
         new FieldSetter(presenter,
                         OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
-        new FieldSetter(presenter,
-                        OverviewScreenPresenter.class.getDeclaredField("changeRequestAuthorId")).set("admin");
 
         doReturn("my comment").when(view).getCommentText();
 

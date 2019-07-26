@@ -128,18 +128,16 @@ public class OverviewScreenPresenter {
     }
 
     public void addComment() {
-        if (isUserAuthor()) {
-            final String commentText = view.getCommentText();
+        final String commentText = view.getCommentText();
 
-            if (isInvalidContent(commentText)) {
-                view.setCommentInputError(ts.getTranslation(LibraryConstants.MissingCommentText));
-            } else {
-                changeRequestService.call()
-                        .addComment(workspaceProject.getSpace().getName(),
-                                    workspaceProject.getRepository().getAlias(),
-                                    currentChangeRequestId,
-                                    commentText);
-            }
+        if (isInvalidContent(commentText)) {
+            view.setCommentInputError(ts.getTranslation(LibraryConstants.MissingCommentText));
+        } else {
+            changeRequestService.call()
+                    .addComment(workspaceProject.getSpace().getName(),
+                                workspaceProject.getRepository().getAlias(),
+                                currentChangeRequestId,
+                                commentText);
         }
     }
 
