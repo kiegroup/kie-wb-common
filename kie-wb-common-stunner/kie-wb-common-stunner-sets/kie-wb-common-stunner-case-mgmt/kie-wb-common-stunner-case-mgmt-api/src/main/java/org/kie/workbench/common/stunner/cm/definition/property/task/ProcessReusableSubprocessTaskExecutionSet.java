@@ -100,11 +100,13 @@ public class ProcessReusableSubprocessTaskExecutionSet
     @Valid
     private AdHocAutostart adHocAutostart;
 
+    @SkipFormField
     @Property
     @Valid
     @FormField(afterElement = "adHocAutostart")
     private IsMultipleInstance isMultipleInstance;
 
+    @SkipFormField
     @Property
     @Valid
     @FormField(afterElement = "isMultipleInstance",
@@ -116,6 +118,7 @@ public class ProcessReusableSubprocessTaskExecutionSet
             className = "org.kie.workbench.common.stunner.bpmn.client.dataproviders.ExecutionOrderProvider")
     private MultipleInstanceExecutionMode multipleInstanceExecutionMode;
 
+    @SkipFormField
     @Property
     @FormField(type = ListBoxFieldType.class, afterElement = "multipleInstanceExecutionMode")
     @SelectorDataProvider(
@@ -125,6 +128,7 @@ public class ProcessReusableSubprocessTaskExecutionSet
     @Valid
     private MultipleInstanceCollectionInput multipleInstanceCollectionInput;
 
+    @SkipFormField
     @Property
     @FormField(
             type = MultipleInstanceVariableFieldType.class,
@@ -133,6 +137,7 @@ public class ProcessReusableSubprocessTaskExecutionSet
     @Valid
     private MultipleInstanceDataInput multipleInstanceDataInput;
 
+    @SkipFormField
     @Property
     @FormField(
             type = ListBoxFieldType.class,
@@ -145,6 +150,7 @@ public class ProcessReusableSubprocessTaskExecutionSet
     @Valid
     private MultipleInstanceCollectionOutput multipleInstanceCollectionOutput;
 
+    @SkipFormField
     @Property
     @FormField(
             type = MultipleInstanceVariableFieldType.class,
@@ -153,6 +159,7 @@ public class ProcessReusableSubprocessTaskExecutionSet
     @Valid
     private MultipleInstanceDataOutput multipleInstanceDataOutput;
 
+    @SkipFormField
     @Property
     @FormField(
             type = TextAreaFieldType.class,
@@ -163,7 +170,7 @@ public class ProcessReusableSubprocessTaskExecutionSet
     private MultipleInstanceCompletionCondition multipleInstanceCompletionCondition;
 
     @Property
-    @FormField(afterElement = "multipleInstanceCompletionCondition",
+    @FormField(afterElement = "adHocAutostart",
             settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")}
     )
     @Valid
