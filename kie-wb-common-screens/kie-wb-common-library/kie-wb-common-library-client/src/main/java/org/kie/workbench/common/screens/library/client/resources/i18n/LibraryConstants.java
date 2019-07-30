@@ -724,4 +724,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DaysAgo = "DaysAgo";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ErrorCreatingPoject = "ErrorCreatingProject";
 }
