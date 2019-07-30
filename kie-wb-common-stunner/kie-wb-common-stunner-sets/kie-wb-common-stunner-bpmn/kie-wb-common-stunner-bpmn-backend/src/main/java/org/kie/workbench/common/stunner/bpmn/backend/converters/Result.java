@@ -71,7 +71,7 @@ public interface Result<T> {
 
     List<MarshallingMessage> messages();
 
-    Result<T> setMessages(MarshallingMessage ... messages);
+    Result<T> setMessages(MarshallingMessage... messages);
 
     default void ifSuccess(Consumer<T> consumer) {
         Optional.ofNullable(value()).ifPresent(consumer::accept);
