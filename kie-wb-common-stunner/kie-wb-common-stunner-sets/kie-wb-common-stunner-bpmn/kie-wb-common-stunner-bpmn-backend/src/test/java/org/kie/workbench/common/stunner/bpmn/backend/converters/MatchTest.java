@@ -68,7 +68,7 @@ public class MatchTest {
     @Test
     public void whenExactlyTest() {
         UserTaskImpl element = (UserTaskImpl) Bpmn2Factory.eINSTANCE.createUserTask();
-        Result<BpmnNode> result = match(element).apply(element);
+        Result<BpmnNode> result = match().apply(element);
         verify(assertUserTask).apply(element);
         assertTrue(result.isSuccess());
     }
@@ -76,7 +76,7 @@ public class MatchTest {
     @Test
     public void whenTest() {
         EventSubprocess element = Bpmn2Factory.eINSTANCE.createEventSubprocess();
-        Result<BpmnNode> result = match(element).apply(element);
+        Result<BpmnNode> result = match().apply(element);
         verify(assertSubProcess).apply(element);
         assertNotEquals(result.value(), defaultValue);
         assertTrue(result.isSuccess());
@@ -85,7 +85,7 @@ public class MatchTest {
     @Test
     public void testFallback() {
         StartEvent element = Bpmn2Factory.eINSTANCE.createStartEvent();
-        Result<BpmnNode> result = match(element)
+        Result<BpmnNode> result = match()
                 .orElse(fallback)
                 .apply(element);
         verify(fallback).apply(element);
@@ -97,7 +97,7 @@ public class MatchTest {
     @Test
     public void ignoreTestAuto() {
         ManualTask element = Bpmn2Factory.eINSTANCE.createManualTask();
-        Result<BpmnNode> result = match(element).apply(element);
+        Result<BpmnNode> result = match().apply(element);
         assertEquals(result.value(), defaultValue);
         assertTrue(result.isIgnored());
         assertFalse(result.isFailure());
@@ -106,7 +106,7 @@ public class MatchTest {
     @Test
     public void ignoreTestIgnore() {
         ManualTask element = Bpmn2Factory.eINSTANCE.createManualTask();
-        Result<BpmnNode> result = match(element)
+        Result<BpmnNode> result = match()
                 .mode(MarshallingRequest.Mode.IGNORE)
                 .apply(element);
         assertEquals(result.value(), defaultValue);
@@ -117,7 +117,7 @@ public class MatchTest {
     @Test
     public void ignoreTestError() {
         ManualTask element = Bpmn2Factory.eINSTANCE.createManualTask();
-        Result<BpmnNode> result = match(element)
+        Result<BpmnNode> result = match()
                 .mode(MarshallingRequest.Mode.ERROR)
                 .apply(element);
         assertEquals(result.value(), defaultValue);
@@ -128,12 +128,12 @@ public class MatchTest {
     @Test
     public void missingTest() {
         ReceiveTask element = Bpmn2Factory.eINSTANCE.createReceiveTask();
-        Result<BpmnNode> result = match(element).apply(element);
+        Result<BpmnNode> result = match().apply(element);
         assertEquals(result.value(), defaultValue);
         assertTrue(result.isFailure());
     }
 
-    private Match<FlowElement, BpmnNode> match(FlowElement element) {
+    private Match<FlowElement, BpmnNode> match() {
         return Match.of(FlowElement.class, BpmnNode.class)
                 .whenExactly(UserTaskImpl.class, assertUserTask)
                 .when(SubProcess.class, assertSubProcess)
