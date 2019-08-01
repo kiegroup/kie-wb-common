@@ -24,7 +24,7 @@
                 <h3 data-i18n-key="Summary" class="editable-field-title"></h3>
                 <a class="fa fa-pencil" data-field="edit-summary"></a>
             </div>
-            <span data-field="summary"></span>
+            <span data-field="summary" class="wrap-text"></span>
             <div data-field="summary-edit-group" class="edit-group-textbox">
                 <div class="form-control-pf-textbox">
                     <input type="text" class="form-control" data-field="summary-edit-input" autocomplete="off"/>
@@ -32,7 +32,7 @@
                         <span class="fa fa-times-circle fa-lg"></span>
                     </button>
                 </div>
-                <button class="btn btn-primary form-control-pf-save" data-field="summary-edit-save" disabled aria-label="Save">
+                <button class="btn btn-primary form-control-pf-save" data-field="summary-edit-save" aria-label="Save">
                     <i class="glyphicon glyphicon-ok"></i>
                 </button>
                 <button class="btn btn-default form-control-pf-cancel" data-field="summary-edit-cancel" aria-label="Cancel">
@@ -48,7 +48,7 @@
             <div data-field="description-edit-group" class="edit-group-textarea">
                 <textarea class="form-control" data-field="description-edit-input" rows="8"></textarea>
                 <div class="edit-buttons">
-                    <button class="btn btn-primary form-control-pf-save" data-field="description-edit-save" disabled aria-label="Save">
+                    <button class="btn btn-primary form-control-pf-save" data-field="description-edit-save" aria-label="Save">
                         <i class="glyphicon glyphicon-ok"></i>
                     </button>
                     <button class="btn btn-default form-control-pf-cancel" data-field="description-edit-cancel" aria-label="Cancel">
@@ -67,13 +67,26 @@
             <span data-field="created-date"></span>
 
             <h3 data-i18n-key="SourceBranch"></h3>
-            <span data-field="source-branch"></span>
+            <span data-field="source-branch" class="wrap-text"></span>
 
             <h3 data-i18n-key="TargetBranch"></h3>
-            <span data-field="target-branch"></span>
+            <span data-field="target-branch" class="wrap-text"></span>
         </div>
         <div class="col-xs-12">
-            <h3 data-field="comment-count"></h3>
+            <div class="comments-container">
+                <h3 data-field="comments-header"></h3>
+
+                <div data-field="comments-toolbar" class="toolbar-pf">
+                    <div class="form-group right-toolbar">
+                        <label data-field="comment-page-indicator" class="nowrap"></label>
+                        <a href="#" data-field="comment-prev-page"><span class="i fa fa-angle-left"></span></a>
+                        <input class="page-number" type="text" data-field="comment-current-page">
+                        <a href="#" data-field="comment-next-page"><span class="i fa fa-angle-right"></span></a>
+                        <span class="nowrap">of <span data-field="comment-total-pages"></span></span>
+                    </div>
+                </div>
+            </div>
+
             <div class="list-group list-view-pf list-view-pf-view" data-field="comment-list"></div>
 
             <div class="list-group-item">

@@ -42,6 +42,8 @@ import org.uberfire.rpc.SessionInfo;
 import org.uberfire.spaces.Space;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -156,7 +158,8 @@ public class OverviewScreenPresenterTest {
         ChangeRequest changeRequest = mock(ChangeRequest.class);
         doReturn("user").when(changeRequest).getAuthorId();
 
-        presenter.setup(changeRequest);
+        presenter.setup(changeRequest, b -> {
+        });
 
         verify(view).hideEditModes();
     }
@@ -171,7 +174,8 @@ public class OverviewScreenPresenterTest {
         doReturn(ChangeRequestStatus.REJECTED).when(changeRequest).getStatus();
         doReturn(true).when(changeRequest).isConflict();
 
-        presenter.setup(changeRequest);
+        presenter.setup(changeRequest, b -> {
+        });
 
         verify(view).showConflictWarning(false);
     }
@@ -186,7 +190,8 @@ public class OverviewScreenPresenterTest {
         doReturn(ChangeRequestStatus.OPEN).when(changeRequest).getStatus();
         doReturn(true).when(changeRequest).isConflict();
 
-        presenter.setup(changeRequest);
+        presenter.setup(changeRequest, b -> {
+        });
 
         verify(view).showConflictWarning(true);
     }
@@ -204,9 +209,12 @@ public class OverviewScreenPresenterTest {
         doReturn(Collections.nCopies(5, mock(ChangeRequestComment.class)))
                 .when(changeRequestService).getComments(anyString(),
                                                         anyString(),
-                                                        anyLong());
+                                                        anyLong(),
+                                                        anyInt(),
+                                                        anyInt());
 
-        presenter.setup(changeRequest);
+        presenter.setup(changeRequest, b -> {
+        });
 
         verify(commentItemPresenterInstances, times(5)).get();
         verify(view, times(5)).addCommentItem(any());
@@ -272,5 +280,101 @@ public class OverviewScreenPresenterTest {
                                                                     anyString(),
                                                                     anyLong(),
                                                                     anyString());
+    }
+
+    @Test
+    public void nextCommentPageTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentCurrentPage"))
+                .set(1);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentTotalPages"))
+                .set(10);
+
+        presenter.nextCommentPage();
+
+        verify(view).setCommentCurrentPage(2);
+    }
+
+    @Test
+    public void nextCommentPageDoNothingTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentCurrentPage"))
+                .set(10);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentTotalPages"))
+                .set(10);
+
+        presenter.nextCommentPage();
+
+        verify(view, never()).setCommentCurrentPage(anyInt());
+    }
+
+    @Test
+    public void prevCommentPageTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentCurrentPage"))
+                .set(5);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentTotalPages"))
+                .set(10);
+
+        presenter.prevCommentPage();
+
+        verify(view).setCommentCurrentPage(4);
+    }
+
+    @Test
+    public void prevCommentPageDoNothingTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentCurrentPage"))
+                .set(1);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentTotalPages"))
+                .set(10);
+
+        presenter.prevCommentPage();
+
+        verify(view, never()).setCommentCurrentPage(anyInt());
+    }
+
+    @Test
+    public void setCommentCurrentPageTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentTotalPages"))
+                .set(10);
+
+        presenter.setCommentCurrentPage(5);
+
+        verify(view).enableCommentPreviousButton(anyBoolean());
+        verify(view).enableCommentNextButton(anyBoolean());
+    }
+
+    @Test
+    public void setCommentCurrentOutRangeTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentCurrentPage"))
+                .set(10);
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("commentTotalPages"))
+                .set(10);
+
+        presenter.setCommentCurrentPage(50);
+
+        verify(view).setCommentCurrentPage(10);
+        verify(view, never()).enableCommentPreviousButton(anyBoolean());
+        verify(view, never()).enableCommentNextButton(anyBoolean());
     }
 }

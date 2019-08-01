@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+.submit-main-container {
+    margin-top: .8em;
+}
+
 .submit-main-container textarea {
     resize: vertical;
     min-height: 166px;

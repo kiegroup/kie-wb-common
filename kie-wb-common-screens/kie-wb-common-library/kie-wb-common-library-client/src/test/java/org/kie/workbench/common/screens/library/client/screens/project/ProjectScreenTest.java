@@ -372,8 +372,7 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         {
             doReturn(promises.resolve(true)).when(this.projectController).canSubmitChangeRequest(any());
             this.presenter.submitChangeRequest();
-            verify(this.libraryPlaces,
-                   times(1)).goToSubmitChangeRequestScreen();
+            verify(this.libraryPlaces).goToSubmitChangeRequestScreen();
         }
     }
 

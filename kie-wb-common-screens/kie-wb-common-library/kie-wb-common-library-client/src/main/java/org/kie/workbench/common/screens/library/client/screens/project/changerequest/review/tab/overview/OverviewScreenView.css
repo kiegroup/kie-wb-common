@@ -66,19 +66,8 @@
     margin-top: 5px;
 }
 
-.form-control-pf-editable textarea {
+.edit-group-textarea textarea {
     min-height: 166px;
-}
-
-.form-control-pf-value {
-    background: 0 0;
-    border: 1px solid transparent;
-    display: inline-block;
-    padding: 0;
-}
-
-.form-control-pf-value:hover {
-    border: 1px solid #ddd;
 }
 
 .form-control-pf-empty {
@@ -118,6 +107,23 @@
     background-color: transparent;
 }
 
+.comments-container {
+    display: flex;
+}
+
+.comments-container > h3 {
+    width: 100%;
+}
+
+.comments-container .right-toolbar {
+    align-items: center;
+}
+
+.comments-container .toolbar-pf {
+    background-color: transparent;
+    margin-top: 10px;
+}
+
 .comment-input {
     width: 100%;
 }
@@ -133,4 +139,8 @@
 
 .comment-input-button > button {
     float: right;
+}
+
+.wrap-text {
+    overflow-wrap: break-word;
 }

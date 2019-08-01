@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.changedfiles;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -88,11 +89,14 @@ public class ChangedFilesScreenPresenter {
         this.view.resetAll();
     }
 
-    public void setup(final ChangeRequest changeRequest) {
+    public void setup(final ChangeRequest changeRequest,
+                      final Consumer<Boolean> finishLoading) {
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
             final boolean warnConflict = changeRequest.getStatus() == ChangeRequestStatus.OPEN;
             this.setupFilesSummary(diffList);
             this.setupDiffList(diffList, warnConflict);
+
+            finishLoading.accept(true);
         }).getDiff(workspaceProject.getSpace().getName(),
                    workspaceProject.getRepository().getAlias(),
                    changeRequest.getId());

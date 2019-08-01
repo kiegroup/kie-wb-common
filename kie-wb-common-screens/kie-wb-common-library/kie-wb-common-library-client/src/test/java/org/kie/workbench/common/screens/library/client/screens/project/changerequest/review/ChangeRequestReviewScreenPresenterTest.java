@@ -18,6 +18,8 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 
 import java.util.Optional;
 
+import javax.enterprise.event.Event;
+
 import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -47,6 +49,7 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.promise.SyncPromises;
 import org.uberfire.spaces.Space;
+import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -94,6 +97,9 @@ public class ChangeRequestReviewScreenPresenterTest {
     private ProjectController projectController;
 
     @Mock
+    private Event<NotificationEvent> notificationEvent;
+
+    @Mock
     private WorkspaceProject workspaceProject;
 
     @Mock
@@ -123,7 +129,8 @@ public class ChangeRequestReviewScreenPresenterTest {
                                                                     overviewScreen,
                                                                     changedFilesScreen,
                                                                     promises,
-                                                                    projectController));
+                                                                    projectController,
+                                                                    notificationEvent));
     }
 
     @Test
@@ -239,47 +246,6 @@ public class ChangeRequestReviewScreenPresenterTest {
     }
 
     @Test
-    public void refreshOnFocusAlreadyOpenTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
-                .set(workspaceProject);
-
-        PlaceRequest place = mock(PlaceRequest.class);
-        SelectPlaceEvent event = new SelectPlaceEvent(place);
-
-        doReturn(ChangeRequestStatus.OPEN).when(changeRequest).getStatus();
-
-        doReturn(LibraryPlaces.PROJECT_SCREEN).when(place).getIdentifier();
-
-        doReturn(true).when(libraryPlaces).isChangeRequestReviewScreenOpen();
-
-        doReturn(changeRequest).when(changeRequestService).getChangeRequest(anyString(),
-                                                                            anyString(),
-                                                                            anyLong());
-        doReturn("branch").when(changeRequest).getTargetBranch();
-
-        doReturn(promises.resolve(true)).when(projectController)
-                .canReadBranch(workspaceProject,
-                               "branch");
-
-        doReturn(promises.resolve(true)).when(projectController)
-                .canUpdateBranch(workspaceProject,
-                                 branch);
-
-        presenter.refreshOnFocus(event);
-
-        verify(overviewScreen).reset();
-        verify(changedFilesScreen).reset();
-        verify(changeRequestService).getChangeRequest(anyString(),
-                                                      anyString(),
-                                                      anyLong());
-        verify(view, never()).activateOverviewTab();
-        verify(view).showAcceptButton(anyBoolean());
-        verify(overviewScreen).reset();
-        verify(changedFilesScreen).reset();
-    }
-
-    @Test
     public void showOverviewContentTest() {
         doReturn(mock(OverviewScreenPresenter.View.class)).when(overviewScreen).getView();
 
@@ -327,7 +293,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService).rejectChangeRequest(anyString(),
                                                          anyString(),
                                                          anyLong());
-        verify(libraryPlaces).goToProject(workspaceProject);
+        verify(notificationEvent).fire(any(NotificationEvent.class));
     }
 
     @Test
@@ -375,7 +341,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService).acceptChangeRequest(anyString(),
                                                          anyString(),
                                                          anyLong());
-        verify(libraryPlaces).goToProject(workspaceProject);
+        verify(notificationEvent).fire(any(NotificationEvent.class));
     }
 
     @Test
@@ -395,6 +361,54 @@ public class ChangeRequestReviewScreenPresenterTest {
         presenter.accept();
 
         verify(changeRequestService, never()).acceptChangeRequest(anyString(),
+                                                                  anyString(),
+                                                                  anyLong());
+    }
+
+    @Test
+    public void revertWhenHasPermissionTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("currentTargetBranch"))
+                .set(branch);
+
+        doReturn(promises.resolve(true)).when(projectController)
+                .canUpdateBranch(workspaceProject,
+                                 branch);
+
+        doReturn(true).when(changeRequestService)
+                .revertChangeRequest(anyString(),
+                                     anyString(),
+                                     anyLong());
+
+        presenter.revert();
+
+        verify(changeRequestService).revertChangeRequest(anyString(),
+                                                         anyString(),
+                                                         anyLong());
+        verify(notificationEvent).fire(any(NotificationEvent.class));
+    }
+
+    @Test
+    public void revertWhenNotAllowedTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("currentTargetBranch"))
+                .set(branch);
+
+        doReturn(promises.resolve(false)).when(projectController)
+                .canUpdateBranch(workspaceProject,
+                                 branch);
+
+        presenter.revert();
+
+        verify(changeRequestService, never()).revertChangeRequest(anyString(),
                                                                   anyString(),
                                                                   anyLong());
     }

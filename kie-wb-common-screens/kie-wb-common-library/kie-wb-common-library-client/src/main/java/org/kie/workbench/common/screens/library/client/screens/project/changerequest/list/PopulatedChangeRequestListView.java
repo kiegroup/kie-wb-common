@@ -31,11 +31,9 @@ import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLLabelElement;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
 import org.uberfire.ext.widgets.common.client.select.SelectComponent;
@@ -93,9 +91,6 @@ public class PopulatedChangeRequestListView implements IsElement,
     private HTMLButtonElement submitChangeRequest;
 
     @Inject
-    private TranslationService ts;
-
-    @Inject
     private SelectComponent selectComponent;
 
     @Inject
@@ -144,22 +139,22 @@ public class PopulatedChangeRequestListView implements IsElement,
     }
 
     @Override
-    public void addChangeRequestItem(ChangeRequestListItemView item) {
+    public void addChangeRequestItem(final ChangeRequestListItemView item) {
         this.changeRequestsList.appendChild(item.getElement());
     }
 
     @Override
-    public void setCurrentPage(int currentPage) {
+    public void setCurrentPage(final int currentPage) {
         this.currentPage.value = String.valueOf(currentPage);
     }
 
     @Override
-    public void setPageIndicator(int from, int to, int total) {
-        this.pageIndicator.textContent = from + "-" + to + " " + ts.getTranslation(LibraryConstants.Of) + " " + total;
+    public void setPageIndicator(final String pageIndicatorText) {
+        this.pageIndicator.textContent = pageIndicatorText;
     }
 
     @Override
-    public void setTotalPages(int totalPages) {
+    public void setTotalPages(final int totalPages) {
         this.totalPages.textContent = String.valueOf(totalPages);
     }
 
@@ -169,17 +164,17 @@ public class PopulatedChangeRequestListView implements IsElement,
     }
 
     @Override
-    public void enablePreviousButton(boolean isEnabled) {
+    public void enablePreviousButton(final boolean isEnabled) {
         this.prevPage.disabled = !isEnabled;
     }
 
     @Override
-    public void enableNextButton(boolean isEnabled) {
+    public void enableNextButton(final boolean isEnabled) {
         this.nextPage.disabled = !isEnabled;
     }
 
     @Override
-    public void setFilterTypes(List<SelectOption> categories) {
+    public void setFilterTypes(final List<SelectOption> categories) {
         this.selectComponent.setup(categories,
                                    selectOption -> presenter.setFilterType(selectOption.getSelector()));
         this.filterType.appendChild(this.selectComponent.getView().getElement());
@@ -191,18 +186,18 @@ public class PopulatedChangeRequestListView implements IsElement,
     }
 
     @Override
-    public void enableSubmitChangeRequestButton(boolean isEnabled) {
+    public void enableSubmitChangeRequestButton(final boolean isEnabled) {
         this.submitChangeRequest.disabled = !isEnabled;
     }
 
     @Override
-    public void showEmptyState(EmptyState emptyState) {
+    public void showEmptyState(final EmptyState emptyState) {
         indexingInfo.className = "blank-slate-pf";
         indexingInfo.innerHTML = emptyState.getElement().getOuterHTML();
     }
 
     @Override
-    public void hideEmptyState(EmptyState emptyState) {
+    public void hideEmptyState(final EmptyState emptyState) {
         emptyState.clear();
         indexingInfo.className = "";
         indexingInfo.innerHTML = "";

@@ -40,7 +40,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -92,7 +91,7 @@ public class ChangeRequestListPresenterTest {
         doReturn(emptyView).when(emptyChangeRequestListPresenter).getView();
         doReturn(emptyElement).when(emptyView).getElement();
 
-        doReturn("LoadingChangeRequests").when(ts).getTranslation(LibraryConstants.LoadingChangeRequests);
+        doReturn(LibraryConstants.Loading).when(ts).getTranslation(LibraryConstants.Loading);
 
         doReturn(populatedView).when(populatedChangeRequestListPresenter).getView();
         doReturn(populatedElement).when(populatedView).getElement();
@@ -113,15 +112,11 @@ public class ChangeRequestListPresenterTest {
         presenter.postConstruct();
 
         verify(view).init(presenter);
-        verify(busyIndicatorView, times(1))
-                .showBusyIndicator(LibraryConstants.LoadingChangeRequests);
-        verify(busyIndicatorView, times(1))
-                .hideBusyIndicator();
+        verify(busyIndicatorView).showBusyIndicator(LibraryConstants.Loading);
+        verify(busyIndicatorView).hideBusyIndicator();
 
-        verify(emptyChangeRequestListPresenter,
-               times(1)).getView();
-        verify(populatedChangeRequestListPresenter,
-               never()).getView();
+        verify(emptyChangeRequestListPresenter).getView();
+        verify(populatedChangeRequestListPresenter, never()).getView();
         verify(view).setContent(emptyChangeRequestListPresenter.getView().getElement());
     }
 
@@ -132,15 +127,13 @@ public class ChangeRequestListPresenterTest {
         presenter.postConstruct();
 
         verify(view).init(presenter);
-        verify(busyIndicatorView, times(1))
-                .showBusyIndicator(LibraryConstants.LoadingChangeRequests);
-        verify(busyIndicatorView, times(1))
+        verify(busyIndicatorView)
+                .showBusyIndicator(LibraryConstants.Loading);
+        verify(busyIndicatorView)
                 .hideBusyIndicator();
 
-        verify(emptyChangeRequestListPresenter,
-               never()).getView();
-        verify(populatedChangeRequestListPresenter,
-               times(1)).getView();
+        verify(emptyChangeRequestListPresenter, never()).getView();
+        verify(populatedChangeRequestListPresenter).getView();
         verify(view).setContent(populatedChangeRequestListPresenter.getView().getElement());
     }
 
@@ -155,7 +148,7 @@ public class ChangeRequestListPresenterTest {
 
         presenter.onChangeRequestListUpdated(new ChangeRequestListUpdatedEvent("myRepository"));
 
-        verify(changeRequestService, times(1)).countChangeRequests(anyString(), anyString());
+        verify(changeRequestService).countChangeRequests(anyString(), anyString());
     }
 
     @Test

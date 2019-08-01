@@ -44,6 +44,7 @@ import org.kie.workbench.common.screens.library.client.screens.project.changereq
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.client.promise.Promises;
+import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.select.SelectOption;
 import org.uberfire.ext.widgets.common.client.select.SelectOptionImpl;
@@ -54,29 +55,29 @@ public class PopulatedChangeRequestListPresenter {
 
     public interface View extends UberElemental<PopulatedChangeRequestListPresenter> {
 
-        void setCurrentPage(int currentPage);
+        void setCurrentPage(final int currentPage);
 
-        void setPageIndicator(int from, int to, int total);
+        void setPageIndicator(final String pageIndicatorText);
 
-        void setTotalPages(int totalPages);
+        void setTotalPages(final int totalPages);
 
         void clearList();
 
-        void enablePreviousButton(boolean isEnabled);
+        void enablePreviousButton(final boolean isEnabled);
 
-        void enableNextButton(boolean isEnabled);
+        void enableNextButton(final boolean isEnabled);
 
-        void setFilterTypes(List<SelectOption> categories);
+        void setFilterTypes(final List<SelectOption> categories);
 
         void clearSearch();
 
-        void enableSubmitChangeRequestButton(boolean isEnabled);
+        void enableSubmitChangeRequestButton(final boolean isEnabled);
 
-        void showEmptyState(EmptyState emptyState);
+        void showEmptyState(final EmptyState emptyState);
 
-        void hideEmptyState(EmptyState emptyState);
+        void hideEmptyState(final EmptyState emptyState);
 
-        void addChangeRequestItem(ChangeRequestListItemView item);
+        void addChangeRequestItem(final ChangeRequestListItemView item);
 
         void setFilterTextPlaceHolder(final String placeHolder);
     }
@@ -98,7 +99,7 @@ public class PopulatedChangeRequestListPresenter {
     private int totalPages;
     private String filterType;
 
-    private static final int PAGE_SIZE = 15;
+    private static final int PAGE_SIZE = 10;
 
     private static final String FILTER_OPEN = "OPEN";
     private static final String FILTER_CLOSED = "CLOSED";
@@ -194,8 +195,7 @@ public class PopulatedChangeRequestListPresenter {
     public void search(String searchText) {
         this.searchFilter = searchText;
         this.currentPage = 1;
-        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.LoadingChangeRequests));
-        this.update(busyIndicatorView::hideBusyIndicator);
+        this.update();
     }
 
     public void showSearchHitNothing() {
@@ -211,22 +211,32 @@ public class PopulatedChangeRequestListPresenter {
             return promises.resolve();
         });
 
-        setupFilter();
-        update();
+        this.setupFilter();
+        this.update();
     }
 
     private void setupListItems() {
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
+
         this.view.clearList();
 
         if (filterType.equals(FILTER_ALL)) {
-            changeRequestService.call((List<ChangeRequest> list) -> createListItems(list))
+            changeRequestService.call((List<ChangeRequest> list) -> {
+                createListItems(list);
+
+                busyIndicatorView.hideBusyIndicator();
+            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                     .getChangeRequests(workspaceProject.getSpace().getName(),
                                        workspaceProject.getRepository().getAlias(),
                                        Math.max(0, currentPage - 1),
                                        PAGE_SIZE,
                                        searchFilter);
         } else {
-            changeRequestService.call((List<ChangeRequest> list) -> createListItems(list))
+            changeRequestService.call((List<ChangeRequest> list) -> {
+                createListItems(list);
+
+                busyIndicatorView.hideBusyIndicator();
+            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                     .getChangeRequests(workspaceProject.getSpace().getName(),
                                        workspaceProject.getRepository().getAlias(),
                                        Math.max(0, currentPage - 1),
@@ -286,30 +296,31 @@ public class PopulatedChangeRequestListPresenter {
     }
 
     private void update() {
-        this.update(() -> {
-        });
-    }
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-    private void update(Runnable runnable) {
-        this.resolveChangeRequestsCount();
-        this.setupListItems();
-
-        runnable.run();
-    }
-
-    private void resolveChangeRequestsCount() {
         if (filterType.equals(FILTER_ALL)) {
-            this.changeRequestService.call((Integer count) -> setupCounters(count))
+            this.changeRequestService.call((Integer count) -> {
+                busyIndicatorView.hideBusyIndicator();
+                setupListItems(count);
+            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                     .countChangeRequests(workspaceProject.getSpace().getName(),
                                          workspaceProject.getRepository().getAlias(),
                                          searchFilter);
         } else {
-            this.changeRequestService.call((Integer count) -> setupCounters(count))
+            this.changeRequestService.call((Integer count) -> {
+                busyIndicatorView.hideBusyIndicator();
+                setupListItems(count);
+            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                     .countChangeRequests(workspaceProject.getSpace().getName(),
                                          workspaceProject.getRepository().getAlias(),
                                          getStatusByFilterType(),
                                          searchFilter);
         }
+    }
+
+    private void setupListItems(final Integer numberOfItems) {
+        setupCounters(numberOfItems);
+        setupListItems();
     }
 
     private IsWidget resolveChangeRequestStatusIcon(ChangeRequestStatus status) {
@@ -324,12 +335,18 @@ public class PopulatedChangeRequestListPresenter {
             hideEmptyState();
         }
 
-        int offset = (this.currentPage - 1) * PAGE_SIZE;
-        this.view.setPageIndicator(count > 0 ? offset + 1 : offset,
-                                   this.resolverCounter(count,
-                                                        offset + PAGE_SIZE),
-                                   this.resolverCounter(count,
-                                                        0));
+        final int offset = (this.currentPage - 1) * PAGE_SIZE;
+        final int fromCount = count > 0 ? offset + 1 : offset;
+        final int toCount = this.resolveCounter(count,
+                                                offset + PAGE_SIZE);
+        final int totalCount = this.resolveCounter(count,
+                                                   0);
+
+        final String pageIndicatorText = fromCount + "-" + toCount + " " +
+                ts.getTranslation(LibraryConstants.Of) + " " + totalCount;
+
+        this.view.setPageIndicator(pageIndicatorText);
+
         this.totalPages = (int) Math.ceil(count / (float) PAGE_SIZE);
         this.view.setTotalPages(Math.max(this.totalPages, 1));
 
@@ -370,8 +387,8 @@ public class PopulatedChangeRequestListPresenter {
         }};
     }
 
-    private int resolverCounter(int numberOfChangeRequests,
-                                int otherCounter) {
+    private int resolveCounter(int numberOfChangeRequests,
+                               int otherCounter) {
         if (numberOfChangeRequests < otherCounter || otherCounter == 0) {
             return numberOfChangeRequests;
         } else {

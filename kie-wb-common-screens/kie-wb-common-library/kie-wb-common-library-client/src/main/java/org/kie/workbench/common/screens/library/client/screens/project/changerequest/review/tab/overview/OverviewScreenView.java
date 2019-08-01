@@ -26,6 +26,7 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLLabelElement;
 import elemental2.dom.HTMLTextAreaElement;
 import org.gwtbootstrap3.client.ui.HelpBlock;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
@@ -124,11 +125,6 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     private HTMLElement targetBranch;
 
     @Inject
-    @DataField("comment-count")
-    @Named("h3")
-    private HTMLElement commentCount;
-
-    @Inject
     @DataField("comment-list")
     private HTMLDivElement commentList;
 
@@ -151,6 +147,36 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     @Inject
     @DataField("conflict-warning")
     private HTMLDivElement conflictWarning;
+
+    @Inject
+    @DataField("comment-page-indicator")
+    private HTMLLabelElement commentPageIndicator;
+
+    @Inject
+    @DataField("comment-total-pages")
+    @Named("span")
+    private HTMLElement commentTotalPages;
+
+    @Inject
+    @DataField("comment-current-page")
+    private HTMLInputElement commentCurrentPage;
+
+    @Inject
+    @DataField("comment-prev-page")
+    private HTMLButtonElement commentPrevPage;
+
+    @Inject
+    @DataField("comment-next-page")
+    private HTMLButtonElement commentNextPage;
+
+    @Inject
+    @DataField("comments-toolbar")
+    private HTMLDivElement commentsToolbar;
+
+    @Inject
+    @DataField("comments-header")
+    @Named("h3")
+    private HTMLElement commentsHeader;
 
     @Inject
     private Elemental2DomUtil domUtil;
@@ -201,18 +227,18 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     }
 
     @Override
-    public void setTargetBranch(String targetBranch) {
+    public void setTargetBranch(final String targetBranch) {
         this.targetBranch.textContent = targetBranch;
     }
 
     @Override
-    public void setCommentCounterText(final String counterText) {
-        this.commentCount.textContent = counterText;
+    public void setCommentsHeader(final String header) {
+        commentsHeader.textContent = header;
     }
 
     @Override
     public void setCommentInputPlaceHolder(final String placeHolder) {
-        commentInput.setAttribute(PLACE_HOLDER, placeHolder);
+        this.commentInput.setAttribute(PLACE_HOLDER, placeHolder);
     }
 
     @Override
@@ -251,6 +277,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     @Override
     public void enableSummaryEditMode(boolean isEnabled) {
         if (isEnabled) {
+            summaryEditSave.disabled = true;
             summaryEditInput.value = summary.textContent;
             summary.hidden = true;
             editSummary.hidden = true;
@@ -265,6 +292,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     @Override
     public void enableDescriptionEditMode(boolean isEnabled) {
         if (isEnabled) {
+            descriptionEditSave.disabled = true;
             descriptionEditInput.value = description.textContent;
             description.hidden = true;
             editDescription.hidden = true;
@@ -296,10 +324,41 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
         createdDate.textContent = "";
         sourceBranch.textContent = "";
         targetBranch.textContent = "";
-        commentCount.textContent = "";
         conflictWarning.hidden = true;
 
+        showCommentsToolbar(false);
+
         clearCommentInputField();
+    }
+
+    @Override
+    public void setCommentCurrentPage(final int currentPage) {
+        this.commentCurrentPage.value = String.valueOf(currentPage);
+    }
+
+    @Override
+    public void setCommentPageIndicator(final String pageIndicatorText) {
+        this.commentPageIndicator.textContent = pageIndicatorText;
+    }
+
+    @Override
+    public void setCommentTotalPages(final int totalPages) {
+        this.commentTotalPages.textContent = String.valueOf(totalPages);
+    }
+
+    @Override
+    public void enableCommentPreviousButton(final boolean isEnabled) {
+        this.commentPrevPage.disabled = !isEnabled;
+    }
+
+    @Override
+    public void enableCommentNextButton(final boolean isEnabled) {
+        this.commentNextPage.disabled = !isEnabled;
+    }
+
+    @Override
+    public void showCommentsToolbar(final boolean isVisible) {
+        this.commentsToolbar.hidden = !isVisible;
     }
 
     @EventHandler("add-comment-button")
@@ -352,6 +411,24 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
         summaryEditInput.value = "";
         checkSummarySaveButtonState();
         summaryEditInput.focus();
+    }
+
+    @EventHandler("comment-current-page")
+    public void onCommentCurrentPageKeyUp(final KeyUpEvent event) {
+        String pageNumber = commentCurrentPage.value;
+        if (pageNumber.matches("\\d+")) {
+            presenter.setCommentCurrentPage(Integer.valueOf(pageNumber));
+        }
+    }
+
+    @EventHandler("comment-next-page")
+    public void onCommentNextPageClicked(final ClickEvent event) {
+        this.presenter.nextCommentPage();
+    }
+
+    @EventHandler("comment-prev-page")
+    public void onCommentPrevPageClicked(final ClickEvent event) {
+        this.presenter.prevCommentPage();
     }
 
     private void checkSummarySaveButtonState() {

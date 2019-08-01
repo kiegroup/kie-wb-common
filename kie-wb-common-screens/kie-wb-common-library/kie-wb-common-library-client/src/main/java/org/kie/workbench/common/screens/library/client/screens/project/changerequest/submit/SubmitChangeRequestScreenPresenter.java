@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -52,6 +53,7 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnLostFocus;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 
 @WorkbenchScreen(identifier = LibraryPlaces.SUBMIT_CHANGE_REQUEST,
         owningPerspective = LibraryPerspective.class)
@@ -99,6 +101,7 @@ public class SubmitChangeRequestScreenPresenter {
     private final Promises promises;
     private final BusyIndicatorView busyIndicatorView;
     private final ChangeRequestUtils changeRequestUtils;
+    private final Event<NotificationEvent> notificationEvent;
 
     private WorkspaceProject workspaceProject;
     private String currentBranchName;
@@ -114,7 +117,8 @@ public class SubmitChangeRequestScreenPresenter {
                                               final ProjectController projectController,
                                               final Promises promises,
                                               final BusyIndicatorView busyIndicatorView,
-                                              final ChangeRequestUtils changeRequestUtils) {
+                                              final ChangeRequestUtils changeRequestUtils,
+                                              final Event<NotificationEvent> notificationEvent) {
         this.view = view;
         this.ts = ts;
         this.libraryPlaces = libraryPlaces;
@@ -124,6 +128,7 @@ public class SubmitChangeRequestScreenPresenter {
         this.promises = promises;
         this.busyIndicatorView = busyIndicatorView;
         this.changeRequestUtils = changeRequestUtils;
+        this.notificationEvent = notificationEvent;
     }
 
     @PostConstruct
@@ -162,8 +167,7 @@ public class SubmitChangeRequestScreenPresenter {
     public void refreshOnFocus(@Observes final SelectPlaceEvent selectPlaceEvent) {
         if (workspaceProject != null && workspaceProject.getMainModule() != null) {
             final PlaceRequest place = selectPlaceEvent.getPlace();
-            if (place.getIdentifier().equals(LibraryPlaces.SUBMIT_CHANGE_REQUEST) ||
-                    libraryPlaces.isSubmitChangeRequestScreenOpen()) {
+            if (place.getIdentifier().equals(LibraryPlaces.SUBMIT_CHANGE_REQUEST)) {
                 this.reset();
                 this.setup();
             }
@@ -183,7 +187,12 @@ public class SubmitChangeRequestScreenPresenter {
                                                  destinationBranch).then(userCanSubmitChangeRequest -> {
             if (userCanSubmitChangeRequest) {
                 changeRequestService.call((ChangeRequest item) -> {
-                    this.libraryPlaces.goToProject(workspaceProject);
+                    notificationEvent.fire(
+                            new NotificationEvent(ts.format(LibraryConstants.ChangeRequestSubmitMessage,
+                                                            item.getId()),
+                                                  NotificationEvent.NotificationType.SUCCESS));
+
+                    this.libraryPlaces.goToChangeRequestReviewScreen(item.getId());
                 }).createChangeRequest(workspaceProject.getSpace().getName(),
                                        workspaceProject.getRepository().getAlias(),
                                        currentBranchName,
@@ -201,13 +210,13 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     public void updateDiffContainer() {
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
+
         view.showWarning(false);
         view.showDiff(false);
         view.setFilesSummary("");
         view.clearDiffList();
         destroyDiffItems();
-
-        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.LoadingChangeRequest));
 
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
             boolean hideDiff = diffList.isEmpty();
@@ -247,9 +256,7 @@ public class SubmitChangeRequestScreenPresenter {
 
     private void setupEmptyDiffList() {
         view.enableSubmitButton(false);
-        view.setFilesSummary(ts.format(LibraryConstants.BranchesAreEven,
-                                       currentBranchName,
-                                       destinationBranch));
+        view.setFilesSummary(ts.getTranslation(LibraryConstants.BranchesAreEven));
     }
 
     private boolean validateFields() {

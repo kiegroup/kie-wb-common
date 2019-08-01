@@ -113,7 +113,8 @@ public class ChangedFilesScreenPresenterTest {
                                                                              anyString(),
                                                                              anyString());
 
-        presenter.setup(changeRequest);
+        presenter.setup(changeRequest,
+                        b -> {});
 
         verify(view).setFilesSummary(anyString());
         verify(view, never()).addDiffItem(any(), any());
@@ -129,7 +130,8 @@ public class ChangedFilesScreenPresenterTest {
                                                            anyString(),
                                                            anyLong());
 
-        presenter.setup(changeRequest);
+        presenter.setup(changeRequest,
+                        b -> {});
 
         verify(view).setFilesSummary(anyString());
         verify(view, times(5)).addDiffItem(any(), any());

@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.enterprise.event.Event;
+
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
@@ -49,8 +51,10 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.promise.SyncPromises;
 import org.uberfire.spaces.Space;
+import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -89,6 +93,9 @@ public class SubmitChangeRequestScreenPresenterTest {
     private ChangeRequestUtils changeRequestUtils;
 
     @Mock
+    private Event<NotificationEvent> notificationEvent;
+
+    @Mock
     private WorkspaceProject workspaceProject;
 
     private Promises promises;
@@ -110,7 +117,7 @@ public class SubmitChangeRequestScreenPresenterTest {
         doReturn(Optional.of(new Branch("defaultBranch", mock(Path.class)))).when(repository).getDefaultBranch();
         doReturn(repository).when(workspaceProject).getRepository();
         doReturn(mock(Space.class)).when(workspaceProject).getSpace();
-        doReturn(LibraryConstants.LoadingChangeRequests).when(ts).getTranslation(LibraryConstants.LoadingChangeRequests);
+        doReturn(LibraryConstants.Loading).when(ts).getTranslation(LibraryConstants.Loading);
         doReturn(mock(DiffItemPresenter.class)).when(diffItemPresenterInstances).get();
 
         this.presenter = spy(new SubmitChangeRequestScreenPresenter(view,
@@ -121,7 +128,8 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                                     projectController,
                                                                     promises,
                                                                     busyIndicatorView,
-                                                                    changeRequestUtils));
+                                                                    changeRequestUtils,
+                                                                    notificationEvent));
     }
 
     @Test
@@ -179,7 +187,7 @@ public class SubmitChangeRequestScreenPresenterTest {
 
         presenter.cancel();
 
-        verify(libraryPlaces, times(1)).goToProject(workspaceProject);
+        verify(libraryPlaces).goToProject(workspaceProject);
     }
 
     @Test
@@ -299,7 +307,7 @@ public class SubmitChangeRequestScreenPresenterTest {
                                                          anyString(),
                                                          anyString(),
                                                          anyString());
-        verify(libraryPlaces).goToProject(workspaceProject);
+        verify(libraryPlaces).goToChangeRequestReviewScreen(anyLong());
     }
 
     @Test

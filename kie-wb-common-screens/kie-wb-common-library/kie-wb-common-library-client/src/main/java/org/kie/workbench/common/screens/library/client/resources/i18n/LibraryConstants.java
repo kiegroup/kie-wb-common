@@ -42,12 +42,6 @@ public class LibraryConstants {
     public static final String LoadingAssets = "LoadingAssets";
 
     @TranslationKey(defaultValue = "")
-    public static final String LoadingChangeRequests = "LoadingChangeRequests";
-
-    @TranslationKey(defaultValue = "")
-    public static final String LoadingChangeRequest = "LoadingChangeRequest";
-
-    @TranslationKey(defaultValue = "")
     public static final String LastModified = "LastModified";
 
     @TranslationKey(defaultValue = "")
@@ -91,12 +85,6 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String Summary = "Summary";
-
-    @TranslationKey(defaultValue = "")
-    public static final String CommentCount = "CommentCount";
-
-    @TranslationKey(defaultValue = "")
-    public static final String CommentsCount = "CommentsCount";
 
     @TranslationKey(defaultValue = "")
     public static final String AddComment = "AddComment";
@@ -396,6 +384,12 @@ public class LibraryConstants {
     public static final String AcceptedStatus = "AcceptedStatus";
 
     @TranslationKey(defaultValue = "")
+    public static final String Comments = "Comments";
+
+    @TranslationKey(defaultValue = "")
+    public static final String NoComments = "NoComments";
+
+    @TranslationKey(defaultValue = "")
     public static final String ChangeRequestFilesSummaryOneFile = "ChangeRequestFilesSummaryOneFile";
 
     @TranslationKey(defaultValue = "")
@@ -631,6 +625,21 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String SubmitChangeRequest = "SubmitChangeRequest";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestSubmitMessage = "ChangeRequestSubmitMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestAcceptMessage = "ChangeRequestAcceptMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestRejectMessage = "ChangeRequestRejectMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestRevertMessage = "ChangeRequestRevertMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestRevertFailMessage = "ChangeRequestRevertFailMessage";
 
     @TranslationKey(defaultValue = "")
     public static final String ChangeRequest = "ChangeRequest";

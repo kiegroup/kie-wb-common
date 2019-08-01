@@ -54,3 +54,24 @@
     font-size: 14px;
     padding: 5px;
 }
+
+.panel-title > a {
+    white-space: nowrap;
+    display: flex;
+}
+
+.panel-title .change-type {
+    white-space: pre;
+}
+
+.panel-title .filename {
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+.panel-title .conflict {
+    margin-left: 5px;
+}

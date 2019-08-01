@@ -94,7 +94,7 @@ public class ChangeRequestListPresenter {
     }
 
     private void setupList() {
-        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.LoadingChangeRequests));
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
         changeRequestService.call((Integer count) -> {
                                       this.empty = count == 0;

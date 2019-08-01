@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.review;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -44,9 +45,11 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.SelectPlaceEvent;
+import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.lifecycle.OnLostFocus;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 
 @WorkbenchScreen(identifier = LibraryPlaces.CHANGE_REQUEST_REVIEW,
         owningPerspective = LibraryPerspective.class)
@@ -83,10 +86,14 @@ public class ChangeRequestReviewScreenPresenter {
     private final ChangedFilesScreenPresenter changedFilesScreen;
     private final Promises promises;
     private final ProjectController projectController;
+    private final Event<NotificationEvent> notificationEvent;
 
     private WorkspaceProject workspaceProject;
     private long currentChangeRequestId;
     private Branch currentTargetBranch;
+
+    private boolean overviewTabLoaded;
+    private boolean changedFilesTabLoaded;
 
     @Inject
     public ChangeRequestReviewScreenPresenter(final View view,
@@ -98,7 +105,8 @@ public class ChangeRequestReviewScreenPresenter {
                                               final OverviewScreenPresenter overviewScreen,
                                               final ChangedFilesScreenPresenter changedFilesScreen,
                                               final Promises promises,
-                                              final ProjectController projectController) {
+                                              final ProjectController projectController,
+                                              final Event<NotificationEvent> notificationEvent) {
         this.view = view;
         this.ts = ts;
         this.libraryPlaces = libraryPlaces;
@@ -109,6 +117,7 @@ public class ChangeRequestReviewScreenPresenter {
         this.changedFilesScreen = changedFilesScreen;
         this.promises = promises;
         this.projectController = projectController;
+        this.notificationEvent = notificationEvent;
     }
 
     @PostConstruct
@@ -137,8 +146,6 @@ public class ChangeRequestReviewScreenPresenter {
                 this.currentChangeRequestId = Long.valueOf(changeRequestIdValue);
                 this.reset();
                 this.setup(false);
-            } else if (libraryPlaces.isChangeRequestReviewScreenOpen()) {
-                this.setup(true);
             }
         }
     }
@@ -146,6 +153,7 @@ public class ChangeRequestReviewScreenPresenter {
     public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())
                 && event.getChangeRequestId() == currentChangeRequestId) {
+            this.reset();
             this.setup(true);
         }
     }
@@ -173,32 +181,22 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     public void reject() {
-        projectController.canUpdateBranch(workspaceProject,
-                                          this.currentTargetBranch).then(userCanUpdateBranch -> {
-            if (userCanUpdateBranch) {
-                doRejectChangeRequest();
-            }
-
-            return promises.resolve();
-        });
+        this.doActionIfAllowed(this::rejectChangeRequestAction);
     }
 
     public void accept() {
-        projectController.canUpdateBranch(workspaceProject,
-                                          this.currentTargetBranch).then(userCanUpdateBranch -> {
-            if (userCanUpdateBranch) {
-                doAcceptChangeRequest();
-            }
-
-            return promises.resolve();
-        });
+        this.doActionIfAllowed(this::acceptChangeRequestAction);
     }
 
     public void revert() {
+        this.doActionIfAllowed(this::revertChangeRequestAction);
+    }
+
+    private void doActionIfAllowed(Runnable action) {
         projectController.canUpdateBranch(workspaceProject,
                                           this.currentTargetBranch).then(userCanUpdateBranch -> {
             if (userCanUpdateBranch) {
-                doRevertChangeRequest();
+                action.run();
             }
 
             return promises.resolve();
@@ -211,6 +209,9 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void reset() {
+        overviewTabLoaded = false;
+        changedFilesTabLoaded = false;
+
         this.view.showAcceptButton(false);
         this.view.showRejectButton(false);
         this.view.showRevertButton(false);
@@ -218,8 +219,11 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void setup(final boolean isReload) {
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
+
         changeRequestService.call((ChangeRequest changeRequest) -> this.loadChangeRequest(changeRequest,
-                                                                                          isReload))
+                                                                                          isReload),
+                                  new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                 .getChangeRequest(workspaceProject.getSpace().getName(),
                                   workspaceProject.getRepository().getAlias(),
                                   currentChangeRequestId);
@@ -238,9 +242,18 @@ public class ChangeRequestReviewScreenPresenter {
                           this.currentTargetBranch);
 
         this.overviewScreen.reset();
-        this.overviewScreen.setup(changeRequest);
+        this.overviewScreen.setup(changeRequest,
+                                  (Boolean success) -> {
+                                      overviewTabLoaded = true;
+                                      finishLoading();
+                                  });
+
         this.changedFilesScreen.reset();
-        this.changedFilesScreen.setup(changeRequest);
+        this.changedFilesScreen.setup(changeRequest,
+                                      (Boolean success) -> {
+                                          changedFilesTabLoaded = true;
+                                          finishLoading();
+                                      });
 
         if (!isReload) {
             this.view.activateOverviewTab();
@@ -267,17 +280,22 @@ public class ChangeRequestReviewScreenPresenter {
         });
     }
 
-    private void doRejectChangeRequest() {
-        this.changeRequestService.call(v -> this.libraryPlaces.goToProject(workspaceProject))
-                .rejectChangeRequest(workspaceProject.getSpace().getName(),
-                                     workspaceProject.getRepository().getAlias(),
-                                     currentChangeRequestId);
+    private void rejectChangeRequestAction() {
+        this.changeRequestService.call(v -> {
+            fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRejectMessage,
+                                            currentChangeRequestId),
+                                  NotificationEvent.NotificationType.SUCCESS);
+        }).rejectChangeRequest(workspaceProject.getSpace().getName(),
+                               workspaceProject.getRepository().getAlias(),
+                               currentChangeRequestId);
     }
 
-    private void doAcceptChangeRequest() {
+    private void acceptChangeRequestAction() {
         this.changeRequestService.call((Boolean succeeded) -> {
             if (succeeded) {
-                this.libraryPlaces.goToProject(workspaceProject);
+                fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestAcceptMessage,
+                                                currentChangeRequestId),
+                                      NotificationEvent.NotificationType.SUCCESS);
             } else {
                 //TODO: [caponetto] handle this case
             }
@@ -286,15 +304,31 @@ public class ChangeRequestReviewScreenPresenter {
                                currentChangeRequestId);
     }
 
-    private void doRevertChangeRequest() {
+    private void revertChangeRequestAction() {
         this.changeRequestService.call((Boolean succeeded) -> {
             if (succeeded) {
-                this.libraryPlaces.goToProject(workspaceProject);
+                fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRevertMessage,
+                                                currentChangeRequestId),
+                                      NotificationEvent.NotificationType.SUCCESS);
             } else {
-                //TODO: [caponetto] handle this case
+                fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRevertFailMessage,
+                                                currentChangeRequestId),
+                                      NotificationEvent.NotificationType.WARNING);
             }
-        }).tryRevertChangeRequest(workspaceProject.getSpace().getName(),
-                                  workspaceProject.getRepository().getAlias(),
-                                  currentChangeRequestId);
+        }).revertChangeRequest(workspaceProject.getSpace().getName(),
+                               workspaceProject.getRepository().getAlias(),
+                               currentChangeRequestId);
+    }
+
+    private void fireNotificationEvent(final String message,
+                                       final NotificationEvent.NotificationType type) {
+        notificationEvent.fire(new NotificationEvent(message,
+                                                     type));
+    }
+
+    private void finishLoading() {
+        if (overviewTabLoaded && changedFilesTabLoaded) {
+            busyIndicatorView.hideBusyIndicator();
+        }
     }
 }

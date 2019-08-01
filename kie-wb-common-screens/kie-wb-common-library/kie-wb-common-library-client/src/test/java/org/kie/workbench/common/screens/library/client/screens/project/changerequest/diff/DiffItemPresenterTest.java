@@ -129,7 +129,7 @@ public class DiffItemPresenterTest {
 
         presenter.preDestroy();
 
-        verify(placeManager, times(1)).closePlace(any(PlaceRequest.class));
+        verify(placeManager).closePlace(any(PlaceRequest.class));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class DiffItemPresenterTest {
 
         presenter.preDestroy();
 
-        verify(placeManager, times(1)).closePlace(any(PlaceRequest.class));
+        verify(placeManager).closePlace(any(PlaceRequest.class));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -289,7 +289,7 @@ public class DiffItemPresenterTest {
 
         verify(view, never()).getCustomLeftContainer();
         verify(view).getCustomRightContainer();
-        verify(placeManager, times(1)).goTo(any(PlaceRequest.class), any(HTMLElement.class));
+        verify(placeManager).goTo(any(PlaceRequest.class), any(HTMLElement.class));
     }
 
     @Test
@@ -308,7 +308,7 @@ public class DiffItemPresenterTest {
 
         verify(view).getCustomLeftContainer();
         verify(view, never()).getCustomRightContainer();
-        verify(placeManager, times(1)).goTo(any(PlaceRequest.class), any(HTMLElement.class));
+        verify(placeManager).goTo(any(PlaceRequest.class), any(HTMLElement.class));
     }
 
     @Test
@@ -317,7 +317,7 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, true);
 
-        verify(view, times(1)).setupTextualContent(anyString(),
+        verify(view).setupTextualContent(anyString(),
                                                    anyString(),
                                                    anyBoolean());
     }
@@ -328,7 +328,7 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, false);
 
-        verify(view, times(1)).setupTextualContent(anyString(),
+        verify(view).setupTextualContent(anyString(),
                                                    anyString(),
                                                    eq(false));
     }
@@ -340,7 +340,7 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, true);
 
-        verify(view, times(1)).setupTextualContent(anyString(),
+        verify(view).setupTextualContent(anyString(),
                                                    anyString(),
                                                    eq(false));
     }
@@ -352,7 +352,7 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, true);
 
-        verify(view, times(1)).setupTextualContent(anyString(),
+        verify(view).setupTextualContent(anyString(),
                                                    anyString(),
                                                    eq(true));
     }
@@ -364,7 +364,7 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, false);
 
-        verify(view, times(1)).setupTextualContent(anyString(),
+        verify(view).setupTextualContent(anyString(),
                                                    anyString(),
                                                    eq(false));
     }
@@ -376,10 +376,10 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, true);
 
-        verify(diff, times(1)).getOldFilePath();
+        verify(diff).getOldFilePath();
         verify(diff, times(2)).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextualContent(eq("my/new/file"),
+        verify(view).setupTextualContent(eq("my/new/file"),
                                                    eq("Added"),
                                                    anyBoolean());
     }
@@ -392,9 +392,9 @@ public class DiffItemPresenterTest {
         presenter.setup(diff, true);
 
         verify(diff, times(2)).getOldFilePath();
-        verify(diff, times(1)).getNewFilePath();
+        verify(diff).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextualContent(eq("my/old/file"),
+        verify(view).setupTextualContent(eq("my/old/file"),
                                                    eq("Deleted"),
                                                    anyBoolean());
     }
@@ -406,9 +406,9 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, true);
         verify(diff, times(2)).getOldFilePath();
-        verify(diff, times(1)).getNewFilePath();
+        verify(diff).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextualContent(eq("my/old/file"),
+        verify(view).setupTextualContent(eq("my/old/file"),
                                                    eq("Updated"),
                                                    anyBoolean());
     }
@@ -421,9 +421,9 @@ public class DiffItemPresenterTest {
         presenter.setup(diff, true);
 
         verify(diff, times(2)).getOldFilePath();
-        verify(diff, times(1)).getNewFilePath();
+        verify(diff).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextualContent(eq("my/old/file -> my/new/file"),
+        verify(view).setupTextualContent(eq("my/old/file -> my/new/file"),
                                                    eq("Copied"),
                                                    anyBoolean());
     }
@@ -436,9 +436,9 @@ public class DiffItemPresenterTest {
         presenter.setup(diff, true);
 
         verify(diff, times(2)).getOldFilePath();
-        verify(diff, times(1)).getNewFilePath();
+        verify(diff).getNewFilePath();
         verify(resourceTypeManagerCache).getResourceTypeDefinitions();
-        verify(view, times(1)).setupTextualContent(eq("my/old/file -> my/new/file"),
+        verify(view).setupTextualContent(eq("my/old/file -> my/new/file"),
                                                    eq("Renamed"),
                                                    anyBoolean());
     }
@@ -459,7 +459,7 @@ public class DiffItemPresenterTest {
 
         presenter.setup(diff, true);
 
-        verify(view, times(1)).setupTextualContent(anyString(),
+        verify(view).setupTextualContent(anyString(),
                                                    anyString(),
                                                    anyBoolean());
     }
