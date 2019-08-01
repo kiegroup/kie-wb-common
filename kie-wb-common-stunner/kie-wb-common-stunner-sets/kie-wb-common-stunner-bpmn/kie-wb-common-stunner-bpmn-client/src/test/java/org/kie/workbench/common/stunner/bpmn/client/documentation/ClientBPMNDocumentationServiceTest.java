@@ -85,6 +85,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariableSerializer;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.bpmn.documentation.model.BPMNDocumentation;
 import org.kie.workbench.common.stunner.bpmn.documentation.model.element.Element;
@@ -163,9 +164,9 @@ public class ClientBPMNDocumentationServiceTest {
     public static final String ON_ENTRY_CAPTION = "ONENTRY_CAPTION";
     public static final String TEMPLATE = "documentationTemplate";
     public static final String ASSIGNEMNTS = "assignemnts";
-    private static final String VARIABLES = "PV1:java.lang.String,PV2:java.lang.Boolean";
-    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String,GL2:java.lang.Boolean";
-    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String,SUBPV2:java.lang.Boolean";
+    private static final String VARIABLES = "PV1:java.lang.String:false,PV2:java.lang.Boolean:false";
+    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String:false,GL2:java.lang.Boolean:false";
+    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String:false,SUBPV2:java.lang.Boolean:false";
     private static final String ISASYNC_CAPTION = "ISASYNC_CAPTION";
     private static final String ON_EXIT_CAPTION = "ONEXIT_CAPTION";
     private static final String ICON_HTML = "icon image";
@@ -495,17 +496,28 @@ public class ClientBPMNDocumentationServiceTest {
         //assert sorting based on the variables names
         final KeyValue[] variables = dataTotal.getVariables();
         assertEquals(variables[0].getKey(), "GL1");
-        assertEquals(variables[0].getValue(), String.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[0].getValue()).type, String.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[0].getValue()).kpi, "false");
+
         assertEquals(variables[1].getKey(), "GL2");
-        assertEquals(variables[1].getValue(), Boolean.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[1].getValue()).type, Boolean.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[1].getValue()).kpi, "false");
+
         assertEquals(variables[2].getKey(), "PV1");
-        assertEquals(variables[2].getValue(), String.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[2].getValue()).type, String.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[2].getValue()).kpi, "false");
+
         assertEquals(variables[3].getKey(), "PV2");
-        assertEquals(variables[3].getValue(), Boolean.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[3].getValue()).type, Boolean.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[3].getValue()).kpi, "false");
+
         assertEquals(variables[4].getKey(), "SUBPV1");
-        assertEquals(variables[4].getValue(), String.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[4].getValue()).type, String.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[4].getValue()).kpi, "false");
+
         assertEquals(variables[5].getKey(), "SUBPV2");
-        assertEquals(variables[5].getValue(), Boolean.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[5].getValue()).type, Boolean.class.getName());
+        assertEquals(((ProcessVariableSerializer.VariableInfo)variables[5].getValue()).kpi, "false");
 
         final ElementTotal[] totals = bpmnDocumentation.getElementsDetails().getTotals();
         assertEquals(totals.length, 2);
