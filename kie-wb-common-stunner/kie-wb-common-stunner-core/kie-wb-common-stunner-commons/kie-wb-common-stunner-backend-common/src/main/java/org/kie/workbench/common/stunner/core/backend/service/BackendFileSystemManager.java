@@ -32,7 +32,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.jboss.errai.bus.server.api.RpcContext;
 import org.kie.workbench.common.stunner.core.backend.util.URLUtils;
 import org.slf4j.Logger;
@@ -50,18 +49,20 @@ public class BackendFileSystemManager {
     private static final String WEBINF_PATH = "WEB-INF";
 
     private final IOService ioService;
-    private final CommentedOptionFactory optionFactory;
+    // TODO: kogito - use of org.guvnor.common.services.backend.util.CommentedOptionFactory creates
+    //  an implicit dependency to uberfire-services-backend, which is not mandatory for the standalone environment
+    // private final CommentedOptionFactory optionFactory;
 
     // CDI proxy.
     protected BackendFileSystemManager() {
-        this(null, null);
+        this(null);
     }
 
     @Inject
-    public BackendFileSystemManager(final @Named("ioStrategy") IOService ioService,
-                                    final CommentedOptionFactory optionFactory) {
+    public BackendFileSystemManager(final @Named("ioStrategy") IOService ioService
+                                    // final CommentedOptionFactory optionFactory
+    ) {
         this.ioService = ioService;
-        this.optionFactory = optionFactory;
     }
 
     public static class AssetBuilder {
@@ -155,8 +156,11 @@ public class BackendFileSystemManager {
                 os.flush();
                 resource.close();
                 ioService.write(assetPath,
-                                os.toByteArray(),
-                                optionFactory.makeCommentedOption(message));
+                                os.toByteArray()
+                                // TODO: kogito - use of org.guvnor.common.services.backend.util.CommentedOptionFactory creates
+                                //  an implicit dependency to uberfire-services-backend, which is not mandatory for the standalone environment
+                                //, optionFactory.makeCommentedOption(message)
+                );
             }
         } catch (final Exception e) {
             LOG.error("Error while deploying assets.", e);
