@@ -60,9 +60,9 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
     static final double SHAPE_EDIT_ALPHA = 0.2d;
     static final double SHAPE_NOT_EDIT_ALPHA = 1.0d;
 
-    private String uuid;
-
     private final Command hideFloatingViewOnTimeoutCommand = this::flush;
+
+    protected String uuid;
 
     protected abstract FloatingView<IsWidget> getFloatingView();
 

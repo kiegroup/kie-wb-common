@@ -147,6 +147,7 @@ public class CanvasInPlaceTextEditorControlInLineTest {
         when(canvas.getShape(eq(UUID))).thenReturn(shape);
         when(shape.getUUID()).thenReturn(UUID);
         when(shape.getShapeView()).thenReturn(testShapeView);
+        when(testShapeView.getFontPosition()).thenReturn("OUTSIDE");
 
         control = spy(new CanvasInPlaceTextEditorControlInLine(floatingView, textEditBoxWidget, canvasSelectionEvent));
     }
@@ -221,6 +222,15 @@ public class CanvasInPlaceTextEditorControlInLineTest {
     @Test
     public void testGetFloatingView() {
         Assert.assertEquals(floatingView , control.getFloatingView());
+    }
+
+    @Test
+    public void testIsOutSide() {
+
+        Assert.assertTrue(control.isOutSide(shape));
+
+
+
     }
 
     private void assertShow() {

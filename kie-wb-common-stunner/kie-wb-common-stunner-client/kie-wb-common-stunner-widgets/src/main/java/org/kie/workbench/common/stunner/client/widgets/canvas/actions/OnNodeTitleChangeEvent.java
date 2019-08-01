@@ -18,10 +18,6 @@ package org.kie.workbench.common.stunner.client.widgets.canvas.actions;
 
 import org.jboss.errai.common.client.api.annotations.LocalEvent;
 
-/**
- * @author Dmitrii Tikhomirov
- * Created by treblereel 6/17/19
- */
 @LocalEvent
 public class OnNodeTitleChangeEvent {
 
