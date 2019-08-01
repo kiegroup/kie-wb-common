@@ -18,15 +18,9 @@ package org.kie.workbench.common.dmn.client.widgets.grid.controls;
 
 import java.util.Optional;
 
-import org.jboss.errai.common.client.api.IsElement;
-
 public interface HasCellEditorControls {
 
-    interface Editor<T> extends IsElement {
-
-        void show(final Optional<String> editorTitle);
-
-        void hide();
+    interface Editor<T> extends PopupEditorControls {
 
         void bind(final T bound,
                   final int uiRowIndex,
