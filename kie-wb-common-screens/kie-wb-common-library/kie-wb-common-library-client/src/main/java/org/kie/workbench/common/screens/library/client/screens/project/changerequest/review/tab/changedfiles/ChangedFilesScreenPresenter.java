@@ -38,23 +38,11 @@ import org.uberfire.client.mvp.UberElemental;
 @Dependent
 public class ChangedFilesScreenPresenter {
 
-    public interface View extends UberElemental<ChangedFilesScreenPresenter> {
-
-        void addDiffItem(final DiffItemPresenter.View item, Runnable draw);
-
-        void clearDiffList();
-
-        void setFilesSummary(final String text);
-
-        void resetAll();
-    }
-
     private final View view;
     private final ManagedInstance<DiffItemPresenter> diffItemPresenterInstances;
     private final ChangeRequestUtils changeRequestUtils;
     private final Caller<ChangeRequestService> changeRequestService;
     private final LibraryPlaces libraryPlaces;
-
     private WorkspaceProject workspaceProject;
 
     @Inject
@@ -104,8 +92,8 @@ public class ChangedFilesScreenPresenter {
 
     private void setupFilesSummary(final List<ChangeRequestDiff> diffList) {
         final int changedFilesCount = diffList.size();
-        final int addedLinesCount = diffList.stream().mapToInt(elem -> elem.getAddedLinesCount()).sum();
-        final int deletedLinesCount = diffList.stream().mapToInt(elem -> elem.getDeletedLinesCount()).sum();
+        final int addedLinesCount = diffList.stream().mapToInt(ChangeRequestDiff::getAddedLinesCount).sum();
+        final int deletedLinesCount = diffList.stream().mapToInt(ChangeRequestDiff::getDeletedLinesCount).sum();
 
         view.setFilesSummary(changeRequestUtils.formatFilesSummary(changedFilesCount,
                                                                    addedLinesCount,
@@ -117,7 +105,18 @@ public class ChangedFilesScreenPresenter {
         diffList.forEach(diff -> {
             DiffItemPresenter item = diffItemPresenterInstances.get();
             item.setup(diff, warnConflict);
-            this.view.addDiffItem(item.getView(), () -> item.draw());
+            this.view.addDiffItem(item.getView(), item::draw);
         });
+    }
+
+    public interface View extends UberElemental<ChangedFilesScreenPresenter> {
+
+        void addDiffItem(final DiffItemPresenter.View item, Runnable draw);
+
+        void clearDiffList();
+
+        void setFilesSummary(final String text);
+
+        void resetAll();
     }
 }

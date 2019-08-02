@@ -29,16 +29,10 @@ import org.uberfire.client.promise.Promises;
 @Dependent
 public class EmptyChangeRequestListPresenter {
 
-    public interface View extends UberElemental<EmptyChangeRequestListPresenter> {
-
-        void enableSubmitChangeRequestButton(boolean isEnabled);
-    }
-
     private final View view;
     private final ProjectController projectController;
     private final LibraryPlaces libraryPlaces;
     private final Promises promises;
-
     private WorkspaceProject workspaceProject;
 
     @Inject
@@ -80,5 +74,10 @@ public class EmptyChangeRequestListPresenter {
             view.enableSubmitChangeRequestButton(userCanSubmitChangeRequest);
             return promises.resolve();
         });
+    }
+
+    public interface View extends UberElemental<EmptyChangeRequestListPresenter> {
+
+        void enableSubmitChangeRequestButton(boolean isEnabled);
     }
 }

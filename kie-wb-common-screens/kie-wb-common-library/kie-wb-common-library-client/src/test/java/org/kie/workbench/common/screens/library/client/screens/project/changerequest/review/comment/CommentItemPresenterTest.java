@@ -25,7 +25,6 @@ import org.jboss.errai.security.shared.api.identity.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.util.DateUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.services.shared.project.KieModule;
@@ -59,9 +58,6 @@ public class CommentItemPresenterTest {
     private ChangeRequestService changeRequestService;
 
     @Mock
-    private ChangeRequestUtils changeRequestUtils;
-
-    @Mock
     private SessionInfo sessionInfo;
 
     @Mock
@@ -83,7 +79,6 @@ public class CommentItemPresenterTest {
         this.presenter = spy(new CommentItemPresenter(view,
                                                       dateUtils,
                                                       new CallerMock<>(changeRequestService),
-                                                      changeRequestUtils,
                                                       sessionInfo,
                                                       libraryPlaces));
     }

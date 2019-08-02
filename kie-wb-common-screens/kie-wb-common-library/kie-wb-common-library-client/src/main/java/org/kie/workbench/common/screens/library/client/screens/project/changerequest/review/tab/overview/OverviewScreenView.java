@@ -417,7 +417,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     public void onCommentCurrentPageKeyUp(final KeyUpEvent event) {
         String pageNumber = commentCurrentPage.value;
         if (pageNumber.matches("\\d+")) {
-            presenter.setCommentCurrentPage(Integer.valueOf(pageNumber));
+            presenter.setCommentCurrentPage(Integer.parseInt(pageNumber));
         }
     }
 

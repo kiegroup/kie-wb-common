@@ -110,8 +110,10 @@ public class DiffItemPresenterTest {
     @Test
     public void preDestroyVisualDiffTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft")).set(mock(PlaceRequest.class));
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomRight")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft"))
+                .set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomRight"))
+                .set(mock(PlaceRequest.class));
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
@@ -123,7 +125,8 @@ public class DiffItemPresenterTest {
     @Test
     public void preDestroyVisualDiffOnlyLeftTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft"))
+                .set(mock(PlaceRequest.class));
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
@@ -135,7 +138,8 @@ public class DiffItemPresenterTest {
     @Test
     public void preDestroyVisualDiffOnlyRightTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomRight")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomRight"))
+                .set(mock(PlaceRequest.class));
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
@@ -469,7 +473,8 @@ public class DiffItemPresenterTest {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
-        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft")).set(mock(PlaceRequest.class));
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft"))
+                .set(mock(PlaceRequest.class));
 
         presenter.toggleCollapsibleContainerState();
 

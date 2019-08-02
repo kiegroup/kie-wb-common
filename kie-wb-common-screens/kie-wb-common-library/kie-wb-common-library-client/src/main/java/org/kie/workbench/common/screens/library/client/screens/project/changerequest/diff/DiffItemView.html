@@ -20,25 +20,25 @@
             <div>
                 <div class="panel-title">
                     <a data-field="collapse-link" data-toggle="collapse">
-                        <span data-field="change-type" class="change-type"></span>
-                        <span data-field="filename" class="filename"></span>
-                        <span data-field="conflict-label" class="pficon pficon-warning-triangle-o conflict"></span>
+                        <span class="change-type" data-field="change-type"></span>
+                        <span class="filename" data-field="filename"></span>
+                        <span class="pficon pficon-warning-triangle-o conflict" data-field="conflict-label"></span>
                     </a>
                 </div>
             </div>
         </div>
-        <div data-field="collapse-container" class="panel-collapse collapse in" aria-expanded="true">
-            <div data-field="textual-diff-container" class="panel-body textual-diff-container">
-                <div data-field="unmodified-file" class="textual-diff-info">
+        <div aria-expanded="true" class="panel-collapse collapse in" data-field="collapse-container">
+            <div class="panel-body textual-diff-container" data-field="textual-diff-container">
+                <div class="textual-diff-info" data-field="unmodified-file">
                     <span data-i18n-key="FileWithoutChanges"></span>
                 </div>
-                <div data-field="binary-file" class="textual-diff-info">
+                <div class="textual-diff-info" data-field="binary-file">
                     <span data-i18n-key="BinaryFilesDiffer"></span>
                 </div>
             </div>
-            <div data-field="custom-diff-container" class="panel-body custom-diff-container">
-                <div data-field="left-container" class="half-container"></div>
-                <div data-field="right-container" class="half-container"></div>
+            <div class="panel-body custom-diff-container" data-field="custom-diff-container">
+                <div class="half-container" data-field="left-container"></div>
+                <div class="half-container" data-field="right-container"></div>
             </div>
         </div>
     </div>

@@ -16,42 +16,45 @@
 <div class="overview-container">
     <div class="row">
         <div class="col-xs-12">
-            <div data-field="conflict-warning" class="alert alert-warning">
+            <div class="alert alert-warning" data-field="conflict-warning">
                 <span class="pficon pficon-warning-triangle-o"></span>
                 <span data-i18n-key="ConflictWarningCannotBeIntegrated"></span>
             </div>
             <div>
-                <h3 data-i18n-key="Summary" class="editable-field-title"></h3>
+                <h3 class="editable-field-title" data-i18n-key="Summary"></h3>
                 <a class="fa fa-pencil" data-field="edit-summary"></a>
             </div>
-            <span data-field="summary" class="wrap-text"></span>
-            <div data-field="summary-edit-group" class="edit-group-textbox">
+            <span class="wrap-text" data-field="summary"></span>
+            <div class="edit-group-textbox" data-field="summary-edit-group">
                 <div class="form-control-pf-textbox">
-                    <input type="text" class="form-control" data-field="summary-edit-input" autocomplete="off"/>
-                    <button type="button" class="form-control-pf-empty" data-field="clear-summary-button">
+                    <input autocomplete="off" class="form-control" data-field="summary-edit-input" type="text"/>
+                    <button class="form-control-pf-empty" data-field="clear-summary-button" type="button">
                         <span class="fa fa-times-circle fa-lg"></span>
                     </button>
                 </div>
-                <button class="btn btn-primary form-control-pf-save" data-field="summary-edit-save" aria-label="Save">
+                <button aria-label="Save" class="btn btn-primary form-control-pf-save" data-field="summary-edit-save">
                     <i class="glyphicon glyphicon-ok"></i>
                 </button>
-                <button class="btn btn-default form-control-pf-cancel" data-field="summary-edit-cancel" aria-label="Cancel">
+                <button aria-label="Cancel" class="btn btn-default form-control-pf-cancel"
+                        data-field="summary-edit-cancel">
                     <i class="glyphicon glyphicon-remove"></i>
                 </button>
             </div>
 
             <div>
-                <h3 data-i18n-key="Description" class="editable-field-title"></h3>
+                <h3 class="editable-field-title" data-i18n-key="Description"></h3>
                 <a class="fa fa-pencil" data-field="edit-description"></a>
             </div>
             <pre data-field="description"></pre>
-            <div data-field="description-edit-group" class="edit-group-textarea">
+            <div class="edit-group-textarea" data-field="description-edit-group">
                 <textarea class="form-control" data-field="description-edit-input" rows="8"></textarea>
                 <div class="edit-buttons">
-                    <button class="btn btn-primary form-control-pf-save" data-field="description-edit-save" aria-label="Save">
+                    <button aria-label="Save" class="btn btn-primary form-control-pf-save"
+                            data-field="description-edit-save">
                         <i class="glyphicon glyphicon-ok"></i>
                     </button>
-                    <button class="btn btn-default form-control-pf-cancel" data-field="description-edit-cancel" aria-label="Cancel">
+                    <button aria-label="Cancel" class="btn btn-default form-control-pf-cancel"
+                            data-field="description-edit-cancel">
                         <i class="glyphicon glyphicon-remove"></i>
                     </button>
                 </div>
@@ -67,21 +70,21 @@
             <span data-field="created-date"></span>
 
             <h3 data-i18n-key="SourceBranch"></h3>
-            <span data-field="source-branch" class="wrap-text"></span>
+            <span class="wrap-text" data-field="source-branch"></span>
 
             <h3 data-i18n-key="TargetBranch"></h3>
-            <span data-field="target-branch" class="wrap-text"></span>
+            <span class="wrap-text" data-field="target-branch"></span>
         </div>
         <div class="col-xs-12">
             <div class="comments-container">
                 <h3 data-field="comments-header"></h3>
 
-                <div data-field="comments-toolbar" class="toolbar-pf">
+                <div class="toolbar-pf" data-field="comments-toolbar">
                     <div class="form-group right-toolbar">
-                        <label data-field="comment-page-indicator" class="nowrap"></label>
-                        <a href="#" data-field="comment-prev-page"><span class="i fa fa-angle-left"></span></a>
-                        <input class="page-number" type="text" data-field="comment-current-page">
-                        <a href="#" data-field="comment-next-page"><span class="i fa fa-angle-right"></span></a>
+                        <label class="nowrap" data-field="comment-page-indicator"></label>
+                        <a data-field="comment-prev-page" href="#"><span class="i fa fa-angle-left"></span></a>
+                        <input class="page-number" data-field="comment-current-page" type="text">
+                        <a data-field="comment-next-page" href="#"><span class="i fa fa-angle-right"></span></a>
                         <span class="nowrap">of <span data-field="comment-total-pages"></span></span>
                     </div>
                 </div>
@@ -97,11 +100,13 @@
                     <div class="list-view-pf-body">
                         <div class="list-view-pf-description">
                             <div class="comment-input-button">
-                                <div data-field="comment-input-group" class="comment-input">
-                                    <textarea data-field="comment-input" class="form-control comment-input input-lg" rows="2"></textarea>
+                                <div class="comment-input" data-field="comment-input-group">
+                                    <textarea class="form-control comment-input input-lg" data-field="comment-input"
+                                              rows="2"></textarea>
                                     <div class="help-block" data-field="comment-input-help-inline"></div>
                                 </div>
-                                <button class="btn btn-default" data-field="add-comment-button" data-i18n-key="Comment"></button>
+                                <button class="btn btn-default" data-field="add-comment-button"
+                                        data-i18n-key="Comment"></button>
                             </div>
                         </div>
                     </div>

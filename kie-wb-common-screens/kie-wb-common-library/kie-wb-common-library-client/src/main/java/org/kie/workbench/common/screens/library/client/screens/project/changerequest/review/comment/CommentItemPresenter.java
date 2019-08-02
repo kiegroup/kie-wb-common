@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.util.DateUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.mvp.UberElemental;
@@ -34,26 +33,11 @@ import org.uberfire.rpc.SessionInfo;
 @Dependent
 public class CommentItemPresenter {
 
-    public interface View extends UberElemental<CommentItemPresenter> {
-
-        void delete();
-
-        void setAuthor(final String author);
-
-        void setDate(final String date);
-
-        void setText(final String text);
-
-        void hideActions();
-    }
-
     private final View view;
     private final DateUtils dateUtils;
     private final Caller<ChangeRequestService> changeRequestService;
-    private final ChangeRequestUtils changeRequestUtils;
     private final SessionInfo sessionInfo;
     private final LibraryPlaces libraryPlaces;
-
     private Long changeRequestId;
     private Long commentId;
     private String authorId;
@@ -62,13 +46,11 @@ public class CommentItemPresenter {
     public CommentItemPresenter(final View view,
                                 final DateUtils dateUtils,
                                 final Caller<ChangeRequestService> changeRequestService,
-                                final ChangeRequestUtils changeRequestUtils,
                                 final SessionInfo sessionInfo,
                                 final LibraryPlaces libraryPlaces) {
         this.view = view;
         this.dateUtils = dateUtils;
         this.changeRequestService = changeRequestService;
-        this.changeRequestUtils = changeRequestUtils;
         this.sessionInfo = sessionInfo;
         this.libraryPlaces = libraryPlaces;
     }
@@ -121,5 +103,18 @@ public class CommentItemPresenter {
 
     private boolean isUserAuthor() {
         return this.authorId.equals(this.sessionInfo.getIdentity().getIdentifier());
+    }
+
+    public interface View extends UberElemental<CommentItemPresenter> {
+
+        void delete();
+
+        void setAuthor(final String author);
+
+        void setDate(final String date);
+
+        void setText(final String text);
+
+        void hideActions();
     }
 }

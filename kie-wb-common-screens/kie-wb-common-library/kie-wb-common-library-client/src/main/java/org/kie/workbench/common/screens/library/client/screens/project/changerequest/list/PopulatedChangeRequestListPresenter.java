@@ -53,35 +53,10 @@ import org.uberfire.mvp.Command;
 @Dependent
 public class PopulatedChangeRequestListPresenter {
 
-    public interface View extends UberElemental<PopulatedChangeRequestListPresenter> {
-
-        void setCurrentPage(final int currentPage);
-
-        void setPageIndicator(final String pageIndicatorText);
-
-        void setTotalPages(final int totalPages);
-
-        void clearList();
-
-        void enablePreviousButton(final boolean isEnabled);
-
-        void enableNextButton(final boolean isEnabled);
-
-        void setFilterTypes(final List<SelectOption> categories);
-
-        void clearSearch();
-
-        void enableSubmitChangeRequestButton(final boolean isEnabled);
-
-        void showEmptyState(final EmptyState emptyState);
-
-        void hideEmptyState(final EmptyState emptyState);
-
-        void addChangeRequestItem(final ChangeRequestListItemView item);
-
-        void setFilterTextPlaceHolder(final String placeHolder);
-    }
-
+    private static final int PAGE_SIZE = 10;
+    private static final String FILTER_OPEN = "OPEN";
+    private static final String FILTER_CLOSED = "CLOSED";
+    private static final String FILTER_ALL = "ALL";
     private final View view;
     private final ProjectController projectController;
     private final LibraryPlaces libraryPlaces;
@@ -92,18 +67,11 @@ public class PopulatedChangeRequestListPresenter {
     private final Caller<ChangeRequestService> changeRequestService;
     private final BusyIndicatorView busyIndicatorView;
     private final ChangeRequestUtils changeRequestUtils;
-
     private WorkspaceProject workspaceProject;
     private int currentPage;
     private String searchFilter;
     private int totalPages;
     private String filterType;
-
-    private static final int PAGE_SIZE = 10;
-
-    private static final String FILTER_OPEN = "OPEN";
-    private static final String FILTER_CLOSED = "CLOSED";
-    private static final String FILTER_ALL = "ALL";
 
     @Inject
     public PopulatedChangeRequestListPresenter(final View view,
@@ -394,5 +362,34 @@ public class PopulatedChangeRequestListPresenter {
         } else {
             return otherCounter;
         }
+    }
+
+    public interface View extends UberElemental<PopulatedChangeRequestListPresenter> {
+
+        void setCurrentPage(final int currentPage);
+
+        void setPageIndicator(final String pageIndicatorText);
+
+        void setTotalPages(final int totalPages);
+
+        void clearList();
+
+        void enablePreviousButton(final boolean isEnabled);
+
+        void enableNextButton(final boolean isEnabled);
+
+        void setFilterTypes(final List<SelectOption> categories);
+
+        void clearSearch();
+
+        void enableSubmitChangeRequestButton(final boolean isEnabled);
+
+        void showEmptyState(final EmptyState emptyState);
+
+        void hideEmptyState(final EmptyState emptyState);
+
+        void addChangeRequestItem(final ChangeRequestListItemView item);
+
+        void setFilterTextPlaceHolder(final String placeHolder);
     }
 }

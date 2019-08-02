@@ -120,11 +120,6 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
     }
 
     @Override
-    public void setDescription(final String description) {
-        this.description.textContent = description;
-    }
-
-    @Override
     public void setDestinationBranches(final List<String> branches,
                                        int selectedIdx) {
         branchSelect.innerHTML = "";
@@ -158,6 +153,11 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
     @Override
     public String getDescription() {
         return description.value;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        this.description.textContent = description;
     }
 
     @Override

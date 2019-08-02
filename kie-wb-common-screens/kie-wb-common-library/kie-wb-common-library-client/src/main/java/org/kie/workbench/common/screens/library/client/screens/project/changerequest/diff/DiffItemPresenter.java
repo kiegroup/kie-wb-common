@@ -43,45 +43,10 @@ import org.uberfire.workbench.type.ResourceTypeDefinition;
 @Dependent
 public class DiffItemPresenter {
 
-    public interface View extends UberElemental<DiffItemPresenter> {
-
-        void setupTextualContent(final String filename,
-                                 final String changeType,
-                                 final boolean conflict);
-
-        void drawTextualContent(final String diffText,
-                                final boolean isUnified);
-
-        void setupCustomContent(final String filename,
-                                final String changeType,
-                                final boolean conflict);
-
-        void expandCustomLeftContainer();
-
-        void expandCustomRightContainer();
-
-        HTMLElement getCustomLeftContainer();
-
-        HTMLElement getCustomRightContainer();
-
-        void clearCustomLeftContainer();
-
-        void clearCustomRightContainer();
-
-        void expandCollapsibleContainer(final boolean isOpened);
-
-        void drawBinaryContent();
-
-        void drawUnmodifiedContent();
-
-        void removeTextualContent();
-    }
-
     private final View view;
     private final ResourceTypeManagerCache resourceTypeManagerCache;
     private final PlaceManager placeManager;
     private final TranslationService ts;
-
     private DiffMode diffMode;
     private PlaceRequest placeRequestCustomLeft;
     private PlaceRequest placeRequestCustomRight;
@@ -340,5 +305,39 @@ public class DiffItemPresenter {
         }
 
         return DiffPrintState.REGULAR;
+    }
+
+    public interface View extends UberElemental<DiffItemPresenter> {
+
+        void setupTextualContent(final String filename,
+                                 final String changeType,
+                                 final boolean conflict);
+
+        void drawTextualContent(final String diffText,
+                                final boolean isUnified);
+
+        void setupCustomContent(final String filename,
+                                final String changeType,
+                                final boolean conflict);
+
+        void expandCustomLeftContainer();
+
+        void expandCustomRightContainer();
+
+        HTMLElement getCustomLeftContainer();
+
+        HTMLElement getCustomRightContainer();
+
+        void clearCustomLeftContainer();
+
+        void clearCustomRightContainer();
+
+        void expandCollapsibleContainer(final boolean isOpened);
+
+        void drawBinaryContent();
+
+        void drawUnmodifiedContent();
+
+        void removeTextualContent();
     }
 }

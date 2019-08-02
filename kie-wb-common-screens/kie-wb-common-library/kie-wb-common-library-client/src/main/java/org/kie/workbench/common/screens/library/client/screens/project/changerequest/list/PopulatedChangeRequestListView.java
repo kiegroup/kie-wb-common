@@ -129,7 +129,7 @@ public class PopulatedChangeRequestListView implements IsElement,
     public void currentPageTextChange(final KeyUpEvent event) {
         String pageNumber = currentPage.value;
         if (pageNumber.matches("\\d+")) {
-            presenter.setCurrentPage(Integer.valueOf(pageNumber));
+            presenter.setCurrentPage(Integer.parseInt(pageNumber));
         }
     }
 

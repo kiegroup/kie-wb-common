@@ -36,11 +36,6 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 @Dependent
 public class ChangeRequestListPresenter {
 
-    public interface View extends UberElemental<ChangeRequestListPresenter> {
-
-        void setContent(HTMLElement element);
-    }
-
     private final View view;
     private final LibraryPlaces libraryPlaces;
     private final EmptyChangeRequestListPresenter emptyChangeRequestsScreen;
@@ -48,7 +43,6 @@ public class ChangeRequestListPresenter {
     private final TranslationService ts;
     private final BusyIndicatorView busyIndicatorView;
     private final Caller<ChangeRequestService> changeRequestService;
-
     private boolean empty;
     private WorkspaceProject workspaceProject;
 
@@ -113,5 +107,10 @@ public class ChangeRequestListPresenter {
         if (element.parentNode == null) {
             this.view.setContent(element);
         }
+    }
+
+    public interface View extends UberElemental<ChangeRequestListPresenter> {
+
+        void setContent(HTMLElement element);
     }
 }

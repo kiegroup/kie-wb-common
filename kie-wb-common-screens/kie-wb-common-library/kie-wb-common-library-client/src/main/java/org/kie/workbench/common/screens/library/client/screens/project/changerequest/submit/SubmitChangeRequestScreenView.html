@@ -29,23 +29,25 @@
         <div class="submit-main-container col-md-12">
             <div class="row">
                 <div class="col-md-6">
-                    <div data-field="summary-group" class="form-group">
-                        <label for="summaryInput" class="required" data-i18n-key="Summary"></label>
-                        <input type="text" class="form-control" data-field="summary" id="summaryInput" autocomplete="off"/>
+                    <div class="form-group" data-field="summary-group">
+                        <label class="required" data-i18n-key="Summary" for="summaryInput"></label>
+                        <input autocomplete="off" class="form-control" data-field="summary" id="summaryInput"
+                               type="text"/>
                         <div class="help-block" data-field="summary-help-inline"></div>
                     </div>
-                    <div data-field="description-group" class="form-group">
-                        <label for="descriptionTextArea" class="required" data-i18n-key="Description"></label>
-                        <textarea class="form-control" data-field="description" id="descriptionTextArea" rows="8"></textarea>
+                    <div class="form-group" data-field="description-group">
+                        <label class="required" data-i18n-key="Description" for="descriptionTextArea"></label>
+                        <textarea class="form-control" data-field="description" id="descriptionTextArea"
+                                  rows="8"></textarea>
                         <div class="help-block" data-field="description-help-inline"></div>
                     </div>
                     <div class="form-group">
-                        <label for="branchSelector" class="form-control-label" data-i18n-key="TargetBranch"></label>
+                        <label class="form-control-label" data-i18n-key="TargetBranch" for="branchSelector"></label>
                         <select class="combobox form-control" data-field="branch-select" id="branchSelector">
                             <option data-field="branch-select-option"></option>
                         </select>
                     </div>
-                    <div data-field="conflict-warning" class="alert alert-warning">
+                    <div class="alert alert-warning" data-field="conflict-warning">
                         <span class="pficon pficon-warning-triangle-o"></span>
                         <span data-i18n-key="ConflictWarning"></span>
                     </div>

@@ -38,12 +38,10 @@ import org.uberfire.ext.widgets.common.client.diff2html.DiffOutputFormat;
 public class DiffItemView implements DiffItemPresenter.View,
                                      IsElement {
 
-    private static int nextId = 0;
-
     private static final String SIZE_100P = "100%";
     private static final int DIFF_CONTAINER_HEIGHT = 396;
     private static final String DIFF_CONTAINER_HEIGHT_PX = DIFF_CONTAINER_HEIGHT + "px";
-
+    private static int nextId = 0;
     private DiffItemPresenter presenter;
 
     @Inject

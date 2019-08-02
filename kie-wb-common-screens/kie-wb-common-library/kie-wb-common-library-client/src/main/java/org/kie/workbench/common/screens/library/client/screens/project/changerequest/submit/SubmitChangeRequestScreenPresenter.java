@@ -59,39 +59,6 @@ import org.uberfire.workbench.events.NotificationEvent;
         owningPerspective = LibraryPerspective.class)
 public class SubmitChangeRequestScreenPresenter {
 
-    public interface View extends UberElemental<SubmitChangeRequestScreenPresenter> {
-
-        void setTitle(final String title);
-
-        void setDescription(final String description);
-
-        void setDestinationBranches(final List<String> branches, int selectedIdx);
-
-        void showWarning(final boolean isVisible);
-
-        void addDiffItem(final DiffItemPresenter.View item, Runnable draw);
-
-        String getSummary();
-
-        String getDescription();
-
-        void clearErrors();
-
-        void clearDiffList();
-
-        void setFilesSummary(final String text);
-
-        void enableSubmitButton(boolean isEnabled);
-
-        void setSummaryError();
-
-        void setDescriptionError();
-
-        void showDiff(boolean isVisible);
-
-        void clearInputFields();
-    }
-
     private final View view;
     private final TranslationService ts;
     private final LibraryPlaces libraryPlaces;
@@ -102,7 +69,6 @@ public class SubmitChangeRequestScreenPresenter {
     private final BusyIndicatorView busyIndicatorView;
     private final ChangeRequestUtils changeRequestUtils;
     private final Event<NotificationEvent> notificationEvent;
-
     private WorkspaceProject workspaceProject;
     private String currentBranchName;
     private Branch defaultBranch;
@@ -281,10 +247,10 @@ public class SubmitChangeRequestScreenPresenter {
 
     private void setupPopulatedDiffList(final List<ChangeRequestDiff> diffList) {
         final int changedFilesCount = diffList.size();
-        final int addedLinesCount = diffList.stream().mapToInt(elem -> elem.getAddedLinesCount()).sum();
-        final int deletedLinesCount = diffList.stream().mapToInt(elem -> elem.getDeletedLinesCount()).sum();
+        final int addedLinesCount = diffList.stream().mapToInt(ChangeRequestDiff::getAddedLinesCount).sum();
+        final int deletedLinesCount = diffList.stream().mapToInt(ChangeRequestDiff::getDeletedLinesCount).sum();
 
-        view.showWarning(diffList.stream().anyMatch(elem -> elem.isConflict()));
+        view.showWarning(diffList.stream().anyMatch(ChangeRequestDiff::isConflict));
         view.enableSubmitButton(true);
         view.setFilesSummary(changeRequestUtils.formatFilesSummary(changedFilesCount,
                                                                    addedLinesCount,
@@ -293,7 +259,7 @@ public class SubmitChangeRequestScreenPresenter {
         diffList.forEach(diff -> {
             DiffItemPresenter item = diffItemPresenterInstances.get();
             item.setup(diff, true);
-            this.view.addDiffItem(item.getView(), () -> item.draw());
+            this.view.addDiffItem(item.getView(), item::draw);
         });
     }
 
@@ -313,5 +279,38 @@ public class SubmitChangeRequestScreenPresenter {
 
             return promises.resolve();
         });
+    }
+
+    public interface View extends UberElemental<SubmitChangeRequestScreenPresenter> {
+
+        void setTitle(final String title);
+
+        void setDestinationBranches(final List<String> branches, int selectedIdx);
+
+        void showWarning(final boolean isVisible);
+
+        void addDiffItem(final DiffItemPresenter.View item, Runnable draw);
+
+        String getSummary();
+
+        String getDescription();
+
+        void setDescription(final String description);
+
+        void clearErrors();
+
+        void clearDiffList();
+
+        void setFilesSummary(final String text);
+
+        void enableSubmitButton(boolean isEnabled);
+
+        void setSummaryError();
+
+        void setDescriptionError();
+
+        void showDiff(boolean isVisible);
+
+        void clearInputFields();
     }
 }

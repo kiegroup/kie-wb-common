@@ -41,65 +41,7 @@ import org.uberfire.rpc.SessionInfo;
 @Dependent
 public class OverviewScreenPresenter {
 
-    public interface View extends UberElemental<OverviewScreenPresenter> {
-
-        void setStatus(final String status);
-
-        void setAuthor(final String author);
-
-        void setCreatedDate(final String createdDate);
-
-        void setSummary(final String summary);
-
-        String getSummaryInputText();
-
-        void setDescription(final String description);
-
-        String getDescriptionInputText();
-
-        void setSourceBranch(final String sourceBranch);
-
-        void setTargetBranch(final String targetBranch);
-
-        void setCommentInputPlaceHolder(final String placeHolder);
-
-        void addCommentItem(final CommentItemPresenter.View item);
-
-        void clearCommentList();
-
-        void setCommentInputError(final String errorMsg);
-
-        void clearCommentInputError();
-
-        String getCommentText();
-
-        void clearCommentInputField();
-
-        void enableSummaryEditMode(final boolean isEnabled);
-
-        void enableDescriptionEditMode(final boolean isEnabled);
-
-        void hideEditModes();
-
-        void showConflictWarning(final boolean isVisible);
-
-        void resetAll();
-
-        void setCommentsHeader(final String header);
-
-        void setCommentCurrentPage(final int page);
-
-        void setCommentPageIndicator(final String pageIndicatorText);
-
-        void setCommentTotalPages(final int total);
-
-        void enableCommentPreviousButton(final boolean isEnabled);
-
-        void enableCommentNextButton(final boolean isEnabled);
-
-        void showCommentsToolbar(final boolean isVisible);
-    }
-
+    private static final int COMMENTS_PAGE_SIZE = 10;
     private final View view;
     private final TranslationService ts;
     private final ManagedInstance<CommentItemPresenter> commentItemPresenterInstances;
@@ -114,8 +56,6 @@ public class OverviewScreenPresenter {
 
     private int commentCurrentPage;
     private int commentTotalPages;
-
-    private static final int COMMENTS_PAGE_SIZE = 10;
 
     @Inject
     public OverviewScreenPresenter(final View view,
@@ -297,7 +237,7 @@ public class OverviewScreenPresenter {
 
             this.view.showCommentsToolbar(!isEmpty);
 
-            comments.stream().forEach(comment -> {
+            comments.forEach(comment -> {
                 CommentItemPresenter item = commentItemPresenterInstances.get();
                 item.setup(currentChangeRequestId,
                            comment.getId(),
@@ -353,5 +293,64 @@ public class OverviewScreenPresenter {
         } else {
             return otherCounter;
         }
+    }
+
+    public interface View extends UberElemental<OverviewScreenPresenter> {
+
+        void setStatus(final String status);
+
+        void setAuthor(final String author);
+
+        void setCreatedDate(final String createdDate);
+
+        void setSummary(final String summary);
+
+        String getSummaryInputText();
+
+        void setDescription(final String description);
+
+        String getDescriptionInputText();
+
+        void setSourceBranch(final String sourceBranch);
+
+        void setTargetBranch(final String targetBranch);
+
+        void setCommentInputPlaceHolder(final String placeHolder);
+
+        void addCommentItem(final CommentItemPresenter.View item);
+
+        void clearCommentList();
+
+        void setCommentInputError(final String errorMsg);
+
+        void clearCommentInputError();
+
+        String getCommentText();
+
+        void clearCommentInputField();
+
+        void enableSummaryEditMode(final boolean isEnabled);
+
+        void enableDescriptionEditMode(final boolean isEnabled);
+
+        void hideEditModes();
+
+        void showConflictWarning(final boolean isVisible);
+
+        void resetAll();
+
+        void setCommentsHeader(final String header);
+
+        void setCommentCurrentPage(final int page);
+
+        void setCommentPageIndicator(final String pageIndicatorText);
+
+        void setCommentTotalPages(final int total);
+
+        void enableCommentPreviousButton(final boolean isEnabled);
+
+        void enableCommentNextButton(final boolean isEnabled);
+
+        void showCommentsToolbar(final boolean isVisible);
     }
 }

@@ -20,7 +20,7 @@
             <div class="toolbar-pf-actions search-pf has-button">
                 <div class="form-group toolbar-pf-filter has-clear search-bar">
                     <div data-field="filter-type"></div>
-                    <input id="filter-text" type="search" data-i18n-key="Search" class="form-control">
+                    <input class="form-control" data-i18n-key="Search" id="filter-text" type="search">
                 </div>
                 <div class="form-group">
                     <button class="btn btn-default" data-field="search" type="button">
@@ -30,12 +30,15 @@
 
                 <div class="toolbar-pf-action-right">
                     <div class="form-group right-toolbar">
-                        <label data-field="page-indicator" class="nowrap"></label>
-                        <a href="#" data-field="prev-page"><span class="i fa fa-angle-left"></span></a>
-                        <input class="page-number" type="text" data-field="current-page" id="-page">
-                        <a href="#" data-field="next-page"><span class="i fa fa-angle-right"></span></a>
+                        <label class="nowrap" data-field="page-indicator"></label>
+                        <a data-field="prev-page" href="#"><span class="i fa fa-angle-left"></span></a>
+                        <input class="page-number" data-field="current-page" id="-page" type="text">
+                        <a data-field="next-page" href="#"><span class="i fa fa-angle-right"></span></a>
                         <span class="nowrap">of <span data-field="total-pages"></span></span>
-                        <button data-field="submit-change-request" class="btn btn-primary" data-i18n-key="SubmitChangeRequest"></button>
+                        <button class="btn btn-primary"
+                                data-field="submit-change-request"
+                                data-i18n-key="SubmitChangeRequest">
+                        </button>
                     </div>
                 </div>
             </div>

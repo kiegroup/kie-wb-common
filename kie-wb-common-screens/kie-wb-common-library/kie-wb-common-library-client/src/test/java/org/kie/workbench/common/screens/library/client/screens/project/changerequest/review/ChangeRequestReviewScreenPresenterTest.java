@@ -28,13 +28,11 @@ import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.changerequest.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.diff.DiffItemPresenter;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.changedfiles.ChangedFilesScreenPresenter;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.overview.OverviewScreenPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -75,9 +73,6 @@ public class ChangeRequestReviewScreenPresenterTest {
 
     @Mock
     private LibraryPlaces libraryPlaces;
-
-    @Mock
-    private ManagedInstance<DiffItemPresenter> diffItemPresenters;
 
     @Mock
     private ChangeRequestService changeRequestService;
@@ -123,7 +118,6 @@ public class ChangeRequestReviewScreenPresenterTest {
         this.presenter = spy(new ChangeRequestReviewScreenPresenter(view,
                                                                     ts,
                                                                     libraryPlaces,
-                                                                    diffItemPresenters,
                                                                     new CallerMock<>(changeRequestService),
                                                                     busyIndicatorView,
                                                                     overviewScreen,

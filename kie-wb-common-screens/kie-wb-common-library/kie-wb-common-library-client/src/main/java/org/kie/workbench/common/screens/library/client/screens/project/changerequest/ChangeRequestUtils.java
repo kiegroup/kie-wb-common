@@ -70,7 +70,8 @@ public class ChangeRequestUtils {
                 } else if (deletedLines == 1) {
                     return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneDeletion);
                 } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyDeletions, deletedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyDeletions,
+                                     deletedLines);
                 }
             } else if (addedLines == 1) {
                 if (deletedLines == 0) {
@@ -78,41 +79,61 @@ public class ChangeRequestUtils {
                 } else if (deletedLines == 1) {
                     return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionOneDeletion);
                 } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionManyDeletions, deletedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionManyDeletions,
+                                     deletedLines);
                 }
             } else {
                 if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditions, addedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditions,
+                                     addedLines);
                 } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsOneDeletion, addedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsOneDeletion,
+                                     addedLines);
                 } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsManyDeletions, addedLines, deletedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsManyDeletions,
+                                     addedLines,
+                                     deletedLines);
                 }
             }
         } else {
             if (addedLines == 0) {
                 if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFiles, changedFiles);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFiles,
+                                     changedFiles);
                 } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneDeletion, changedFiles);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneDeletion,
+                                     changedFiles);
                 } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyDeletions, changedFiles, deletedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyDeletions,
+                                     changedFiles,
+                                     deletedLines);
                 }
             } else if (addedLines == 1) {
                 if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAddition, changedFiles);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAddition,
+                                     changedFiles);
                 } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionOneDeletion, changedFiles);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionOneDeletion,
+                                     changedFiles);
                 } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionManyDeletions, changedFiles, deletedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionManyDeletions,
+                                     changedFiles,
+                                     deletedLines);
                 }
             } else {
                 if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditions, changedFiles, addedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditions,
+                                     changedFiles,
+                                     addedLines);
                 } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsOneDeletion, changedFiles, addedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsOneDeletion,
+                                     changedFiles,
+                                     addedLines);
                 } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsManyDeletions, changedFiles, addedLines, deletedLines);
+                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsManyDeletions,
+                                     changedFiles,
+                                     addedLines,
+                                     deletedLines);
                 }
             }
         }

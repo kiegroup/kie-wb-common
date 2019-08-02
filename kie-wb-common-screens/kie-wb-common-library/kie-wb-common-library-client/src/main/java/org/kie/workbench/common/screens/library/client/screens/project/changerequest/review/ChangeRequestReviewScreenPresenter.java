@@ -30,12 +30,10 @@ import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestUpdatedEvent;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.diff.DiffItemPresenter;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.changedfiles.ChangedFilesScreenPresenter;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.overview.OverviewScreenPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -55,31 +53,9 @@ import org.uberfire.workbench.events.NotificationEvent;
         owningPerspective = LibraryPerspective.class)
 public class ChangeRequestReviewScreenPresenter {
 
-    public interface View extends UberElemental<ChangeRequestReviewScreenPresenter> {
-
-        void setTitle(final String title);
-
-        void setChangedFilesCount(final int count);
-
-        void setContent(final HTMLElement content);
-
-        void showRejectButton(final boolean isVisible);
-
-        void showAcceptButton(final boolean isVisible);
-
-        void enableAcceptButton(final boolean isEnabled);
-
-        void showRevertButton(final boolean isVisible);
-
-        void activateOverviewTab();
-
-        void activateChangedFilesTab();
-    }
-
     private final View view;
     private final TranslationService ts;
     private final LibraryPlaces libraryPlaces;
-    private final ManagedInstance<DiffItemPresenter> diffItemPresenters;
     private final Caller<ChangeRequestService> changeRequestService;
     private final BusyIndicatorView busyIndicatorView;
     private final OverviewScreenPresenter overviewScreen;
@@ -87,11 +63,9 @@ public class ChangeRequestReviewScreenPresenter {
     private final Promises promises;
     private final ProjectController projectController;
     private final Event<NotificationEvent> notificationEvent;
-
     private WorkspaceProject workspaceProject;
     private long currentChangeRequestId;
     private Branch currentTargetBranch;
-
     private boolean overviewTabLoaded;
     private boolean changedFilesTabLoaded;
 
@@ -99,7 +73,6 @@ public class ChangeRequestReviewScreenPresenter {
     public ChangeRequestReviewScreenPresenter(final View view,
                                               final TranslationService ts,
                                               final LibraryPlaces libraryPlaces,
-                                              final ManagedInstance<DiffItemPresenter> diffItemPresenters,
                                               final Caller<ChangeRequestService> changeRequestService,
                                               final BusyIndicatorView busyIndicatorView,
                                               final OverviewScreenPresenter overviewScreen,
@@ -110,7 +83,6 @@ public class ChangeRequestReviewScreenPresenter {
         this.view = view;
         this.ts = ts;
         this.libraryPlaces = libraryPlaces;
-        this.diffItemPresenters = diffItemPresenters;
         this.changeRequestService = changeRequestService;
         this.busyIndicatorView = busyIndicatorView;
         this.overviewScreen = overviewScreen;
@@ -143,7 +115,7 @@ public class ChangeRequestReviewScreenPresenter {
 
             if (changeRequestIdValue != null && !changeRequestIdValue.equals("") &&
                     place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
-                this.currentChangeRequestId = Long.valueOf(changeRequestIdValue);
+                this.currentChangeRequestId = Long.parseLong(changeRequestIdValue);
                 this.reset();
                 this.setup(false);
             }
@@ -330,5 +302,26 @@ public class ChangeRequestReviewScreenPresenter {
         if (overviewTabLoaded && changedFilesTabLoaded) {
             busyIndicatorView.hideBusyIndicator();
         }
+    }
+
+    public interface View extends UberElemental<ChangeRequestReviewScreenPresenter> {
+
+        void setTitle(final String title);
+
+        void setChangedFilesCount(final int count);
+
+        void setContent(final HTMLElement content);
+
+        void showRejectButton(final boolean isVisible);
+
+        void showAcceptButton(final boolean isVisible);
+
+        void enableAcceptButton(final boolean isEnabled);
+
+        void showRevertButton(final boolean isVisible);
+
+        void activateOverviewTab();
+
+        void activateChangedFilesTab();
     }
 }
