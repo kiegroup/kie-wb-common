@@ -239,11 +239,11 @@ public class BaseEditorSearchIndexTest {
     }
 
     @Test
-    public void testReset() {
+    public void testClose() {
 
         index.search("Element");
 
-        index.reset();
+        index.close();
 
         assertEquals(0, index.getTotalOfResultsNumber());
         assertEquals(0, index.getCurrentResultNumber());
