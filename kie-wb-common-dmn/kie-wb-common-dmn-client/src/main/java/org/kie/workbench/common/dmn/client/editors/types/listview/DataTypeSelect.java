@@ -16,10 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -41,8 +39,6 @@ public class DataTypeSelect {
     private final DataTypeUtils dataTypeUtils;
 
     private final DataTypeManager dataTypeManager;
-
-    final static String STRUCTURE = "Structure";
 
     private DataType dataType;
 
@@ -109,25 +105,6 @@ public class DataTypeSelect {
         subDataTypes = dataTypeManager.from(getDataType()).makeExternalDataTypes(typeName);
         listItem.refreshSubItems(subDataTypes);
         listItem.refreshConstraintComponent();
-    }
-
-    boolean isIndirectTypeOf(final String... types) {
-        final String currentValue = getValue();
-        return isIndirectTypeOf(currentValue, types);
-    }
-
-    boolean isIndirectTypeOf(final String currentValue, final String... types) {
-        final List<DataType> customDataTypes = getCustomDataTypes();
-        final Optional<DataType> customType = customDataTypes.stream()
-                .filter(d -> d.getName().equals(currentValue))
-                .findFirst();
-
-        if (customType.isPresent()) {
-            final String type = customType.get().getType();
-            return Arrays.stream(types).anyMatch(t -> t.equals(type)) || isIndirectTypeOf(type, types);
-        }
-
-        return false;
     }
 
     public String getValue() {
