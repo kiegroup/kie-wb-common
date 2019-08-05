@@ -57,7 +57,7 @@ public class CommentItemPresenter {
 
     @PostConstruct
     public void postConstruct() {
-        this.prepareView();
+        this.view.init(this);
     }
 
     public void setup(final Long changeRequestId,
@@ -72,8 +72,7 @@ public class CommentItemPresenter {
         this.view.setAuthor(authorId);
         this.view.setDate(this.dateUtils.format(date));
         this.view.setText(text);
-
-        this.checkActionsForAuthor();
+        this.view.showActions(isUserAuthor());
     }
 
     public View getView() {
@@ -91,16 +90,6 @@ public class CommentItemPresenter {
         }
     }
 
-    private void checkActionsForAuthor() {
-        if (!isUserAuthor()) {
-            view.hideActions();
-        }
-    }
-
-    private void prepareView() {
-        this.view.init(this);
-    }
-
     private boolean isUserAuthor() {
         return this.authorId.equals(this.sessionInfo.getIdentity().getIdentifier());
     }
@@ -115,6 +104,6 @@ public class CommentItemPresenter {
 
         void setText(final String text);
 
-        void hideActions();
+        void showActions(final boolean isVisible);
     }
 }

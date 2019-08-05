@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.overview;
 
-import java.util.List;
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
@@ -24,10 +24,11 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestComment;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestComment;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.PaginatedChangeRequestCommentList;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -78,7 +79,7 @@ public class OverviewScreenPresenter {
     public void postConstruct() {
         this.workspaceProject = libraryPlaces.getActiveWorkspace();
 
-        this.prepareView();
+        this.view.init(this);
     }
 
     public View getView() {
@@ -100,13 +101,13 @@ public class OverviewScreenPresenter {
     }
 
     public void reset() {
-        view.resetAll();
+        this.view.resetAll();
 
         this.commentCurrentPage = 1;
     }
 
     public void setup(final ChangeRequest changeRequest,
-                      final Consumer<Boolean> finishLoading) {
+                      final Consumer<Boolean> finishLoadingCallback) {
         this.currentChangeRequestId = changeRequest.getId();
         this.changeRequestAuthorId = changeRequest.getAuthorId();
 
@@ -122,9 +123,9 @@ public class OverviewScreenPresenter {
         this.view.enableDescriptionEditMode(false);
         this.view.showConflictWarning(changeRequest.isConflict()
                                               && changeRequest.getStatus() == ChangeRequestStatus.OPEN);
+        this.view.showEditModes(isUserAuthor());
 
-        this.updateComments(finishLoading);
-        this.checkActionsForAuthor();
+        this.refreshCommentList(finishLoadingCallback);
     }
 
     public void startEditSummary() {
@@ -178,7 +179,7 @@ public class OverviewScreenPresenter {
     public void nextCommentPage() {
         if (this.commentCurrentPage + 1 <= this.commentTotalPages) {
             this.commentCurrentPage++;
-            this.updateComments(b -> {
+            this.refreshCommentList(b -> {
             });
         }
     }
@@ -186,7 +187,7 @@ public class OverviewScreenPresenter {
     public void prevCommentPage() {
         if (this.commentCurrentPage - 1 >= 1) {
             this.commentCurrentPage--;
-            this.updateComments(b -> {
+            this.refreshCommentList(b -> {
             });
         }
     }
@@ -194,65 +195,55 @@ public class OverviewScreenPresenter {
     public void setCommentCurrentPage(int currentCommentPage) {
         if (currentCommentPage <= commentTotalPages && currentCommentPage > 0) {
             this.commentCurrentPage = currentCommentPage;
-            updateComments(b -> {
+            refreshCommentList(b -> {
             });
         } else {
             this.view.setCommentCurrentPage(this.commentCurrentPage);
         }
     }
 
-    private void updateComments(final Consumer<Boolean> finishLoading) {
-        this.changeRequestService.call((Integer count) -> {
-            setupCommentCounters(count);
-
-            setupComments(finishLoading);
-        }).countChangeRequestComments(workspaceProject.getSpace().getName(),
-                                      workspaceProject.getRepository().getAlias(),
-                                      currentChangeRequestId);
-    }
-
-    private void checkActionsForAuthor() {
-        if (!isUserAuthor()) {
-            view.hideEditModes();
-        }
-    }
-
-    private boolean isInvalidContent(final String content) {
-        return content == null || content.trim().isEmpty();
-    }
-
-    private void prepareView() {
-        this.view.init(this);
-    }
-
-    private void setupComments(final Consumer<Boolean> finishLoading) {
+    private void refreshCommentList(final Consumer<Boolean> finishLoadingCallback) {
         this.view.clearCommentList();
 
-        changeRequestService.call((List<ChangeRequestComment> comments) -> {
-            final boolean isEmpty = comments.isEmpty();
+        changeRequestService.call((final PaginatedChangeRequestCommentList paginatedList) -> {
+            this.setupCommentToolbar(paginatedList.getTotal(),
+                                     paginatedList.getChangeRequestComments().size());
 
-            this.view.setCommentsHeader(isEmpty ?
-                                                ts.getTranslation(LibraryConstants.NoComments) :
-                                                ts.getTranslation(LibraryConstants.Comments));
+            paginatedList.getChangeRequestComments().stream()
+                    .sorted(Comparator.comparing(ChangeRequestComment::getCreatedDate))
+                    .forEach(comment -> {
+                        CommentItemPresenter item = commentItemPresenterInstances.get();
+                        item.setup(currentChangeRequestId,
+                                   comment.getId(),
+                                   comment.getAuthorId(),
+                                   comment.getCreatedDate(),
+                                   comment.getText());
+                        this.view.addCommentItem(item.getView());
+                    });
 
-            this.view.showCommentsToolbar(!isEmpty);
-
-            comments.forEach(comment -> {
-                CommentItemPresenter item = commentItemPresenterInstances.get();
-                item.setup(currentChangeRequestId,
-                           comment.getId(),
-                           comment.getAuthorId(),
-                           comment.getCreatedDate(),
-                           comment.getText());
-                this.view.addCommentItem(item.getView());
-            });
-
-            finishLoading.accept(true);
+            finishLoadingCallback.accept(true);
         }).getComments(workspaceProject.getSpace().getName(),
                        workspaceProject.getRepository().getAlias(),
                        currentChangeRequestId,
                        Math.max(0, commentCurrentPage - 1),
                        COMMENTS_PAGE_SIZE);
+    }
+
+    private void setupCommentToolbar(final int total,
+                                     final int paginatedCount) {
+        this.setupCommentCounters(total);
+
+        final boolean isEmpty = paginatedCount == 0;
+
+        this.view.setCommentsHeader(isEmpty ?
+                                            ts.getTranslation(LibraryConstants.NoComments) :
+                                            ts.getTranslation(LibraryConstants.Comments));
+
+        this.view.showCommentsToolbar(!isEmpty);
+    }
+
+    private boolean isInvalidContent(final String content) {
+        return content == null || content.trim().isEmpty();
     }
 
     private boolean isUserAuthor() {
@@ -267,12 +258,18 @@ public class OverviewScreenPresenter {
                                                        offset + COMMENTS_PAGE_SIZE);
         final int totalCount = this.resolveCommentCounter(count,
                                                           0);
-        final String pageIndicatorText = fromCount + "-" + toCount + " " +
-                ts.getTranslation(LibraryConstants.Of) + " " + totalCount;
-        this.view.setCommentPageIndicator(pageIndicatorText);
+
+        final String indicatorText = ts.format(LibraryConstants.ItemCountIndicatorText,
+                                               fromCount,
+                                               toCount,
+                                               totalCount);
+        this.view.setCommentPageIndicator(indicatorText);
 
         this.commentTotalPages = (int) Math.ceil(count / (float) COMMENTS_PAGE_SIZE);
-        this.view.setCommentTotalPages(Math.max(this.commentTotalPages, 1));
+
+        final String totalText = ts.format(LibraryConstants.OfN,
+                                           Math.max(this.commentTotalPages, 1));
+        this.view.setCommentTotalPages(totalText);
 
         this.view.setCommentCurrentPage(this.commentCurrentPage);
         this.checkCommentPaginationButtons();
@@ -333,7 +330,7 @@ public class OverviewScreenPresenter {
 
         void enableDescriptionEditMode(final boolean isEnabled);
 
-        void hideEditModes();
+        void showEditModes(final boolean isVisible);
 
         void showConflictWarning(final boolean isVisible);
 
@@ -345,7 +342,7 @@ public class OverviewScreenPresenter {
 
         void setCommentPageIndicator(final String pageIndicatorText);
 
-        void setCommentTotalPages(final int total);
+        void setCommentTotalPages(final String totalText);
 
         void enableCommentPreviousButton(final boolean isEnabled);
 

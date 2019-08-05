@@ -140,7 +140,7 @@ public class DiffItemView implements DiffItemPresenter.View,
     }
 
     @Override
-    public void expandCollapsibleContainer(boolean isOpened) {
+    public void expandCollapsibleContainer(final boolean isOpened) {
         if (isOpened) {
             collapseLink.classList.remove("collapsed");
             collapseContainer.classList.add("in");

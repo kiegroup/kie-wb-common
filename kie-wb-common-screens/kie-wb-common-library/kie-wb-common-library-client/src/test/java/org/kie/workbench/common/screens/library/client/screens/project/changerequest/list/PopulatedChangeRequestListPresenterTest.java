@@ -24,9 +24,10 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.PaginatedChangeRequestList;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -36,6 +37,7 @@ import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryCon
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
+import org.kie.workbench.common.screens.library.client.util.DateUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.mockito.Mock;
@@ -93,6 +95,9 @@ public class PopulatedChangeRequestListPresenterTest {
     private ChangeRequestUtils changeRequestUtils;
 
     @Mock
+    private DateUtils dateUtils;
+
+    @Mock
     private WorkspaceProject workspaceProject;
 
     private Promises promises;
@@ -106,6 +111,26 @@ public class PopulatedChangeRequestListPresenterTest {
         doReturn(mock(Repository.class)).when(workspaceProject).getRepository();
         doReturn(mock(Space.class)).when(workspaceProject).getSpace();
 
+        PaginatedChangeRequestList paginatedList = new PaginatedChangeRequestList(Collections.emptyList(),
+                                                                                  0,
+                                                                                  0,
+                                                                                  0);
+
+        doReturn(paginatedList).when(changeRequestService)
+                .getChangeRequests(anyString(),
+                                   anyString(),
+                                   anyInt(),
+                                   anyInt(),
+                                   anyListOf(ChangeRequestStatus.class),
+                                   anyString());
+
+        doReturn(paginatedList).when(changeRequestService)
+                .getChangeRequests(anyString(),
+                                   anyString(),
+                                   anyInt(),
+                                   anyInt(),
+                                   anyString());
+
         this.presenter = spy(new PopulatedChangeRequestListPresenter(view,
                                                                      projectController,
                                                                      libraryPlaces,
@@ -115,7 +140,8 @@ public class PopulatedChangeRequestListPresenterTest {
                                                                      changeRequestListItemViewInstances,
                                                                      new CallerMock<>(changeRequestService),
                                                                      busyIndicatorView,
-                                                                     changeRequestUtils));
+                                                                     changeRequestUtils,
+                                                                     dateUtils));
 
         new FieldSetter(presenter,
                         PopulatedChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
@@ -132,16 +158,20 @@ public class PopulatedChangeRequestListPresenterTest {
         verify(view).init(presenter);
         verify(view).enableSubmitChangeRequestButton(true);
         verify(view).setFilterTypes(anyListOf(SelectOption.class));
+        verify(view).clearList();
     }
 
     @Test
     public void postConstructUserCannotSubmitChangeRequestTest() {
         doReturn(promises.resolve(false))
                 .when(projectController).canSubmitChangeRequest(workspaceProject);
-        doReturn(10).when(changeRequestService).countChangeRequests(anyString(),
-                                                                    anyString(),
-                                                                    anyListOf(ChangeRequestStatus.class),
-                                                                    anyString());
+        doReturn(mock(PaginatedChangeRequestList.class)).when(changeRequestService)
+                .getChangeRequests(anyString(),
+                                   anyString(),
+                                   anyInt(),
+                                   anyInt(),
+                                   anyListOf(ChangeRequestStatus.class),
+                                   anyString());
 
         presenter.postConstruct();
 
@@ -149,7 +179,7 @@ public class PopulatedChangeRequestListPresenterTest {
     }
 
     @Test
-    public void createListItemsTest() {
+    public void refreshListTest() {
         doReturn(LibraryConstants.ChangeRequestFilesSummaryManyFiles).when(ts).format(anyString(), anyInt());
 
         doReturn(promises.resolve(true))
@@ -162,15 +192,19 @@ public class PopulatedChangeRequestListPresenterTest {
         doReturn(0).when(cr).getCommentsCount();
         doReturn(new Date()).when(cr).getCreatedDate();
         List<ChangeRequest> crList = Collections.nCopies(10, cr);
+        PaginatedChangeRequestList paginatedList = new PaginatedChangeRequestList(crList,
+                                                                                  0,
+                                                                                  10,
+                                                                                  10);
 
         doReturn("Open").when(changeRequestUtils).formatStatus(ChangeRequestStatus.OPEN);
 
-        doReturn(crList).when(changeRequestService).getChangeRequests(anyString(),
-                                                                      anyString(),
-                                                                      anyInt(),
-                                                                      anyInt(),
-                                                                      anyListOf(ChangeRequestStatus.class),
-                                                                      anyString());
+        doReturn(paginatedList).when(changeRequestService).getChangeRequests(anyString(),
+                                                                             anyString(),
+                                                                             anyInt(),
+                                                                             anyInt(),
+                                                                             anyListOf(ChangeRequestStatus.class),
+                                                                             anyString());
 
         presenter.postConstruct();
 

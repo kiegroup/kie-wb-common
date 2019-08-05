@@ -24,10 +24,10 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestDiff;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestDiff;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
@@ -62,15 +62,11 @@ public class ChangedFilesScreenPresenter {
     public void postConstruct() {
         this.workspaceProject = this.libraryPlaces.getActiveWorkspace();
 
-        this.prepareView();
+        this.view.init(this);
     }
 
     public View getView() {
         return view;
-    }
-
-    private void prepareView() {
-        this.view.init(this);
     }
 
     public void reset() {
@@ -78,13 +74,16 @@ public class ChangedFilesScreenPresenter {
     }
 
     public void setup(final ChangeRequest changeRequest,
-                      final Consumer<Boolean> finishLoading) {
+                      final Consumer<Boolean> finishLoadingCallback,
+                      final Consumer<Integer> setChangedFilesCountCallback) {
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
+            setChangedFilesCountCallback.accept(diffList.size());
+
             final boolean warnConflict = changeRequest.getStatus() == ChangeRequestStatus.OPEN;
             this.setupFilesSummary(diffList);
             this.setupDiffList(diffList, warnConflict);
 
-            finishLoading.accept(true);
+            finishLoadingCallback.accept(true);
         }).getDiff(workspaceProject.getSpace().getName(),
                    workspaceProject.getRepository().getAlias(),
                    changeRequest.getId());

@@ -27,8 +27,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestDiff;
-import org.guvnor.structure.repositories.changerequest.ChangeType;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestDiff;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeType;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.uberfire.backend.vfs.Path;
@@ -67,7 +67,7 @@ public class DiffItemPresenter {
 
     @PostConstruct
     public void postConstruct() {
-        this.prepareView();
+        view.init(this);
     }
 
     @PreDestroy
@@ -199,10 +199,6 @@ public class DiffItemPresenter {
 
     private void closeTextualContent() {
         view.removeTextualContent();
-    }
-
-    private void prepareView() {
-        view.init(this);
     }
 
     private Map<String, String> createPathPlaceRequestParameters() {

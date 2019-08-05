@@ -19,8 +19,8 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestCountSummary;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,12 +106,24 @@ public class ChangeRequestListPresenterTest {
     }
 
     @Test
-    public void showEmptyListTest() {
-        doReturn(0).when(changeRequestService).countChangeRequests(anyString(), anyString());
-
+    public void postConstructTest() {
         presenter.postConstruct();
 
         verify(view).init(presenter);
+    }
+
+    @Test
+    public void showEmptyListTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+
+        doReturn(mock(ChangeRequestCountSummary.class)).when(changeRequestService).countChangeRequests(anyString(),
+                                                                                                       anyString());
+
+        presenter.setupList(i -> {
+        });
+
         verify(busyIndicatorView).showBusyIndicator(LibraryConstants.Loading);
         verify(busyIndicatorView).hideBusyIndicator();
 
@@ -121,61 +133,22 @@ public class ChangeRequestListPresenterTest {
     }
 
     @Test
-    public void showPopulatedListTest() {
-        doReturn(10).when(changeRequestService).countChangeRequests(anyString(), anyString());
+    public void showPopulatedListTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
 
-        presenter.postConstruct();
+        ChangeRequestCountSummary countSummary = new ChangeRequestCountSummary(10, 10);
+        doReturn(countSummary).when(changeRequestService).countChangeRequests(anyString(), anyString());
 
-        verify(view).init(presenter);
-        verify(busyIndicatorView)
-                .showBusyIndicator(LibraryConstants.Loading);
-        verify(busyIndicatorView)
-                .hideBusyIndicator();
+        presenter.setupList(i -> {
+        });
+
+        verify(busyIndicatorView).showBusyIndicator(LibraryConstants.Loading);
+        verify(busyIndicatorView).hideBusyIndicator();
 
         verify(emptyChangeRequestListPresenter, never()).getView();
         verify(populatedChangeRequestListPresenter).getView();
         verify(view).setContent(populatedChangeRequestListPresenter.getView().getElement());
-    }
-
-    @Test
-    public void refreshWhenEmptyOnListUpdatedTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        ChangeRequestListPresenter.class.getDeclaredField("empty"))
-                .set(true);
-        new FieldSetter(presenter,
-                        ChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
-                .set(workspaceProject);
-
-        presenter.onChangeRequestListUpdated(new ChangeRequestListUpdatedEvent("myRepository"));
-
-        verify(changeRequestService).countChangeRequests(anyString(), anyString());
-    }
-
-    @Test
-    public void doNothingWhenNotEmptyOnListUpdatedTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        ChangeRequestListPresenter.class.getDeclaredField("empty"))
-                .set(false);
-        new FieldSetter(presenter,
-                        ChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
-                .set(workspaceProject);
-
-        presenter.onChangeRequestListUpdated(new ChangeRequestListUpdatedEvent("myRepository"));
-
-        verify(changeRequestService, never()).countChangeRequests(anyString(), anyString());
-    }
-
-    @Test
-    public void doNothingWhenDifferentRepositoryOnListUpdatedTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        ChangeRequestListPresenter.class.getDeclaredField("empty"))
-                .set(false);
-        new FieldSetter(presenter,
-                        ChangeRequestListPresenter.class.getDeclaredField("workspaceProject"))
-                .set(workspaceProject);
-
-        presenter.onChangeRequestListUpdated(new ChangeRequestListUpdatedEvent("otherRepository"));
-
-        verify(changeRequestService, never()).countChangeRequests(anyString(), anyString());
     }
 }

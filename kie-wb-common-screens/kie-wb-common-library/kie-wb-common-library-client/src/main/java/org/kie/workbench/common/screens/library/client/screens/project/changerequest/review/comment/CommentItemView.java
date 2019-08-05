@@ -97,7 +97,7 @@ public class CommentItemView implements CommentItemPresenter.View,
     }
 
     @Override
-    public void hideActions() {
-        kebabActions.hidden = true;
+    public void showActions(final boolean isVisible) {
+        kebabActions.hidden = !isVisible;
     }
 }

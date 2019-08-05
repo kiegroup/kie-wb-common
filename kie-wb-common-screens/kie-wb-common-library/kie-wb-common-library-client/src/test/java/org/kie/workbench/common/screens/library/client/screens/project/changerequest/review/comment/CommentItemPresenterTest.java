@@ -98,7 +98,7 @@ public class CommentItemPresenterTest {
                         new Date(),
                         "My comment");
 
-        verify(view).hideActions();
+        verify(view).showActions(false);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class CommentItemPresenterTest {
                         new Date(),
                         "My comment");
 
-        verify(view, never()).hideActions();
+        verify(view).showActions(true);
     }
 
     @Test

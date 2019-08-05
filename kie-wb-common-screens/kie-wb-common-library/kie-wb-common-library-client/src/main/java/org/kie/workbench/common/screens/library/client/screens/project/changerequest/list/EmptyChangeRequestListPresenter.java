@@ -48,9 +48,15 @@ public class EmptyChangeRequestListPresenter {
 
     @PostConstruct
     public void postConstruct() {
-        workspaceProject = this.libraryPlaces.getActiveWorkspace();
+        this.workspaceProject = this.libraryPlaces.getActiveWorkspace();
 
-        this.prepareView();
+        this.view.init(this);
+
+        projectController.canSubmitChangeRequest(workspaceProject).then(userCanSubmitChangeRequest -> {
+            view.enableSubmitChangeRequestButton(userCanSubmitChangeRequest);
+
+            return promises.resolve();
+        });
     }
 
     public View getView() {
@@ -63,15 +69,6 @@ public class EmptyChangeRequestListPresenter {
                 this.libraryPlaces.goToSubmitChangeRequestScreen();
             }
 
-            return promises.resolve();
-        });
-    }
-
-    private void prepareView() {
-        this.view.init(this);
-
-        projectController.canSubmitChangeRequest(workspaceProject).then(userCanSubmitChangeRequest -> {
-            view.enableSubmitChangeRequestButton(userCanSubmitChangeRequest);
             return promises.resolve();
         });
     }

@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -29,18 +30,21 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestListUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.PaginatedChangeRequestList;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
+import org.kie.workbench.common.screens.library.client.util.DateUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.client.promise.Promises;
@@ -67,6 +71,7 @@ public class PopulatedChangeRequestListPresenter {
     private final Caller<ChangeRequestService> changeRequestService;
     private final BusyIndicatorView busyIndicatorView;
     private final ChangeRequestUtils changeRequestUtils;
+    private final DateUtils dateUtils;
     private WorkspaceProject workspaceProject;
     private int currentPage;
     private String searchFilter;
@@ -83,7 +88,8 @@ public class PopulatedChangeRequestListPresenter {
                                                final ManagedInstance<ChangeRequestListItemView> changeRequestItem,
                                                final Caller<ChangeRequestService> changeRequestService,
                                                final BusyIndicatorView busyIndicatorView,
-                                               final ChangeRequestUtils changeRequestUtils) {
+                                               final ChangeRequestUtils changeRequestUtils,
+                                               final DateUtils dateUtils) {
         this.view = view;
         this.projectController = projectController;
         this.libraryPlaces = libraryPlaces;
@@ -94,13 +100,22 @@ public class PopulatedChangeRequestListPresenter {
         this.changeRequestService = changeRequestService;
         this.busyIndicatorView = busyIndicatorView;
         this.changeRequestUtils = changeRequestUtils;
+        this.dateUtils = dateUtils;
     }
 
     @PostConstruct
     public void postConstruct() {
-        workspaceProject = this.libraryPlaces.getActiveWorkspace();
+        this.workspaceProject = this.libraryPlaces.getActiveWorkspace();
 
-        this.prepareView();
+        this.view.init(this);
+        this.setupFilter();
+
+        projectController.canSubmitChangeRequest(workspaceProject).then(userCanSubmitChangeRequest -> {
+            view.enableSubmitChangeRequestButton(userCanSubmitChangeRequest);
+            return promises.resolve();
+        });
+
+        this.refreshList();
     }
 
     public View getView() {
@@ -109,34 +124,34 @@ public class PopulatedChangeRequestListPresenter {
 
     public void onChangeRequestListUpdated(@Observes final ChangeRequestListUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
-            update();
+            this.refreshList();
         }
     }
 
     public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
-            update();
+            this.refreshList();
         }
     }
 
     public void nextPage() {
         if (this.currentPage + 1 <= this.totalPages) {
             this.currentPage++;
-            this.update();
+            this.refreshList();
         }
     }
 
     public void prevPage() {
         if (this.currentPage - 1 >= 1) {
             this.currentPage--;
-            this.update();
+            this.refreshList();
         }
     }
 
     public void setCurrentPage(int currentPage) {
         if (currentPage <= totalPages && currentPage > 0) {
             this.currentPage = currentPage;
-            update();
+            this.refreshList();
         } else {
             this.view.setCurrentPage(this.currentPage);
         }
@@ -147,7 +162,7 @@ public class PopulatedChangeRequestListPresenter {
         this.searchFilter = "";
         this.view.clearSearch();
         this.currentPage = 1;
-        this.update();
+        this.refreshList();
     }
 
     public void submitChangeRequest() {
@@ -163,7 +178,7 @@ public class PopulatedChangeRequestListPresenter {
     public void search(String searchText) {
         this.searchFilter = searchText;
         this.currentPage = 1;
-        this.update();
+        this.refreshList();
     }
 
     public void showSearchHitNothing() {
@@ -171,63 +186,8 @@ public class PopulatedChangeRequestListPresenter {
                             ts.getTranslation(LibraryConstants.NoChangeRequestsFound));
     }
 
-    private void prepareView() {
-        this.view.init(this);
-
-        projectController.canSubmitChangeRequest(workspaceProject).then(userCanSubmitChangeRequest -> {
-            view.enableSubmitChangeRequestButton(userCanSubmitChangeRequest);
-            return promises.resolve();
-        });
-
-        this.setupFilter();
-        this.update();
-    }
-
-    private void setupListItems() {
-        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
-
-        this.view.clearList();
-
-        if (filterType.equals(FILTER_ALL)) {
-            changeRequestService.call((List<ChangeRequest> list) -> {
-                createListItems(list);
-
-                busyIndicatorView.hideBusyIndicator();
-            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
-                    .getChangeRequests(workspaceProject.getSpace().getName(),
-                                       workspaceProject.getRepository().getAlias(),
-                                       Math.max(0, currentPage - 1),
-                                       PAGE_SIZE,
-                                       searchFilter);
-        } else {
-            changeRequestService.call((List<ChangeRequest> list) -> {
-                createListItems(list);
-
-                busyIndicatorView.hideBusyIndicator();
-            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
-                    .getChangeRequests(workspaceProject.getSpace().getName(),
-                                       workspaceProject.getRepository().getAlias(),
-                                       Math.max(0, currentPage - 1),
-                                       PAGE_SIZE,
-                                       getStatusByFilterType(),
-                                       searchFilter);
-        }
-    }
-
-    private void createListItems(List<ChangeRequest> list) {
-        list.forEach(item -> {
-            ChangeRequestListItemView viewItem = changeRequestListItemViewInstances.get();
-
-            viewItem.init(resolveChangeRequestStatusIcon(item.getStatus()),
-                          item.toString(),
-                          item.getAuthorId(),
-                          changeRequestUtils.formatCreatedDate(item.getCreatedDate()),
-                          formatChangedFiles(item.getChangedFilesCount()),
-                          String.valueOf(item.getCommentsCount()),
-                          selectCommand(item.getId()));
-
-            this.view.addChangeRequestItem(viewItem);
-        });
+    private String formatCreatedTime(final Date createdDate) {
+        return ts.format(LibraryConstants.Submitted) + " " + dateUtils.format(createdDate);
     }
 
     private String formatChangedFiles(int changedFilesCount) {
@@ -263,32 +223,57 @@ public class PopulatedChangeRequestListPresenter {
         return () -> libraryPlaces.goToChangeRequestReviewScreen(changeRequestId);
     }
 
-    private void update() {
+    private void refreshList() {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
+        this.view.clearList();
+
         if (filterType.equals(FILTER_ALL)) {
-            this.changeRequestService.call((Integer count) -> {
-                busyIndicatorView.hideBusyIndicator();
-                setupListItems(count);
-            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
-                    .countChangeRequests(workspaceProject.getSpace().getName(),
-                                         workspaceProject.getRepository().getAlias(),
-                                         searchFilter);
+            changeRequestService.call(getChangeRequestsCallback(),
+                                      new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
+                    .getChangeRequests(workspaceProject.getSpace().getName(),
+                                       workspaceProject.getRepository().getAlias(),
+                                       Math.max(0, currentPage - 1),
+                                       PAGE_SIZE,
+                                       searchFilter);
         } else {
-            this.changeRequestService.call((Integer count) -> {
-                busyIndicatorView.hideBusyIndicator();
-                setupListItems(count);
-            }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
-                    .countChangeRequests(workspaceProject.getSpace().getName(),
-                                         workspaceProject.getRepository().getAlias(),
-                                         getStatusByFilterType(),
-                                         searchFilter);
+            changeRequestService.call(getChangeRequestsCallback(),
+                                      new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
+                    .getChangeRequests(workspaceProject.getSpace().getName(),
+                                       workspaceProject.getRepository().getAlias(),
+                                       Math.max(0, currentPage - 1),
+                                       PAGE_SIZE,
+                                       getStatusByFilterType(),
+                                       searchFilter);
         }
     }
 
-    private void setupListItems(final Integer numberOfItems) {
-        setupCounters(numberOfItems);
-        setupListItems();
+    private RemoteCallback<PaginatedChangeRequestList> getChangeRequestsCallback() {
+        return (final PaginatedChangeRequestList paginatedList) -> {
+            setupCounters(paginatedList.getTotal());
+
+            if (paginatedList.getTotal() == 0) {
+                showSearchHitNothing();
+            } else {
+                hideEmptyState();
+
+                paginatedList.getChangeRequests().forEach(item -> {
+                    ChangeRequestListItemView viewItem = changeRequestListItemViewInstances.get();
+
+                    viewItem.init(resolveChangeRequestStatusIcon(item.getStatus()),
+                                  item.toString(),
+                                  item.getAuthorId(),
+                                  formatCreatedTime(item.getCreatedDate()),
+                                  formatChangedFiles(item.getChangedFilesCount()),
+                                  String.valueOf(item.getCommentsCount()),
+                                  selectCommand(item.getId()));
+
+                    this.view.addChangeRequestItem(viewItem);
+                });
+            }
+
+            busyIndicatorView.hideBusyIndicator();
+        };
     }
 
     private IsWidget resolveChangeRequestStatusIcon(ChangeRequestStatus status) {
@@ -296,29 +281,29 @@ public class PopulatedChangeRequestListPresenter {
         return new InlineLabel(changeRequestUtils.formatStatus(status).substring(0, 1).toUpperCase());
     }
 
-    private void setupCounters(int count) {
-        if (count == 0) {
-            showSearchHitNothing();
-        } else {
-            hideEmptyState();
-        }
-
+    private void setupCounters(final int totalChangeRequests) {
         final int offset = (this.currentPage - 1) * PAGE_SIZE;
-        final int fromCount = count > 0 ? offset + 1 : offset;
-        final int toCount = this.resolveCounter(count,
+        final int fromCount = totalChangeRequests > 0 ? offset + 1 : offset;
+        final int toCount = this.resolveCounter(totalChangeRequests,
                                                 offset + PAGE_SIZE);
-        final int totalCount = this.resolveCounter(count,
+        final int totalCount = this.resolveCounter(totalChangeRequests,
                                                    0);
 
-        final String pageIndicatorText = fromCount + "-" + toCount + " " +
-                ts.getTranslation(LibraryConstants.Of) + " " + totalCount;
+        final String indicatorText = ts.format(LibraryConstants.ItemCountIndicatorText,
+                                               fromCount,
+                                               toCount,
+                                               totalCount);
 
-        this.view.setPageIndicator(pageIndicatorText);
+        this.view.setPageIndicator(indicatorText);
 
-        this.totalPages = (int) Math.ceil(count / (float) PAGE_SIZE);
-        this.view.setTotalPages(Math.max(this.totalPages, 1));
+        this.totalPages = (int) Math.ceil(totalChangeRequests / (float) PAGE_SIZE);
+
+        final String totalText = ts.format(LibraryConstants.OfN,
+                                           Math.max(this.totalPages, 1));
+        this.view.setTotalPages(totalText);
 
         this.view.setCurrentPage(this.currentPage);
+
         this.checkPaginationButtons();
     }
 
@@ -370,7 +355,7 @@ public class PopulatedChangeRequestListPresenter {
 
         void setPageIndicator(final String pageIndicatorText);
 
-        void setTotalPages(final int totalPages);
+        void setTotalPages(final String totalText);
 
         void clearList();
 

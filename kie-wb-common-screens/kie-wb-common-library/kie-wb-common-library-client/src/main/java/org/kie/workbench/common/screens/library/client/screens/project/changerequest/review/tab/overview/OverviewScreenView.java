@@ -305,9 +305,9 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     }
 
     @Override
-    public void hideEditModes() {
-        editSummary.hidden = true;
-        editDescription.hidden = true;
+    public void showEditModes(final boolean isVisible) {
+        editSummary.hidden = !isVisible;
+        editDescription.hidden = !isVisible;
     }
 
     @Override
@@ -342,8 +342,8 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     }
 
     @Override
-    public void setCommentTotalPages(final int totalPages) {
-        this.commentTotalPages.textContent = String.valueOf(totalPages);
+    public void setCommentTotalPages(final String totalText) {
+        this.commentTotalPages.textContent = totalText;
     }
 
     @Override

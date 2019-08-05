@@ -48,6 +48,9 @@ public class LibraryConstants {
     public static final String Created = "Created";
 
     @TranslationKey(defaultValue = "")
+    public static final String Submitted = "Submitted";
+
+    @TranslationKey(defaultValue = "")
     public static final String DefaultProject = "DefaultProject";
 
     @TranslationKey(defaultValue = "")
@@ -459,6 +462,12 @@ public class LibraryConstants {
     public static final String Of = "Of";
 
     @TranslationKey(defaultValue = "")
+    public static final String OfN = "OfN";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ItemCountIndicatorText = "ItemCountIndicatorText";
+
+    @TranslationKey(defaultValue = "")
     public static final String AllPackagesIncluded = "AllPackagesIncluded";
 
     @TranslationKey(defaultValue = "")
@@ -640,6 +649,9 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String ChangeRequestRevertFailMessage = "ChangeRequestRevertFailMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestAlreadyOpenMessage = "ChangeRequestAlreadyOpenMessage";
 
     @TranslationKey(defaultValue = "")
     public static final String ChangeRequest = "ChangeRequest";

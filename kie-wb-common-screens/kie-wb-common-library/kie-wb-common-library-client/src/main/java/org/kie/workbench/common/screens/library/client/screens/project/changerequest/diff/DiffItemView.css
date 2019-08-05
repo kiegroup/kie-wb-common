@@ -58,6 +58,7 @@
 .panel-title > a {
     white-space: nowrap;
     display: flex;
+    line-height: 1.1em;
 }
 
 .panel-title .change-type {

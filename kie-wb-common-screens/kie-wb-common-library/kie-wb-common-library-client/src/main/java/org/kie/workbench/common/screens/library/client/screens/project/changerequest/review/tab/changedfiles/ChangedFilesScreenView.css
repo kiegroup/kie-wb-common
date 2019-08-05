@@ -16,4 +16,5 @@
 
 .changed-files-container .list-view-pf-view {
     background-color: transparent;
+    margin-top: 20px !important;
 }

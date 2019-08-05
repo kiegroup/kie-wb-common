@@ -25,10 +25,10 @@ import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
@@ -96,15 +96,16 @@ public class ChangeRequestReviewScreenPresenter {
     public void postConstruct() {
         workspaceProject = libraryPlaces.getActiveWorkspace();
 
-        this.prepareView();
+        this.view.init(this);
+        this.view.setTitle(this.getTitle());
     }
 
     @OnLostFocus
     public void onLostFocus() {
         this.reset();
 
-        overviewScreen.reset();
-        changedFilesScreen.reset();
+        this.overviewScreen.reset();
+        this.changedFilesScreen.reset();
     }
 
     public void refreshOnFocus(@Observes final SelectPlaceEvent selectPlaceEvent) {
@@ -164,7 +165,7 @@ public class ChangeRequestReviewScreenPresenter {
         this.doActionIfAllowed(this::revertChangeRequestAction);
     }
 
-    private void doActionIfAllowed(Runnable action) {
+    private void doActionIfAllowed(final Runnable action) {
         projectController.canUpdateBranch(workspaceProject,
                                           this.currentTargetBranch).then(userCanUpdateBranch -> {
             if (userCanUpdateBranch) {
@@ -173,11 +174,6 @@ public class ChangeRequestReviewScreenPresenter {
 
             return promises.resolve();
         });
-    }
-
-    private void prepareView() {
-        this.view.init(this);
-        this.view.setTitle(this.getTitle());
     }
 
     private void reset() {
@@ -204,7 +200,6 @@ public class ChangeRequestReviewScreenPresenter {
     private void loadChangeRequest(final ChangeRequest changeRequest,
                                    final boolean isReload) {
         this.view.setTitle(ts.format(LibraryConstants.ChangeRequestAndId, currentChangeRequestId));
-        this.view.setChangedFilesCount(changeRequest.getChangedFilesCount());
 
         this.currentTargetBranch = workspaceProject.getRepository().getBranch(changeRequest.getTargetBranch())
                 .orElseThrow(() -> new IllegalStateException(
@@ -222,10 +217,10 @@ public class ChangeRequestReviewScreenPresenter {
 
         this.changedFilesScreen.reset();
         this.changedFilesScreen.setup(changeRequest,
-                                      (Boolean success) -> {
+                                      (final Boolean success) -> {
                                           changedFilesTabLoaded = true;
                                           finishLoading();
-                                      });
+                                      }, this.view::setChangedFilesCount);
 
         if (!isReload) {
             this.view.activateOverviewTab();
@@ -263,7 +258,7 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void acceptChangeRequestAction() {
-        this.changeRequestService.call((Boolean succeeded) -> {
+        this.changeRequestService.call((final Boolean succeeded) -> {
             if (succeeded) {
                 fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestAcceptMessage,
                                                 currentChangeRequestId),
@@ -277,7 +272,7 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void revertChangeRequestAction() {
-        this.changeRequestService.call((Boolean succeeded) -> {
+        this.changeRequestService.call((final Boolean succeeded) -> {
             if (succeeded) {
                 fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRevertMessage,
                                                 currentChangeRequestId),

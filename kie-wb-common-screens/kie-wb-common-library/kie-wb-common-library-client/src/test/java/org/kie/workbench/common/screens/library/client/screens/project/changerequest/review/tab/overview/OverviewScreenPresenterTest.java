@@ -17,13 +17,15 @@
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.review.tab.overview;
 
 import java.util.Collections;
+import java.util.Date;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestComment;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestComment;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.PaginatedChangeRequestCommentList;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -97,6 +99,16 @@ public class OverviewScreenPresenterTest {
 
         doReturn(mock(CommentItemPresenter.class)).when(commentItemPresenterInstances).get();
 
+        PaginatedChangeRequestCommentList paginatedList = new PaginatedChangeRequestCommentList(Collections.emptyList(),
+                                                                                                0,
+                                                                                                0,
+                                                                                                0);
+        doReturn(paginatedList).when(changeRequestService).getComments(anyString(),
+                                                                       anyString(),
+                                                                       anyLong(),
+                                                                       anyInt(),
+                                                                       anyInt());
+
         this.presenter = spy(new OverviewScreenPresenter(view,
                                                          ts,
                                                          commentItemPresenterInstances,
@@ -161,7 +173,21 @@ public class OverviewScreenPresenterTest {
         presenter.setup(changeRequest, b -> {
         });
 
-        verify(view).hideEditModes();
+        verify(view).showEditModes(false);
+    }
+
+    @Test
+    public void setupIsAuthorTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
+
+        ChangeRequest changeRequest = mock(ChangeRequest.class);
+        doReturn("admin").when(changeRequest).getAuthorId();
+
+        presenter.setup(changeRequest, b -> {
+        });
+
+        verify(view).showEditModes(true);
     }
 
     @Test
@@ -206,12 +232,21 @@ public class OverviewScreenPresenterTest {
         doReturn(ChangeRequestStatus.OPEN).when(changeRequest).getStatus();
         doReturn(true).when(changeRequest).isConflict();
 
-        doReturn(Collections.nCopies(5, mock(ChangeRequestComment.class)))
-                .when(changeRequestService).getComments(anyString(),
-                                                        anyString(),
-                                                        anyLong(),
-                                                        anyInt(),
-                                                        anyInt());
+        ChangeRequestComment changeRequestComment = new ChangeRequestComment(1L,
+                                                                             "admin",
+                                                                             new Date(),
+                                                                             "text");
+        PaginatedChangeRequestCommentList paginatedList =
+                new PaginatedChangeRequestCommentList(Collections.nCopies(5, changeRequestComment),
+                                                      0,
+                                                      10,
+                                                      5);
+
+        doReturn(paginatedList).when(changeRequestService).getComments(anyString(),
+                                                                       anyString(),
+                                                                       anyLong(),
+                                                                       anyInt(),
+                                                                       anyInt());
 
         presenter.setup(changeRequest, b -> {
         });

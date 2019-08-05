@@ -154,8 +154,8 @@ public class PopulatedChangeRequestListView implements IsElement,
     }
 
     @Override
-    public void setTotalPages(final int totalPages) {
-        this.totalPages.textContent = String.valueOf(totalPages);
+    public void setTotalPages(final String totalText) {
+        this.totalPages.textContent = totalText;
     }
 
     @Override

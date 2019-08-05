@@ -30,10 +30,12 @@ import javax.inject.Inject;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestDiff;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestAlreadyOpenException;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestDiff;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
@@ -99,15 +101,16 @@ public class SubmitChangeRequestScreenPresenter {
 
     @PostConstruct
     public void postConstruct() {
-        workspaceProject = libraryPlaces.getActiveWorkspace();
-        currentBranchName = workspaceProject.getBranch().getName();
+        this.workspaceProject = libraryPlaces.getActiveWorkspace();
+        this.currentBranchName = this.workspaceProject.getBranch().getName();
 
-        defaultBranch = workspaceProject.getRepository().getDefaultBranch()
+        this.defaultBranch = this.workspaceProject.getRepository().getDefaultBranch()
                 .orElseThrow(() -> new IllegalStateException("The default branch does not exist"));
 
-        destinationBranch = defaultBranch.getName();
+        this.destinationBranch = this.defaultBranch.getName();
 
-        this.prepareView();
+        this.view.init(this);
+        this.view.setTitle(this.getTitle());
     }
 
     @WorkbenchPartTitle
@@ -149,25 +152,49 @@ public class SubmitChangeRequestScreenPresenter {
             return;
         }
 
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
+
         projectController.canSubmitChangeRequest(workspaceProject,
                                                  destinationBranch).then(userCanSubmitChangeRequest -> {
             if (userCanSubmitChangeRequest) {
                 changeRequestService.call((ChangeRequest item) -> {
+                    busyIndicatorView.hideBusyIndicator();
+
                     notificationEvent.fire(
                             new NotificationEvent(ts.format(LibraryConstants.ChangeRequestSubmitMessage,
                                                             item.getId()),
                                                   NotificationEvent.NotificationType.SUCCESS));
 
                     this.libraryPlaces.goToChangeRequestReviewScreen(item.getId());
-                }).createChangeRequest(workspaceProject.getSpace().getName(),
-                                       workspaceProject.getRepository().getAlias(),
-                                       currentBranchName,
-                                       destinationBranch,
-                                       view.getSummary(),
-                                       view.getDescription());
+                }, createChangeRequestErrorCallback())
+                        .createChangeRequest(workspaceProject.getSpace().getName(),
+                                             workspaceProject.getRepository().getAlias(),
+                                             currentBranchName,
+                                             destinationBranch,
+                                             view.getSummary(),
+                                             view.getDescription());
             }
             return promises.resolve();
         });
+    }
+
+    private ErrorCallback<Object> createChangeRequestErrorCallback() {
+        return (message, throwable) -> {
+            busyIndicatorView.hideBusyIndicator();
+
+            if (throwable instanceof ChangeRequestAlreadyOpenException) {
+                final Long changeRequestId = ((ChangeRequestAlreadyOpenException) throwable).getChangeRequestId();
+                notificationEvent.fire(
+                        new NotificationEvent(ts.format(LibraryConstants.ChangeRequestAlreadyOpenMessage,
+                                                        currentBranchName,
+                                                        destinationBranch,
+                                                        changeRequestId),
+                                              NotificationEvent.NotificationType.WARNING));
+                return false;
+            }
+
+            return true;
+        };
     }
 
     public void selectBranch(String branchName) {
@@ -204,11 +231,6 @@ public class SubmitChangeRequestScreenPresenter {
 
     private void destroyDiffItems() {
         diffItemPresenterInstances.destroyAll();
-    }
-
-    private void prepareView() {
-        this.view.init(this);
-        this.view.setTitle(this.getTitle());
     }
 
     private void reset() {

@@ -16,15 +16,16 @@
 
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
+import java.util.function.Consumer;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestCountSummary;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
@@ -43,7 +44,6 @@ public class ChangeRequestListPresenter {
     private final TranslationService ts;
     private final BusyIndicatorView busyIndicatorView;
     private final Caller<ChangeRequestService> changeRequestService;
-    private boolean empty;
     private WorkspaceProject workspaceProject;
 
     @Inject
@@ -67,38 +67,27 @@ public class ChangeRequestListPresenter {
     public void postConstruct() {
         this.workspaceProject = libraryPlaces.getActiveWorkspace();
 
-        this.prepareView();
+        this.view.init(this);
     }
 
     public View getView() {
         return view;
     }
 
-    public void onChangeRequestListUpdated(@Observes final ChangeRequestListUpdatedEvent event) {
-        if (workspaceProject != null && this.empty &&
-                event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
-            this.setupList();
-        }
-    }
-
-    private void prepareView() {
-        this.view.init(this);
-        this.empty = true;
-        this.setupList();
-    }
-
-    private void setupList() {
+    public void setupList(final Consumer<Integer> openChangeRequestsCallback) {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-        changeRequestService.call((Integer count) -> {
-                                      this.empty = count == 0;
-                                      final HTMLElement element = (empty) ?
-                                              emptyChangeRequestsScreen.getView().getElement() :
-                                              populatedChangeRequestsScreen.getView().getElement();
-                                      ensureContentSet(element);
-                                      busyIndicatorView.hideBusyIndicator();
-                                  },
-                                  new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
+        changeRequestService.call((ChangeRequestCountSummary countSummary) -> {
+            openChangeRequestsCallback.accept(countSummary.getOpen());
+
+            final HTMLElement element = (countSummary.getTotal() == 0) ?
+                    emptyChangeRequestsScreen.getView().getElement() :
+                    populatedChangeRequestsScreen.getView().getElement();
+
+            ensureContentSet(element);
+
+            busyIndicatorView.hideBusyIndicator();
+        }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                 .countChangeRequests(workspaceProject.getSpace().getName(),
                                      workspaceProject.getRepository().getAlias());
     }

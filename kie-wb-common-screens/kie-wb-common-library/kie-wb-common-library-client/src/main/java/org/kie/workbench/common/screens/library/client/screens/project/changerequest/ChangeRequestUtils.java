@@ -22,7 +22,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 

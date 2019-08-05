@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import elemental2.dom.HTMLElement;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestDiff;
-import org.guvnor.structure.repositories.changerequest.ChangeType;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestDiff;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeType;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;

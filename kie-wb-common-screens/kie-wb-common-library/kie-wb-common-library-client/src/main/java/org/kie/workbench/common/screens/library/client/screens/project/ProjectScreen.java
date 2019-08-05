@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.library.client.screens.project;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -32,10 +31,9 @@ import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.RepositoryContributorsUpdatedEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestListUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -195,7 +193,6 @@ public class ProjectScreen {
         this.view.setTitle(libraryPlaces.getActiveWorkspace().getName());
         this.view.addMainAction(projectMainActions.getElement());
         this.resolveAssetsCount();
-        this.resolveChangeRequestsCount();
         this.showAssets();
 
         projectController.canUpdateProject(workspaceProject).then(userCanUpdateProject -> {
@@ -246,6 +243,8 @@ public class ProjectScreen {
             return promises.resolve();
         });
 
+        this.setupChangeRequestList();
+
         contributorsListScreen.setup(projectContributorsListService,
                                      contributorCount -> this.view.setContributorsCount(contributorCount));
     }
@@ -273,8 +272,8 @@ public class ProjectScreen {
         this.view.setAssetsCount(assetsCount);
     }
 
-    public void setChangeRequestsCount(Integer changeRequestsCount) {
-        this.view.setChangeRequestsCount(changeRequestsCount);
+    public void setChangeRequestsCount(final Integer openChangeRequestsCount) {
+        this.view.setChangeRequestsCount(openChangeRequestsCount);
     }
 
     public void onAddAsset(@Observes NewResourceSuccessEvent event) {
@@ -283,14 +282,18 @@ public class ProjectScreen {
 
     public void onChangeRequestListUpdated(@Observes final ChangeRequestListUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
-            resolveChangeRequestsCount();
+            this.setupChangeRequestList();
         }
     }
 
     public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
-            resolveChangeRequestsCount();
+            this.setupChangeRequestList();
         }
+    }
+
+    private void setupChangeRequestList() {
+        this.changeRequestsScreen.setupList(this::setChangeRequestsCount);
     }
 
     public void onAssetsUpdated(@Observes UpdatedAssetsEvent event) {
@@ -314,15 +317,6 @@ public class ProjectScreen {
     private void resolveAssetsCount() {
         this.libraryService.call((Integer numberOfAssets) -> this.setAssetsCount(numberOfAssets))
                 .getNumberOfAssets(this.workspaceProject);
-    }
-
-    private void resolveChangeRequestsCount() {
-        final List<ChangeRequestStatus> statusList = Collections.singletonList(ChangeRequestStatus.OPEN);
-
-        this.changeRequestService.call((Integer count) -> this.setChangeRequestsCount(count))
-                .countChangeRequests(this.workspaceProject.getSpace().getName(),
-                                     this.workspaceProject.getRepository().getAlias(),
-                                     statusList);
     }
 
     public void showAssets() {

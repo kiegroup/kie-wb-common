@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.changerequest.ChangeRequest;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestDiff;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestDiff;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,7 +114,10 @@ public class ChangedFilesScreenPresenterTest {
                                                                              anyString());
 
         presenter.setup(changeRequest,
-                        b -> {});
+                        b -> {
+                        },
+                        i -> {
+                        });
 
         verify(view).setFilesSummary(anyString());
         verify(view, never()).addDiffItem(any(), any());
@@ -131,7 +134,10 @@ public class ChangedFilesScreenPresenterTest {
                                                            anyLong());
 
         presenter.setup(changeRequest,
-                        b -> {});
+                        b -> {
+                        },
+                        i -> {
+                        });
 
         verify(view).setFilesSummary(anyString());
         verify(view, times(5)).addDiffItem(any(), any());

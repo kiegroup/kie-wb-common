@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest;
 
-import org.guvnor.structure.repositories.changerequest.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
