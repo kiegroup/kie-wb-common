@@ -31,7 +31,7 @@ import com.google.gwt.validation.client.GwtValidation;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATA_TIME;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ONE_TIME_EXECUTION;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
@@ -99,7 +99,7 @@ public class NotificationValueValidator implements ConstraintValidator<ValidNoti
             isTimePeriodExpressionWithRepeatableSection.or(isTimePeriodExpression).or(isOneTimeExecution).test(maybeIso);
 
     private Predicate<String> isRepeatableDataTimeExpression = (maybeIso) -> {
-        Optional<MatchResult> result = checkIfPatternMatch.apply(REPEATABLE + "/" + ISO_DATA_TIME + "/" + PERIOD, maybeIso);
+        Optional<MatchResult> result = checkIfPatternMatch.apply(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD, maybeIso);
         if (result.isPresent()) {
             if (checkIfValueRepeatable.test(result.get().getGroup(1))
                     && checkIfValueIsMinuteOrMonth.apply(result.get().getGroup(5), result.get().getGroup(7))
@@ -111,7 +111,7 @@ public class NotificationValueValidator implements ConstraintValidator<ValidNoti
     };
 
     private Predicate<String> isDataTimeExpression = (maybeIso)
-            -> checkIfPatternMatch.apply("^" + ISO_DATA_TIME, maybeIso).isPresent();
+            -> checkIfPatternMatch.apply("^" + ISO_DATE_TIME, maybeIso).isPresent();
 
     private Predicate<String> isValidDataTimeExpression = (maybeIso)
             -> isRepeatableDataTimeExpression.or(isDataTimeExpression).test(maybeIso);

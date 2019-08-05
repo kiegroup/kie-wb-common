@@ -71,7 +71,7 @@ import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
 import org.uberfire.ext.widgets.common.client.dropdown.MultipleLiveSearchSelectionHandler;
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATA_TIME;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
 
@@ -369,7 +369,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         modal.setSize(ModalSize.MEDIUM);
         modal.setBody(this);
         modal.setClosable(false);
-        modal.addShowHandler(modalShowEvent -> periodBox.onShow());
         modal.addDomHandler(getEscDomHandler(), KeyDownEvent.getType());
 
         this.liveSearchFromDropDown.setOnChange(() -> customerBinder.getWorkingModel().setFrom(searchSelectionFromHandler.getSelectedValue()));
@@ -439,7 +438,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     }
 
     protected void setExpirationDataTime(NotificationRow row) {
-        MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATA_TIME + "/" + PERIOD).exec(row.getExpiresAt());
+        MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD).exec(row.getExpiresAt());
         if (result != null) {
             repeatNotification.setValue(true, true);
             Date dataTime = dateTimeFormat.parse(result.getGroup(2));
@@ -449,7 +448,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
             setTimeZonePickerValue(tz.equals("00Z") ? "0" : tz);
             setTaskStateOrRepeatCountValue(getRepeatCount(row.getExpiresAt().split("/")[0]));
         } else {
-            result = RegExp.compile(ISO_DATA_TIME).exec(row.getExpiresAt());
+            result = RegExp.compile(ISO_DATE_TIME).exec(row.getExpiresAt());
             if (result != null) {
                 repeatNotification.setValue(false);
                 Date dataTime = dateTimeFormat.parse(result.getGroup(1));

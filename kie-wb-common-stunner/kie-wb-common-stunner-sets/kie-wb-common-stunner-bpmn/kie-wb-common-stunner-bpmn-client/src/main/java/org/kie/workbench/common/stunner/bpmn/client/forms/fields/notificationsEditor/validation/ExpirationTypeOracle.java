@@ -27,14 +27,14 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notifica
 
 public class ExpirationTypeOracle {
 
-    public static final String ISO_DATA_TIME = "(2[0-9][0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})([:|+|-]([0-9]{2}:[0-9]{2}|[0-9]{2}|00Z))";
+    public static final String ISO_DATE_TIME = "(2[0-9][0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})([:|+|-]([0-9]{2}:[0-9]{2}|[0-9]{2}|00Z))";
     public static final String REPEATABLE = "^R([0-9]*)";
     public static final String PERIOD = "[P](T?)([0-9]*)([MHDY])";
     public static final String ONE_TIME_EXECUTION = "^(\\d+)([mhdyMHDY])";
 
     private Map<Expiration, List<String>> patterns = ImmutableMap.of(
             Expiration.TIMEPERIOD, Arrays.asList(REPEATABLE + "/" + PERIOD, "^" + PERIOD),
-            Expiration.DATATIME, Arrays.asList(REPEATABLE + "/" + ISO_DATA_TIME + "/" + PERIOD, "^" + ISO_DATA_TIME),
+            Expiration.DATATIME, Arrays.asList(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD, "^" + ISO_DATE_TIME),
             Expiration.EXPRESSION, Arrays.asList());
 
     public ExpirationTypeOracle() {

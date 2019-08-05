@@ -80,9 +80,9 @@ public class PeriodBox extends Composite implements IsWidget,
     private void initChangeHandlers() {
         numberPeriod.addEventListener("change", event -> {
             String value = numberPeriod.value;
-            if(value.startsWith("-")){
+            if(value.startsWith("-")) {
                 addStyleName(ValidationState.ERROR.getCssName());
-            } else if(value.matches("[0-9]*")){
+            } else if(value.matches("[0-9]*")) {
                 if (getStyleName().contains(ValidationState.ERROR.getCssName())) {
                     removeStyleName(ValidationState.ERROR.getCssName());
                     error.setText("");
@@ -162,10 +162,6 @@ public class PeriodBox extends Composite implements IsWidget,
 
     private void setUnitPeriod(String duration) {
         unitPeriod.setValue(Duration.get(duration).getAlias());
-    }
-
-    public void onShow() {
-        //unitPeriodSelectorWidth();
     }
 
     private void unitPeriodSelectorWidth() {
