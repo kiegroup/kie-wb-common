@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -34,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.GenericServiceTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ServiceTaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.UserTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
@@ -71,6 +73,7 @@ public abstract class BaseTaskConverterTest {
     protected View<NoneTask> noneTaskContent;
 
     protected NoneTask noneTaskDefinition;
+
     @Mock
     protected TaskPropertyReader taskPropertyReader;
 
@@ -136,7 +139,7 @@ public abstract class BaseTaskConverterTest {
         when(businessRuleTaskContent.getDefinition()).thenReturn(businessRuleDefinition);
         when(propertyReaderFactory.of(task)).thenReturn(propertyReader);
 
-        final BpmnNode converted = tested.convert(task).value();
+        final BpmnNode converted = (BpmnNode) tested.convert(task).value();
         assertNotEquals(converted.value(), noneTaskNode);
         assertEquals(converted.value(), businessRuleTaskNode);
     }
@@ -161,7 +164,7 @@ public abstract class BaseTaskConverterTest {
         when(ruleAttr.getValue()).thenReturn("");
         when(ruleFeature.getName()).thenReturn(CustomAttribute.serviceImplementation.name());
 
-        final BpmnNode converted = tested.convert(task).value();
+        final BpmnNode converted = (BpmnNode) tested.convert(task).value();
         assertNotEquals(converted.value(), noneTaskNode);
         assertEquals(converted.value(), serviceTaskNode);
     }
@@ -187,7 +190,7 @@ public abstract class BaseTaskConverterTest {
         when(ruleAttr.getValue()).thenReturn("Java");
         when(ruleFeature.getName()).thenReturn(CustomAttribute.serviceImplementation.name());
 
-        final BpmnNode converted = tested.convert(task).value();
+        final BpmnNode converted = (BpmnNode) tested.convert(task).value();
         assertNotEquals(converted.value(), noneTaskNode);
         assertEquals(converted.value(), genericServiceTaskNode);
     }
