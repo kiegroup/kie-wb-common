@@ -79,10 +79,7 @@ public class BPMNDiagramNewResourceHandler extends AbstractProjectDiagramNewReso
 
     @Override
     public boolean canCreate() {
-        return authorizationManager.authorize(new ResourceRef(BPMNDiagramEditor.EDITOR_ID,
-                                                              ActivityResourceType.EDITOR),
-                                              ResourceAction.READ,
-                                              sessionInfo.getIdentity());
+        return true;
     }
 
     private BPMNDiagramResourceType getBPMNDiagramResourceType() {
