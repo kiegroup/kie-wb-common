@@ -361,7 +361,10 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
         assertThat(onEntryScriptTypeValues.get(0)).isNotNull();
         assertThat(onExitScriptTypeValues.get(0)).isNotNull();
 
+        assertThat(executionSet.getIsAsync()).isNotNull();
         assertThat(executionSet.getIsAsync().getValue()).isEqualTo(isAsync);
+
+        assertThat(executionSet.getSlaDueDate()).isNotNull();
         assertThat(executionSet.getSlaDueDate().getValue()).isEqualTo(slaDueDate);
 
         assertThat(onEntryScriptTypeValues.get(0).getScript()).isEqualTo(onEntryActionScriptValue);

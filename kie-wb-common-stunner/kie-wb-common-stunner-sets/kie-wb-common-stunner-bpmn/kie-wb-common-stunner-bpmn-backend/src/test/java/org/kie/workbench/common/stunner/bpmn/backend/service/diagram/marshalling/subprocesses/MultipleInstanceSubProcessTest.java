@@ -430,7 +430,10 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
         assertThat(executionSet.getMultipleInstanceDataOutput().getValue()).isEqualTo(multipleInstanceDataOutput);
         assertThat(executionSet.getMultipleInstanceCompletionCondition().getValue()).isEqualTo(multipleInstanceCompletionCondition);
 
+        assertThat(executionSet.getIsAsync()).isNotNull();
         assertThat(executionSet.getIsAsync().getValue()).isEqualTo(isAsync);
+
+        assertThat(executionSet.getSlaDueDate()).isNotNull();
         assertThat(executionSet.getSlaDueDate().getValue()).isEqualTo(slaDueDate);
 
         assertThat(onEntryScriptTypeValues.get(0).getScript()).isEqualTo(onEntryActionScriptValue);
