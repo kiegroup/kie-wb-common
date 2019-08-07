@@ -20,13 +20,17 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.project.client.editor.BPMNDiagramEditor;
 import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramResourceType;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.project.client.handlers.AbstractProjectDiagramNewResourceHandler;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.rpc.SessionInfo;
+import org.uberfire.security.ResourceAction;
+import org.uberfire.security.ResourceRef;
 import org.uberfire.security.authz.AuthorizationManager;
+import org.uberfire.workbench.model.ActivityResourceType;
 
 @ApplicationScoped
 public class BPMNDiagramNewResourceHandler extends AbstractProjectDiagramNewResourceHandler<BPMNDiagramResourceType> {
@@ -75,7 +79,10 @@ public class BPMNDiagramNewResourceHandler extends AbstractProjectDiagramNewReso
 
     @Override
     public boolean canCreate() {
-        return true;
+        return authorizationManager.authorize(new ResourceRef(BPMNDiagramEditor.EDITOR_ID,
+                                                              ActivityResourceType.EDITOR),
+                                              ResourceAction.READ,
+                                              sessionInfo.getIdentity());
     }
 
     private BPMNDiagramResourceType getBPMNDiagramResourceType() {
