@@ -129,4 +129,20 @@ public class CallActivityPropertyReaderTest {
                                                 definitionResolver);
         assertEquals(value, tested.isAbortParent());
     }
+
+    @Test
+    public void testgetSlaDueDate() throws Exception {
+        String id = UUID.randomUUID().toString();
+        String rawSlaDueDate = "12/25/1983";
+
+        CallActivity callActivity = bpmn2.createCallActivity();
+        callActivity.setId(id);
+        CustomElement.slaDueDate.of(callActivity).set(rawSlaDueDate);
+
+        tested = new CallActivityPropertyReader(callActivity,
+                                                definitionResolver.getDiagram(),
+                                                definitionResolver);
+
+        assertTrue(tested.getSlaDueDate().contains(rawSlaDueDate));
+    }
 }
