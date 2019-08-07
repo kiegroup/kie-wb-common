@@ -188,7 +188,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
             VariableScope.Variable variable =
                     variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType(), decl.getKpi());
             if (Boolean.parseBoolean(decl.getKpi())) {
-                CustomElement.customKPI.of(variable.getTypedIdentifier()).set(Boolean.parseBoolean(decl.getKpi()));
+                CustomElement.customKPI.of(variable.getTypedIdentifier()).set(true);
             }
             properties.add(variable.getTypedIdentifier());
             this.itemDefinitions.add(variable.getTypeDeclaration());
