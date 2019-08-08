@@ -148,6 +148,7 @@ public class SubProcessConverterTest {
         definition.getExecutionSet().getAdHocCompletionCondition().setValue(COMPLETION_CONDITION);
         definition.getExecutionSet().getOnEntryAction().getValue().addValue(ON_ENTRY_ACTION);
         definition.getExecutionSet().getOnExitAction().getValue().addValue(ON_EXIT_ACTION);
+        definition.getExecutionSet().setIsAsync(new IsAsync(Boolean.TRUE));
         definition.getExecutionSet().setSlaDueDate(new SLADueDate(SLA_DUE_DATE));
 
         double nodeX1 = 10;
@@ -192,12 +193,14 @@ public class SubProcessConverterTest {
         assertEquals(parentY1 + nodeY1, shape.getBounds().getY(), 0);
         assertEquals(nodeX2 - nodeX1, shape.getBounds().getWidth(), 0);
         assertEquals(nodeY2 - nodeY1, shape.getBounds().getHeight(), 0);
+        assertTrue(CustomElement.async.of(adHocSubProcess).get());
         assertTrue(CustomElement.slaDueDate.of(adHocSubProcess).get().contains(SLA_DUE_DATE));
     }
 
     @Test
-    public void testConvertMultipleInstanceSubprocessNode_SlaDueDate() {
+    public void testConvertMultipleIntanceSubprocess() {
         final MultipleInstanceSubprocess definition = new MultipleInstanceSubprocess();
+        definition.getExecutionSet().setIsAsync(new IsAsync(Boolean.TRUE));
         definition.getExecutionSet().setSlaDueDate(new SLADueDate(SLA_DUE_DATE));
         final View<MultipleInstanceSubprocess> view = new ViewImpl<>(definition, Bounds.create());
         final Node<View<MultipleInstanceSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
@@ -205,12 +208,14 @@ public class SubProcessConverterTest {
 
         SubProcessPropertyWriter writer = tested.convertMultipleInstanceSubprocessNode(node);
         assertTrue(MultipleInstanceSubProcessPropertyWriter.class.isInstance(writer));
+        assertTrue(CustomElement.async.of(writer.getElement()).get());
         assertTrue(CustomElement.slaDueDate.of(writer.getElement()).get().contains(SLA_DUE_DATE));
     }
 
     @Test
-    public void testConvertEmbeddedSubprocessNode_SlaDueDate() {
+    public void testConvertEmbeddedSubprocess() {
         final EmbeddedSubprocess definition = new EmbeddedSubprocess();
+        definition.getExecutionSet().setIsAsync(new IsAsync(Boolean.TRUE));
         definition.getExecutionSet().setSlaDueDate(new SLADueDate(SLA_DUE_DATE));
         final View<EmbeddedSubprocess> view = new ViewImpl<>(definition, Bounds.create());
         final Node<View<EmbeddedSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
@@ -218,12 +223,14 @@ public class SubProcessConverterTest {
 
         SubProcessPropertyWriter writer = tested.convertEmbeddedSubprocessNode(node);
         assertTrue(SubProcessPropertyWriter.class.isInstance(writer));
+        assertTrue(CustomElement.async.of(writer.getElement()).get());
         assertTrue(CustomElement.slaDueDate.of(writer.getElement()).get().contains(SLA_DUE_DATE));
     }
 
     @Test
-    public void testConvertEventSubprocessNode_SlaDueDate() {
+    public void testConvertEventSubprocess() {
         final EventSubprocess definition = new EventSubprocess();
+        definition.getExecutionSet().setIsAsync(new IsAsync(Boolean.TRUE));
         definition.getExecutionSet().setSlaDueDate(new SLADueDate(SLA_DUE_DATE));
         final View<EventSubprocess> view = new ViewImpl<>(definition, Bounds.create());
         final Node<View<EventSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
@@ -231,6 +238,7 @@ public class SubProcessConverterTest {
 
         SubProcessPropertyWriter writer = tested.convertEventSubprocessNode(node);
         assertTrue(SubProcessPropertyWriter.class.isInstance(writer));
+        assertTrue(CustomElement.async.of(writer.getElement()).get());
         assertTrue(CustomElement.slaDueDate.of(writer.getElement()).get().contains(SLA_DUE_DATE));
     }
 
