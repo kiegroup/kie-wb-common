@@ -180,7 +180,7 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
     }
 
     private void triggerOnFoundCommand() {
-        triggerNoResultsFoundCommand();
+        triggerClearCurrentResultsCallback();
         if (getCurrentResult().isPresent()) {
             getCurrentResult().get().onFound().execute();
         } else {
