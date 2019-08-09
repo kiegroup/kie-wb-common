@@ -60,7 +60,7 @@ public class BaseSubprocessTaskExecutionSet implements BPMNPropertySet {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(slaDueDate.hashCode());
+        return HashUtil.combineHashCodes(Objects.hashCode(slaDueDate));
     }
 
     @Override

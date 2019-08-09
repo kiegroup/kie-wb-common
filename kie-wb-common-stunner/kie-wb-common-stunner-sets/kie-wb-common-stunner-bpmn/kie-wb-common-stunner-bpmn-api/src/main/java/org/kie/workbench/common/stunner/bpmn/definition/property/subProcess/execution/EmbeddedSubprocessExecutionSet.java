@@ -104,9 +104,9 @@ public class EmbeddedSubprocessExecutionSet extends BaseSubprocessTaskExecutionS
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
-                                         onEntryAction.hashCode(),
-                                         onExitAction.hashCode(),
-                                         isAsync.hashCode());
+                                         Objects.hashCode(onEntryAction),
+                                         Objects.hashCode(onExitAction),
+                                         Objects.hashCode(isAsync));
     }
 
     @Override

@@ -64,7 +64,7 @@ public class EventSubprocessExecutionSet extends BaseSubprocessTaskExecutionSet 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
-                                         isAsync.hashCode());
+                                         Objects.hashCode(isAsync));
     }
 
     @Override
