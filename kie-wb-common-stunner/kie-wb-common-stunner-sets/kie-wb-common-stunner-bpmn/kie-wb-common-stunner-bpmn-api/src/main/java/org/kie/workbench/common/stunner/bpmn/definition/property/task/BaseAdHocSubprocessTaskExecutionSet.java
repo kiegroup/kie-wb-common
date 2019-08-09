@@ -20,6 +20,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 
 public interface BaseAdHocSubprocessTaskExecutionSet extends BPMNPropertySet {
 
+    BaseAdHocActivationCondition getAdHocActivationCondition();
+
     BaseAdHocCompletionCondition getAdHocCompletionCondition();
 
     AdHocOrdering getAdHocOrdering();

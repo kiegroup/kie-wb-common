@@ -177,10 +177,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private OrganizationalUnitController organizationalUnitController;
 
-    @Inject
-    private Caller<OrganizationalUnitService> organizationalUnitService;
-
     private Promises promises;
+
+    private Caller<OrganizationalUnitService> organizationalUnitService;
 
     private boolean closingLibraryPlaces = false;
 
@@ -209,7 +208,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final LibraryInternalPreferences libraryInternalPreferences,
                          final Caller<RepositoryService> repositoryService,
                          final Promises promises,
-                         final OrganizationalUnitController organizationalUnitController) {
+                         final OrganizationalUnitController organizationalUnitController,
+                         final Caller<OrganizationalUnitService> organizationalUnitService) {
 
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
@@ -233,6 +233,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.repositoryService = repositoryService;
         this.promises = promises;
         this.organizationalUnitController = organizationalUnitController;
+        this.organizationalUnitService = organizationalUnitService;
     }
 
     @PostConstruct
@@ -261,7 +262,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         return self.promises.promisify(self.organizationalUnitService, s -> {
             return s.getOrganizationalUnit(spaceName);
         }).then(space -> {
-            self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
+            self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(space));
             return self.goToLibrary();
         });
     }
@@ -467,9 +468,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
 
-        if (!projectContext.getActiveWorkspaceProject().isPresent()) {
-            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(activeOu));
-        }
+        projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(activeOu));
 
         closeLibraryPlaces();
         placeManager.goTo(part,

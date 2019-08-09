@@ -71,6 +71,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.notification.No
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AbortParent;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocActivationCondition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompletionCondition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
@@ -109,6 +111,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskEx
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTaskExecutionSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -160,6 +164,22 @@ public class HashCodeAndEqualityTest {
         BusinessRuleTask b = new BusinessRuleTask();
         assertEquals(a,
                      b);
+        assertFalse(a.equals(19));
+        assertFalse(a.equals(null));
+    }
+
+    @Test
+    public void testServiceTaskHashCode() {
+        ServiceTask a = new ServiceTask();
+        ServiceTask b = new ServiceTask();
+        assertEquals(a.hashCode(), b.hashCode());
+    }
+
+    @Test
+    public void testServiceTaskEquals() {
+        ServiceTask a = new ServiceTask();
+        ServiceTask b = new ServiceTask();
+        assertEquals(a, b);
         assertFalse(a.equals(19));
         assertFalse(a.equals(null));
     }
@@ -1318,12 +1338,14 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new AdHocSubprocessTaskExecutionSet(),
                              new AdHocSubprocessTaskExecutionSet())
 
-                .addTrueCase(new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(),
+                .addTrueCase(new AdHocSubprocessTaskExecutionSet(new AdHocActivationCondition(),
+                                                                 new AdHocCompletionCondition(),
                                                                  new AdHocOrdering(),
                                                                  new AdHocAutostart(),
                                                                  new OnEntryAction(),
                                                                  new OnExitAction()),
-                             new AdHocSubprocessTaskExecutionSet(new AdHocCompletionCondition(),
+                             new AdHocSubprocessTaskExecutionSet(new AdHocActivationCondition(),
+                                                                 new AdHocCompletionCondition(),
                                                                  new AdHocOrdering(),
                                                                  new AdHocAutostart(),
                                                                  new OnEntryAction(),
@@ -1340,6 +1362,7 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new ReusableSubprocessTaskExecutionSet(new CalledElement(),
                                                                     new IsCase(),
                                                                     new Independent(),
+                                                                    new AbortParent(),
                                                                     new WaitForCompletion(),
                                                                     new IsAsync(),
                                                                     new AdHocAutostart(),
@@ -1355,6 +1378,7 @@ public class HashCodeAndEqualityTest {
                              new ReusableSubprocessTaskExecutionSet(new CalledElement(),
                                                                     new IsCase(),
                                                                     new Independent(),
+                                                                    new AbortParent(),
                                                                     new WaitForCompletion(),
                                                                     new IsAsync(),
                                                                     new AdHocAutostart(),
@@ -1384,7 +1408,8 @@ public class HashCodeAndEqualityTest {
                                                               new OnEntryAction(),
                                                               new OnExitAction(),
                                                               new IsAsync(),
-                                                              new AdHocAutostart()),
+                                                              new AdHocAutostart(),
+                                                              new SLADueDate()),
                              new BusinessRuleTaskExecutionSet(new RuleLanguage(),
                                                               new RuleFlowGroup(),
                                                               new Namespace(),
@@ -1393,7 +1418,29 @@ public class HashCodeAndEqualityTest {
                                                               new OnEntryAction(),
                                                               new OnExitAction(),
                                                               new IsAsync(),
-                                                              new AdHocAutostart()))
+                                                              new AdHocAutostart(),
+                                                              new SLADueDate()))
+                .test();
+    }
+
+    @Test
+    public void testServiceTaskExecutionSetEqualsAndHashCode() {
+        TestCaseBuilder.newTestCase()
+                .addTrueCase(new ServiceTaskExecutionSet(),
+                             new ServiceTaskExecutionSet())
+
+                .addTrueCase(new ServiceTaskExecutionSet(new TaskName(),
+                                                         new IsAsync(),
+                                                         new AdHocAutostart(),
+                                                         new OnEntryAction(),
+                                                         new OnExitAction(),
+                                                         new SLADueDate()),
+                             new ServiceTaskExecutionSet(new TaskName(),
+                                                         new IsAsync(),
+                                                         new AdHocAutostart(),
+                                                         new OnEntryAction(),
+                                                         new OnExitAction(),
+                                                         new SLADueDate()))
                 .test();
     }
 
@@ -1884,9 +1931,9 @@ public class HashCodeAndEqualityTest {
                                                               "c1",
                                                               "d1");
         TimerSettingsValue TIMER_REF_1 = new TimerSettingsValue("a2",
-                                                              "b2",
-                                                              "c2",
-                                                              "d2");
+                                                                "b2",
+                                                                "c2",
+                                                                "d2");
         TestCaseBuilder.newTestCase()
                 .addTrueCase(new CancellingTimerEventExecutionSet(),
                              new CancellingTimerEventExecutionSet())
@@ -2375,6 +2422,29 @@ public class HashCodeAndEqualityTest {
                               new EventGateway(new BPMNGeneralSet("name1", "documentation"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()))
                 .addFalseCase(new EventGateway(new BPMNGeneralSet("name", "documentation"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()),
                               new EventGateway(new BPMNGeneralSet("name", "documentation1"), new BackgroundSet(), new FontSet(), new CircleDimensionSet()))
+                .test();
+    }
+
+    @Test
+    public void testAdHocActivationConditionEqualsAndHashCode() {
+        TestCaseBuilder.newTestCase()
+                .addTrueCase(new AdHocActivationCondition(), new AdHocActivationCondition())
+                .addTrueCase(new AdHocActivationCondition(null), new AdHocActivationCondition(null))
+                .addTrueCase(new AdHocActivationCondition("value1"), new AdHocActivationCondition("value1"))
+                .addFalseCase(new AdHocActivationCondition("value1"), new AdHocActivationCondition("value2"))
+                .addFalseCase(new AdHocActivationCondition("value1"), new AdHocActivationCondition(null))
+                .test();
+    }
+
+    @Test
+    public void testAbortParentEqualsAndHashCode() {
+        TestCaseBuilder.newTestCase()
+                .addTrueCase(new AbortParent(), new AbortParent())
+                .addTrueCase(new AbortParent(true), new AbortParent(true))
+                .addTrueCase(new AbortParent(false), new AbortParent(false))
+                .addTrueCase(new AbortParent(true), new AbortParent())
+                .addFalseCase(new AbortParent(false), new AbortParent())
+                .addFalseCase(new AbortParent(true), new AbortParent(false))
                 .test();
     }
 

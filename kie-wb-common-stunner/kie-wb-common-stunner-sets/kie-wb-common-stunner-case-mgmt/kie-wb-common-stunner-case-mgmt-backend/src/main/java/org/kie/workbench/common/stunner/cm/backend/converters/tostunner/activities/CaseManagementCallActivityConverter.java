@@ -21,11 +21,19 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.activi
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.CallActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AbortParent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceExecutionMode;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
@@ -59,17 +67,33 @@ public class CaseManagementCallActivityConverter extends BaseCallActivityConvert
                 new CaseReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
                                                            new IsCase(true),
                                                            new Independent(p.isIndependent()),
+                                                           new AbortParent(p.isAbortParent()),
                                                            new WaitForCompletion(p.isWaitForCompletion()),
                                                            new IsAsync(p.isAsync()),
                                                            new AdHocAutostart(p.isAdHocAutostart()),
+                                                           new IsMultipleInstance(p.isMultipleInstance()),
+                                                           new MultipleInstanceExecutionMode(p.isSequential()),
+                                                           new MultipleInstanceCollectionInput(p.getCollectionInput()),
+                                                           new MultipleInstanceDataInput(p.getDataInput()),
+                                                           new MultipleInstanceCollectionOutput(p.getCollectionOutput()),
+                                                           new MultipleInstanceDataOutput(p.getDataOutput()),
+                                                           new MultipleInstanceCompletionCondition(p.getCompletionCondition()),
                                                            new OnEntryAction(p.getOnEntryAction()),
                                                            new OnExitAction(p.getOnExitAction())) :
                 new ProcessReusableSubprocessTaskExecutionSet(new CalledElement(activity.getCalledElement()),
                                                               new IsCase(false),
                                                               new Independent(p.isIndependent()),
+                                                              new AbortParent(p.isAbortParent()),
                                                               new WaitForCompletion(p.isWaitForCompletion()),
                                                               new IsAsync(p.isAsync()),
                                                               new AdHocAutostart(p.isAdHocAutostart()),
+                                                              new IsMultipleInstance(p.isMultipleInstance()),
+                                                              new MultipleInstanceExecutionMode(p.isSequential()),
+                                                              new MultipleInstanceCollectionInput(p.getCollectionInput()),
+                                                              new MultipleInstanceDataInput(p.getDataInput()),
+                                                              new MultipleInstanceCollectionOutput(p.getCollectionOutput()),
+                                                              new MultipleInstanceDataOutput(p.getDataOutput()),
+                                                              new MultipleInstanceCompletionCondition(p.getCompletionCondition()),
                                                               new OnEntryAction(p.getOnEntryAction()),
                                                               new OnExitAction(p.getOnExitAction()));
     }

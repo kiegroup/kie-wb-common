@@ -88,7 +88,6 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.commons.cluster.ClusterService;
-import org.uberfire.ext.security.management.api.exception.NoImplementationAvailableException;
 import org.uberfire.ext.security.management.api.service.UserManagerService;
 import org.uberfire.ext.security.management.impl.SearchRequestImpl;
 import org.uberfire.io.IOService;
@@ -201,15 +200,9 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public LibraryInfo getLibraryInfo(final OrganizationalUnit organizationalUnit) {
-        final Collection<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(organizationalUnit).stream()
+        final List<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(organizationalUnit).stream()
                 .filter(p -> userCanReadProject(p))
                 .collect(Collectors.toList());
-
-        projects.stream().forEach(p -> {
-            if (p.getMainModule() != null) {
-                p.getMainModule().setNumberOfAssets(getNumberOfAssets(p));
-            }
-        });
 
         return new LibraryInfo(projects);
     }
@@ -465,16 +458,24 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public void removeBranch(final WorkspaceProject project,
                              final Branch branch) {
-        final org.uberfire.java.nio.file.Path branchPath = pathUtil.convert(branch.getPath());
-        ioService.delete(branchPath);
-        deleteBranchPermissions(project.getSpace().getName(),
-                                project.getRepository().getIdentifier(),
-                                branch.getName());
-        deleteAssociatedChangeRequests(project.getSpace().getName(),
-                                       project.getRepository().getAlias(),
-                                       branch.getName());
-        this.repositoryUpdatedEvent.fire(new RepositoryUpdatedEvent(repoService.getRepositoryFromSpace(project.getSpace(),
-                                                                                                       project.getRepository().getAlias())));
+        try {
+            ioService.startBatch(pathUtil.convert(branch.getPath()).getFileSystem());
+
+            repoService.getRepositoryFromSpace(project.getSpace(), project.getRepository().getAlias()).getBranch(branch.getName()).ifPresent(updatedBranch -> {
+                final org.uberfire.java.nio.file.Path branchPath = pathUtil.convert(branch.getPath());
+                ioService.delete(branchPath);
+                deleteBranchPermissions(project.getSpace().getName(),
+                                        project.getRepository().getIdentifier(),
+                                        branch.getName());
+                deleteAssociatedChangeRequests(project.getSpace().getName(),
+                                               project.getRepository().getAlias(),
+                                               branch.getName());
+                this.repositoryUpdatedEvent.fire(new RepositoryUpdatedEvent(repoService.getRepositoryFromSpace(project.getSpace(),
+                                                                                                               project.getRepository().getAlias())));
+            });
+        } finally {
+            ioService.endBatch();
+        }
     }
 
     @Override
