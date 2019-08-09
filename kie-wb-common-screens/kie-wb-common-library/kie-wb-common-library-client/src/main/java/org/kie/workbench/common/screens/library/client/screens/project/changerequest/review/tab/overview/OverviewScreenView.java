@@ -42,6 +42,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
                                            IsElement {
 
     private static final String PLACE_HOLDER = "placeholder";
+    private static final String EMPTY_CONTENT = "";
 
     private OverviewScreenPresenter presenter;
 
@@ -317,18 +318,21 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
 
     @Override
     public void resetAll() {
-        summary.textContent = "";
-        description.textContent = "";
-        status.textContent = "";
-        author.textContent = "";
-        createdDate.textContent = "";
-        sourceBranch.textContent = "";
-        targetBranch.textContent = "";
-        conflictWarning.hidden = true;
+        this.showCommentsToolbar(false);
+        this.showConflictWarning(false);
+        this.clearCommentInputField();
+        this.clearCommentList();
+        this.enableSummaryEditMode(false);
+        this.enableDescriptionEditMode(false);
 
-        showCommentsToolbar(false);
-
-        clearCommentInputField();
+        summary.textContent = EMPTY_CONTENT;
+        description.textContent = EMPTY_CONTENT;
+        status.textContent = EMPTY_CONTENT;
+        author.textContent = EMPTY_CONTENT;
+        createdDate.textContent = EMPTY_CONTENT;
+        sourceBranch.textContent = EMPTY_CONTENT;
+        targetBranch.textContent = EMPTY_CONTENT;
+        commentsHeader.textContent = EMPTY_CONTENT;
     }
 
     @Override

@@ -134,6 +134,12 @@ public class PopulatedChangeRequestListPresenter {
         }
     }
 
+    public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
+        if (event.getProject().getRepository().getIdentifier().equals(this.workspaceProject.getRepository().getIdentifier())) {
+            this.refreshList();
+        }
+    }
+
     public void nextPage() {
         if (this.currentPage + 1 <= this.totalPages) {
             this.currentPage++;
@@ -226,8 +232,6 @@ public class PopulatedChangeRequestListPresenter {
     private void refreshList() {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-        this.view.clearList();
-
         if (filterType.equals(FILTER_ALL)) {
             changeRequestService.call(getChangeRequestsCallback(),
                                       new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
@@ -251,6 +255,8 @@ public class PopulatedChangeRequestListPresenter {
     private RemoteCallback<PaginatedChangeRequestList> getChangeRequestsCallback() {
         return (final PaginatedChangeRequestList paginatedList) -> {
             setupCounters(paginatedList.getTotal());
+
+            this.view.clearList();
 
             if (paginatedList.getTotal() == 0) {
                 showSearchHitNothing();

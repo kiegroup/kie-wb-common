@@ -203,11 +203,11 @@ public class OverviewScreenPresenter {
     }
 
     private void refreshCommentList(final Consumer<Boolean> finishLoadingCallback) {
-        this.view.clearCommentList();
-
         changeRequestService.call((final PaginatedChangeRequestCommentList paginatedList) -> {
             this.setupCommentToolbar(paginatedList.getTotal(),
                                      paginatedList.getChangeRequestComments().size());
+
+            this.view.clearCommentList();
 
             paginatedList.getChangeRequestComments().stream()
                     .sorted(Comparator.comparing(ChangeRequestComment::getCreatedDate))

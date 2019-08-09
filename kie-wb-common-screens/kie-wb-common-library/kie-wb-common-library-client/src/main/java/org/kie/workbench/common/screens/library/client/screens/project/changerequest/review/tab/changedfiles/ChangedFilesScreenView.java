@@ -70,6 +70,13 @@ public class ChangedFilesScreenView implements ChangedFilesScreenPresenter.View,
     @Override
     public void resetAll() {
         filesSummary.textContent = "";
+
+        showDiffList(false);
         clearDiffList();
+    }
+
+    @Override
+    public void showDiffList(final boolean isVisible) {
+        this.diffList.hidden = !isVisible;
     }
 }

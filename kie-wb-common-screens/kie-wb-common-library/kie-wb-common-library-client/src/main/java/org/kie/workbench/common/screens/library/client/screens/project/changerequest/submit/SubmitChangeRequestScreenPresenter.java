@@ -38,6 +38,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
@@ -53,7 +54,6 @@ import org.uberfire.client.workbench.events.SelectPlaceEvent;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.lifecycle.OnClose;
-import org.uberfire.lifecycle.OnLostFocus;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -128,11 +128,6 @@ public class SubmitChangeRequestScreenPresenter {
         destroyDiffItems();
     }
 
-    @OnLostFocus
-    public void onLostFocus() {
-        destroyDiffItems();
-    }
-
     public void refreshOnFocus(@Observes final SelectPlaceEvent selectPlaceEvent) {
         if (workspaceProject != null && workspaceProject.getMainModule() != null) {
             final PlaceRequest place = selectPlaceEvent.getPlace();
@@ -143,7 +138,15 @@ public class SubmitChangeRequestScreenPresenter {
         }
     }
 
+    public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
+        if (event.getProject().getRepository().getIdentifier().equals(this.workspaceProject.getRepository().getIdentifier())) {
+            this.updateDiffContainer();
+        }
+    }
+
     public void cancel() {
+        destroyDiffItems();
+
         this.libraryPlaces.goToProject(workspaceProject);
     }
 
@@ -164,6 +167,8 @@ public class SubmitChangeRequestScreenPresenter {
                             new NotificationEvent(ts.format(LibraryConstants.ChangeRequestSubmitMessage,
                                                             item.getId()),
                                                   NotificationEvent.NotificationType.SUCCESS));
+
+                    destroyDiffItems();
 
                     this.libraryPlaces.goToChangeRequestReviewScreen(item.getId());
                 }, createChangeRequestErrorCallback())
@@ -208,8 +213,6 @@ public class SubmitChangeRequestScreenPresenter {
         view.showWarning(false);
         view.showDiff(false);
         view.setFilesSummary("");
-        view.clearDiffList();
-        destroyDiffItems();
 
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
             boolean hideDiff = diffList.isEmpty();
@@ -243,6 +246,9 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     private void setupEmptyDiffList() {
+        destroyDiffItems();
+
+        view.clearDiffList();
         view.enableSubmitButton(false);
         view.setFilesSummary(ts.getTranslation(LibraryConstants.BranchesAreEven));
     }
@@ -277,6 +283,9 @@ public class SubmitChangeRequestScreenPresenter {
         view.setFilesSummary(changeRequestUtils.formatFilesSummary(changedFilesCount,
                                                                    addedLinesCount,
                                                                    deletedLinesCount));
+
+        destroyDiffItems();
+        view.clearDiffList();
 
         diffList.forEach(diff -> {
             DiffItemPresenter item = diffItemPresenterInstances.get();

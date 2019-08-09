@@ -132,24 +132,32 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
     public void activateOverviewTab() {
         this.deactivateAllTabs();
         this.activate(this.overviewTabItem);
+        this.presenter.showOverviewContent();
     }
 
     @Override
     public void activateChangedFilesTab() {
         this.deactivateAllTabs();
         this.activate(this.changedFilesTabItem);
+        this.presenter.showChangedFilesContent();
+    }
+
+    @Override
+    public void resetAll() {
+        this.showAcceptButton(false);
+        this.showRejectButton(false);
+        this.showRevertButton(false);
+        this.enableAcceptButton(true);
     }
 
     @EventHandler("overview-tab-link")
     public void onOverviewTabLinkClicked(final ClickEvent event) {
         this.activateOverviewTab();
-        this.presenter.showOverviewContent();
     }
 
     @EventHandler("changed-files-tab-link")
     public void onChangedFilesTabLinkClicked(final ClickEvent event) {
         this.activateChangedFilesTab();
-        this.presenter.showChangedFilesContent();
     }
 
     @EventHandler("cancel-button")

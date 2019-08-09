@@ -31,6 +31,7 @@ import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestSta
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
@@ -45,7 +46,6 @@ import org.uberfire.client.promise.Promises;
 import org.uberfire.client.workbench.events.SelectPlaceEvent;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
-import org.uberfire.lifecycle.OnLostFocus;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -94,18 +94,10 @@ public class ChangeRequestReviewScreenPresenter {
 
     @PostConstruct
     public void postConstruct() {
-        workspaceProject = libraryPlaces.getActiveWorkspace();
+        this.workspaceProject = libraryPlaces.getActiveWorkspace();
 
         this.view.init(this);
         this.view.setTitle(this.getTitle());
-    }
-
-    @OnLostFocus
-    public void onLostFocus() {
-        this.reset();
-
-        this.overviewScreen.reset();
-        this.changedFilesScreen.reset();
     }
 
     public void refreshOnFocus(@Observes final SelectPlaceEvent selectPlaceEvent) {
@@ -117,8 +109,7 @@ public class ChangeRequestReviewScreenPresenter {
             if (changeRequestIdValue != null && !changeRequestIdValue.equals("") &&
                     place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
                 this.currentChangeRequestId = Long.parseLong(changeRequestIdValue);
-                this.reset();
-                this.setup(false);
+                this.init(false);
             }
         }
     }
@@ -126,8 +117,13 @@ public class ChangeRequestReviewScreenPresenter {
     public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())
                 && event.getChangeRequestId() == currentChangeRequestId) {
-            this.reset();
-            this.setup(true);
+            this.init(true);
+        }
+    }
+
+    public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
+        if (event.getProject().getRepository().getIdentifier().equals(this.workspaceProject.getRepository().getIdentifier())) {
+            this.init(true);
         }
     }
 
@@ -150,6 +146,8 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     public void cancel() {
+        this.reset(false);
+
         this.libraryPlaces.goToProject(workspaceProject);
     }
 
@@ -176,14 +174,23 @@ public class ChangeRequestReviewScreenPresenter {
         });
     }
 
-    private void reset() {
+    private void init(final boolean isReload) {
+        this.reset(isReload);
+        this.setup(isReload);
+    }
+
+    private void reset(final boolean isReload) {
         overviewTabLoaded = false;
         changedFilesTabLoaded = false;
 
-        this.view.showAcceptButton(false);
-        this.view.showRejectButton(false);
-        this.view.showRevertButton(false);
-        this.view.enableAcceptButton(true);
+        this.overviewScreen.reset();
+        this.changedFilesScreen.reset();
+
+        this.view.resetAll();
+
+        if (!isReload) {
+            this.view.activateOverviewTab();
+        }
     }
 
     private void setup(final boolean isReload) {
@@ -208,14 +215,11 @@ public class ChangeRequestReviewScreenPresenter {
         this.setupButtons(changeRequest,
                           this.currentTargetBranch);
 
-        this.overviewScreen.reset();
         this.overviewScreen.setup(changeRequest,
                                   (Boolean success) -> {
                                       overviewTabLoaded = true;
                                       finishLoading();
                                   });
-
-        this.changedFilesScreen.reset();
         this.changedFilesScreen.setup(changeRequest,
                                       (final Boolean success) -> {
                                           changedFilesTabLoaded = true;
@@ -224,7 +228,6 @@ public class ChangeRequestReviewScreenPresenter {
 
         if (!isReload) {
             this.view.activateOverviewTab();
-            this.showOverviewContent();
         }
     }
 
@@ -318,5 +321,7 @@ public class ChangeRequestReviewScreenPresenter {
         void activateOverviewTab();
 
         void activateChangedFilesTab();
+
+        void resetAll();
     }
 }

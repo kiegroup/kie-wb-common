@@ -71,6 +71,8 @@ public class ChangedFilesScreenPresenter {
 
     public void reset() {
         this.view.resetAll();
+
+        this.destroyDiffItems();
     }
 
     public void setup(final ChangeRequest changeRequest,
@@ -79,9 +81,13 @@ public class ChangedFilesScreenPresenter {
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
             setChangedFilesCountCallback.accept(diffList.size());
 
-            final boolean warnConflict = changeRequest.getStatus() == ChangeRequestStatus.OPEN;
+            if (!diffList.isEmpty()) {
+                final boolean warnConflict = changeRequest.getStatus() == ChangeRequestStatus.OPEN;
+                this.setupDiffList(diffList, warnConflict);
+                this.view.showDiffList(true);
+            }
+
             this.setupFilesSummary(diffList);
-            this.setupDiffList(diffList, warnConflict);
 
             finishLoadingCallback.accept(true);
         }).getDiff(workspaceProject.getSpace().getName(),
@@ -94,18 +100,24 @@ public class ChangedFilesScreenPresenter {
         final int addedLinesCount = diffList.stream().mapToInt(ChangeRequestDiff::getAddedLinesCount).sum();
         final int deletedLinesCount = diffList.stream().mapToInt(ChangeRequestDiff::getDeletedLinesCount).sum();
 
-        view.setFilesSummary(changeRequestUtils.formatFilesSummary(changedFilesCount,
-                                                                   addedLinesCount,
-                                                                   deletedLinesCount));
+        this.view.setFilesSummary(changeRequestUtils.formatFilesSummary(changedFilesCount,
+                                                                        addedLinesCount,
+                                                                        deletedLinesCount));
     }
 
     private void setupDiffList(final List<ChangeRequestDiff> diffList,
                                final boolean warnConflict) {
+        this.view.clearDiffList();
+
         diffList.forEach(diff -> {
             DiffItemPresenter item = diffItemPresenterInstances.get();
             item.setup(diff, warnConflict);
             this.view.addDiffItem(item.getView(), item::draw);
         });
+    }
+
+    private void destroyDiffItems() {
+        diffItemPresenterInstances.destroyAll();
     }
 
     public interface View extends UberElemental<ChangedFilesScreenPresenter> {
@@ -117,5 +129,7 @@ public class ChangedFilesScreenPresenter {
         void setFilesSummary(final String text);
 
         void resetAll();
+
+        void showDiffList(final boolean isVisible);
     }
 }

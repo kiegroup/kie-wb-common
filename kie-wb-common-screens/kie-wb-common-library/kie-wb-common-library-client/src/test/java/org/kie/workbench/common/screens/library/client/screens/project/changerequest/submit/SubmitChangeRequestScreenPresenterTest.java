@@ -141,13 +141,6 @@ public class SubmitChangeRequestScreenPresenterTest {
     }
 
     @Test
-    public void onLostFocusTest() {
-        presenter.onLostFocus();
-
-        verify(diffItemPresenterInstances).destroyAll();
-    }
-
-    @Test
     public void refreshOnFocusTest() throws NoSuchFieldException {
         new FieldSetter(presenter,
                         SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))

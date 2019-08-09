@@ -136,14 +136,6 @@ public class ChangeRequestReviewScreenPresenterTest {
     }
 
     @Test
-    public void onLostFocusTest() {
-        presenter.onLostFocus();
-
-        verify(overviewScreen).reset();
-        verify(changedFilesScreen).reset();
-    }
-
-    @Test
     public void refreshOnFocusOtherPlaceTest() {
         PlaceRequest place = mock(PlaceRequest.class);
         SelectPlaceEvent event = new SelectPlaceEvent(place);
@@ -191,7 +183,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService).getChangeRequest(anyString(),
                                                       anyString(),
                                                       anyLong());
-        verify(view).activateOverviewTab();
+        verify(view, times(2)).activateOverviewTab();
         verify(view, never()).showAcceptButton(true);
         verify(overviewScreen).reset();
         verify(changedFilesScreen).reset();
@@ -233,8 +225,8 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService).getChangeRequest(anyString(),
                                                       anyString(),
                                                       anyLong());
-        verify(view).activateOverviewTab();
-        verify(view, times(2)).showAcceptButton(anyBoolean());
+        verify(view, times(2)).activateOverviewTab();
+        verify(view).showAcceptButton(anyBoolean());
         verify(overviewScreen).reset();
         verify(changedFilesScreen).reset();
     }
