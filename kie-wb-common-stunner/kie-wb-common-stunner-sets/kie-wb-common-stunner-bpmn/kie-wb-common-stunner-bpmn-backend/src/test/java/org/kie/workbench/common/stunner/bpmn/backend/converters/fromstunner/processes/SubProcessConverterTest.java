@@ -196,7 +196,7 @@ public class SubProcessConverterTest {
     }
 
     @Test
-    public void testConvertMultipleIntanceSubprocessNode_SlaDueDate() {
+    public void testConvertMultipleInstanceSubprocessNode_SlaDueDate() {
         final MultipleInstanceSubprocess definition = new MultipleInstanceSubprocess();
         definition.getExecutionSet().setSlaDueDate(new SLADueDate(SLA_DUE_DATE));
         final View<MultipleInstanceSubprocess> view = new ViewImpl<>(definition, Bounds.create());

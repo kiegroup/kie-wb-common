@@ -17,13 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes;
 
 import java.util.Collections;
-import java.util.UUID;
 
 import org.eclipse.bpmn2.AdHocOrdering;
 import org.eclipse.bpmn2.AdHocSubProcess;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.FormalExpression;
-import org.eclipse.bpmn2.MultiInstanceLoopCharacteristics;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.junit.Before;
@@ -41,10 +39,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
-import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EventSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -64,6 +60,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SubProcessConverterTest {
+
+    private final String SLA_DUE_DATE = "12/25/1983";
 
     private DefinitionResolver definitionResolver;
 
@@ -141,83 +139,61 @@ public class SubProcessConverterTest {
 
     @Test
     public void testConvertAdHocSubprocessNode_SlaDueDate() {
-        final String SLA_DUE_DATE = "12/25/1983";
-
         SubProcess subProcess = bpmn2.createAdHocSubProcess();
-        subProcess.setId(UUID.randomUUID().toString());
-        subProcess.setTriggeredByEvent(Boolean.TRUE);
         CustomElement.slaDueDate.setValue(subProcess, SLA_DUE_DATE);
 
         Result<BpmnNode> result = tested.convertSubProcess(subProcess);
         BpmnNode node = result.value();
         AdHocSubprocess adHocSubprocess = (AdHocSubprocess) node.value().getContent().getDefinition();
-        assertNotNull(adHocSubprocess);
-        assertNotNull(adHocSubprocess.getExecutionSet());
 
-        AdHocSubprocessTaskExecutionSet executionSet = adHocSubprocess.getExecutionSet();
-        SLADueDate slaDueDate = executionSet.getSlaDueDate();
-        assertNotNull(slaDueDate);
-        assertTrue(slaDueDate.getValue().contains(SLA_DUE_DATE));
+        assertNotNull(adHocSubprocess);
+        assertBaseSubprocessExecutionSet(adHocSubprocess.getExecutionSet());
     }
 
     @Test
     public void testConvertMultInstanceSubprocessNode_SlaDueDate() {
-        final String SLA_DUE_DATE = "12/25/1983";
-
         SubProcess subProcess = bpmn2.createSubProcess();
-        MultiInstanceLoopCharacteristics loopCharacteristics = bpmn2.createMultiInstanceLoopCharacteristics();
-        subProcess.setLoopCharacteristics(loopCharacteristics);
-        subProcess.setId(UUID.randomUUID().toString());
+        subProcess.setLoopCharacteristics(bpmn2.createMultiInstanceLoopCharacteristics());
         CustomElement.slaDueDate.setValue(subProcess, SLA_DUE_DATE);
 
         Result<BpmnNode> result = tested.convertSubProcess(subProcess);
         BpmnNode node = result.value();
-        MultipleInstanceSubprocess miSubProcces = (MultipleInstanceSubprocess) node.value().getContent().getDefinition();
-        assertNotNull(miSubProcces);
-        assertNotNull(miSubProcces.getExecutionSet());
+        MultipleInstanceSubprocess miSubProcess = (MultipleInstanceSubprocess) node.value().getContent().getDefinition();
 
-        MultipleInstanceSubprocessTaskExecutionSet executionSet = miSubProcces.getExecutionSet();
-        SLADueDate slaDueDate = executionSet.getSlaDueDate();
-        assertNotNull(slaDueDate);
-        assertTrue(slaDueDate.getValue().contains(SLA_DUE_DATE));
+        assertNotNull(miSubProcess);
+        assertBaseSubprocessExecutionSet(miSubProcess.getExecutionSet());
     }
 
     @Test
     public void testConvertEmbeddedSubprocessNode_SlaDueDate() {
-        final String SLA_DUE_DATE = "12/25/1983";
-
         SubProcess subProcess = bpmn2.createSubProcess();
-        subProcess.setId(UUID.randomUUID().toString());
         CustomElement.slaDueDate.setValue(subProcess, SLA_DUE_DATE);
 
         Result<BpmnNode> result = tested.convertSubProcess(subProcess);
         BpmnNode node = result.value();
-        EmbeddedSubprocess embeddedSubProcces = (EmbeddedSubprocess) node.value().getContent().getDefinition();
-        assertNotNull(embeddedSubProcces);
-        assertNotNull(embeddedSubProcces.getExecutionSet());
+        EmbeddedSubprocess embeddedSubprocess = (EmbeddedSubprocess) node.value().getContent().getDefinition();
+        assertNotNull(embeddedSubprocess);
 
-        EmbeddedSubprocessExecutionSet executionSet = embeddedSubProcces.getExecutionSet();
-        SLADueDate slaDueDate = executionSet.getSlaDueDate();
-        assertNotNull(slaDueDate);
-        assertTrue(slaDueDate.getValue().contains(SLA_DUE_DATE));
+        assertBaseSubprocessExecutionSet(embeddedSubprocess.getExecutionSet());
     }
 
     @Test
     public void testConvertEventSubprocessNode_SlaDueDate() {
-        final String SLA_DUE_DATE = "12/25/1983";
-
         SubProcess subProcess = bpmn2.createSubProcess();
-        subProcess.setId(UUID.randomUUID().toString());
         subProcess.setTriggeredByEvent(Boolean.TRUE);
         CustomElement.slaDueDate.setValue(subProcess, SLA_DUE_DATE);
 
         Result<BpmnNode> result = tested.convertSubProcess(subProcess);
         BpmnNode node = result.value();
         EventSubprocess eventSubprocess = (EventSubprocess) node.value().getContent().getDefinition();
-        assertNotNull(eventSubprocess);
-        assertNotNull(eventSubprocess.getExecutionSet());
 
-        EventSubprocessExecutionSet executionSet = eventSubprocess.getExecutionSet();
+        assertNotNull(eventSubprocess);
+        assertBaseSubprocessExecutionSet(eventSubprocess.getExecutionSet());
+    }
+
+    private void assertBaseSubprocessExecutionSet(BaseSubprocessTaskExecutionSet executionSet) {
+        assertNotNull(executionSet);
+
         SLADueDate slaDueDate = executionSet.getSlaDueDate();
         assertNotNull(slaDueDate);
         assertTrue(slaDueDate.getValue().contains(SLA_DUE_DATE));

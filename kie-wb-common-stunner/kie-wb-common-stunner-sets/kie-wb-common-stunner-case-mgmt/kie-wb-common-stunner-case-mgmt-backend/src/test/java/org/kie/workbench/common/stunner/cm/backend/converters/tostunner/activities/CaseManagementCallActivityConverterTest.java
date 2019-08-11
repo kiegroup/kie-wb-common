@@ -48,6 +48,8 @@ import static org.mockito.Mockito.verify;
 
 public class CaseManagementCallActivityConverterTest {
 
+    private final String SLA_DUE_DATE = "12/25/1983";
+
     private DefinitionResolver definitionResolver;
 
     private FactoryManager factoryManager;
@@ -107,12 +109,7 @@ public class CaseManagementCallActivityConverterTest {
 
     @Test
     public void testCreateReusableSubprocessTaskExecutionSet_case() {
-        final String SLA_DUE_DATE = "12/25/1983";
-
-        String uuid = UUID.randomUUID().toString();
-
         CallActivity callActivity = bpmn2.createCallActivity();
-        callActivity.setId(uuid);
         CustomElement.isCase.of(callActivity).set(Boolean.TRUE);
         CustomElement.slaDueDate.of(callActivity).set(SLA_DUE_DATE);
 
@@ -130,11 +127,7 @@ public class CaseManagementCallActivityConverterTest {
 
     @Test
     public void testCreateReusableSubprocessTaskExecutionSet_process() {
-        String uuid = UUID.randomUUID().toString();
-        final String SLA_DUE_DATE = "12/25/1983";
-
         CallActivity callActivity = bpmn2.createCallActivity();
-        callActivity.setId(uuid);
         CustomElement.isCase.of(callActivity).set(Boolean.FALSE);
         CustomElement.slaDueDate.of(callActivity).set(SLA_DUE_DATE);
 
