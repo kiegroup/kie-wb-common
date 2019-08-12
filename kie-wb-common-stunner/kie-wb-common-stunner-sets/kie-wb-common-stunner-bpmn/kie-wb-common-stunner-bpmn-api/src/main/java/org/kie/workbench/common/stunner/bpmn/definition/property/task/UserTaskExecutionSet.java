@@ -40,6 +40,7 @@ import org.kie.workbench.common.stunner.bpmn.forms.model.AssignmentsEditorFieldT
 import org.kie.workbench.common.stunner.bpmn.forms.model.MultipleInstanceVariableFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.NotificationsEditorFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ReassignmentsEditorFieldType;
+import org.kie.workbench.common.stunner.bpmn.forms.model.SLASettingsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -225,7 +226,8 @@ public class UserTaskExecutionSet implements BaseUserTaskExecutionSet {
     private Content content;
 
     @Property
-    @FormField(afterElement = "content")
+    @FormField(type = SLASettingsFieldType.class,
+            afterElement = "content")
     @Valid
     private SLADueDate slaDueDate;
 

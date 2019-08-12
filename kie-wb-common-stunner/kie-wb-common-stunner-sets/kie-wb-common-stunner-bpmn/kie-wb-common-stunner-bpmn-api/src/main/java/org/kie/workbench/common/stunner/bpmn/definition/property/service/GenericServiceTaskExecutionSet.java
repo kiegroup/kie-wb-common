@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.forms.model.GenericServiceTaskEditorFieldType;
+import org.kie.workbench.common.stunner.bpmn.forms.model.SLASettingsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -45,7 +46,8 @@ public class GenericServiceTaskExecutionSet implements BPMNPropertySet {
     private GenericServiceTaskInfo genericServiceTaskInfo;
 
     @Property
-    @FormField(afterElement = "genericServiceTaskInfo")
+    @FormField(type = SLASettingsFieldType.class,
+            afterElement = "genericServiceTaskInfo")
     @Valid
     private SLADueDate slaDueDate;
 

@@ -27,37 +27,33 @@ public class TimerSettingsValueTest {
     private static final String TIME_CYCLE = "TIME_CYCLE";
     private static final String TIME_CYCLE_LANGUAGE = "TIME_CYCLE_LANGUAGE";
 
-    private TimerSettingsValue value;
+    private String value;
 
     @Before
     public void setUp() {
-        value = new TimerSettingsValue(TIME_DATE,
-                                       TIME_DURATION,
-                                       TIME_CYCLE,
-                                       TIME_CYCLE_LANGUAGE);
+        value = TIME_DURATION
+                ;
     }
 
     @Test
     public void testEqualsAndHashCode() {
 
-        TimerSettingsValue otherValue = new TimerSettingsValue(TIME_DATE,
-                                                               TIME_DURATION,
-                                                               TIME_CYCLE,
-                                                               TIME_CYCLE_LANGUAGE);
+        String otherValue =
+                                                               TIME_DURATION
+                            ;
         EqualsAndHashCodeTestUtils.TestCaseBuilder.newTestCase()
-                .addTrueCase(new TimerSettingsValue(),
-                             new TimerSettingsValue())
+                .addTrueCase("",
+                             "")
                 .addTrueCase(value,
                              otherValue)
                 .addFalseCase(value,
                               null)
                 .addFalseCase(value,
-                              new TimerSettingsValue())
+                              "")
                 .addFalseCase(value,
-                              new TimerSettingsValue("a",
-                                                     "b",
-                                                     "c",
-                                                     "d"))
+
+                                                     "b"
+                              )
                 .test();
     }
 }

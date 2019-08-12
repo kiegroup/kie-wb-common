@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitActi
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
+import org.kie.workbench.common.stunner.bpmn.forms.model.SLASettingsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -73,7 +74,8 @@ public class ServiceTaskExecutionSet implements BPMNPropertySet {
     private OnExitAction onExitAction;
 
     @Property
-    @FormField(afterElement = "onExitAction")
+    @FormField(type = SLASettingsFieldType.class,
+            afterElement = "onExitAction")
     @Valid
     private SLADueDate slaDueDate;
 
