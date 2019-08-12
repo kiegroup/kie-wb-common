@@ -22,13 +22,17 @@ import javax.enterprise.event.Event;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -60,6 +64,7 @@ import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramF
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
+import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -110,6 +115,9 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
     private final IncludedModelsPage includedModelsPage;
     private final IncludedModelsPageStateProviderImpl importsPageProvider;
 
+    private final DMNEditorSearchIndex editorSearchIndex;
+    private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
+
     private final SubmarineClientDiagramService diagramServices;
 
     public BaseKogitoDMNDiagramEditor(final View view,
@@ -127,6 +135,8 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
                                       final DiagramClientErrorHandler diagramClientErrorHandler,
                                       final ClientTranslationService translationService,
                                       final DocumentationView<Diagram> documentationView,
+                                      final DMNEditorSearchIndex editorSearchIndex,
+                                      final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                                       final SessionManager sessionManager,
                                       final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                       final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
@@ -169,6 +179,9 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
         this.includedModelsPage = includedModelsPage;
         this.importsPageProvider = importsPageProvider;
 
+        this.editorSearchIndex = editorSearchIndex;
+        this.searchBarComponent = searchBarComponent;
+
         this.diagramServices = diagramServices;
     }
 
@@ -194,6 +207,19 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
 
         getWidget().getMultiPage().addPage(dataTypesPage);
         getWidget().getMultiPage().addPage(includedModelsPage);
+
+        setupSearchComponent();
+    }
+
+    void setupSearchComponent() {
+        final HTMLElement element = searchBarComponent.getView().getElement();
+
+        searchBarComponent.init(editorSearchIndex);
+        getWidget().getMultiPage().addTabBarWidget(getWidget(element));
+    }
+
+    ElementWrapperWidget<?> getWidget(final HTMLElement element) {
+        return ElementWrapperWidget.getWidget(element);
     }
 
     @SuppressWarnings("unused")

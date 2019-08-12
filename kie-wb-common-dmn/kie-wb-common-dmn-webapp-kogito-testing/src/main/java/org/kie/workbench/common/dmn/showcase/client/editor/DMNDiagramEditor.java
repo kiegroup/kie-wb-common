@@ -27,6 +27,8 @@ import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -58,6 +60,7 @@ import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramF
 import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
+import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -92,6 +95,8 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
                             final DiagramClientErrorHandler diagramClientErrorHandler,
                             final ClientTranslationService translationService,
                             final @DMNEditor DocumentationView<Diagram> documentationView,
+                            final DMNEditorSearchIndex editorSearchIndex,
+                            final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
@@ -120,6 +125,8 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
               diagramClientErrorHandler,
               translationService,
               documentationView,
+              editorSearchIndex,
+              searchBarComponent,
               sessionManager,
               sessionCommandManager,
               refreshFormPropertiesEvent,
