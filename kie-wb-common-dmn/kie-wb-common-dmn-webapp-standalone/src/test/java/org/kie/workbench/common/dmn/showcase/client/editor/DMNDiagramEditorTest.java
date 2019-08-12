@@ -189,6 +189,8 @@ public class DMNDiagramEditorTest {
                                           screenPanelView,
                                           null,
                                           kieView));
+
+        doReturn(searchBarComponentWidget).when(editor).getWidget(searchBarComponentViewElement);
     }
 
     @Test
