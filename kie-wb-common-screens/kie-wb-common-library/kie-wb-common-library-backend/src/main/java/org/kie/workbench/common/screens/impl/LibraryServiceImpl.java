@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -76,6 +77,7 @@ import org.kie.workbench.common.services.refactoring.backend.server.query.standa
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.LibraryValueFileExtensionIndexTerm;
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.LibraryValueFileNameIndexTerm;
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.LibraryValueRepositoryRootIndexTerm;
+import org.kie.workbench.common.services.refactoring.model.index.events.IndexingFinishedEvent;
 import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
@@ -196,15 +198,9 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public LibraryInfo getLibraryInfo(final OrganizationalUnit organizationalUnit) {
-        final Collection<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(organizationalUnit).stream()
+        final List<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(organizationalUnit).stream()
                 .filter(p -> userCanReadProject(p))
                 .collect(Collectors.toList());
-
-        projects.stream().forEach(p -> {
-            if (p.getMainModule() != null) {
-                p.getMainModule().setNumberOfAssets(getNumberOfAssets(p));
-            }
-        });
 
         return new LibraryInfo(projects);
     }
@@ -460,13 +456,21 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public void removeBranch(final WorkspaceProject project,
                              final Branch branch) {
-        final org.uberfire.java.nio.file.Path branchPath = pathUtil.convert(branch.getPath());
-        ioService.delete(branchPath);
-        deleteBranchPermissions(project.getSpace().getName(),
-                                project.getRepository().getIdentifier(),
-                                branch.getName());
-        this.repositoryUpdatedEvent.fire(new RepositoryUpdatedEvent(repoService.getRepositoryFromSpace(project.getSpace(),
-                                                                                                       project.getRepository().getAlias())));
+        try {
+            ioService.startBatch(pathUtil.convert(branch.getPath()).getFileSystem());
+
+            repoService.getRepositoryFromSpace(project.getSpace(), project.getRepository().getAlias()).getBranch(branch.getName()).ifPresent(updatedBranch -> {
+                final org.uberfire.java.nio.file.Path branchPath = pathUtil.convert(branch.getPath());
+                ioService.delete(branchPath);
+                deleteBranchPermissions(project.getSpace().getName(),
+                                        project.getRepository().getIdentifier(),
+                                        branch.getName());
+                this.repositoryUpdatedEvent.fire(new RepositoryUpdatedEvent(repoService.getRepositoryFromSpace(project.getSpace(),
+                                                                                                               project.getRepository().getAlias())));
+            });
+        } finally {
+            ioService.endBatch();
+        }
     }
 
     @Override

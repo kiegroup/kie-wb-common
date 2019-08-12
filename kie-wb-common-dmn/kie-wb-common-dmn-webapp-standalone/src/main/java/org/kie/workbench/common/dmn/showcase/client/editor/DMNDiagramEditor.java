@@ -28,12 +28,16 @@ import javax.inject.Inject;
 
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
+import elemental2.dom.HTMLElement;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
@@ -79,6 +83,7 @@ import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -126,6 +131,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private final IncludedModelsPage includedModelsPage;
     private final IncludedModelsPageStateProviderImpl importsPageProvider;
     private final DocumentationView<Diagram> documentationView;
+    private final DMNEditorSearchIndex editorSearchIndex;
+    private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
 
     private final DefinitionManager definitionManager;
     private final ClientFactoryService clientFactoryServices;
@@ -155,6 +162,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final @DMNEditor DocumentationView<Diagram> documentationView,
+                            final DMNEditorSearchIndex editorSearchIndex,
+                            final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                             final DefinitionManager definitionManager,
                             final ClientFactoryService clientFactoryServices,
                             final DMNShowcaseDiagramService diagramService,
@@ -180,6 +189,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         this.includedModelsPage = includedModelsPage;
         this.importsPageProvider = importsPageProvider;
         this.documentationView = documentationView;
+        this.editorSearchIndex = editorSearchIndex;
+        this.searchBarComponent = searchBarComponent;
 
         this.definitionManager = definitionManager;
         this.clientFactoryServices = clientFactoryServices;
@@ -202,6 +213,15 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         kieView.getMultiPage().addPage(getDocumentationPage());
         kieView.getMultiPage().addPage(dataTypesPage);
         kieView.getMultiPage().addPage(includedModelsPage);
+
+        setupSearchComponent();
+    }
+
+    void setupSearchComponent() {
+        final HTMLElement element = searchBarComponent.getView().getElement();
+
+        searchBarComponent.init(editorSearchIndex);
+        kieView.getMultiPage().addTabBarWidget(getWidget(element));
     }
 
     DocumentationPage getDocumentationPage() {
@@ -544,6 +564,10 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
             LOGGER.log(level,
                        message);
         }
+    }
+
+    ElementWrapperWidget<?> getWidget(final HTMLElement element) {
+        return ElementWrapperWidget.getWidget(element);
     }
 
     private final class ScreenPresenterCallback implements SessionPresenter.SessionPresenterCallback<Diagram> {

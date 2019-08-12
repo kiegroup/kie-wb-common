@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.HTMLElement;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,8 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -48,6 +52,7 @@ import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -122,11 +127,27 @@ public class DMNDiagramEditorTest {
     @Mock
     private DMNEditorSession session;
 
+    @Mock
+    private DMNEditorSearchIndex editorSearchIndex;
+
+    @Mock
+    private SearchBarComponent<DMNSearchableElement> searchBarComponent;
+
+    @Mock
+    private SearchBarComponent.View searchBarComponentView;
+
+    @Mock
+    private HTMLElement searchBarComponentViewElement;
+
+    @Mock
+    private ElementWrapperWidget searchBarComponentWidget;
     private DMNDiagramEditor editor;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+        when(searchBarComponent.getView()).thenReturn(searchBarComponentView);
+        when(searchBarComponentView.getElement()).thenReturn(searchBarComponentViewElement);
         doReturn(presenter).when(presenter).withToolbar(anyBoolean());
         doReturn(presenter).when(presenter).withPalette(anyBoolean());
         doReturn(presenter).when(presenter).displayNotifications(any());
@@ -159,6 +180,8 @@ public class DMNDiagramEditorTest {
                                           includedModelsPage,
                                           importsPageProvider,
                                           documentationView,
+                                          editorSearchIndex,
+                                          searchBarComponent,
                                           null,
                                           null,
                                           null,
@@ -190,6 +213,21 @@ public class DMNDiagramEditorTest {
         verify(multiPageEditor).addPage(dataTypesPage);
         verify(multiPageEditor).addPage(includedModelsPage);
         verify(multiPageEditor).addPage(documentationPage);
+
+        verify(editor).setupSearchComponent();
+    }
+
+    @Test
+    public void testSetupSearchComponent() {
+
+        final MultiPageEditor multiPageEditor = mock(MultiPageEditor.class);
+
+        when(kieView.getMultiPage()).thenReturn(multiPageEditor);
+
+        editor.setupSearchComponent();
+
+        verify(searchBarComponent).init(editorSearchIndex);
+        verify(multiPageEditor).addTabBarWidget(searchBarComponentWidget);
     }
 
     @Test

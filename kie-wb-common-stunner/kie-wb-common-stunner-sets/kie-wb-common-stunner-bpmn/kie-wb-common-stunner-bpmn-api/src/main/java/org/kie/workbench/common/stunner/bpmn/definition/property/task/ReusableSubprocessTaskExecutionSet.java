@@ -69,6 +69,13 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
             afterElement = "independent"
     )
     @Valid
+    private AbortParent abortParent;
+
+    @Property
+    @FormField(
+            afterElement = "abortParent"
+    )
+    @Valid
     private WaitForCompletion waitForCompletion;
 
     @Property
@@ -163,6 +170,7 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         this(new CalledElement(),
              new IsCase(),
              new Independent(),
+             new AbortParent(),
              new WaitForCompletion(),
              new IsAsync(),
              new AdHocAutostart(),
@@ -182,6 +190,7 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     public ReusableSubprocessTaskExecutionSet(final @MapsTo("calledElement") CalledElement calledElement,
                                               final @MapsTo("isCase") IsCase isCase,
                                               final @MapsTo("independent") Independent independent,
+                                              final @MapsTo("abortParent") AbortParent abortParent,
                                               final @MapsTo("waitForCompletion") WaitForCompletion waitForCompletion,
                                               final @MapsTo("isAsync") IsAsync isAsync,
                                               final @MapsTo("adHocAutostart") AdHocAutostart adHocAutostart,
@@ -197,6 +206,7 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         this.calledElement = calledElement;
         this.isCase = isCase;
         this.independent = independent;
+        this.abortParent = abortParent;
         this.waitForCompletion = waitForCompletion;
         this.isAsync = isAsync;
         this.adHocAutostart = adHocAutostart;
@@ -247,6 +257,16 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     }
 
     @Override
+    public AbortParent getAbortParent() {
+        return abortParent;
+    }
+
+    @Override
+    public void setAbortParent(final AbortParent abortParent) {
+        this.abortParent = abortParent;
+    }
+
+    @Override
     public void setWaitForCompletion(final WaitForCompletion waitForCompletion) {
         this.waitForCompletion = waitForCompletion;
     }
@@ -271,62 +291,77 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         this.adHocAutostart = adHocAutostart;
     }
 
+    @Override
     public IsMultipleInstance getIsMultipleInstance() {
         return isMultipleInstance;
     }
 
+    @Override
     public void setIsMultipleInstance(IsMultipleInstance isMultipleInstance) {
         this.isMultipleInstance = isMultipleInstance;
     }
 
+    @Override
     public MultipleInstanceExecutionMode getMultipleInstanceExecutionMode() {
         return multipleInstanceExecutionMode;
     }
 
+    @Override
     public void setMultipleInstanceExecutionMode(MultipleInstanceExecutionMode multipleInstanceExecutionMode) {
         this.multipleInstanceExecutionMode = multipleInstanceExecutionMode;
     }
 
+    @Override
     public MultipleInstanceCollectionInput getMultipleInstanceCollectionInput() {
         return multipleInstanceCollectionInput;
     }
 
+    @Override
     public void setMultipleInstanceCollectionInput(MultipleInstanceCollectionInput multipleInstanceCollectionInput) {
         this.multipleInstanceCollectionInput = multipleInstanceCollectionInput;
     }
 
+    @Override
     public MultipleInstanceDataInput getMultipleInstanceDataInput() {
         return multipleInstanceDataInput;
     }
 
+    @Override
     public void setMultipleInstanceDataInput(MultipleInstanceDataInput multipleInstanceDataInput) {
         this.multipleInstanceDataInput = multipleInstanceDataInput;
     }
 
+    @Override
     public MultipleInstanceCollectionOutput getMultipleInstanceCollectionOutput() {
         return multipleInstanceCollectionOutput;
     }
 
+    @Override
     public void setMultipleInstanceCollectionOutput(MultipleInstanceCollectionOutput multipleInstanceCollectionOutput) {
         this.multipleInstanceCollectionOutput = multipleInstanceCollectionOutput;
     }
 
+    @Override
     public MultipleInstanceDataOutput getMultipleInstanceDataOutput() {
         return multipleInstanceDataOutput;
     }
 
+    @Override
     public void setMultipleInstanceDataOutput(MultipleInstanceDataOutput multipleInstanceDataOutput) {
         this.multipleInstanceDataOutput = multipleInstanceDataOutput;
     }
 
+    @Override
     public MultipleInstanceCompletionCondition getMultipleInstanceCompletionCondition() {
         return multipleInstanceCompletionCondition;
     }
 
+    @Override
     public void setMultipleInstanceCompletionCondition(MultipleInstanceCompletionCondition multipleInstanceCompletionCondition) {
         this.multipleInstanceCompletionCondition = multipleInstanceCompletionCondition;
     }
 
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
@@ -351,6 +386,7 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         return HashUtil.combineHashCodes(Objects.hashCode(calledElement),
                                          Objects.hashCode(isCase),
                                          Objects.hashCode(independent),
+                                         Objects.hashCode(abortParent),
                                          Objects.hashCode(waitForCompletion),
                                          Objects.hashCode(isAsync),
                                          Objects.hashCode(adHocAutostart),
@@ -375,6 +411,7 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
             return Objects.equals(calledElement, other.calledElement) &&
                     Objects.equals(isCase, other.isCase) &&
                     Objects.equals(independent, other.independent) &&
+                    Objects.equals(abortParent, other.abortParent) &&
                     Objects.equals(waitForCompletion, other.waitForCompletion) &&
                     Objects.equals(isAsync, other.isAsync) &&
                     Objects.equals(adHocAutostart, other.adHocAutostart) &&

@@ -23,6 +23,8 @@ import javax.enterprise.event.Event;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
+import elemental2.dom.HTMLElement;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +35,8 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -61,6 +65,7 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramResource;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.kie.workbench.common.widgets.client.docks.DefaultEditorDock;
+import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -82,6 +87,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -146,6 +152,21 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Mock
     private DefaultEditorDock docks;
 
+    @Mock
+    private DMNEditorSearchIndex editorSearchIndex;
+
+    @Mock
+    private SearchBarComponent<DMNSearchableElement> searchBarComponent;
+
+    @Mock
+    private SearchBarComponent.View searchBarComponentView;
+
+    @Mock
+    private HTMLElement searchBarComponentViewElement;
+
+    @Mock
+    private ElementWrapperWidget searchBarComponentWidget;
+
     @Captor
     private ArgumentCaptor<Consumer<String>> errorConsumerCaptor;
 
@@ -162,6 +183,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         when(dmnEditorSession.getExpressionEditor()).thenReturn(expressionEditor);
         when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(searchBarComponent.getView()).thenReturn(searchBarComponentView);
+        when(searchBarComponentView.getElement()).thenReturn(searchBarComponentViewElement);
     }
 
     @Override
@@ -199,7 +222,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  layoutExecutor,
                                                  dataTypesPage,
                                                  includedModelsPage,
-                                                 importsPageProvider) {
+                                                 importsPageProvider,
+                                                 editorSearchIndex,
+                                                 searchBarComponent) {
             {
                 docks = DMNDiagramEditorTest.this.docks;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
@@ -243,6 +268,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                 return DMNDiagramEditorTest.this.isReadOnly;
             }
         });
+
+        doReturn(searchBarComponentWidget).when(diagramEditor).getWidget(searchBarComponentViewElement);
 
         return diagramEditor;
     }
@@ -294,6 +321,16 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
         verify(multiPage).addPage(dataTypesPage);
         verify(multiPage).addPage(includedModelsPage);
+        verify(diagramEditor).setupSearchComponent();
+    }
+
+    @Test
+    public void testSetupSearchComponent() {
+
+        diagramEditor.setupSearchComponent();
+
+        verify(searchBarComponent).init(editorSearchIndex);
+        verify(multiPage).addTabBarWidget(searchBarComponentWidget);
     }
 
     @Test
@@ -430,5 +467,4 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         assertEquals(DMNProjectClientConstants.DMNDiagramParsingErrorMessage,
                      notificationEvent.getNotification());
     }
-
 }

@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.kie.workbench.services</groupId>
     <artifactId>kie-wb-common-services</artifactId>
-    <version>7.25.0-SNAPSHOT</version>
+    <version>7.26.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -34,11 +34,6 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-    </dependency>
-    <!-- This is a transient dependency of org.apache.velocity:velocity -->
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
       <groupId>org.drools</groupId>

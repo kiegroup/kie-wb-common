@@ -25,7 +25,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
@@ -138,7 +138,7 @@ public class DecisionNavigatorBaseItemFactory {
         return (name != null ? name : getDefaultName());
     }
 
-    String getName(final Element<View> element) {
+    String getName(final Element<? extends Definition> element) {
         final TextPropertyProvider provider = textPropertyProviderFactory.getProvider(element);
         return provider.getText(element);
     }

@@ -28,6 +28,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceExecutionMode;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
@@ -38,11 +45,12 @@ import org.kie.workbench.common.stunner.cm.definition.property.task.UserTaskExec
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest;
 
 public class CaseManagementTaskConverter extends BaseTaskConverter<UserTask, UserTaskExecutionSet> {
 
     public CaseManagementTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
-        super(factoryManager, propertyReaderFactory);
+        super(factoryManager, propertyReaderFactory, MarshallingRequest.Mode.AUTO);
     }
 
     @Override
@@ -65,6 +73,13 @@ public class CaseManagementTaskConverter extends BaseTaskConverter<UserTask, Use
                                         new Description(p.getDescription()),
                                         new CreatedBy(p.getCreatedBy()),
                                         new AdHocAutostart(p.isAdHocAutostart()),
+                                        new IsMultipleInstance(p.isMultipleInstance()),
+                                        new MultipleInstanceExecutionMode(p.isSequential()),
+                                        new MultipleInstanceCollectionInput(p.getCollectionInput()),
+                                        new MultipleInstanceDataInput(p.getDataInput()),
+                                        new MultipleInstanceCollectionOutput(p.getCollectionOutput()),
+                                        new MultipleInstanceDataOutput(p.getDataOutput()),
+                                        new MultipleInstanceCompletionCondition(p.getCompletionCondition()),
                                         new OnEntryAction(p.getOnEntryAction()),
                                         new OnExitAction(p.getOnExitAction()),
                                         new Content(p.getContent()),

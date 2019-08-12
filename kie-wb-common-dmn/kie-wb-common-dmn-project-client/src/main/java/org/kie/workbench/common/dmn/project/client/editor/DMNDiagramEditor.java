@@ -27,7 +27,9 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
@@ -35,6 +37,8 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -66,6 +70,7 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramResourceService;
 import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchEditor;
@@ -109,6 +114,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final DataTypesPage dataTypesPage;
     private final IncludedModelsPage includedModelsPage;
     private final IncludedModelsPageStateProviderImpl importsPageProvider;
+    private final DMNEditorSearchIndex editorSearchIndex;
+    private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -135,7 +142,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider) {
+                            final IncludedModelsPageStateProviderImpl importsPageProvider,
+                            final DMNEditorSearchIndex editorSearchIndex,
+                            final SearchBarComponent<DMNSearchableElement> searchBarComponent) {
         super(view,
               xmlEditorView,
               editorSessionPresenterInstances,
@@ -161,6 +170,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.dataTypesPage = dataTypesPage;
         this.includedModelsPage = includedModelsPage;
         this.importsPageProvider = importsPageProvider;
+        this.editorSearchIndex = editorSearchIndex;
+        this.searchBarComponent = searchBarComponent;
     }
 
     @Override
@@ -188,6 +199,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
         kieView.getMultiPage().addPage(dataTypesPage);
         kieView.getMultiPage().addPage(includedModelsPage);
+
+        setupSearchComponent();
     }
 
     @Override
@@ -212,6 +225,13 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         super.hideDocks();
         decisionNavigatorDock.close();
         decisionNavigatorDock.resetContent();
+    }
+
+    void setupSearchComponent() {
+        final HTMLElement element = searchBarComponent.getView().getElement();
+
+        searchBarComponent.init(editorSearchIndex);
+        kieView.getMultiPage().addTabBarWidget(getWidget(element));
     }
 
     public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
@@ -346,5 +366,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     void superDoStartUp(final ObservablePath path,
                         final PlaceRequest place) {
         super.doStartUp(path, place);
+    }
+
+    ElementWrapperWidget<?> getWidget(final HTMLElement element) {
+        return ElementWrapperWidget.getWidget(element);
     }
 }
