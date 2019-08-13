@@ -24,6 +24,7 @@ import javax.enterprise.event.Event;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
 import elemental2.dom.HTMLElement;
+import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
@@ -466,5 +467,11 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         final NotificationEvent notificationEvent = notificationEventCaptor.getValue();
         assertEquals(DMNProjectClientConstants.DMNDiagramParsingErrorMessage,
                      notificationEvent.getNotification());
+    }
+
+    @Test
+    public void testStunnerSave_ValidationUnsuccessful() {
+        final Overview overview = assertBasicStunnerSaveOperation(false);
+        assertSaveOperation(overview);
     }
 }

@@ -606,7 +606,8 @@ public class AbstractProjectDiagramEditorTest {
     public void testStunnerSave_SaveFailed() {
         final String errorMessage = "Something went wrong";
         final ClientRuntimeError cre = new ClientRuntimeError(errorMessage);
-        final ServiceCallback<ProjectDiagram> serviceCallback = assertBasicStunnerSaveOperation(true);
+        final Overview overview = assertBasicStunnerSaveOperation(true);
+        final ServiceCallback<ProjectDiagram> serviceCallback = assertSaveOperation(overview);
 
         serviceCallback.onError(cre);
 
@@ -621,10 +622,8 @@ public class AbstractProjectDiagramEditorTest {
     }
 
     @SuppressWarnings("unchecked")
-    private ServiceCallback<ProjectDiagram> assertBasicStunnerSaveOperation(final boolean validateSuccess) {
-        final String commitMessage = "message";
+    protected Overview assertBasicStunnerSaveOperation(final boolean validateSuccess) {
         final Overview overview = open();
-        final Metadata metadata = overview.getMetadata();
         doReturn(diagram).when(presenterCore).getDiagram();
         EditorSessionCommands editorSessionCommands = mock(EditorSessionCommands.class);
         when(getMenuSessionItems().getCommands()).thenReturn(editorSessionCommands);
@@ -643,31 +642,37 @@ public class AbstractProjectDiagramEditorTest {
         }).when(validateSessionCommand).execute(any(ClientSessionCommand.Callback.class));
         presenter.save();
 
-        if (validateSuccess) {
-            ArgumentCaptor<ParameterizedCommand> savePopupCommandCaptor = ArgumentCaptor.forClass(ParameterizedCommand.class);
-            verify(savePopUpPresenter).show(eq(versionRecordManager.getCurrentPath()),
-                                            savePopupCommandCaptor.capture());
+        return overview;
+    }
 
-            final ParameterizedCommand<String> savePopupCommand = savePopupCommandCaptor.getValue();
-            savePopupCommand.execute(commitMessage);
+    @SuppressWarnings("unchecked")
+    protected ServiceCallback<ProjectDiagram> assertSaveOperation(final Overview overview) {
+        final String commitMessage = "message";
+        final Metadata metadata = overview.getMetadata();
 
-            verify(view).showSaving();
-            ArgumentCaptor<ServiceCallback> serviceCallbackCaptor = ArgumentCaptor.forClass(ServiceCallback.class);
-            verify(clientProjectDiagramService).saveOrUpdate(eq(versionRecordManager.getCurrentPath()),
-                                                             eq(diagram),
-                                                             eq(metadata),
-                                                             eq(commitMessage),
-                                                             serviceCallbackCaptor.capture());
+        final ArgumentCaptor<ParameterizedCommand> savePopupCommandCaptor = ArgumentCaptor.forClass(ParameterizedCommand.class);
+        verify(savePopUpPresenter).show(eq(versionRecordManager.getCurrentPath()),
+                                        savePopupCommandCaptor.capture());
 
-            return serviceCallbackCaptor.getValue();
-        }
-        return null;
+        final ParameterizedCommand<String> savePopupCommand = savePopupCommandCaptor.getValue();
+        savePopupCommand.execute(commitMessage);
+
+        verify(view).showSaving();
+        final ArgumentCaptor<ServiceCallback> serviceCallbackCaptor = ArgumentCaptor.forClass(ServiceCallback.class);
+        verify(clientProjectDiagramService).saveOrUpdate(eq(versionRecordManager.getCurrentPath()),
+                                                         eq(diagram),
+                                                         eq(metadata),
+                                                         eq(commitMessage),
+                                                         serviceCallbackCaptor.capture());
+
+        return serviceCallbackCaptor.getValue();
     }
 
     @Test
     public void testStunnerSave_ValidationSuccessful() {
         when(translationService.getValue(eq(StunnerProjectClientConstants.DIAGRAM_SAVE_SUCCESSFUL))).thenReturn("okk");
-        final ServiceCallback<ProjectDiagram> serviceCallback = assertBasicStunnerSaveOperation(true);
+        final Overview overview = assertBasicStunnerSaveOperation(true);
+        final ServiceCallback<ProjectDiagram> serviceCallback = assertSaveOperation(overview);
         serviceCallback.onSuccess(diagram);
 
         final Path path = versionRecordManager.getCurrentPath();
