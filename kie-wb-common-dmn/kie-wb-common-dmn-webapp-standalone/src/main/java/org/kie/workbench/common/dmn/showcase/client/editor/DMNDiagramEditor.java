@@ -78,8 +78,6 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
-import org.kie.workbench.common.stunner.core.validation.Violation;
-import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
@@ -315,18 +313,12 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                 .execute(new ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>>() {
                     @Override
                     public void onSuccess() {
-                        log(Level.INFO, "Validation success.");
                         save.execute();
                     }
 
                     @Override
                     public void onError(final Collection<DiagramElementViolation<RuleViolation>> violations) {
-                        log(Level.WARNING, "Validation failed [violations=" + violations.toString() + "].");
-                        // Allow saving when only warnings founds.
-                        final Violation.Type maxSeverity = ValidationUtils.getMaxSeverity(violations);
-                        if (!maxSeverity.equals(Violation.Type.ERROR)) {
-                            save.execute();
-                        }
+                        save.execute();
                     }
                 });
     }

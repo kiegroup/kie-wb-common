@@ -22,7 +22,7 @@ import com.google.gwt.safehtml.shared.UriUtils;
 import org.kie.workbench.common.stunner.core.client.ShapeSetThumbProvider;
 
 @ApplicationScoped
-public class DefaultDMNShapeSetThumbProvder implements ShapeSetThumbProvider {
+public class DMNShapeSetThumbProvider implements ShapeSetThumbProvider {
 
     @Override
     public SafeUri getThumbnailUri() {

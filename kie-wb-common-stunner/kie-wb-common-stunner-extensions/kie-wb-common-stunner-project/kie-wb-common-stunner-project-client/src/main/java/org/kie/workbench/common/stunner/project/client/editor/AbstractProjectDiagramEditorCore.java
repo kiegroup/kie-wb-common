@@ -78,28 +78,32 @@ public abstract class AbstractProjectDiagramEditorCore<M extends Metadata, D ext
             getMenuSessionItems()
                     .getCommands()
                     .getValidateSessionCommand()
-                    .execute(new ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>>() {
-                        @Override
-                        public void onSuccess() {
-                            continueSaveOnceValid.execute();
-                        }
-
-                        @Override
-                        public void onError(final Collection<DiagramElementViolation<RuleViolation>> violations) {
-                            final Violation.Type maxSeverity = ValidationUtils.getMaxSeverity(violations);
-                            if (maxSeverity.equals(Violation.Type.ERROR)) {
-                                onValidationFailed(violations);
-                            } else {
-                                // Allow saving when only warnings founds.
-                                continueSaveOnceValid.execute();
-                            }
-                        }
-                    });
+                    .execute(getSaveAfterValidationCallback(continueSaveOnceValid));
         });
         proxy.setSaveAfterUserConfirmationConsumer(AbstractProjectDiagramEditorCore.this::saveOrUpdate);
         proxy.setShowNoChangesSinceLastSaveMessageConsumer((message) -> getSessionPresenter().getView().showMessage(message));
 
         return proxy;
+    }
+
+    protected ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>> getSaveAfterValidationCallback(final Command continueSaveOnceValid) {
+        return new ClientSessionCommand.Callback<Collection<DiagramElementViolation<RuleViolation>>>() {
+            @Override
+            public void onSuccess() {
+                continueSaveOnceValid.execute();
+            }
+
+            @Override
+            public void onError(final Collection<DiagramElementViolation<RuleViolation>> violations) {
+                final Violation.Type maxSeverity = ValidationUtils.getMaxSeverity(violations);
+                if (maxSeverity.equals(Violation.Type.ERROR)) {
+                    onValidationFailed(violations);
+                } else {
+                    // Allow saving when only warnings founds.
+                    continueSaveOnceValid.execute();
+                }
+            }
+        };
     }
 
     @Override
