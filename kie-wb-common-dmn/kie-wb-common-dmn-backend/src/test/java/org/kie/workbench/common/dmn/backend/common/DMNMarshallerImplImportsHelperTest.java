@@ -70,7 +70,7 @@ import static org.mockito.Mockito.when;
 import static org.uberfire.backend.vfs.PathFactory.PathImpl;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DMNMarshallerImportsHelperImplTest {
+public class DMNMarshallerImplImportsHelperTest {
 
     @Mock
     private DMNPathsHelperImpl pathsHelper;
@@ -87,15 +87,15 @@ public class DMNMarshallerImportsHelperImplTest {
     @Mock
     private PMMLIncludedDocumentFactory pmmlDocumentFactory;
 
-    private DMNMarshallerImportsHelperImpl helper;
+    private DMNMarshallerImportsHelperStandaloneImpl helper;
 
     @Before
     public void setup() {
-        helper = spy(new DMNMarshallerImportsHelperImpl(pathsHelper,
-                                                        projectService,
-                                                        marshaller,
-                                                        pmmlDocumentFactory,
-                                                        ioService));
+        helper = spy(new DMNMarshallerImportsHelperStandaloneImpl(pathsHelper,
+                                                                  projectService,
+                                                                  marshaller,
+                                                                  pmmlDocumentFactory,
+                                                                  ioService));
     }
 
     @Test
@@ -319,7 +319,7 @@ public class DMNMarshallerImportsHelperImplTest {
     }
 
     private String getNamespace(final DRGElement element) {
-        return element.getAdditionalAttributes().get(DMNMarshallerImportsHelperImpl.NAMESPACE);
+        return element.getAdditionalAttributes().get(DMNMarshallerImportsHelperStandaloneImpl.NAMESPACE);
     }
 
     @Test

@@ -32,6 +32,7 @@
   <properties>
     <version.jsonix-scripts>3.0.0</version.jsonix-scripts>
     <version.gwt-jsonix-schema-compiler>1.0b</version.gwt-jsonix-schema-compiler>
+    <version.jaxb2-basics>0.12.0</version.jaxb2-basics>
     <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
     <version.maven-jaxb2-plugin>0.14.0</version.maven-jaxb2-plugin>
     <js.destination>${project.basedir}/src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js</js.destination>
@@ -43,6 +44,11 @@
         <groupId>org.kogito</groupId>
         <artifactId>gwt-jsonix-schema-compiler</artifactId>
         <version>${version.gwt-jsonix-schema-compiler}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jvnet.jaxb2_commons</groupId>
+        <artifactId>jaxb2-basics</artifactId>
+        <version>${version.jaxb2-basics}</version>
       </dependency>
       <dependency>
         <groupId>com.google.jsinterop</groupId>
@@ -61,6 +67,21 @@
       <groupId>com.google.jsinterop</groupId>
       <artifactId>base</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench</groupId>
+      <artifactId>kie-wb-common-dmn-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-core-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -76,6 +97,10 @@
               <includes>
                 <include>**</include>
               </includes>
+              <excludes>
+                <exclude>DMNModelInstrumentedBase.java</exclude>
+                <exclude>ComponentsWidthsExtension.java</exclude>
+              </excludes>
             </fileset>
             <fileset>
               <directory>${js.destination}</directory>
@@ -107,12 +132,17 @@
               <verbose>false</verbose>
               <args>
                 <arg>-Xgwtjsonix</arg>
+                <arg>-Xinheritance</arg>
                 <arg>-jsid=${project.build.sourceDirectory}</arg>
               </args>
               <plugins>
                 <plugin>
                   <groupId>org.kogito</groupId>
                   <artifactId>gwt-jsonix-schema-compiler</artifactId>
+                </plugin>
+                <plugin>
+                  <groupId>org.jvnet.jaxb2_commons</groupId>
+                  <artifactId>jaxb2-basics</artifactId>
                 </plugin>
               </plugins>
             </configuration>
@@ -167,27 +197,27 @@
         </executions>
       </plugin>
       <!-- GWT Maven Plugin-->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>generateAsync</goal>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <module>org.kie.workbench.common.dmn.webapp.kogito.marshaller.DMNMarshaller</module>
-          <style>PRETTY</style>
-          <compileReport>true</compileReport>
-          <soycDetailed>true</soycDetailed>
-          <logLevel>TRACE</logLevel>
-          <noServer>false</noServer>
-        </configuration>
-      </plugin>
+      <!--<plugin>-->
+      <!--<groupId>org.codehaus.mojo</groupId>-->
+      <!--<artifactId>gwt-maven-plugin</artifactId>-->
+      <!--<executions>-->
+      <!--<execution>-->
+      <!--<goals>-->
+      <!--<goal>compile</goal>-->
+      <!--<goal>generateAsync</goal>-->
+      <!--<goal>test</goal>-->
+      <!--</goals>-->
+      <!--</execution>-->
+      <!--</executions>-->
+      <!--<configuration>-->
+      <!--<module>org.kie.workbench.common.dmn.webapp.kogito.marshaller.DMNMarshaller</module>-->
+      <!--<style>PRETTY</style>-->
+      <!--<compileReport>true</compileReport>-->
+      <!--<soycDetailed>true</soycDetailed>-->
+      <!--<logLevel>TRACE</logLevel>-->
+      <!--<noServer>false</noServer>-->
+      <!--</configuration>-->
+      <!--</plugin>-->
       <!-- DISABLE CHECKSTYLE -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -1,0 +1,136 @@
+/*
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
+
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
+import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
+import org.kie.workbench.common.dmn.api.definition.model.Context;
+import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
+import org.kie.workbench.common.dmn.api.definition.model.Expression;
+import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
+import org.kie.workbench.common.dmn.api.definition.model.Invocation;
+import org.kie.workbench.common.dmn.api.definition.model.IsLiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.model.List;
+import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.model.Relation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContext;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionTable;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInvocation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
+
+public class ExpressionPropertyConverter {
+
+    public static Expression wbFromDMN(final JSITExpression dmn,
+                                       final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
+        if (dmn instanceof JSITLiteralExpression) {
+            final LiteralExpression e = LiteralExpressionPropertyConverter.wbFromDMN((JSITLiteralExpression) dmn);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        } else if (dmn instanceof JSITContext) {
+            final Context e = ContextPropertyConverter.wbFromDMN((JSITContext) dmn,
+                                                                 hasComponentWidthsConsumer);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        } else if (dmn instanceof JSITRelation) {
+            final Relation e = RelationPropertyConverter.wbFromDMN((JSITRelation) dmn,
+                                                                   hasComponentWidthsConsumer);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        } else if (dmn instanceof JSITList) {
+            final List e = ListPropertyConverter.wbFromDMN((JSITList) dmn,
+                                                           hasComponentWidthsConsumer);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        } else if (dmn instanceof JSITInvocation) {
+            final Invocation e = InvocationPropertyConverter.wbFromDMN((JSITInvocation) dmn,
+                                                                       hasComponentWidthsConsumer);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        } else if (dmn instanceof JSITFunctionDefinition) {
+            final FunctionDefinition e = FunctionDefinitionPropertyConverter.wbFromDMN((JSITFunctionDefinition) dmn,
+                                                                                       hasComponentWidthsConsumer);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        } else if (dmn instanceof JSITDecisionTable) {
+            final DecisionTable e = DecisionTablePropertyConverter.wbFromDMN((JSITDecisionTable) dmn);
+            hasComponentWidthsConsumer.accept(dmn.getId(),
+                                              e);
+            return e;
+        }
+        return null;
+    }
+
+    public static JSITExpression dmnFromWB(final Expression wb,
+                                           final Consumer<ComponentWidths> componentWidthsConsumer) {
+        // SPECIAL CASE: to represent a partially edited DMN file.
+        // reference above.
+        if (wb == null) {
+            final JSITLiteralExpression mockedExpression = new JSITLiteralExpression();
+            return mockedExpression;
+        }
+
+        final String uuid = wb.getId().getValue();
+        if (Objects.nonNull(uuid)) {
+            final ComponentWidths componentWidths = new ComponentWidths();
+            componentWidths.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
+                                                       uuid,
+                                                       XMLConstants.DEFAULT_NS_PREFIX));
+            componentWidths.setWidths(new ArrayList<>(wb.getComponentWidths()));
+            componentWidthsConsumer.accept(componentWidths);
+        }
+
+        if (wb instanceof IsLiteralExpression) {
+            return LiteralExpressionPropertyConverter.dmnFromWB((IsLiteralExpression) wb);
+        } else if (wb instanceof Context) {
+            return ContextPropertyConverter.dmnFromWB((Context) wb,
+                                                      componentWidthsConsumer);
+        } else if (wb instanceof Relation) {
+            return RelationPropertyConverter.dmnFromWB((Relation) wb,
+                                                       componentWidthsConsumer);
+        } else if (wb instanceof List) {
+            return ListPropertyConverter.dmnFromWB((List) wb,
+                                                   componentWidthsConsumer);
+        } else if (wb instanceof Invocation) {
+            return InvocationPropertyConverter.dmnFromWB((Invocation) wb,
+                                                         componentWidthsConsumer);
+        } else if (wb instanceof FunctionDefinition) {
+            return FunctionDefinitionPropertyConverter.dmnFromWB((FunctionDefinition) wb,
+                                                                 componentWidthsConsumer);
+        } else if (wb instanceof DecisionTable) {
+            return DecisionTablePropertyConverter.dmnFromWB((DecisionTable) wb);
+        }
+        return null;
+    }
+}

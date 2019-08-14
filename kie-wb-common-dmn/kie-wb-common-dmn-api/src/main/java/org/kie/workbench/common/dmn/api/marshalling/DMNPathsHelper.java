@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.backend.common;
+package org.kie.workbench.common.dmn.api.marshalling;
 
 import java.util.List;
 

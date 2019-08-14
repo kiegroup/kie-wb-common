@@ -4,7 +4,12 @@
 /src/main/gwt-unitCache/
 
 # Generated files
-/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/MainJS.java
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/callbacks/
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/dc/
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/di/
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/dmn12/
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/dmndi12/
 /src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DC.js
 /src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DI.js
 /src/main/resources/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/DMNDI12.js

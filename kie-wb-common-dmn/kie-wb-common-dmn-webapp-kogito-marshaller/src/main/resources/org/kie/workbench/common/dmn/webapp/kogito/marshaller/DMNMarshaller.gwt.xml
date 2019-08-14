@@ -19,6 +19,7 @@
 <module>
 
   <inherits name="jsinterop.base.Base"/>
+  <inherits name="org.kie.workbench.common.dmn.DMNAPI"/>
 
   <!-- We don't need to support IE10 or older -->
   <!-- There is no "ie11" permutation. IE11 uses the Firefox one (gecko1_8) -->
@@ -28,6 +29,7 @@
   <source path="js">
     <exclude name="jre"/>
   </source>
+  <source path="mapper"/>
 
   <super-source path="jre"/>
 

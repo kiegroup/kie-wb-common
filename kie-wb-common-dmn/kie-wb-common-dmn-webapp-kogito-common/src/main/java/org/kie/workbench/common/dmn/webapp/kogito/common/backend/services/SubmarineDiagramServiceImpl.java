@@ -26,7 +26,7 @@ import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.api.factory.DMNDiagramFactory;
 import org.kie.workbench.common.dmn.backend.DMNBackendService;
-import org.kie.workbench.common.dmn.backend.DMNMarshaller;
+import org.kie.workbench.common.dmn.backend.DMNMarshallerStandalone;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -113,7 +113,7 @@ public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
         final InputStream is = new ByteArrayInputStream(xml.getBytes());
 
         try {
-            final DMNMarshaller dmnMarshaller = (DMNMarshaller) dmnBackendService.getDiagramMarshaller();
+            final DMNMarshallerStandalone dmnMarshaller = (DMNMarshallerStandalone) dmnBackendService.getDiagramMarshaller();
             final Graph<DefinitionSet, ?> graph = dmnMarshaller.unmarshall(metadata, is);
             final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
             final String title = diagramNode.getContent().getDefinition().getDefinitions().getName().getValue();
@@ -131,7 +131,7 @@ public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
     @Override
     public String transform(final SubmarineDiagram diagram) {
         try {
-            final DMNMarshaller dmnMarshaller = (DMNMarshaller) dmnBackendService.getDiagramMarshaller();
+            final DMNMarshallerStandalone dmnMarshaller = (DMNMarshallerStandalone) dmnBackendService.getDiagramMarshaller();
             return dmnMarshaller.marshall(convert(diagram));
         } catch (Exception e) {
             LOG.error("Error whilst converting DMNDiagram to XML.", e);
