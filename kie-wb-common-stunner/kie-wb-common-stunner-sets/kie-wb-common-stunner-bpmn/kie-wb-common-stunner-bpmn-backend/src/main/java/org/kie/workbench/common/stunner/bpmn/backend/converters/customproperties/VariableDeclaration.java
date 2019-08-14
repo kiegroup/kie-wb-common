@@ -119,12 +119,13 @@ public class VariableDeclaration {
         }
         VariableDeclaration that = (VariableDeclaration) o;
         return Objects.equals(identifier, that.identifier) &&
-                Objects.equals(type, that.type);
+                Objects.equals(type, that.type) &&
+                Objects.equals(kpi, that.kpi);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier, type);
+        return Objects.hash(identifier, type, kpi);
     }
 }
 
