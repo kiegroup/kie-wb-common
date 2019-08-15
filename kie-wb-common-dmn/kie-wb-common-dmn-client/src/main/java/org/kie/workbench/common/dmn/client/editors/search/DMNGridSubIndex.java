@@ -87,6 +87,8 @@ public class DMNGridSubIndex implements DMNSubIndex {
         final DMNSearchableElement searchableCell = new DMNSearchableElement();
         final String value = getValue(cell);
 
+        searchableCell.setRow(row);
+        searchableCell.setColumn(column);
         searchableCell.setText(value);
         searchableCell.setOnFound(() -> dmnGridHelper.highlightCell(row, column, gridWidget));
 

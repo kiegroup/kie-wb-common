@@ -41,6 +41,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
+import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
@@ -57,6 +58,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.kie.workbench.common.widgets.client.search.common.SearchPerformedEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -70,6 +72,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperati
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveLeft;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveRight;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveUp;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.impl.BaseGridRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
 import org.uberfire.mocks.EventSourceMock;
@@ -439,5 +442,24 @@ public class ExpressionEditorViewImplTest {
         view.setFocus();
 
         verify(gridPanel).setFocus(true);
+    }
+
+    @Test
+    public void testOnSearchPerformed() {
+        final int row = 2;
+        final int column = 3;
+        final DMNSearchableElement element = mock(DMNSearchableElement.class);
+        when(element.getColumn()).thenReturn(column);
+        when(element.getRow()).thenReturn(row);
+        final BaseGridRenderer renderer = mock(BaseGridRenderer.class);
+        when(editor.getRenderer()).thenReturn(renderer);
+        Optional<BaseExpressionGrid> existingEditor = Optional.of(editor);
+        when(view.getExistingEditor()).thenReturn(existingEditor);
+        final SearchPerformedEvent event = new SearchPerformedEvent(element);
+
+        view.onSearchPerformed(event);
+
+        verify(renderer).clearCellHighlight();
+        verify(renderer).highlightCell(column, row);
     }
 }
