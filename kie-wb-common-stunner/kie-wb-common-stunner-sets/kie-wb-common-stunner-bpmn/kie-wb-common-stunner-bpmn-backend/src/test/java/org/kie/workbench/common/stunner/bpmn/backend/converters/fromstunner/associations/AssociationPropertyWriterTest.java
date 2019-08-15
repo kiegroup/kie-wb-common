@@ -125,8 +125,8 @@ public class AssociationPropertyWriterTest {
 
     @Test
     public void testSetNoneDirectionAssociation() {
-        NonDirectionalAssociation directionalAssociation = new NonDirectionalAssociation();
-        associationWriter.setDirectionAssociation(directionalAssociation);
+        NonDirectionalAssociation nonDirectionalAssociation = new NonDirectionalAssociation();
+        associationWriter.setDirectionAssociation(nonDirectionalAssociation);
         verify(association).setAssociationDirection(AssociationDirection.NONE);
     }
 }

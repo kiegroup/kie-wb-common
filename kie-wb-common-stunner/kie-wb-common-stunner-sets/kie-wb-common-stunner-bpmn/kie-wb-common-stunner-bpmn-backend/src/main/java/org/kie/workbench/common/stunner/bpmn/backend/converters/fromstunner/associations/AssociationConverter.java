@@ -49,6 +49,7 @@ public class AssociationConverter {
         association.setId(edge.getUUID());
 
         BasePropertyWriter pSrc = process.getChildElement(edge.getSourceNode().getUUID());
+
         BasePropertyWriter pTgt = process.getChildElement(edge.getTargetNode().getUUID());
 
         if (pSrc == null || pTgt == null) {

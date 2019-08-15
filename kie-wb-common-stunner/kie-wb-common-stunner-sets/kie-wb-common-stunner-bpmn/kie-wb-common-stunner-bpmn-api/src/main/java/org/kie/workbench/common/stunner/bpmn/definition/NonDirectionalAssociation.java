@@ -29,8 +29,6 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.factory.graph.EdgeFactory;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
 import org.kie.workbench.common.stunner.core.rule.annotation.EdgeOccurrences;
-import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
-import org.kie.workbench.common.stunner.core.rule.ext.impl.ConnectorParentsMatchHandler;
 
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.AbstractEmbeddedFormsInitializer.COLLAPSIBLE_CONTAINER;
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.AbstractEmbeddedFormsInitializer.FIELD_CONTAINER_PARAM;
@@ -45,12 +43,6 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @EdgeOccurrences(role = "text_annotation", type = EdgeOccurrences.EdgeType.OUTGOING, max = 1)
 @EdgeOccurrences(role = "text_annotation", type = EdgeOccurrences.EdgeType.INCOMING, max = 1)
 
-// Associations cannot exceed bounds when any of the nodes are in an embedded subprocess context.
-@RuleExtension(handler = ConnectorParentsMatchHandler.class,
-        typeArguments = {EmbeddedSubprocess.class, EventSubprocess.class, MultipleInstanceSubprocess.class,
-                AdHocSubprocess.class},
-        arguments = {"Association flow connectors cannot exceed the sub-process' bounds. " +
-                "Both source and target nodes must be in same parent process."})
 @FormDefinition(
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED,

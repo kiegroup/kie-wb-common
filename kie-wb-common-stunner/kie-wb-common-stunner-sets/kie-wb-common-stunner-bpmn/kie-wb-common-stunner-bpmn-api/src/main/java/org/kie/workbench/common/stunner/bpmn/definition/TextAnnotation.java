@@ -73,6 +73,7 @@ public class TextAnnotation implements BPMNViewDefinition {
     @Labels
     private final static Set<String> labels = new Sets.Builder<String>()
             .add("text_annotation")
+            .add("lane_child")
             .add("all")
             .build();
 

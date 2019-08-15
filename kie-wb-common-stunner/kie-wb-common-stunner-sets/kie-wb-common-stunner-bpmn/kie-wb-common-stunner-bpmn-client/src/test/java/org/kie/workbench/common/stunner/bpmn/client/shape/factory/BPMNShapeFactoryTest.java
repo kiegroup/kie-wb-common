@@ -356,7 +356,6 @@ public class BPMNShapeFactoryTest {
         assertEquals(2,
                      basicFactoryCallCount,
                      0);
-        //todo: tiago nondirectional test + text annotation
     }
 
     private boolean isSvgShapeFactory(final Supplier supplier) {

@@ -128,7 +128,7 @@ public class AssociationPropertyReaderTest {
     }
 
     @Test
-    public void testGetAssociationByDirection(){
+    public void testGetAssociationByDirection() {
         final Association association = Bpmn2Factory.eINSTANCE.createAssociation();
 
         //null direction
