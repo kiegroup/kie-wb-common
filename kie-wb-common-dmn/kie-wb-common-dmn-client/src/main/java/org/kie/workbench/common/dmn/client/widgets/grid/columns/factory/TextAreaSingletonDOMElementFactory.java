@@ -78,7 +78,7 @@ public class TextAreaSingletonDOMElementFactory extends BaseSingletonDOMElementF
 
     @Override
     protected KeyDownHandlerCommon destroyOrFlushKeyDownHandler() {
-        return new KeyDownHandlerCommon(gridPanel, gridLayer, gridWidget, this, true, false, true);
+        return new KeyDownHandlerCommon(gridPanel, gridLayer, gridWidget, this);
     }
 
     @Override

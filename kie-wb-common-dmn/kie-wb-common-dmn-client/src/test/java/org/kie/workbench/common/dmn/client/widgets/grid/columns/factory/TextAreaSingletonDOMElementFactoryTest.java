@@ -98,7 +98,7 @@ public class TextAreaSingletonDOMElementFactoryTest extends BaseSingletonDOMElem
 
         keyDownHandlerCommon.onKeyDown(event);
 
-        verify(factory, never()).flush();
+        verify(factory).flush();
     }
 
     @Test
