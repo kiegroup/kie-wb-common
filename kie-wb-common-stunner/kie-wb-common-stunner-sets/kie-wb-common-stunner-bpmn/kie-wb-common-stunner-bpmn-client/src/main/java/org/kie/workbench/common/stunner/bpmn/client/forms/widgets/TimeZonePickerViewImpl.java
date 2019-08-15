@@ -41,7 +41,7 @@ public class TimeZonePickerViewImpl extends Composite implements TimeZonePickerV
 
     private Presenter presenter;
 
-    private final double defaultOffset = new Date().getTimezoneOffset();
+    private final double defaultOffset = new Date().getTimezoneOffset() * -1;
 
     @DataField
     private Select tzSelect = new Select();

@@ -34,6 +34,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Dependent
 public class TimeZonePicker implements IsWidget,
@@ -129,7 +130,6 @@ public class TimeZonePicker implements IsWidget,
                     "code='" + code + '\'' +
                     ", name='" + name + '\'' +
                     ", offsetAsString=" + offsetAsString +
-                    ", offsetAsDouble=" + offsetAsDouble +
                     '}';
         }
 
@@ -149,7 +149,9 @@ public class TimeZonePicker implements IsWidget,
 
         @Override
         public int hashCode() {
-            return Objects.hash(name, code, offsetAsDouble);
+            return HashUtil.combineHashCodes(Objects.hash(name),
+                                             Objects.hash(code),
+                                             Objects.hash(offsetAsString));
         }
     }
 }

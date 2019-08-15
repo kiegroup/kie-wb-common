@@ -127,7 +127,7 @@ public class NotificationValueValidatorTest {
     @Test
     public void testISO8601WithTZ00ZRepeatable1AndPeriodAndWrongTZ002Value() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R1/1919-07-14T13:34-002/PT33Y");
+        notification.setExpiresAt("R1/1919-07-14T13:34-002/P33Y");
         boolean result = validator.isValid(notification, context);
         assertFalse(result);
         assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
@@ -136,7 +136,7 @@ public class NotificationValueValidatorTest {
     @Test
     public void testISO8601WithTZ00ZRepeatable1AndPeriodAndTZ02Value() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R1/2019-07-14T13:34-02/PT33D");
+        notification.setExpiresAt("R1/2019-07-14T13:34-02/P33D");
         boolean result = validator.isValid(notification, context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
@@ -154,7 +154,7 @@ public class NotificationValueValidatorTest {
     @Test
     public void testISO8601WithTZ00ZRepeatable10AndPeriodValue() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R10/2019-07-14T13:34:00Z/PT33Y");
+        notification.setExpiresAt("R10/2019-07-14T13:34:00Z/P33Y");
         boolean result = validator.isValid(notification, context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
@@ -251,14 +251,6 @@ public class NotificationValueValidatorTest {
     }
 
     @Test
-    public void testISO8601WithWrongYearRepeatableValue() {
-        NotificationRow notification = new NotificationRow();
-        boolean result = validator.isValid(notification, context);
-        assertFalse(result);
-        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
-    }
-
-    @Test
     public void testISO8601WithWrongYearAndTZRepeatableValue() {
         NotificationRow notification = new NotificationRow();
         notification.setExpiresAt("1819-07-14T13:34-022");
@@ -307,7 +299,7 @@ public class NotificationValueValidatorTest {
     @Test
     public void testDayRepeatableUntilStateChangesNotification() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R/PT33D");
+        notification.setExpiresAt("R/P33D");
         boolean result = validator.isValid(notification, context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
@@ -316,7 +308,7 @@ public class NotificationValueValidatorTest {
     @Test
     public void testYearRepeatableUntilStateChangesNotification() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R/PT33Y");
+        notification.setExpiresAt("R/P33Y");
         boolean result = validator.isValid(notification, context);
         assertTrue(result);
         assertTrue(errorMessages.isEmpty());
@@ -336,8 +328,8 @@ public class NotificationValueValidatorTest {
         NotificationRow notification = new NotificationRow();
         notification.setExpiresAt("R/P33D");
         boolean result = validator.isValid(notification, context);
-        assertFalse(result);
-        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
     }
 
     @Test
@@ -345,8 +337,8 @@ public class NotificationValueValidatorTest {
         NotificationRow notification = new NotificationRow();
         notification.setExpiresAt("R/P33Y");
         boolean result = validator.isValid(notification, context);
-        assertFalse(result);
-        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
     }
 
     @Test
@@ -381,8 +373,8 @@ public class NotificationValueValidatorTest {
         NotificationRow notification = new NotificationRow();
         notification.setExpiresAt("PT0H");
         boolean result = validator.isValid(notification, context);
-        assertFalse(result);
-        assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
     }
 
     @Test
@@ -395,9 +387,27 @@ public class NotificationValueValidatorTest {
     }
 
     @Test
+    public void testR2PT4H20190527T130000Z() {
+        NotificationRow notification = new NotificationRow();
+        notification.setExpiresAt("R2/PT4H/2019-05-27T13:00:00Z");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testR2PT4H20190527T133300Z() {
+        NotificationRow notification = new NotificationRow();
+        notification.setExpiresAt("R2/PT4H/2019-05-27T13:33:00Z");
+        boolean result = validator.isValid(notification, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
     public void testWrongDayRepeatableNotification() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R44/P33D");
+        notification.setExpiresAt("R44/PT33D");
         boolean result = validator.isValid(notification, context);
         assertFalse(result);
         assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
@@ -406,7 +416,7 @@ public class NotificationValueValidatorTest {
     @Test
     public void testWrongYearRepeatableNotification() {
         NotificationRow notification = new NotificationRow();
-        notification.setExpiresAt("R44/P33Y");
+        notification.setExpiresAt("R44/PT33Y");
         boolean result = validator.isValid(notification, context);
         assertFalse(result);
         assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
@@ -470,15 +480,6 @@ public class NotificationValueValidatorTest {
     public void testNegativeExpiresAtNotificationRow() {
         NotificationRow value = new NotificationRow();
         value.setExpiresAt("-1d");
-        boolean result = validator.isValid(value, context);
-        assertFalse(result);
-        assertFalse(errorMessages.isEmpty());
-    }
-
-    @Test
-    public void testIsTooBigExpiresAtNotificationRow() {
-        NotificationRow value = new NotificationRow();
-        value.setExpiresAt("1111111111111111111111111111111111111111111d");
         boolean result = validator.isValid(value, context);
         assertFalse(result);
         assertFalse(errorMessages.isEmpty());
@@ -557,15 +558,6 @@ public class NotificationValueValidatorTest {
     }
 
     @Test
-    public void testIntOverflowExpiresAtNotificationRow() {
-        NotificationRow value = new NotificationRow();
-        value.setExpiresAt("2147483648d");
-        boolean result = validator.isValid(value, context);
-        assertFalse(result);
-        assertFalse(errorMessages.isEmpty());
-    }
-
-    @Test
     public void testZeroExpiresAtNotificationRow() {
         NotificationRow value = new NotificationRow();
         value.setExpiresAt("0d");
@@ -573,4 +565,167 @@ public class NotificationValueValidatorTest {
         assertFalse(result);
         assertEquals(NotificationValueValidator.WRONG_EXPIRES_AT_EXPRESSION, errorMessages.get(0));
     }
+
+    @Test
+    public void testOldTimeFormat() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("2d6H48m32s12mS");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testP2M2D() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("P2M2D");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testP2M2DT2S() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("P2M2DT2S");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testExampleFromTheTip() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("2d6H48m32s12mS");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testDurations() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("P1Y2M5DT4H5M8S6MS");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testDurationsY() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("P1Y445DT20H13M");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testBounded5S() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R5/PT2S");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testBounded5SWrong() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R5/P2S");
+        boolean result = validator.isValid(value, context);
+        assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testUnBounded2D() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R/P2D");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testUnBounded2DWrong() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R/PT2D");
+        boolean result = validator.isValid(value, context);
+        assertFalse(result);
+        assertFalse(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testDurationsD() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("P1DT20H13M7MS");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testDurationsW() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("P1WT20H13M");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testRepeatingIntervals() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R5/P1Y2M5DT4H5M8S6MS");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testRepeatingIntervalsY() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R2/P1YT20H13M");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testRepeatingIntervalsD() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R2/P1DT20H13M");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testRepeatingIntervalsW() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R2/P1WT20H13M");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testR2StartEnd() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R2/2019-05-27T13:00:00Z/2019-05-27T17:00:00Z");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
+    @Test
+    public void testRStartEnd() {
+        NotificationRow value = new NotificationRow();
+        value.setExpiresAt("R/2019-05-27T13:00:00Z/2019-05-27T17:00:00Z");
+        boolean result = validator.isValid(value, context);
+        assertTrue(result);
+        assertTrue(errorMessages.isEmpty());
+    }
+
 }

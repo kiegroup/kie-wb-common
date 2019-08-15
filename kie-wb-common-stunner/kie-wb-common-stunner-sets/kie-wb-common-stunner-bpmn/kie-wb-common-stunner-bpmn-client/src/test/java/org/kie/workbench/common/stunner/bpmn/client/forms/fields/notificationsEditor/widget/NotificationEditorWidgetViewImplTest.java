@@ -59,10 +59,10 @@ public class NotificationEditorWidgetViewImplTest extends GWTTestCase {
     }
 
     @Test
-    public void ISO8601BuilderExpression() {
+    public void testISO8601BuilderExpression() {
         String result = NotificationEditorWidgetViewImpl.ISO8601Builder.get()
                 .setRepeatable(false)
-                .setType(Expiration.DATATIME.getName())
+                .setType(Expiration.DATETIME.getName())
                 .setRepeat("")
                 .setUntil(false)
                 .setDate(new Date())
@@ -78,10 +78,10 @@ public class NotificationEditorWidgetViewImplTest extends GWTTestCase {
     }
 
     @Test
-    public void ISO8601BuilderExpressionRepeatable() {
+    public void testISO8601BuilderExpressionRepeatable() {
         String result = NotificationEditorWidgetViewImpl.ISO8601Builder.get()
                 .setRepeatable(false)
-                .setType(Expiration.DATATIME.getName())
+                .setType(Expiration.DATETIME.getName())
                 .setRepeat("true")
                 .setUntil(false)
                 .setDate(new Date())

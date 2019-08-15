@@ -138,8 +138,8 @@ public class NotificationValue {
                 "|tousers:" + users.stream().collect(Collectors.joining(",")) +
                 "|togroups:" + groups.stream().collect(Collectors.joining(",")) +
                 "|replyTo:" + replyTo +
-                "|subject:" + subject +
-                "|body:" + body +
+                "|subject:" + (subject != null ? subject.replaceAll("\\|","&#124;") : "") +
+                "|body:" + (body != null ? body.replaceAll("\\|","&#124;") : "") +
                 "]@[" + expiresAt + "]";
     }
 

@@ -206,6 +206,7 @@ public class NotificationRow {
                 "id=" + id +
                 ", body='" + body + '\'' +
                 ", expiresAt='" + expiresAt + '\'' +
+                ", Expiration='" + getExpiration() + '\'' +
                 ", from='" + from + '\'' +
                 ", groups=" + groups.stream().collect(Collectors.joining(",")) +
                 ", replyTo='" + replyTo + '\'' +

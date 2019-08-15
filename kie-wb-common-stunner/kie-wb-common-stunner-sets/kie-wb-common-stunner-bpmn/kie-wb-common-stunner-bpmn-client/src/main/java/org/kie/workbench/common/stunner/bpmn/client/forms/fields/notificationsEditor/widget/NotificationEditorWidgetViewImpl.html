@@ -28,7 +28,9 @@
     </div>
     <div class="row" style="width: 200px;">
         <p style="font-weight: bold;">Task expiration definition
-            <a href="#" data-toggle="tooltip" data-placement="top" title="This time definition determines when notification will occur"><span class="glyphicon glyphicon-info-sign"></span></a>
+            <a data-field="notificationPopover" id="notificationPopover" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-html="true" class="popover-pf-info" data-content="This time definition determines when notification will occur" data-placement="top">
+                <span class="glyphicon glyphicon-info-sign"></span>
+            </a>
         </p>
         <div data-field="taskExpiration" id="taskExpiration"></div>
     </div>
@@ -38,7 +40,7 @@
             <div data-field="periodBox" style="width: 240px;"></div>
         </div>
     </div>
-    <div data-field="datatimeDiv" style="display:none; margin-bottom: 10px;">
+    <div data-field="datetimeDiv" style="display:none; margin-bottom: 10px;">
         <div class="row">
             <p style="font-weight: bold; margin-top: 10px;">Notify after task expiration</p>
             <div class="col-sm-2" style="margin-left: -20px;">
@@ -49,8 +51,6 @@
             </div>
         </div>
     </div>
-
-
     <div data-field="repeatNotificationsDiv">
         <div class="row">
             <div class="form-group">
@@ -77,7 +77,6 @@
             </div>
         </div>
     </div>
-
     <div class="row" data-field="expressionDiv" style="display:none;">
         <textarea data-field="expressionTextArea" placeholder="Example of basic expression notation for an interval: P2y10M14dT20h13m" class="form-control" rows="5" style="width:500px; height: 50px; resize: none; margin-top: 20px;"></textarea>
         <a href="#"><span class="glyphicon glyphicon-question-sign" style="color: grey;"></span></a><span>For syntax requirements for ISO 8601 expressions, see https://www.iso.org/</span>
@@ -94,7 +93,11 @@
                 <select data-field="liveSearchFromDropDown" id="from" style="width: 200px;"></select>
             </div>
             <div class="col-sm-3">
-                <p>Reply to (optional)<a href="#"><span class="glyphicon glyphicon-info-sign"></span></a></p>
+                <p>Reply to (optional)
+                    <a data-field="replyPopover" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-html="true" class="popover-pf-info" data-content="An optional user or group that should receive replies to the notification." data-placement="top">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </a>
+                </p>
                 <select data-field="liveSearchReplyToDropDown" id="replyTo" style="width: 200px;"></select>
             </div>
         </div>

@@ -39,10 +39,12 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.Composite;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
-import org.gwtbootstrap3.client.ui.ModalSize;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.extras.datetimepicker.client.ui.DateTimePicker;
@@ -71,6 +73,7 @@ import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
 import org.uberfire.ext.widgets.common.client.dropdown.MultipleLiveSearchSelectionHandler;
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 
+import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
@@ -93,7 +96,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
     @Inject
     @DataField
-    protected HTMLDivElement datatimeDiv;
+    protected HTMLDivElement datetimeDiv;
 
     @Inject
     @DataField
@@ -134,6 +137,14 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     @Inject
     @DataField
     protected HTMLInputElement notStartedInput;
+
+    @Inject
+    @DataField
+    protected HTMLAnchorElement notificationPopover;
+
+    @Inject
+    @DataField
+    protected HTMLAnchorElement replyPopover;
 
     protected DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm");
 
@@ -242,6 +253,11 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         initTypeSelector();
     }
 
+    private void initPopover() {
+        PopOver.$(notificationPopover).popovers();
+        PopOver.$(replyPopover).popovers();
+    }
+
     protected void initTextBoxes() {
         subject.setMaxLength(100);
         periodBox.showLabel(false);
@@ -261,6 +277,8 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         repeatNotification.setSize(SizeType.MINI);
         repeatNotification.setOnColor(ColorType.INFO);
         repeatNotification.setOnColor(ColorType.PRIMARY);
+        repeatNotification.setOnText("Yes");
+        repeatNotification.setOffText("No");
         repeatNotification.addValueChangeHandler(event -> onRepeatNotification(event.getValue()));
     }
 
@@ -338,7 +356,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     }
 
     protected void checkNotifyEveryPanelDivVisible() {
-        notifyEveryPanelDiv.style.display = taskExpiration.getValue().equals(Expiration.DATATIME.getName())
+        notifyEveryPanelDiv.style.display = taskExpiration.getValue().equals(Expiration.DATETIME.getName())
                 ? Style.Display.BLOCK.getCssName()
                 : Style.Display.NONE.getCssName();
     }
@@ -352,7 +370,8 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
         panels = ImmutableMap.of(Expiration.TIMEPERIOD.getName(), timeperiodDiv,
                                  Expiration.EXPRESSION.getName(), expressionDiv,
-                                 Expiration.DATATIME.getName(), datatimeDiv);
+                                 Expiration.DATETIME.getName(), datetimeDiv);
+        initPopover();
     }
 
     @Override
@@ -366,7 +385,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
     protected void initModel() {
         modal.setTitle(presenter.getNameHeader());
-        modal.setSize(ModalSize.MEDIUM);
+        modal.setWidth("535px");
         modal.setBody(this);
         modal.setClosable(false);
         modal.addDomHandler(getEscDomHandler(), KeyDownEvent.getType());
@@ -430,30 +449,30 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         taskExpiration.setValue(expiration.getName(), true);
         if (expiration.equals(Expiration.EXPRESSION)) {
             expressionTextArea.setValue(row.getExpiresAt());
-        } else if (expiration.equals(Expiration.DATATIME)) {
-            setExpirationDataTime(row);
+        } else if (expiration.equals(Expiration.DATETIME)) {
+            setExpirationDATETIME(row);
         } else if (expiration.equals(Expiration.TIMEPERIOD)) {
             setExpirationTimeperiod(row.getExpiresAt());
         }
     }
 
-    protected void setExpirationDataTime(NotificationRow row) {
+    protected void setExpirationDATETIME(NotificationRow row) {
         MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD).exec(row.getExpiresAt());
         if (result != null) {
             repeatNotification.setValue(true, true);
-            Date dataTime = dateTimeFormat.parse(result.getGroup(2));
+            Date DATETIME = dateTimeFormat.parse(result.getGroup(2));
             String tz = result.getGroup(3);
             setPeriod(row.getExpiresAt().split("/")[2], repeatBox);
-            dateTimePicker.setValue(dataTime);
+            dateTimePicker.setValue(DATETIME);
             setTimeZonePickerValue(tz.equals("00Z") ? "0" : tz);
             setTaskStateOrRepeatCountValue(getRepeatCount(row.getExpiresAt().split("/")[0]));
         } else {
             result = RegExp.compile(ISO_DATE_TIME).exec(row.getExpiresAt());
             if (result != null) {
                 repeatNotification.setValue(false);
-                Date dataTime = dateTimeFormat.parse(result.getGroup(1));
+                Date DATETIME = dateTimeFormat.parse(result.getGroup(1));
                 String tz = result.getGroup(2);
-                dateTimePicker.setValue(dataTime);
+                dateTimePicker.setValue(DATETIME);
                 setTimeZonePickerValue(tz);
             }
         }
@@ -565,6 +584,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     }
 
     protected void onViolationError(Set<ConstraintViolation<NotificationRow>> violations) {
+        expressionTextArea.getElement().getStyle().setBorderColor("red");
         errorDivPanel.innerHTML = violations.stream().map(v -> "* " + v.getMessage()).collect(Collectors.joining("\n"));
     }
 
@@ -583,6 +603,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         taskExpiration.setValue(Expiration.TIMEPERIOD.getName(), true);
         repeatBox.setValue("1");
         errorDivPanel.innerHTML = "";
+        expressionTextArea.getElement().getStyle().setBorderColor("");
 
         dateTimePicker.setValue(new Date());
         timeZonePicker.setValue("0");
@@ -679,7 +700,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
             if (type.equals(Expiration.TIMEPERIOD.getName())) {
                 // Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
-                sb.append(period.contains("M") ? "P" : "PT");
+                sb.append((period.contains("M") || period.contains("Y") || period.contains("D")) ? "P" : "PT");
                 sb.append(period.toUpperCase());
             } else {
                 DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm");
@@ -688,14 +709,11 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                 sb.append(strFormat);
                 sb.append(tz.equals("0") ? ":00Z" : tz);
                 if (repeatable) {
-                    if (type.equals(Expiration.DATATIME.getName())) {
+                    if (type.equals(Expiration.DATETIME.getName())) {
                         sb.append("/");
                     }
-                    if (repeat.contains("M")) { // Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
-                        sb.append("P");
-                    } else {
-                        sb.append("PT");
-                    }
+                    // Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
+                    sb.append((repeat.contains("M") || repeat.contains("Y") || repeat.contains("D")) ? "P" : "PT");
                     sb.append(repeat.toUpperCase());
                 }
             }
@@ -710,5 +728,14 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
             }
             return Integer.parseInt(tz) * 60;
         }
+    }
+
+    @JsType(isNative = true)
+    private static abstract class PopOver {
+
+        @JsMethod(namespace = GLOBAL, name = "jQuery")
+        public native static PopOver $(final elemental2.dom.Node selector);
+
+        public native void popovers();
     }
 }

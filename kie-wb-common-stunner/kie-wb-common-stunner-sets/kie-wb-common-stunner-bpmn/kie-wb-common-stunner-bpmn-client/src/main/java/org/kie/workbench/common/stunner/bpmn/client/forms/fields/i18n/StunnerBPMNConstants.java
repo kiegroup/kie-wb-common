@@ -92,8 +92,8 @@ public interface StunnerBPMNConstants {
     @TranslationKey(defaultValue = "Expression")
     String NOTIFICATION_EXPIRATION_EXPRESSION_LABEL = "notification.expiration.expression.label";
 
-    @TranslationKey(defaultValue = "Data/time")
-    String NOTIFICATION_EXPIRATION_DATATIME_LABEL = "notification.datatime";
+    @TranslationKey(defaultValue = "Date/time")
+    String NOTIFICATION_EXPIRATION_DATETIME_LABEL = "notification.datetime";
 
     @TranslationKey(defaultValue = "Time period")
     String NOTIFICATION_EXPIRATION_TIMEPERIOD_LABEL = "notification.expiration.timeperiod.label";

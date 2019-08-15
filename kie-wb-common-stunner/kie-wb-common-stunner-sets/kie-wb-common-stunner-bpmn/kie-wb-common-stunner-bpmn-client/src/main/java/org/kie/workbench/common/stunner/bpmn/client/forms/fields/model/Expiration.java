@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum Expiration {
     EXPRESSION("Expression"),
-    DATATIME("Data/time"),
+    DATETIME("Date/time"),
     TIMEPERIOD("Time period");
 
     private static Map<String, Expiration> ENUM_MAP;

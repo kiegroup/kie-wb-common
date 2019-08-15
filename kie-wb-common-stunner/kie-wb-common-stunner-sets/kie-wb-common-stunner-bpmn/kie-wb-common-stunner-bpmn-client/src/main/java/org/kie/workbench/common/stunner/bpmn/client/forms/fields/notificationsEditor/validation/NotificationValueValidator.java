@@ -31,10 +31,16 @@ import com.google.gwt.validation.client.GwtValidation;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.DURATION;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.OLD_DURATION;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ONE_TIME_EXECUTION;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE_DURATION_END;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE_START_END;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATING_INTERVALS;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATING_INTERVALS_TIME;
 
 @GwtValidation(NotificationRow.class)
 public class NotificationValueValidator implements ConstraintValidator<ValidNotificationValue, NotificationRow> {
@@ -60,7 +66,16 @@ public class NotificationValueValidator implements ConstraintValidator<ValidNoti
     private Predicate<String> checkIfValueRepeatable = iso -> iso.isEmpty() || checkIfValueIsNotEmptyOrNegative.test(iso);
     //Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
     private BiFunction<String, String, Boolean> checkIfValueIsMinuteOrMonth = (t, m)
-            -> ((!m.equals("M") && !t.isEmpty()) || (t.isEmpty() || t.equals("T")) && m.equals("M")) ? true : false;
+            -> {
+        if (m.equals("M")) {
+            return ((!m.equals("M") && !t.isEmpty()) || (t.isEmpty() || t.equals("T")) && m.equals("M")) ? true : false;
+        } else if (m.equals("H")) {
+            return !t.isEmpty();
+        } else if (m.equals("D") || m.equals("Y")) {
+            return t.isEmpty();
+        }
+        return false;
+    };
 
     private Predicate<String> isTimePeriodExpressionWithRepeatableSection = (maybeIso) -> {
         Optional<MatchResult> result = checkIfPatternMatch.apply(REPEATABLE + "/" + PERIOD, maybeIso);
@@ -80,7 +95,7 @@ public class NotificationValueValidator implements ConstraintValidator<ValidNoti
             if (checkIfValueIsNotEmptyOrNegative.test(result.get().getGroup(2))
                     && checkIfValueIsMinuteOrMonth.apply(result.get()
                                                                  .getGroup(1), result.get()
-                    .getGroup(3))) {
+                                                                 .getGroup(3))) {
                 return true;
             }
         }
@@ -95,10 +110,31 @@ public class NotificationValueValidator implements ConstraintValidator<ValidNoti
         return false;
     };
 
-    private Predicate<String> isValidRepeatableExpression = (maybeIso) ->
-            isTimePeriodExpressionWithRepeatableSection.or(isTimePeriodExpression).or(isOneTimeExecution).test(maybeIso);
+    private Predicate<String> isRepeatableStartEnd = (maybeIso) -> checkIfPatternMatch.apply(REPEATABLE_START_END, maybeIso).isPresent();
 
-    private Predicate<String> isRepeatableDataTimeExpression = (maybeIso) -> {
+    private Predicate<String> isRepeatableDurationStart = (maybeIso) -> checkIfPatternMatch.apply(REPEATABLE_DURATION_END, maybeIso).isPresent();
+
+    private Predicate<String> isRepeatingIntervalsWithTime = (maybeIso) -> checkIfPatternMatch.apply(REPEATING_INTERVALS_TIME, maybeIso).isPresent();
+
+    private Predicate<String> isRepeatingIntervals = (maybeIso) -> checkIfPatternMatch.apply(REPEATING_INTERVALS, maybeIso).isPresent();
+
+    private Predicate<String> isDuration = (maybeIso) -> checkIfPatternMatch.apply("^" + DURATION, maybeIso).isPresent();
+
+    private Predicate<String> isOldDuration = (maybeIso) -> checkIfPatternMatch.apply(OLD_DURATION, maybeIso).isPresent();
+
+    private Predicate<String> isValidRepeatableExpression = (maybeIso) ->
+            isTimePeriodExpressionWithRepeatableSection
+                    .or(isTimePeriodExpression)
+                    .or(isRepeatableStartEnd)
+                    .or(isRepeatableDurationStart)
+                    .or(isRepeatingIntervals)
+                    .or(isRepeatingIntervalsWithTime)
+                    .or(isDuration)
+                    .or(isOldDuration)
+                    .or(isOneTimeExecution)
+                    .test(maybeIso);
+
+    private Predicate<String> isRepeatableDateTimeExpression = (maybeIso) -> {
         Optional<MatchResult> result = checkIfPatternMatch.apply(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD, maybeIso);
         if (result.isPresent()) {
             if (checkIfValueRepeatable.test(result.get().getGroup(1))
@@ -110,15 +146,15 @@ public class NotificationValueValidator implements ConstraintValidator<ValidNoti
         return false;
     };
 
-    private Predicate<String> isDataTimeExpression = (maybeIso)
+    private Predicate<String> isDateTimeExpression = (maybeIso)
             -> checkIfPatternMatch.apply("^" + ISO_DATE_TIME, maybeIso).isPresent();
 
-    private Predicate<String> isValidDataTimeExpression = (maybeIso)
-            -> isRepeatableDataTimeExpression.or(isDataTimeExpression).test(maybeIso);
+    private Predicate<String> isValidDateTimeExpression = (maybeIso)
+            -> isRepeatableDateTimeExpression.or(isDateTimeExpression).test(maybeIso);
 
     public Map<Expiration, Predicate> validators = ImmutableMap.of(
             Expiration.TIMEPERIOD, isValidRepeatableExpression,
-            Expiration.DATATIME, isValidDataTimeExpression,
+            Expiration.DATETIME, isValidDateTimeExpression,
             Expiration.EXPRESSION, isValidRepeatableExpression);
 
     private Predicate getValidator(Expiration expiration) {

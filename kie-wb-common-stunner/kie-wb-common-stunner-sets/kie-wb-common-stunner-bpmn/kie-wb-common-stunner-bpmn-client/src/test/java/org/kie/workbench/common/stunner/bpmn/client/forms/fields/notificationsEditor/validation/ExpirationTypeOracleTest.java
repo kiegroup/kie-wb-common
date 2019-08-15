@@ -41,39 +41,39 @@ public class ExpirationTypeOracleTest {
     }
 
     @Test
-    public void testISO8601DataTimeRepeatableValue() {
+    public void testISO8601DATETIMERepeatableValue() {
         Expiration result = oracle.guess("R/2019-07-14T13:34-02/PT33M");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
     public void testISO8601WithTZ02ZRepeatable1AndPeriodValue() {
         Expiration result = oracle.guess("R1/2019-07-14T13:34-02/PT33M");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
     public void testISO8601WithTZ00ZRepeatable1AndPeriodAndTZ02Value() {
         Expiration result = oracle.guess("R1/2019-07-14T13:34-02/PT33D");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
     public void testISO8601WithTZ00ZRepeatable10AndPeriodAndTZ0230Value() {
         Expiration result = oracle.guess("R10/2019-07-14T13:34+02:30/P33M");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
     public void testISO8601WithTZ02RepeatableValue() {
         Expiration result = oracle.guess("2019-07-14T13:34-02");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
-    public void testISO8601DataTimeValue() {
+    public void testISO8601DATETIMEValue() {
         Expiration result = oracle.guess("2019-07-14T13:34-02");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
@@ -91,13 +91,13 @@ public class ExpirationTypeOracleTest {
     @Test
     public void testNotificationAndTZ0245() {
         Expiration result = oracle.guess("2019-07-14T13:34-02:45");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
     public void testNotificationAndTZ002() {
         Expiration result = oracle.guess("2019-07-14T13:34:00Z");
-        assertEquals(Expiration.DATATIME, result);
+        assertEquals(Expiration.DATETIME, result);
     }
 
     @Test
@@ -107,8 +107,92 @@ public class ExpirationTypeOracleTest {
     }
 
     @Test
-    public void testDataTimeExpiresAtNotificationRow() {
-        Expiration result = oracle.guess("R19/2019-07-24T19:00+05/PT1H");
-        assertEquals(Expiration.DATATIME, result);
+    public void testOldTimeFormat() {
+        Expiration result = oracle.guess("2d6H48m32s12mS");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testExampleFromTheTip() {
+        Expiration result = oracle.guess("P2y10M14dT20h13m");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testDurations() {
+        Expiration result = oracle.guess("P1Y2M5DT4H5M8S6MS");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testDurationsY() {
+        Expiration result = oracle.guess("P1YT20H13M");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testDurationsD() {
+        Expiration result = oracle.guess("P1DT20H13M");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testDurationsW() {
+        Expiration result = oracle.guess("P1WT20H13M");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testRepeatingIntervals() {
+        Expiration result = oracle.guess("R5/P1Y2M5DT4H5M8S6MS");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testRepeatingIntervalsY() {
+        Expiration result = oracle.guess("R2/P1YT20H13M");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testRepeatingIntervalsD() {
+        Expiration result = oracle.guess("R2/P1DT20H13M");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testRepeatingIntervalsW() {
+        Expiration result = oracle.guess("R2/P1WT20H13M");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testR2StartEnd() {
+        Expiration result = oracle.guess("R2/2019-05-27T13:00:00Z/2019-05-27T17:00:00Z");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testRStartEnd() {
+        Expiration result = oracle.guess("R/2019-05-27T13:00:00Z/2019-05-27T17:00:00Z");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testPT0H() {
+        Expiration result = oracle.guess("PT0H");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testR2PT4H20190527T130000Z() {
+        Expiration result = oracle.guess("R2/PT4H/2019-05-27T13:00:00Z");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testR2P1WT20H13M20190527T130000Z() {
+        Expiration result = oracle.guess("R2/P1WT20H13M/2019-05-27T13:00:00Z");
+        assertEquals(Expiration.EXPRESSION, result);
     }
 }
