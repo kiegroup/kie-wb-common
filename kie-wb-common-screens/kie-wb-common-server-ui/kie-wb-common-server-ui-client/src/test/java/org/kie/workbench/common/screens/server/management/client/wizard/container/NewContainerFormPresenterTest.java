@@ -378,4 +378,69 @@ public class NewContainerFormPresenterTest {
         assertEquals("containerAlias", containerSpec.getContainerName());
         assertEquals("containerName", containerSpec.getId());
     }
+
+    @Test
+    public void testIsArtifactSupportedByServer() {
+        ServerTemplate serverTemplate;
+
+        // version = "", serverTemplate = null
+        when(view.getVersion()).thenReturn("");
+        serverTemplate = null;
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "1.0.0", serverTemplate = null
+        when(view.getVersion()).thenReturn("1.0.0");
+        serverTemplate = null;
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "1.0.0-SNAPSHOT", serverTemplate = null
+        when(view.getVersion()).thenReturn("1.0.0-SNAPSHOT");
+        serverTemplate = null;
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "", serverTemplate = not null, mode = PRODUCTION
+        when(view.getVersion()).thenReturn("");
+        serverTemplate = new ServerTemplate();
+        serverTemplate.setMode(KieServerMode.PRODUCTION);
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "", serverTemplate = not null, mode = DEVELOPMENT
+        when(view.getVersion()).thenReturn("");
+        serverTemplate = new ServerTemplate();
+        serverTemplate.setMode(KieServerMode.DEVELOPMENT);
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "1.0.0", serverTemplate = not null, mode = PRODUCTION
+        when(view.getVersion()).thenReturn("1.0.0");
+        serverTemplate = new ServerTemplate();
+        serverTemplate.setMode(KieServerMode.PRODUCTION);
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "1.0.0", serverTemplate = not null, mode = DEVELOPMENT
+        when(view.getVersion()).thenReturn("1.0.0");
+        serverTemplate = new ServerTemplate();
+        serverTemplate.setMode(KieServerMode.DEVELOPMENT);
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+
+        // version = "1.0.0-SNAPSHOT", serverTemplate = not null, mode = PRODUCTION
+        when(view.getVersion()).thenReturn("1.0.0-SNAPSHOT");
+        serverTemplate = new ServerTemplate();
+        serverTemplate.setMode(KieServerMode.PRODUCTION);
+        presenter.setServerTemplate(serverTemplate);
+        assertFalse(presenter.isArtifactSupportedByServer());
+
+        // version = "1.0.0-SNAPSHOT", serverTemplate = not null, mode = DEVELOPMENT
+        when(view.getVersion()).thenReturn("1.0.0-SNAPSHOT");
+        serverTemplate = new ServerTemplate();
+        serverTemplate.setMode(KieServerMode.DEVELOPMENT);
+        presenter.setServerTemplate(serverTemplate);
+        assertTrue(presenter.isArtifactSupportedByServer());
+    }
 }
