@@ -131,7 +131,7 @@ public class CallActivityPropertyReaderTest {
     }
 
     @Test
-    public void testgetSlaDueDate() {
+    public void testGetSlaDueDate() {
         String rawSlaDueDate = "12/25/1983";
 
         CallActivity callActivity = bpmn2.createCallActivity();

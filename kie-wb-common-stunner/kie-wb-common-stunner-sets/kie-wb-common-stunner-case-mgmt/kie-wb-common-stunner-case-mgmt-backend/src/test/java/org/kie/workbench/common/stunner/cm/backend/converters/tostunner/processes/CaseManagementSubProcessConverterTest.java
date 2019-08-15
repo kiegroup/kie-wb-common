@@ -62,7 +62,7 @@ import static org.mockito.Mockito.when;
 
 public class CaseManagementSubProcessConverterTest {
 
-    private final String SLA_DUE_DATE = "12/25/1983";
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
     private DefinitionResolver definitionResolver;
 
