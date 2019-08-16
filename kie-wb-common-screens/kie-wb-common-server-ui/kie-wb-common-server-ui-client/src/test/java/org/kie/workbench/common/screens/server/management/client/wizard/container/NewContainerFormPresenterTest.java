@@ -380,65 +380,78 @@ public class NewContainerFormPresenterTest {
     }
 
     @Test
-    public void testIsArtifactSupportedByServer() {
-        ServerTemplate serverTemplate;
-
-        // version = "", serverTemplate = null
+    public void testIsArtifactSupportedByServerWhenVersionIsEmptyAndServerTemplateIsNull() {
         when(view.getVersion()).thenReturn("");
-        serverTemplate = null;
+        ServerTemplate serverTemplate = null;
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "1.0.0", serverTemplate = null
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsNotEmptyAndServerTemplateIsNull() {
         when(view.getVersion()).thenReturn("1.0.0");
-        serverTemplate = null;
+        ServerTemplate serverTemplate = null;
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "1.0.0-SNAPSHOT", serverTemplate = null
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsSnapshotAndServerTemplateIsNull() {
         when(view.getVersion()).thenReturn("1.0.0-SNAPSHOT");
-        serverTemplate = null;
+        ServerTemplate serverTemplate = null;
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "", serverTemplate = not null, mode = PRODUCTION
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsEmptyAndServerTemplateModeIsProduction() {
         when(view.getVersion()).thenReturn("");
-        serverTemplate = new ServerTemplate();
+        ServerTemplate serverTemplate = new ServerTemplate();
         serverTemplate.setMode(KieServerMode.PRODUCTION);
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "", serverTemplate = not null, mode = DEVELOPMENT
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsEmptyAndServerTemplateModeIsDevelopment() {
         when(view.getVersion()).thenReturn("");
-        serverTemplate = new ServerTemplate();
+        ServerTemplate serverTemplate = new ServerTemplate();
         serverTemplate.setMode(KieServerMode.DEVELOPMENT);
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "1.0.0", serverTemplate = not null, mode = PRODUCTION
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsNotEmptyAndServerTemplateModeIsProduction() {
         when(view.getVersion()).thenReturn("1.0.0");
-        serverTemplate = new ServerTemplate();
+        ServerTemplate serverTemplate = new ServerTemplate();
         serverTemplate.setMode(KieServerMode.PRODUCTION);
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "1.0.0", serverTemplate = not null, mode = DEVELOPMENT
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsNotEmptyAndServerTemplateModeIsDevelopment() {
         when(view.getVersion()).thenReturn("1.0.0");
-        serverTemplate = new ServerTemplate();
+        ServerTemplate serverTemplate = new ServerTemplate();
         serverTemplate.setMode(KieServerMode.DEVELOPMENT);
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "1.0.0-SNAPSHOT", serverTemplate = not null, mode = PRODUCTION
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsSnapshoptAndServerTemplateModeIsProduction() {
         when(view.getVersion()).thenReturn("1.0.0-SNAPSHOT");
-        serverTemplate = new ServerTemplate();
+        ServerTemplate serverTemplate = new ServerTemplate();
         serverTemplate.setMode(KieServerMode.PRODUCTION);
         presenter.setServerTemplate(serverTemplate);
         assertFalse(presenter.isArtifactSupportedByServer());
+    }
 
-        // version = "1.0.0-SNAPSHOT", serverTemplate = not null, mode = DEVELOPMENT
+    @Test
+    public void testIsArtifactSupportedByServerWhenVersionIsNotSnapshotAndServerTemplateModeIsDevelopment() {
         when(view.getVersion()).thenReturn("1.0.0-SNAPSHOT");
-        serverTemplate = new ServerTemplate();
+        ServerTemplate serverTemplate = new ServerTemplate();
         serverTemplate.setMode(KieServerMode.DEVELOPMENT);
         presenter.setServerTemplate(serverTemplate);
         assertTrue(presenter.isArtifactSupportedByServer());
