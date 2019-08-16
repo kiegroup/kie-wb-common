@@ -72,7 +72,6 @@ import org.kie.workbench.common.screens.library.api.LibraryInfo;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.OrganizationalUnitRepositoryInfo;
 import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
-import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.FindAllLibraryAssetsQuery;
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.LibraryValueFileExtensionIndexTerm;
@@ -108,9 +107,6 @@ public class LibraryServiceImpl implements LibraryService {
     private RefactoringQueryService refactoringQueryService;
     private OrganizationalUnitService ouService;
     private LibraryPreferences preferences;
-
-    private LibraryInternalPreferences internalPreferences;
-
     private AuthorizationManager authorizationManager;
     private SessionInfo sessionInfo;
     private ExplorerServiceHelper explorerServiceHelper;
@@ -143,7 +139,6 @@ public class LibraryServiceImpl implements LibraryService {
                               final KieModuleService moduleService,
                               final ExamplesService examplesService,
                               @Named("ioStrategy") final IOService ioService,
-                              final LibraryInternalPreferences internalPreferences,
                               final UserManagerService userManagerService,
                               final IndexStatusOracle indexOracle,
                               final RepositoryService repoService,
@@ -164,7 +159,6 @@ public class LibraryServiceImpl implements LibraryService {
         this.moduleService = moduleService;
         this.examplesService = examplesService;
         this.ioService = ioService;
-        this.internalPreferences = internalPreferences;
         this.userManagerService = userManagerService;
         this.indexOracle = indexOracle;
         this.repoService = repoService;
@@ -544,11 +538,6 @@ public class LibraryServiceImpl implements LibraryService {
         return preferences;
     }
 
-    LibraryInternalPreferences getInternalPreferences() {
-        internalPreferences.load();
-        return internalPreferences;
-    }
-
     POM createPOM(final String projectName,
                   final String projectDescription,
                   final GAV gav) {
@@ -589,10 +578,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public OrganizationalUnit getDefaultOrganizationalUnit() {
-        String defaultOUIdentifier = getInternalPreferences().getLastOpenedOrganizationalUnit();
-        if (defaultOUIdentifier == null || defaultOUIdentifier.isEmpty()) {
-            defaultOUIdentifier = getPreferences().getOrganizationalUnitPreferences().getName();
-        }
+        final String defaultOUIdentifier = getPreferences().getOrganizationalUnitPreferences().getName();
 
         final List<OrganizationalUnit> organizationalUnits = getOrganizationalUnits();
         final Optional<OrganizationalUnit> defaultOU = getOrganizationalUnit(defaultOUIdentifier,

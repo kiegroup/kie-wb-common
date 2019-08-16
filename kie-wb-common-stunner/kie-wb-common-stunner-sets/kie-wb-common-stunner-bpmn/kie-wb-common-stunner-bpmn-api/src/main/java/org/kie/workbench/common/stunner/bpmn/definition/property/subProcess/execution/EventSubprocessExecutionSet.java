@@ -24,7 +24,8 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
@@ -33,8 +34,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Portable
 @Bindable
 @PropertySet
-@FormDefinition
-public class EventSubprocessExecutionSet implements BPMNPropertySet {
+@FormDefinition(startElement = "isAsync")
+public class EventSubprocessExecutionSet extends BaseSubprocessTaskExecutionSet {
 
     @Property
     @FormField
@@ -42,10 +43,13 @@ public class EventSubprocessExecutionSet implements BPMNPropertySet {
     private IsAsync isAsync;
 
     public EventSubprocessExecutionSet() {
-        this(new IsAsync());
+        this(new IsAsync(),
+             new SLADueDate());
     }
 
-    public EventSubprocessExecutionSet(final @MapsTo("isAsync") IsAsync isAsync) {
+    public EventSubprocessExecutionSet(final @MapsTo("isAsync") IsAsync isAsync,
+                                       final @MapsTo("slaDueDate") SLADueDate slaDueDate) {
+        super(slaDueDate);
         this.isAsync = isAsync;
     }
 
@@ -59,14 +63,16 @@ public class EventSubprocessExecutionSet implements BPMNPropertySet {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(isAsync.hashCode());
+        return HashUtil.combineHashCodes(super.hashCode(),
+                                         Objects.hashCode(isAsync));
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof EventSubprocessExecutionSet) {
             EventSubprocessExecutionSet other = (EventSubprocessExecutionSet) o;
-            return Objects.equals(isAsync, other.isAsync);
+            return super.equals(other) &&
+                    Objects.equals(isAsync, other.isAsync);
         }
         return false;
     }
