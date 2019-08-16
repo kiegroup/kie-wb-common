@@ -251,11 +251,11 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-preferences-client</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-preferences-client-backend</artifactId>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.uberfire</groupId>-->
+      <!--<artifactId>uberfire-preferences-client-backend</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-widgets-service-api</artifactId>
@@ -381,6 +381,12 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-layout-editor-client</artifactId>
       <scope>provided</scope>
+      <exclusions>
+      <exclusion>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-client-backend</artifactId>
+      </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -461,11 +467,11 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-client-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-client-backend</artifactId>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.uberfire</groupId>-->
+      <!--<artifactId>uberfire-client-backend</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client</artifactId>
@@ -659,6 +665,10 @@
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-submarine-client</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench</groupId>
+      <artifactId>kie-wb-common-submarine-api</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
