@@ -112,7 +112,8 @@ public class ChangedFilesScreenPresenter {
         diffList.forEach(diff -> {
             DiffItemPresenter item = diffItemPresenterInstances.get();
             item.setup(diff, warnConflict);
-            this.view.addDiffItem(item.getView(), item::draw);
+            this.view.addDiffItem(item.getView(),
+                                  item::draw);
         });
     }
 

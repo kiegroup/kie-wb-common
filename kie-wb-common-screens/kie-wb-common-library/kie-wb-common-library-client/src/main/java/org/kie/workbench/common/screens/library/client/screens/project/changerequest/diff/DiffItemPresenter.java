@@ -52,7 +52,8 @@ public class DiffItemPresenter {
     private PlaceRequest placeRequestCustomRight;
     private ChangeRequestDiff diff;
     private boolean ready;
-    private boolean open;
+    private boolean open = false;
+    private boolean canClose = false;
 
     @Inject
     public DiffItemPresenter(final View view,
@@ -73,11 +74,7 @@ public class DiffItemPresenter {
     @PreDestroy
     public void preDestroy() {
         if (ready && open) {
-            if (diffMode == DiffMode.VISUAL) {
-                closeVisualContent();
-            } else {
-                closeTextualContent();
-            }
+            closeContent();
         }
     }
 
@@ -95,29 +92,23 @@ public class DiffItemPresenter {
                                                                diff.getOldFilePath().getFileName(),
                                                                diff.getNewFilePath().getFileName());
 
-        if (diffMode == DiffMode.VISUAL) {
-            prepareVisualDiff(diff,
-                              resolveDiffFilename,
-                              warnConflict);
-        } else {
-            prepareTextualDiff(diff,
-                               resolveDiffFilename,
-                               warnConflict);
+        prepareDiff(diff,
+                    resolveDiffFilename,
+                    warnConflict);
+
+        view.expandCollapsibleContainer(open);
+
+        if (open && !canClose) {
+            view.removeCollapseLink();
         }
 
         ready = true;
-
-        view.expandCollapsibleContainer(open);
     }
 
     public void draw() {
         if (ready) {
             if (open) {
-                if (diffMode == DiffMode.VISUAL) {
-                    drawVisualContent();
-                } else {
-                    drawTextualContent();
-                }
+                openContent();
             }
         } else {
             throw new IllegalStateException("Item not ready - setup first.");
@@ -125,23 +116,54 @@ public class DiffItemPresenter {
     }
 
     public void toggleCollapsibleContainerState() {
+        open = !open;
+
+        handleContent();
+    }
+
+    private void prepareDiff(final ChangeRequestDiff diff,
+                             final String filename,
+                             final boolean warnConflict) {
+        if (diffMode == DiffMode.VISUAL) {
+            prepareVisualDiff(diff,
+                              filename,
+                              warnConflict);
+        } else {
+            prepareTextualDiff(diff,
+                               filename,
+                               warnConflict);
+        }
+    }
+
+    private void handleContent() {
         if (ready) {
             if (open) {
-                if (diffMode == DiffMode.VISUAL) {
-                    closeVisualContent();
-                } else {
-                    closeTextualContent();
+                openContent();
+
+                if (!canClose) {
+                    view.removeCollapseLink();
+                    view.expandCollapsibleContainer(true);
                 }
-            } else {
-                if (diffMode == DiffMode.VISUAL) {
-                    drawVisualContent();
-                } else {
-                    drawTextualContent();
-                }
+            } else if (canClose) {
+                closeContent();
             }
         }
+    }
 
-        open = !open;
+    private void closeContent() {
+        if (diffMode == DiffMode.VISUAL) {
+            closeVisualContent();
+        } else {
+            closeTextualContent();
+        }
+    }
+
+    private void openContent() {
+        if (diffMode == DiffMode.VISUAL) {
+            drawVisualContent();
+        } else {
+            drawTextualContent();
+        }
     }
 
     PlaceRequest createPlaceRequest(final Path path) {
@@ -335,5 +357,7 @@ public class DiffItemPresenter {
         void drawUnmodifiedContent();
 
         void removeTextualContent();
+
+        void removeCollapseLink();
     }
 }

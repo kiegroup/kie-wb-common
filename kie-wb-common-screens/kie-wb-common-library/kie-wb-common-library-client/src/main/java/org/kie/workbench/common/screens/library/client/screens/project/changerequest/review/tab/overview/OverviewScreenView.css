@@ -23,10 +23,6 @@
     background-color: transparent;
 }
 
-.overview-container .fix-height:before {
-    content: "\200b";
-}
-
 .overview-container pre {
     border: 0;
     padding: 0;

@@ -29,7 +29,9 @@ import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.NothingToMergeException;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
@@ -104,12 +106,14 @@ public class ChangeRequestReviewScreenPresenter {
         if (workspaceProject != null && workspaceProject.getMainModule() != null) {
             final PlaceRequest place = selectPlaceEvent.getPlace();
 
-            String changeRequestIdValue = place.getParameter(ChangeRequestUtils.CHANGE_REQUEST_ID_KEY, null);
+            if (place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
+                String changeRequestIdValue = place.getParameter(ChangeRequestUtils.CHANGE_REQUEST_ID_KEY, null);
 
-            if (changeRequestIdValue != null && !changeRequestIdValue.equals("") &&
-                    place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
-                this.currentChangeRequestId = Long.parseLong(changeRequestIdValue);
-                this.init(false);
+                if (changeRequestIdValue != null && !changeRequestIdValue.equals("") &&
+                        place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
+                    this.currentChangeRequestId = Long.parseLong(changeRequestIdValue);
+                    this.init(false);
+                }
             }
         }
     }
@@ -175,6 +179,8 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void init(final boolean isReload) {
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
+
         this.reset(isReload);
         this.setup(isReload);
     }
@@ -194,8 +200,6 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void setup(final boolean isReload) {
-        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
-
         changeRequestService.call((ChangeRequest changeRequest) -> this.loadChangeRequest(changeRequest,
                                                                                           isReload),
                                   new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
@@ -261,17 +265,35 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void acceptChangeRequestAction() {
+        busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
+
         this.changeRequestService.call((final Boolean succeeded) -> {
             if (succeeded) {
                 fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestAcceptMessage,
                                                 currentChangeRequestId),
                                       NotificationEvent.NotificationType.SUCCESS);
-            } else {
-                //TODO: [caponetto] handle this case
             }
-        }).acceptChangeRequest(workspaceProject.getSpace().getName(),
+
+            busyIndicatorView.hideBusyIndicator();
+        }, acceptChangeRequestErrorCallback())
+                .acceptChangeRequest(workspaceProject.getSpace().getName(),
                                workspaceProject.getRepository().getAlias(),
                                currentChangeRequestId);
+    }
+
+    private ErrorCallback<Object> acceptChangeRequestErrorCallback() {
+        return (message, throwable) -> {
+            busyIndicatorView.hideBusyIndicator();
+
+            if (throwable instanceof NothingToMergeException) {
+                notificationEvent.fire(
+                        new NotificationEvent(ts.getTranslation(LibraryConstants.NothingToMergeMessage),
+                                              NotificationEvent.NotificationType.WARNING));
+                return false;
+            }
+
+            return true;
+        };
     }
 
     private void revertChangeRequestAction() {

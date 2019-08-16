@@ -140,7 +140,7 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
 
     @Override
     public void addDiffItem(final DiffItemPresenter.View item,
-                            Runnable draw) {
+                            final Runnable draw) {
         this.diffList.appendChild(item.getElement());
         draw.run();
     }

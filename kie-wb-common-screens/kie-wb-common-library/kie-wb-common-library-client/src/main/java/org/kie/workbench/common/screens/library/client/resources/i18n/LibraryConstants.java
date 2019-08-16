@@ -654,6 +654,9 @@ public class LibraryConstants {
     public static final String ChangeRequestAlreadyOpenMessage = "ChangeRequestAlreadyOpenMessage";
 
     @TranslationKey(defaultValue = "")
+    public static final String NothingToMergeMessage = "NothingToMergeMessage";
+
+    @TranslationKey(defaultValue = "")
     public static final String ChangeRequest = "ChangeRequest";
 
     @TranslationKey(defaultValue = "")

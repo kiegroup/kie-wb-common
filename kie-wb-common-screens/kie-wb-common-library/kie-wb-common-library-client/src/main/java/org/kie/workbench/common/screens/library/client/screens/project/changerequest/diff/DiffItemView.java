@@ -171,6 +171,12 @@ public class DiffItemView implements DiffItemPresenter.View,
     }
 
     @Override
+    public void removeCollapseLink() {
+        this.collapseLink.href = "";
+        this.collapseLink.style.cursor = "auto";
+    }
+
+    @Override
     public void drawTextualContent(final String diffText,
                                    final boolean isUnified) {
         if (this.diff2Html == null) {
@@ -200,7 +206,9 @@ public class DiffItemView implements DiffItemPresenter.View,
 
     @EventHandler("collapse-link")
     public void onCollapseLinkClicked(final ClickEvent event) {
-        presenter.toggleCollapsibleContainerState();
+        if (!this.collapseLink.href.equals("")) {
+            presenter.toggleCollapsibleContainerState();
+        }
     }
 
     private void setup(final String filename,

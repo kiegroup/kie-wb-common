@@ -51,8 +51,8 @@ public class ChangedFilesScreenView implements ChangedFilesScreenPresenter.View,
     }
 
     @Override
-    public void addDiffItem(DiffItemPresenter.View item,
-                            Runnable draw) {
+    public void addDiffItem(final DiffItemPresenter.View item,
+                            final Runnable draw) {
         this.diffList.appendChild(item.getElement());
         draw.run();
     }

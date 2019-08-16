@@ -473,6 +473,7 @@ public class DiffItemPresenterTest {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.VISUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("canClose")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("placeRequestCustomLeft"))
                 .set(mock(PlaceRequest.class));
 
@@ -485,11 +486,24 @@ public class DiffItemPresenterTest {
     public void toggleCollapsibleContainerStateWhenReadyOpenTextualTest() throws NoSuchFieldException {
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("canClose")).set(true);
         new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
 
         presenter.toggleCollapsibleContainerState();
 
         verify(view).removeTextualContent();
+    }
+
+    @Test
+    public void toggleCollapsibleContainerStateWhenReadyOpenCannotCloseTextualTest() throws NoSuchFieldException {
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("diffMode")).set(DiffMode.TEXTUAL);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("ready")).set(true);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("canClose")).set(false);
+        new FieldSetter(presenter, DiffItemPresenter.class.getDeclaredField("open")).set(true);
+
+        presenter.toggleCollapsibleContainerState();
+
+        verify(view, never()).removeTextualContent();
     }
 
     @Test

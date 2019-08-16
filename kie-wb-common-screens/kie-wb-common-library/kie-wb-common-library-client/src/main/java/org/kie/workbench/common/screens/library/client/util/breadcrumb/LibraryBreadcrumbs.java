@@ -120,7 +120,7 @@ public class LibraryBreadcrumbs {
                                   () -> libraryPlaces.goToSubmitChangeRequestScreen());
     }
 
-    // Spaces -> {spaceName} -> {projectName} -> {branchName} -> Change Request {#id}
+    // Spaces -> {spaceName} -> {projectName} -> {branchName} -> Change Request ({#id})
     public void setupForChangeRequestReview(final WorkspaceProject project,
                                             final long changeRequestId) {
         setupForProject(project);
