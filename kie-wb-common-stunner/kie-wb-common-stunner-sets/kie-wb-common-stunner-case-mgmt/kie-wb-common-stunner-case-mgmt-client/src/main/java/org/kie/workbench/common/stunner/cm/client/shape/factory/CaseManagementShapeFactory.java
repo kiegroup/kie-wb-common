@@ -48,6 +48,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventT
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
 import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.NonDirectionalAssociation;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
@@ -60,6 +61,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgDiagramShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgNullShapeDef;
@@ -227,7 +229,13 @@ public class CaseManagementShapeFactory implements ShapeFactory<BPMNDefinition, 
                           () -> shapeDefFactory)
                 .delegate(DirectionalAssociation.class,
                           new CaseManagementSvgNullShapeDef(),
-                          () -> shapeDefFactory);
+                          () -> shapeDefFactory)
+                .delegate(NonDirectionalAssociation.class,
+                          new CaseManagementSvgNullShapeDef(),
+                          () -> shapeDefFactory)
+                .delegate(TextAnnotation.class,
+                           new CaseManagementSvgNullShapeDef(),
+                           () -> shapeDefFactory);
     }
 
     @Override
