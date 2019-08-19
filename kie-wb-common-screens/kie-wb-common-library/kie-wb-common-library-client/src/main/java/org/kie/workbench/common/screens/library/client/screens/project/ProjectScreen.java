@@ -33,7 +33,8 @@ import org.guvnor.common.services.project.events.RepositoryContributorsUpdatedEv
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestListUpdatedEvent;
-import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatusUpdatedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -286,8 +287,9 @@ public class ProjectScreen {
         }
     }
 
-    public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
-        if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
+    public void onChangeRequestStatusUpdated(@Observes final ChangeRequestStatusUpdatedEvent event) {
+        if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier()) &&
+                event.getOldStatus() == ChangeRequestStatus.OPEN) {
             this.setupChangeRequestList();
         }
     }

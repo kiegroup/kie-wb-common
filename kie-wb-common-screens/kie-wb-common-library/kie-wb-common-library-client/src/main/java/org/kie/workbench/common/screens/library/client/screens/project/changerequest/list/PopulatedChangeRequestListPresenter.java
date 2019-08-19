@@ -33,6 +33,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatusUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.PaginatedChangeRequestList;
 import org.jboss.errai.common.client.api.Caller;
@@ -85,7 +86,7 @@ public class PopulatedChangeRequestListPresenter {
                                                final Promises promises,
                                                final EmptyState emptyState,
                                                final TranslationService ts,
-                                               final ManagedInstance<ChangeRequestListItemView> changeRequestItem,
+                                               final ManagedInstance<ChangeRequestListItemView> changeRequestItemViews,
                                                final Caller<ChangeRequestService> changeRequestService,
                                                final BusyIndicatorView busyIndicatorView,
                                                final ChangeRequestUtils changeRequestUtils,
@@ -96,7 +97,7 @@ public class PopulatedChangeRequestListPresenter {
         this.promises = promises;
         this.emptyState = emptyState;
         this.ts = ts;
-        this.changeRequestListItemViewInstances = changeRequestItem;
+        this.changeRequestListItemViewInstances = changeRequestItemViews;
         this.changeRequestService = changeRequestService;
         this.busyIndicatorView = busyIndicatorView;
         this.changeRequestUtils = changeRequestUtils;
@@ -130,6 +131,13 @@ public class PopulatedChangeRequestListPresenter {
 
     public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())) {
+            this.refreshList();
+        }
+    }
+
+    public void onChangeRequestStatusUpdated(@Observes final ChangeRequestStatusUpdatedEvent event) {
+        if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier()) &&
+                event.getOldStatus() == ChangeRequestStatus.OPEN) {
             this.refreshList();
         }
     }

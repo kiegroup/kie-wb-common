@@ -77,7 +77,7 @@ public class ChangeRequestListPresenter {
     public void setupList(final Consumer<Integer> openChangeRequestsCallback) {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-        changeRequestService.call((ChangeRequestCountSummary countSummary) -> {
+        changeRequestService.call((final ChangeRequestCountSummary countSummary) -> {
             openChangeRequestsCallback.accept(countSummary.getOpen());
 
             final HTMLElement element = (countSummary.getTotal() == 0) ?

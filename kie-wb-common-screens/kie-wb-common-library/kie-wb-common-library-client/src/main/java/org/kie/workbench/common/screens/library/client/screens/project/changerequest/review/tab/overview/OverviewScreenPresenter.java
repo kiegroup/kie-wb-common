@@ -92,8 +92,10 @@ public class OverviewScreenPresenter {
         if (isInvalidContent(commentText)) {
             view.setCommentInputError(ts.getTranslation(LibraryConstants.MissingCommentText));
         } else {
-            changeRequestService.call()
-                    .addComment(workspaceProject.getSpace().getName(),
+            changeRequestService.call(v -> {
+                this.view.clearCommentInputError();
+                this.view.clearCommentInputField();
+            }).addComment(workspaceProject.getSpace().getName(),
                                 workspaceProject.getRepository().getAlias(),
                                 currentChangeRequestId,
                                 commentText);

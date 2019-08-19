@@ -28,6 +28,7 @@ import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatusUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.NothingToMergeException;
 import org.jboss.errai.common.client.api.Caller;
@@ -107,10 +108,9 @@ public class ChangeRequestReviewScreenPresenter {
             final PlaceRequest place = selectPlaceEvent.getPlace();
 
             if (place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
-                String changeRequestIdValue = place.getParameter(ChangeRequestUtils.CHANGE_REQUEST_ID_KEY, null);
+                final String changeRequestIdValue = place.getParameter(ChangeRequestUtils.CHANGE_REQUEST_ID_KEY, null);
 
-                if (changeRequestIdValue != null && !changeRequestIdValue.equals("") &&
-                        place.getIdentifier().equals(LibraryPlaces.CHANGE_REQUEST_REVIEW)) {
+                if (changeRequestIdValue != null && !changeRequestIdValue.equals("")) {
                     this.currentChangeRequestId = Long.parseLong(changeRequestIdValue);
                     this.init(false);
                 }
@@ -119,6 +119,13 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     public void onChangeRequestUpdated(@Observes final ChangeRequestUpdatedEvent event) {
+        if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())
+                && event.getChangeRequestId() == currentChangeRequestId) {
+            this.init(true);
+        }
+    }
+
+    public void onChangeRequestStatusUpdated(@Observes final ChangeRequestStatusUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())
                 && event.getChangeRequestId() == currentChangeRequestId) {
             this.init(true);
@@ -150,7 +157,7 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     public void cancel() {
-        this.reset(false);
+        this.reset();
 
         this.libraryPlaces.goToProject(workspaceProject);
     }
@@ -181,11 +188,14 @@ public class ChangeRequestReviewScreenPresenter {
     private void init(final boolean isReload) {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-        this.reset(isReload);
+        if (!isReload) {
+            this.reset();
+        }
+
         this.setup(isReload);
     }
 
-    private void reset(final boolean isReload) {
+    private void reset() {
         overviewTabLoaded = false;
         changedFilesTabLoaded = false;
 
@@ -194,9 +204,7 @@ public class ChangeRequestReviewScreenPresenter {
 
         this.view.resetAll();
 
-        if (!isReload) {
-            this.view.activateOverviewTab();
-        }
+        this.view.activateOverviewTab();
     }
 
     private void setup(final boolean isReload) {
@@ -238,6 +246,8 @@ public class ChangeRequestReviewScreenPresenter {
     private void setupButtons(final ChangeRequest changeRequest,
                               final Branch targetBranch) {
         projectController.canUpdateBranch(workspaceProject, targetBranch).then(userCanUpdateBranch -> {
+            this.view.resetButtonState();
+
             if (userCanUpdateBranch) {
                 if (changeRequest.getStatus() == ChangeRequestStatus.ACCEPTED) {
                     this.view.showRevertButton(true);
@@ -343,6 +353,8 @@ public class ChangeRequestReviewScreenPresenter {
         void activateOverviewTab();
 
         void activateChangedFilesTab();
+
+        void resetButtonState();
 
         void resetAll();
     }

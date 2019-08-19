@@ -144,6 +144,11 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
 
     @Override
     public void resetAll() {
+        resetButtonState();
+    }
+
+    @Override
+    public void resetButtonState() {
         this.showAcceptButton(false);
         this.showRejectButton(false);
         this.showRevertButton(false);
