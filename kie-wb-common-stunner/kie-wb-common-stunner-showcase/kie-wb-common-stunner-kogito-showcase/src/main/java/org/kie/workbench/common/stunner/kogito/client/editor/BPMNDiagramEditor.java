@@ -28,7 +28,6 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
-import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
@@ -43,7 +42,6 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.kogito.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
@@ -85,11 +83,6 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
 
     public static final String EDITOR_ID = "BPMNDiagramEditor";
 
-    private final SessionManager sessionManager;
-    private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
-    private final Event<NotificationEvent> notificationEvent;
-
     private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
 
@@ -114,9 +107,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                              final DiagramClientErrorHandler diagramClientErrorHandler,
                              final ClientTranslationService translationService,
                              final DocumentationView documentationView,
-                             final SessionManager sessionManager,
                              final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                              final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                              final DiagramEditorPropertiesDock diagramPropertiesDock,
                              final LayoutHelper layoutHelper,
@@ -137,11 +128,6 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
               diagramClientErrorHandler,
               translationService,
               documentationView);
-        this.sessionManager = sessionManager;
-        this.sessionCommandManager = sessionCommandManager;
-        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
-        this.notificationEvent = notificationEvent;
-
         this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
         this.diagramPropertiesDock = diagramPropertiesDock;
 

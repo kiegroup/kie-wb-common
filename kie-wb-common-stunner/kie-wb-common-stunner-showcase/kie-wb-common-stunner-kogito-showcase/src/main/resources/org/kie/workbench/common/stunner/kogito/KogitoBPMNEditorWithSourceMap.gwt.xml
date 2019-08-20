@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<module rename-to="org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcase">
+<module rename-to="org.kie.workbench.common.stunner.kogito.KogitoBPMNEditor">
 
-  <inherits name="org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcase"/>
+  <inherits name="org.kie.workbench.common.stunner.kogito.KogitoBPMNEditor"/>
 
   <!--
   Reduce GWT compile to just one permutations (includes all locales and browsers)

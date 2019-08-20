@@ -700,7 +700,7 @@
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <draftCompile>true</draftCompile>
           <extraJvmArgs>-Xmx4096m -Xms1024m -Xss1M -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home} -Derrai.dynamic_validation.enabled=true</extraJvmArgs>
-          <module>org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcaseWithSourceMap</module>
+          <module>org.kie.workbench.common.stunner.kogito.KogitoBPMNEditorWithSourceMap</module>
           <style>PRETTY</style>
           <logLevel>INFO</logLevel>
           <noServer>false</noServer>
@@ -837,7 +837,7 @@
               <directory>${basedir}</directory>
               <includes>
                 <include>www-test/**</include>
-                <include>src/main/webapp/org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcase/</include>
+                <include>src/main/webapp/org.kie.workbench.common.stunner.kogito.KogitoBPMNEditor/</include>
                 <include>src/main/webapp/WEB-INF/classes/</include>
                 <include>src/main/webapp/WEB-INF/deploy/</include>
                 <include>src/main/webapp/WEB-INF/lib/</include>
@@ -913,7 +913,7 @@
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>gwt-maven-plugin</artifactId>
               <configuration>
-                <module>org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcase</module>
+                <module>org.kie.workbench.common.stunner.kogito.KogitoBPMNEditor</module>
                 <draftCompile>false</draftCompile>
               </configuration>
             </plugin>
@@ -931,7 +931,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
-              <module>org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcaseWithSourceMap</module>
+              <module>org.kie.workbench.common.stunner.kogito.KogitoBPMNEditorWithSourceMap</module>
               <saveSource>true</saveSource>
             </configuration>
           </plugin>
@@ -948,11 +948,11 @@
                 <configuration>
                   <webResources>
                     <resource>
-                      <directory>${basedir}/target/extra/org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcase/src</directory>
+                      <directory>${basedir}/target/extra/org.kie.workbench.common.stunner.kogito.KogitoBPMNEditor/src</directory>
                       <targetPath>sourcemaps</targetPath>
                     </resource>
                     <resource>
-                      <directory>${basedir}/target/extra/org.kie.workbench.common.stunner.kogito.StunnerStandaloneShowcase/symbolMaps</directory>
+                      <directory>${basedir}/target/extra/org.kie.workbench.common.stunner.kogito.KogitoBPMNEditor/symbolMaps</directory>
                       <includes>
                         <include>*.json</include>
                       </includes>
