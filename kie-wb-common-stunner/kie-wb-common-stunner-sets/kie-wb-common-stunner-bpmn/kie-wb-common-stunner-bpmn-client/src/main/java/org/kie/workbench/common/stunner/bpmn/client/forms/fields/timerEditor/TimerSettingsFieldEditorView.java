@@ -387,7 +387,7 @@ public class TimerSettingsFieldEditorView
         this.optionSupplier = optionSupplier;
     }
 
-    private String buildHtmlHelpText(String header,
+    public static String buildHtmlHelpText(String header,
                                      String... lines) {
         StringBuilder html = new StringBuilder();
         html.append(header);

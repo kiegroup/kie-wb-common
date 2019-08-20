@@ -27,6 +27,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.bpmn.forms.model.SLASettingsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -43,7 +44,8 @@ public class BaseSubprocessTaskExecutionSet implements BPMNPropertySet {
     private IsAsync isAsync;
 
     @Property
-    @FormField(afterElement = "isAsync")
+    @FormField(type = SLASettingsFieldType.class,
+            afterElement = "isAsync")
     @Valid
     protected SLADueDate slaDueDate;
 

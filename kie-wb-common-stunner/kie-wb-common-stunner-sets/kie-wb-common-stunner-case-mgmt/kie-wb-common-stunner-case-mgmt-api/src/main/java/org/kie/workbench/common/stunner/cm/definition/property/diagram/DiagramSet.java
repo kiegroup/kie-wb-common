@@ -36,6 +36,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.bpmn.forms.model.SLASettingsFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.VariablesEditorFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
@@ -110,7 +111,8 @@ public class DiagramSet implements BaseDiagramSet {
     private Executable executable;
 
     @Property
-    @FormField(afterElement = "executable")
+    @FormField(type = SLASettingsFieldType.class,
+            afterElement = "executable")
     @Valid
     private SLADueDate slaDueDate;
 

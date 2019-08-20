@@ -48,6 +48,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptType
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssignmentsEditorFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.GenericServiceTaskEditorFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.MultipleInstanceVariableFieldType;
+import org.kie.workbench.common.stunner.bpmn.forms.model.SLASettingsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -157,7 +158,8 @@ public class GenericServiceTaskExecutionSet implements BPMNPropertySet {
     private OnExitAction onExitAction;
 
     @Property
-    @FormField(afterElement = "onExitAction")
+    @FormField(type = SLASettingsFieldType.class,
+            afterElement = "onExitAction")
     @Valid
     private SLADueDate slaDueDate;
 
