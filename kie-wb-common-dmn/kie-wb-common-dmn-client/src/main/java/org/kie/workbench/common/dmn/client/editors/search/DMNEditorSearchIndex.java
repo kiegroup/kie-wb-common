@@ -17,8 +17,8 @@
 package org.kie.workbench.common.dmn.client.editors.search;
 
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
