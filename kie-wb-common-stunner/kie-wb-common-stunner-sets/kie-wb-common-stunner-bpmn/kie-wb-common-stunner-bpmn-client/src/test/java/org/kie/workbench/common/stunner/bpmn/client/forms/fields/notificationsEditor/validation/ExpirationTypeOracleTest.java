@@ -195,4 +195,16 @@ public class ExpirationTypeOracleTest {
         Expiration result = oracle.guess("R2/P1WT20H13M/2019-05-27T13:00:00Z");
         assertEquals(Expiration.EXPRESSION, result);
     }
+
+    @Test
+    public void testR120190714T133402P33S() {
+        Expiration result = oracle.guess("R1/2019-07-14T13:34-02/P33S");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
+
+    @Test
+    public void testR120190714T133402P33MS() {
+        Expiration result = oracle.guess("R1/2019-07-14T13:34-02/P33MS");
+        assertEquals(Expiration.EXPRESSION, result);
+    }
 }

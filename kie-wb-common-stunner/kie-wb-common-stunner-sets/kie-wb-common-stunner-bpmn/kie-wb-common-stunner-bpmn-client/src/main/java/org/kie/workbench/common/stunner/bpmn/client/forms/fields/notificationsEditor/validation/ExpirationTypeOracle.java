@@ -28,23 +28,20 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notifica
 public class ExpirationTypeOracle {
 
     public static final String ISO_DATE_TIME = "(2[0-9][0-9]{2}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})([:|+|-]([0-9]{2}:[0-9]{2}|[0-9]{2}|00Z))";
-    public static final String REPEATABLE = "^R([0-9]*)";
-    public static final String PERIOD = "P(T?)([1-9]\\d*)([MHDWYS])";
-    public static final String ONE_TIME_EXECUTION = "^(\\d+)([mwhdyMHWDYS])$";
-
-    public static final String TIME = "T([1-9]\\d*[H])?([1-9]\\d*[M])?([1-9]\\d*[S])?([1-9]\\d*MS)?$";
-    public static final String DURATION = "P([1-9]\\d*[Y])?([1-9]\\d*[M])?([1-9]\\d*[W])?([1-9]\\d*[D])?";
-
-    public static final String OLD_DURATION = "^([1-9]\\d*[mhdyMHWDYS])(([1-9]\\d*(m|M){1})?([1-9]\\d*[w|W])?([1-9]\\d*[d|D])?([1-9]\\d*[h|H])?([1-9]\\d*[m|M])?([1-9]\\d*[s|S])?([1-9]\\d*(ms|MS|mS))?)?$";
-
-    public static final String REPEATING_INTERVALS_TIME = REPEATABLE + "/" + DURATION + TIME;
+    public static final String REPEATABLE = "^R([1-9]*[0-9]*)?";
+    public static final String PERIOD = "P(T?)([1-9]\\d*)([MHDY])";
+    public static final String ONE_TIME_EXECUTION = "^(\\d+)([mwhdysMHWDYS]|ms|MS|)$";
+    public static final String DURATION = "P([1-9]\\d*[yY])?([1-9]\\d*[mM])?([1-9]\\d*[wW])?([1-9]\\d*[dD])?(T([1-9]\\d*[hH])?([1-9]\\d*[mM])?([1-9]\\d*[sS])?([1-9]\\d*(ms|MS|mS))?)?";
+    public static final String OLD_DURATION = "^([1-9]\\d*[mhdysMHWDYS|ms|mS])(([1-9]\\d*(m|M){1})?([1-9]\\d*[w|W])?([1-9]\\d*[d|D])?([1-9]\\d*[h|H])?([1-9]\\d*[m|M])?([1-9]\\d*[s|S])?([1-9]\\d*(ms|MS|mS))?)?$";
+    public static final String OLD_MULTIPLE_INTERVALS = "(R([1-9]*[0-9]*)/)?" + DURATION + ",(R([0-9]*)/)?" + DURATION + "$";
     public static final String REPEATING_INTERVALS = REPEATABLE + "/" + DURATION + "$";
+    public static final String JAVA_VARIABLE = "^#\\{([_$a-z][\\w$]*)\\}$";
     public static final String REPEATABLE_START_END = REPEATABLE + "/" + ISO_DATE_TIME + "/" + ISO_DATE_TIME + "$";
     public static final String REPEATABLE_DURATION_END = REPEATABLE + "/" + DURATION + "/" + ISO_DATE_TIME + "$";
 
     private Map<Expiration, List<String>> patterns = ImmutableMap.of(
             Expiration.TIMEPERIOD, Arrays.asList(REPEATABLE + "/" + PERIOD + "$", "^" + PERIOD + "$"),
-            Expiration.DATETIME, Arrays.asList(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD, "^" + ISO_DATE_TIME + "$"),
+            Expiration.DATETIME, Arrays.asList(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD + "$", "^" + ISO_DATE_TIME + "$"),
             Expiration.EXPRESSION, Arrays.asList());
 
     public ExpirationTypeOracle() {

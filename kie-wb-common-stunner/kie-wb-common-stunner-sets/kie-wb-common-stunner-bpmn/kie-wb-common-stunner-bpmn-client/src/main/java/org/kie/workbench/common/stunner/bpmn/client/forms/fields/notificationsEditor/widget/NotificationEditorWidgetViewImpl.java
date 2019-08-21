@@ -140,6 +140,10 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
     @Inject
     @DataField
+    protected HTMLInputElement notCompletedInput;
+
+    @Inject
+    @DataField
     protected HTMLAnchorElement notificationPopover;
 
     @Inject
@@ -177,7 +181,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     @Bound(property = "groups")
     protected MultipleSelectorInput<String> multipleSelectorInputGroups;
 
-    @Bound(property = "type")
     protected Select typeSelect = new Select();
 
     protected Option notStarted = new Option();
@@ -266,9 +269,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
         dateTimePicker.setValue(new Date());
         repeatBox.showLabel(false);
-
-        notStartedInput.checked = true;
-        notStartedInput.type = "radio";
 
         taskStateChanges.addEventListener("change", event -> onTaskStateChanges());
         repeatCountReaches.addEventListener("change", event -> onTaskStateChanges());
@@ -427,11 +427,11 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
         if (row.getType() != null) {
             if (row.getType().equals(NotificationType.NotCompletedNotify)) {
-                notStarted.setSelected(false);
-                notCompleted.setSelected(true);
-            } else {
-                notStarted.setSelected(true);
-                notCompleted.setSelected(false);
+                notCompletedInput.checked = true;
+                notStartedInput.checked = false;
+            } else if (row.getType().equals(NotificationType.NotStartedNotify)) {
+                notCompletedInput.checked = false;
+                notStartedInput.checked = true;
             }
         }
         setExpiration(row);
@@ -566,8 +566,8 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         current.setFrom(searchSelectionFromHandler.getSelectedValue() != null ? searchSelectionFromHandler.getSelectedValue() : "");
         current.setReplyTo(searchSelectionReplyToHandler.getSelectedValue() != null ? searchSelectionReplyToHandler.getSelectedValue() : "");
         current.setExpiresAt(combineISO8601String());
-        current.setType(NotificationType.get(typeSelect.getSelectedItem().getValue()));
         current.setExpiration(Expiration.get(taskExpiration.getValue()));
+        current.setType(notStartedInput.checked ? NotificationType.NotStartedNotify : NotificationType.NotCompletedNotify);
 
         Set<ConstraintViolation<NotificationRow>> violations = validator.validate(current);
         if (violations.isEmpty()) {
@@ -597,7 +597,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         body.clear();
         liveSearchFromDropDown.clearSelection();
         liveSearchReplyToDropDown.clearSelection();
-        notStarted.setSelected(true);
+        notStartedInput.checked = true;
         repeatBox.clear();
         repeatNotification.setValue(false, true);
         taskExpiration.setValue(Expiration.TIMEPERIOD.getName(), true);

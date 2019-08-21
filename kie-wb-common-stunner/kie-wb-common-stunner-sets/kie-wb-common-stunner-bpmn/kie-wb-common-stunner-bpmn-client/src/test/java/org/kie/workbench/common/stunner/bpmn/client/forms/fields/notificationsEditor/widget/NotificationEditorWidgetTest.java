@@ -26,6 +26,7 @@ import javax.validation.Validator;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLInputElement;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
@@ -115,6 +116,10 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     private Select taskExpiration;
 
+    HTMLInputElement notCompletedInput;
+
+    HTMLInputElement notStartedInput;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -131,6 +136,8 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         searchSelectionFromHandler = mock(SingleLiveSearchSelectionHandler.class);
         multipleLiveSearchSelectionHandlerUsers = mock(MultipleLiveSearchSelectionHandler.class);
         multipleLiveSearchSelectionHandlerGroups = mock(MultipleLiveSearchSelectionHandler.class);
+        notCompletedInput = mock(HTMLInputElement.class);
+        notStartedInput = mock(HTMLInputElement.class);
 
         doNothing().when(modal).hide();
         doNothing().when(modal).show();
@@ -146,13 +153,14 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         doCallRealMethod().when(typeSelect).getValue();
 
         doCallRealMethod().when(view).setReadOnly(any(boolean.class));
-        doCallRealMethod().when(view).initTypeSelector();
         doCallRealMethod().when(view).createOrEdit(any(NotificationWidgetView.class), any(NotificationRow.class));
         doCallRealMethod().when(view).save();
 
         setFieldValue(view, "modal", modal);
         setFieldValue(view, "body", body);
         setFieldValue(view, "customerBinder", customerBinder);
+        setFieldValue(view, "notCompletedInput", notCompletedInput);
+        setFieldValue(view, "notStartedInput", notStartedInput);
         setFieldValue(view, "subject", subject);
         setFieldValue(view, "searchSelectionFromHandler", searchSelectionFromHandler);
         setFieldValue(view, "searchSelectionReplyToHandler", searchSelectionReplyToHandler);
@@ -165,8 +173,6 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         setFieldValue(view, "customerBinder", customerBinder);
         setFieldValue(view, "typeSelect", typeSelect);
         setFieldValue(view, "notStarted", notStarted);
-        setFieldValue(view, "notCompleted", notCompleted);
-
         setFieldValue(view, "notCompleted", notCompleted);
 
         doCallRealMethod().when(body).setValue(any(String.class));
@@ -187,7 +193,6 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
         when(translationService.getValue(any(String.class))).thenReturn("Notification");
 
-        view.initTypeSelector();
     }
 
     @Test
