@@ -29,6 +29,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.SkipFormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldType;
 import org.kie.workbench.common.stunner.bpmn.forms.model.MultipleInstanceVariableFieldType;
@@ -42,7 +43,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition(
         startElement = "calledElement"
 )
-public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubprocessTaskExecutionSet {
+public class ReusableSubprocessTaskExecutionSet extends BaseSubprocessTaskExecutionSet implements BaseReusableSubprocessTaskExecutionSet {
 
     @Property
     @SelectorDataProvider(
@@ -77,13 +78,6 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     )
     @Valid
     private WaitForCompletion waitForCompletion;
-
-    @Property
-    @FormField(
-            afterElement = "waitForCompletion"
-    )
-    @Valid
-    private IsAsync isAsync;
 
     @Property
     @SkipFormField
@@ -184,7 +178,8 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
-                                                                                     ""))));
+                                                                                     ""))),
+             new SLADueDate());
     }
 
     public ReusableSubprocessTaskExecutionSet(final @MapsTo("calledElement") CalledElement calledElement,
@@ -202,13 +197,14 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
                                               final @MapsTo("multipleInstanceDataOutput") MultipleInstanceDataOutput multipleInstanceDataOutput,
                                               final @MapsTo("multipleInstanceCompletionCondition") MultipleInstanceCompletionCondition multipleInstanceCompletionCondition,
                                               final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
-                                              final @MapsTo("onExitAction") OnExitAction onExitAction) {
+                                              final @MapsTo("onExitAction") OnExitAction onExitAction,
+                                              final @MapsTo("slaDueDate") SLADueDate slaDueDate) {
+        super(isAsync, slaDueDate);
         this.calledElement = calledElement;
         this.isCase = isCase;
         this.independent = independent;
         this.abortParent = abortParent;
         this.waitForCompletion = waitForCompletion;
-        this.isAsync = isAsync;
         this.adHocAutostart = adHocAutostart;
         this.isMultipleInstance = isMultipleInstance;
         this.multipleInstanceExecutionMode = multipleInstanceExecutionMode;
@@ -269,16 +265,6 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
     @Override
     public void setWaitForCompletion(final WaitForCompletion waitForCompletion) {
         this.waitForCompletion = waitForCompletion;
-    }
-
-    @Override
-    public IsAsync getIsAsync() {
-        return isAsync;
-    }
-
-    @Override
-    public void setIsAsync(final IsAsync isAsync) {
-        this.isAsync = isAsync;
     }
 
     @Override
@@ -383,12 +369,12 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(Objects.hashCode(calledElement),
+        return HashUtil.combineHashCodes(super.hashCode(),
+                                         Objects.hashCode(calledElement),
                                          Objects.hashCode(isCase),
                                          Objects.hashCode(independent),
                                          Objects.hashCode(abortParent),
                                          Objects.hashCode(waitForCompletion),
-                                         Objects.hashCode(isAsync),
                                          Objects.hashCode(adHocAutostart),
                                          Objects.hashCode(isMultipleInstance),
                                          Objects.hashCode(multipleInstanceExecutionMode),
@@ -408,12 +394,12 @@ public class ReusableSubprocessTaskExecutionSet implements BaseReusableSubproces
         }
         if (o instanceof ReusableSubprocessTaskExecutionSet) {
             ReusableSubprocessTaskExecutionSet other = (ReusableSubprocessTaskExecutionSet) o;
-            return Objects.equals(calledElement, other.calledElement) &&
+            return super.equals(other) &&
+                    Objects.equals(calledElement, other.calledElement) &&
                     Objects.equals(isCase, other.isCase) &&
                     Objects.equals(independent, other.independent) &&
                     Objects.equals(abortParent, other.abortParent) &&
                     Objects.equals(waitForCompletion, other.waitForCompletion) &&
-                    Objects.equals(isAsync, other.isAsync) &&
                     Objects.equals(adHocAutostart, other.adHocAutostart) &&
                     Objects.equals(isMultipleInstance, other.isMultipleInstance) &&
                     Objects.equals(multipleInstanceExecutionMode, other.multipleInstanceExecutionMode) &&

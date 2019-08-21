@@ -38,8 +38,12 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseAdHocSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -70,6 +74,7 @@ public class SubProcessConverterTest {
     private static final ScriptTypeValue COMPLETION_CONDITION = new ScriptTypeValue("drools", "the condition");
     private static final ScriptTypeValue ON_ENTRY_ACTION = new ScriptTypeValue("java", "on entry script");
     private static final ScriptTypeValue ON_EXIT_ACTION = new ScriptTypeValue("java", "on exit script");
+    private static final String SLA_DUE_DATE = "12/25/1983";
 
     @Test
     public void JBPM_7525_eventSubProcessShouldStoreIsAsync() {
@@ -92,7 +97,7 @@ public class SubProcessConverterTest {
     private SubProcessConverter tested;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         PropertyWriterFactory factory = new PropertyWriterFactory();
 
         DefinitionsBuildingContext definitionsBuildingContext = new DefinitionsBuildingContext(new GraphImpl("x", new GraphNodeStoreImpl()));
@@ -128,6 +133,17 @@ public class SubProcessConverterTest {
         assertFalse(CustomElement.autoStart.of(writer.getFlowElement()).get());
     }
 
+    private static void setBaseSubprocessExecutionSetValues(BaseSubprocessTaskExecutionSet executionSet) {
+        executionSet.setIsAsync(new IsAsync(Boolean.TRUE));
+        executionSet.setSlaDueDate(new SLADueDate(SLA_DUE_DATE));
+    }
+
+    private static void assertBaseSubprocessExecutionSet(SubProcessPropertyWriter writer) {
+        assertTrue(SubProcessPropertyWriter.class.isInstance(writer));
+        assertTrue(CustomElement.async.of(writer.getElement()).get());
+        assertTrue(CustomElement.slaDueDate.of(writer.getElement()).get().contains(SLA_DUE_DATE));
+    }
+
     @Test
     public void testConvertAdhocSubprocess() {
         AdHocSubprocess definition = new AdHocSubprocess();
@@ -143,6 +159,7 @@ public class SubProcessConverterTest {
         definition.getExecutionSet().getAdHocCompletionCondition().setValue(COMPLETION_CONDITION);
         definition.getExecutionSet().getOnEntryAction().getValue().addValue(ON_ENTRY_ACTION);
         definition.getExecutionSet().getOnExitAction().getValue().addValue(ON_EXIT_ACTION);
+        setBaseSubprocessExecutionSetValues(definition.getExecutionSet());
 
         double nodeX1 = 10;
         double nodeY1 = 20;
@@ -186,6 +203,19 @@ public class SubProcessConverterTest {
         assertEquals(parentY1 + nodeY1, shape.getBounds().getY(), 0);
         assertEquals(nodeX2 - nodeX1, shape.getBounds().getWidth(), 0);
         assertEquals(nodeY2 - nodeY1, shape.getBounds().getHeight(), 0);
+        assertBaseSubprocessExecutionSet(result.value());
+    }
+
+    @Test
+    public void testConvertMultipleIntanceSubprocess() {
+        final MultipleInstanceSubprocess definition = new MultipleInstanceSubprocess();
+        setBaseSubprocessExecutionSetValues(definition.getExecutionSet());
+        final View<MultipleInstanceSubprocess> view = new ViewImpl<>(definition, Bounds.create());
+        final Node<View<MultipleInstanceSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
+        node.setContent(view);
+
+        SubProcessPropertyWriter writer = tested.convertMultipleInstanceSubprocessNode(node);
+        assertBaseSubprocessExecutionSet(writer);
     }
 
     private static void assertVariables(List<Pair<String, String>> expectedVariables, List<Property> properties) {
@@ -200,5 +230,29 @@ public class SubProcessConverterTest {
             assertEquals(String.format("_%sItem", expectedVariable.getK1()), property.getItemSubjectRef().getId());
             assertEquals(expectedVariable.getK2(), property.getItemSubjectRef().getStructureRef());
         }
+    }
+
+    @Test
+    public void testConvertEmbeddedSubprocess() {
+        final EmbeddedSubprocess definition = new EmbeddedSubprocess();
+        setBaseSubprocessExecutionSetValues(definition.getExecutionSet());
+        final View<EmbeddedSubprocess> view = new ViewImpl<>(definition, Bounds.create());
+        final Node<View<EmbeddedSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
+        node.setContent(view);
+
+        SubProcessPropertyWriter writer = tested.convertEmbeddedSubprocessNode(node);
+        assertBaseSubprocessExecutionSet(writer);
+    }
+
+    @Test
+    public void testConvertEventSubprocess() {
+        final EventSubprocess definition = new EventSubprocess();
+        setBaseSubprocessExecutionSetValues(definition.getExecutionSet());
+        final View<EventSubprocess> view = new ViewImpl<>(definition, Bounds.create());
+        final Node<View<EventSubprocess>, ?> node = new NodeImpl<>(UUID.randomUUID().toString());
+        node.setContent(view);
+
+        SubProcessPropertyWriter writer = tested.convertEventSubprocessNode(node);
+        assertBaseSubprocessExecutionSet(writer);
     }
 }

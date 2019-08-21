@@ -25,7 +25,8 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
@@ -39,7 +40,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "onEntryAction")
-public class EmbeddedSubprocessExecutionSet implements BPMNPropertySet {
+public class EmbeddedSubprocessExecutionSet extends BaseSubprocessTaskExecutionSet {
 
     @Property
     @FormField(settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")})
@@ -47,26 +48,27 @@ public class EmbeddedSubprocessExecutionSet implements BPMNPropertySet {
     private OnEntryAction onEntryAction;
 
     @Property
-    @FormField(settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")})
+    @FormField(settings = {@FieldParam(name = "mode", value = "ACTION_SCRIPT")},
+            afterElement = "onEntryAction")
     @Valid
     private OnExitAction onExitAction;
-
-    @Property
-    @FormField(afterElement = "onExitAction")
-    @Valid
-    private IsAsync isAsync;
 
     public EmbeddedSubprocessExecutionSet() {
         this(new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),
              new OnExitAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
-                                                                                     ""))), new IsAsync());
+                                                                                     ""))),
+             new IsAsync(),
+             new SLADueDate());
     }
 
-    public EmbeddedSubprocessExecutionSet(final @MapsTo("onEntryAction") OnEntryAction onEntryAction, final @MapsTo("onExitAction") OnExitAction onExitAction, final @MapsTo("isAsync") IsAsync isAsync) {
+    public EmbeddedSubprocessExecutionSet(final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
+                                          final @MapsTo("onExitAction") OnExitAction onExitAction,
+                                          final @MapsTo("isAsync") IsAsync isAsync,
+                                          final @MapsTo("slaDueDate") SLADueDate slaDueDate) {
+        super(isAsync, slaDueDate);
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
-        this.isAsync = isAsync;
     }
 
     public OnEntryAction getOnEntryAction() {
@@ -85,26 +87,20 @@ public class EmbeddedSubprocessExecutionSet implements BPMNPropertySet {
         this.onExitAction = onExitAction;
     }
 
-    public IsAsync getIsAsync() {
-        return isAsync;
-    }
-
-    public void setIsAsync(IsAsync isAsync) {
-        this.isAsync = isAsync;
-    }
-
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(onEntryAction.hashCode(), onExitAction.hashCode(), isAsync.hashCode());
+        return HashUtil.combineHashCodes(super.hashCode(),
+                                         Objects.hashCode(onEntryAction),
+                                         Objects.hashCode(onExitAction));
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof EmbeddedSubprocessExecutionSet) {
             EmbeddedSubprocessExecutionSet other = (EmbeddedSubprocessExecutionSet) o;
-            return Objects.equals(onEntryAction, other.onEntryAction) &&
-                    Objects.equals(onExitAction, other.onExitAction) &&
-                    Objects.equals(isAsync, other.isAsync);
+            return super.equals(other) &&
+                    Objects.equals(onEntryAction, other.onEntryAction) &&
+                    Objects.equals(onExitAction, other.onExitAction);
         }
         return false;
     }

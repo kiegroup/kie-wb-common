@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -21,8 +22,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.Defini
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.BaseSubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AdHocSubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.cm.definition.AdHocSubprocess;
@@ -65,6 +68,8 @@ public class CaseManagementSubProcessConverter extends BaseSubProcessConverter<A
                                                    new AdHocOrdering(p.getAdHocOrdering()),
                                                    new AdHocAutostart(p.isAdHocAutostart()),
                                                    new OnEntryAction(p.getOnEntryAction()),
-                                                   new OnExitAction(p.getOnExitAction()));
+                                                   new OnExitAction(p.getOnExitAction()),
+                                                   new IsAsync(p.isAsync()),
+                                                   new SLADueDate(p.getSlaDueDate()));
     }
 }
