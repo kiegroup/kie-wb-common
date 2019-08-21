@@ -208,7 +208,7 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void setup(final boolean isReload) {
-        changeRequestService.call((ChangeRequest changeRequest) -> this.loadChangeRequest(changeRequest,
+        changeRequestService.call((final ChangeRequest changeRequest) -> this.loadChangeRequest(changeRequest,
                                                                                           isReload),
                                   new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                 .getChangeRequest(workspaceProject.getSpace().getName(),

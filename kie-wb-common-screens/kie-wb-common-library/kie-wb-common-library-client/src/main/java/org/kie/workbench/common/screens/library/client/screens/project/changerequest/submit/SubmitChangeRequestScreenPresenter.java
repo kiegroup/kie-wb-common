@@ -160,7 +160,7 @@ public class SubmitChangeRequestScreenPresenter {
         projectController.canSubmitChangeRequest(workspaceProject,
                                                  destinationBranch).then(userCanSubmitChangeRequest -> {
             if (userCanSubmitChangeRequest) {
-                changeRequestService.call((ChangeRequest item) -> {
+                changeRequestService.call((final ChangeRequest item) -> {
                     busyIndicatorView.hideBusyIndicator();
 
                     notificationEvent.fire(

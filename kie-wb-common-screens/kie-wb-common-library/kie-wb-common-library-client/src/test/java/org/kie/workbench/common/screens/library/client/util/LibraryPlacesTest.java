@@ -527,42 +527,6 @@ public class LibraryPlacesTest {
     }
 
     @Test
-    public void isSubmitChangeRequestScreenOpenWhenOpenTest() {
-        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(LibraryPlaces.SUBMIT_CHANGE_REQUEST);
-
-        boolean result = libraryPlaces.isSubmitChangeRequestScreenOpen();
-
-        assertTrue(result);
-    }
-
-    @Test
-    public void isSubmitChangeRequestScreenOpenWhenClosedTest() {
-        doReturn(PlaceStatus.CLOSE).when(placeManager).getStatus(LibraryPlaces.SUBMIT_CHANGE_REQUEST);
-
-        boolean result = libraryPlaces.isSubmitChangeRequestScreenOpen();
-
-        assertFalse(result);
-    }
-
-    @Test
-    public void iisChangeRequestReviewScreenOpenWhenOpenTest() {
-        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(LibraryPlaces.CHANGE_REQUEST_REVIEW);
-
-        boolean result = libraryPlaces.isChangeRequestReviewScreenOpen();
-
-        assertTrue(result);
-    }
-
-    @Test
-    public void isChangeRequestReviewScreenOpenWhenClosedTest() {
-        doReturn(PlaceStatus.CLOSE).when(placeManager).getStatus(LibraryPlaces.CHANGE_REQUEST_REVIEW);
-
-        boolean result = libraryPlaces.isChangeRequestReviewScreenOpen();
-
-        assertFalse(result);
-    }
-
-    @Test
     public void goToAssetTestWithPackage() {
 
         final ObservablePath path = mock(ObservablePath.class);

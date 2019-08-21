@@ -290,9 +290,27 @@ public class PopulatedChangeRequestListPresenter {
         };
     }
 
-    private IsWidget resolveChangeRequestStatusIcon(ChangeRequestStatus status) {
+    private IsWidget resolveChangeRequestStatusIcon(final ChangeRequestStatus status) {
         //TODO: [caponetto] resolve the icons when UX provides them
-        return new InlineLabel(changeRequestUtils.formatStatus(status).substring(0, 1).toUpperCase());
+
+        String tempIcon;
+        switch (status) {
+            case OPEN:
+                tempIcon = "O"; // open
+                break;
+            case ACCEPTED:
+            case REVERTED:
+            case REVERT_FAILED:
+                tempIcon = "M"; // merged
+                break;
+
+            case REJECTED:
+            default:
+                tempIcon = "C"; // closed
+                break;
+        }
+
+        return new InlineLabel(tempIcon);
     }
 
     private void setupCounters(final int totalChangeRequests) {

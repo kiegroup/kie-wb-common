@@ -17,6 +17,7 @@ package org.kie.workbench.common.screens.library.client.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,6 +179,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     private Caller<OrganizationalUnitService> organizationalUnitService;
 
     private boolean closingLibraryPlaces = false;
+
+    private PlaceRequest changeRequestReviewScreen = null;
 
     public LibraryPlaces() {
     }
@@ -545,25 +548,19 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     public void goToChangeRequestReviewScreen(final long changeRequestId) {
-        final PlaceRequest changeRequestReviewScreen = new DefaultPlaceRequest(LibraryPlaces.CHANGE_REQUEST_REVIEW);
-        changeRequestReviewScreen.addParameter(ChangeRequestUtils.CHANGE_REQUEST_ID_KEY,
-                                               String.valueOf(changeRequestId));
+        placeManager.closePlace(changeRequestReviewScreen);
+
+        changeRequestReviewScreen =
+                new DefaultPlaceRequest(LibraryPlaces.CHANGE_REQUEST_REVIEW,
+                                        Collections.singletonMap(ChangeRequestUtils.CHANGE_REQUEST_ID_KEY,
+                                                                 String.valueOf(changeRequestId)));
+
         final PartDefinitionImpl part = new PartDefinitionImpl(changeRequestReviewScreen);
         part.setSelectable(false);
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
         libraryBreadcrumbs.setupForChangeRequestReview(getActiveWorkspace(),
                                                        changeRequestId);
-    }
-
-    public boolean isSubmitChangeRequestScreenOpen() {
-        final PlaceStatus placeStatus = placeManager.getStatus(SUBMIT_CHANGE_REQUEST);
-        return placeStatus.equals(PlaceStatus.OPEN);
-    }
-
-    public boolean isChangeRequestReviewScreenOpen() {
-        final PlaceStatus placeStatus = placeManager.getStatus(CHANGE_REQUEST_REVIEW);
-        return placeStatus.equals(PlaceStatus.OPEN);
     }
 
     public void goToTrySamples() {
