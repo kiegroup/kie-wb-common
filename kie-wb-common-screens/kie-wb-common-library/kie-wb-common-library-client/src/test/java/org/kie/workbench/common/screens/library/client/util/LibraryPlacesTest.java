@@ -52,7 +52,6 @@ import org.kie.workbench.common.screens.examples.model.ImportProject;
 import org.kie.workbench.common.screens.explorer.model.URIStructureExplorerModel;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
-import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
 import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.screens.importrepository.ImportProjectsSetupEvent;
@@ -66,6 +65,7 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
@@ -80,7 +80,6 @@ import org.uberfire.ext.widgets.common.client.breadcrumbs.UberfireBreadcrumbs;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
@@ -180,11 +179,11 @@ public class LibraryPlacesTest {
     private LibraryBreadcrumbs libraryBreadcrumbs;
 
     @Mock
-    private LibraryInternalPreferences libraryInternalPreferences;
-
-    @Mock
     private OrganizationalUnitService organizationalUnitService;
     private Caller<OrganizationalUnitService> organizationalUnitServiceCaller;
+
+    @Mock
+    private Logger logger;
 
     @Captor
     private ArgumentCaptor<WorkspaceProjectContextChangeEvent> projectContextChangeEventArgumentCaptor;
@@ -234,11 +233,11 @@ public class LibraryPlacesTest {
                                               projectsSetupEvent,
                                               libraryBreadcrumbs,
                                               sessionInfo,
-                                              libraryInternalPreferences,
                                               repositoryServiceCaller,
                                               new SyncPromises(),
                                               mock(OrganizationalUnitController.class),
-                                              organizationalUnitServiceCaller) {
+                                              organizationalUnitServiceCaller,
+                                              logger) {
 
             @Override
             protected Map<String, List<String>> getParameterMap() {
@@ -287,16 +286,6 @@ public class LibraryPlacesTest {
         doReturn(pathPlaceRequest).when(libraryPlaces).createPathPlaceRequest(any());
 
         doReturn(importRepositoryPopUpPresenter).when(importRepositoryPopUpPresenters).get();
-
-        doAnswer(invocationOnMock -> {
-            invocationOnMock.getArgumentAt(0, ParameterizedCommand.class).execute(libraryInternalPreferences);
-            return null;
-        }).when(libraryInternalPreferences).load(any(ParameterizedCommand.class), any(ParameterizedCommand.class));
-
-        doAnswer(invocationOnMock -> {
-            invocationOnMock.getArgumentAt(0, Command.class).execute();
-            return null;
-        }).when(libraryInternalPreferences).save(any(Command.class), any(ParameterizedCommand.class));
     }
 
     @Test
@@ -565,18 +554,18 @@ public class LibraryPlacesTest {
 
         doReturn(mock(OrganizationalUnit.class)).when(libraryService).getDefaultOrganizationalUnit();
 
-        final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
+        final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
 
         libraryPlaces.goToLibrary();
 
-        verify(libraryPlaces).closeLibraryPlaces();
+        verify(placeManager).closeAllPlaces();
         verify(placeManager).goTo(eq(part),
                                   any(PanelDefinition.class));
-        verify(libraryBreadcrumbs).setupForSpace(any());
+        verify(libraryBreadcrumbs).setupForSpacesScreen();
         verify(projectContextChangeEvent,
-               times(2)).fire(any(WorkspaceProjectContextChangeEvent.class));
+               times(1)).fire(any(WorkspaceProjectContextChangeEvent.class));
     }
 
     @Test
@@ -708,13 +697,11 @@ public class LibraryPlacesTest {
                                                               activeRepository,
                                                               activeBranch,
                                                               mock(Module.class));
-        final Branch lastOpenedBranch = new Branch("master", mock(Path.class));
-        doReturn(Optional.of(lastOpenedBranch)).when(libraryInternalPreferences).getLastBranchOpened(project);
-        doReturn(activeProject).when(projectService).resolveProject(activeSpace, lastOpenedBranch);
+        doReturn(activeProject).when(projectService).resolveProject(activeSpace, activeBranch);
 
         libraryPlaces.goToProject(project);
 
-        verify(libraryPlaces).goToProject(project, lastOpenedBranch);
+        verify(libraryPlaces).goToProject(project, activeBranch);
         verify(projectContextChangeEvent).fire(any(WorkspaceProjectContextChangeEvent.class));
         verify(placeManager).closeAllPlaces();
     }
@@ -739,17 +726,13 @@ public class LibraryPlacesTest {
                                                               activeRepository,
                                                               activeBranch,
                                                               mock(Module.class));
-        final Branch lastOpenedBranch = new Branch("master", mock(Path.class));
         final Branch otherBranch = new Branch("other-branch", mock(Path.class));
 
-        doReturn(Optional.of(lastOpenedBranch)).when(libraryInternalPreferences).getLastBranchOpened(project);
         doReturn(activeProject).when(projectService).resolveProject(activeSpace, otherBranch);
 
         libraryPlaces.goToProject(project,
                                   otherBranch);
 
-        verify(libraryInternalPreferences).setLastBranchOpened(project, otherBranch);
-        verify(libraryInternalPreferences).save(any(Command.class), any());
         verify(libraryPlaces).goToProject(activeProject);
     }
 
@@ -760,14 +743,11 @@ public class LibraryPlacesTest {
                                                               activeBranch,
                                                               mock(Module.class));
 
-        doReturn(Optional.of(activeBranch)).when(libraryInternalPreferences).getLastBranchOpened(project);
         doReturn(activeProject).when(projectService).resolveProject(activeSpace, activeBranch);
 
         libraryPlaces.goToProject(project,
                                   activeBranch);
 
-        verify(libraryInternalPreferences, never()).setLastBranchOpened(any(), any());
-        verify(libraryInternalPreferences, never()).save(any(Command.class), any());
         verify(libraryPlaces).goToProject(activeProject);
     }
 

@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.showcase.client.editor;
 
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,6 +89,7 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.uberfire.lifecycle.OnClose;
@@ -212,7 +214,24 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         kieView.getMultiPage().addPage(dataTypesPage);
         kieView.getMultiPage().addPage(includedModelsPage);
 
+        setupEditorSearchIndex();
         setupSearchComponent();
+    }
+
+    private void setupEditorSearchIndex() {
+        editorSearchIndex.setCurrentAssetHashcodeSupplier(getHashcodeSupplier());
+        editorSearchIndex.setIsDataTypesTabActiveSupplier(getIsDataTypesTabActiveSupplier());
+    }
+
+    Supplier<Integer> getHashcodeSupplier() {
+        return () -> getDiagram().hashCode();
+    }
+
+    Supplier<Boolean> getIsDataTypesTabActiveSupplier() {
+        return () -> {
+            final int selectedPageIndex = kieView.getMultiPage().selectedPage();
+            return selectedPageIndex == DATA_TYPES_PAGE_INDEX;
+        };
     }
 
     void setupSearchComponent() {
@@ -378,6 +397,14 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                 .build();
     }
 
+    public void onMultiPageEditorSelectedPageEvent(final @Observes MultiPageEditorSelectedPageEvent event) {
+        searchBarComponent.disableSearch();
+    }
+
+    public void onRefreshFormPropertiesEvent(final @Observes RefreshFormPropertiesEvent event) {
+        searchBarComponent.disableSearch();
+    }
+
     private void load(final String name,
                       final Command callback) {
         BusyPopup.showMessage("Loading");
@@ -533,7 +560,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         }
     }
 
-    private void onEditExpressionEvent(final @Observes EditExpressionEvent event) {
+    void onEditExpressionEvent(final @Observes EditExpressionEvent event) {
+        searchBarComponent.disableSearch();
         if (isSameSession(event.getSession())) {
             final DMNSession session = sessionManager.getCurrentSession();
             final ExpressionEditorView.Presenter expressionEditor = session.getExpressionEditor();

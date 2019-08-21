@@ -35,9 +35,15 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
 
     private String currentTerm;
 
-    private Supplier<Boolean> isDirtySupplier = () -> false;
+    private Integer currentAssetHash = null;
 
     private Command noResultsFoundCallback = () -> {/* Nothing */};
+
+    private Command clearCurrentResultsCallback = () -> {/* Nothing */};
+
+    private Supplier<Integer> currentAssetHashcodeSupplier;
+
+    private Command searchClosedCallback = () -> {/* Nothing */};
 
     @Override
     public List<HasSearchableElements<T>> getSubIndexes() {
@@ -52,7 +58,8 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
     @Override
     public void search(final String term) {
 
-        final boolean isNewSearch = !Objects.equals(term, currentTerm);
+        triggerClearCurrentResultsCallback();
+        final boolean isNewSearch = !Objects.equals(term, currentTerm) || isDirty();
         final Optional<T> result;
 
         if (isNewSearch) {
@@ -79,10 +86,10 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
     }
 
     @Override
-    public void reset() {
+    public void close() {
         results = new ArrayList<>();
         currentTerm = "";
-        triggerNoResultsFoundCommand();
+        triggerSearchClosedCommand();
     }
 
     @Override
@@ -91,13 +98,18 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
     }
 
     @Override
-    public void setIsDirtySupplier(final Supplier<Boolean> isDirtySupplier) {
-        this.isDirtySupplier = isDirtySupplier;
+    public void setClearCurrentResultsCallback(final Command callback) {
+        clearCurrentResultsCallback = callback;
+    }
+
+    @Override
+    public void setSearchClosedCallback(final Command searchClosedCallback) {
+        this.searchClosedCallback = searchClosedCallback;
     }
 
     @Override
     public boolean isDirty() {
-        return isDirtySupplier.get();
+        return currentAssetHash != null && !Objects.equals(currentAssetHash, getCurrentAssetHashcode());
     }
 
     @Override
@@ -112,6 +124,21 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
         final Optional<T> result = findPreviousElement();
         currentResult = result.orElse(null);
         triggerOnFoundCommand();
+    }
+
+    @Override
+    public Integer getCurrentAssetHashcode() {
+        return getCurrentAssetHashcodeSupplier()
+                .map(Supplier::get)
+                .orElseThrow(() -> new UnsupportedOperationException("The asset hashcode supplier must be set in the 'EditorSearchIndex'."));
+    }
+
+    public void setCurrentAssetHashcodeSupplier(final Supplier<Integer> currentAssetHashcodeSupplier) {
+        this.currentAssetHashcodeSupplier = currentAssetHashcodeSupplier;
+    }
+
+    private Optional<Supplier<Integer>> getCurrentAssetHashcodeSupplier() {
+        return Optional.ofNullable(currentAssetHashcodeSupplier);
     }
 
     List<T> getResults() {
@@ -165,13 +192,23 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
 
         final List<T> searchableElements = getSearchableElements();
 
+        updateCurrentHashcode();
+        updateResultsState(term, searchableElements);
+    }
+
+    private void updateResultsState(final String term, final List<T> searchableElements) {
         results = searchableElements
                 .stream()
                 .filter(element -> element.matches(term))
                 .collect(Collectors.toList());
     }
 
+    private void updateCurrentHashcode() {
+        currentAssetHash = getCurrentAssetHashcode();
+    }
+
     private void triggerOnFoundCommand() {
+        triggerClearCurrentResultsCallback();
         if (getCurrentResult().isPresent()) {
             getCurrentResult().get().onFound().execute();
         } else {
@@ -181,6 +218,14 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
 
     private void triggerNoResultsFoundCommand() {
         noResultsFoundCallback.execute();
+    }
+
+    private void triggerClearCurrentResultsCallback() {
+        clearCurrentResultsCallback.execute();
+    }
+
+    private void triggerSearchClosedCommand() {
+        searchClosedCallback.execute();
     }
 
     private Optional<T> getCurrentResult() {

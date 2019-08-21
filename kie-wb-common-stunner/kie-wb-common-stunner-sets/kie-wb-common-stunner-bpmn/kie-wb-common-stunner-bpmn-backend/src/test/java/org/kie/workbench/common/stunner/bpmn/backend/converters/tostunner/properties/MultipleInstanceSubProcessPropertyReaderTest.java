@@ -19,18 +19,37 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 import java.util.Collections;
 
 import org.eclipse.bpmn2.Definitions;
+import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
 
 public class MultipleInstanceSubProcessPropertyReaderTest {
+
+    private DefinitionResolver definitionResolverReal;
+
+    private MultipleInstanceSubProcessPropertyReader tested;
+
+    @Before
+    public void setUp() {
+        Definitions definitions = bpmn2.createDefinitions();
+        definitions.getRootElements().add(bpmn2.createProcess());
+        BPMNDiagram bpmnDiagram = di.createBPMNDiagram();
+        bpmnDiagram.setPlane(di.createBPMNPlane());
+        definitions.getDiagrams().add(bpmnDiagram);
+
+        definitionResolverReal = new DefinitionResolver(definitions, Collections.emptyList());
+    }
 
     @Test
     public void defaultReturnValues() {
@@ -41,6 +60,7 @@ public class MultipleInstanceSubProcessPropertyReaderTest {
         assertEquals("", p.getDataInput());
         assertEquals("", p.getDataOutput());
         assertEquals("", p.getCompletionCondition());
+        assertEquals("", p.getSlaDueDate());
     }
 
     // internal mock
@@ -63,5 +83,33 @@ public class MultipleInstanceSubProcessPropertyReaderTest {
             d.getRootElements().add(bpmn2.createProcess());
             return d;
         }
+    }
+
+    @Test
+    public void testIsAsync() {
+        SubProcess multipleInstanceSubProcess = bpmn2.createSubProcess();
+        multipleInstanceSubProcess.setLoopCharacteristics(bpmn2.createMultiInstanceLoopCharacteristics());
+        CustomElement.async.of(multipleInstanceSubProcess).set(Boolean.TRUE);
+
+        tested = new MultipleInstanceSubProcessPropertyReader(multipleInstanceSubProcess,
+                                                              definitionResolverReal.getDiagram(),
+                                                              definitionResolverReal);
+
+        assertTrue(tested.isAsync());
+    }
+
+    @Test
+    public void testGetSlaDueDate() {
+        String rawSlaDueDate = "12/25/1983";
+
+        SubProcess multipleInstanceSubProcess = bpmn2.createSubProcess();
+        multipleInstanceSubProcess.setLoopCharacteristics(bpmn2.createMultiInstanceLoopCharacteristics());
+        CustomElement.slaDueDate.of(multipleInstanceSubProcess).set(rawSlaDueDate);
+
+        tested = new MultipleInstanceSubProcessPropertyReader(multipleInstanceSubProcess,
+                                                              definitionResolverReal.getDiagram(),
+                                                              definitionResolverReal);
+
+        assertTrue(tested.getSlaDueDate().contains(rawSlaDueDate));
     }
 }

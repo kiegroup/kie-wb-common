@@ -244,6 +244,18 @@ public class DMNGridSubIndexTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void testOnNoResultsFound() {
+        index.onNoResultsFound();
+        verify(dmnGridHelper).clearSelections();
+    }
+
+    @Test
+    public void testOnSearchClosed() {
+        index.onSearchClosed();
+        verify(dmnGridHelper).focusGridPanel();
+    }
+
     private Set<GridWidget> asSet(final GridWidget... a) {
         return new HashSet<>(asList(a));
     }

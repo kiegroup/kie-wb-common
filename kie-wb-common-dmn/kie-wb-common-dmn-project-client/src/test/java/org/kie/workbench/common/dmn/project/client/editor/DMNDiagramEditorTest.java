@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.project.client.editor;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 
@@ -72,6 +73,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
@@ -82,6 +84,9 @@ import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.project.client.editor.DMNDiagramEditor.DATA_TYPES_PAGE_INDEX;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -282,6 +287,13 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Test
     public void testInit() {
+
+        final Supplier<Boolean> isDataTypesTabActiveSupplier = () -> true;
+        final Supplier<Integer> currentContentHashSupplier = () -> 123;
+
+        doReturn(isDataTypesTabActiveSupplier).when(diagramEditor).getIsDataTypesTabActiveSupplier();
+        doReturn(currentContentHashSupplier).when(diagramEditor).getGetCurrentContentHashSupplier();
+
         diagramEditor.init();
 
         //DMNProjectEditorMenuSessionItems.setErrorConsumer(..) is called several times so just check the last invocation
@@ -291,6 +303,20 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
         verify(view).hideBusyIndicator();
         verify(errorPopupPresenter, never()).showMessage(anyString());
+        verify(editorSearchIndex).setIsDataTypesTabActiveSupplier(isDataTypesTabActiveSupplier);
+        verify(editorSearchIndex).setCurrentAssetHashcodeSupplier(currentContentHashSupplier);
+    }
+
+    @Test
+    public void testGetIsDataTypesTabActiveSupplierWhenDataTypesTabIsActive() {
+        when(multiPage.selectedPage()).thenReturn(DATA_TYPES_PAGE_INDEX);
+        assertTrue(diagramEditor.getIsDataTypesTabActiveSupplier().get());
+    }
+
+    @Test
+    public void testGetIsDataTypesTabActiveSupplierWhenDataTypesTabIsNotActive() {
+        when(multiPage.selectedPage()).thenReturn(DATA_TYPES_PAGE_INDEX + 1);
+        assertFalse(diagramEditor.getIsDataTypesTabActiveSupplier().get());
     }
 
     @Test
@@ -393,6 +419,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
         diagramEditor.onEditExpressionEvent(editExpressionEvent);
 
+        verify(searchBarComponent).disableSearch();
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               any(NavigateToExpressionEditorCommand.class));
     }
@@ -473,5 +500,17 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     public void testStunnerSave_ValidationUnsuccessful() {
         final Overview overview = assertBasicStunnerSaveOperation(false);
         assertSaveOperation(overview);
+    }
+
+    @Test
+    public void testOnMultiPageEditorSelectedPageEvent() {
+        diagramEditor.onMultiPageEditorSelectedPageEvent(mock(MultiPageEditorSelectedPageEvent.class));
+        verify(searchBarComponent).disableSearch();
+    }
+
+    @Test
+    public void testOnRefreshFormPropertiesEvent() {
+        diagramEditor.onRefreshFormPropertiesEvent(mock(RefreshFormPropertiesEvent.class));
+        verify(searchBarComponent).disableSearch();
     }
 }

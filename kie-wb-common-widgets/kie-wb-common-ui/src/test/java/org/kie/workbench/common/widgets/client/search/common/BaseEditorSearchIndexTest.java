@@ -17,6 +17,7 @@
 package org.kie.workbench.common.widgets.client.search.common;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
@@ -48,6 +49,11 @@ public class BaseEditorSearchIndexTest {
     @Mock
     private Command noResultsFoundCallback;
 
+    @Mock
+    private Command searchClosedCallback;
+
+    private Supplier<Integer> currentAssetHashcodeSupplier;
+
     private FakeEditorSearchIndex index;
 
     private List<FakeSearchable> searchableElements;
@@ -68,9 +74,12 @@ public class BaseEditorSearchIndexTest {
         searchable3 = spy(new FakeSearchable("Element 3"));
         searchable4 = spy(new FakeSearchable("Element 4"));
         searchableElements = asList(searchable1, searchable2, searchable3, searchable4);
+        currentAssetHashcodeSupplier = () -> 123;
 
         index = new FakeEditorSearchIndex(searchableElements);
         index.setNoResultsFoundCallback(noResultsFoundCallback);
+        index.setSearchClosedCallback(searchClosedCallback);
+        index.setCurrentAssetHashcodeSupplier(currentAssetHashcodeSupplier);
     }
 
     @Test
@@ -95,6 +104,20 @@ public class BaseEditorSearchIndexTest {
         verify(searchable3, never()).onFound();
         verify(searchable4, never()).onFound();
         verify(noResultsFoundCallback).execute();
+    }
+
+    @Test
+    public void testSearchWhenSearchIsTriggeredTwiceButUserHasUpdatedAsset() {
+
+        index.search("Element");
+        index.setCurrentAssetHashcodeSupplier(() -> currentAssetHashcodeSupplier.get() + 1);
+        index.search("Element");
+
+        verify(searchable1, Mockito.times(2)).onFound();
+        verify(searchable2, never()).onFound();
+        verify(searchable3, never()).onFound();
+        verify(searchable4, never()).onFound();
+        verify(noResultsFoundCallback, never()).execute();
     }
 
     @Test
@@ -126,14 +149,23 @@ public class BaseEditorSearchIndexTest {
     }
 
     @Test
-    public void testIsDirtyWhenItReturnsFalse() {
-        index.setIsDirtySupplier(() -> false);
+    public void testIsDirtyWhenItsTheFirstSearch() {
         assertFalse(index.isDirty());
     }
 
     @Test
-    public void testIsDirtyWhenItReturnsTrue() {
-        index.setIsDirtySupplier(() -> true);
+    public void testIsDirtyWhenItsTheSecondSearch() {
+        index.search("element");
+        assertFalse(index.isDirty());
+    }
+
+    @Test
+    public void testIsDirtyWhenItsTheSecondSearchAndUserHasUpdatedTheAsset() {
+        index.search("element");
+
+        // The user has updated the asset.
+        index.setCurrentAssetHashcodeSupplier(() -> currentAssetHashcodeSupplier.get() + 1);
+
         assertTrue(index.isDirty());
     }
 
@@ -211,16 +243,17 @@ public class BaseEditorSearchIndexTest {
     }
 
     @Test
-    public void testReset() {
+    public void testClose() {
 
         index.search("Element");
 
-        index.reset();
+        index.close();
 
         assertEquals(0, index.getTotalOfResultsNumber());
         assertEquals(0, index.getCurrentResultNumber());
         assertEquals("", index.getCurrentTerm());
         assertEquals(0, index.getResults().size());
+        verify(searchClosedCallback).execute();
     }
 
     private void times(final int times,

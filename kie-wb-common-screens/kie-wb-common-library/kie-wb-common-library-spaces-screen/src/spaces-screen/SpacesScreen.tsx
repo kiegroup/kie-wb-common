@@ -56,14 +56,7 @@ export class SpacesScreen extends React.Component<Props, State> {
         );
         return Promise.resolve();
     } else {
-        return this.showLoadingPopupWhile(
-            Service.updateLibraryPreference({
-                projectExplorerExpanded: false,
-                lastOpenedOrganizationalUnit: space.name
-            }).then(() => {
-                return LibraryPlaces.goToSpace(space.name);
-            })
-        );
+        return this.showLoadingPopupWhile(LibraryPlaces.goToSpace(space.name));
     }
   }
 
@@ -115,7 +108,7 @@ export class SpacesScreen extends React.Component<Props, State> {
         )}
 
         {this.state.spaces.length <= 0 && (
-          <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()} />
+          <EmptySpacesScreen onAddSpace={() => this.openNewSpacePopup()} canCreateSpace={() => this.canCreateSpace()} />
         )}
 
         {this.state.spaces.length > 0 && (
@@ -160,7 +153,7 @@ export class SpacesScreen extends React.Component<Props, State> {
   }
 }
 
-export function EmptySpacesScreen(props: { onAddSpace: () => void }) {
+export function EmptySpacesScreen(props: { onAddSpace: () => void; canCreateSpace: () => boolean }) {
   return (
     <div className={"library"}>
       <div className={"col-sm-12 blank-slate-pf"}>
@@ -175,17 +168,19 @@ export function EmptySpacesScreen(props: { onAddSpace: () => void }) {
           ])}
         </p>
         <div className={"blank-slate-pf-main-action"}>
-          <button
-            className={"btn btn-primary btn-lg"}
-            onClick={() => props.onAddSpace()}
-          >
-            {AppFormer.translate("CreateOrganizationalUnit", [
-              AppFormer.translate(
-                "OrganizationalUnitDefaultAliasInSingular",
-                []
-              )
-            ])}
-          </button>
+          {props.canCreateSpace() && (
+            <button
+              className={"btn btn-primary btn-lg"}
+              onClick={() => props.onAddSpace()}
+            >
+              {AppFormer.translate("CreateOrganizationalUnit", [
+                AppFormer.translate(
+                  "OrganizationalUnitDefaultAliasInSingular",
+                  []
+                )
+              ])}
+            </button>
+          )}
         </div>
       </div>
     </div>

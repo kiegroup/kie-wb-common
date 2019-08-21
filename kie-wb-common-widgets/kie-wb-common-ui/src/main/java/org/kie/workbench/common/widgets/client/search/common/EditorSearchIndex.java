@@ -17,7 +17,6 @@
 package org.kie.workbench.common.widgets.client.search.common;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.uberfire.mvp.Command;
 
@@ -58,11 +57,19 @@ public interface EditorSearchIndex<T extends Searchable> {
      */
     void setNoResultsFoundCallback(final Command callback);
 
+    void setSearchClosedCallback(final Command callback);
+
     /**
-     * Sets the <code>isDirty</code> logic.
-     * @param isDirtySupplier represents the <code>isDirty</code> logic.
+     * Sets the callback that will be triggered when the current search results needs to be cleared.
+     * @param callback the callback that will be triggered
      */
-    void setIsDirtySupplier(final Supplier<Boolean> isDirtySupplier);
+    void setClearCurrentResultsCallback(final Command callback);
+
+    /**
+     * This method is used by the <code>isDirty</code> logic.
+     * @return the asset hashcode.
+     */
+    Integer getCurrentAssetHashcode();
 
     /**
      * Check if the index is dirty.
@@ -97,5 +104,5 @@ public interface EditorSearchIndex<T extends Searchable> {
      * It affects the <code>isDirty</code>, the <code>nextResult</code>, the <code>previousResult</code>,
      * the <code>getCurrentResultNumber</code>, and the <code>getTotalOfResultsNumber</code> method.
      */
-    void reset();
+    void close();
 }
