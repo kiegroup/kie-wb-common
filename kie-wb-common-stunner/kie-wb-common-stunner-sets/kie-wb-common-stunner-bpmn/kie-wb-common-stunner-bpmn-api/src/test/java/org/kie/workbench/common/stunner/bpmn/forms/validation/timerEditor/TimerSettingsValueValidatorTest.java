@@ -39,7 +39,7 @@ public class TimerSettingsValueValidatorTest
 
     private List<TestElement> testElements = new ArrayList<>();
 
-    private static final String[] VALID_TIME_DURATIONS = {
+    public static final String[] VALID_TIME_DURATIONS = {
             "P6D",
             "P6DT1H",
             "P6DT1H8M",
@@ -154,11 +154,11 @@ public class TimerSettingsValueValidatorTest
             "etc"
     };
 
-    private static final String[] VALID_EXPRESSIONS = {
+    public static final String[] VALID_EXPRESSIONS = {
             "#{something}"
     };
 
-    private static final String[] INVALID_EXPRESSIONS = {
+    public static final String[] INVALID_EXPRESSIONS = {
             "#",
             "{",
             "#{",
@@ -241,7 +241,7 @@ public class TimerSettingsValueValidatorTest
             testElement.setResult(validator.isValid(value,
                                                     context));
         });
-        verifyTestResults();
+        verifyTestResults(testElements, errorMessages);
     }
 
     @Test
@@ -266,7 +266,7 @@ public class TimerSettingsValueValidatorTest
         value.setTimeCycle(null);
         testElements.get(testElements.size() - 1).setResult(validator.isValid(value,
                                                                               context));
-        verifyTestResults();
+        verifyTestResults(testElements, errorMessages);
     }
 
     @Test
@@ -294,7 +294,7 @@ public class TimerSettingsValueValidatorTest
         value.setTimeCycle(null);
         testElements.get(testElements.size() - 1).setResult(validator.isValid(value,
                                                                               context));
-        verifyTestResults();
+        verifyTestResults(testElements, errorMessages);
     }
 
     @Test
@@ -314,7 +314,7 @@ public class TimerSettingsValueValidatorTest
             testElement.setResult(validator.isValid(value,
                                                     context));
         });
-        verifyTestResults();
+        verifyTestResults(testElements, errorMessages);
     }
 
     private void loadValidTestElements(String... values) {
@@ -329,7 +329,7 @@ public class TimerSettingsValueValidatorTest
                                                                                 errorMessage)));
     }
 
-    private void verifyTestResults() {
+    public static void verifyTestResults(List<TestElement> testElements, List<String> errorMessages) {
         int error = 0;
         for (int i = 0; i < testElements.size(); i++) {
             TestElement testElement = testElements.get(i);
@@ -351,7 +351,7 @@ public class TimerSettingsValueValidatorTest
         errorMessages.clear();
     }
 
-    private class TestElement {
+    public static class TestElement {
 
         private String value = null;
         private boolean expectedResult;

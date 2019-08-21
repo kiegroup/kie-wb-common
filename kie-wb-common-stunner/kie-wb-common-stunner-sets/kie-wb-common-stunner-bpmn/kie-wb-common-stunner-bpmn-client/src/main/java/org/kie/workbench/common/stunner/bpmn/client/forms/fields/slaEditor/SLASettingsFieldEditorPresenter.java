@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,15 @@ public class SLASettingsFieldEditorPresenter
         extends FieldEditorPresenter<String> {
 
     public interface View extends UberElement<SLASettingsFieldEditorPresenter> {
+
         void setTimeDuration(String timeDuration);
+
         String getTimeDuration();
+
         void clear();
+
+        boolean isValid();
+
         void setReadOnly(final boolean readOnly);
     }
 
@@ -63,16 +69,10 @@ public class SLASettingsFieldEditorPresenter
 
     protected void onTimerDurationChange() {
         String oldValue = value;
-        value = copy(oldValue);
         value = view.getTimeDuration();
-        notifyChange(oldValue,
-                     value);
-    }
-
-    private String copy(String source) {
-        if (source == null) {
-            return "";
+        if (view.isValid()) {
+            notifyChange(oldValue,
+                         value);
         }
-        return source + "";
     }
 }

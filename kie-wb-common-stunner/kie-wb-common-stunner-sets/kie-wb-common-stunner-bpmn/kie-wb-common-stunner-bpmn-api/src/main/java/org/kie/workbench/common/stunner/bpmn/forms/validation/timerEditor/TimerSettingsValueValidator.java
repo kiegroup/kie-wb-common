@@ -57,17 +57,17 @@ public class TimerSettingsValueValidator
      */
     private static final String CRON_INTERVAL = "(\\d+)?(\\d+?d)?(\\s)?(\\d+?h)?(\\s)?(\\d+?m)?(\\s)?(\\d+?s)?(\\s)?(\\d+?ms)?";
 
-    private static final String EXPRESSION = "#{(.+)}";
+    private static final String EXPRESSION = "#\\{(.+)\\}";
 
-    private static final RegExp durationExpr = RegExp.compile("^" + ISO_DURATION + "$");
+    public static final RegExp durationExpr = RegExp.compile("^" + ISO_DURATION + "$");
 
     private static final RegExp repetableIntervalExpr = RegExp.compile("^" + ISO_REPETABLE_INTERVAL + "$");
 
     private static final RegExp cronIntervalExpr = RegExp.compile("^" + CRON_INTERVAL + "$");
 
-    private static final RegExp expressionExpr = RegExp.compile("^" + EXPRESSION + "$");
+    public static final RegExp expressionExpr = RegExp.compile("^" + EXPRESSION + "$");
 
-    private static final RegExp dateTimeExpr = RegExp.compile("^" + ISO_DATE_TIME + "$");
+    public static final RegExp dateTimeExpr = RegExp.compile("^" + ISO_DATE_TIME + "$");
 
     public void initialize(ValidTimerSettingsValue constraintAnnotation) {
     }
@@ -115,15 +115,15 @@ public class TimerSettingsValueValidator
         return true;
     }
 
-    private static boolean looksLikeExpression(final String value) {
+    public static boolean looksLikeExpression(final String value) {
         return hasSomething(value) && (value.startsWith("#{") || value.contains("{") || value.contains("}"));
     }
 
-    private static boolean isValidExpression(final String value) {
+    public static boolean isValidExpression(final String value) {
         return hasSomething(value) && expressionExpr.test(value) && value.length() > 3;
     }
 
-    private static boolean isValidDuration(final String value) {
+    public static boolean isValidDuration(final String value) {
         return hasSomething(value) && durationExpr.test(value);
     }
 
@@ -147,7 +147,7 @@ public class TimerSettingsValueValidator
         return hasSomething(value) && dateTimeExpr.test(value);
     }
 
-    private static boolean hasSomething(final String value) {
+    public static boolean hasSomething(final String value) {
         return value != null && !value.trim().isEmpty();
     }
 }

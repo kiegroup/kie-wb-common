@@ -35,11 +35,11 @@ import org.uberfire.client.views.pfly.widgets.Popover;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.DATA_CONTENT_ATTR;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.DurationTimer_Help_Header;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.DurationTimer_Help_Line_1;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.Expression_Help_Line;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.DURATION_TIMER_HELP_HEADER;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.DURATION_TIMER_HELP_LINE_1;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.EXPRESSION_HELP_LINE;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.PLACEHOLDER_ATTR;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.TimeDuration_Placeholder;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor.SLASettingsFieldEditorView.TIME_DURATION_PLACE_HOLDER;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -84,22 +84,22 @@ public class SLASettingsFieldEditorViewTest {
         view.init(presenter);
         when(slaDurationTimerParamsContainer.getStyle()).thenReturn(slaDurationTimerParamsContainerCSS);
         when(slaDurationTimerHelpPopover.wrap(slaDurationTimerHelp)).thenReturn(dateTimerHelpPopoverWrapped);
-        when(translationService.getValue(TimeDuration_Placeholder)).thenReturn(TimeDuration_Placeholder);
-        when(translationService.getValue(DurationTimer_Help_Header)).thenReturn(DurationTimer_Help_Header);
-        when(translationService.getValue(DurationTimer_Help_Line_1)).thenReturn(DurationTimer_Help_Line_1);
-        when(translationService.getValue(Expression_Help_Line)).thenReturn(Expression_Help_Line);
-        when(translationService.getValue(Expression_Help_Line)).thenReturn(Expression_Help_Line);
-        when(translationService.getValue(Expression_Help_Line)).thenReturn(Expression_Help_Line);
+        when(translationService.getValue(TIME_DURATION_PLACE_HOLDER)).thenReturn(TIME_DURATION_PLACE_HOLDER);
+        when(translationService.getValue(DURATION_TIMER_HELP_HEADER)).thenReturn(DURATION_TIMER_HELP_HEADER);
+        when(translationService.getValue(DURATION_TIMER_HELP_LINE_1)).thenReturn(DURATION_TIMER_HELP_LINE_1);
+        when(translationService.getValue(EXPRESSION_HELP_LINE)).thenReturn(EXPRESSION_HELP_LINE);
+        when(translationService.getValue(EXPRESSION_HELP_LINE)).thenReturn(EXPRESSION_HELP_LINE);
+        when(translationService.getValue(EXPRESSION_HELP_LINE)).thenReturn(EXPRESSION_HELP_LINE);
     }
 
     @Test
     public void testInit() {
         view.init();
-        verify(slaTimeDuration).setAttribute(PLACEHOLDER_ATTR, TimeDuration_Placeholder);
+        verify(slaTimeDuration).setAttribute(PLACEHOLDER_ATTR, TIME_DURATION_PLACE_HOLDER);
 
-        String expectedDurationHelp = DurationTimer_Help_Header + ":" + "<UL>" +
-                "<LI>" + DurationTimer_Help_Line_1 + "</LI>" +
-                "<LI>" + Expression_Help_Line + "</LI>" +
+        String expectedDurationHelp = DURATION_TIMER_HELP_HEADER + ":" + "<UL>" +
+                "<LI>" + DURATION_TIMER_HELP_LINE_1 + "</LI>" +
+                "<LI>" + EXPRESSION_HELP_LINE + "</LI>" +
                 "</UL>";
         verify(slaDurationTimerHelp).setAttribute(DATA_CONTENT_ATTR, expectedDurationHelp);
     }
@@ -118,7 +118,7 @@ public class SLASettingsFieldEditorViewTest {
 
     @Test
     public void testSetReadOnly() {
-        boolean arbitraryValue = false;
+        final boolean arbitraryValue = false;
         view.setReadOnly(arbitraryValue);
         verify(slaTimeDuration).setDisabled(arbitraryValue);
     }

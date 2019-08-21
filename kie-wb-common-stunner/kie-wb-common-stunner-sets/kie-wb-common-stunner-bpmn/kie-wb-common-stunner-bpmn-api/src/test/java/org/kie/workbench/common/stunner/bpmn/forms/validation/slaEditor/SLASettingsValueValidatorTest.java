@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.validation.ConstraintValidatorContext;
 import com.google.gwt.junit.client.GWTTestCase;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.bpmn.forms.validation.timerEditor.TimerSettingsValueValidatorTest;
 
 public class SLASettingsValueValidatorTest
         extends GWTTestCase {
@@ -37,19 +38,7 @@ public class SLASettingsValueValidatorTest
 
     private List<String> errorMessages = new ArrayList<>();
 
-    private List<TestElement> testElements = new ArrayList<>();
-
-    private static final String[] VALID_TIME_DURATIONS = {
-            "P6D",
-            "P6DT1H",
-            "P6DT1H8M",
-            "P6DT1H8M15S",
-            "PT1H",
-            "PT1H8M",
-            "PT1H8M5S",
-            "PT8M",
-            "PT3S"
-    };
+    private List<TimerSettingsValueValidatorTest.TestElement> testElements = new ArrayList<>();
 
     private static final String[] INVALID_TIME_DURATIONS = {
             "P4Y",
@@ -61,20 +50,6 @@ public class SLASettingsValueValidatorTest
             "PPP",
             "23EE",
             "etc",
-    };
-
-    private static final String[] VALID_EXPRESSIONS = {
-            "#{something}"
-    };
-
-    private static final String[] INVALID_EXPRESSIONS = {
-            "#",
-            "{",
-            "#{",
-            "#{}",
-            "#}",
-            "}",
-            "etc"
     };
 
     @Override
@@ -118,103 +93,34 @@ public class SLASettingsValueValidatorTest
     @Test
     public void testValidateTimeDuration() {
         clear();
-        loadValidTestElements(VALID_TIME_DURATIONS);
-        loadValidTestElements(VALID_EXPRESSIONS);
+        loadValidTestElements(TimerSettingsValueValidatorTest.VALID_TIME_DURATIONS);
+        loadValidTestElements(TimerSettingsValueValidatorTest.VALID_EXPRESSIONS);
         loadInvalidTestElements(SLASettingsValueValidator.TimeDurationInvalid,
                                 INVALID_TIME_DURATIONS);
         loadInvalidTestElements(SLASettingsValueValidator.TimeDurationInvalid,
-                                INVALID_EXPRESSIONS);
+                                TimerSettingsValueValidatorTest.INVALID_EXPRESSIONS);
         testElements.forEach(testElement -> {
             value = testElement.getValue();
             testElement.setResult(validator.isValid(new SLADueDate(value),
                                                     context));
         });
-        verifyTestResults();
+        TimerSettingsValueValidatorTest.verifyTestResults(testElements, errorMessages);
     }
 
     private void loadValidTestElements(String... values) {
-        Arrays.stream(values).forEach(value -> testElements.add(new TestElement(value,
+        Arrays.stream(values).forEach(value -> testElements.add(new TimerSettingsValueValidatorTest.TestElement(value,
                                                                                 true)));
     }
 
     private void loadInvalidTestElements(String errorMessage,
                                          String... values) {
-        Arrays.stream(values).forEach(value -> testElements.add(new TestElement(value,
+        Arrays.stream(values).forEach(value -> testElements.add(new TimerSettingsValueValidatorTest.TestElement(value,
                                                                                 false,
                                                                                 errorMessage)));
-    }
-
-    private void verifyTestResults() {
-        int error = 0;
-        for (int i = 0; i < testElements.size(); i++) {
-            TestElement testElement = testElements.get(i);
-            assertEquals("Invalid validation for item: " + testElement.toString(),
-                         testElement.getExpectedResult(),
-                         testElement.getResult());
-
-            if (!testElement.getExpectedResult()) {
-                assertEquals("Invalid validation: " + testElement.toString(),
-                             testElement.getExpectedError(),
-                             errorMessages.get(error));
-                error++;
-            }
-        }
     }
 
     private void clear() {
         testElements.clear();
         errorMessages.clear();
-    }
-
-    private class TestElement {
-
-        private String value = null;
-        private boolean expectedResult;
-        private String expectedError = null;
-        private boolean result;
-
-        public TestElement(String value,
-                           boolean expectedResult) {
-            this.value = value;
-            this.expectedResult = expectedResult;
-        }
-
-        public TestElement(String value,
-                           boolean expectedResult,
-                           String expectedError) {
-            this.value = value;
-            this.expectedResult = expectedResult;
-            this.expectedError = expectedError;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public boolean getExpectedResult() {
-            return expectedResult;
-        }
-
-        public String getExpectedError() {
-            return expectedError;
-        }
-
-        public boolean getResult() {
-            return result;
-        }
-
-        public void setResult(boolean result) {
-            this.result = result;
-        }
-
-        @Override
-        public String toString() {
-            return "TestElement{" +
-                    "value='" + value + '\'' +
-                    ", expectedResult=" + expectedResult +
-                    ", expectedError='" + expectedError + '\'' +
-                    ", result=" + result +
-                    '}';
-        }
     }
 }

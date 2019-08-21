@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,18 +58,20 @@ public class SLASettingsFieldEditorPresenterTest
     public FieldEditorPresenter.ValueChangeHandler<String> mockChangeHandler() {
         return mock(FieldEditorPresenter.ValueChangeHandler.class);
     }
+
     @Test
     public void testOnTimerDurationChange() {
         String value = "";
         editor.setValue(value);
-        when(view.getTimeDuration()).thenReturn(VALUE_1);
+        when(view.getTimeDuration()).thenReturn("P6D");
+        when(view.isValid()).thenReturn(true);
+
         editor.onTimerDurationChange();
         verify(changeHandler,
                times(1)).onValueChange(oldValueCaptor.capture(),
                                        newValueCaptor.capture());
         assertEquals(value, oldValueCaptor.getValue());
-        value = VALUE_1;
-        assertEquals(value, newValueCaptor.getValue());
+        assertEquals("P6D", newValueCaptor.getValue());
     }
 
     @Test
@@ -83,5 +85,4 @@ public class SLASettingsFieldEditorPresenterTest
         editor.setReadOnly(false);
         verify(view, times(1)).setReadOnly(false);
     }
-
 }

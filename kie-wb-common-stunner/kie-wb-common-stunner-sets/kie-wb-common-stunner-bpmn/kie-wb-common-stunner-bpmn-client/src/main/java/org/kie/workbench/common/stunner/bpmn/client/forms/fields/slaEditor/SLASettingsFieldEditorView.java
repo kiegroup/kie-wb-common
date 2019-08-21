@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,19 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.slaEditor;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
 import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Event;
+import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.common.client.dom.TextInput;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -29,9 +36,11 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.timerEditor.TimerSettingsFieldEditorView;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.uberfire.client.views.pfly.widgets.JQueryProducer;
 import org.uberfire.client.views.pfly.widgets.Popover;
+import org.uberfire.client.views.pfly.widgets.ValidationState;
 
 @Templated
 public class SLASettingsFieldEditorView
@@ -40,13 +49,13 @@ public class SLASettingsFieldEditorView
 
     static final String EMPTY_VALUE = "";
 
-    static final String TimeDuration_Placeholder = "SLASettingsFieldEditorView.TimeDuration_Placeholder";
+    static final String TIME_DURATION_PLACE_HOLDER = "SLASettingsFieldEditorView.TimeDuration_Placeholder";
 
-    static final String DurationTimer_Help_Header = "SLASettingsFieldEditorView.DurationTimer_Help_Header";
+    static final String DURATION_TIMER_HELP_HEADER = "SLASettingsFieldEditorView.DurationTimer_Help_Header";
 
-    static final String DurationTimer_Help_Line_1 = "SLASettingsFieldEditorView.DurationTimer_Help_Line_1";
+    static final String DURATION_TIMER_HELP_LINE_1 = "SLASettingsFieldEditorView.DurationTimer_Help_Line_1";
 
-    static final String Expression_Help_Line = "SLASettingsFieldEditorView.Expression_Help_Line";
+    static final String EXPRESSION_HELP_LINE = "SLASettingsFieldEditorView.Expression_Help_Line";
 
     static final String PLACEHOLDER_ATTR = "placeholder";
 
@@ -69,6 +78,17 @@ public class SLASettingsFieldEditorView
     @Inject
     private ClientTranslationService translationService;
 
+    @Inject
+    @DataField
+    private Div slaInputFormGroup;
+
+    @Inject
+    @DataField
+    private Span slaInputHelpBlock;
+
+    @Inject
+    private Validator validator;
+
     private SLASettingsFieldEditorPresenter presenter;
 
     @Override
@@ -79,7 +99,7 @@ public class SLASettingsFieldEditorView
     @PostConstruct
     public void init() {
         timeDuration.setAttribute(PLACEHOLDER_ATTR,
-                                  translationService.getValue(TimeDuration_Placeholder));
+                                  translationService.getValue(TIME_DURATION_PLACE_HOLDER));
 
         durationTimerHelp.setAttribute(DATA_CONTENT_ATTR,
                                        getDurationTimerHtmlHelpText());
@@ -106,10 +126,32 @@ public class SLASettingsFieldEditorView
         timeDuration.setDisabled(readOnly);
     }
 
+    @Override
+    public boolean isValid() {
+        Set<ConstraintViolation<SLADueDate>> violations = validator.validate(new SLADueDate(timeDuration.getValue()));
+        if (violations.isEmpty()) {
+            clearErrors();
+            return true;
+        } else {
+            showError(violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(",")));
+            return false;
+        }
+    }
+
+    private void showError(String errorMessage) {
+        DOMUtil.addCSSClass(slaInputFormGroup, ValidationState.ERROR.getCssName());
+        slaInputHelpBlock.setTextContent(errorMessage);
+    }
+
+    private void clearErrors() {
+        DOMUtil.removeCSSClass(slaInputFormGroup, ValidationState.ERROR.getCssName());
+        slaInputHelpBlock.setTextContent("");
+    }
+
     private String getDurationTimerHtmlHelpText() {
-        return TimerSettingsFieldEditorView.buildHtmlHelpText(translationService.getValue(DurationTimer_Help_Header),
-                                                              translationService.getValue(DurationTimer_Help_Line_1),
-                                                              translationService.getValue(Expression_Help_Line));
+        return TimerSettingsFieldEditorView.buildHtmlHelpText(translationService.getValue(DURATION_TIMER_HELP_HEADER),
+                                                              translationService.getValue(DURATION_TIMER_HELP_LINE_1),
+                                                              translationService.getValue(EXPRESSION_HELP_LINE));
     }
 
     @EventHandler("sla-time-duration")
