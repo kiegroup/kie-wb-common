@@ -25,7 +25,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kie-wb-common-stunner-kogito-showcase</artifactId>
+  <artifactId>kie-wb-common-stunner-showcase-kogito</artifactId>
   <packaging>war</packaging>
   <name>Kie Workbench - Common - Stunner - Kogito Showcase</name>
   <description>Kie Workbench - Common - Stunner - Kogito Showcase</description>

@@ -39,7 +39,7 @@
   <modules>
     <module>kie-wb-common-stunner-showcase-standalone</module>
     <module>kie-wb-common-stunner-showcase-project</module>
-    <module>kie-wb-common-stunner-kogito-showcase</module>
+    <module>kie-wb-common-stunner-showcase-kogito</module>
   </modules>
 
 </project>
