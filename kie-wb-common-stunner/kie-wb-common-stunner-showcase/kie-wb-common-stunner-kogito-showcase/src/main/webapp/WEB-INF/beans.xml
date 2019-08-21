@@ -34,6 +34,7 @@
     <exclude name="org.kie.workbench.common.stunner.bpmn.client.**"/>
     <exclude name="org.kie.workbench.common.stunner.standalone.client.**"/>
     <exclude name="org.kie.workbench.common.stunner.forms.client.**"/>
+    <exclude name="org.kie.workbench.common.stunner.kogito.client.**"/>
 
     <!-- Exclude all guvnor & kie project stuff, not just client side.-->
     <exclude name="org.kie.workbench.common.stunner.bpmn.project.**"/>
@@ -71,5 +72,8 @@
     <exclude name="org.kie.workbench.common.widgets.decoratedgrid.client.**"/>
     <exclude name="org.kie.workbench.common.widgets.metadata.client.**"/>
 
+    <!-- Uberfire . -->
+    <exclude name="org.uberfire.preferences.client.**"/>
+    <exclude name="org.uberfire.client.**"/>
   </scan>
 </beans>
