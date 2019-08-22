@@ -34,11 +34,10 @@ public class SLASettingsValueValidator
     @Override
     public boolean isValid(SLADueDate slaDueDate,
                            ConstraintValidatorContext constraintValidatorContext) {
-        String value;
         String errorMessage = null;
 
         if (slaDueDate != null && TimerSettingsValueValidator.hasSomething(slaDueDate.getValue())) {
-            value = slaDueDate.getValue();
+            String value = slaDueDate.getValue();
             final boolean looksLikeExpression = TimerSettingsValueValidator.looksLikeExpression(value);
             if ((looksLikeExpression && !TimerSettingsValueValidator.isValidExpression(value)) ||
                     (!looksLikeExpression && !TimerSettingsValueValidator.isValidDuration(value))) {
