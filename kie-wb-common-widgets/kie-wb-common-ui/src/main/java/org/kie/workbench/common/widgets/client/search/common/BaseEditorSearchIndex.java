@@ -98,7 +98,6 @@ public abstract class BaseEditorSearchIndex<T extends Searchable> implements Edi
         results = new ArrayList<>();
         currentTerm = "";
         currentResult = null;
-        triggerNoResultsFoundCommand();
         triggerOnSearchPerformedCommand();
         triggerSearchClosedCommand();
     }

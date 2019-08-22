@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.ait.lienzo.client.core.types.Transform;
@@ -37,7 +36,6 @@ import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
-import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
@@ -57,24 +55,18 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Domai
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.widgets.client.search.common.SearchPerformedEvent;
-import org.kie.workbench.common.widgets.client.search.common.Searchable;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidgetKeyboardHandler;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperation;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveDown;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveLeft;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveRight;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveUp;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.impl.BaseGridRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
-import org.uberfire.workbench.events.UberFireEvent;
 
 @Templated
 @Dependent
-public class ExpressionEditorViewImpl implements ExpressionEditorView,
-                                                 UberFireEvent {
+public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     static final double VP_SCALE = 1.0;
 
@@ -138,26 +130,6 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView,
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.domainObjectSelectionEvent = domainObjectSelectionEvent;
-    }
-
-    void onSearchPerformed(final @Observes SearchPerformedEvent event) {
-        final Optional<BaseExpressionGrid> existing = getExistingEditor();
-        existing.ifPresent(e -> {
-            final GridRenderer renderer = e.getRenderer();
-            if (renderer instanceof BaseGridRenderer) {
-                final BaseGridRenderer bgr = (BaseGridRenderer) renderer;
-                bgr.clearCellHighlight();
-                if (event.hasElement()) {
-                    final Searchable element = event.getCurrentElement();
-                    if (element instanceof DMNSearchableElement) {
-                        final DMNSearchableElement gdtElement = ((DMNSearchableElement) element);
-                        int column = gdtElement.getColumn();
-                        int row = gdtElement.getRow();
-                        bgr.highlightCell(column, row);
-                    }
-                }
-            }
-        });
     }
 
     Optional<BaseExpressionGrid> getExistingEditor() {
