@@ -52,6 +52,7 @@ public class DMNGridSubIndex implements DMNSubIndex {
     @Override
     public void onSearchClosed() {
         dmnGridHelper.focusGridPanel();
+        dmnGridHelper.clearCellHighlights();
     }
 
     private List<DMNSearchableElement> getSearchableElements(final GridWidget gridWidget) {
@@ -90,7 +91,10 @@ public class DMNGridSubIndex implements DMNSubIndex {
         searchableCell.setRow(row);
         searchableCell.setColumn(column);
         searchableCell.setText(value);
-        searchableCell.setOnFound(() -> dmnGridHelper.highlightCell(row, column, gridWidget));
+        searchableCell.setOnFound(() -> {
+            dmnGridHelper.clearCellHighlights();
+            dmnGridHelper.highlightCell(row, column, gridWidget);
+        });
 
         return searchableCell;
     }
@@ -117,5 +121,6 @@ public class DMNGridSubIndex implements DMNSubIndex {
     @Override
     public void onNoResultsFound() {
         dmnGridHelper.clearSelections();
+        dmnGridHelper.clearCellHighlights();
     }
 }
