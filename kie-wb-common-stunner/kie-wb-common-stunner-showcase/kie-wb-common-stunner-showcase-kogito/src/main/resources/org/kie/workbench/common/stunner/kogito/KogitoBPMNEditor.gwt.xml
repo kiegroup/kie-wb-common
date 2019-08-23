@@ -47,6 +47,7 @@
 
   <!-- BPMN -->
   <inherits name="org.kie.workbench.common.stunner.bpmn.StunnerBpmnClient"/>
+  <inherits name="org.kie.workbench.common.stunner.bpmn.StunnerBpmnMarshalling"/>
 
   <extend-property name="locale" values="es"/>
   <extend-property name="locale" values="fr"/>

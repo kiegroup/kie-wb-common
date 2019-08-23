@@ -224,17 +224,18 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-bpmn-backend</artifactId>
+      <artifactId>kie-wb-common-stunner-bpmn-emf</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-bpmn-marshalling</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-bpmn-client</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jbpm</groupId>
-      <artifactId>jbpm-bpmn2</artifactId>
     </dependency>
 
     <!-- Uberfire Preferences -->
@@ -790,6 +791,8 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-svg-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-widgets</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-bpmn-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-bpmn-emf</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-bpmn-marshalling</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-bpmn-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-forms-client</compileSourcesArtifact>

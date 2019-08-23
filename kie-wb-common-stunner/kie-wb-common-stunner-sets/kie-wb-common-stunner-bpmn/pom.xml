@@ -33,6 +33,8 @@
   <modules>
     <module>kie-wb-common-stunner-bpmn-api</module>
     <module>kie-wb-common-stunner-bpmn-backend</module>
+    <module>kie-wb-common-stunner-bpmn-emf</module>
+    <module>kie-wb-common-stunner-bpmn-marshalling</module>
     <module>kie-wb-common-stunner-bpmn-client</module>
     <module>kie-wb-common-stunner-bpmn-project-api</module>
     <module>kie-wb-common-stunner-bpmn-project-client</module>

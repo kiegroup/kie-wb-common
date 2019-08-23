@@ -25,11 +25,11 @@ import java.util.List;
 
 import org.eclipse.bpmn2.Definitions;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.BPMNTestDefinitionFactory;
+import org.kie.workbench.common.stunner.bpmn.WorkItemDefinitionMockRegistry;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
-import org.kie.workbench.common.stunner.bpmn.backend.BPMNTestDefinitionFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.WorkItemDefinitionMockRegistry;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
