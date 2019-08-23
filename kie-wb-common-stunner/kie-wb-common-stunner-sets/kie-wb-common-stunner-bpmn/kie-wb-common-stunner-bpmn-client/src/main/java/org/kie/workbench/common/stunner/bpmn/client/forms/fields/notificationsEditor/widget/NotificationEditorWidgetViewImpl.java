@@ -568,14 +568,17 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         current.setExpiresAt(combineISO8601String());
         current.setExpiration(Expiration.get(taskExpiration.getValue()));
         current.setType(notStartedInput.checked ? NotificationType.NotStartedNotify : NotificationType.NotCompletedNotify);
+        notificationEvent.fire(new NotificationEvent(current));
+        hide();
 
-        Set<ConstraintViolation<NotificationRow>> violations = validator.validate(current);
+        //Temporary disabled
+/*        Set<ConstraintViolation<NotificationRow>> violations = validator.validate(current);
         if (violations.isEmpty()) {
             notificationEvent.fire(new NotificationEvent(current));
             hide();
         } else {
             onViolationError(violations);
-        }
+        }*/
     }
 
     void close() {
