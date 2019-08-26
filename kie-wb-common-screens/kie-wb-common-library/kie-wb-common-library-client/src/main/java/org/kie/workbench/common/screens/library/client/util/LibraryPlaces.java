@@ -71,6 +71,7 @@ import org.kie.workbench.common.screens.library.client.screens.project.close.Clo
 import org.kie.workbench.common.screens.library.client.util.breadcrumb.LibraryBreadcrumbs;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceSuccessEvent;
+import org.slf4j.Logger;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
@@ -178,6 +179,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private Caller<OrganizationalUnitService> organizationalUnitService;
 
+    private Logger logger;
+
     private boolean closingLibraryPlaces = false;
 
     private PlaceRequest changeRequestReviewScreen = null;
@@ -207,7 +210,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final Caller<RepositoryService> repositoryService,
                          final Promises promises,
                          final OrganizationalUnitController organizationalUnitController,
-                         final Caller<OrganizationalUnitService> organizationalUnitService) {
+                         final Caller<OrganizationalUnitService> organizationalUnitService,
+                         final Logger logger) {
 
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
@@ -231,6 +235,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.promises = promises;
         this.organizationalUnitController = organizationalUnitController;
         this.organizationalUnitService = organizationalUnitService;
+        this.logger = logger;
     }
 
     @PostConstruct
@@ -461,7 +466,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
 
-        projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(activeOu));
+        if (!projectContext.getActiveWorkspaceProject().isPresent()) {
+            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(activeOu));
+        }
 
         closeLibraryPlaces();
         placeManager.goTo(part,
@@ -487,7 +494,11 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     public void goToProject(final WorkspaceProject project,
                             final Branch branch) {
-        projectService.call((RemoteCallback<WorkspaceProject>) this::goToProject).resolveProject(project.getSpace(), branch);
+        projectService.call((RemoteCallback<WorkspaceProject>) this::goToProject,
+                            (o, throwable) -> {
+                                logger.info("Project " + project.getName() + " branch " + branch.getName() + " not found.");
+                                return false;
+                            }).resolveProject(project.getSpace(), branch);
     }
 
     void goToProject() {

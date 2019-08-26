@@ -24,11 +24,11 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public enum Duration {
-    HOUR("hours", "h"),
-    DAYS("days", "d"),
-    WEEKS("weeks", "w"),
-    MONTHS("months", "m"),
-    YEARS("years", "y");
+    MINUTE("minutes", "m"),
+    HOUR("hours", "H"),
+    DAYS("days", "D"),
+    MONTHS("months", "M"),
+    YEARS("years", "Y");
 
     private static final Map<String, Duration> ENUM_MAP;
 

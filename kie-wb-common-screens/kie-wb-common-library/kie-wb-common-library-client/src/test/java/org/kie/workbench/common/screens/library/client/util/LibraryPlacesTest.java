@@ -66,6 +66,7 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
@@ -182,6 +183,9 @@ public class LibraryPlacesTest {
     private OrganizationalUnitService organizationalUnitService;
     private Caller<OrganizationalUnitService> organizationalUnitServiceCaller;
 
+    @Mock
+    private Logger logger;
+
     @Captor
     private ArgumentCaptor<WorkspaceProjectContextChangeEvent> projectContextChangeEventArgumentCaptor;
 
@@ -233,7 +237,8 @@ public class LibraryPlacesTest {
                                               repositoryServiceCaller,
                                               new SyncPromises(),
                                               mock(OrganizationalUnitController.class),
-                                              organizationalUnitServiceCaller) {
+                                              organizationalUnitServiceCaller,
+                                              logger) {
 
             @Override
             protected Map<String, List<String>> getParameterMap() {
@@ -471,7 +476,7 @@ public class LibraryPlacesTest {
 
         libraryPlaces.nativeGoToSpace("space");
 
-        verify(projectContextChangeEvent, times(2)).fire(projectContextChangeEventArgumentCaptor.capture());
+        verify(projectContextChangeEvent, times(1)).fire(projectContextChangeEventArgumentCaptor.capture());
         assertEquals(activeOrganizationalUnit, projectContextChangeEventArgumentCaptor.getValue().getOrganizationalUnit());
         verify(libraryPlaces).goToLibrary();
     }
@@ -632,7 +637,7 @@ public class LibraryPlacesTest {
         verify(libraryPlaces).closeLibraryPlaces();
         verify(placeManager).goTo(eq(part), any(PanelDefinition.class));
         verify(libraryBreadcrumbs).setupForSpace(activeOrganizationalUnit);
-        verify(projectContextChangeEvent).fire(any(WorkspaceProjectContextChangeEvent.class));
+        verify(projectContextChangeEvent, never()).fire(any(WorkspaceProjectContextChangeEvent.class));
     }
 
     @Test

@@ -26,6 +26,7 @@ import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -37,10 +38,13 @@ import org.kie.workbench.common.screens.library.api.preferences.LibraryOrganizat
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryProjectPreferences;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
+import org.kie.workbench.common.services.refactoring.model.index.events.IndexingFinishedEvent;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.views.pfly.widgets.ErrorPopup;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
@@ -97,6 +101,13 @@ public class AddProjectPopUpPresenterTest {
     @Mock
     private TranslationService translationService;
 
+    @Mock
+    private WorkspaceProjectService projectService;
+    private CallerMock<WorkspaceProjectService> projectServiceCaller;
+
+    @Mock
+    private Logger logger;
+
     private AddProjectPopUpPresenter presenter;
 
     private LibraryInfo libraryInfo;
@@ -106,6 +117,7 @@ public class AddProjectPopUpPresenterTest {
     public void setup() {
         libraryServiceCaller = new CallerMock<>(libraryService);
         validationServiceCaller = new CallerMock<>(validationService);
+        projectServiceCaller = new CallerMock<>(projectService);
         sessionInfo = new SessionInfoMock();
 
         selectedOrganizationalUnit = mock(OrganizationalUnit.class);
@@ -129,7 +141,9 @@ public class AddProjectPopUpPresenterTest {
                                                      conflictingRepositoriesPopup,
                                                      validationServiceCaller,
                                                      errorPopup,
-                                                     translationService));
+                                                     translationService,
+                                                     projectServiceCaller,
+                                                     logger));
 
         doReturn("baseUrl").when(presenter).getBaseURL();
 
@@ -144,6 +158,8 @@ public class AddProjectPopUpPresenterTest {
         doReturn(true).when(validationService).validateGroupId(any());
         doReturn(true).when(validationService).validateArtifactId(any());
         doReturn(true).when(validationService).validateGAVVersion(any());
+
+        doReturn(mock(WorkspaceProject.class)).when(libraryService).createProject(any(), any(), any());
 
         presenter.setup();
     }
@@ -262,10 +278,9 @@ public class AddProjectPopUpPresenterTest {
         verify(view).setAddButtonEnabled(false);
         verify(view).showBusyIndicator(anyString());
         verify(view).setAddButtonEnabled(true);
-        verify(newProjectEvent).fire(any(NewProjectEvent.class));
         verify(view).hide();
         verify(notificationEvent).fire(any(NotificationEvent.class));
-        verify(libraryPlaces).goToProject(any(WorkspaceProject.class));
+        verify(libraryPlaces, never()).goToProject(any(WorkspaceProject.class));
     }
 
     @Test
@@ -528,7 +543,51 @@ public class AddProjectPopUpPresenterTest {
         verify(view).setAddButtonEnabled(false);
         verify(view).showBusyIndicator(anyString());
         verify(view).setAddButtonEnabled(true);
-        verify(command).execute(any());
+        verify(command, never()).execute(any());
+    }
+
+    @Test
+    public void createProjectCallbackAfterProjectIndexedEventTest() {
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final Path projectRootPath = mock(Path.class);
+        doReturn(projectRootPath).when(project).getRootPath();
+        doReturn(project).when(projectService).resolveProject(any(Path.class));
+        doReturn(project).when(libraryService).createProject(any(), any(), any());
+        doReturn("test").when(view).getName();
+        doReturn("description").when(view).getDescription();
+
+        presenter.onProjectIndexingFinishedEvent(new IndexingFinishedEvent("kClusterId",
+                                                                           projectRootPath));
+        presenter.add();
+
+        verify(view).setAddButtonEnabled(false);
+        verify(view).showBusyIndicator(anyString());
+        verify(view).setAddButtonEnabled(true);
+        verify(view).hide();
+        verify(notificationEvent).fire(any(NotificationEvent.class));
+        verify(libraryPlaces).goToProject(project);
+    }
+
+    @Test
+    public void createProjectCallbackBeforeProjectIndexedEventTest() {
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final Path projectRootPath = mock(Path.class);
+        doReturn(projectRootPath).when(project).getRootPath();
+        doReturn(project).when(projectService).resolveProject(any(Path.class));
+        doReturn(project).when(libraryService).createProject(any(), any(), any());
+        doReturn("test").when(view).getName();
+        doReturn("description").when(view).getDescription();
+
+        presenter.add();
+        presenter.onProjectIndexingFinishedEvent(new IndexingFinishedEvent("kClusterId",
+                                                                           projectRootPath));
+
+        verify(view).setAddButtonEnabled(false);
+        verify(view).showBusyIndicator(anyString());
+        verify(view).setAddButtonEnabled(true);
+        verify(view).hide();
+        verify(notificationEvent).fire(any(NotificationEvent.class));
+        verify(libraryPlaces).goToProject(project);
     }
 
     @Test
