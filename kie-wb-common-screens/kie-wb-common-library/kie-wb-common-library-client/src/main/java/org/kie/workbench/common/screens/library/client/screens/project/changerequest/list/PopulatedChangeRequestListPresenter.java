@@ -26,7 +26,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -42,8 +42,8 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.resources.images.LibraryImages;
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
 import org.kie.workbench.common.screens.library.client.util.DateUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -71,7 +71,6 @@ public class PopulatedChangeRequestListPresenter {
     private final ManagedInstance<ChangeRequestListItemView> changeRequestListItemViewInstances;
     private final Caller<ChangeRequestService> changeRequestService;
     private final BusyIndicatorView busyIndicatorView;
-    private final ChangeRequestUtils changeRequestUtils;
     private final DateUtils dateUtils;
     private WorkspaceProject workspaceProject;
     private int currentPage;
@@ -89,7 +88,6 @@ public class PopulatedChangeRequestListPresenter {
                                                final ManagedInstance<ChangeRequestListItemView> changeRequestItemViews,
                                                final Caller<ChangeRequestService> changeRequestService,
                                                final BusyIndicatorView busyIndicatorView,
-                                               final ChangeRequestUtils changeRequestUtils,
                                                final DateUtils dateUtils) {
         this.view = view;
         this.projectController = projectController;
@@ -100,7 +98,6 @@ public class PopulatedChangeRequestListPresenter {
         this.changeRequestListItemViewInstances = changeRequestItemViews;
         this.changeRequestService = changeRequestService;
         this.busyIndicatorView = busyIndicatorView;
-        this.changeRequestUtils = changeRequestUtils;
         this.dateUtils = dateUtils;
     }
 
@@ -291,26 +288,17 @@ public class PopulatedChangeRequestListPresenter {
     }
 
     private IsWidget resolveChangeRequestStatusIcon(final ChangeRequestStatus status) {
-        //TODO: [caponetto] resolve the icons when UX provides them
-
-        String tempIcon;
         switch (status) {
             case OPEN:
-                tempIcon = "O"; // open
-                break;
+                return new Image(LibraryImages.INSTANCE.changeRequestOpenStatus().getSafeUri());
             case ACCEPTED:
             case REVERTED:
             case REVERT_FAILED:
-                tempIcon = "M"; // merged
-                break;
-
+                return new Image(LibraryImages.INSTANCE.changeRequestMergedStatus().getSafeUri());
             case REJECTED:
             default:
-                tempIcon = "C"; // closed
-                break;
+                return new Image(LibraryImages.INSTANCE.changeRequestClosedStatus().getSafeUri());
         }
-
-        return new InlineLabel(tempIcon);
     }
 
     private void setupCounters(final int totalChangeRequests) {

@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.EmptyState;
-import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.list.listitem.ChangeRequestListItemView;
 import org.kie.workbench.common.screens.library.client.util.DateUtils;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -92,9 +91,6 @@ public class PopulatedChangeRequestListPresenterTest {
     private BusyIndicatorView busyIndicatorView;
 
     @Mock
-    private ChangeRequestUtils changeRequestUtils;
-
-    @Mock
     private DateUtils dateUtils;
 
     @Mock
@@ -140,7 +136,6 @@ public class PopulatedChangeRequestListPresenterTest {
                                                                      changeRequestListItemViewInstances,
                                                                      new CallerMock<>(changeRequestService),
                                                                      busyIndicatorView,
-                                                                     changeRequestUtils,
                                                                      dateUtils));
 
         new FieldSetter(presenter,
@@ -196,8 +191,6 @@ public class PopulatedChangeRequestListPresenterTest {
                                                                                   0,
                                                                                   10,
                                                                                   10);
-
-        doReturn("Open").when(changeRequestUtils).formatStatus(ChangeRequestStatus.OPEN);
 
         doReturn(paginatedList).when(changeRequestService).getChangeRequests(anyString(),
                                                                              anyString(),
