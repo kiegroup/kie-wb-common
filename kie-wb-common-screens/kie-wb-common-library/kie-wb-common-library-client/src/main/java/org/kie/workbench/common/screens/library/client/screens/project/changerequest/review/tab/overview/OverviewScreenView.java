@@ -180,6 +180,11 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     private HTMLElement commentsHeader;
 
     @Inject
+    @DataField("revert-failed-tooltip")
+    @Named("span")
+    private HTMLElement revertFailedTooltip;
+
+    @Inject
     private Elemental2DomUtil domUtil;
 
     @Override
@@ -324,6 +329,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
         this.clearCommentList();
         this.enableSummaryEditMode(false);
         this.enableDescriptionEditMode(false);
+        this.showRevertFailedTooltip(false);
 
         summary.textContent = EMPTY_CONTENT;
         description.textContent = EMPTY_CONTENT;
@@ -363,6 +369,16 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     @Override
     public void showCommentsToolbar(final boolean isVisible) {
         this.commentsToolbar.hidden = !isVisible;
+    }
+
+    @Override
+    public void setRevertFailedTooltipText(final String tooltip) {
+        this.revertFailedTooltip.title = tooltip;
+    }
+
+    @Override
+    public void showRevertFailedTooltip(final boolean isVisible) {
+        this.revertFailedTooltip.hidden = !isVisible;
     }
 
     @EventHandler("add-comment-button")

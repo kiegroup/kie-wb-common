@@ -80,6 +80,7 @@ public class OverviewScreenPresenter {
         this.workspaceProject = libraryPlaces.getActiveWorkspace();
 
         this.view.init(this);
+        this.view.setRevertFailedTooltipText(ts.getTranslation(LibraryConstants.RevertFailedTooltip));
     }
 
     public View getView() {
@@ -126,6 +127,7 @@ public class OverviewScreenPresenter {
         this.view.showConflictWarning(changeRequest.isConflict()
                                               && changeRequest.getStatus() == ChangeRequestStatus.OPEN);
         this.view.showEditModes(isUserAuthor());
+        this.view.showRevertFailedTooltip(changeRequest.getStatus() == ChangeRequestStatus.REVERT_FAILED);
 
         this.refreshCommentList(finishLoadingCallback);
     }
@@ -351,5 +353,9 @@ public class OverviewScreenPresenter {
         void enableCommentNextButton(final boolean isEnabled);
 
         void showCommentsToolbar(final boolean isVisible);
+
+        void setRevertFailedTooltipText(final String tooltip);
+
+        void showRevertFailedTooltip(final boolean isVisible);
     }
 }

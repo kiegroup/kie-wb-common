@@ -387,6 +387,9 @@ public class LibraryConstants {
     public static final String AcceptedStatus = "AcceptedStatus";
 
     @TranslationKey(defaultValue = "")
+    public static final String RevertFailedTooltip = "RevertFailedTooltip";
+
+    @TranslationKey(defaultValue = "")
     public static final String Comments = "Comments";
 
     @TranslationKey(defaultValue = "")
@@ -655,6 +658,9 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String NothingToMergeMessage = "NothingToMergeMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestUpdatedMessage = "ChangeRequestUpdatedMessage";
 
     @TranslationKey(defaultValue = "")
     public static final String ChangeRequest = "ChangeRequest";

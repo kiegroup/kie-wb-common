@@ -25,6 +25,8 @@ import elemental2.dom.HTMLElement;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
+import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
@@ -50,6 +52,7 @@ import org.uberfire.client.workbench.events.SelectPlaceEvent;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.rpc.SessionInfo;
 import org.uberfire.workbench.events.NotificationEvent;
 
 @WorkbenchScreen(identifier = LibraryPlaces.CHANGE_REQUEST_REVIEW,
@@ -68,9 +71,11 @@ public class ChangeRequestReviewScreenPresenter {
     private final Event<NotificationEvent> notificationEvent;
     private WorkspaceProject workspaceProject;
     private long currentChangeRequestId;
+    private Branch currentSourceBranch;
     private Branch currentTargetBranch;
     private boolean overviewTabLoaded;
     private boolean changedFilesTabLoaded;
+    private final SessionInfo sessionInfo;
 
     @Inject
     public ChangeRequestReviewScreenPresenter(final View view,
@@ -82,7 +87,8 @@ public class ChangeRequestReviewScreenPresenter {
                                               final ChangedFilesScreenPresenter changedFilesScreen,
                                               final Promises promises,
                                               final ProjectController projectController,
-                                              final Event<NotificationEvent> notificationEvent) {
+                                              final Event<NotificationEvent> notificationEvent,
+                                              final SessionInfo sessionInfo) {
         this.view = view;
         this.ts = ts;
         this.libraryPlaces = libraryPlaces;
@@ -93,6 +99,7 @@ public class ChangeRequestReviewScreenPresenter {
         this.promises = promises;
         this.projectController = projectController;
         this.notificationEvent = notificationEvent;
+        this.sessionInfo = sessionInfo;
     }
 
     @PostConstruct
@@ -122,6 +129,7 @@ public class ChangeRequestReviewScreenPresenter {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())
                 && event.getChangeRequestId() == currentChangeRequestId) {
             this.init(true);
+            this.notifyOtherUsers(event.getUserId());
         }
     }
 
@@ -129,13 +137,19 @@ public class ChangeRequestReviewScreenPresenter {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier())
                 && event.getChangeRequestId() == currentChangeRequestId) {
             this.init(true);
+            this.notifyOtherUsers(event.getUserId());
         }
     }
 
     public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
-        if (event.getProject().getRepository().getIdentifier().equals(this.workspaceProject.getRepository().getIdentifier())) {
+        if (event.getProject().getRepository().getIdentifier()
+                .equals(this.workspaceProject.getRepository().getIdentifier())) {
             this.init(true);
         }
+    }
+
+    public void onRepositoryUpdatedEvent(@Observes final RepositoryUpdatedEvent event) {
+        this.handleRepositoryUpdate(event.getRepository());
     }
 
     @WorkbenchPartTitle
@@ -157,9 +171,7 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     public void cancel() {
-        this.reset();
-
-        this.libraryPlaces.goToProject(workspaceProject);
+        this.goBackToProject();
     }
 
     public void reject() {
@@ -174,6 +186,29 @@ public class ChangeRequestReviewScreenPresenter {
         this.doActionIfAllowed(this::revertChangeRequestAction);
     }
 
+    private void handleRepositoryUpdate(final Repository repository) {
+        if (libraryPlaces.isThisRepositoryBeingAccessed(repository) &&
+                (!repository.getBranches().contains(currentSourceBranch) ||
+                        !repository.getBranches().contains(currentTargetBranch))) {
+            this.goBackToProject();
+        }
+    }
+
+    private void notifyOtherUsers(final String userWhoMadeUpdates) {
+        if (!sessionInfo.getIdentity().getIdentifier().equals(userWhoMadeUpdates)) {
+            fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestUpdatedMessage,
+                                            currentChangeRequestId,
+                                            userWhoMadeUpdates),
+                                  NotificationEvent.NotificationType.INFO);
+        }
+    }
+
+    private void goBackToProject() {
+        this.reset();
+
+        this.libraryPlaces.goToProject(workspaceProject);
+    }
+
     private void doActionIfAllowed(final Runnable action) {
         projectController.canUpdateBranch(workspaceProject,
                                           this.currentTargetBranch).then(userCanUpdateBranch -> {
@@ -185,14 +220,14 @@ public class ChangeRequestReviewScreenPresenter {
         });
     }
 
-    private void init(final boolean isReload) {
+    private void init(final boolean isRefresh) {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-        if (!isReload) {
+        if (!isRefresh) {
             this.reset();
         }
 
-        this.setup(isReload);
+        this.setup(isRefresh);
     }
 
     private void reset() {
@@ -207,9 +242,9 @@ public class ChangeRequestReviewScreenPresenter {
         this.view.activateOverviewTab();
     }
 
-    private void setup(final boolean isReload) {
+    private void setup(final boolean isRefresh) {
         changeRequestService.call((final ChangeRequest changeRequest) -> this.loadChangeRequest(changeRequest,
-                                                                                          isReload),
+                                                                                                isRefresh),
                                   new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
                 .getChangeRequest(workspaceProject.getSpace().getName(),
                                   workspaceProject.getRepository().getAlias(),
@@ -217,8 +252,12 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void loadChangeRequest(final ChangeRequest changeRequest,
-                                   final boolean isReload) {
+                                   final boolean isRefresh) {
         this.view.setTitle(ts.format(LibraryConstants.ChangeRequestAndId, currentChangeRequestId));
+
+        this.currentSourceBranch = workspaceProject.getRepository().getBranch(changeRequest.getSourceBranch())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The branch " + changeRequest.getSourceBranch() + " does not exist."));
 
         this.currentTargetBranch = workspaceProject.getRepository().getBranch(changeRequest.getTargetBranch())
                 .orElseThrow(() -> new IllegalStateException(
@@ -238,7 +277,7 @@ public class ChangeRequestReviewScreenPresenter {
                                           finishLoading();
                                       }, this.view::setChangedFilesCount);
 
-        if (!isReload) {
+        if (!isRefresh) {
             this.view.activateOverviewTab();
         }
     }
@@ -287,8 +326,8 @@ public class ChangeRequestReviewScreenPresenter {
             busyIndicatorView.hideBusyIndicator();
         }, acceptChangeRequestErrorCallback())
                 .acceptChangeRequest(workspaceProject.getSpace().getName(),
-                               workspaceProject.getRepository().getAlias(),
-                               currentChangeRequestId);
+                                     workspaceProject.getRepository().getAlias(),
+                                     currentChangeRequestId);
     }
 
     private ErrorCallback<Object> acceptChangeRequestErrorCallback() {

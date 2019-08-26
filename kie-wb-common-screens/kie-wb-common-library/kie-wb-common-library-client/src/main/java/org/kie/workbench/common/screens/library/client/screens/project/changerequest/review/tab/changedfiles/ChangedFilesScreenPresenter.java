@@ -85,6 +85,9 @@ public class ChangedFilesScreenPresenter {
                 final boolean warnConflict = changeRequest.getStatus() == ChangeRequestStatus.OPEN;
                 this.setupDiffList(diffList, warnConflict);
                 this.view.showDiffList(true);
+            } else {
+                this.destroyDiffItems();
+                this.view.clearDiffList();
             }
 
             this.setupFilesSummary(diffList);

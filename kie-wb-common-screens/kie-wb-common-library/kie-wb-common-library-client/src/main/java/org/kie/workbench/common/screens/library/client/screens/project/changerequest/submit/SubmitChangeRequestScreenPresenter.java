@@ -139,7 +139,8 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
-        if (event.getProject().getRepository().getIdentifier().equals(this.workspaceProject.getRepository().getIdentifier())) {
+        if (event.getProject().getRepository().getIdentifier()
+                .equals(this.workspaceProject.getRepository().getIdentifier())) {
             this.updateDiffContainer();
         }
     }
@@ -191,9 +192,9 @@ public class SubmitChangeRequestScreenPresenter {
                 final Long changeRequestId = ((ChangeRequestAlreadyOpenException) throwable).getChangeRequestId();
                 notificationEvent.fire(
                         new NotificationEvent(ts.format(LibraryConstants.ChangeRequestAlreadyOpenMessage,
+                                                        changeRequestId,
                                                         currentBranchName,
-                                                        destinationBranch,
-                                                        changeRequestId),
+                                                        destinationBranch),
                                               NotificationEvent.NotificationType.WARNING));
                 return false;
             }

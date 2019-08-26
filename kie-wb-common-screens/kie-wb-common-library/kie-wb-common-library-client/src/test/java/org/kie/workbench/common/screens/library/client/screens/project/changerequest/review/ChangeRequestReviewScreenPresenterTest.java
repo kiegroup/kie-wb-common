@@ -46,6 +46,7 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.promise.SyncPromises;
+import org.uberfire.rpc.SessionInfo;
 import org.uberfire.spaces.Space;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -95,6 +96,9 @@ public class ChangeRequestReviewScreenPresenterTest {
     private Event<NotificationEvent> notificationEvent;
 
     @Mock
+    private SessionInfo sessionInfo;
+
+    @Mock
     private WorkspaceProject workspaceProject;
 
     @Mock
@@ -124,7 +128,8 @@ public class ChangeRequestReviewScreenPresenterTest {
                                                                     changedFilesScreen,
                                                                     promises,
                                                                     projectController,
-                                                                    notificationEvent));
+                                                                    notificationEvent,
+                                                                    sessionInfo));
     }
 
     @Test
@@ -164,6 +169,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         doReturn(changeRequest).when(changeRequestService).getChangeRequest(anyString(),
                                                                             anyString(),
                                                                             anyLong());
+        doReturn("branch").when(changeRequest).getSourceBranch();
         doReturn("branch").when(changeRequest).getTargetBranch();
 
         doReturn(promises.resolve(true)).when(projectController)
@@ -206,6 +212,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         doReturn(changeRequest).when(changeRequestService).getChangeRequest(anyString(),
                                                                             anyString(),
                                                                             anyLong());
+        doReturn("branch").when(changeRequest).getSourceBranch();
         doReturn("branch").when(changeRequest).getTargetBranch();
 
         doReturn(promises.resolve(true)).when(projectController)
