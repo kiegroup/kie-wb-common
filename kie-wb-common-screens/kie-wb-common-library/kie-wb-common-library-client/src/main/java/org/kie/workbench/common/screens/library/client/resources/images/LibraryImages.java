@@ -18,9 +18,21 @@ package org.kie.workbench.common.screens.library.client.resources.images;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.DataResource;
 
 public interface LibraryImages extends ClientBundle {
 
     LibraryImages INSTANCE = GWT.create(LibraryImages.class );
 
+    @Source("changerequest/closed.svg")
+    @DataResource.MimeType("image/svg+xml")
+    DataResource changeRequestClosedStatus();
+
+    @Source("changerequest/merged.svg")
+    @DataResource.MimeType("image/svg+xml")
+    DataResource changeRequestMergedStatus();
+
+    @Source("changerequest/open.svg")
+    @DataResource.MimeType("image/svg+xml")
+    DataResource changeRequestOpenStatus();
 }
