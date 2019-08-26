@@ -26,7 +26,6 @@ import org.kie.workbench.common.dmn.api.resource.DMNDefinitionSetResourceType;
 import org.kie.workbench.common.dmn.project.client.resources.DMNProjectImageResources;
 import org.kie.workbench.common.dmn.project.client.resources.i18n.DMNProjectClientConstants;
 import org.uberfire.client.workbench.type.ClientResourceType;
-import org.uberfire.workbench.diff.DiffMode;
 
 @ApplicationScoped
 public class DMNDiagramResourceType extends DMNDefinitionSetResourceType implements ClientResourceType {
@@ -60,10 +59,5 @@ public class DMNDiagramResourceType extends DMNDefinitionSetResourceType impleme
     @Override
     public String getDescription() {
         return translationService.getTranslation(DMNProjectClientConstants.DMNDiagramResourceTypeDescription);
-    }
-
-    @Override
-    public DiffMode getDiffMode() {
-        return DiffMode.TEXTUAL;
     }
 }

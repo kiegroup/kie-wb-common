@@ -340,7 +340,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     public void onLostFocus() {
         super.doLostFocus();
         dataTypesPage.onLostFocus();
-        dataTypesPage.disableShortcuts();
     }
 
     @Override

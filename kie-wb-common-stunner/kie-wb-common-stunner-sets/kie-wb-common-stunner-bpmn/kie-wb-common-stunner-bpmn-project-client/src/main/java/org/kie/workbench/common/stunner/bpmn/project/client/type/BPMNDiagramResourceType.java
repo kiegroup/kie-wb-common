@@ -26,7 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.project.client.resources.BPMNClient
 import org.kie.workbench.common.stunner.bpmn.project.client.resources.BPMNProjectImageResources;
 import org.kie.workbench.common.stunner.bpmn.resource.BPMNDefinitionSetResourceType;
 import org.uberfire.client.workbench.type.ClientResourceType;
-import org.uberfire.workbench.diff.DiffMode;
 
 @ApplicationScoped
 public class BPMNDiagramResourceType extends BPMNDefinitionSetResourceType implements ClientResourceType {
@@ -66,10 +65,5 @@ public class BPMNDiagramResourceType extends BPMNDefinitionSetResourceType imple
      */
     Image newIcon() {
         return new Image(BPMNProjectImageResources.INSTANCE.bpmn2Icon());
-    }
-
-    @Override
-    public DiffMode getDiffMode() {
-        return DiffMode.TEXTUAL;
     }
 }
