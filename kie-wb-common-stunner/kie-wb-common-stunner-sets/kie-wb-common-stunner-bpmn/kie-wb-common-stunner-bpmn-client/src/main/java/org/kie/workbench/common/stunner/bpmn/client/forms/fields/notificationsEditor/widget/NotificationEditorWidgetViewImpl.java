@@ -609,7 +609,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         expressionTextArea.getElement().getStyle().setBorderColor("");
 
         dateTimePicker.setValue(new Date());
-        timeZonePicker.setValue("0");
+        timeZonePicker.clear();
 
         onRepeatNotification(false);
 

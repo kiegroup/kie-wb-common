@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.widgets;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,18 +40,13 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated(value = "TimeZonePicker.html")
 public class TimeZonePickerViewImpl extends Composite implements TimeZonePickerView {
 
+    private final double defaultOffset = (new Date().getTimezoneOffset() * -1) / 60;
     private Presenter presenter;
-
-    private final double defaultOffset = new Date().getTimezoneOffset() * -1;
-
     @DataField
     private Select tzSelect = new Select();
-
     private List<TimeZonePicker.TimeZoneDTO> zones;
-
     @DataField
     private Button tzSwitch = new Button();
-
     private TZSelectType tzSelectType = TZSelectType.TZ;
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
@@ -66,47 +62,55 @@ public class TimeZonePickerViewImpl extends Composite implements TimeZonePickerV
         tzSwitch.setIcon(IconType.GLOBE);
         tzSwitch.setColor("blue");
         tzSwitch.addClickHandler(event -> changeSwitchType());
-        populateTzSelector();
+        populateTzSelector(String.valueOf(defaultOffset));
     }
 
     private void changeSwitchType() {
         tzSelectType = tzSelectType.equals(TZSelectType.COUNTRY) ? TZSelectType.TZ : TZSelectType.COUNTRY;
-        populateTzSelector();
+        populateTzSelector(tzSelect.getValue());
     }
 
-    void populateTzSelector() {
+    void populateTzSelector(String offset) {
+        String value = offset.replaceAll(":", ".");
         tzSelect.clear();
         if (tzSelectType.equals(TZSelectType.COUNTRY)) {
-            for (int i = 0; i < zones.size(); i++) {
-                Option option = new Option();
-                option.setText(zones.get(i).name);
-                option.setValue(zones.get(i).offsetAsString + "");
-                if (new Double(zones.get(i).offsetAsDouble).equals(new Double(defaultOffset / 60))) {
-                    option.setSelected(true);
-                }
-                tzSelect.add(option);
-            }
+            zones.stream().sorted(Comparator.comparing(v -> v.name)).forEach(zone -> createOption(zone, timeZoneDTO -> timeZoneDTO.name, value));
         } else {
             zones.stream().filter(distinctByKey(p -> p.offsetAsDouble))
                     .sorted((z1, z2) -> Double.valueOf(z1.offsetAsDouble)
                             .compareTo(new Double(z2.offsetAsDouble)))
                     .collect(Collectors.toCollection(LinkedHashSet::new))
-                    .forEach(zone -> {
-                        Option option = new Option();
-                        option.setText(zone.offsetAsString + "");
-                        option.setValue(zone.offsetAsString + "");
-                        if (new Double(zone.offsetAsDouble).equals(new Double(defaultOffset / 60))) {
-                            option.setSelected(true);
-                        }
-                        tzSelect.add(option);
-                    });
+                    .forEach(zone -> createOption(zone, timeZoneDTO -> timeZoneDTO.offsetAsString, value));
         }
         tzSelect.refresh();
+    }
+
+    protected void createOption(TimeZonePicker.TimeZoneDTO zone,
+                                Function<TimeZonePicker.TimeZoneDTO, String> optionName,
+                                String select) {
+        Option option = new Option();
+        option.setText(optionName.apply(zone));
+        option.setValue(zone.offsetAsString + "");
+        if (new Double(zone.offsetAsDouble).equals(new Double(select))) {
+            option.setSelected(true);
+        }
+        tzSelect.add(option);
     }
 
     @Override
     public String getValue() {
         return tzSelect.getValue();
+    }
+
+    @Override
+    public void setValue(String value) {
+        populateTzSelector(value);
+    }
+
+    @Override
+    public void clear() {
+        tzSelectType = TZSelectType.TZ;
+        populateTzSelector(String.valueOf(defaultOffset));
     }
 
     private enum TZSelectType {
