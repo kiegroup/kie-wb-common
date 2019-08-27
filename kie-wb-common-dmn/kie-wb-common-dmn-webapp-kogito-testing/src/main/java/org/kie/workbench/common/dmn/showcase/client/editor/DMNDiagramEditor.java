@@ -65,6 +65,7 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
@@ -191,5 +192,15 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
     @Override
     public void onEditExpressionEvent(final @Observes EditExpressionEvent event) {
         super.onEditExpressionEvent(event);
+    }
+
+    @Override
+    public void onMultiPageEditorSelectedPageEvent(final @Observes MultiPageEditorSelectedPageEvent event) {
+        super.onMultiPageEditorSelectedPageEvent(event);
+    }
+
+    @Override
+    public void onRefreshFormPropertiesEvent(final @Observes RefreshFormPropertiesEvent event) {
+        super.onRefreshFormPropertiesEvent(event);
     }
 }

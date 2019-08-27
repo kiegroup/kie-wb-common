@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 
@@ -72,6 +73,7 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
@@ -208,7 +210,24 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
         getWidget().getMultiPage().addPage(dataTypesPage);
         getWidget().getMultiPage().addPage(includedModelsPage);
 
+        setupEditorSearchIndex();
         setupSearchComponent();
+    }
+
+    private void setupEditorSearchIndex() {
+        editorSearchIndex.setCurrentAssetHashcodeSupplier(getHashcodeSupplier());
+        editorSearchIndex.setIsDataTypesTabActiveSupplier(getIsDataTypesTabActiveSupplier());
+    }
+
+    Supplier<Integer> getHashcodeSupplier() {
+        return this::getCurrentDiagramHash;
+    }
+
+    Supplier<Boolean> getIsDataTypesTabActiveSupplier() {
+        return () -> {
+            final int selectedPageIndex = getWidget().getMultiPage().selectedPage();
+            return selectedPageIndex == DATA_TYPES_PAGE_INDEX;
+        };
     }
 
     void setupSearchComponent() {
@@ -368,7 +387,16 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
         };
     }
 
+    protected void onMultiPageEditorSelectedPageEvent(final MultiPageEditorSelectedPageEvent event) {
+        searchBarComponent.disableSearch();
+    }
+
+    protected void onRefreshFormPropertiesEvent(final RefreshFormPropertiesEvent event) {
+        searchBarComponent.disableSearch();
+    }
+
     protected void onEditExpressionEvent(final EditExpressionEvent event) {
+        searchBarComponent.disableSearch();
         if (isSameSession(event.getSession())) {
             final DMNSession session = sessionManager.getCurrentSession();
             final ExpressionEditorView.Presenter expressionEditor = session.getExpressionEditor();

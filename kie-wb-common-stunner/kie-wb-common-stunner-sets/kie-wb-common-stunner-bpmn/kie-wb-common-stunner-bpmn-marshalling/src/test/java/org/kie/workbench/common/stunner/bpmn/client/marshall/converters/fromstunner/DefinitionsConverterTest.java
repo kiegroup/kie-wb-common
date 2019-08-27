@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
@@ -55,6 +56,7 @@ public class DefinitionsConverterTest {
                 new AdHoc(false),
                 new ProcessInstanceDescription("descr"),
                 new GlobalVariables(""),
+                new Imports(),
                 new Executable(true),
                 new SLADueDate("")
         ));
