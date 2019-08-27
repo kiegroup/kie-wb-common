@@ -546,25 +546,20 @@ public class DMNMarshallerKogito {
 
     @SuppressWarnings("unchecked")
     private List<JSIDMNShape> getUniqueDMNShapes(final JSIDMNDiagram dmnDDDiagram) {
-        final List<JSIDMNShape> jsidmnShapes = new ArrayList<>();
+        final Map<String, JSIDMNShape> jsidmnShapes = new HashMap<>();
         final JsArrayLike<JSIDiagramElement> original = dmnDDDiagram.getDMNDiagramElement();
-        final JsArrayLike<JSIDiagramElement> dmnDiagramElement = (JsArrayLike<JSIDiagramElement>) JsArrayLikeUtils.getUnwrappedElemetsArray(original);
-        for (int i = 0; i < dmnDiagramElement.getLength(); i++) {
-            final JSIDiagramElement jsiDiagramElement = Js.uncheckedCast(dmnDiagramElement.getAt(i));
+        final JsArrayLike<JSIDiagramElement> unwrapped = (JsArrayLike<JSIDiagramElement>) JsArrayLikeUtils.getUnwrappedElemetsArray(original);
+        for (int i = 0; i < unwrapped.getLength(); i++) {
+            final JSIDiagramElement jsiDiagramElement = Js.uncheckedCast(unwrapped.getAt(i));
             final String actualType = jsiDiagramElement.getTYPE_NAME();
-            if ("DMNDI12.DMNShape".equals(actualType)) {
+            if (Objects.equals(JSIDMNShape.TYPE, actualType)) {
                 final JSIDMNShape jsidmnShape = Js.uncheckedCast(jsiDiagramElement);
-                jsidmnShapes.add(jsidmnShape);
+                if (!jsidmnShapes.containsKey(jsidmnShape.getId())) {
+                    jsidmnShapes.put(jsidmnShape.getId(), jsidmnShape);
+                }
             }
         }
-
-        final List<JSIDiagramElement> _jsiDiagramElements = JsArrayLikeUtils.toList(dmnDDDiagram.getDMNDiagramElement());
-        return new ArrayList<>(_jsiDiagramElements.stream()
-                                       .map(Js::uncheckedCast)
-                                       .filter(diagramElements -> diagramElements instanceof JSIDMNShape)
-                                       .map(d -> (JSIDMNShape) d)
-                                       .collect(toMap(JSIDMNShape::getId, shape -> shape, (shape1, shape2) -> shape1))
-                                       .values());
+        return new ArrayList<>(jsidmnShapes.values());
     }
 
     /**
