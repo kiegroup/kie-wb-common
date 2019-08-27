@@ -141,8 +141,6 @@ public interface DefaultWorkbenchConstants
 
     String XLSScoreCard();
 
-    String StunnerDesigner();
-
     String StunnerDesignerPreferences();
 
     String SSHKeys();
