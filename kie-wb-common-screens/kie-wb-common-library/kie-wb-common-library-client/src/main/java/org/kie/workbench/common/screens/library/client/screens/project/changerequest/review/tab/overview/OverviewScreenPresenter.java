@@ -124,12 +124,15 @@ public class OverviewScreenPresenter {
         this.view.setCommentInputPlaceHolder(ts.getTranslation(LibraryConstants.LeaveAComment));
         this.view.enableSummaryEditMode(false);
         this.view.enableDescriptionEditMode(false);
-        this.view.showConflictWarning(changeRequest.isConflict()
-                                              && changeRequest.getStatus() == ChangeRequestStatus.OPEN);
         this.view.showEditModes(isUserAuthor());
         this.view.showRevertFailedTooltip(changeRequest.getStatus() == ChangeRequestStatus.REVERT_FAILED);
 
         this.refreshCommentList(finishLoadingCallback);
+    }
+
+    public void checkWarnConflict(final ChangeRequest changeRequest) {
+        this.view.showConflictWarning(changeRequest.isConflict() &&
+                                              changeRequest.getStatus() == ChangeRequestStatus.OPEN);
     }
 
     public void startEditSummary() {
@@ -196,7 +199,7 @@ public class OverviewScreenPresenter {
         }
     }
 
-    public void setCommentCurrentPage(int currentCommentPage) {
+    public void setCommentCurrentPage(final int currentCommentPage) {
         if (currentCommentPage <= commentTotalPages && currentCommentPage > 0) {
             this.commentCurrentPage = currentCommentPage;
             refreshCommentList(b -> {
@@ -254,7 +257,7 @@ public class OverviewScreenPresenter {
         return this.changeRequestAuthorId.equals(this.sessionInfo.getIdentity().getIdentifier());
     }
 
-    private void setupCommentCounters(int count) {
+    private void setupCommentCounters(final int count) {
         int offset = (this.commentCurrentPage - 1) * COMMENTS_PAGE_SIZE;
 
         final int fromCount = count > 0 ? offset + 1 : offset;
@@ -287,8 +290,8 @@ public class OverviewScreenPresenter {
         this.view.enableCommentNextButton(isNextButtonEnabled);
     }
 
-    private int resolveCommentCounter(int numberOfComments,
-                                      int otherCounter) {
+    private int resolveCommentCounter(final int numberOfComments,
+                                      final int otherCounter) {
         if (numberOfComments < otherCounter || otherCounter == 0) {
             return numberOfComments;
         } else {

@@ -75,6 +75,6 @@ public class EmptyChangeRequestListPresenter {
 
     public interface View extends UberElemental<EmptyChangeRequestListPresenter> {
 
-        void enableSubmitChangeRequestButton(boolean isEnabled);
+        void enableSubmitChangeRequestButton(final boolean isEnabled);
     }
 }

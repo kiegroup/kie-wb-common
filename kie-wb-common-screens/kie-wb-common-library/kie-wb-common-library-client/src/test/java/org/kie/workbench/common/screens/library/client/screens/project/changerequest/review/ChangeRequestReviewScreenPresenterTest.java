@@ -25,6 +25,7 @@ import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
@@ -51,14 +52,12 @@ import org.uberfire.spaces.Space;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,6 +76,9 @@ public class ChangeRequestReviewScreenPresenterTest {
 
     @Mock
     private ChangeRequestService changeRequestService;
+
+    @Mock
+    private RepositoryService repositoryService;
 
     @Mock
     private BusyIndicatorView busyIndicatorView;
@@ -102,6 +104,9 @@ public class ChangeRequestReviewScreenPresenterTest {
     private WorkspaceProject workspaceProject;
 
     @Mock
+    private Repository repository;
+
+    @Mock
     private Branch branch;
 
     @Mock
@@ -111,11 +116,11 @@ public class ChangeRequestReviewScreenPresenterTest {
     public void setUp() {
         promises = new SyncPromises();
 
-        Repository repository = mock(Repository.class);
-
         doReturn(workspaceProject).when(libraryPlaces).getActiveWorkspace();
         doReturn(mock(KieModule.class)).when(workspaceProject).getMainModule();
         doReturn(repository).when(workspaceProject).getRepository();
+        doReturn(repository).when(repositoryService).getRepositoryFromSpace(any(Space.class),
+                                                                            anyString());
         doReturn(mock(Space.class)).when(workspaceProject).getSpace();
         doReturn(Optional.of(branch)).when(repository).getBranch("branch");
 
@@ -123,6 +128,7 @@ public class ChangeRequestReviewScreenPresenterTest {
                                                                     ts,
                                                                     libraryPlaces,
                                                                     new CallerMock<>(changeRequestService),
+                                                                    new CallerMock<>(repositoryService),
                                                                     busyIndicatorView,
                                                                     overviewScreen,
                                                                     changedFilesScreen,
@@ -159,6 +165,9 @@ public class ChangeRequestReviewScreenPresenterTest {
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
 
         PlaceRequest place = mock(PlaceRequest.class);
         SelectPlaceEvent event = new SelectPlaceEvent(place);
@@ -189,7 +198,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService).getChangeRequest(anyString(),
                                                       anyString(),
                                                       anyLong());
-        verify(view, times(2)).activateOverviewTab();
+        verify(view).activateOverviewTab();
         verify(view, never()).showAcceptButton(true);
         verify(overviewScreen).reset();
         verify(changedFilesScreen).reset();
@@ -200,6 +209,9 @@ public class ChangeRequestReviewScreenPresenterTest {
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
 
         PlaceRequest place = mock(PlaceRequest.class);
         SelectPlaceEvent event = new SelectPlaceEvent(place);
@@ -232,8 +244,7 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService).getChangeRequest(anyString(),
                                                       anyString(),
                                                       anyLong());
-        verify(view, times(2)).activateOverviewTab();
-        verify(view).showAcceptButton(anyBoolean());
+        verify(view).activateOverviewTab();
         verify(overviewScreen).reset();
         verify(changedFilesScreen).reset();
     }
@@ -272,6 +283,9 @@ public class ChangeRequestReviewScreenPresenterTest {
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
 
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("currentTargetBranch"))
@@ -315,6 +329,9 @@ public class ChangeRequestReviewScreenPresenterTest {
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
 
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("currentTargetBranch"))
@@ -363,6 +380,9 @@ public class ChangeRequestReviewScreenPresenterTest {
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
 
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("currentTargetBranch"))

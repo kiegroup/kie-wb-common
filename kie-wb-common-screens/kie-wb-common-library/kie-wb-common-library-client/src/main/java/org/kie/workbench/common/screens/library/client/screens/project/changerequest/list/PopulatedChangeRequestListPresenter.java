@@ -140,7 +140,8 @@ public class PopulatedChangeRequestListPresenter {
     }
 
     public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
-        if (event.getProject().getRepository().getIdentifier().equals(this.workspaceProject.getRepository().getIdentifier())) {
+        if (event.getProject().getRepository().getIdentifier()
+                .equals(this.workspaceProject.getRepository().getIdentifier())) {
             this.refreshList();
         }
     }
@@ -159,7 +160,7 @@ public class PopulatedChangeRequestListPresenter {
         }
     }
 
-    public void setCurrentPage(int currentPage) {
+    public void setCurrentPage(final int currentPage) {
         if (currentPage <= totalPages && currentPage > 0) {
             this.currentPage = currentPage;
             this.refreshList();
@@ -168,7 +169,7 @@ public class PopulatedChangeRequestListPresenter {
         }
     }
 
-    public void setFilterType(String filterType) {
+    public void setFilterType(final String filterType) {
         this.filterType = filterType;
         this.searchFilter = "";
         this.view.clearSearch();
@@ -186,7 +187,7 @@ public class PopulatedChangeRequestListPresenter {
         });
     }
 
-    public void search(String searchText) {
+    public void search(final String searchText) {
         this.searchFilter = searchText;
         this.currentPage = 1;
         this.refreshList();
@@ -201,7 +202,7 @@ public class PopulatedChangeRequestListPresenter {
         return ts.format(LibraryConstants.Submitted) + " " + dateUtils.format(createdDate);
     }
 
-    private String formatChangedFiles(int changedFilesCount) {
+    private String formatChangedFiles(final int changedFilesCount) {
         if (changedFilesCount == 1) {
             return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFile);
         } else {
@@ -219,7 +220,8 @@ public class PopulatedChangeRequestListPresenter {
         this.view.setFilterTextPlaceHolder(ts.getTranslation(LibraryConstants.SearchByIdOrSummary));
     }
 
-    private void showEmptyState(String title, String message) {
+    private void showEmptyState(final String title,
+                                final String message) {
         this.emptyState.clear();
         this.emptyState.setMessage(title, message);
         this.view.showEmptyState(emptyState);
@@ -360,8 +362,8 @@ public class PopulatedChangeRequestListPresenter {
         }};
     }
 
-    private int resolveCounter(int numberOfChangeRequests,
-                               int otherCounter) {
+    private int resolveCounter(final int numberOfChangeRequests,
+                               final int otherCounter) {
         if (numberOfChangeRequests < otherCounter || otherCounter == 0) {
             return numberOfChangeRequests;
         } else {

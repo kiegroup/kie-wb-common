@@ -119,7 +119,7 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
     }
 
     @Override
-    public void enableAcceptButton(boolean isEnabled) {
+    public void enableAcceptButton(final boolean isEnabled) {
         this.acceptButton.disabled = !isEnabled;
     }
 
@@ -185,11 +185,11 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
         presenter.revert();
     }
 
-    private void activate(HTMLLIElement element) {
+    private void activate(final HTMLLIElement element) {
         element.classList.add(ACTIVE);
     }
 
-    private void deactivate(HTMLLIElement element) {
+    private void deactivate(final HTMLLIElement element) {
         element.classList.remove(ACTIVE);
     }
 

@@ -186,7 +186,7 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
     }
 
     @Override
-    public void showDiff(boolean isVisible) {
+    public void showDiff(final boolean isVisible) {
         diffList.hidden = !isVisible;
     }
 
@@ -203,7 +203,7 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
     }
 
     @Override
-    public void enableSubmitButton(boolean isEnabled) {
+    public void enableSubmitButton(final boolean isEnabled) {
         this.submitButton.disabled = !isEnabled;
     }
 

@@ -281,7 +281,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     }
 
     @Override
-    public void enableSummaryEditMode(boolean isEnabled) {
+    public void enableSummaryEditMode(final boolean isEnabled) {
         if (isEnabled) {
             summaryEditSave.disabled = true;
             summaryEditInput.value = summary.textContent;
@@ -296,7 +296,7 @@ public class OverviewScreenView implements OverviewScreenPresenter.View,
     }
 
     @Override
-    public void enableDescriptionEditMode(boolean isEnabled) {
+    public void enableDescriptionEditMode(final boolean isEnabled) {
         if (isEnabled) {
             descriptionEditSave.disabled = true;
             descriptionEditInput.value = description.textContent;

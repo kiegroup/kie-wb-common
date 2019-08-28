@@ -559,7 +559,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     public void goToChangeRequestReviewScreen(final long changeRequestId) {
-        placeManager.closePlace(changeRequestReviewScreen);
+        this.closeChangeRequestReviewScreen();
 
         changeRequestReviewScreen =
                 new DefaultPlaceRequest(LibraryPlaces.CHANGE_REQUEST_REVIEW,
@@ -662,6 +662,12 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                                                          uncloseablePlaces,
                                                          newSuccessCallback,
                                                          () -> placeManager.goTo(uncloseablePlaces.get(0)));
+        }
+    }
+
+    public void closeChangeRequestReviewScreen() {
+        if (changeRequestReviewScreen != null) {
+            placeManager.closePlace(changeRequestReviewScreen);
         }
     }
 

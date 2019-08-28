@@ -132,8 +132,7 @@ public class SubmitChangeRequestScreenPresenter {
         if (workspaceProject != null && workspaceProject.getMainModule() != null) {
             final PlaceRequest place = selectPlaceEvent.getPlace();
             if (place.getIdentifier().equals(LibraryPlaces.SUBMIT_CHANGE_REQUEST)) {
-                this.reset();
-                this.setup();
+                this.init();
             }
         }
     }
@@ -141,7 +140,11 @@ public class SubmitChangeRequestScreenPresenter {
     public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
         if (event.getProject().getRepository().getIdentifier()
                 .equals(this.workspaceProject.getRepository().getIdentifier())) {
-            this.updateDiffContainer();
+            final String updatedBranchName = event.getProject().getBranch().getName();
+
+            if (currentBranchName.equals(updatedBranchName) || destinationBranch.equals(updatedBranchName)) {
+                this.updateDiffContainer();
+            }
         }
     }
 
@@ -184,26 +187,7 @@ public class SubmitChangeRequestScreenPresenter {
         });
     }
 
-    private ErrorCallback<Object> createChangeRequestErrorCallback() {
-        return (message, throwable) -> {
-            busyIndicatorView.hideBusyIndicator();
-
-            if (throwable instanceof ChangeRequestAlreadyOpenException) {
-                final Long changeRequestId = ((ChangeRequestAlreadyOpenException) throwable).getChangeRequestId();
-                notificationEvent.fire(
-                        new NotificationEvent(ts.format(LibraryConstants.ChangeRequestAlreadyOpenMessage,
-                                                        changeRequestId,
-                                                        currentBranchName,
-                                                        destinationBranch),
-                                              NotificationEvent.NotificationType.WARNING));
-                return false;
-            }
-
-            return true;
-        };
-    }
-
-    public void selectBranch(String branchName) {
+    public void selectBranch(final String branchName) {
         destinationBranch = branchName;
         updateDiffContainer();
     }
@@ -233,8 +217,32 @@ public class SubmitChangeRequestScreenPresenter {
                          destinationBranch);
     }
 
+    private ErrorCallback<Object> createChangeRequestErrorCallback() {
+        return (message, throwable) -> {
+            busyIndicatorView.hideBusyIndicator();
+
+            if (throwable instanceof ChangeRequestAlreadyOpenException) {
+                final Long changeRequestId = ((ChangeRequestAlreadyOpenException) throwable).getChangeRequestId();
+                notificationEvent.fire(
+                        new NotificationEvent(ts.format(LibraryConstants.ChangeRequestAlreadyOpenMessage,
+                                                        changeRequestId,
+                                                        currentBranchName,
+                                                        destinationBranch),
+                                              NotificationEvent.NotificationType.WARNING));
+                return false;
+            }
+
+            return true;
+        };
+    }
+
     private void destroyDiffItems() {
         diffItemPresenterInstances.destroyAll();
+    }
+
+    private void init() {
+        this.reset();
+        this.setup();
     }
 
     private void reset() {
@@ -317,11 +325,11 @@ public class SubmitChangeRequestScreenPresenter {
 
         void setTitle(final String title);
 
-        void setDestinationBranches(final List<String> branches, int selectedIdx);
+        void setDestinationBranches(final List<String> branches, final int selectedIdx);
 
         void showWarning(final boolean isVisible);
 
-        void addDiffItem(final DiffItemPresenter.View item, Runnable draw);
+        void addDiffItem(final DiffItemPresenter.View item, final Runnable draw);
 
         String getSummary();
 
@@ -335,13 +343,13 @@ public class SubmitChangeRequestScreenPresenter {
 
         void setFilesSummary(final String text);
 
-        void enableSubmitButton(boolean isEnabled);
+        void enableSubmitButton(final boolean isEnabled);
 
         void setSummaryError();
 
         void setDescriptionError();
 
-        void showDiff(boolean isVisible);
+        void showDiff(final boolean isVisible);
 
         void clearInputFields();
     }

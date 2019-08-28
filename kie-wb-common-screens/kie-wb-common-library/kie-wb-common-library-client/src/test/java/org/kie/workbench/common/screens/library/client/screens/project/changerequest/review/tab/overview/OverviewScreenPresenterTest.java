@@ -191,35 +191,36 @@ public class OverviewScreenPresenterTest {
     }
 
     @Test
-    public void setupDontShowConflictIfNotOpenTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
-
+    public void showConflictIfOpenTest() {
         ChangeRequest changeRequest = mock(ChangeRequest.class);
-        doReturn("user").when(changeRequest).getAuthorId();
+        doReturn(ChangeRequestStatus.OPEN).when(changeRequest).getStatus();
+        doReturn(true).when(changeRequest).isConflict();
+
+        presenter.checkWarnConflict(changeRequest);
+
+        verify(view).showConflictWarning(true);
+    }
+
+    @Test
+    public void hideConflictIfNotOpenTest() {
+        ChangeRequest changeRequest = mock(ChangeRequest.class);
         doReturn(ChangeRequestStatus.REJECTED).when(changeRequest).getStatus();
         doReturn(true).when(changeRequest).isConflict();
 
-        presenter.setup(changeRequest, b -> {
-        });
+        presenter.checkWarnConflict(changeRequest);
 
         verify(view).showConflictWarning(false);
     }
 
     @Test
-    public void setupShowConflictTest() throws NoSuchFieldException {
-        new FieldSetter(presenter,
-                        OverviewScreenPresenter.class.getDeclaredField("workspaceProject")).set(workspaceProject);
-
+    public void hideConflictIfNotInConflictTest() {
         ChangeRequest changeRequest = mock(ChangeRequest.class);
-        doReturn("user").when(changeRequest).getAuthorId();
         doReturn(ChangeRequestStatus.OPEN).when(changeRequest).getStatus();
-        doReturn(true).when(changeRequest).isConflict();
+        doReturn(false).when(changeRequest).isConflict();
 
-        presenter.setup(changeRequest, b -> {
-        });
+        presenter.checkWarnConflict(changeRequest);
 
-        verify(view).showConflictWarning(true);
+        verify(view).showConflictWarning(false);
     }
 
     @Test

@@ -46,7 +46,7 @@ public class EmptyChangeRequestListView implements IsElement,
     }
 
     @Override
-    public void enableSubmitChangeRequestButton(boolean isEnabled) {
+    public void enableSubmitChangeRequestButton(final boolean isEnabled) {
         this.submitChangeRequest.disabled = !isEnabled;
     }
 }
