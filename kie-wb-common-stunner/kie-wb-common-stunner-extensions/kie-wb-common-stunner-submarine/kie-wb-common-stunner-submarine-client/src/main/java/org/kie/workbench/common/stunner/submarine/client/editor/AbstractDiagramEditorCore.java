@@ -51,7 +51,7 @@ import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
-public abstract class AbstractDiagramEditorCore<M extends Metadata, D extends Diagram<Graph, M>, C extends SubmarineDiagramResource<D>, P extends DiagramEditorProxy<C>> implements DiagramEditorCore<M, D> {
+public abstract class AbstractDiagramEditorCore<M extends Metadata, D extends Diagram, C extends SubmarineDiagramResource<D>, P extends DiagramEditorProxy<C>> implements DiagramEditorCore<M, D> {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractDiagramEditorCore.class.getName());
 
@@ -69,6 +69,10 @@ public abstract class AbstractDiagramEditorCore<M extends Metadata, D extends Di
     private Optional<SessionViewerPresenter<ViewerSession>> viewerSessionPresenter = Optional.empty();
 
     private P editorProxy = makeEditorProxy();
+
+    public AbstractDiagramEditorCore() {
+        this(null, null, null, null, null, null, null, null, null);
+    }
 
     public AbstractDiagramEditorCore(final View baseEditorView,
                                      final TextEditorView xmlEditorView,

@@ -31,16 +31,16 @@ import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.service.DefinitionSetService;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
 import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,17 +83,17 @@ public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
     }
 
     @Override
-    public SubmarineDiagram transform(final String xml) {
+    public Diagram transform(final String xml) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
             return doNewDiagram();
         }
         return doTransformation(xml);
     }
 
-    private SubmarineDiagram doNewDiagram() {
+    private Diagram doNewDiagram() {
         final String title = UUID.uuid();
         final String defSetId = getDefinitionSetId(dmnBackendService);
-        final SubmarineMetadata metadata = buildMetadataInstance(defSetId);
+        final Metadata metadata = buildMetadataInstance(defSetId);
         metadata.setTitle(title);
 
         try {
@@ -107,9 +107,9 @@ public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
     }
 
     @SuppressWarnings("unchecked")
-    private SubmarineDiagram doTransformation(final String xml) {
+    private Diagram doTransformation(final String xml) {
         final String defSetId = getDefinitionSetId(dmnBackendService);
-        final SubmarineMetadata metadata = buildMetadataInstance(defSetId);
+        final Metadata metadata = buildMetadataInstance(defSetId);
         final InputStream is = new ByteArrayInputStream(xml.getBytes());
 
         try {
@@ -129,7 +129,7 @@ public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
     }
 
     @Override
-    public String transform(final SubmarineDiagram diagram) {
+    public String transform(final Diagram diagram) {
         try {
             final DMNMarshallerStandalone dmnMarshaller = (DMNMarshallerStandalone) dmnBackendService.getDiagramMarshaller();
             return dmnMarshaller.marshall(convert(diagram));
@@ -144,14 +144,14 @@ public class SubmarineDiagramServiceImpl implements SubmarineDiagramService {
         return BindableAdapterUtils.getDefinitionSetId(type);
     }
 
-    private SubmarineMetadata buildMetadataInstance(final String defSetId) {
-        return new SubmarineMetadataImpl.SubmarineMetadataBuilder(defSetId,
-                                                                  definitionManager)
+    private Metadata buildMetadataInstance(final String defSetId) {
+        return new MetadataImpl.MetadataImplBuilder(defSetId,
+                                                    definitionManager)
                 .setRoot(PathFactory.newPath(".", ROOT))
                 .build();
     }
 
-    private DiagramImpl convert(final SubmarineDiagram diagram) {
+    private DiagramImpl convert(final Diagram diagram) {
         return new DiagramImpl(diagram.getName(),
                                diagram.getGraph(),
                                diagram.getMetadata());

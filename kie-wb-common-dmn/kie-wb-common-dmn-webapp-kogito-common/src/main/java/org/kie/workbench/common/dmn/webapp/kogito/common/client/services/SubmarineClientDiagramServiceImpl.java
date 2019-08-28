@@ -34,10 +34,10 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshalle
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
 import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
@@ -72,7 +72,7 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
 
     @Override
     public void transform(final String xml,
-                          final ServiceCallback<SubmarineDiagram> callback) {
+                          final ServiceCallback<Diagram> callback) {
 
         //TODO {manstis} XML->model marshalling...
         //Stage 1 client-side marshalling
@@ -81,7 +81,7 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
         testClientSideUnmarshaller(xml);
 
         //Legacy server-side marshalling
-        submarineDiagramServiceCaller.call((SubmarineDiagram d) -> {
+        submarineDiagramServiceCaller.call((Diagram d) -> {
             updateClientMetadata(d);
             callback.onSuccess(d);
         }).transform(xml);
@@ -100,7 +100,7 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
         return promises.resolve(resource.xmlDiagram().orElse("DiagramType is XML_DIAGRAM however no instance present"));
     }
 
-    private void updateClientMetadata(final SubmarineDiagram diagram) {
+    private void updateClientMetadata(final Diagram diagram) {
         if (null != diagram) {
             final Metadata metadata = diagram.getMetadata();
             if (Objects.nonNull(metadata) && StringUtils.isEmpty(metadata.getShapeSetId())) {

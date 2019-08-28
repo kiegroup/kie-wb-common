@@ -40,11 +40,11 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.kogito.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditor;
@@ -153,7 +153,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    public void open(final SubmarineDiagram diagram) {
+    public void open(final Diagram diagram) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         super.open(diagram);
     }
@@ -268,10 +268,10 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @Override
     public void setContent(final String value) {
         diagramServices.transform(value,
-                                  new ServiceCallback<SubmarineDiagram>() {
+                                  new ServiceCallback<Diagram>() {
 
                                       @Override
-                                      public void onSuccess(final SubmarineDiagram diagram) {
+                                      public void onSuccess(final Diagram diagram) {
                                           getEditor().open(diagram);
                                       }
 

@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.uberfire.ext.editor.commons.client.BaseEditorView;
 
-public interface DiagramEditorCore<M extends Metadata, D extends Diagram<Graph, M>> {
+public interface DiagramEditorCore<M extends Metadata, D extends Diagram> {
 
     interface View extends BaseEditorView,
                            RequiresResize,

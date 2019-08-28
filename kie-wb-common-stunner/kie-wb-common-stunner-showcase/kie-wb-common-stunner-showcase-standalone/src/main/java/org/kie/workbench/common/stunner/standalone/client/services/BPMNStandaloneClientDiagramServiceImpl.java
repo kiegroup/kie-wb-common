@@ -26,9 +26,9 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
 import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
@@ -77,8 +77,8 @@ public class BPMNStandaloneClientDiagramServiceImpl implements SubmarineClientDi
 
     @Override
     public void transform(final String xml,
-                          final ServiceCallback<SubmarineDiagram> callback) {
-        submarineDiagramServiceCaller.call((SubmarineDiagram d) -> {
+                          final ServiceCallback<Diagram> callback) {
+        submarineDiagramServiceCaller.call((Diagram d) -> {
             updateClientMetadata(d);
             callback.onSuccess(d);
         }).transform(xml);
@@ -95,7 +95,7 @@ public class BPMNStandaloneClientDiagramServiceImpl implements SubmarineClientDi
         return promises.resolve(resource.xmlDiagram().orElse("DiagramType is XML_DIAGRAM however no instance present"));
     }
 
-    private void updateClientMetadata(final SubmarineDiagram diagram) {
+    private void updateClientMetadata(final Diagram diagram) {
         if (null != diagram) {
             final Metadata metadata = diagram.getMetadata();
             if (Objects.nonNull(metadata) && StringUtils.isEmpty(metadata.getShapeSetId())) {

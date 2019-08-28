@@ -58,7 +58,6 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditor;
 import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
@@ -204,7 +203,7 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    public void initialiseKieEditorForSession(final SubmarineDiagram diagram) {
+    public void initialiseKieEditorForSession(final Diagram diagram) {
         superInitialiseKieEditorForSession(diagram);
 
         getWidget().getMultiPage().addPage(dataTypesPage);
@@ -246,12 +245,12 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
         getWidget().getMultiPage().selectPage(DATA_TYPES_PAGE_INDEX);
     }
 
-    void superInitialiseKieEditorForSession(final SubmarineDiagram diagram) {
+    void superInitialiseKieEditorForSession(final Diagram diagram) {
         super.initialiseKieEditorForSession(diagram);
     }
 
     @Override
-    public void open(final SubmarineDiagram diagram) {
+    public void open(final Diagram diagram) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         super.open(diagram);
     }
@@ -429,10 +428,10 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
     @SetContent
     public void setContent(final String value) {
         diagramServices.transform(value,
-                                  new ServiceCallback<SubmarineDiagram>() {
+                                  new ServiceCallback<Diagram>() {
 
                                       @Override
-                                      public void onSuccess(final SubmarineDiagram diagram) {
+                                      public void onSuccess(final Diagram diagram) {
                                           getEditor().open(diagram);
                                       }
 

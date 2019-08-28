@@ -20,23 +20,23 @@ import java.util.Optional;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.submarine.api.editor.SubmarineDiagramResource;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 @Portable
-public class SubmarineDiagramResourceImpl implements SubmarineDiagramResource<SubmarineDiagram> {
+public class SubmarineDiagramResourceImpl implements SubmarineDiagramResource<Diagram> {
 
-    private SubmarineDiagram projectDiagram = null;
+    private Diagram projectDiagram = null;
 
     private String xmlDiagram = "";
 
     private DiagramType type = DiagramType.PROJECT_DIAGRAM;
 
-    public SubmarineDiagramResourceImpl(final @MapsTo("projectDiagram") SubmarineDiagram projectDiagram,
+    public SubmarineDiagramResourceImpl(final @MapsTo("projectDiagram") Diagram projectDiagram,
                                         final @MapsTo("xmlDiagram") String xmlDiagram,
                                         final @MapsTo("type") DiagramType type) {
         checkNotNull("type", type);
@@ -46,7 +46,7 @@ public class SubmarineDiagramResourceImpl implements SubmarineDiagramResource<Su
         this.type = type;
     }
 
-    public SubmarineDiagramResourceImpl(final SubmarineDiagram projectDiagram) {
+    public SubmarineDiagramResourceImpl(final Diagram projectDiagram) {
         this(projectDiagram, null, DiagramType.PROJECT_DIAGRAM);
     }
 
@@ -81,7 +81,7 @@ public class SubmarineDiagramResourceImpl implements SubmarineDiagramResource<Su
     }
 
     @Override
-    public Optional<SubmarineDiagram> projectDiagram() {
+    public Optional<Diagram> projectDiagram() {
         return Optional.ofNullable(projectDiagram);
     }
 

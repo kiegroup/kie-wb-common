@@ -17,6 +17,8 @@ package org.kie.workbench.common.stunner.submarine.api.diagram.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
+import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
@@ -31,20 +33,20 @@ public class SubmarineDiagramImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testProjectDiagramEquals() {
-        final SubmarineDiagramImpl a = new SubmarineDiagramImpl("Diagram",
-                                                                new GraphImpl("Graph",
-                                                                              new GraphNodeStoreImpl()),
-                                                                new SubmarineMetadataImpl());
-        final SubmarineDiagramImpl b = new SubmarineDiagramImpl("AnotherDiagram",
-                                                                new GraphImpl("Graph",
-                                                                              new GraphNodeStoreImpl()),
-                                                                new SubmarineMetadataImpl());
+        final DiagramImpl a = new DiagramImpl("Diagram",
+                                              new GraphImpl("Graph",
+                                                            new GraphNodeStoreImpl()),
+                                              new MetadataImpl());
+        final DiagramImpl b = new DiagramImpl("AnotherDiagram",
+                                              new GraphImpl("Graph",
+                                                            new GraphNodeStoreImpl()),
+                                              new MetadataImpl());
         assertNotEquals(a,
                         b);
-        final SubmarineDiagramImpl c = new SubmarineDiagramImpl("Diagram",
-                                                                new GraphImpl("Graph",
-                                                                              new GraphNodeStoreImpl()),
-                                                                new SubmarineMetadataImpl());
+        final DiagramImpl c = new DiagramImpl("Diagram",
+                                              new GraphImpl("Graph",
+                                                            new GraphNodeStoreImpl()),
+                                              new MetadataImpl());
         assertEquals(a,
                      c);
 
@@ -70,20 +72,20 @@ public class SubmarineDiagramImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testProjectDiagramHashCode() {
-        final SubmarineDiagramImpl a = new SubmarineDiagramImpl("Diagram",
-                                                                new GraphImpl("Graph",
-                                                                              new GraphNodeStoreImpl()),
-                                                                new SubmarineMetadataImpl());
-        final SubmarineDiagramImpl b = new SubmarineDiagramImpl("AnotherDiagram",
-                                                                new GraphImpl("Graph",
-                                                                              new GraphNodeStoreImpl()),
-                                                                new SubmarineMetadataImpl());
+        final DiagramImpl a = new DiagramImpl("Diagram",
+                                              new GraphImpl("Graph",
+                                                            new GraphNodeStoreImpl()),
+                                              new MetadataImpl());
+        final DiagramImpl b = new DiagramImpl("AnotherDiagram",
+                                              new GraphImpl("Graph",
+                                                            new GraphNodeStoreImpl()),
+                                              new MetadataImpl());
         assertNotEquals(a.hashCode(),
                         b.hashCode());
-        final SubmarineDiagramImpl c = new SubmarineDiagramImpl("Diagram",
-                                                                new GraphImpl("Graph",
-                                                                              new GraphNodeStoreImpl()),
-                                                                new SubmarineMetadataImpl());
+        final DiagramImpl c = new DiagramImpl("Diagram",
+                                              new GraphImpl("Graph",
+                                                            new GraphNodeStoreImpl()),
+                                              new MetadataImpl());
         assertEquals(a.hashCode(),
                      c.hashCode());
 

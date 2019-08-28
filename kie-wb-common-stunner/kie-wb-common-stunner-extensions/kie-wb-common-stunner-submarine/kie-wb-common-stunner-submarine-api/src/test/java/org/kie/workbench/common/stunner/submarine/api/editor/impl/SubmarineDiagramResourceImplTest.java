@@ -17,11 +17,11 @@
 package org.kie.workbench.common.stunner.submarine.api.editor.impl;
 
 import org.junit.Test;
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
+import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
 import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
 
 import static org.junit.Assert.assertEquals;
@@ -34,8 +34,8 @@ public class SubmarineDiagramResourceImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testEqualsWhenProjectDiagramIsDifferent() {
-        final SubmarineDiagramImpl projectDiagram1 = new SubmarineDiagramImpl("Diagram", makeGraph(), makeMetadata());
-        final SubmarineDiagramImpl projectDiagram2 = new SubmarineDiagramImpl("Diagram_", makeGraph(), makeMetadata());
+        final DiagramImpl projectDiagram1 = new DiagramImpl("Diagram", makeGraph(), makeMetadata());
+        final DiagramImpl projectDiagram2 = new DiagramImpl("Diagram_", makeGraph(), makeMetadata());
         final SubmarineDiagramResourceImpl projectDiagramResource1 = new SubmarineDiagramResourceImpl(projectDiagram1);
         final SubmarineDiagramResourceImpl projectDiagramResource2 = new SubmarineDiagramResourceImpl(projectDiagram2);
 
@@ -69,8 +69,8 @@ public class SubmarineDiagramResourceImplTest {
 
         graphTwo.addNode(new NodeImpl("unique id"));
 
-        final SubmarineDiagramImpl projectDiagram1 = new SubmarineDiagramImpl("Diagram", graphOne, makeMetadata());
-        final SubmarineDiagramImpl projectDiagram2 = new SubmarineDiagramImpl("Diagram", graphTwo, makeMetadata());
+        final DiagramImpl projectDiagram1 = new DiagramImpl("Diagram", graphOne, makeMetadata());
+        final DiagramImpl projectDiagram2 = new DiagramImpl("Diagram", graphTwo, makeMetadata());
         final SubmarineDiagramResourceImpl projectDiagramResource1 = new SubmarineDiagramResourceImpl(projectDiagram1);
         final SubmarineDiagramResourceImpl projectDiagramResource2 = new SubmarineDiagramResourceImpl(projectDiagram2);
 
@@ -81,14 +81,14 @@ public class SubmarineDiagramResourceImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testEqualsWhenProjectDiagramIsDifferentMetadata() {
-        final SubmarineMetadataImpl metadataOne = spy(makeMetadata());
-        final SubmarineMetadataImpl metadataTwo = spy(makeMetadata());
+        final MetadataImpl metadataOne = spy(makeMetadata());
+        final MetadataImpl metadataTwo = spy(makeMetadata());
 
         doReturn("moduleOne").when(metadataOne).getTitle();
         doReturn("moduleTwo").when(metadataTwo).getTitle();
 
-        final SubmarineDiagramImpl projectDiagram1 = new SubmarineDiagramImpl("Diagram", makeGraph(), metadataOne);
-        final SubmarineDiagramImpl projectDiagram2 = new SubmarineDiagramImpl("Diagram", makeGraph(), metadataTwo);
+        final DiagramImpl projectDiagram1 = new DiagramImpl("Diagram", makeGraph(), metadataOne);
+        final DiagramImpl projectDiagram2 = new DiagramImpl("Diagram", makeGraph(), metadataTwo);
         final SubmarineDiagramResourceImpl projectDiagramResource1 = new SubmarineDiagramResourceImpl(projectDiagram1);
         final SubmarineDiagramResourceImpl projectDiagramResource2 = new SubmarineDiagramResourceImpl(projectDiagram2);
 
@@ -99,8 +99,8 @@ public class SubmarineDiagramResourceImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testEqualsWhenObjectsAreEqual() {
-        final SubmarineDiagramImpl projectDiagram1 = new SubmarineDiagramImpl("Diagram", makeGraph(), makeMetadata());
-        final SubmarineDiagramImpl projectDiagram2 = new SubmarineDiagramImpl("Diagram", makeGraph(), makeMetadata());
+        final DiagramImpl projectDiagram1 = new DiagramImpl("Diagram", makeGraph(), makeMetadata());
+        final DiagramImpl projectDiagram2 = new DiagramImpl("Diagram", makeGraph(), makeMetadata());
         final SubmarineDiagramResourceImpl projectDiagramResource1 = new SubmarineDiagramResourceImpl(projectDiagram1);
         final SubmarineDiagramResourceImpl projectDiagramResource2 = new SubmarineDiagramResourceImpl(projectDiagram2);
 
@@ -117,7 +117,7 @@ public class SubmarineDiagramResourceImplTest {
         return new GraphImpl("Graph", new GraphNodeStoreImpl());
     }
 
-    private SubmarineMetadataImpl makeMetadata() {
-        return new SubmarineMetadataImpl();
+    private MetadataImpl makeMetadata() {
+        return new MetadataImpl();
     }
 }

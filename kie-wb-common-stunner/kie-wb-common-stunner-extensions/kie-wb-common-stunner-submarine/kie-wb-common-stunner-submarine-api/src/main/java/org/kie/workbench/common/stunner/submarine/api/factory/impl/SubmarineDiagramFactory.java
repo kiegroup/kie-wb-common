@@ -17,32 +17,31 @@ package org.kie.workbench.common.stunner.submarine.api.factory.impl;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
 
 /**
  * The default factory for SubmarineDiagrams.
  */
 @ApplicationScoped
 public class SubmarineDiagramFactory
-        implements DiagramFactory<SubmarineMetadata, SubmarineDiagramImpl> {
+        implements DiagramFactory<Metadata, DiagramImpl> {
 
     @Override
     public Class<? extends Metadata> getMetadataType() {
-        return SubmarineMetadata.class;
+        return Metadata.class;
     }
 
     @Override
-    public SubmarineDiagramImpl build(final String name,
-                                      final SubmarineMetadata metadata,
-                                      final Graph<DefinitionSet, ?> graph) {
-        return new SubmarineDiagramImpl(name,
-                                        graph,
-                                        metadata);
+    public DiagramImpl build(final String name,
+                             final Metadata metadata,
+                             final Graph<DefinitionSet, ?> graph) {
+        return new DiagramImpl(name,
+                               graph,
+                               metadata);
     }
 
     @Override

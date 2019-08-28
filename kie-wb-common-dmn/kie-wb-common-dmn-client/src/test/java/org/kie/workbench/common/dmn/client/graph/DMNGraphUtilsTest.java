@@ -29,13 +29,13 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -64,19 +64,19 @@ public class DMNGraphUtilsTest {
     private CanvasHandler canvasHandler;
 
     @Mock
-    private SubmarineMetadata metadata;
+    private Metadata metadata;
 
     private DMNGraphUtils utils;
 
     private GraphImpl<DefinitionSet> graph;
 
-    private SubmarineDiagramImpl diagram;
+    private DiagramImpl diagram;
 
     @Before
     public void setup() {
         this.utils = new DMNGraphUtils(sessionManager, dmnDiagramUtils);
         this.graph = new GraphImpl<>(UUID.uuid(), new GraphNodeStoreImpl());
-        this.diagram = new SubmarineDiagramImpl(NAME, graph, metadata);
+        this.diagram = new DiagramImpl(NAME, graph, metadata);
         when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);

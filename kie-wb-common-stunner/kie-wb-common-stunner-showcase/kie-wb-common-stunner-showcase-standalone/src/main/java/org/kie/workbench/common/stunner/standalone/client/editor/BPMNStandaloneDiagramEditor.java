@@ -41,12 +41,12 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.standalone.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.standalone.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditor;
@@ -154,7 +154,7 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
     }
 
 //    @Override
-//    protected AbstractDiagramEditorCore<SubmarineMetadata, SubmarineDiagram, SubmarineDiagramResourceImpl> makeCore(final View view,
+//    protected AbstractDiagramEditorCore<SubmarineMetadata, Diagram, DiagramResourceImpl> makeCore(final View view,
 //                                                                                                                    final TextEditorView xmlEditorView,
 //                                                                                                                    final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
 //                                                                                                                    final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
@@ -218,16 +218,16 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    public void initialiseKieEditorForSession(final SubmarineDiagram diagram) {
+    public void initialiseKieEditorForSession(final Diagram diagram) {
         superInitialiseKieEditorForSession(diagram);
     }
 
-    void superInitialiseKieEditorForSession(final SubmarineDiagram diagram) {
+    void superInitialiseKieEditorForSession(final Diagram diagram) {
         super.initialiseKieEditorForSession(diagram);
     }
 
     @Override
-    public void open(final SubmarineDiagram diagram) {
+    public void open(final Diagram diagram) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         super.open(diagram);
     }
@@ -360,10 +360,10 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
     // @SetContent
     public void setContent(final String value) {
         diagramServices.transform(value,
-                                  new ServiceCallback<SubmarineDiagram>() {
+                                  new ServiceCallback<Diagram>() {
 
                                       @Override
-                                      public void onSuccess(final SubmarineDiagram diagram) {
+                                      public void onSuccess(final Diagram diagram) {
                                           getEditor().open(diagram);
                                       }
 

@@ -17,13 +17,13 @@ package org.kie.workbench.common.stunner.submarine.client.service;
 
 import elemental2.promise.Promise;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
 
 public interface SubmarineClientDiagramService {
 
     void transform(final String xml,
-                   final ServiceCallback<SubmarineDiagram> callback);
+                   final ServiceCallback<Diagram> callback);
 
     Promise<String> transform(final SubmarineDiagramResourceImpl resource);
 }

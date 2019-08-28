@@ -15,12 +15,12 @@
  */
 package org.kie.workbench.common.dmn.api.factory;
 
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 
-public interface DMNDiagramFactory
-        extends DMNFactory,
-                DiagramFactory<SubmarineMetadata, SubmarineDiagram> {
+public interface DMNDiagramFactory extends DMNFactory,
+                                           DiagramFactory<Metadata, Diagram<Graph, Metadata>> {
 
 }

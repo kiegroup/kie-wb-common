@@ -16,14 +16,14 @@
 package org.kie.workbench.common.stunner.submarine.api.service;
 
 import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.submarine.api.Submarine;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 
 @Submarine
 @Remote
 public interface SubmarineDiagramService {
 
-    SubmarineDiagram transform(final String xml);
+    Diagram transform(final String xml);
 
-    String transform(final SubmarineDiagram diagram);
+    String transform(final Diagram diagram);
 }

@@ -45,8 +45,6 @@ import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
 import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
 import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.submarine.client.resources.i18n.SubmarineClientConstants;
@@ -62,7 +60,7 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
-public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPresenter<SubmarineDiagramResourceImpl> implements DiagramEditorCore<SubmarineMetadata, SubmarineDiagram> {
+public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPresenter<SubmarineDiagramResourceImpl> implements DiagramEditorCore<Metadata, Diagram> {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractDiagramEditor.class.getName());
 
@@ -77,7 +75,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
 
     protected boolean menuBarInitialized = false;
 
-    public class DiagramEditorCore extends AbstractDiagramEditorCore<SubmarineMetadata, SubmarineDiagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> {
+    public class DiagramEditorCore extends AbstractDiagramEditorCore<Metadata, Diagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> {
 
         public DiagramEditorCore(final View baseEditorView,
                                  final TextEditorView xmlEditorView,
@@ -105,7 +103,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         }
 
         @Override
-        protected SubmarineDiagramResourceImpl makeDiagramResourceImpl(final SubmarineDiagram diagram) {
+        protected SubmarineDiagramResourceImpl makeDiagramResourceImpl(final Diagram diagram) {
             return new SubmarineDiagramResourceImpl(diagram);
         }
 
@@ -125,7 +123,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         }
 
         @Override
-        public void initialiseKieEditorForSession(final SubmarineDiagram diagram) {
+        public void initialiseKieEditorForSession(final Diagram diagram) {
             AbstractDiagramEditor.this.initialiseKieEditorForSession(diagram);
         }
 
@@ -165,7 +163,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         }
     }
 
-    private final AbstractDiagramEditorCore<SubmarineMetadata, SubmarineDiagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> editor;
+    private final AbstractDiagramEditorCore<Metadata, Diagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> editor;
 
     public AbstractDiagramEditor(final View view,
                                  final FileMenuBuilder fileMenuBuilder,
@@ -204,15 +202,15 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
                                translationService);
     }
 
-    protected AbstractDiagramEditorCore<SubmarineMetadata, SubmarineDiagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> makeCore(final View view,
-                                                                                                                                                                      final TextEditorView xmlEditorView,
-                                                                                                                                                                      final Event<NotificationEvent> notificationEvent,
-                                                                                                                                                                      final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
-                                                                                                                                                                      final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                                                                                                                                                      final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
-                                                                                                                                                                      final ErrorPopupPresenter errorPopupPresenter,
-                                                                                                                                                                      final DiagramClientErrorHandler diagramClientErrorHandler,
-                                                                                                                                                                      final ClientTranslationService translationService) {
+    protected AbstractDiagramEditorCore<Metadata, Diagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> makeCore(final View view,
+                                                                                                                                                    final TextEditorView xmlEditorView,
+                                                                                                                                                    final Event<NotificationEvent> notificationEvent,
+                                                                                                                                                    final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                                                                                                                                    final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                                                                                                                                    final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                                                                                                                                    final ErrorPopupPresenter errorPopupPresenter,
+                                                                                                                                                    final DiagramClientErrorHandler diagramClientErrorHandler,
+                                                                                                                                                    final ClientTranslationService translationService) {
         return new DiagramEditorCore(view,
                                      xmlEditorView,
                                      notificationEvent,
@@ -293,7 +291,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
     }
 
     @Override
-    public void open(final SubmarineDiagram diagram) {
+    public void open(final Diagram diagram) {
         editor.open(diagram);
     }
 
@@ -303,7 +301,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
     }
 
     @Override
-    public void initialiseKieEditorForSession(final SubmarineDiagram diagram) {
+    public void initialiseKieEditorForSession(final Diagram diagram) {
         resetEditorPages();
         updateTitle(diagram.getMetadata().getTitle());
         onDiagramLoad();
@@ -322,7 +320,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
     }
 
     @SuppressWarnings("unchecked")
-    protected void addDocumentationPage(final SubmarineDiagram diagram) {
+    protected void addDocumentationPage(final Diagram diagram) {
         Optional.of(documentationView.isEnabled())
                 .filter(Boolean.TRUE::equals)
                 .ifPresent(enabled -> {
@@ -403,7 +401,7 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
         return fileMenuBuilder;
     }
 
-    protected AbstractDiagramEditorCore<SubmarineMetadata, SubmarineDiagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> getEditor() {
+    protected AbstractDiagramEditorCore<Metadata, Diagram, SubmarineDiagramResourceImpl, DiagramEditorProxy<SubmarineDiagramResourceImpl>> getEditor() {
         return editor;
     }
 }
