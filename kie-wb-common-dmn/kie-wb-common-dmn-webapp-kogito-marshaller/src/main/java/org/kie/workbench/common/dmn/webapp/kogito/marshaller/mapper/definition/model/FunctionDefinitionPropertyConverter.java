@@ -37,7 +37,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class FunctionDefinitionPropertyConverter {
 
@@ -161,7 +161,7 @@ public class FunctionDefinitionPropertyConverter {
             if (iiConverted != null) {
                 iiConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getFormalParameter(), iiConverted);
+            JsUtils.add(result.getFormalParameter(), iiConverted);
         }
 
         return result;

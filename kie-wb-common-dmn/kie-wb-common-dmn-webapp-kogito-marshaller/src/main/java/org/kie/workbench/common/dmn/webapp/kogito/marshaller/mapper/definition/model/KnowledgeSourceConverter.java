@@ -37,7 +37,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -108,21 +108,21 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredDecision(ri);
-                        JsArrayLikeUtils.add(result.getAuthorityRequirement(), iReq);
+                        JsUtils.add(result.getAuthorityRequirement(), iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        JsArrayLikeUtils.add(result.getAuthorityRequirement(), iReq);
+                        JsUtils.add(result.getAuthorityRequirement(), iReq);
                     } else if (drgElement instanceof InputData) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredInput(ri);
-                        JsArrayLikeUtils.add(result.getAuthorityRequirement(), iReq);
+                        JsUtils.add(result.getAuthorityRequirement(), iReq);
                     } else {
                         throw new UnsupportedOperationException("wrong model definition.");
                     }

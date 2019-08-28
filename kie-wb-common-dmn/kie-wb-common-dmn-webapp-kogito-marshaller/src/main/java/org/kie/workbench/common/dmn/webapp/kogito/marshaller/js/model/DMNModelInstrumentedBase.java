@@ -17,8 +17,10 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import jsinterop.annotations.JsIgnore;
@@ -54,14 +56,22 @@ public class DMNModelInstrumentedBase {
     public Map<String, String> getNsContext() {
         if (nsContext == null) {
             nsContext = new HashMap<>();
+            for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
+                final QName qName = e.getKey();
+                final String nsLocalPart = qName.getLocalPart();
+                final String nsNamespaceURI = qName.getNamespaceURI();
+                final String nsPrefix = qName.getPrefix();
+
+                nsContext.put(Objects.nonNull(nsPrefix) ? nsPrefix : XMLConstants.DEFAULT_NS_PREFIX, nsNamespaceURI);
+            }
         }
         return nsContext;
     }
 
     @JsIgnore
     public String getNamespaceURI(final String prefix) {
-        if (this.nsContext != null && this.nsContext.containsKey(prefix)) {
-            return this.nsContext.get(prefix);
+        if (getNsContext().containsKey(prefix)) {
+            return getNsContext().get(prefix);
         }
         if (this.parent != null) {
             return parent.getNamespaceURI(prefix);
@@ -71,8 +81,8 @@ public class DMNModelInstrumentedBase {
 
     @JsIgnore
     public Optional<String> getPrefixForNamespaceURI(final String namespaceURI) {
-        if (this.nsContext != null && this.nsContext.containsValue(namespaceURI)) {
-            return this.nsContext.entrySet().stream().filter(kv -> kv.getValue().equals(namespaceURI)).findFirst().map(Map.Entry::getKey);
+        if (getNsContext().containsValue(namespaceURI)) {
+            return getNsContext().entrySet().stream().filter(kv -> kv.getValue().equals(namespaceURI)).findFirst().map(Map.Entry::getKey);
         }
         if (this.parent != null) {
             return parent.getPrefixForNamespaceURI(namespaceURI);

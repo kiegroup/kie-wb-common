@@ -44,7 +44,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -196,11 +196,11 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         for (JSITDMNElementReference e : existing) {
             boolean existingIsAlsoCandidate = candidate.removeIf(er -> er.getHref().equals(e.getHref()));
             if (existingIsAlsoCandidate) {
-                JsArrayLikeUtils.add(targetList, e);
+                JsUtils.add(targetList, e);
             }
         }
         for (JSITDMNElementReference c : candidate) {
-            JsArrayLikeUtils.add(targetList, c);
+            JsUtils.add(targetList, c);
         }
     }
 

@@ -29,7 +29,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 import static java.util.Optional.ofNullable;
 
@@ -131,7 +131,7 @@ public class ItemDefinitionPropertyConverter {
         for (ItemDefinition child : wb.getItemComponent()) {
             final JSITItemDefinition convertedChild = ItemDefinitionPropertyConverter.dmnFromWB(child);
             convertedChild.setParent(result);
-            JsArrayLikeUtils.add(result.getItemComponent(), convertedChild);
+            JsUtils.add(result.getItemComponent(), convertedChild);
         }
 
         return result;

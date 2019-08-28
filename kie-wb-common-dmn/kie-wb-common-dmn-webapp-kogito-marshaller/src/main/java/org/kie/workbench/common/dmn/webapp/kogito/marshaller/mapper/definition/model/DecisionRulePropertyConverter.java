@@ -24,7 +24,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionRule;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class DecisionRulePropertyConverter {
 
@@ -64,14 +64,14 @@ public class DecisionRulePropertyConverter {
             if (inputEntryConverted != null) {
                 inputEntryConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getInputEntry(), inputEntryConverted);
+            JsUtils.add(result.getInputEntry(), inputEntryConverted);
         }
         for (LiteralExpression oe : wb.getOutputEntry()) {
             final JSITLiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.dmnFromWB(oe);
             if (outputEntryConverted != null) {
                 outputEntryConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getOutputEntry(), outputEntryConverted);
+            JsUtils.add(result.getOutputEntry(), outputEntryConverted);
         }
 
         return result;

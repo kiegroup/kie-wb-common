@@ -23,9 +23,9 @@ import java.util.Objects;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 
-public class JsArrayLikeUtils {
+public class JsUtils {
 
-    private JsArrayLikeUtils() {
+    private JsUtils() {
         //Private constructor to prevent instantiation
     }
 
@@ -38,7 +38,7 @@ public class JsArrayLikeUtils {
 
     public static <D> void addAll(final JsArrayLike<D> jsArrayLike,
                                   final D... elements) {
-        Arrays.stream(elements).forEach(element -> JsArrayLikeUtils.add(jsArrayLike, element));
+        Arrays.stream(elements).forEach(element -> JsUtils.add(jsArrayLike, element));
     }
 
     public static <D> void remove(final JsArrayLike<D> jsArrayLike,
@@ -63,7 +63,7 @@ public class JsArrayLikeUtils {
         return elements;
     }
 
-    public static native JsArrayLike<?> getUnwrappedElemetsArray(final JsArrayLike<?> original) /*-{
+    public static native <D> JsArrayLike<D> getUnwrappedElementsArray(final JsArrayLike<D> original) /*-{
         var toReturn = original.map(function (arrayItem) {
             var retrieved = arrayItem.value
             var toSet = retrieved == null ? arrayItem : retrieved
@@ -72,4 +72,12 @@ public class JsArrayLikeUtils {
         });
         return toReturn;
     }-*/;
+
+    public static native Object getUnwrappedElement(final Object original) /*-{
+        var toReturn = original.value;
+        var toSet = toReturn == null ? original : toReturn;
+        console.log(toSet);
+        return toSet;
+    }-*/;
 }
+/**/

@@ -29,7 +29,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class ListPropertyConverter {
 
@@ -68,7 +68,7 @@ public class ListPropertyConverter {
             if (eConverted != null) {
                 eConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getExpression(), eConverted);
+            JsUtils.add(result.getExpression(), eConverted);
         }
 
         return result;

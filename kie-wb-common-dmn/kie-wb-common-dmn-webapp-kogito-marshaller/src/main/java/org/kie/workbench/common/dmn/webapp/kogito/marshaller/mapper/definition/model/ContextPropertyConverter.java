@@ -31,7 +31,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class ContextPropertyConverter {
 
@@ -82,7 +82,7 @@ public class ContextPropertyConverter {
             if (ceConverted != null) {
                 ceConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getContextEntry(), ceConverted);
+            JsUtils.add(result.getContextEntry(), ceConverted);
         }
 
         //The UI appends a ContextEntry for the _default_ result that may contain an undefined Expression.
@@ -92,7 +92,7 @@ public class ContextPropertyConverter {
         final int contextEntriesCount = result.getContextEntry().getLength();
         if (contextEntriesCount > 0) {
             if (Objects.isNull(wb.getContextEntry().get(contextEntriesCount - 1).getExpression())) {
-                JsArrayLikeUtils.remove(result.getContextEntry(), contextEntriesCount - 1);
+                JsUtils.remove(result.getContextEntry(), contextEntriesCount - 1);
             }
         }
 

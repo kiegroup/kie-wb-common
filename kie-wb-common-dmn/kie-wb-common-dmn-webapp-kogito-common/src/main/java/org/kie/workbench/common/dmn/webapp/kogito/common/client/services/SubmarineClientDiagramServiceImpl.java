@@ -31,6 +31,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -116,7 +117,7 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
 
         final DMN12UnmarshallCallback callback = dmn12 -> {
             this.dmn12 = dmn12;
-            final JSITDefinitions definitions = Js.uncheckedCast(dmn12.getValue());
+            final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
             final Graph graph = dmnMarshaller.unmarshall(null, definitions);
 
             //Round-tripping to isolate issues
@@ -142,7 +143,7 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
 
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshaller.marshall(graph);
-            dmn12.setValue(jsitDefinitions);
+            dmn12.setDefinitions(jsitDefinitions);
             MainJs.marshall(dmn12, callback);
         } catch (Exception e) {
             GWT.log(e.getMessage());

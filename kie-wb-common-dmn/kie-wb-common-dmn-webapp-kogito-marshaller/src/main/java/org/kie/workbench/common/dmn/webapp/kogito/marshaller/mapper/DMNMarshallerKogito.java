@@ -111,7 +111,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.ArrayUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -209,16 +209,16 @@ public class DMNMarshallerKogito {
         };
 
         final JsArrayLike<JSITDRGElement> jsitDRGElements = dmnXml.getDrgElement();
-        final List<JSITDRGElement> diagramDrgElements = JsArrayLikeUtils.toList(jsitDRGElements);
+        final List<JSITDRGElement> diagramDrgElements = JsUtils.toList(jsitDRGElements);
         final Optional<JSIDMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
 
         // Get external DMN model information
         final Map<JSITImport, JSITDefinitions> importDefinitions = dmnMarshallerImportsHelper.getImportDefinitions(metadata,
-                                                                                                                   JsArrayLikeUtils.toList(dmnXml.getImport()));
+                                                                                                                   JsUtils.toList(dmnXml.getImport()));
 
         // Get external PMML model information
         final Map<JSITImport, PMMLDocumentMetadata> pmmlDocuments = dmnMarshallerImportsHelper.getPMMLDocuments(metadata,
-                                                                                                                JsArrayLikeUtils.toList(dmnXml.getImport()));
+                                                                                                                JsUtils.toList(dmnXml.getImport()));
 
         // Map external DRGElements
         final List<JSITDRGElement> importedDrgElements = new ArrayList<>();
@@ -481,7 +481,8 @@ public class DMNMarshallerKogito {
 
     private HashMap<String, String> getIndexByUri(final JSITDefinitions dmnXml) {
         final HashMap<String, String> indexByUri = new HashMap<>();
-        dmnXml.getNsContext().entrySet().forEach(e -> indexByUri.put(e.getValue(), e.getKey()));
+        final JSITDefinitions definitions = Js.uncheckedCast(dmnXml);
+        definitions.getNsContext().entrySet().forEach(e -> indexByUri.put(e.getValue(), e.getKey()));
         return indexByUri;
     }
 
@@ -548,7 +549,7 @@ public class DMNMarshallerKogito {
     private List<JSIDMNShape> getUniqueDMNShapes(final JSIDMNDiagram dmnDDDiagram) {
         final Map<String, JSIDMNShape> jsidmnShapes = new HashMap<>();
         final JsArrayLike<JSIDiagramElement> original = dmnDDDiagram.getDMNDiagramElement();
-        final JsArrayLike<JSIDiagramElement> unwrapped = (JsArrayLike<JSIDiagramElement>) JsArrayLikeUtils.getUnwrappedElemetsArray(original);
+        final JsArrayLike<JSIDiagramElement> unwrapped = JsUtils.getUnwrappedElementsArray(original);
         for (int i = 0; i < unwrapped.getLength(); i++) {
             final JSIDiagramElement jsiDiagramElement = Js.uncheckedCast(unwrapped.getAt(i));
             final String actualType = jsiDiagramElement.getTYPE_NAME();
@@ -811,7 +812,7 @@ public class DMNMarshallerKogito {
             final JsArrayLike<JSIDMNDiagram> diagrams = JavaScriptObject.createArray().cast();
             definitions.getDMNDI().setDMNDiagram(diagrams);
         }
-        JsArrayLikeUtils.add(definitions.getDMNDI().getDMNDiagram(), dmnDDDMNDiagram);
+        JsUtils.add(definitions.getDMNDI().getDMNDiagram(), dmnDDDMNDiagram);
 
         //Convert relative positioning to absolute
         for (Node<?, ?> node : graph.nodes()) {
@@ -856,8 +857,8 @@ public class DMNMarshallerKogito {
                         final JsArrayLike<JSIDiagramElement> elements = JavaScriptObject.createArray().cast();
                         dmnDDDMNDiagram.setDMNDiagramElement(elements);
                     }
-                    JsArrayLikeUtils.add(dmnDDDMNDiagram.getDMNDiagramElement(),
-                                         stunnerToDDExt((View<? extends DMNElement>) view));
+                    JsUtils.add(dmnDDDMNDiagram.getDMNDiagramElement(),
+                                stunnerToDDExt((View<? extends DMNElement>) view));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(),
@@ -867,13 +868,13 @@ public class DMNMarshallerKogito {
                         final JsArrayLike<JSIDiagramElement> elements = JavaScriptObject.createArray().cast();
                         dmnDDDMNDiagram.setDMNDiagramElement(elements);
                     }
-                    JsArrayLikeUtils.add(dmnDDDMNDiagram.getDMNDiagramElement(),
-                                         stunnerToDDExt((View<? extends DMNElement>) view));
+                    JsUtils.add(dmnDDDMNDiagram.getDMNDiagramElement(),
+                                stunnerToDDExt((View<? extends DMNElement>) view));
 
                     final List<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     final JSITAssociation[] aAssociations = new JSITAssociation[]{};
                     associations.toArray(aAssociations);
-                    JsArrayLikeUtils.addAll(definitions.getArtifact(), aAssociations);
+                    JsUtils.addAll(definitions.getArtifact(), aAssociations);
                 }
 
                 // DMNDI Edge management.
@@ -932,11 +933,11 @@ public class DMNMarshallerKogito {
                                                                uuid,
                                                                XMLConstants.DEFAULT_NS_PREFIX));
 
-                            JsArrayLikeUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(sourcePoint));
+                            JsUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(sourcePoint));
                             for (ControlPoint cp : connectionContent.getControlPoints()) {
-                                JsArrayLikeUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(cp.getLocation()));
+                                JsUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(cp.getLocation()));
                             }
-                            JsArrayLikeUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(targetPoint));
+                            JsUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(targetPoint));
                             dmnEdges.add(dmnEdge);
                         }
                     }
@@ -950,18 +951,18 @@ public class DMNMarshallerKogito {
         }
         nodes.values().forEach(n -> {
             n.setParent(definitions);
-            JsArrayLikeUtils.add(definitions.getDrgElement(), n);
+            JsUtils.add(definitions.getDrgElement(), n);
         });
         if (Objects.isNull(definitions.getArtifact())) {
             final JsArrayLike<JSITArtifact> artifacts = JavaScriptObject.createArray().cast();
             definitions.setArtifact(artifacts);
         }
-        textAnnotations.values().forEach(text -> JsArrayLikeUtils.add(definitions.getArtifact(), text));
+        textAnnotations.values().forEach(text -> JsUtils.add(definitions.getArtifact(), text));
 
         // add DMNEdge last.
         final JSIDMNEdge[] aDMNEdges = new JSIDMNEdge[]{};
         dmnEdges.toArray(aDMNEdges);
-        JsArrayLikeUtils.addAll(dmnDDDMNDiagram.getDMNDiagramElement(), aDMNEdges);
+        JsUtils.addAll(dmnDDDMNDiagram.getDMNDiagramElement(), aDMNEdges);
 
         return definitions;
     }
@@ -1185,11 +1186,11 @@ public class DMNMarshallerKogito {
             leftPoint.setX(v.getBounds().getUpperLeft().getX());
             final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
             leftPoint.setY(dlY);
-            JsArrayLikeUtils.add(dl.getWaypoint(), leftPoint);
+            JsUtils.add(dl.getWaypoint(), leftPoint);
             final JSIPoint rightPoint = new JSIPoint();
             rightPoint.setX(v.getBounds().getLowerRight().getX());
             rightPoint.setY(dlY);
-            JsArrayLikeUtils.add(dl.getWaypoint(), rightPoint);
+            JsUtils.add(dl.getWaypoint(), rightPoint);
             result.setDMNDecisionServiceDividerLine(dl);
         }
         return result;

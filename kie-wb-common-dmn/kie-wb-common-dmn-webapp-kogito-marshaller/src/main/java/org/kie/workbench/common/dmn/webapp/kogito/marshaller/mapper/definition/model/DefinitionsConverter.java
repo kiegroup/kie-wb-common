@@ -31,7 +31,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
@@ -121,7 +121,7 @@ public class DefinitionsConverter {
             if (itemDefConverted != null) {
                 itemDefConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getItemDefinition(), itemDefConverted);
+            JsUtils.add(result.getItemDefinition(), itemDefConverted);
         }
 
         for (Import i : wb.getImport()) {
@@ -129,7 +129,7 @@ public class DefinitionsConverter {
             if (importConverted != null) {
                 importConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getImport(), importConverted);
+            JsUtils.add(result.getImport(), importConverted);
         }
 
         return result;

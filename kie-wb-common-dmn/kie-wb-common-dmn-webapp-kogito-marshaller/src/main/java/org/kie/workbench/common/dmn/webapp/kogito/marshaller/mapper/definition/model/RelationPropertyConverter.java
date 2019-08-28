@@ -32,7 +32,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class RelationPropertyConverter {
 
@@ -76,7 +76,7 @@ public class RelationPropertyConverter {
             if (iitemConverted != null) {
                 iitemConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getColumn(), iitemConverted);
+            JsUtils.add(result.getColumn(), iitemConverted);
         }
 
         for (org.kie.workbench.common.dmn.api.definition.model.List list : wb.getRow()) {
@@ -84,7 +84,7 @@ public class RelationPropertyConverter {
             if (listConverted != null) {
                 listConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getRow(), listConverted);
+            JsUtils.add(result.getRow(), listConverted);
         }
 
         return result;

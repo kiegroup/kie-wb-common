@@ -33,7 +33,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITHitPolicy;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputClause;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITOutputClause;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class DecisionTablePropertyConverter {
 
@@ -94,14 +94,14 @@ public class DecisionTablePropertyConverter {
             if (c != null) {
                 c.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getInput(), c);
+            JsUtils.add(result.getInput(), c);
         }
         for (OutputClause input : wb.getOutput()) {
             final JSITOutputClause c = OutputClausePropertyConverter.dmnFromWB(input);
             if (c != null) {
                 c.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getOutput(), c);
+            JsUtils.add(result.getOutput(), c);
         }
         if (result.getOutput().getLength() == 1) {
             result.getOutput().getAt(0).setName(null); // DROOLS-3281
@@ -111,7 +111,7 @@ public class DecisionTablePropertyConverter {
             if (c != null) {
                 c.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getRule(), c);
+            JsUtils.add(result.getRule(), c);
         }
         if (wb.getHitPolicy() != null) {
             result.setHitPolicy(JSITHitPolicy.valueOf(wb.getHitPolicy().name()));

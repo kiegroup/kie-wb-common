@@ -46,7 +46,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -139,28 +139,28 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredDecision(ri);
-                        JsArrayLikeUtils.add(d.getInformationRequirement(), iReq);
+                        JsUtils.add(d.getInformationRequirement(), iReq);
                     } else if (drgElement instanceof BusinessKnowledgeModel) {
                         final JSITKnowledgeRequirement iReq = new JSITKnowledgeRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredKnowledge(ri);
-                        JsArrayLikeUtils.add(d.getKnowledgeRequirement(), iReq);
+                        JsUtils.add(d.getKnowledgeRequirement(), iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        JsArrayLikeUtils.add(d.getAuthorityRequirement(), iReq);
+                        JsUtils.add(d.getAuthorityRequirement(), iReq);
                     } else if (drgElement instanceof InputData) {
                         final JSITInformationRequirement iReq = new JSITInformationRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredInput(ri);
-                        JsArrayLikeUtils.add(d.getInformationRequirement(), iReq);
+                        JsUtils.add(d.getInformationRequirement(), iReq);
                     } else if (drgElement instanceof DecisionService) {
                         if (e.getContent() instanceof Child) {
                             // Stunner relationship of this Decision be encapsulated by the DecisionService, not managed here.
@@ -170,7 +170,7 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
                             final JSITDMNElementReference ri = new JSITDMNElementReference();
                             ri.setHref(getHref(drgElement));
                             iReq.setRequiredKnowledge(ri);
-                            JsArrayLikeUtils.add(d.getKnowledgeRequirement(), iReq);
+                            JsUtils.add(d.getKnowledgeRequirement(), iReq);
                         } else {
                             throw new UnsupportedOperationException("wrong model definition.");
                         }

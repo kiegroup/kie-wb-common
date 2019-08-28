@@ -30,7 +30,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInvocation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsArrayLikeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 
 public class InvocationPropertyConverter {
 
@@ -90,7 +90,7 @@ public class InvocationPropertyConverter {
             if (bConverted != null) {
                 bConverted.setParent(result);
             }
-            JsArrayLikeUtils.add(result.getBinding(), bConverted);
+            JsUtils.add(result.getBinding(), bConverted);
         }
 
         return result;
