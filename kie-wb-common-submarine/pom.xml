@@ -38,6 +38,7 @@
   <modules>
     <module>kie-wb-common-submarine-api</module>
     <module>kie-wb-common-submarine-client</module>
+    <module>kie-wb-common-kogito-webapp-base</module>
   </modules>
 
 </project>
