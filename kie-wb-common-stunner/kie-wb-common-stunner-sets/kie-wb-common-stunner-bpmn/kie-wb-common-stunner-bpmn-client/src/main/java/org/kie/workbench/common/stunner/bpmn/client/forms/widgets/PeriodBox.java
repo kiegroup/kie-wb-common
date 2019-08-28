@@ -78,25 +78,28 @@ public class PeriodBox extends Composite implements IsWidget,
     }
 
     private void initChangeHandlers() {
-        numberPeriod.addEventListener("change", event -> {
-            String value = numberPeriod.value;
-            if (value.startsWith("-")) {
-                addStyleName(ValidationState.ERROR.getCssName());
-            } else if (value.matches("[0-9]*")) {
-                if (getStyleName().contains(ValidationState.ERROR.getCssName())) {
-                    removeStyleName(ValidationState.ERROR.getCssName());
-                    error.setText("");
-                }
-            } else {
-                value = "0";
-            }
-            setValue(value, true);
-        });
+        numberPeriod.addEventListener("focusout", event -> validateNumberPeriodValue());
 
         unitPeriod.addValueChangeHandler(event -> {
             String newValue = getValue();
             setValue(newValue, true);
         });
+    }
+
+    private void validateNumberPeriodValue() {
+        Integer parsed;
+        try {
+            Integer maybeValue = Integer.valueOf(numberPeriod.value);
+            if (maybeValue < 1) {
+                maybeValue = 1;
+                numberPeriod.value = String.valueOf(maybeValue);
+            }
+            parsed = maybeValue;
+        } catch (NumberFormatException nfe) {
+            parsed = 1;
+            numberPeriod.value = String.valueOf(parsed);
+        }
+        setValue(String.valueOf(parsed), true);
     }
 
     private void initTypeSelector() {
@@ -125,7 +128,7 @@ public class PeriodBox extends Composite implements IsWidget,
 
     public void showLabel(boolean show) {
         inputPeriodLabel.style.display = show ? "block" : "none";
-     }
+    }
 
     private void parse(String value) {
         if (value != null && value.length() >= 2) {

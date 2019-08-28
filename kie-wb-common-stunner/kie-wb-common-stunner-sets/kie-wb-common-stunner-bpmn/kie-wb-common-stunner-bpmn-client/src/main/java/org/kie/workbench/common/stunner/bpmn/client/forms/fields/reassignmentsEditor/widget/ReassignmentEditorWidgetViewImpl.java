@@ -146,6 +146,7 @@ public class ReassignmentEditorWidgetViewImpl extends Composite implements Reass
     public void init() {
         closeButton.addEventListener("click", event -> close(), false);
         saveButton.addEventListener("click", event -> save(), false);
+        periodBox.showLabel(false);
     }
 
     @Override

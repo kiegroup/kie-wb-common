@@ -498,7 +498,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                     .setUntil(repeatCountReaches.checked)
                     .setDate(dateTimePicker.getValue())
                     .setTz(timeZonePicker.getValue())
-                    .setRepeatCount(Integer.parseInt(repeatCount.value))
+                    .setRepeatCount(validateRepeatCountValue(repeatCount.value))
                     .setPeriod(periodBox.getValue());
             return builder.build();
         }
@@ -628,6 +628,20 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
             repeatCount.disabled = false;
             repeatCount.value = "1";
         }
+    }
+
+    private int validateRepeatCountValue(String value) {
+        Integer parsed;
+        try {
+            Integer maybeValue = Integer.valueOf(value);
+            if (maybeValue < 1) {
+                maybeValue = 1;
+            }
+            parsed = maybeValue;
+        } catch (NumberFormatException nfe) {
+            parsed = 1;
+        }
+        return parsed;
     }
 
     static class ISO8601Builder {

@@ -50,7 +50,7 @@ public class ReassignmentRowTest {
     public void testToReassignmentValue() {
         // Setup
         final ReassignmentValue expectedResult = new ReassignmentValue();
-        expectedResult.setDuration("0h");
+        expectedResult.setDuration("");
         expectedResult.setType("NotCompletedReassign");
         // Run the test
         final ReassignmentValue result = new ReassignmentRow().toReassignmentValue();
