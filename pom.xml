@@ -237,26 +237,15 @@
       <id>run-code-coverage</id>
       <properties>
         <jacoco.excludes>*Lexer</jacoco.excludes>
-        <jacoco.exec.file>${maven.multiModuleProjectDirectory}/target/jacoco.exec</jacoco.exec.file>
         <code.coverage.disabled>false</code.coverage.disabled>
       </properties>
 
-      <dependencyManagement>
-        <dependencies>
-          <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>org.jacoco.agent</artifactId>
-            <classifier>runtime</classifier>
-            <scope>test</scope>
-            <version>${version.jacoco.plugin}</version>
-          </dependency>
-        </dependencies>
-      </dependencyManagement>
       <dependencies>
         <dependency>
           <groupId>org.jacoco</groupId>
           <artifactId>org.jacoco.agent</artifactId>
           <classifier>runtime</classifier>
+          <version>${version.jacoco.plugin}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -290,13 +279,6 @@
               </executions>
             </plugin>
             <plugin>
-              <groupId>net.ltgt.gwt.maven</groupId>
-              <artifactId>gwt-maven-plugin</artifactId>
-              <configuration>
-                <skipCompilation>true</skipCompilation>
-              </configuration>
-            </plugin>
-            <plugin>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
                 <systemPropertyVariables>
@@ -316,14 +298,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>report-code-coverage</id>
-      <properties>
-        <jacoco.master.exec.file>${maven.multiModuleProjectDirectory}/target/jacoco.exec</jacoco.master.exec.file>
-        <sonar.jacoco.reportPaths>${jacoco.master.exec.file}</sonar.jacoco.reportPaths>
-      </properties>
     </profile>
   </profiles>
 
