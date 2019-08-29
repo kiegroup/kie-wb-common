@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -455,9 +456,9 @@ public class DMNMarshallerKogito {
         });
 
         return graph;
-    }
+    }/**/
 
-    void updateIDsWithAlias(final HashMap<String, String> indexByUri,
+    void updateIDsWithAlias(final Map<String, String> indexByUri,
                             final List<JSITDRGElement> importedDrgElements) {
 
         if (importedDrgElements.isEmpty()) {
@@ -479,10 +480,18 @@ public class DMNMarshallerKogito {
         }
     }
 
-    private HashMap<String, String> getIndexByUri(final JSITDefinitions dmnXml) {
-        final HashMap<String, String> indexByUri = new HashMap<>();
-        final JSITDefinitions definitions = Js.uncheckedCast(dmnXml);
-        definitions.getNsContext().entrySet().forEach(e -> indexByUri.put(e.getValue(), e.getKey()));
+    private Map<String, String> getIndexByUri(final JSITDefinitions dmnXml) {
+        final Map<String, String> indexByUri = new HashMap<>();
+        final Map<QName, String> otherAttributes = JsUtils.getOtherAttributes(dmnXml);
+        for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
+            final QName qName = e.getKey();
+            final String nsLocalPart = qName.getLocalPart();
+            final String nsNamespaceURI = qName.getNamespaceURI();
+            final String nsPrefix = qName.getPrefix();
+            GWT.log("localPart=" + nsLocalPart + ", nameSpaceURI=" + nsNamespaceURI + ", prefix=" + nsPrefix);
+        }
+
+        dmnXml.getNsContext().entrySet().forEach(e -> indexByUri.put(e.getValue(), e.getKey()));
         return indexByUri;
     }
 
@@ -518,7 +527,7 @@ public class DMNMarshallerKogito {
         final List<JSITDRGElement> importedDRGElements = dmnMarshallerImportsHelper.getImportedDRGElements(importDefinitions);
 
         // Update IDs with the alias used in this file for the respective imports
-        final HashMap<String, String> indexByUri = getIndexByUri(dmnXml);
+        final Map<String, String> indexByUri = getIndexByUri(dmnXml);
         updateIDsWithAlias(indexByUri, importedDRGElements);
 
         return dmnShapes

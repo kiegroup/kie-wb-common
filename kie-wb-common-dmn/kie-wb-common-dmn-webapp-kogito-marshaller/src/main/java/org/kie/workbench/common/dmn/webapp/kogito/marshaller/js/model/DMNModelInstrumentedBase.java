@@ -17,11 +17,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsPackage;
@@ -50,20 +46,11 @@ public class DMNModelInstrumentedBase {
 
     private Map<String, String> nsContext;
     private DMNModelInstrumentedBase parent;
-    private Map<QName, String> otherAttributes = new HashMap<>();
 
     @JsIgnore
     public Map<String, String> getNsContext() {
         if (nsContext == null) {
             nsContext = new HashMap<>();
-            for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
-                final QName qName = e.getKey();
-                final String nsLocalPart = qName.getLocalPart();
-                final String nsNamespaceURI = qName.getNamespaceURI();
-                final String nsPrefix = qName.getPrefix();
-
-                nsContext.put(Objects.nonNull(nsPrefix) ? nsPrefix : XMLConstants.DEFAULT_NS_PREFIX, nsNamespaceURI);
-            }
         }
         return nsContext;
     }
@@ -88,14 +75,6 @@ public class DMNModelInstrumentedBase {
             return parent.getPrefixForNamespaceURI(namespaceURI);
         }
         return Optional.empty();
-    }
-
-    public void setOtherAttributes(final Map<QName, String> otherAttributes) {
-        this.otherAttributes = otherAttributes;
-    }
-
-    public Map<QName, String> getOtherAttributes() {
-        return otherAttributes;
     }
 
     @JsIgnore
