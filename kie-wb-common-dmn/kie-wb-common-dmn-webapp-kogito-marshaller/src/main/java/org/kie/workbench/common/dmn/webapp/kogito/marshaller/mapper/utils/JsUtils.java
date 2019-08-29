@@ -17,8 +17,12 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -55,8 +59,9 @@ public class JsUtils {
     public static <D> List<D> toList(final JsArrayLike<D> jsArrayLike) {
         final List<D> elements = new ArrayList<>();
         if (Objects.nonNull(jsArrayLike)) {
-            for (int i = 0; i < jsArrayLike.getLength(); i++) {
-                final D element = Js.uncheckedCast(jsArrayLike.getAt(i));
+            final JsArrayLike<D> unwrapped = getUnwrappedElementsArray(jsArrayLike);
+            for (int i = 0; i < unwrapped.getLength(); i++) {
+                final D element = Js.uncheckedCast(unwrapped.getAt(i));
                 elements.add(element);
             }
         }
@@ -79,4 +84,31 @@ public class JsUtils {
         console.log(toSet);
         return toSet;
     }-*/;
+
+    /**
+     * Extracts the otherAttributes property from a JavaScriptObject to a _regular_ Java Map.
+     * @param original
+     * @return
+     */
+    public static Map<QName, String> toAttributesMap(final Object original) {
+        final Map<QName, String> attributes = new HashMap<>();
+        toAttributesMap(attributes, original);
+        return attributes;
+    }
+
+    private static native void toAttributesMap(final Map<QName, String> toReturn,
+                                               final Object original) /*-{
+        var keys = Object.keys(original);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var value = original[key];
+            @org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils::put(Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)(toReturn, key, value);
+        }
+    }-*/;
+
+    private static void put(final Map<QName, String> toReturn,
+                            final String qNameAsString,
+                            final String value) {
+        toReturn.put(QName.valueOf(qNameAsString), value);
+    }
 }

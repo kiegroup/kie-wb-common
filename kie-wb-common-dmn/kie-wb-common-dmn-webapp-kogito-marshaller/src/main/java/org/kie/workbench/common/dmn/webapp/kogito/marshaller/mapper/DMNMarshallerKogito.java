@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -482,16 +481,18 @@ public class DMNMarshallerKogito {
 
     private Map<String, String> getIndexByUri(final JSITDefinitions dmnXml) {
         final Map<String, String> indexByUri = new HashMap<>();
-        final Map<QName, String> otherAttributes = JsUtils.getOtherAttributes(dmnXml);
+        final Map<QName, String> otherAttributes = JsUtils.toAttributesMap(dmnXml.getOtherAttributes());
+
+        //Filter otherAttributes by NameSpace definitions
         for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
             final QName qName = e.getKey();
             final String nsLocalPart = qName.getLocalPart();
             final String nsNamespaceURI = qName.getNamespaceURI();
-            final String nsPrefix = qName.getPrefix();
-            GWT.log("localPart=" + nsLocalPart + ", nameSpaceURI=" + nsNamespaceURI + ", prefix=" + nsPrefix);
+            if (Objects.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, nsNamespaceURI)) {
+                indexByUri.put(e.getValue(), nsLocalPart);
+            }
         }
 
-        dmnXml.getNsContext().entrySet().forEach(e -> indexByUri.put(e.getValue(), e.getKey()));
         return indexByUri;
     }
 

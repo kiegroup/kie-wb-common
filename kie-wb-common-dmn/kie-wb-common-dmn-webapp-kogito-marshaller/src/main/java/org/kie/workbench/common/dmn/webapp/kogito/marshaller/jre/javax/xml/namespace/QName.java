@@ -63,7 +63,7 @@ public class QName {
             throw new IllegalArgumentException(
                     "prefix cannot be \"null\" when creating a QName");
         }
-        setLocalPart(prefix);
+        setPrefix(prefix);
     }
 
     @Override

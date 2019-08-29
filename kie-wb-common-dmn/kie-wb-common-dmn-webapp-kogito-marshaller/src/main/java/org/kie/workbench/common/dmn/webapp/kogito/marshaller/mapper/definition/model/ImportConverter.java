@@ -91,7 +91,7 @@ public final class ImportConverter {
         result.setId(wb.getId().getValue());
         result.setName(wb.getName().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        result.setOtherAttributes(additionalAttributes);
+        result.getOtherAttributes().putAll(additionalAttributes);
 
         wb.getNsContext().forEach((key, value) -> result.getNsContext().put(key, value));
 
