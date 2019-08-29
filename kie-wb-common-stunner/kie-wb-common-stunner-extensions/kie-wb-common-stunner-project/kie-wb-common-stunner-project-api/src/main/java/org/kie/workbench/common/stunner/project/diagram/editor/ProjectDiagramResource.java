@@ -15,9 +15,9 @@
  */
 package org.kie.workbench.common.stunner.project.diagram.editor;
 
+import org.kie.workbench.common.stunner.kogito.api.editor.KogitoDiagramResource;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
-import org.kie.workbench.common.stunner.submarine.api.editor.SubmarineDiagramResource;
 
-public interface ProjectDiagramResource extends SubmarineDiagramResource<ProjectDiagram> {
+public interface ProjectDiagramResource extends KogitoDiagramResource<ProjectDiagram> {
 
 }

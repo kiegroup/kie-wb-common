@@ -42,7 +42,7 @@ import org.uberfire.workbench.model.menu.Menus;
 @WorkbenchScreen(identifier = BaseDMNDiagramsNavigatorScreen.SCREEN_ID)
 public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
 
-    private DMNDiagramSubmarineWrapper stateHolder;
+    private DMNDiagramKogitoWrapper stateHolder;
 
     public DMNDiagramsNavigatorScreen() {
         //CDI proxy
@@ -51,7 +51,7 @@ public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
     @Inject
     public DMNDiagramsNavigatorScreen(final DiagramsNavigator diagramsNavigator,
                                       final ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder,
-                                      final DMNDiagramSubmarineWrapper stateHolder) {
+                                      final DMNDiagramKogitoWrapper stateHolder) {
         super(diagramsNavigator,
               newDiagramMenuItemsBuilder);
         this.stateHolder = stateHolder;

@@ -21,11 +21,11 @@ import java.util.Collection;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.submarine.api.Submarine;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
+import org.kie.workbench.common.stunner.kogito.api.Kogito;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientService;
 
-@Submarine
-public interface WorkItemDefinitionClientService extends SubmarineClientService<Metadata, Collection<WorkItemDefinition>> {
+@Kogito
+public interface WorkItemDefinitionClientService extends KogitoClientService<Metadata, Collection<WorkItemDefinition>> {
 
     WorkItemDefinitionRegistry getRegistry();
 }

@@ -18,11 +18,11 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEdito
 
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.Condition;
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.GenerateConditionResult;
-import org.kie.workbench.common.stunner.submarine.api.Submarine;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
+import org.kie.workbench.common.stunner.kogito.api.Kogito;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientService;
 
-@Submarine
+@Kogito
 public interface ConditionEditorGeneratorService
-        extends SubmarineClientService<Condition, GenerateConditionResult> {
+        extends KogitoClientService<Condition, GenerateConditionResult> {
 
 }

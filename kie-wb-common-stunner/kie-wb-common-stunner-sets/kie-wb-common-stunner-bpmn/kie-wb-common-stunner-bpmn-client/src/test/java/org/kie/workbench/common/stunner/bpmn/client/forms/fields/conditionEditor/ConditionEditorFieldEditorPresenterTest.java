@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.forms.conditions.ParseConditionResu
 import org.kie.workbench.common.stunner.bpmn.forms.model.ScriptTypeMode;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.submarine.client.PromiseMock;
+import org.kie.workbench.common.stunner.kogito.client.PromiseMock;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;

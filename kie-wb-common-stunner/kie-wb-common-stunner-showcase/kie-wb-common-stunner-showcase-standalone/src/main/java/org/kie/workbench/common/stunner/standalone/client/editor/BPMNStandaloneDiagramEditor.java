@@ -45,13 +45,13 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditor;
+import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.kie.workbench.common.stunner.standalone.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.standalone.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditor;
-import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.backend.vfs.Path;
@@ -95,7 +95,7 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
 
-    private final SubmarineClientDiagramService diagramServices;
+    private final KogitoClientDiagramService diagramServices;
     private final BPMNStandaloneDiagramWrapper stateHolder;
 
     @Inject
@@ -121,7 +121,7 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
                                        final DiagramEditorPropertiesDock diagramPropertiesDock,
                                        final LayoutHelper layoutHelper,
                                        final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
-                                       final SubmarineClientDiagramService diagramServices,
+                                       final KogitoClientDiagramService diagramServices,
                                        final BPMNStandaloneDiagramWrapper stateHolder) {
         super(view,
               fileMenuBuilder,

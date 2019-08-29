@@ -29,20 +29,20 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
-import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
-import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
-import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
+import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramResourceImpl;
+import org.kie.workbench.common.stunner.kogito.api.service.KogitoDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.promise.Promises;
 
 @ApplicationScoped
-public class BPMNStandaloneClientDiagramServiceImpl implements SubmarineClientDiagramService {
+public class BPMNStandaloneClientDiagramServiceImpl implements KogitoClientDiagramService {
 
     private ShapeManager shapeManager;
     private Caller<VFSService> vfsServiceCaller;
-    private Caller<SubmarineDiagramService> submarineDiagramServiceCaller;
+    private Caller<KogitoDiagramService> submarineDiagramServiceCaller;
     private Promises promises;
 
     public BPMNStandaloneClientDiagramServiceImpl() {
@@ -52,7 +52,7 @@ public class BPMNStandaloneClientDiagramServiceImpl implements SubmarineClientDi
     @Inject
     public BPMNStandaloneClientDiagramServiceImpl(final ShapeManager shapeManager,
                                                   final Caller<VFSService> vfsServiceCaller,
-                                                  final Caller<SubmarineDiagramService> submarineDiagramServiceCaller,
+                                                  final Caller<KogitoDiagramService> submarineDiagramServiceCaller,
                                                   final Promises promises) {
         this.shapeManager = shapeManager;
         this.vfsServiceCaller = vfsServiceCaller;
@@ -85,7 +85,7 @@ public class BPMNStandaloneClientDiagramServiceImpl implements SubmarineClientDi
     }
 
     @Override
-    public Promise<String> transform(final SubmarineDiagramResourceImpl resource) {
+    public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.promisify(submarineDiagramServiceCaller,
                                       s -> {

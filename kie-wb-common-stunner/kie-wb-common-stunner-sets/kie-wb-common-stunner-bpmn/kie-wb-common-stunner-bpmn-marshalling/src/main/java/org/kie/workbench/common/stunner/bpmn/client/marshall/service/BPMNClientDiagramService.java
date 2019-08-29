@@ -40,14 +40,14 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
-import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
+import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramResourceImpl;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
 
 @ApplicationScoped
-public class BPMNClientDiagramService implements SubmarineClientDiagramService {
+public class BPMNClientDiagramService implements KogitoClientDiagramService {
 
     private final DefinitionManager definitionManager;
     private final BPMNClientMarshalling marshalling;
@@ -85,7 +85,7 @@ public class BPMNClientDiagramService implements SubmarineClientDiagramService {
     }
 
     @Override
-    public Promise<String> transform(final SubmarineDiagramResourceImpl resource) {
+    public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.resolve(transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present"))));
         }

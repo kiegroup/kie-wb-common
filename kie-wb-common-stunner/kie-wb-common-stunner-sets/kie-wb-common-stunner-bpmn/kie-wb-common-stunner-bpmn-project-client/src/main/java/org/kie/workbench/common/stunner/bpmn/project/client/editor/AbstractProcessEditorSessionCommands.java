@@ -22,7 +22,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.ManagedClien
 import org.kie.workbench.common.stunner.forms.client.session.command.GenerateDiagramFormsSessionCommand;
 import org.kie.workbench.common.stunner.forms.client.session.command.GenerateProcessFormsSessionCommand;
 import org.kie.workbench.common.stunner.forms.client.session.command.GenerateSelectedFormsSessionCommand;
-import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
+import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommands;
 
 public abstract class AbstractProcessEditorSessionCommands extends EditorSessionCommands {
 

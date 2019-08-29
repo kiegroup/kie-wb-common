@@ -36,7 +36,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchG
 import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ValidateSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
-import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
+import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommands;
 
 // TODO: (kogito) Remove class?
 

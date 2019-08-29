@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.submarine.client.PromisesMock;
+import org.kie.workbench.common.stunner.kogito.client.PromisesMock;
 import org.mockito.Mock;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.mocks.CallerMock;

@@ -43,7 +43,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-import org.kie.workbench.common.stunner.submarine.api.service.SubmarineDiagramService;
+import org.kie.workbench.common.stunner.kogito.api.service.KogitoDiagramService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.vfs.PathFactory;
@@ -51,7 +51,7 @@ import org.uberfire.commons.uuid.UUID;
 
 @Service
 @ApplicationScoped
-public class BPMNSubmarineDiagramServiceImpl implements SubmarineDiagramService {
+public class BPMNSubmarineDiagramServiceImpl implements KogitoDiagramService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BPMNSubmarineDiagramServiceImpl.class);
 

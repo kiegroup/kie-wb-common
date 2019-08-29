@@ -21,7 +21,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
 
 // TODO: (kogito) Remove class?
 
