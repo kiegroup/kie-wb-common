@@ -162,13 +162,14 @@ public class ChangeRequestReviewScreenPresenter {
         }
     }
 
-    public void onRepositoryUpdatedEvent(@Observes final RepositoryUpdatedEvent event) {
-        final Repository updatedRepository = event.getRepository();
+    public void onRepositoryUpdated(@Observes final RepositoryUpdatedEvent event) {
+        if (event.getRepository().getIdentifier().equals(repository.getIdentifier())) {
+            this.repository = event.getRepository();
 
-        if (libraryPlaces.isThisRepositoryBeingAccessed(updatedRepository) &&
-                (!updatedRepository.getBranches().contains(currentSourceBranch) ||
-                        !updatedRepository.getBranches().contains(currentTargetBranch))) {
-            this.goBackToProject();
+            if (!this.repository.getBranches().contains(currentSourceBranch) ||
+                    !this.repository.getBranches().contains(currentTargetBranch)) {
+                this.goBackToProject();
+            }
         }
     }
 

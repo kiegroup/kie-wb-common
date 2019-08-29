@@ -245,7 +245,7 @@ public class SubmitChangeRequestScreenPresenterTest {
                         SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
         new FieldSetter(presenter,
-                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("destinationBranch"))
+                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("selectedBranch"))
                 .set(destinationBranch);
 
         doReturn("summary").when(view).getSummary();
@@ -272,7 +272,7 @@ public class SubmitChangeRequestScreenPresenterTest {
                         SubmitChangeRequestScreenPresenter.class.getDeclaredField("workspaceProject"))
                 .set(workspaceProject);
         new FieldSetter(presenter,
-                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("destinationBranch"))
+                        SubmitChangeRequestScreenPresenter.class.getDeclaredField("selectedBranch"))
                 .set(destinationBranch);
 
         doReturn("summary").when(view).getSummary();

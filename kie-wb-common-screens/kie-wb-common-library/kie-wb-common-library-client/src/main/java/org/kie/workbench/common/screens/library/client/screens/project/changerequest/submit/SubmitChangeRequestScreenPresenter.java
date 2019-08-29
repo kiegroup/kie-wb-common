@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.submit;
 
 import java.util.List;
-import java.util.OptionalInt;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -74,7 +73,7 @@ public class SubmitChangeRequestScreenPresenter {
     private WorkspaceProject workspaceProject;
     private String currentBranchName;
     private Branch defaultBranch;
-    private String destinationBranch;
+    private String selectedBranch;
 
     @Inject
     public SubmitChangeRequestScreenPresenter(final View view,
@@ -102,12 +101,6 @@ public class SubmitChangeRequestScreenPresenter {
     @PostConstruct
     public void postConstruct() {
         this.workspaceProject = libraryPlaces.getActiveWorkspace();
-        this.currentBranchName = this.workspaceProject.getBranch().getName();
-
-        this.defaultBranch = this.workspaceProject.getRepository().getDefaultBranch()
-                .orElseThrow(() -> new IllegalStateException("The default branch does not exist"));
-
-        this.destinationBranch = this.defaultBranch.getName();
 
         this.view.init(this);
         this.view.setTitle(this.getTitle());
@@ -141,7 +134,7 @@ public class SubmitChangeRequestScreenPresenter {
         if (event.getRepositoryId().equals(this.workspaceProject.getRepository().getIdentifier())) {
             final String updatedBranchName = event.getBranchName();
 
-            if ((currentBranchName.equals(updatedBranchName) || destinationBranch.equals(updatedBranchName))) {
+            if ((currentBranchName.equals(updatedBranchName) || selectedBranch.equals(updatedBranchName))) {
                 this.updateDiffContainer();
             }
         }
@@ -161,7 +154,7 @@ public class SubmitChangeRequestScreenPresenter {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
         projectController.canSubmitChangeRequest(workspaceProject,
-                                                 destinationBranch).then(userCanSubmitChangeRequest -> {
+                                                 selectedBranch).then(userCanSubmitChangeRequest -> {
             if (userCanSubmitChangeRequest) {
                 changeRequestService.call((final ChangeRequest item) -> {
                     busyIndicatorView.hideBusyIndicator();
@@ -178,7 +171,7 @@ public class SubmitChangeRequestScreenPresenter {
                         .createChangeRequest(workspaceProject.getSpace().getName(),
                                              workspaceProject.getRepository().getAlias(),
                                              currentBranchName,
-                                             destinationBranch,
+                                             selectedBranch,
                                              view.getSummary(),
                                              view.getDescription());
             }
@@ -187,8 +180,8 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     public void selectBranch(final String branchName) {
-        destinationBranch = branchName;
-        updateDiffContainer();
+        this.selectedBranch = branchName;
+        this.updateDiffContainer();
     }
 
     public void updateDiffContainer() {
@@ -209,7 +202,7 @@ public class SubmitChangeRequestScreenPresenter {
                 .getDiff(workspaceProject.getSpace().getName(),
                          workspaceProject.getRepository().getAlias(),
                          currentBranchName,
-                         destinationBranch);
+                         selectedBranch);
     }
 
     private ErrorCallback<Object> createChangeRequestErrorCallback() {
@@ -222,7 +215,7 @@ public class SubmitChangeRequestScreenPresenter {
                         new NotificationEvent(ts.format(LibraryConstants.ChangeRequestAlreadyOpenMessage,
                                                         changeRequestId,
                                                         currentBranchName,
-                                                        destinationBranch),
+                                                        selectedBranch),
                                               NotificationEvent.NotificationType.WARNING));
                 return false;
             }
@@ -236,6 +229,13 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     private void init() {
+        this.currentBranchName = this.workspaceProject.getBranch().getName();
+
+        this.defaultBranch = this.workspaceProject.getRepository().getDefaultBranch()
+                .orElseThrow(() -> new IllegalStateException("The default branch does not exist"));
+
+        this.selectedBranch = this.defaultBranch.getName();
+        
         this.reset();
         this.setup();
     }
@@ -245,8 +245,8 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     private void setup() {
-        updateDestinationBranchList();
-        updateDiffContainer();
+        this.updateDestinationBranchList();
+        this.updateDiffContainer();
     }
 
     private void setupEmptyDiffList() {
@@ -301,17 +301,18 @@ public class SubmitChangeRequestScreenPresenter {
 
     private void updateDestinationBranchList() {
         projectController.getReadableBranches(libraryPlaces.getActiveWorkspace()).then(branches -> {
-            List<String> destinationBranchNames = branches.stream()
+            final List<String> destinationBranchNames = branches.stream()
                     .map(Branch::getName)
                     .filter(branchName -> !branchName.equals(currentBranchName))
                     .sorted(SortHelper.ALPHABETICAL_ORDER_COMPARATOR)
                     .collect(Collectors.toList());
 
-            OptionalInt defaultBranchIdx = IntStream.range(0, destinationBranchNames.size())
-                    .filter(i -> defaultBranch.getName().equals(destinationBranchNames.get(i)))
-                    .findFirst();
+            final int selectedBranchIdx = IntStream.range(0, destinationBranchNames.size())
+                    .filter(i -> selectedBranch.equals(destinationBranchNames.get(i)))
+                    .findFirst()
+                    .orElse(0);
 
-            view.setDestinationBranches(destinationBranchNames, defaultBranchIdx.orElse(0));
+            view.setDestinationBranches(destinationBranchNames, selectedBranchIdx);
 
             return promises.resolve();
         });
