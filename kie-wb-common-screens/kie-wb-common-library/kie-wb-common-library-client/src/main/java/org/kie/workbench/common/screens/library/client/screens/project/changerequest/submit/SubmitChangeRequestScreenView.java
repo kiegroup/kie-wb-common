@@ -198,6 +198,14 @@ public class SubmitChangeRequestScreenView implements SubmitChangeRequestScreenP
     }
 
     @Override
+    public void resetAll() {
+        clearInputFields();
+        showWarning(false);
+        setFilesSummary("");
+        showDiff(false);
+    }
+
+    @Override
     public void setFilesSummary(final String text) {
         filesSummary.textContent = text;
     }

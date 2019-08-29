@@ -152,7 +152,7 @@ public class SubmitChangeRequestScreenPresenterTest {
         presenter.refreshOnFocus(new SelectPlaceEvent(place));
 
         verify(projectController).getReadableBranches(workspaceProject);
-        verify(view).clearInputFields();
+        verify(view).resetAll();
         verify(busyIndicatorView).showBusyIndicator(anyString());
         verify(view).clearDiffList();
         verify(changeRequestService).getDiff(anyString(), anyString(), anyString(), anyString());

@@ -38,7 +38,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
+import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdated;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
@@ -137,12 +137,11 @@ public class SubmitChangeRequestScreenPresenter {
         }
     }
 
-    public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
-        if (event.getProject().getRepository().getIdentifier()
-                .equals(this.workspaceProject.getRepository().getIdentifier())) {
-            final String updatedBranchName = event.getProject().getBranch().getName();
+    public void onRepositoryFileListUpdated(@Observes final RepositoryFileListUpdated event) {
+        if (event.getRepositoryId().equals(this.workspaceProject.getRepository().getIdentifier())) {
+            final String updatedBranchName = event.getBranchName();
 
-            if (currentBranchName.equals(updatedBranchName) || destinationBranch.equals(updatedBranchName)) {
+            if ((currentBranchName.equals(updatedBranchName) || destinationBranch.equals(updatedBranchName))) {
                 this.updateDiffContainer();
             }
         }
@@ -195,10 +194,6 @@ public class SubmitChangeRequestScreenPresenter {
     public void updateDiffContainer() {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
-        view.showWarning(false);
-        view.showDiff(false);
-        view.setFilesSummary("");
-
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
             boolean hideDiff = diffList.isEmpty();
 
@@ -246,7 +241,7 @@ public class SubmitChangeRequestScreenPresenter {
     }
 
     private void reset() {
-        view.clearInputFields();
+        view.resetAll();
     }
 
     private void setup() {
@@ -257,6 +252,7 @@ public class SubmitChangeRequestScreenPresenter {
     private void setupEmptyDiffList() {
         destroyDiffItems();
 
+        view.showWarning(false);
         view.clearDiffList();
         view.enableSubmitButton(false);
         view.setFilesSummary(ts.getTranslation(LibraryConstants.BranchesAreEven));
@@ -352,5 +348,7 @@ public class SubmitChangeRequestScreenPresenter {
         void showDiff(final boolean isVisible);
 
         void clearInputFields();
+
+        void resetAll();
     }
 }

@@ -38,7 +38,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
+import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdated;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
@@ -150,11 +150,12 @@ public class ChangeRequestReviewScreenPresenter {
         }
     }
 
-    public void onProjectAssetListUpdated(@Observes final ProjectAssetListUpdated event) {
-        if (event.getProject().getRepository().getIdentifier().equals(repository.getIdentifier())) {
-            final Branch updatedBranch = event.getProject().getBranch();
+    public void onRepositoryFileListUpdated(@Observes final RepositoryFileListUpdated event) {
+        if (event.getRepositoryId().equals(repository.getIdentifier())) {
+            final String updatedBranch = event.getBranchName();
 
-            if (currentSourceBranch.equals(updatedBranch) || currentTargetBranch.equals(updatedBranch)) {
+            if (currentSourceBranch.getName().equals(updatedBranch) ||
+                    currentTargetBranch.getName().equals(updatedBranch)) {
                 this.refreshContent(false,
                                     true);
             }
