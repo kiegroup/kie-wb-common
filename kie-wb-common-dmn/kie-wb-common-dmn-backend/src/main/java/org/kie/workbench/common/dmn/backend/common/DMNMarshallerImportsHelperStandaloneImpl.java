@@ -48,6 +48,7 @@ import org.kie.dmn.model.api.Invocable;
 import org.kie.dmn.model.api.ItemDefinition;
 import org.kie.dmn.model.v1_2.TInformationItem;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.kie.workbench.common.dmn.api.marshalling.DMNPathsHelper;
 import org.kie.workbench.common.dmn.backend.editors.common.PMMLIncludedDocumentFactory;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.uberfire.backend.server.util.Paths;
@@ -59,7 +60,7 @@ import static org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils.is
 import static org.kie.workbench.common.dmn.backend.definition.v1_1.ImportedItemDefinitionConverter.withNamespace;
 
 @ApplicationScoped
-public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelper {
+public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerImportsHelperStandalone {
 
     private final DMNPathsHelper pathsHelper;
 
@@ -73,16 +74,16 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
 
     private final PMMLIncludedDocumentFactory pmmlDocumentFactory;
 
-    public DMNMarshallerImportsHelperImpl() {
+    public DMNMarshallerImportsHelperStandaloneImpl() {
         this(null, null, null, null, null);
     }
 
     @Inject
-    public DMNMarshallerImportsHelperImpl(final DMNPathsHelper pathsHelper,
-                                          final WorkspaceProjectService projectService,
-                                          final DMNMarshaller marshaller,
-                                          final PMMLIncludedDocumentFactory pmmlDocumentFactory,
-                                          final @Named("ioStrategy") IOService ioService) {
+    public DMNMarshallerImportsHelperStandaloneImpl(final DMNPathsHelper pathsHelper,
+                                                    final WorkspaceProjectService projectService,
+                                                    final DMNMarshaller marshaller,
+                                                    final PMMLIncludedDocumentFactory pmmlDocumentFactory,
+                                                    final @Named("ioStrategy") IOService ioService) {
         this.pathsHelper = pathsHelper;
         this.projectService = projectService;
         this.marshaller = marshaller;

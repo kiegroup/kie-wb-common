@@ -23,13 +23,19 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import elemental2.promise.Promise;
+import jsinterop.base.Js;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12MarshallCallback;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12UnmarshallCallback;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
 import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
@@ -42,8 +48,10 @@ import org.uberfire.client.promise.Promises;
 public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagramService {
 
     private ShapeManager shapeManager;
+    private DMNMarshallerKogito dmnMarshaller;
     private Caller<SubmarineDiagramService> submarineDiagramServiceCaller;
     private Promises promises;
+    private DMN12 dmn12;
 
     public SubmarineClientDiagramServiceImpl() {
         //CDI proxy
@@ -51,9 +59,11 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
 
     @Inject
     public SubmarineClientDiagramServiceImpl(final ShapeManager shapeManager,
+                                             final DMNMarshallerKogito dmnMarshaller,
                                              final Caller<SubmarineDiagramService> submarineDiagramServiceCaller,
                                              final Promises promises) {
         this.shapeManager = shapeManager;
+        this.dmnMarshaller = dmnMarshaller;
         this.submarineDiagramServiceCaller = submarineDiagramServiceCaller;
         this.promises = promises;
     }
@@ -68,7 +78,7 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
         //Stage 1 client-side marshalling
         // - Stage 1 is XML -> generic POJO model
         // - Stage 2 is generic POJO model to DMN editor UI model
-        testClientSideMarshaller(xml);
+        testClientSideUnmarshaller(xml);
 
         //Legacy server-side marshalling
         submarineDiagramServiceCaller.call((SubmarineDiagram d) -> {
@@ -77,28 +87,13 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
         }).transform(xml);
     }
 
-    private void testClientSideMarshaller(final String xml) {
-        if (StringUtils.isEmpty(xml)) {
-            return;
-        }
-
-        final DMN12UnmarshallCallback callback = dmn12 -> {
-            final JSITDMNElement element = dmn12.getValue();
-            GWT.log("break point -- check element is correct!");
-        };
-
-        try {
-            MainJs.unmarshall(xml, callback);
-        } catch (Exception e) {
-            GWT.log(e.getMessage());
-        }
-    }
-
     @Override
     public Promise<String> transform(final SubmarineDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.promisify(submarineDiagramServiceCaller,
                                       s -> {
+                                          resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
+
                                           return s.transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present")));
                                       });
         }
@@ -112,6 +107,46 @@ public class SubmarineClientDiagramServiceImpl implements SubmarineClientDiagram
                 final String sId = shapeManager.getDefaultShapeSet(metadata.getDefinitionSetId()).getId();
                 metadata.setShapeSetId(sId);
             }
+        }
+    }
+
+    private void testClientSideUnmarshaller(final String xml) {
+        if (StringUtils.isEmpty(xml)) {
+            return;
+        }
+
+        final DMN12UnmarshallCallback callback = dmn12 -> {
+            this.dmn12 = dmn12;
+            final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
+            final Graph graph = dmnMarshaller.unmarshall(null, definitions);
+
+            //Round-tripping to isolate issues
+            testClientSideMarshaller(graph);
+        };
+
+        try {
+            MainJs.unmarshall(xml, callback);
+        } catch (Exception e) {
+            GWT.log(e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void testClientSideMarshaller(final Graph graph) {
+        if (Objects.isNull(graph)) {
+            return;
+        }
+
+        final DMN12MarshallCallback callback = xml -> {
+            final String breakpoint = xml;
+        };
+
+        try {
+            final JSITDefinitions jsitDefinitions = dmnMarshaller.marshall(graph);
+            dmn12.setDefinitions(jsitDefinitions);
+            MainJs.marshall(dmn12, callback);
+        } catch (Exception e) {
+            GWT.log(e.getMessage());
         }
     }
 }

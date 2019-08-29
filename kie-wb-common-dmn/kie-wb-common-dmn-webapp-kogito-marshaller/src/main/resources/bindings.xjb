@@ -18,6 +18,7 @@
     version="2.1"
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
     xmlns:jsonix="http://jsonix.highsource.org/customizations"
+    xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     jaxb:extensionBindingPrefixes="jsonix">
 
@@ -49,10 +50,16 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12"
         spaceName="DMNDI12"/>
-  </jaxb:bindings>
+  </jaxb:bindings><!---->
 
   <!-- DMN1.2 -->
   <jaxb:bindings schemaLocation="DMN12.xsd" node="/xs:schema">
+    <jaxb:bindings node=".//xs:complexType[@name='tDMNElement']">
+      <inheritance:extends>org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.DMNModelInstrumentedBase</inheritance:extends>
+    </jaxb:bindings>
+    <jaxb:bindings node=".//xs:complexType[@name='tBinding']">
+      <inheritance:extends>org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.DMNModelInstrumentedBase</inheritance:extends>
+    </jaxb:bindings>
     <jaxb:schemaBindings>
       <jaxb:package name="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12"/>
     </jaxb:schemaBindings>

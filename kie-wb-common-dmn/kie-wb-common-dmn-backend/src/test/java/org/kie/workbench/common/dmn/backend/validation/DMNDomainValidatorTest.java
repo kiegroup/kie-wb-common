@@ -41,8 +41,8 @@ import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
-import org.kie.workbench.common.dmn.backend.DMNMarshaller;
-import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelper;
+import org.kie.workbench.common.dmn.backend.DMNMarshallerStandalone;
+import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperStandalone;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
@@ -72,13 +72,13 @@ public class DMNDomainValidatorTest {
     private static final String IMPORTED_DMN_XML = "<Some other XML/>";
 
     @Mock
-    private DMNMarshaller dmnMarshaller;
+    private DMNMarshallerStandalone dmnMarshaller;
 
     @Mock
     private DMNDiagramUtils dmnDiagramUtils;
 
     @Mock
-    private DMNMarshallerImportsHelper importsHelper;
+    private DMNMarshallerImportsHelperStandalone importsHelper;
 
     @Mock
     private DMNValidator dmnValidator;
