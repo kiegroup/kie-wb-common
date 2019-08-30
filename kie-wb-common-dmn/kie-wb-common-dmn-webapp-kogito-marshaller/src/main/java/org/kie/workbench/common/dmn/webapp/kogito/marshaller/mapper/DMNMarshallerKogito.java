@@ -207,7 +207,7 @@ public class DMNMarshallerKogito {
             }
         };
 
-        final JsArrayLike<JSITDRGElement> jsitDRGElements = dmnXml.getDrgElement();
+        final JsArrayLike<JSITDRGElement> jsitDRGElements = JSITDefinitions.getDrgElement(dmnXml);
         final List<JSITDRGElement> diagramDrgElements = JsUtils.toList(jsitDRGElements);
         final Optional<JSIDMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
 
@@ -227,16 +227,23 @@ public class DMNMarshallerKogito {
             importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes, importDefinitions, dmnXml));
         }
 
-        // Group DRGElements
+        // Combine all explicit and imported elements into one
         final List<JSITDRGElement> drgElements = new ArrayList<>();
+        final Set<JSITDecisionService> dmnDecisionServices = new HashSet<>();
         drgElements.addAll(diagramDrgElements);
         drgElements.addAll(importedDrgElements);
 
-        final Map<String, Entry<JSITDRGElement, Node>> elems = drgElements.stream().collect(toMap(JSITDRGElement::getId,
-                                                                                                  dmn -> new AbstractMap.SimpleEntry<>(dmn,
-                                                                                                                                       dmnToStunner(dmn, hasComponentWidthsConsumer, importedDrgElements))));
-
-        final Set<JSITDecisionService> dmnDecisionServices = new HashSet<>();
+        // Main conversion from DMN to Stunner
+        final Map<String, Entry<JSITDRGElement, Node>> elems = new HashMap<>();
+        for (int i = 0; i < drgElements.size(); i++) {
+            final JSITDRGElement drgElement = Js.uncheckedCast(drgElements.get(i));
+            final String id = drgElement.getId();
+            final Node stunnerNode = dmnToStunner(drgElement,
+                                                  hasComponentWidthsConsumer,
+                                                  importedDrgElements);
+            elems.put(id,
+                      new AbstractMap.SimpleEntry<>(drgElement, stunnerNode));
+        }
 
         // Stunner rely on relative positioning for Edge connections, so need to cycle on DMNShape first.
         for (Entry<JSITDRGElement, Node> kv : elems.values()) {
@@ -613,20 +620,20 @@ public class DMNMarshallerKogito {
 
     private Node createNode(final JSITDRGElement dmn,
                             final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        if (dmn instanceof JSITInputData) {
-            return inputDataConverter.nodeFromDMN((JSITInputData) dmn,
+        if (JSITInputData.instanceOf(dmn)) {
+            return inputDataConverter.nodeFromDMN(Js.uncheckedCast(dmn),
                                                   hasComponentWidthsConsumer);
-        } else if (dmn instanceof JSITDecision) {
-            return decisionConverter.nodeFromDMN((JSITDecision) dmn,
+        } else if (JSITDecision.instanceOf(dmn)) {
+            return decisionConverter.nodeFromDMN(Js.uncheckedCast(dmn),
                                                  hasComponentWidthsConsumer);
-        } else if (dmn instanceof JSITBusinessKnowledgeModel) {
-            return bkmConverter.nodeFromDMN((JSITBusinessKnowledgeModel) dmn,
+        } else if (JSITBusinessKnowledgeModel.instanceOf(dmn)) {
+            return bkmConverter.nodeFromDMN(Js.uncheckedCast(dmn),
                                             hasComponentWidthsConsumer);
-        } else if (dmn instanceof JSITKnowledgeSource) {
-            return knowledgeSourceConverter.nodeFromDMN((JSITKnowledgeSource) dmn,
+        } else if (JSITKnowledgeSource.instanceOf(dmn)) {
+            return knowledgeSourceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
                                                         hasComponentWidthsConsumer);
-        } else if (dmn instanceof JSITDecisionService) {
-            return decisionServiceConverter.nodeFromDMN((JSITDecisionService) dmn,
+        } else if (JSITDecisionService.instanceOf(dmn)) {
+            return decisionServiceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
                                                         hasComponentWidthsConsumer);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO

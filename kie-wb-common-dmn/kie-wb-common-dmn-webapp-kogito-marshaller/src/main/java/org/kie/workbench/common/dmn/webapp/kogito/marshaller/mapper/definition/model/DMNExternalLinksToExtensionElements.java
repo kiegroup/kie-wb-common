@@ -33,14 +33,16 @@ class DMNExternalLinksToExtensionElements {
                                                        final org.kie.workbench.common.dmn.api.definition.model.DRGElement target) {
 
         if (!Objects.isNull(source.getExtensionElements())) {
-            for (final Object obj : source.getExtensionElements().getAny()) {
-
-                if (obj instanceof ExternalLink) {
-                    final ExternalLink el = (ExternalLink) obj;
-                    final DMNExternalLink external = new DMNExternalLink();
-                    external.setDescription(el.getName());
-                    external.setUrl(el.getUrl());
-                    target.getLinksHolder().getValue().addLink(external);
+            final Object[] any = JSITDRGElement.JSIExtensionElements.getAny(source.getExtensionElements());
+            if (!Objects.isNull(any)) {
+                for (final Object obj : any) {
+                    if (obj instanceof ExternalLink) {
+                        final ExternalLink el = (ExternalLink) obj;
+                        final DMNExternalLink external = new DMNExternalLink();
+                        external.setDescription(el.getName());
+                        external.setUrl(el.getUrl());
+                        target.getLinksHolder().getValue().addLink(external);
+                    }
                 }
             }
         }
