@@ -37,6 +37,7 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import gwt.jsonix.marshallers.xjc.plugin.JsUtils;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
@@ -111,7 +112,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.ArrayUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
