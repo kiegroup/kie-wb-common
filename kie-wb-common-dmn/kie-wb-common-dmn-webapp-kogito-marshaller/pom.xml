@@ -113,7 +113,7 @@
               </includes>
             </fileset>
             <fileset>
-              <directory>src/main/java/gwt/jsonix/marshallers/xjc/plugin</directory>
+              <directory>src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/mapper</directory>
               <includes>
                 <include>JsUtils.java</include>
               </includes>
@@ -141,6 +141,7 @@
                 <arg>-Xgwtjsonix</arg>
                 <arg>-Xinheritance</arg>
                 <arg>-jsid=${project.build.sourceDirectory}</arg>
+                <arg>-jsmpkg=org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper</arg>
               </args>
               <plugins>
                 <plugin>
