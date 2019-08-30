@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import gwt.jsonix.marshallers.xjc.plugin.JsUtils;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.DMNElementReference;
@@ -44,6 +43,7 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;

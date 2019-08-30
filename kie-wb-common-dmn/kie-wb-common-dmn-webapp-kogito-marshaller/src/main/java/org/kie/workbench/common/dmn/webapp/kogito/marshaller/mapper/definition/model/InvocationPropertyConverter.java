@@ -19,7 +19,6 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import gwt.jsonix.marshallers.xjc.plugin.JsUtils;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
@@ -30,6 +29,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBinding;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInvocation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 
 public class InvocationPropertyConverter {

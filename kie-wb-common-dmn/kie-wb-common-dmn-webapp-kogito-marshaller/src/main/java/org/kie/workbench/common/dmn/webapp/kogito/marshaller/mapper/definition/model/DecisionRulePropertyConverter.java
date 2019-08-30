@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import gwt.jsonix.marshallers.xjc.plugin.JsUtils;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
@@ -25,6 +24,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionRule;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class DecisionRulePropertyConverter {
 

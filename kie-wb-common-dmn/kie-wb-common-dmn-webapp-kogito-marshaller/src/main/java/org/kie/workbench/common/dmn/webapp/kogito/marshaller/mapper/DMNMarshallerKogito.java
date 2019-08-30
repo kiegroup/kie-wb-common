@@ -37,7 +37,6 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import gwt.jsonix.marshallers.xjc.plugin.JsUtils;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
@@ -544,26 +543,29 @@ public class DMNMarshallerKogito {
 
     private Optional<JSITDRGElement> getReference(final List<JSITDRGElement> importedDRGElements,
                                                   final String dmnElementRef) {
-        final Optional<JSITDRGElement> element = importedDRGElements.stream().filter(drgElement -> dmnElementRef.equals(drgElement.getId())).findFirst();
-        return element;
+        for (JSITDRGElement importedDRGElement : importedDRGElements) {
+            final String importedDRGElementId = importedDRGElement.getId();
+            if (Objects.equals(importedDRGElementId, dmnElementRef)) {
+                return Optional.of(importedDRGElement);
+            }
+        }
+        return Optional.empty();
     }
 
     private String getDmnElementRef(final JSIDMNShape dmnShape) {
-        return Optional
-                .ofNullable(dmnShape.getDmnElementRef())
-                .map(QName::getLocalPart)
-                .orElse("");
+        final QName elementRef = dmnShape.getDmnElementRef();
+        if (Objects.nonNull(elementRef)) {
+            return elementRef.getLocalPart();
+        }
+        return "";
     }
 
-    @SuppressWarnings("unchecked")
     private List<JSIDMNShape> getUniqueDMNShapes(final JSIDMNDiagram dmnDDDiagram) {
         final Map<String, JSIDMNShape> jsidmnShapes = new HashMap<>();
-        final JsArrayLike<JSIDiagramElement> original = dmnDDDiagram.getDMNDiagramElement();
-        final JsArrayLike<JSIDiagramElement> unwrapped = JsUtils.getUnwrappedElementsArray(original);
+        final JsArrayLike<JSIDiagramElement> unwrapped = JSIDMNDiagram.getDMNDiagramElement(dmnDDDiagram);
         for (int i = 0; i < unwrapped.getLength(); i++) {
             final JSIDiagramElement jsiDiagramElement = Js.uncheckedCast(unwrapped.getAt(i));
-            final String actualType = jsiDiagramElement.getTYPE_NAME();
-            if (Objects.equals(JSIDMNShape.TYPE, actualType)) {
+            if (JSIDMNShape.instanceOf(jsiDiagramElement)) {
                 final JSIDMNShape jsidmnShape = Js.uncheckedCast(jsiDiagramElement);
                 if (!jsidmnShapes.containsKey(jsidmnShape.getId())) {
                     jsidmnShapes.put(jsidmnShape.getId(), jsidmnShape);

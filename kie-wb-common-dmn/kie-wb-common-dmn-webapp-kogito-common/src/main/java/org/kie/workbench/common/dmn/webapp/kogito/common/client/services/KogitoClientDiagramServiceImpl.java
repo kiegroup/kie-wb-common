@@ -23,7 +23,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import elemental2.promise.Promise;
-import gwt.jsonix.marshallers.xjc.plugin.JsUtils;
 import jsinterop.base.Js;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
@@ -32,6 +31,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;

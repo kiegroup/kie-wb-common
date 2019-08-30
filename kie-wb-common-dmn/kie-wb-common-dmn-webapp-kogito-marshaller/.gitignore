@@ -4,7 +4,7 @@
 /src/main/gwt-unitCache/
 
 # Generated files
-/src/main/java/gwt/jsonix/marshallers/xjc/plugin/JsUtils.java
+/src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/mapper/JsUtils.java
 /src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/MainJs.java
 /src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/callbacks/
 /src/main/java/org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/model/dc/
