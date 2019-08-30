@@ -75,5 +75,7 @@
     <!-- Uberfire . -->
     <exclude name="org.uberfire.preferences.client.**"/>
     <exclude name="org.uberfire.client.**"/>
+
+    <exclude name="org.jboss.errai.enterprise.client.**"/>
   </scan>
 </beans>
