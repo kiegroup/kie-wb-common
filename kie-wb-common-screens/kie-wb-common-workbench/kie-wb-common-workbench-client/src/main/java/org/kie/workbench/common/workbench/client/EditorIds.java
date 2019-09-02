@@ -21,7 +21,6 @@ public interface EditorIds {
     String GUIDED_DECISION_TREE = "GuidedDecisionTreeEditorPresenter";
     String GUIDED_SCORE_CARD = "GuidedScoreCardEditor";
     String XLS_SCORE_CARD = "ScoreCardXLSEditor";
-    String STUNNER_DESIGNER = "BPMNDiagramEditor";
     String CASE_MODELLER = "CaseManagementDiagramEditor";
     String SCENARIO_SIMULATION_DESIGNER = "ScenarioSimulationEditor";
 }
