@@ -144,7 +144,7 @@ public class DMNDomainValidator implements DomainValidator {
 
         return (modelNamespace, modelName, locationURI) -> {
 
-            final Path modelPath = importsHelper.getModelPath(metadata, modelNamespace, modelName);
+            final Path modelPath = importsHelper.getDMNModelPath(metadata, modelNamespace, modelName);
             final URI pmmlURI = getPMMLURI(modelPath, locationURI);
             final String pmmlXML = importsHelper.loadPath(getPath(pmmlURI)).map(dmnIOHelper::isAsString).orElse("");
 

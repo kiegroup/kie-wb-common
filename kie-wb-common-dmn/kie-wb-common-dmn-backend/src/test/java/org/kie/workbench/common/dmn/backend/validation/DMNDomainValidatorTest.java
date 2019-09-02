@@ -180,7 +180,7 @@ public class DMNDomainValidatorTest {
         final org.uberfire.java.nio.file.Path pmmlPath = mock(org.uberfire.java.nio.file.Path.class);
         final InputStream inputStream = mock(InputStream.class);
 
-        when(importsHelper.getModelPath(metadata, modelNamespace, modelName)).thenReturn(modelPath);
+        when(importsHelper.getDMNModelPath(metadata, modelNamespace, modelName)).thenReturn(modelPath);
         when(importsHelper.loadPath(pmmlPath)).thenReturn(Optional.of(inputStream));
         when(dmnIOHelper.isAsString(inputStream)).thenReturn(pmmlXML);
 

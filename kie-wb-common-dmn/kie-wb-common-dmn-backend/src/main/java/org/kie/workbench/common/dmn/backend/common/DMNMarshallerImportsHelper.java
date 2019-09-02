@@ -95,9 +95,9 @@ public interface DMNMarshallerImportsHelper {
      * @param modelName represents the mode name of the desired DMN model.
      * @return the {@link Path} of the desired DMN model.
      */
-    Path getModelPath(final Metadata metadata,
-                      final String modelNamespace,
-                      final String modelName);
+    Path getDMNModelPath(final Metadata metadata,
+                         final String modelNamespace,
+                         final String modelName);
 
     /**
      * This method loads the {@link InputStream} from a given {@link org.uberfire.java.nio.file.Path}.

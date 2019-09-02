@@ -544,7 +544,7 @@ public class DMNMarshallerImportsHelperImplTest {
         when(projectService.resolveProject(metadataPath)).thenReturn(workspaceProject);
         when(pathsHelper.getDMNModelsPaths(workspaceProject)).thenReturn(asList(path1, path2, path3));
 
-        final Path modelPath = helper.getModelPath(metadata, modelNamespace, modelName);
+        final Path modelPath = helper.getDMNModelPath(metadata, modelNamespace, modelName);
 
         assertEquals(path2, modelPath);
     }
@@ -556,7 +556,7 @@ public class DMNMarshallerImportsHelperImplTest {
         final String modelNamespace = "0000-1111-2222-3333";
         final String modelName = "model name";
 
-        assertThatThrownBy(() -> helper.getModelPath(metadata, modelNamespace, modelName))
+        assertThatThrownBy(() -> helper.getDMNModelPath(metadata, modelNamespace, modelName))
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessageContaining("No DMN model could be found for the following namespace: 0000-1111-2222-3333");
     }

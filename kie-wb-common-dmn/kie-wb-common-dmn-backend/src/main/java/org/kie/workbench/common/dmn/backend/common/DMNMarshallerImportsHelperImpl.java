@@ -146,9 +146,9 @@ public class DMNMarshallerImportsHelperImpl implements DMNMarshallerImportsHelpe
     }
 
     @Override
-    public Path getModelPath(final Metadata metadata,
-                             final String modelNamespace,
-                             final String modelName) {
+    public Path getDMNModelPath(final Metadata metadata,
+                                final String modelNamespace,
+                                final String modelName) {
 
         final WorkspaceProject workspaceProject = getProject(metadata);
 
