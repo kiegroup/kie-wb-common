@@ -18,11 +18,11 @@ package org.kie.workbench.common.stunner.project.client.editor;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.kie.workbench.common.stunner.submarine.api.editor.SubmarineDiagramResource;
-import org.kie.workbench.common.stunner.submarine.client.editor.DiagramEditorProxy;
+import org.kie.workbench.common.stunner.kogito.api.editor.KogitoDiagramResource;
+import org.kie.workbench.common.stunner.kogito.client.editor.DiagramEditorProxy;
 import org.uberfire.mvp.Command;
 
-public class ProjectDiagramEditorProxy<RESOURCE extends SubmarineDiagramResource> extends DiagramEditorProxy<RESOURCE> {
+public class ProjectDiagramEditorProxy<RESOURCE extends KogitoDiagramResource> extends DiagramEditorProxy<RESOURCE> {
 
     private Optional<Consumer<Command>> saveAfterValidationConsumer;
     private Optional<Consumer<String>> saveAfterUserConfirmationConsumer;

@@ -36,15 +36,17 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
-import org.kie.workbench.common.stunner.submarine.api.editor.SubmarineDiagramResource;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorCore;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.api.editor.KogitoDiagramResource;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorCore;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
-public abstract class AbstractProjectDiagramEditorCore<M extends Metadata, D extends Diagram<Graph, M>, C extends SubmarineDiagramResource<D>, P extends ProjectDiagramEditorProxy<C>> extends AbstractDiagramEditorCore<M, D, C, P> {
+public abstract class AbstractProjectDiagramEditorCore<M extends Metadata, D extends Diagram<Graph, M>,
+        C extends KogitoDiagramResource<D>, P extends ProjectDiagramEditorProxy<C>> extends AbstractDiagramEditorCore<M,
+                D, C, P> {
 
     public AbstractProjectDiagramEditorCore(final View baseEditorView,
                                             final TextEditorView xmlEditorView,

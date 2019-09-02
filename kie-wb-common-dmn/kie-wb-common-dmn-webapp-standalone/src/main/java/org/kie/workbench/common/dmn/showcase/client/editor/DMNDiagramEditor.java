@@ -73,6 +73,7 @@ import org.kie.workbench.common.stunner.core.client.session.event.OnSessionError
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -80,8 +81,7 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
 import org.uberfire.client.annotations.WorkbenchContextId;
@@ -390,8 +390,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private Metadata buildMetadata(final String defSetId,
                                    final String shapeSetId,
                                    final String title) {
-        return new SubmarineMetadataImpl.SubmarineMetadataBuilder(defSetId,
-                                                                  definitionManager)
+        return new MetadataImpl.MetadataImplBuilder(defSetId,
+                                                    definitionManager)
                 .setTitle(title)
                 .setShapeSetId(shapeSetId)
                 .build();

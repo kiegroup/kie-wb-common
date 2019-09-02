@@ -23,7 +23,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.submarine.client.editor.DiagramEditorView;
+import org.kie.workbench.common.stunner.kogito.client.editor.DiagramEditorView;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
 import static org.mockito.Matchers.eq;

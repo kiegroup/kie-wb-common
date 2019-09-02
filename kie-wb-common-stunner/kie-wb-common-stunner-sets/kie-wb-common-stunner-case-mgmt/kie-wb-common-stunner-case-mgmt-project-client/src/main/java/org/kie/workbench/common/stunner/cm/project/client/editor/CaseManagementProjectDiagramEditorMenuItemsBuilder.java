@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.client.widgets.popups.PopupUtil;
 import org.kie.workbench.common.stunner.cm.project.client.resources.i18n.CaseManagementProjectClientConstants;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuItemsBuilder;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuItemsBuilder;
 
 @Dependent
 @Typed(CaseManagementProjectDiagramEditorMenuItemsBuilder.class)

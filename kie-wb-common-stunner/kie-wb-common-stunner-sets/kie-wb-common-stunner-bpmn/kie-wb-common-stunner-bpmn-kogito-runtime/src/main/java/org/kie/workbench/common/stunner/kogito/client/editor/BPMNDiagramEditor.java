@@ -40,16 +40,15 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPreviewAndExplorerDock;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditor;
-import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.backend.vfs.Path;
@@ -89,7 +88,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
 
-    private final SubmarineClientDiagramService diagramServices;
+    private final KogitoClientDiagramService diagramServices;
 
     @Inject
     public BPMNDiagramEditor(final View view,
@@ -112,7 +111,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                              final DiagramEditorPropertiesDock diagramPropertiesDock,
                              final LayoutHelper layoutHelper,
                              final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
-                             final SubmarineClientDiagramService diagramServices) {
+                             final KogitoClientDiagramService diagramServices) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -153,7 +152,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    public void open(final SubmarineDiagram diagram) {
+    public void open(final Diagram diagram) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         super.open(diagram);
     }
@@ -268,10 +267,10 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @Override
     public void setContent(final String value) {
         diagramServices.transform(value,
-                                  new ServiceCallback<SubmarineDiagram>() {
+                                  new ServiceCallback<Diagram>() {
 
                                       @Override
-                                      public void onSuccess(final SubmarineDiagram diagram) {
+                                      public void onSuccess(final Diagram diagram) {
                                           getEditor().open(diagram);
                                       }
 

@@ -50,9 +50,9 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
-import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
@@ -98,7 +98,7 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
-                            final SubmarineClientDiagramService diagramServices) {
+                            final KogitoClientDiagramService diagramServices) {
         super(view,
               fileMenuBuilder,
               placeManager,

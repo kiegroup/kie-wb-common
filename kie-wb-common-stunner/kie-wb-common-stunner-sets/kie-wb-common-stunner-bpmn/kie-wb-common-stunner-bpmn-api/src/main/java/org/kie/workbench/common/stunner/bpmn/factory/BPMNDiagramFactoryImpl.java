@@ -20,16 +20,15 @@ import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineDiagramImpl;
 
 @Dependent
 public class BPMNDiagramFactoryImpl
-        extends AbstractBPMNDiagramFactory<SubmarineMetadata, SubmarineDiagram>
+        extends AbstractBPMNDiagramFactory<Metadata, Diagram<Graph, Metadata>>
         implements BPMNDiagramFactory {
 
     public BPMNDiagramFactoryImpl() {
@@ -43,15 +42,15 @@ public class BPMNDiagramFactoryImpl
 
     @Override
     public Class<? extends Metadata> getMetadataType() {
-        return SubmarineMetadata.class;
+        return Metadata.class;
     }
 
     @Override
-    protected SubmarineDiagram doBuild(final String name,
-                                       final SubmarineMetadata metadata,
-                                       final Graph<DefinitionSet, ?> graph) {
-        return new SubmarineDiagramImpl(name,
-                                        graph,
-                                        metadata);
+    protected Diagram doBuild(final String name,
+                              final Metadata metadata,
+                              final Graph<DefinitionSet, ?> graph) {
+        return new DiagramImpl(name,
+                               graph,
+                               metadata);
     }
 }

@@ -33,23 +33,21 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineDiagram;
-import org.kie.workbench.common.stunner.submarine.api.diagram.SubmarineMetadata;
-import org.kie.workbench.common.stunner.submarine.api.diagram.impl.SubmarineMetadataImpl;
-import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
-import org.kie.workbench.common.stunner.submarine.api.editor.impl.SubmarineDiagramResourceImpl;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
+import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramResourceImpl;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
 
 @ApplicationScoped
-public class BPMNClientDiagramService implements SubmarineClientDiagramService {
+public class BPMNClientDiagramService implements KogitoClientDiagramService {
 
     private final DefinitionManager definitionManager;
     private final BPMNClientMarshalling marshalling;
@@ -80,46 +78,46 @@ public class BPMNClientDiagramService implements SubmarineClientDiagramService {
 
     @Override
     public void transform(final String xml,
-                          final ServiceCallback<SubmarineDiagram> callback) {
+                          final ServiceCallback<Diagram> callback) {
         // TODO: handle errors?
-        SubmarineDiagram diagram = transform(xml);
+        Diagram diagram = transform(xml);
         callback.onSuccess(diagram);
     }
 
     @Override
-    public Promise<String> transform(final SubmarineDiagramResourceImpl resource) {
+    public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.resolve(transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present"))));
         }
         return promises.resolve(resource.xmlDiagram().orElse("DiagramType is XML_DIAGRAM however no instance present"));
     }
 
-    public SubmarineDiagram transform(final String xml) {
+    public Diagram transform(final String xml) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
             return doNewDiagram();
         }
         return doTransformation(xml);
     }
 
-    public String transform(final SubmarineDiagram diagram) {
+    public String transform(final Diagram diagram) {
         return marshalling.marshall(convert(diagram));
     }
 
-    private SubmarineDiagram doNewDiagram() {
+    private Diagram doNewDiagram() {
         final String title = UUID.uuid();
         final String defSetId = BPMNClientMarshalling.getDefinitionSetId();
-        final SubmarineMetadata metadata = createMetadata();
+        final Metadata metadata = createMetadata();
         metadata.setTitle(title);
-        final SubmarineDiagram diagram = factoryManager.newDiagram(title,
-                                                                   defSetId,
-                                                                   metadata);
+        final Diagram diagram = factoryManager.newDiagram(title,
+                                                          defSetId,
+                                                          metadata);
         updateClientMetadata(diagram);
         return diagram;
     }
 
     @SuppressWarnings("unchecked")
-    private SubmarineDiagram doTransformation(final String raw) {
-        final SubmarineMetadata metadata = createMetadata();
+    private Diagram doTransformation(final String raw) {
+        final Metadata metadata = createMetadata();
         final Graph<DefinitionSet, ?> graph = marshalling.unmarshall(metadata, raw);
         final Node<Definition<BPMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, BPMNDiagramImpl.class);
         if (null == diagramNode) {
@@ -127,9 +125,9 @@ public class BPMNClientDiagramService implements SubmarineClientDiagramService {
         }
         final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();
         metadata.setTitle(title);
-        final SubmarineDiagram diagram = diagramFactory.build(title,
-                                                              metadata,
-                                                              graph);
+        final Diagram diagram = diagramFactory.build(title,
+                                                     metadata,
+                                                     graph);
         updateClientMetadata(diagram);
         return diagram;
     }
@@ -137,9 +135,9 @@ public class BPMNClientDiagramService implements SubmarineClientDiagramService {
     // TODO: Necessary?
     private static final String ROOT_PATH = "default://master@system/stunner/diagrams";
 
-    private SubmarineMetadata createMetadata() {
-        return new SubmarineMetadataImpl.SubmarineMetadataBuilder(BPMNClientMarshalling.getDefinitionSetId(),
-                                                                  definitionManager)
+    private Metadata createMetadata() {
+        return new MetadataImpl.MetadataImplBuilder(BPMNClientMarshalling.getDefinitionSetId(),
+                                                    definitionManager)
                 .setRoot(PathFactory.newPath(".", ROOT_PATH))
                 .build();
     }
@@ -154,7 +152,7 @@ public class BPMNClientDiagramService implements SubmarineClientDiagramService {
         }
     }
 
-    private DiagramImpl convert(final SubmarineDiagram diagram) {
+    private DiagramImpl convert(final Diagram diagram) {
         return new DiagramImpl(diagram.getName(),
                                diagram.getGraph(),
                                diagram.getMetadata());

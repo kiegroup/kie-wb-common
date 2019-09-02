@@ -33,7 +33,7 @@ import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEv
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
-import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramSubmarineWrapper;
+import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramKogitoWrapper;
 import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.BaseKogitoDMNDiagramEditor;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.DMNEditorMenuSessionItems;
@@ -55,9 +55,9 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
-import org.kie.workbench.common.stunner.submarine.client.docks.DiagramEditorPropertiesDock;
-import org.kie.workbench.common.stunner.submarine.client.editor.event.OnDiagramFocusEvent;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
+import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
@@ -78,7 +78,7 @@ import org.uberfire.workbench.model.menu.Menus;
 public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
 
     private final Event<NotificationEvent> notificationEvent;
-    private final DMNDiagramSubmarineWrapper stateHolder;
+    private final DMNDiagramKogitoWrapper stateHolder;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -109,8 +109,8 @@ public class DMNDiagramEditor extends BaseKogitoDMNDiagramEditor {
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
-                            final SubmarineClientDiagramService diagramServices,
-                            final DMNDiagramSubmarineWrapper stateHolder) {
+                            final KogitoClientDiagramService diagramServices,
+                            final DMNDiagramKogitoWrapper stateHolder) {
         super(view,
               fileMenuBuilder,
               placeManager,

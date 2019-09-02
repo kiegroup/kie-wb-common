@@ -27,7 +27,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.common.client.session.DMNEdito
 import org.kie.workbench.common.stunner.client.widgets.menu.MenuUtils;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.workbench.model.menu.MenuItem;
 

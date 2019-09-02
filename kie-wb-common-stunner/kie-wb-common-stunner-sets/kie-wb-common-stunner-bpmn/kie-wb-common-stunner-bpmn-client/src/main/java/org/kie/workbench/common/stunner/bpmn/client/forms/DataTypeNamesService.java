@@ -18,11 +18,11 @@ package org.kie.workbench.common.stunner.bpmn.client.forms;
 
 import java.util.List;
 
-import org.kie.workbench.common.stunner.submarine.api.Submarine;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
+import org.kie.workbench.common.stunner.kogito.api.Kogito;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientService;
 import org.uberfire.backend.vfs.Path;
 
-@Submarine
-public interface DataTypeNamesService extends SubmarineClientService<Path, List<String>> {
+@Kogito
+public interface DataTypeNamesService extends KogitoClientService<Path, List<String>> {
 
 }

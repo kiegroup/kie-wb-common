@@ -17,11 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor;
 
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.ParseConditionResult;
-import org.kie.workbench.common.stunner.submarine.api.Submarine;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
+import org.kie.workbench.common.stunner.kogito.api.Kogito;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientService;
 
-@Submarine
+@Kogito
 public interface ConditionEditorParsingService
-        extends SubmarineClientService<String, ParseConditionResult> {
+        extends KogitoClientService<String, ParseConditionResult> {
 
 }

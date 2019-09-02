@@ -18,9 +18,9 @@ package org.kie.workbench.common.stunner.bpmn.workitem.service;
 
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.submarine.api.Submarine;
+import org.kie.workbench.common.stunner.kogito.api.Kogito;
 
-@Submarine
+@Kogito
 @Remote
 public interface WorkItemDefinitionLookupService
         extends WorkItemDefinitionService<Metadata> {

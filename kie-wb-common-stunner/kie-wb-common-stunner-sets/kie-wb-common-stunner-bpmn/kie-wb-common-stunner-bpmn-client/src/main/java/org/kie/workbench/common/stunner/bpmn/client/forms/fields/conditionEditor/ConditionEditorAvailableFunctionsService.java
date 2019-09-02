@@ -19,13 +19,13 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEdito
 import java.util.List;
 
 import org.kie.workbench.common.stunner.bpmn.forms.conditions.FunctionDef;
-import org.kie.workbench.common.stunner.submarine.api.Submarine;
-import org.kie.workbench.common.stunner.submarine.client.service.SubmarineClientService;
+import org.kie.workbench.common.stunner.kogito.api.Kogito;
+import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientService;
 import org.uberfire.backend.vfs.Path;
 
-@Submarine
+@Kogito
 public interface ConditionEditorAvailableFunctionsService
-        extends SubmarineClientService<ConditionEditorAvailableFunctionsService.Input, List<FunctionDef>> {
+        extends KogitoClientService<ConditionEditorAvailableFunctionsService.Input, List<FunctionDef>> {
 
     class Input {
 

@@ -30,7 +30,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSe
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchGridSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
-import org.kie.workbench.common.stunner.submarine.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
 
 public class DMNProjectToolbarStateHandler implements ToolbarStateHandler {
 

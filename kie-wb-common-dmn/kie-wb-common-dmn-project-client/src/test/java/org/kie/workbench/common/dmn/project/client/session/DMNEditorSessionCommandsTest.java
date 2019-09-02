@@ -35,8 +35,8 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchG
 import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ValidateSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
-import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommands;
-import org.kie.workbench.common.stunner.submarine.client.session.EditorSessionCommandsTest;
+import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommands;
+import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommandsTest;
 import org.mockito.InOrder;
 import org.mockito.runners.MockitoJUnitRunner;
 

@@ -21,9 +21,9 @@ import java.util.Optional;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramResource;
-import org.kie.workbench.common.stunner.submarine.api.editor.DiagramType;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
