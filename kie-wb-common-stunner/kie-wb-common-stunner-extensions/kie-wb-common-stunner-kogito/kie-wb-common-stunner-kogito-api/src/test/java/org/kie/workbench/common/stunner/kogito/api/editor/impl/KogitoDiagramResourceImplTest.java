@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.kogito.api.editor.impl;
 
 import org.junit.Test;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
-import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.impl.GraphImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
@@ -27,9 +27,9 @@ import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
 
-public class SubmarineDiagramResourceImplTest {
+public class KogitoDiagramResourceImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
@@ -81,8 +81,8 @@ public class SubmarineDiagramResourceImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testEqualsWhenProjectDiagramIsDifferentMetadata() {
-        final MetadataImpl metadataOne = spy(makeMetadata());
-        final MetadataImpl metadataTwo = spy(makeMetadata());
+        final Metadata metadataOne = makeMetadata();
+        final Metadata metadataTwo = makeMetadata();
 
         doReturn("moduleOne").when(metadataOne).getTitle();
         doReturn("moduleTwo").when(metadataTwo).getTitle();
@@ -99,8 +99,11 @@ public class SubmarineDiagramResourceImplTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testEqualsWhenObjectsAreEqual() {
-        final DiagramImpl projectDiagram1 = new DiagramImpl("Diagram", makeGraph(), makeMetadata());
-        final DiagramImpl projectDiagram2 = new DiagramImpl("Diagram", makeGraph(), makeMetadata());
+        final GraphImpl graph = makeGraph();
+        final Metadata metadata = makeMetadata();
+        final String diagramName = "Diagram";
+        final DiagramImpl projectDiagram1 = new DiagramImpl(diagramName, graph, metadata);
+        final DiagramImpl projectDiagram2 = new DiagramImpl(diagramName, graph, metadata);
         final KogitoDiagramResourceImpl projectDiagramResource1 = new KogitoDiagramResourceImpl(projectDiagram1);
         final KogitoDiagramResourceImpl projectDiagramResource2 = new KogitoDiagramResourceImpl(projectDiagram2);
 
@@ -117,7 +120,7 @@ public class SubmarineDiagramResourceImplTest {
         return new GraphImpl("Graph", new GraphNodeStoreImpl());
     }
 
-    private MetadataImpl makeMetadata() {
-        return new MetadataImpl();
+    private Metadata makeMetadata() {
+        return mock(Metadata.class);
     }
 }
