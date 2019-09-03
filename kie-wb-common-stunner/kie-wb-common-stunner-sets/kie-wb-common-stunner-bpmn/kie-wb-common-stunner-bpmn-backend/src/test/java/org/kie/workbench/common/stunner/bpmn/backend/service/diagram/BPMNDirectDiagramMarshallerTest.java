@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +52,9 @@ import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.BPMNTestDefinitionFactory;
 import org.kie.workbench.common.stunner.bpmn.WorkItemDefinitionMockRegistry;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
@@ -241,7 +245,8 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String ARIS_COLLAPSED_SUBPROCESS_IN_LANE = PATH_DIAGRAM + "/aris/ARIS_COLLAPSED_SUBPROCESS_IN_LANE.bpmn";
     private static final String BPMN_LOG_TASK_JBPM_DESIGNER = PATH_DIAGRAM + "/logtask.bpmn";
     private static final String BPMN_SERVICETASKS_JBPM_DESIGNER = PATH_DIAGRAM + "/serviceTasksJBPMDeginer.bpmn";
-    private static final String BPMN_EVENT_GATEWAY = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/eventGateway.bpmn";
+    private static final String BPMN_EVENT_GATEWAY = PATH_DIAGRAM + "/eventGateway.bpmn";
+    private static final String BPMN_TRAVELS = PATH_DIAGRAM + "/travels.bpmn";
 
     private static final String NEW_LINE = System.lineSeparator();
 
@@ -443,6 +448,42 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(197d,
                      task1LRBound.getY(),
                      0);
+    }
+
+    @Test
+    public void testUnmarshallTravels() throws Exception {
+        final Diagram<Graph, Metadata> diagram = unmarshall(BPMN_TRAVELS);
+
+        //User Task 1
+        Node<? extends View, ?> userTask1Node = diagram.getGraph().getNode("UserTask_1");
+        UserTask userTask1 = (UserTask) userTask1Node.getContent().getDefinition();
+        ParsedAssignmentsInfo parsedAssignmentsInfo = ParsedAssignmentsInfo.fromString(userTask1.getExecutionSet().getAssignmentsinfo().getValue());
+        assertDataTye("org.acme.travels.Trip", "trip", parsedAssignmentsInfo.getInputs());
+        assertDataTye("org.acme.travels.Traveller", "traveller", parsedAssignmentsInfo.getInputs());
+        assertDataTye("java.lang.Boolean", "Skippable", parsedAssignmentsInfo.getInputs());
+        assertDataTye("java.lang.Integer", "Priority", parsedAssignmentsInfo.getInputs());
+        assertDataTye("java.lang.String", "Comment", parsedAssignmentsInfo.getInputs());
+
+        //Business Rule 1
+        Node<? extends View, ?> businessRuleTaskNode = diagram.getGraph().getNode("BusinessRuleTask_1");
+        BusinessRuleTask businessRuleTask1 = (BusinessRuleTask) businessRuleTaskNode.getContent().getDefinition();
+        ParsedAssignmentsInfo businessRuleParsedAssignmentsInfo =
+                ParsedAssignmentsInfo.fromString(businessRuleTask1.getDataIOSet().getAssignmentsinfo().getValue());
+
+        assertDataTye("org.acme.travels.Traveller", "traveller", businessRuleParsedAssignmentsInfo.getInputs());
+        assertDataTye("org.acme.travels.Trip", "trip", businessRuleParsedAssignmentsInfo.getInputs());
+        assertDataTye("org.acme.travels.Trip", "trip", businessRuleParsedAssignmentsInfo.getOutputs());
+    }
+
+    private void assertDataTye(String expectedType, String name, DeclarationList declarationList) {
+        assertEquals(expectedType,
+                     declarationList
+                             .getDeclarations()
+                             .stream()
+                             .filter(d -> Objects.equals(d.getIdentifier(), name))
+                             .map(VariableDeclaration::getType)
+                             .findFirst()
+                             .orElse(null));
     }
 
     @Test
