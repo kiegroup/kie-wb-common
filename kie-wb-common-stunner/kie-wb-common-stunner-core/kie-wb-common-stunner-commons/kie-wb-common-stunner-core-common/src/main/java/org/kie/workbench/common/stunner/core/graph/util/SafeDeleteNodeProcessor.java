@@ -54,58 +54,75 @@ public class SafeDeleteNodeProcessor {
         void deleteCandidateNode(final Node<?, Edge> node);
 
         boolean deleteNode(final Node<?, Edge> node);
+
+        default void moveChildToCanvasRoot(final Element<?> canvas, final Node<?, Edge> node) {
+            // Nothing
+        }
     }
 
     private final Set<String> processedConnectors = new HashSet<>();
     private final Node<Definition<?>, Edge> candidate;
     private final Graph graph;
     private final ChildrenTraverseProcessor childrenTraverseProcessor;
+    private final boolean keepChildren;
 
     public SafeDeleteNodeProcessor(final ChildrenTraverseProcessor childrenTraverseProcessor,
                                    final Graph graph,
                                    final Node<Definition<?>, Edge> candidate) {
+        this(childrenTraverseProcessor, graph, candidate, false);
+    }
+
+    public SafeDeleteNodeProcessor(final ChildrenTraverseProcessor childrenTraverseProcessor,
+                                   final Graph graph,
+                                   final Node<Definition<?>, Edge> candidate,
+                                   final boolean keepChildren) {
         this.childrenTraverseProcessor = childrenTraverseProcessor;
         this.graph = graph;
         this.candidate = candidate;
+        this.keepChildren = keepChildren;
     }
 
     @SuppressWarnings("unchecked")
     public void run(final Callback callback) {
         final Deque<Node<View, Edge>> nodes = new ArrayDeque();
         processedConnectors.clear();
-        childrenTraverseProcessor
-                .setRootUUID(candidate.getUUID())
-                .traverse(graph,
-                          new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
 
-                              @Override
-                              public void startNodeTraversal(final Node<View, Edge> node) {
-                                  super.startNodeTraversal(node);
-                                  if (isDockedNode(node)) {
-                                      //docked nodes will be handled on the #processNode
-                                      return;
+        if (!keepChildren) {
+            childrenTraverseProcessor
+                    .setRootUUID(candidate.getUUID())
+                    .traverse(graph,
+                              new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
+
+                                  @Override
+                                  public void startNodeTraversal(final Node<View, Edge> node) {
+                                      super.startNodeTraversal(node);
+                                      if (isDockedNode(node)) {
+                                          //docked nodes will be handled on the #processNode
+                                          return;
+                                      }
+                                      nodes.add(node);
                                   }
-                                  nodes.add(node);
-                              }
 
-                              @Override
-                              public boolean startNodeTraversal(final List<Node<View, Edge>> parents,
-                                                                final Node<View, Edge> node) {
-                                  super.startNodeTraversal(parents,
-                                                           node);
-                                  if (isDockedNode(node)) {
-                                      //docked nodes will be handled on the #processNode
+                                  @Override
+                                  public boolean startNodeTraversal(final List<Node<View, Edge>> parents,
+                                                                    final Node<View, Edge> node) {
+                                      super.startNodeTraversal(parents,
+                                                               node);
+                                      if (isDockedNode(node)) {
+                                          //docked nodes will be handled on the #processNode
+                                          return true;
+                                      }
+                                      nodes.add(node);
                                       return true;
                                   }
-                                  nodes.add(node);
-                                  return true;
-                              }
-                          });
-
-        // Process delete for children nodes
-        nodes.descendingIterator().forEachRemaining(node -> processNode(node,
-                                                                        callback,
-                                                                        false));
+                              });
+        }
+        if (!keepChildren) {
+            // Process delete for children nodes
+            nodes.descendingIterator().forEachRemaining(node -> processNode(node,
+                                                                            callback,
+                                                                            false));
+        }
 
         // Process candidate's delete.
         processNode(candidate,
