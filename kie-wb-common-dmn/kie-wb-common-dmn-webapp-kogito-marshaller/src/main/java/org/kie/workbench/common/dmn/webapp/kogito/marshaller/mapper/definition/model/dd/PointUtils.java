@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
@@ -91,19 +92,35 @@ public class PointUtils {
     }
 
     public static double xOfShape(final JSIDMNShape shape) {
-        return extractValue(shape, JSIBounds::getX);
+        return extractValue(shape,
+                            bounds -> {
+                                final JSIBounds _bounds = Js.uncheckedCast(bounds);
+                                return _bounds.getX();
+                            });
     }
 
     public static double yOfShape(final JSIDMNShape shape) {
-        return extractValue(shape, JSIBounds::getY);
+        return extractValue(shape,
+                            bounds -> {
+                                final JSIBounds _bounds = Js.uncheckedCast(bounds);
+                                return _bounds.getY();
+                            });
     }
 
     public static double widthOfShape(final JSIDMNShape shape) {
-        return extractValue(shape, JSIBounds::getWidth);
+        return extractValue(shape,
+                            bounds -> {
+                                final JSIBounds _bounds = Js.uncheckedCast(bounds);
+                                return _bounds.getWidth();
+                            });
     }
 
     public static double heightOfShape(final JSIDMNShape shape) {
-        return extractValue(shape, JSIBounds::getHeight);
+        return extractValue(shape,
+                            bounds -> {
+                                final JSIBounds _bounds = Js.uncheckedCast(bounds);
+                                return _bounds.getHeight();
+                            });
     }
 
     public static Bound upperLeftBound(final View view) {
@@ -125,8 +142,10 @@ public class PointUtils {
     private static double extractValue(final JSIDMNShape shape,
                                        final Function<JSIBounds, Double> extractor) {
         if (Objects.nonNull(shape)) {
-            if (Objects.nonNull(shape.getBounds())) {
-                return extractor.apply(shape.getBounds());
+            final JSIDMNShape _shape = Js.uncheckedCast(shape);
+            if (Objects.nonNull(_shape.getBounds())) {
+                final JSIBounds bounds = Js.uncheckedCast(_shape.getBounds());
+                return extractor.apply(bounds);
             }
         }
         return 0.0;

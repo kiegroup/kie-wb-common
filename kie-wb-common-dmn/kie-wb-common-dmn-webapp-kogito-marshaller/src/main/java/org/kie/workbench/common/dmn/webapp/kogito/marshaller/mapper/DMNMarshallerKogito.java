@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -74,6 +73,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBoun
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIStyle;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITArtifact;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
@@ -1010,15 +1010,23 @@ public class DMNMarshallerKogito {
             return;
         }
 
-        final Stream<JSIDMNShape> drgShapeStream = Arrays.stream(dmnDDDiagram.get().getDMNDiagramElement().asArray())
-                .filter(e -> e instanceof JSIDMNShape)
-                .map(e -> (JSIDMNShape) e);
+        final JSIDMNDiagram jsiDiagram = Js.uncheckedCast(dmnDDDiagram.get());
+        final JsArrayLike<JSIDiagramElement> wrapped = jsiDiagram.getDMNDiagramElement();
+        final JsArrayLike<JSIDiagramElement> jsiDiagramElements = JsUtils.getUnwrappedElementsArray(wrapped);
+
+        final List<JSIDMNShape> drgShapes = new ArrayList<>();
+        for (int i = 0; i < jsiDiagramElements.getLength(); i++) {
+            final JSIDiagramElement jsiDiagramElement = Js.uncheckedCast(jsiDiagramElements.getAt(i));
+            if (JSIDMNShape.instanceOf(jsiDiagramElement)) {
+                drgShapes.add(Js.uncheckedCast(jsiDiagramElement));
+            }
+        }
         final View content = (View) currentNode.getContent();
         final Bound ulBound = upperLeftBound(content);
         final Bound lrBound = lowerRightBound(content);
         if (content.getDefinition() instanceof Decision) {
             final Decision d = (Decision) content.getDefinition();
-            internalAugment(drgShapeStream, d.getId(),
+            internalAugment(drgShapes, d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
@@ -1026,7 +1034,7 @@ public class DMNMarshallerKogito {
                             d::setFontSet);
         } else if (content.getDefinition() instanceof InputData) {
             final InputData d = (InputData) content.getDefinition();
-            internalAugment(drgShapeStream,
+            internalAugment(drgShapes,
                             d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
@@ -1035,7 +1043,7 @@ public class DMNMarshallerKogito {
                             d::setFontSet);
         } else if (content.getDefinition() instanceof BusinessKnowledgeModel) {
             final BusinessKnowledgeModel d = (BusinessKnowledgeModel) content.getDefinition();
-            internalAugment(drgShapeStream,
+            internalAugment(drgShapes,
                             d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
@@ -1044,7 +1052,7 @@ public class DMNMarshallerKogito {
                             d::setFontSet);
         } else if (content.getDefinition() instanceof KnowledgeSource) {
             final KnowledgeSource d = (KnowledgeSource) content.getDefinition();
-            internalAugment(drgShapeStream,
+            internalAugment(drgShapes,
                             d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
@@ -1053,7 +1061,7 @@ public class DMNMarshallerKogito {
                             d::setFontSet);
         } else if (content.getDefinition() instanceof TextAnnotation) {
             final TextAnnotation d = (TextAnnotation) content.getDefinition();
-            internalAugment(drgShapeStream,
+            internalAugment(drgShapes,
                             d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
@@ -1062,7 +1070,7 @@ public class DMNMarshallerKogito {
                             d::setFontSet);
         } else if (content.getDefinition() instanceof DecisionService) {
             final DecisionService d = (DecisionService) content.getDefinition();
-            internalAugment(drgShapeStream,
+            internalAugment(drgShapes,
                             d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
@@ -1074,7 +1082,7 @@ public class DMNMarshallerKogito {
     }
 
     @SuppressWarnings("unchecked")
-    private void internalAugment(final Stream<JSIDMNShape> drgShapeStream,
+    private void internalAugment(final List<JSIDMNShape> drgShapeStream,
                                  final Id id,
                                  final Bound ulBound,
                                  final RectangleDimensionsSet dimensionsSet,
@@ -1092,7 +1100,7 @@ public class DMNMarshallerKogito {
     }
 
     @SuppressWarnings("unchecked")
-    private void internalAugment(final Stream<JSIDMNShape> drgShapeStream,
+    private void internalAugment(final List<JSIDMNShape> drgShapes,
                                  final Id id,
                                  final Bound ulBound,
                                  final RectangleDimensionsSet dimensionsSet,
@@ -1100,11 +1108,20 @@ public class DMNMarshallerKogito {
                                  final BackgroundSet bgset,
                                  final Consumer<FontSet> fontSetSetter,
                                  final Consumer<Double> decisionServiceDividerLineYSetter) {
-        final Optional<JSIDMNShape> drgShapeOpt = drgShapeStream.filter(shape -> shape.getDmnElementRef().getLocalPart().equals(id.getValue())).findFirst();
+        //Lookup JSIDMNShape corresponding to DRGElement...
+        Optional<JSIDMNShape> drgShapeOpt = Optional.empty();
+        for (int i = 0; i < drgShapes.size(); i++) {
+            final JSIDMNShape jsiShape = Js.uncheckedCast(drgShapes.get(i));
+            if (Objects.equals(id.getValue(), jsiShape.getDmnElementRef().getLocalPart())) {
+                drgShapeOpt = Optional.of(jsiShape);
+            }
+        }
         if (!drgShapeOpt.isPresent()) {
             return;
         }
-        final JSIDMNShape drgShape = drgShapeOpt.get();
+
+        //Augment Stunner Node with Shape data
+        final JSIDMNShape drgShape = Js.uncheckedCast(drgShapeOpt.get());
 
         if (Objects.nonNull(ulBound)) {
             ulBound.setX(xOfShape(drgShape));
@@ -1117,7 +1134,8 @@ public class DMNMarshallerKogito {
             lrBound.setY(yOfShape(drgShape) + heightOfShape(drgShape));
         }
 
-        final JSIDMNStyle dmnStyleOfDrgShape = drgShape.getStyle() instanceof JSIDMNStyle ? (JSIDMNStyle) drgShape.getStyle() : null;
+        final JSIStyle drgStyle = Js.uncheckedCast(JsUtils.getUnwrappedElement(drgShape.getStyle()));
+        final JSIDMNStyle dmnStyleOfDrgShape = JSIDMNStyle.instanceOf(drgStyle) ? Js.uncheckedCast(drgStyle) : null;
         if (Objects.nonNull(dmnStyleOfDrgShape)) {
             if (Objects.nonNull(dmnStyleOfDrgShape.getFillColor())) {
                 bgset.setBgColour(new BgColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getFillColor())));
