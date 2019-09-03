@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DeleteElementsCommand extends AbstractCanvasGraphCommand {
 
-    private final Collection<Element> elements;
+    protected final Collection<Element> elements;
     private transient CompositeCommand<AbstractCanvasHandler, CanvasViolation> command;
 
     @SuppressWarnings("unchecked")
