@@ -1149,15 +1149,20 @@ public class DMNMarshallerKogito {
         if (Objects.nonNull(dmnStyleOfDrgShape)) {
             mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN(dmnStyleOfDrgShape));
         }
-        if (Objects.nonNull(drgShape.getDMNLabel()) && drgShape.getDMNLabel().getSharedStyle() instanceof JSIDMNStyle) {
-            mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN((JSIDMNStyle) drgShape.getDMNLabel().getSharedStyle()));
-        }
-        if (Objects.nonNull(drgShape.getDMNLabel()) && drgShape.getDMNLabel().getStyle() instanceof JSIDMNStyle) {
-            mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN((JSIDMNStyle) drgShape.getDMNLabel().getStyle()));
+        if (Objects.nonNull(drgShape.getDMNLabel())) {
+            final JSIDMNShape jsiLabel = Js.uncheckedCast(drgShape.getDMNLabel());
+            final JSIDiagramElement jsiLabelStyle = Js.uncheckedCast(jsiLabel.getStyle());
+            final JSIDiagramElement jsiLabelSharedStyle = Js.uncheckedCast(jsiLabel.getSharedStyle());
+            if (Objects.nonNull(jsiLabelSharedStyle) && JSIDMNStyle.instanceOf(jsiLabelSharedStyle)) {
+                mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN((Js.uncheckedCast(jsiLabelSharedStyle))));
+            }
+            if (Objects.nonNull(jsiLabelStyle) && JSIDMNStyle.instanceOf(jsiLabelStyle)) {
+                mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN(Js.uncheckedCast(jsiLabelStyle)));
+            }
         }
         fontSetSetter.accept(fontSet);
 
-        if (drgShape.getDMNDecisionServiceDividerLine() != null) {
+        if (Objects.nonNull(drgShape.getDMNDecisionServiceDividerLine())) {
             decisionServiceDividerLineYSetter.accept(drgShape.getDMNDecisionServiceDividerLine().getWaypoint().getAt(0).getY());
         }
     }
