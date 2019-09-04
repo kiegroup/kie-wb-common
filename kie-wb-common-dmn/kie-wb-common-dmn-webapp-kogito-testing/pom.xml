@@ -528,7 +528,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- UberFire Submarine dependencies -->
+    <!-- UberFire kogito dependencies -->
     <dependency>
       <groupId>com.google.elemental2</groupId>
       <artifactId>elemental2-promise</artifactId>
@@ -695,10 +695,10 @@
       <artifactId>elemental2-dom</artifactId>
     </dependency>
 
-    <!-- Submarine -->
+    <!-- kogito -->
     <dependency>
       <groupId>org.kie.workbench</groupId>
-      <artifactId>kie-wb-common-submarine-client</artifactId>
+      <artifactId>kie-wb-common-kogito-client</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -808,7 +808,7 @@
             <compileSourcesArtifact>org.kie.workbench.profile:kie-wb-common-profile-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-datamodel-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.services:kie-wb-common-services-api</compileSourcesArtifact>
-            <compileSourcesArtifact>org.kie.workbench:kie-wb-common-submarine-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.kie.workbench:kie-wb-common-kogito-client</compileSourcesArtifact>
 
             <!-- UF-ext -->
             <compileSourcesArtifact>org.uberfire:uberfire-runtime-plugins-api</compileSourcesArtifact>

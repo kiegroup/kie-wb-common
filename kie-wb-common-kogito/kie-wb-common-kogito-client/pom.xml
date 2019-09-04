@@ -24,13 +24,13 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kie-wb-common-submarine-client</artifactId>
-  <name>Kie Workbench - Common - Submarine - Client</name>
-  <description>Kie Workbench - Common - Submarine - Client</description>
+  <artifactId>kie-wb-common-kogito-client</artifactId>
+  <name>Kie Workbench - Common - Kogito - Client</name>
+  <description>Kie Workbench - Common - Kogito - Client</description>
   <packaging>jar</packaging>
 
   <properties>
-    <java.module.name>org.kie.wb.common.submarine.client</java.module.name>
+    <java.module.name>org.kie.wb.common.kogito.client</java.module.name>
   </properties>
 
   <dependencies>
