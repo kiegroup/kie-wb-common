@@ -78,7 +78,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     }
 
     @Override
-    public Optional<InputStream> loadPath(final org.uberfire.java.nio.file.Path path) {
+    public Optional<InputStream> loadPath(final Path path) {
         return Optional.empty();
     }
 }
