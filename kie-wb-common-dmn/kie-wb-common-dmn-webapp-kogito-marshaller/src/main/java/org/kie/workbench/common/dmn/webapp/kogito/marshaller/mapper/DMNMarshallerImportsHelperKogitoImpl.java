@@ -15,9 +15,11 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -28,6 +30,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.uberfire.backend.vfs.Path;
 
 @ApplicationScoped
 public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImportsHelperKogito {
@@ -65,5 +68,17 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                                           final String modelName,
                                                                           final String namespace) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Path getDMNModelPath(final Metadata metadata,
+                                final String modelNamespace,
+                                final String modelName) {
+        throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
+    }
+
+    @Override
+    public Optional<InputStream> loadPath(final org.uberfire.java.nio.file.Path path) {
+        return Optional.empty();
     }
 }
