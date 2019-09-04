@@ -16,15 +16,21 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.Optional;
+
+import org.eclipse.bpmn2.Operation;
 import org.eclipse.bpmn2.ServiceTask;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskValue;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPropertyReader {
 
+    public static final String JAVA = "Java";
+    public static final String WEB_SERVICE = "WebService";
     private final ServiceTask task;
 
     public GenericServiceTaskPropertyReader(ServiceTask task, BPMNDiagram diagram, DefinitionResolver definitionResolver) {
@@ -34,21 +40,24 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
 
     public GenericServiceTaskValue getGenericServiceTask() {
         GenericServiceTaskValue value = new GenericServiceTaskValue();
-        if (CustomAttribute.serviceImplementation.of(task).get() != null) {
-            String candidate = CustomAttribute.serviceImplementation.of(task).get();
-            if (!candidate.equals("Java")) {
-                candidate = "WebService";
-            }
-            value.setServiceImplementation(candidate);
-        }
-        if (CustomAttribute.serviceOperation.of(task).get() != null) {
-            value.setServiceOperation(CustomAttribute.serviceOperation.of(task).get());
-        }
-        if (CustomAttribute.serviceInterface.of(task).get() != null) {
-            value.setServiceInterface(CustomAttribute.serviceInterface.of(task).get());
-        }
+        final String implementation = Optional.ofNullable(CustomAttribute.serviceImplementation.of(task).get())
+                .filter(StringUtils::nonEmpty)
+                .orElseGet(() -> task.getImplementation());
+        value.setServiceImplementation(Optional.ofNullable(implementation)
+                                               .filter(impl -> JAVA.equalsIgnoreCase(impl))
+                                               .orElse(WEB_SERVICE));
+
+        final String operation = Optional.ofNullable(CustomAttribute.serviceOperation.of(task).get())
+                .filter(StringUtils::nonEmpty)
+                .orElseGet(() -> Optional.ofNullable(task.getOperationRef()).map(Operation::getName).orElse(null));
+        value.setServiceOperation(operation);
+
+        final String serviceInterface = CustomAttribute.serviceInterface.of(task).get();
+        value.setServiceInterface(serviceInterface);
+
         return value;
     }
+
 
     public boolean isAsync() {
         return CustomElement.async.of(element).get();
