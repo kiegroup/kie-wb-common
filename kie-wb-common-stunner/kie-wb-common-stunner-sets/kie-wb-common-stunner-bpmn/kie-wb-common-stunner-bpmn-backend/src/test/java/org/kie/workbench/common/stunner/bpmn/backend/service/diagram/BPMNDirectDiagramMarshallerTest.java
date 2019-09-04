@@ -73,6 +73,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EventGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEventThrowing;
@@ -115,6 +116,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.notification.No
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
@@ -247,6 +249,7 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String BPMN_SERVICETASKS_JBPM_DESIGNER = PATH_DIAGRAM + "/serviceTasksJBPMDeginer.bpmn";
     private static final String BPMN_EVENT_GATEWAY = PATH_DIAGRAM + "/eventGateway.bpmn";
     private static final String BPMN_TRAVELS = PATH_DIAGRAM + "/travels.bpmn";
+    private static final String BPMN_FLIGHT_BOOKING = PATH_DIAGRAM + "/flightBooking.bpmn";
 
     private static final String NEW_LINE = System.lineSeparator();
 
@@ -448,6 +451,21 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(197d,
                      task1LRBound.getY(),
                      0);
+    }
+
+    @Test
+    public void testUnmarshallFlightBooking() throws Exception {
+        final Diagram<Graph, Metadata> diagram = unmarshall(BPMN_FLIGHT_BOOKING);
+
+        //User Task 1
+        Node<? extends View, ?> serviceTask1Node = diagram.getGraph().getNode("ServiceTask_1");
+        GenericServiceTask serviceTask1 = (GenericServiceTask) serviceTask1Node.getContent().getDefinition();
+
+        //Assert properties from Generic Service Task
+        GenericServiceTaskValue serviceTaskValue = serviceTask1.getExecutionSet().getGenericServiceTaskInfo().getValue();
+        assertEquals("Java", serviceTaskValue.getServiceImplementation());
+        assertEquals("org.acme.travels.service.FlightBookingService", serviceTaskValue.getServiceInterface());
+        assertEquals("bookFlight", serviceTaskValue.getServiceOperation());
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import java.util.Optional;
 
+import org.eclipse.bpmn2.Interface;
 import org.eclipse.bpmn2.Operation;
 import org.eclipse.bpmn2.ServiceTask;
 import org.eclipse.bpmn2.di.BPMNDiagram;
@@ -44,15 +45,28 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
                 .filter(StringUtils::nonEmpty)
                 .orElseGet(() -> task.getImplementation());
         value.setServiceImplementation(Optional.ofNullable(implementation)
+                                               .filter(StringUtils::nonEmpty)
                                                .filter(impl -> JAVA.equalsIgnoreCase(impl))
+                                               .map(java -> JAVA)//assert that matches "Java"
                                                .orElse(WEB_SERVICE));
 
         final String operation = Optional.ofNullable(CustomAttribute.serviceOperation.of(task).get())
                 .filter(StringUtils::nonEmpty)
-                .orElseGet(() -> Optional.ofNullable(task.getOperationRef()).map(Operation::getName).orElse(null));
+                .orElseGet(() -> Optional
+                        .ofNullable(task.getOperationRef())
+                        .map(Operation::getName)
+                        .orElse(null));
         value.setServiceOperation(operation);
 
-        final String serviceInterface = CustomAttribute.serviceInterface.of(task).get();
+        final String serviceInterface = Optional.ofNullable(CustomAttribute.serviceInterface.of(task).get())
+                .filter(StringUtils::nonEmpty)
+                .orElseGet(() -> Optional
+                        .ofNullable(task.getOperationRef())
+                        .map(Operation::eContainer)
+                        .filter(container -> container instanceof Interface)
+                        .map(container -> (Interface) container)
+                        .map(Interface::getName)
+                        .orElse(null));
         value.setServiceInterface(serviceInterface);
 
         return value;
