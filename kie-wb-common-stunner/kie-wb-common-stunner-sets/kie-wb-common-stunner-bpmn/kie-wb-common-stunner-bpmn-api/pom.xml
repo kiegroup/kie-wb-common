@@ -167,7 +167,7 @@
       <artifactId>kie-soup-commons</artifactId>
     </dependency>
 
-    <!-- Submarine -->
+    <!-- Kogito -->
 
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>

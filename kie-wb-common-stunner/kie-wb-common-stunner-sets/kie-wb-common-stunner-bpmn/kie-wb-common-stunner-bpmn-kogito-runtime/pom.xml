@@ -473,7 +473,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- UberFire Submarine dependencies -->
+    <!-- UberFire Kogito dependencies -->
     <dependency>
       <groupId>com.google.elemental2</groupId>
       <artifactId>elemental2-promise</artifactId>
@@ -582,7 +582,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Submarine -->
+    <!-- Kogito -->
     <dependency>
       <groupId>org.kie.workbench</groupId>
       <artifactId>kie-wb-common-kogito-client</artifactId>
