@@ -73,9 +73,9 @@ public class KogitoDiagramServiceImpl implements KogitoDiagramService {
 
     @Inject
     public KogitoDiagramServiceImpl(final DefinitionManager definitionManager,
-                                       final FactoryManager factoryManager,
-                                       final DMNBackendService dmnBackendService,
-                                       final DMNDiagramFactory dmnDiagramFactory) {
+                                    final FactoryManager factoryManager,
+                                    final DMNBackendService dmnBackendService,
+                                    final DMNDiagramFactory dmnDiagramFactory) {
         this.definitionManager = definitionManager;
         this.factoryManager = factoryManager;
         this.dmnBackendService = dmnBackendService;
