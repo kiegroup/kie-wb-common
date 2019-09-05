@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -276,35 +276,44 @@ public class BPMNDirectDiagramMarshallerTest {
     //Unsupported nodes
     @Test
     public void testManualTask() throws Exception {
+        final String uuid = "_25DC90B5-E0BA-4D32-842E-DD11CE507B01";
+        final String expectedBpmnElement = "<bpmn2:task id=\"" + uuid + "\" name=\"manual\">" + System.lineSeparator();
+
         final Diagram<Graph, Metadata> diagram = unmarshall(BPMN_MANUAL_TASK);
         final String result = tested.marshall(diagram);
-        final String uuid = "_25DC90B5-E0BA-4D32-842E-DD11CE507B01";
         final Node<? extends Definition, ?> element = diagram.getGraph().getNode(uuid);
+
         assertDiagram(diagram, 4);
         assertTrue(element.getContent().getDefinition() instanceof NoneTask);
-        assertTrue(result.contains("<bpmn2:task id=\"$uuid\" name=\"manual\">\n".replace("$uuid", uuid)));
+        assertTrue(result.contains(expectedBpmnElement));
     }
 
     @Test
     public void testSendTask() throws Exception {
+        final String uuid = "_25DC90B5-E0BA-4D32-842E-DD11CE507B01";
+        final String expectedBpmnElement = "<bpmn2:task id=\"" + uuid + "\" name=\"send\">" + System.lineSeparator();
+
         final Diagram<Graph, Metadata> diagram = unmarshall(BPMN_SEND_TASK);
         final String result = tested.marshall(diagram);
-        final String uuid = "_25DC90B5-E0BA-4D32-842E-DD11CE507B01";
         final Node<? extends Definition, ?> element = diagram.getGraph().getNode(uuid);
+
         assertDiagram(diagram, 4);
         assertTrue(element.getContent().getDefinition() instanceof NoneTask);
-        assertTrue(result.contains("<bpmn2:task id=\"$uuid\" name=\"send\">\n".replace("$uuid", uuid)));
+        assertTrue(result.contains(expectedBpmnElement));
     }
 
     @Test
     public void testReceiveTask() throws Exception {
+        final String uuid = "_25DC90B5-E0BA-4D32-842E-DD11CE507B01";
+        final String expectedBpmnElement = "<bpmn2:task id=\"" + uuid + "\" name=\"received\">" + System.lineSeparator();
+
         final Diagram<Graph, Metadata> diagram = unmarshall(BPMN_RECEIVED_TASK);
         final String result = tested.marshall(diagram);
-        final String uuid = "_25DC90B5-E0BA-4D32-842E-DD11CE507B01";
         final Node<? extends Definition, ?> element = diagram.getGraph().getNode(uuid);
+
         assertDiagram(diagram, 4);
         assertTrue(element.getContent().getDefinition() instanceof NoneTask);
-        assertTrue(result.contains("<bpmn2:task id=\"$uuid\" name=\"received\">\n".replace("$uuid", uuid)));
+        assertTrue(result.contains(expectedBpmnElement));
     }
 
     @Test
