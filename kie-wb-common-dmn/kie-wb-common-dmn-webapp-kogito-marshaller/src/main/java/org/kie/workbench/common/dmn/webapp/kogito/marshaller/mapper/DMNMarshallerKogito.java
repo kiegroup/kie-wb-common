@@ -111,6 +111,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.ArrayUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -417,38 +418,55 @@ public class DMNMarshallerKogito {
             }
         }
 
-        final Map<String, Node<View<TextAnnotation>, ?>> textAnnotations = Arrays.stream(dmnXml.getArtifact().asArray())
-                .filter(e -> e instanceof JSITTextAnnotation)
-                .map(e -> (JSITTextAnnotation) e)
-                .collect(toMap(JSITTextAnnotation::getId,
-                               dmn -> textAnnotationConverter.nodeFromDMN(dmn,
-                                                                          hasComponentWidthsConsumer)));
-        textAnnotations.values().forEach(n -> ddExtAugmentStunner(dmnDDDiagram, n));
+        final Map<String, Node<View<TextAnnotation>, ?>> textAnnotations = new HashMap<>();
+        final JsArrayLike<JSITArtifact> wrappedArtifacts = dmnXml.getArtifact();
+        if (Objects.nonNull(wrappedArtifacts)) {
+            final JsArrayLike<JSITArtifact> jsiArtifacts = JsUtils.getUnwrappedElementsArray(wrappedArtifacts);
+            for (int i = 0; i < jsiArtifacts.getLength(); i++) {
+                final JSITArtifact jsiArtifact = Js.uncheckedCast(jsiArtifacts.getAt(i));
+                if (JSITTextAnnotation.instanceOf(jsiArtifact)) {
+                    final String id = jsiArtifact.getId();
+                    final JSITTextAnnotation jsiTextAnnotation = Js.uncheckedCast(jsiArtifact);
+                    final Node<View<TextAnnotation>, ?> textAnnotation = textAnnotationConverter.nodeFromDMN(jsiTextAnnotation,
+                                                                                                             hasComponentWidthsConsumer);
+                    textAnnotations.put(id,
+                                        textAnnotation);
+                }
+            }
+            textAnnotations.values().forEach(n -> ddExtAugmentStunner(dmnDDDiagram, n));
+        }
 
-        final List<JSITAssociation> associations = Arrays.stream(dmnXml.getArtifact().asArray())
-                .filter(e -> e instanceof JSITAssociation)
-                .map(e -> (JSITAssociation) e)
-                .collect(toList());
-        for (JSITAssociation a : associations) {
-            final String sourceId = getId(a.getSourceRef());
-            final Node sourceNode = Optional.ofNullable(elems.get(sourceId)).map(Entry::getValue).orElse(textAnnotations.get(sourceId));
+        final List<JSITAssociation> associations = new ArrayList<>();
+        if (Objects.nonNull(wrappedArtifacts)) {
+            final JsArrayLike<JSITArtifact> jsiArtifacts = JsUtils.getUnwrappedElementsArray(wrappedArtifacts);
+            for (int i = 0; i < jsiArtifacts.getLength(); i++) {
+                final JSITArtifact jsiArtifact = Js.uncheckedCast(jsiArtifacts.getAt(i));
+                if (JSITAssociation.instanceOf(jsiArtifact)) {
+                    final JSITAssociation jsiAssociation = Js.uncheckedCast(jsiArtifact);
+                    associations.add(jsiAssociation);
+                }
+            }
+            for (JSITAssociation a : associations) {
+                final String sourceId = getId(a.getSourceRef());
+                final Node sourceNode = Optional.ofNullable(elems.get(sourceId)).map(Entry::getValue).orElse(textAnnotations.get(sourceId));
 
-            final String targetId = getId(a.getTargetRef());
-            final Node targetNode = Optional.ofNullable(elems.get(targetId)).map(Entry::getValue).orElse(textAnnotations.get(targetId));
+                final String targetId = getId(a.getTargetRef());
+                final Node targetNode = Optional.ofNullable(elems.get(targetId)).map(Entry::getValue).orElse(textAnnotations.get(targetId));
 
-            @SuppressWarnings("unchecked")
-            final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(a),
-                                                                                                             ASSOCIATION_ID).asEdge();
+                @SuppressWarnings("unchecked")
+                final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(a),
+                                                                                                                 ASSOCIATION_ID).asEdge();
 
-            final Id id = new Id(a.getId());
-            final Description description = new Description(a.getDescription());
-            final Association definition = new Association(id, description);
-            myEdge.getContent().setDefinition(definition);
+                final Id id = new Id(a.getId());
+                final Description description = new Description(a.getDescription());
+                final Association definition = new Association(id, description);
+                myEdge.getContent().setDefinition(definition);
 
-            connectEdge(myEdge,
-                        sourceNode,
-                        targetNode);
-            setConnectionMagnets(myEdge, a.getId(), dmnXml);
+                connectEdge(myEdge,
+                            sourceNode,
+                            targetNode);
+                setConnectionMagnets(myEdge, a.getId(), dmnXml);
+            }
         }
 
         //Ensure all locations are updated to relative for Stunner
@@ -525,23 +543,6 @@ public class DMNMarshallerKogito {
         }
     }
 
-    private Map<String, String> getIndexByUri(final JSITDefinitions dmnXml) {
-        final Map<String, String> indexByUri = new HashMap<>();
-        final Map<QName, String> otherAttributes = JsUtils.toAttributesMap(dmnXml.getOtherAttributes());
-
-        //Filter otherAttributes by NameSpace definitions
-        for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
-            final QName qName = e.getKey();
-            final String nsLocalPart = qName.getLocalPart();
-            final String nsNamespaceURI = qName.getNamespaceURI();
-            if (Objects.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, nsNamespaceURI)) {
-                indexByUri.put(e.getValue(), nsLocalPart);
-            }
-        }
-
-        return indexByUri;
-    }
-
     private void changeAlias(final String alias,
                              final JSITDRGElement drgElement) {
         if (drgElement.getId().contains(":")) {
@@ -574,7 +575,7 @@ public class DMNMarshallerKogito {
         final List<JSITDRGElement> importedDRGElements = dmnMarshallerImportsHelper.getImportedDRGElements(importDefinitions);
 
         // Update IDs with the alias used in this file for the respective imports
-        final Map<String, String> indexByUri = getIndexByUri(dmnXml);
+        final Map<String, String> indexByUri = NameSpaceUtils.extractNamespacesKeyedByUri(dmnXml);
         updateIDsWithAlias(indexByUri, importedDRGElements);
 
         return dmnShapes

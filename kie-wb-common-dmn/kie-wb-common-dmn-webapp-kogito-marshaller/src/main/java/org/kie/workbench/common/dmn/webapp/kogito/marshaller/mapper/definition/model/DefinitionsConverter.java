@@ -18,7 +18,10 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
+import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
@@ -32,6 +35,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
@@ -54,7 +58,9 @@ public class DefinitionsConverter {
         result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
                                           namespace);
         result.setDescription(description);
-        for (Entry<String, String> kv : dmn.getNsContext().entrySet()) {
+
+        final Map<String, String> namespaces = NameSpaceUtils.extractNamespacesKeyedByPrefix(dmn);
+        for (Entry<String, String> kv : namespaces.entrySet()) {
             String mappedURI = kv.getValue();
             switch (mappedURI) {
                 case org.kie.dmn.model.v1_1.KieDMNModelInstrumentedBase.URI_DMN:
@@ -74,22 +80,32 @@ public class DefinitionsConverter {
             }
         }
 
-        for (JSITItemDefinition itemDef : dmn.getItemDefinition().asArray()) {
-            final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(itemDef);
-            if (itemDefConverted != null) {
-                itemDefConverted.setParent(result);
+        final JsArrayLike<JSITItemDefinition> wrappedItemDefinitions = dmn.getItemDefinition();
+        if (Objects.nonNull(wrappedItemDefinitions)) {
+            final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JsUtils.getUnwrappedElementsArray(wrappedItemDefinitions);
+            for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
+                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
+                final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition);
+                if (Objects.nonNull(itemDefConverted)) {
+                    itemDefConverted.setParent(result);
+                    result.getItemDefinition().add(itemDefConverted);
+                }
             }
-            result.getItemDefinition().add(itemDefConverted);
         }
 
-        for (JSITImport i : dmn.getImport().asArray()) {
-            final JSITDefinitions definitions = importDefinitions.get(i);
-            final PMMLDocumentMetadata pmmlDocument = pmmlDocuments.get(i);
-            final Import importConverted = ImportConverter.wbFromDMN(i, definitions, pmmlDocument);
-            if (importConverted != null) {
-                importConverted.setParent(result);
+        final JsArrayLike<JSITImport> wrappedImports = dmn.getImport();
+        if (Objects.nonNull(wrappedImports)) {
+            final JsArrayLike<JSITImport> jsiImports = JsUtils.getUnwrappedElementsArray(wrappedImports);
+            for (int i = 0; i < jsiImports.getLength(); i++) {
+                final JSITImport jsiImport = Js.uncheckedCast(jsiImports.getAt(i));
+                final JSITDefinitions definitions = importDefinitions.get(jsiImport);
+                final PMMLDocumentMetadata pmmlDocument = pmmlDocuments.get(jsiImport);
+                final Import importConverted = ImportConverter.wbFromDMN(jsiImport, definitions, pmmlDocument);
+                if (Objects.nonNull(importConverted)) {
+                    importConverted.setParent(result);
+                    result.getImport().add(importConverted);
+                }
             }
-            result.getImport().add(importConverted);
         }
 
         return result;
