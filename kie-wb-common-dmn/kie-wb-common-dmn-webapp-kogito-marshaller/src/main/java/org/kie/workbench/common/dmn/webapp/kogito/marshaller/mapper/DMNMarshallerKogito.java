@@ -133,7 +133,6 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.heightOfShape;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.lowerRightBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.upperLeftBound;
@@ -253,17 +252,17 @@ public class DMNMarshallerKogito {
 
         // Setup Node Relationships and Connections all based on absolute positioning
         for (Entry<JSITDRGElement, Node> kv : elems.values()) {
-            final JSITDRGElement elem = Js.uncheckedCast(kv.getKey());
+            final JSITDRGElement element = Js.uncheckedCast(kv.getKey());
             final Node currentNode = kv.getValue();
 
             // For imported nodes, we don't have its connections
-            if (isImportedDRGElement(importedDrgElements, elem)) {
+            if (isImportedDRGElement(importedDrgElements, element)) {
                 continue;
             }
 
             // DMN spec table 2: Requirements connection rules
-            if (JSITDecision.instanceOf(elem)) {
-                final JSITDecision decision = Js.uncheckedCast(elem);
+            if (JSITDecision.instanceOf(element)) {
+                final JSITDecision decision = Js.uncheckedCast(element);
                 final JsArrayLike<JSITInformationRequirement> wrappedInformationRequirements = decision.getInformationRequirement();
                 if (Objects.nonNull(wrappedInformationRequirements)) {
                     final JsArrayLike<JSITInformationRequirement> jsiInformationRequirements = JsUtils.getUnwrappedElementsArray(wrappedInformationRequirements);
@@ -321,8 +320,8 @@ public class DMNMarshallerKogito {
                         setConnectionMagnets(myEdge, ar.getId(), dmnXml);
                     }
                 }
-            } else if (JSITBusinessKnowledgeModel.instanceOf(elem)) {
-                final JSITBusinessKnowledgeModel bkm = Js.uncheckedCast(elem);
+            } else if (JSITBusinessKnowledgeModel.instanceOf(element)) {
+                final JSITBusinessKnowledgeModel bkm = Js.uncheckedCast(element);
                 final JsArrayLike<JSITKnowledgeRequirement> wrappedKnowledgeRequirements = bkm.getKnowledgeRequirement();
                 if (Objects.nonNull(wrappedKnowledgeRequirements)) {
                     final JsArrayLike<JSITKnowledgeRequirement> jsiKnowledgeRequirements = JsUtils.getUnwrappedElementsArray(wrappedKnowledgeRequirements);
@@ -353,8 +352,8 @@ public class DMNMarshallerKogito {
                         setConnectionMagnets(myEdge, ar.getId(), dmnXml);
                     }
                 }
-            } else if (JSITKnowledgeSource.instanceOf(elem)) {
-                final JSITKnowledgeSource ks = Js.uncheckedCast(elem);
+            } else if (JSITKnowledgeSource.instanceOf(element)) {
+                final JSITKnowledgeSource ks = Js.uncheckedCast(element);
                 final JsArrayLike<JSITAuthorityRequirement> wrappedAuthorityRequirements = ks.getAuthorityRequirement();
                 if (Objects.nonNull(wrappedAuthorityRequirements)) {
                     final JsArrayLike<JSITAuthorityRequirement> jsiAuthorityRequirements = JsUtils.getUnwrappedElementsArray(wrappedAuthorityRequirements);
@@ -392,8 +391,8 @@ public class DMNMarshallerKogito {
                         }
                     }
                 }
-            } else if (JSITDecisionService.instanceOf(elem)) {
-                final JSITDecisionService ds = Js.uncheckedCast(elem);
+            } else if (JSITDecisionService.instanceOf(element)) {
+                final JSITDecisionService ds = Js.uncheckedCast(element);
                 dmnDecisionServices.add(ds);
                 final JsArrayLike<JSITDMNElementReference> wrappedEncapsulatedDecisions = ds.getEncapsulatedDecision();
                 if (Objects.nonNull(wrappedEncapsulatedDecisions)) {
@@ -489,11 +488,15 @@ public class DMNMarshallerKogito {
         final List<String> references = new ArrayList<>();
         dmnDecisionServices.forEach(ds -> references.addAll(Arrays.stream(ds.getEncapsulatedDecision().asArray()).map(JSITDMNElementReference::getHref).collect(toList())));
         dmnDecisionServices.forEach(ds -> references.addAll(Arrays.stream(ds.getOutputDecision().asArray()).map(JSITDMNElementReference::getHref).collect(toList())));
-
-        final Map<JSITDRGElement, Node> elemsToConnectToRoot = elems.values().stream()
-                .filter(elem -> !references.contains("#" + elem.getKey().getId()))
-                .collect(toMap(Entry::getKey, Entry::getValue));
-        elemsToConnectToRoot.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
+        final Map<JSITDRGElement, Node> elementsToConnectToRoot = new HashMap<>();
+        for (Entry<JSITDRGElement, Node> kv : elems.values()) {
+            final JSITDRGElement element = Js.uncheckedCast(kv.getKey());
+            final Node node = kv.getValue();
+            if (!references.contains("#" + element.getId())) {
+                elementsToConnectToRoot.put(element, node);
+            }
+        }
+        elementsToConnectToRoot.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
         textAnnotations.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
 
         //Copy ComponentWidths information
@@ -837,7 +840,8 @@ public class DMNMarshallerKogito {
         if (!dmnDDDiagram.isPresent()) {
             return Optional.empty();
         }
-        final JSIDiagramElement.JSIExtension dmnDDExtensions = dmnDDDiagram.get().getExtension();
+        final JSIDMNDiagram jsiDiagram = Js.uncheckedCast(dmnDDDiagram.get());
+        final JSIDiagramElement.JSIExtension dmnDDExtensions = Js.uncheckedCast(jsiDiagram.getExtension());
 
         if (Objects.isNull(dmnDDExtensions)) {
             return Optional.empty();

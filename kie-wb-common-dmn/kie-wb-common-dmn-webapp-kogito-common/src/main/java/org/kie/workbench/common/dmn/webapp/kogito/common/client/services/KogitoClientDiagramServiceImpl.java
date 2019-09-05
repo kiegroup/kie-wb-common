@@ -27,6 +27,7 @@ import jsinterop.base.Js;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
+import org.kie.workbench.common.dmn.api.factory.DMNDiagramFactory;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12MarshallCallback;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12UnmarshallCallback;
@@ -65,6 +66,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     private DMNMarshallerKogito dmnMarshaller;
     private Caller<KogitoDiagramService> submarineDiagramServiceCaller;
     private DefinitionManager definitionManager;
+    private DMNDiagramFactory dmnDiagramFactory;
     private Promises promises;
     private DMN12 dmn12;
 
@@ -77,11 +79,13 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
                                           final DMNMarshallerKogito dmnMarshaller,
                                           final Caller<KogitoDiagramService> submarineDiagramServiceCaller,
                                           final DefinitionManager definitionManager,
+                                          final DMNDiagramFactory dmnDiagramFactory,
                                           final Promises promises) {
         this.shapeManager = shapeManager;
         this.dmnMarshaller = dmnMarshaller;
         this.submarineDiagramServiceCaller = submarineDiagramServiceCaller;
         this.definitionManager = definitionManager;
+        this.dmnDiagramFactory = dmnDiagramFactory;
         this.promises = promises;
     }
 
@@ -90,18 +94,16 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     @Override
     public void transform(final String xml,
                           final ServiceCallback<Diagram> callback) {
-
-        //TODO {manstis} XML->model marshalling...
-        //Stage 1 client-side marshalling
-        // - Stage 1 is XML -> generic POJO model
-        // - Stage 2 is generic POJO model to DMN editor UI model
-        testClientSideUnmarshaller(xml);
-
-        //Legacy server-side marshalling
-        submarineDiagramServiceCaller.call((Diagram d) -> {
-            updateClientMetadata(d);
-            callback.onSuccess(d);
-        }).transform(xml);
+        //TODO {manstis} XML->model marshalling... New diagrams too!
+        if (!StringUtils.isEmpty(xml)) {
+            testClientSideUnmarshaller(xml, callback);
+        } else {
+            //Legacy server-side marshalling for new diagrams
+            submarineDiagramServiceCaller.call((Diagram d) -> {
+                updateClientMetadata(d);
+                callback.onSuccess(d);
+            }).transform(xml);
+        }
     }
 
     @Override
@@ -128,12 +130,9 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     }
 
     @SuppressWarnings("unchecked")
-    private void testClientSideUnmarshaller(final String xml) {
-        if (StringUtils.isEmpty(xml)) {
-            return;
-        }
-
-        final DMN12UnmarshallCallback callback = dmn12 -> {
+    private void testClientSideUnmarshaller(final String xml,
+                                            final ServiceCallback<Diagram> callback) {
+        final DMN12UnmarshallCallback jsCallback = dmn12 -> {
             this.dmn12 = dmn12;
             final Metadata metadata = buildMetadataInstance();
             final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
@@ -142,12 +141,13 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
             final String title = diagramNode.getContent().getDefinition().getDefinitions().getName().getValue();
             metadata.setTitle(title);
 
-            //Round-tripping to isolate issues
-            testClientSideMarshaller(graph);
+            final Diagram diagram = dmnDiagramFactory.build(title, metadata, graph);
+            updateClientMetadata(diagram);
+            callback.onSuccess(diagram);
         };
 
         try {
-            MainJs.unmarshall(xml, callback);
+            MainJs.unmarshall(xml, jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage());
         }
@@ -167,14 +167,14 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
             return;
         }
 
-        final DMN12MarshallCallback callback = xml -> {
+        final DMN12MarshallCallback jsCallback = xml -> {
             final String breakpoint = xml;
         };
 
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshaller.marshall(graph);
             dmn12.setDefinitions(jsitDefinitions);
-            MainJs.marshall(dmn12, callback);
+            MainJs.marshall(dmn12, jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage());
         }
