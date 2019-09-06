@@ -228,6 +228,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         drgElements.addAll(diagramDrgElements);
         drgElements.addAll(importedDrgElements);
 
+        // Remove DRGElements that doesn't have any local or imported shape.
+        removeDrgElementsWithoutShape(drgElements, dmnShapes);
+
         Map<String, Entry<org.kie.dmn.model.api.DRGElement, Node>> elems = drgElements.stream().collect(toMap(org.kie.dmn.model.api.DRGElement::getId,
                                                                                                               dmn -> new SimpleEntry<>(dmn,
                                                                                                                                        dmnToStunner(dmn, hasComponentWidthsConsumer, importedDrgElements))));
@@ -455,6 +458,28 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         });
 
         return graph;
+    }
+
+    void removeDrgElementsWithoutShape(
+            final List<org.kie.dmn.model.api.DRGElement> drgElements,
+            final List<DMNShape> dmnShapes) {
+
+        if (dmnShapes.size() == 0) {
+            // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
+            return;
+        }
+
+        for (int i = drgElements.size() - 1; i >= 0; i--) {
+            final org.kie.dmn.model.api.DRGElement element = drgElements.get(i);
+
+            final Optional<DMNShape> shape = dmnShapes.stream()
+                    .filter(s -> s.getDmnElementRef().getLocalPart().equals(element.getId()))
+                    .findFirst();
+
+            if (!shape.isPresent()) {
+                drgElements.remove(element);
+            }
+        }
     }
 
     void updateIDsWithAlias(final HashMap<String, String> indexByUri,
