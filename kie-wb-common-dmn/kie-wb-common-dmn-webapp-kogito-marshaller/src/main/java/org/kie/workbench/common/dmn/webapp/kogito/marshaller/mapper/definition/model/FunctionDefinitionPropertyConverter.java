@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
@@ -33,6 +34,7 @@ import org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDo
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
@@ -49,7 +51,8 @@ public class FunctionDefinitionPropertyConverter {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
-        final Expression expression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression(),
+        final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
+        final Expression expression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                             hasComponentWidthsConsumer);
         final FunctionDefinition result = new FunctionDefinition(id,
                                                                  description,

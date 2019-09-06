@@ -111,8 +111,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.promisify(submarineDiagramServiceCaller,
                                       s -> {
-                                          resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
-
+                                          //resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
                                           return s.transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present")));
                                       });
         }

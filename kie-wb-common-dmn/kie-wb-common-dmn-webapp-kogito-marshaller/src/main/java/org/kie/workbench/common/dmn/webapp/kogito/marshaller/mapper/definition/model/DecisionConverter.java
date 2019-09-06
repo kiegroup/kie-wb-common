@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
@@ -75,7 +76,8 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), dmn);
-        final Expression expression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression(),
+        final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
+        final Expression expression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                             hasComponentWidthsConsumer);
         final Decision decision = new Decision(id,
                                                description,
