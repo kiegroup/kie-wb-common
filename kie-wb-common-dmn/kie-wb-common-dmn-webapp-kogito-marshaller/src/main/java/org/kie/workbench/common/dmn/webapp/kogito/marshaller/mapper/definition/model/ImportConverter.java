@@ -45,7 +45,7 @@ public final class ImportConverter {
         final Import result = createWBImport(dmn, definitions, pmmlDocument);
         final Map<QName, String> additionalAttributes = new HashMap<>();
         for (Map.Entry<javax.xml.namespace.QName, String> entry : dmn.getOtherAttributes().entrySet()) {
-            additionalAttributes.put(QNamePropertyConverter.wbFromDMN(entry.getKey().toString(), dmn), entry.getValue());
+            additionalAttributes.put(QNamePropertyConverter.wbFromDMN(entry.getKey().toString(), dmn ,definitions), entry.getValue());
         }
         result.setAdditionalAttributes(additionalAttributes);
         final String id = dmn.getId();

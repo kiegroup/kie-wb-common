@@ -24,6 +24,7 @@ import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITNamedElement;
 
@@ -32,13 +33,14 @@ public class InformationItemPrimaryPropertyConverter {
     private static final String DEFAULT_NAME = "";
 
     public static InformationItemPrimary wbFromDMN(final JSITInformationItem dmn,
+                                                   final JSITDefinitions jsiDefinitions,
                                                    final Object parent) {
         if (dmn == null) {
             return null;
         }
         final Id id = new Id(dmn.getId());
         final Name name = new Name(getParentName(parent));
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
 
         return new InformationItemPrimary(id,
                                           name,

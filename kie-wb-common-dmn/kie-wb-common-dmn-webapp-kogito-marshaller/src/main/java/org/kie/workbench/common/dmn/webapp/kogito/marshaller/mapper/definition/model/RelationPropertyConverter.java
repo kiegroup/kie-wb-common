@@ -28,6 +28,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
@@ -37,16 +38,20 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class RelationPropertyConverter {
 
     public static Relation wbFromDMN(final JSITRelation dmn,
+                                     final JSITDefinitions jsiDefinitions,
                                      final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(),
+                                                               dmn,
+                                                               jsiDefinitions);
 
         final List<JSITInformationItem> column = Arrays.asList(dmn.getColumn().asArray());
         final List<JSITList> row = Arrays.asList(dmn.getRow().asArray());
 
-        final List<InformationItem> convertedColumn = column.stream().map(InformationItemPropertyConverter::wbFromDMN).collect(Collectors.toList());
+        final List<InformationItem> convertedColumn = column.stream().map(c->InformationItemPropertyConverter.wbFromDMN(c, jsiDefinitions)).collect(Collectors.toList());
         final List<org.kie.workbench.common.dmn.api.definition.model.List> convertedRow = row.stream().map(r -> ListPropertyConverter.wbFromDMN(r,
+                                                                                                                                                jsiDefinitions,
                                                                                                                                                 hasComponentWidthsConsumer)).collect(Collectors.toList());
 
         final Relation result = new Relation(id, description, typeRef, convertedColumn, convertedRow);

@@ -21,18 +21,20 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 
 public class InformationItemPropertyConverter {
 
-    public static InformationItem wbFromDMN(final JSITInformationItem dmn) {
+    public static InformationItem wbFromDMN(final JSITInformationItem dmn,
+                                            final JSITDefinitions jsiDefinitions) {
         if (dmn == null) {
             return null;
         }
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
         final InformationItem result = new InformationItem(id,
                                                            description,
                                                            name,

@@ -37,6 +37,7 @@ import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContext;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionTable;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInvocation;
@@ -48,16 +49,20 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class ExpressionPropertyConverter {
 
     public static Expression wbFromDMN(final JSITExpression dmn,
+                                       final JSITExpression parent,
+                                       final JSITDefinitions jsiDefinitions,
                                        final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (JSITLiteralExpression.instanceOf(dmn)) {
             final JSITLiteralExpression jsiExpression = Js.uncheckedCast(dmn);
-            final LiteralExpression e = LiteralExpressionPropertyConverter.wbFromDMN(jsiExpression);
+            final LiteralExpression e = LiteralExpressionPropertyConverter.wbFromDMN(jsiExpression, jsiDefinitions);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
             return e;
         } else if (JSITContext.instanceOf(dmn)) {
             final JSITContext jsiExpression = Js.uncheckedCast(dmn);
             final Context e = ContextPropertyConverter.wbFromDMN(jsiExpression,
+                                                                 parent,
+                                                                 jsiDefinitions,
                                                                  hasComponentWidthsConsumer);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
@@ -65,6 +70,7 @@ public class ExpressionPropertyConverter {
         } else if (JSITRelation.instanceOf(dmn)) {
             final JSITRelation jsiExpression = Js.uncheckedCast(dmn);
             final Relation e = RelationPropertyConverter.wbFromDMN(jsiExpression,
+                                                                   jsiDefinitions,
                                                                    hasComponentWidthsConsumer);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
@@ -72,6 +78,7 @@ public class ExpressionPropertyConverter {
         } else if (JSITList.instanceOf(dmn)) {
             final JSITList jsiExpression = Js.uncheckedCast(dmn);
             final List e = ListPropertyConverter.wbFromDMN(jsiExpression,
+                                                           jsiDefinitions,
                                                            hasComponentWidthsConsumer);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
@@ -79,6 +86,7 @@ public class ExpressionPropertyConverter {
         } else if (JSITInvocation.instanceOf(dmn)) {
             final JSITInvocation jsiExpression = Js.uncheckedCast(dmn);
             final Invocation e = InvocationPropertyConverter.wbFromDMN(jsiExpression,
+                                                                       jsiDefinitions,
                                                                        hasComponentWidthsConsumer);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
@@ -86,13 +94,15 @@ public class ExpressionPropertyConverter {
         } else if (JSITFunctionDefinition.instanceOf(dmn)) {
             final JSITFunctionDefinition jsiExpression = Js.uncheckedCast(dmn);
             final FunctionDefinition e = FunctionDefinitionPropertyConverter.wbFromDMN(jsiExpression,
+                                                                                       jsiDefinitions,
                                                                                        hasComponentWidthsConsumer);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
             return e;
         } else if (JSITDecisionTable.instanceOf(dmn)) {
             final JSITDecisionTable jsiExpression = Js.uncheckedCast(dmn);
-            final DecisionTable e = DecisionTablePropertyConverter.wbFromDMN(jsiExpression);
+            final DecisionTable e = DecisionTablePropertyConverter.wbFromDMN(jsiExpression,
+                                                                             jsiDefinitions);
             hasComponentWidthsConsumer.accept(dmn.getId(),
                                               e);
             return e;

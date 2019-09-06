@@ -23,15 +23,18 @@ import javax.xml.namespace.QName;
 
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 
 public class ImportedItemDefinitionConverter {
 
     public static ItemDefinition wbFromDMN(final JSITItemDefinition dmnItemDefinition,
+                                           final JSITDefinitions jsiDefinitions,
                                            final String prefix) {
 
         final JSITItemDefinition dmnItemDefinitionWithNamespace = withNamespace(dmnItemDefinition, prefix);
-        final ItemDefinition wbItemDefinition = ItemDefinitionPropertyConverter.wbFromDMN(dmnItemDefinitionWithNamespace);
+        final ItemDefinition wbItemDefinition = ItemDefinitionPropertyConverter.wbFromDMN(dmnItemDefinitionWithNamespace,
+                                                                                          jsiDefinitions);
 
         allowOnlyVisualChange(wbItemDefinition);
 

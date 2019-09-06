@@ -42,6 +42,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
@@ -64,6 +65,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
 
     @Override
     public Node<View<DecisionService>, ?> nodeFromDMN(final JSITDecisionService dmn,
+                                                      final JSITDefinitions jsiDefinitions,
                                                       final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         @SuppressWarnings("unchecked")
         final Node<View<DecisionService>, ?> node = (Node<View<DecisionService>, ?>) factoryManager.newElement(dmn.getId(),
@@ -71,7 +73,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
-        final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), dmn);
+        final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), jsiDefinitions, dmn);
         final List<DMNElementReference> outputDecision = Stream.of(dmn.getOutputDecision().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
         final List<DMNElementReference> encapsulatedDecision = Stream.of(dmn.getEncapsulatedDecision().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
         final List<DMNElementReference> inputDecision = Stream.of(dmn.getInputDecision().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());

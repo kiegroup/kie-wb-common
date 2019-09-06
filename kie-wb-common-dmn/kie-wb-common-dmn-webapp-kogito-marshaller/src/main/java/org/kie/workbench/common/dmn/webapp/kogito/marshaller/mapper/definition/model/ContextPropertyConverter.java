@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
@@ -28,6 +30,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContext;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContextEntry;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -36,24 +40,31 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class ContextPropertyConverter {
 
     public static Context wbFromDMN(final JSITContext dmn,
+                                    final JSITExpression parent,
+                                    final JSITDefinitions jsiDefinitions,
                                     final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
         final Context result = new Context(id,
                                            description,
                                            typeRef);
-        for (JSITContextEntry ce : dmn.getContextEntry().asArray()) {
-            final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(ce, hasComponentWidthsConsumer);
-            if (ceConverted != null) {
-                ceConverted.setParent(result);
+        final JsArrayLike<JSITContextEntry> wrappedContextEntries = dmn.getContextEntry();
+        if (Objects.nonNull(wrappedContextEntries)) {
+            final JsArrayLike<JSITContextEntry> jsiContextEntries = JsUtils.getUnwrappedElementsArray(wrappedContextEntries);
+            for (int i = 0; i < jsiContextEntries.getLength(); i++) {
+                final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
+                final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, jsiDefinitions,  hasComponentWidthsConsumer);
+                if (Objects.nonNull(ceConverted)) {
+                    ceConverted.setParent(result);
+                    result.getContextEntry().add(ceConverted);
+                }
             }
-            result.getContextEntry().add(ceConverted);
         }
 
         //No need to append a _default_ row if the Context is part of a JAVA or PMML FunctionDefinition
-        if (dmn.getParent() instanceof JSITFunctionDefinition) {
-            final JSITFunctionDefinition functionDefinition = (JSITFunctionDefinition) dmn.getParent();
+        if (JSITFunctionDefinition.instanceOf(parent)) {
+            final JSITFunctionDefinition functionDefinition = Js.uncheckedCast(parent);
             if (!functionDefinition.getKind().equals(JSITFunctionKind.FEEL)) {
                 return result;
             }

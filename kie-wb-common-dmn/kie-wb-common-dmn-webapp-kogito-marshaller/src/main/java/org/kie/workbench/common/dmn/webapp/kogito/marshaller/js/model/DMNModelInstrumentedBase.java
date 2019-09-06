@@ -81,11 +81,6 @@ public class DMNModelInstrumentedBase {
     }
 
     @JsIgnore
-    public DMNModelInstrumentedBase getParent() {
-        return parent;
-    }
-
-    @JsIgnore
     public void setParent(final DMNModelInstrumentedBase parent) {
         this.parent = parent;
     }

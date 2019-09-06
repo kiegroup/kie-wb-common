@@ -28,6 +28,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBinding;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInvocation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -36,13 +37,16 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class InvocationPropertyConverter {
 
     public static Invocation wbFromDMN(final JSITInvocation dmn,
+                                       final JSITDefinitions jsiDefinitions,
                                        final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (dmn == null) {
             return null;
         }
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(),
+                                                               dmn,
+                                                               jsiDefinitions);
 
         final Invocation result = new Invocation();
         result.setId(id);
@@ -51,6 +55,8 @@ public class InvocationPropertyConverter {
 
         final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
         final Expression convertedExpression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
+                                                                                     Js.uncheckedCast(dmn),
+                                                                                     jsiDefinitions,
                                                                                      hasComponentWidthsConsumer);
         result.setExpression(convertedExpression);
         if (convertedExpression != null) {
@@ -59,6 +65,7 @@ public class InvocationPropertyConverter {
 
         for (JSITBinding b : dmn.getBinding().asArray()) {
             final Binding bConverted = BindingPropertyConverter.wbFromDMN(b,
+                                                                          jsiDefinitions,
                                                                           hasComponentWidthsConsumer);
             if (bConverted != null) {
                 bConverted.setParent(result);

@@ -199,7 +199,7 @@ public class DMNMarshallerKogito {
 
     @SuppressWarnings("unchecked")
     public Graph unmarshall(final Metadata metadata,
-                            final JSITDefinitions dmnXml) {
+                            final JSITDefinitions jsiDefinitions) {
         final Map<String, HasComponentWidths> hasComponentWidthsMap = new HashMap<>();
         final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer = (uuid, hcw) -> {
             if (Objects.nonNull(uuid)) {
@@ -207,24 +207,24 @@ public class DMNMarshallerKogito {
             }
         };
 
-        final JsArrayLike<JSITDRGElement> jsitDRGElements = JSITDefinitions.getDrgElement(dmnXml);
+        final JsArrayLike<JSITDRGElement> jsitDRGElements = JSITDefinitions.getDrgElement(jsiDefinitions);
         final List<JSITDRGElement> diagramDrgElements = JsUtils.toList(jsitDRGElements);
-        final Optional<JSIDMNDiagram> dmnDDDiagram = findDMNDiagram(dmnXml);
+        final Optional<JSIDMNDiagram> dmnDDDiagram = findDMNDiagram(jsiDefinitions);
 
         // Get external DMN model information
         final Map<JSITImport, JSITDefinitions> importDefinitions = dmnMarshallerImportsHelper.getImportDefinitions(metadata,
-                                                                                                                   JsUtils.toList(dmnXml.getImport()));
+                                                                                                                   JsUtils.toList(jsiDefinitions.getImport()));
 
         // Get external PMML model information
         final Map<JSITImport, PMMLDocumentMetadata> pmmlDocuments = dmnMarshallerImportsHelper.getPMMLDocuments(metadata,
-                                                                                                                JsUtils.toList(dmnXml.getImport()));
+                                                                                                                JsUtils.toList(jsiDefinitions.getImport()));
 
         // Map external DRGElements
         final List<JSITDRGElement> importedDrgElements = new ArrayList<>();
         if (dmnDDDiagram.isPresent()) {
             final JSIDMNDiagram jsidmnDiagram = Js.uncheckedCast(dmnDDDiagram.get());
             final List<JSIDMNShape> dmnShapes = getUniqueDMNShapes(jsidmnDiagram);
-            importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes, importDefinitions, dmnXml));
+            importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes, importDefinitions, jsiDefinitions));
         }
 
         // Combine all explicit and imported elements into one
@@ -239,6 +239,7 @@ public class DMNMarshallerKogito {
             final JSITDRGElement drgElement = Js.uncheckedCast(drgElements.get(i));
             final String id = drgElement.getId();
             final Node stunnerNode = dmnToStunner(drgElement,
+                                                  jsiDefinitions,
                                                   hasComponentWidthsConsumer,
                                                   importedDrgElements);
             elems.put(id,
@@ -276,7 +277,7 @@ public class DMNMarshallerKogito {
                             connectEdge(myEdge,
                                         requiredNode,
                                         currentNode);
-                            setConnectionMagnets(myEdge, ir.getId(), dmnXml);
+                            setConnectionMagnets(myEdge, ir.getId(), jsiDefinitions);
                         }
                         if (ir.getRequiredDecision() != null) {
                             final String reqInputID = getId(ir.getRequiredDecision());
@@ -286,7 +287,7 @@ public class DMNMarshallerKogito {
                             connectEdge(myEdge,
                                         requiredNode,
                                         currentNode);
-                            setConnectionMagnets(myEdge, ir.getId(), dmnXml);
+                            setConnectionMagnets(myEdge, ir.getId(), jsiDefinitions);
                         }
                     }
                 }
@@ -302,7 +303,7 @@ public class DMNMarshallerKogito {
                         connectEdge(myEdge,
                                     requiredNode,
                                     currentNode);
-                        setConnectionMagnets(myEdge, kr.getId(), dmnXml);
+                        setConnectionMagnets(myEdge, kr.getId(), jsiDefinitions);
                     }
                 }
                 final JsArrayLike<JSITAuthorityRequirement> wrappedAuthorityRequirements = decision.getAuthorityRequirement();
@@ -317,7 +318,7 @@ public class DMNMarshallerKogito {
                         connectEdge(myEdge,
                                     requiredNode,
                                     currentNode);
-                        setConnectionMagnets(myEdge, ar.getId(), dmnXml);
+                        setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
                     }
                 }
             } else if (JSITBusinessKnowledgeModel.instanceOf(element)) {
@@ -334,7 +335,7 @@ public class DMNMarshallerKogito {
                         connectEdge(myEdge,
                                     requiredNode,
                                     currentNode);
-                        setConnectionMagnets(myEdge, kr.getId(), dmnXml);
+                        setConnectionMagnets(myEdge, kr.getId(), jsiDefinitions);
                     }
                 }
                 final JsArrayLike<JSITAuthorityRequirement> wrappedAuthorityRequirements = bkm.getAuthorityRequirement();
@@ -349,7 +350,7 @@ public class DMNMarshallerKogito {
                         connectEdge(myEdge,
                                     requiredNode,
                                     currentNode);
-                        setConnectionMagnets(myEdge, ar.getId(), dmnXml);
+                        setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
                     }
                 }
             } else if (JSITKnowledgeSource.instanceOf(element)) {
@@ -367,7 +368,7 @@ public class DMNMarshallerKogito {
                             connectEdge(myEdge,
                                         requiredNode,
                                         currentNode);
-                            setConnectionMagnets(myEdge, ar.getId(), dmnXml);
+                            setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
                         }
                         if (ar.getRequiredDecision() != null) {
                             final String reqInputID = getId(ar.getRequiredDecision());
@@ -377,7 +378,7 @@ public class DMNMarshallerKogito {
                             connectEdge(myEdge,
                                         requiredNode,
                                         currentNode);
-                            setConnectionMagnets(myEdge, ar.getId(), dmnXml);
+                            setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
                         }
                         if (ar.getRequiredAuthority() != null) {
                             final String reqInputID = getId(ar.getRequiredAuthority());
@@ -387,7 +388,7 @@ public class DMNMarshallerKogito {
                             connectEdge(myEdge,
                                         requiredNode,
                                         currentNode);
-                            setConnectionMagnets(myEdge, ar.getId(), dmnXml);
+                            setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
                         }
                     }
                 }
@@ -418,7 +419,7 @@ public class DMNMarshallerKogito {
         }
 
         final Map<String, Node<View<TextAnnotation>, ?>> textAnnotations = new HashMap<>();
-        final JsArrayLike<JSITArtifact> wrappedArtifacts = dmnXml.getArtifact();
+        final JsArrayLike<JSITArtifact> wrappedArtifacts = jsiDefinitions.getArtifact();
         if (Objects.nonNull(wrappedArtifacts)) {
             final JsArrayLike<JSITArtifact> jsiArtifacts = JsUtils.getUnwrappedElementsArray(wrappedArtifacts);
             for (int i = 0; i < jsiArtifacts.getLength(); i++) {
@@ -427,6 +428,7 @@ public class DMNMarshallerKogito {
                     final String id = jsiArtifact.getId();
                     final JSITTextAnnotation jsiTextAnnotation = Js.uncheckedCast(jsiArtifact);
                     final Node<View<TextAnnotation>, ?> textAnnotation = textAnnotationConverter.nodeFromDMN(jsiTextAnnotation,
+                                                                                                             jsiDefinitions,
                                                                                                              hasComponentWidthsConsumer);
                     textAnnotations.put(id,
                                         textAnnotation);
@@ -464,7 +466,7 @@ public class DMNMarshallerKogito {
                 connectEdge(myEdge,
                             sourceNode,
                             targetNode);
-                setConnectionMagnets(myEdge, a.getId(), dmnXml);
+                setConnectionMagnets(myEdge, a.getId(), jsiDefinitions);
             }
         }
 
@@ -480,8 +482,13 @@ public class DMNMarshallerKogito {
         textAnnotations.values().forEach(graph::addNode);
 
         final Node<?, ?> dmnDiagramRoot = findDMNDiagramRoot(graph);
-        final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(dmnXml, importDefinitions, pmmlDocuments);
-        loadImportedItemDefinitions(definitionsStunnerPojo, importDefinitions);
+        final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(jsiDefinitions,
+                                                                                  jsiDefinitions,
+                                                                                  importDefinitions,
+                                                                                  pmmlDocuments);
+        loadImportedItemDefinitions(definitionsStunnerPojo,
+                                    importDefinitions,
+                                    jsiDefinitions);
         ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(definitionsStunnerPojo);
 
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
@@ -655,29 +662,38 @@ public class DMNMarshallerKogito {
     }
 
     private Node dmnToStunner(final JSITDRGElement dmn,
+                              final JSITDefinitions jsiDefinitions,
                               final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer,
                               final List<JSITDRGElement> importedDrgElements) {
 
-        final Node node = createNode(dmn, hasComponentWidthsConsumer);
+        final Node node = createNode(dmn,
+                                     jsiDefinitions,
+                                     hasComponentWidthsConsumer);
         return setAllowOnlyVisualChange(importedDrgElements, node);
     }
 
     private Node createNode(final JSITDRGElement dmn,
+                            final JSITDefinitions jsiDefinitions,
                             final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (JSITInputData.instanceOf(dmn)) {
             return inputDataConverter.nodeFromDMN(Js.uncheckedCast(dmn),
+                                                  jsiDefinitions,
                                                   hasComponentWidthsConsumer);
         } else if (JSITDecision.instanceOf(dmn)) {
             return decisionConverter.nodeFromDMN(Js.uncheckedCast(dmn),
+                                                 jsiDefinitions,
                                                  hasComponentWidthsConsumer);
         } else if (JSITBusinessKnowledgeModel.instanceOf(dmn)) {
             return bkmConverter.nodeFromDMN(Js.uncheckedCast(dmn),
+                                            jsiDefinitions,
                                             hasComponentWidthsConsumer);
         } else if (JSITKnowledgeSource.instanceOf(dmn)) {
             return knowledgeSourceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
+                                                        jsiDefinitions,
                                                         hasComponentWidthsConsumer);
         } else if (JSITDecisionService.instanceOf(dmn)) {
             return decisionServiceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
+                                                        jsiDefinitions,
                                                         hasComponentWidthsConsumer);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO
@@ -1040,19 +1056,23 @@ public class DMNMarshallerKogito {
     }
 
     void loadImportedItemDefinitions(final Definitions definitions,
-                                     final Map<JSITImport, JSITDefinitions> importDefinitions) {
-        definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions));
+                                     final Map<JSITImport, JSITDefinitions> importDefinitions,
+                                     final JSITDefinitions jsiDefinitions) {
+        definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions,
+                                                                            jsiDefinitions));
     }
 
     void cleanImportedItemDefinitions(final Definitions definitions) {
         definitions.getItemDefinition().removeIf(ItemDefinition::isAllowOnlyVisualChange);
     }
 
-    List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions) {
+    List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions,
+                                                      final JSITDefinitions jsiDefinitions) {
         return dmnMarshallerImportsHelper
                 .getImportedItemDefinitions(importDefinitions)
                 .stream()
-                .map(ItemDefinitionPropertyConverter::wbFromDMN)
+                .map(importDefinition -> ItemDefinitionPropertyConverter.wbFromDMN(importDefinition,
+                                                                                   jsiDefinitions))
                 .peek(itemDefinition -> itemDefinition.setAllowOnlyVisualChange(true))
                 .collect(toList());
     }
