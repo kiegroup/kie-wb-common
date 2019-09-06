@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
@@ -62,7 +63,9 @@ public class FunctionDefinitionPropertyConverter {
             expression.setParent(result);
         }
 
-        final JSITFunctionKind kind = dmn.getKind();
+        //JSITFunctionKind is a String JSO so convert into the real type
+        final String sKind = Js.uncheckedCast(dmn.getKind());
+        final JSITFunctionKind kind = JSITFunctionKind.valueOf(sKind);
         switch (kind) {
             case FEEL:
                 result.setKind(Kind.FEEL);
@@ -79,12 +82,17 @@ public class FunctionDefinitionPropertyConverter {
                 break;
         }
 
-        for (JSITInformationItem ii : dmn.getFormalParameter().asArray()) {
-            final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(ii);
-            if (iiConverted != null) {
-                iiConverted.setParent(result);
+        final JsArrayLike<JSITInformationItem> wrappedInformationItems = dmn.getFormalParameter();
+        if (Objects.nonNull(wrappedInformationItems)) {
+            final JsArrayLike<JSITInformationItem> jsiInformationItems = JsUtils.getUnwrappedElementsArray(wrappedInformationItems);
+            for (int i = 0; i < jsiInformationItems.getLength(); i++) {
+                final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.getAt(i));
+                final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
+                if (iiConverted != null) {
+                    iiConverted.setParent(result);
+                }
+                result.getFormalParameter().add(iiConverted);
             }
-            result.getFormalParameter().add(iiConverted);
         }
 
         return result;
