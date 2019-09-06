@@ -48,6 +48,7 @@ public class DMNModelInstrumentedBase {
     private DMNModelInstrumentedBase parent;
 
     @JsIgnore
+    //TODO {manstis} Remove. This does not exist in the XSD. User otherAttributes() and NamespaceUtils.
     public Map<String, String> getNsContext() {
         if (nsContext == null) {
             nsContext = new HashMap<>();
@@ -56,6 +57,7 @@ public class DMNModelInstrumentedBase {
     }
 
     @JsIgnore
+    //TODO {manstis} Remove. This does not exist in the XSD. User otherAttributes() and NamespaceUtils.
     public String getNamespaceURI(final String prefix) {
         if (getNsContext().containsKey(prefix)) {
             return getNsContext().get(prefix);
@@ -67,6 +69,7 @@ public class DMNModelInstrumentedBase {
     }
 
     @JsIgnore
+    //TODO {manstis} Remove. This does not exist in the XSD. User otherAttributes() and NamespaceUtils.
     public Optional<String> getPrefixForNamespaceURI(final String namespaceURI) {
         if (getNsContext().containsValue(namespaceURI)) {
             return getNsContext().entrySet().stream().filter(kv -> kv.getValue().equals(namespaceURI)).findFirst().map(Map.Entry::getKey);

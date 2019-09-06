@@ -17,9 +17,12 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
@@ -37,19 +40,24 @@ public class ListPropertyConverter {
                                  final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
 
         final java.util.List<Expression> expression = new ArrayList<>();
-        for (JSITExpression e : dmn.getExpression().asArray()) {
-            Expression eConverted = ExpressionPropertyConverter.wbFromDMN(e,
-                                                                          hasComponentWidthsConsumer);
-            expression.add(eConverted);
-        }
-
+        final JsArrayLike<JSITExpression> wrappedExpressions = dmn.getExpression();
         final List result = new List(id, description, typeRef, expression);
-        for (Expression e : expression) {
-            if (e != null) {
-                e.setParent(result);
+        if (Objects.nonNull(wrappedExpressions)) {
+            final JsArrayLike<JSITExpression> jsiExpressions = JsUtils.getUnwrappedElementsArray(wrappedExpressions);
+            for (int i = 0; i < jsiExpressions.getLength(); i++) {
+                final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.getAt(i));
+                Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
+                                                                              hasComponentWidthsConsumer);
+                expression.add(eConverted);
+            }
+
+            for (Expression e : expression) {
+                if (e != null) {
+                    e.setParent(result);
+                }
             }
         }
         return result;

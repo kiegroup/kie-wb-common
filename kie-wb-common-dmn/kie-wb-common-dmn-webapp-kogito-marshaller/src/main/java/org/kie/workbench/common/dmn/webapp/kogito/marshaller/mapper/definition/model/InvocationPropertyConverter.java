@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
@@ -48,7 +49,8 @@ public class InvocationPropertyConverter {
         result.setDescription(description);
         result.setTypeRef(typeRef);
 
-        final Expression convertedExpression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression(),
+        final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
+        final Expression convertedExpression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                                      hasComponentWidthsConsumer);
         result.setExpression(convertedExpression);
         if (convertedExpression != null) {

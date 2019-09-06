@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
@@ -26,6 +27,7 @@ import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBinding;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 
 public class BindingPropertyConverter {
@@ -36,7 +38,8 @@ public class BindingPropertyConverter {
             return null;
         }
         final InformationItem convertedParameter = InformationItemPropertyConverter.wbFromDMN(dmn.getParameter());
-        final Expression convertedExpression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression(),
+        final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
+        final Expression convertedExpression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                                      hasComponentWidthsConsumer);
 
         final Binding result = new Binding();
