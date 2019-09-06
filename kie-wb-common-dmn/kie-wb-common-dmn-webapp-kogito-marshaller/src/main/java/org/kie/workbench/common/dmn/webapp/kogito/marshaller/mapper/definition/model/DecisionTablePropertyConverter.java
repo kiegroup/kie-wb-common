@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 import java.util.Objects;
 
 import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
@@ -50,37 +51,55 @@ public class DecisionTablePropertyConverter {
         result.setDescription(description);
         result.setTypeRef(typeRef);
 
-        for (JSITInputClause input : dmn.getInput().asArray()) {
-            final InputClause inputClauseConverted = InputClausePropertyConverter.wbFromDMN(input);
-            if (inputClauseConverted != null) {
-                inputClauseConverted.setParent(result);
+        final JsArrayLike<JSITInputClause> wrappedInputClauses = dmn.getInput();
+        if (Objects.nonNull(wrappedInputClauses)) {
+            final JsArrayLike<JSITInputClause> jsiInputClauses = JsUtils.getUnwrappedElementsArray(wrappedInputClauses);
+            for (int i = 0; i < jsiInputClauses.getLength(); i++) {
+                final JSITInputClause input = Js.uncheckedCast(jsiInputClauses.getAt(i));
+                final InputClause inputClauseConverted = InputClausePropertyConverter.wbFromDMN(input);
+                if (Objects.nonNull(inputClauseConverted)) {
+                    inputClauseConverted.setParent(result);
+                    result.getInput().add(inputClauseConverted);
+                }
             }
-            result.getInput().add(inputClauseConverted);
         }
-        for (JSITOutputClause input : dmn.getOutput().asArray()) {
-            final OutputClause outputClauseConverted = OutputClausePropertyConverter.wbFromDMN(input);
-            if (outputClauseConverted != null) {
-                outputClauseConverted.setParent(result);
+        final JsArrayLike<JSITOutputClause> wrappedOutputClauses = dmn.getOutput();
+        if (Objects.nonNull(wrappedInputClauses)) {
+            final JsArrayLike<JSITOutputClause> jsiOutputClauses = JsUtils.getUnwrappedElementsArray(wrappedOutputClauses);
+            for (int i = 0; i < jsiOutputClauses.getLength(); i++) {
+                final JSITOutputClause output = Js.uncheckedCast(jsiOutputClauses.getAt(i));
+                final OutputClause outputClauseConverted = OutputClausePropertyConverter.wbFromDMN(output);
+                if (Objects.nonNull(outputClauseConverted)) {
+                    outputClauseConverted.setParent(result);
+                    result.getOutput().add(outputClauseConverted);
+                }
             }
-            result.getOutput().add(outputClauseConverted);
         }
-        for (JSITDecisionRule dr : dmn.getRule().asArray()) {
-            final DecisionRule decisionRuleConverted = DecisionRulePropertyConverter.wbFromDMN(dr);
-            if (decisionRuleConverted != null) {
-                decisionRuleConverted.setParent(result);
+        final JsArrayLike<JSITDecisionRule> wrappedDecisionRules = dmn.getRule();
+        if (Objects.nonNull(wrappedDecisionRules)) {
+            final JsArrayLike<JSITDecisionRule> jsiDecisionRules = JsUtils.getUnwrappedElementsArray(wrappedDecisionRules);
+            for (int i = 0; i < jsiDecisionRules.getLength(); i++) {
+                final JSITDecisionRule dr = Js.uncheckedCast(jsiDecisionRules.getAt(i));
+                final DecisionRule decisionRuleConverted = DecisionRulePropertyConverter.wbFromDMN(dr);
+                if (decisionRuleConverted != null) {
+                    decisionRuleConverted.setParent(result);
+                }
+                result.getRule().add(decisionRuleConverted);
             }
-            result.getRule().add(decisionRuleConverted);
         }
+
         //JSITHitPolicy is a String JSO so convert into the real type
         final String hitPolicy = Js.uncheckedCast(dmn.getHitPolicy());
         if (Objects.nonNull(hitPolicy)) {
             result.setHitPolicy(HitPolicy.fromValue(hitPolicy));
         }
+
         //JSITBuiltinAggregator is a String JSO so convert into the real type
         final String aggregation = Js.uncheckedCast(dmn.getAggregation());
         if (Objects.nonNull(aggregation)) {
             result.setAggregation(BuiltinAggregator.fromValue(aggregation));
         }
+
         //JSITDecisionTableOrientation is a String JSO so convert into the real type
         final String orientation = Js.uncheckedCast(dmn.getPreferredOrientation());
         if (Objects.nonNull(orientation)) {
