@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
@@ -29,6 +30,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.NONE;
 
@@ -45,8 +47,10 @@ public class UnaryTestsPropertyConverter {
         final QName key = new QName(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
                                     ConstraintType.CONSTRAINT_KEY,
                                     DMNModelInstrumentedBase.Namespace.KIE.getPrefix());
-        if (dmn.getOtherAttributes().containsKey(key)) {
-            constraintTypeField = ConstraintTypeFieldPropertyConverter.wbFromDMN(dmn.getOtherAttributes().get(key));
+
+        final Map<QName, String> otherAttributes = JsUtils.toAttributesMap(dmn);
+        if (otherAttributes.containsKey(key)) {
+            constraintTypeField = ConstraintTypeFieldPropertyConverter.wbFromDMN(otherAttributes.get(key));
         } else {
             constraintTypeField = NONE;
         }
