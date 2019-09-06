@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
+import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
@@ -68,14 +71,20 @@ public class DecisionTablePropertyConverter {
             }
             result.getRule().add(decisionRuleConverted);
         }
-        if (dmn.getHitPolicy() != null) {
-            result.setHitPolicy(HitPolicy.fromValue(dmn.getHitPolicy().value()));
+        //JSITHitPolicy is a String JSO so convert into the real type
+        final String hitPolicy = Js.uncheckedCast(dmn.getHitPolicy());
+        if (Objects.nonNull(hitPolicy)) {
+            result.setHitPolicy(HitPolicy.fromValue(hitPolicy));
         }
-        if (dmn.getAggregation() != null) {
-            result.setAggregation(BuiltinAggregator.fromValue(dmn.getAggregation().name()));
+        //JSITBuiltinAggregator is a String JSO so convert into the real type
+        final String aggregation = Js.uncheckedCast(dmn.getAggregation());
+        if (Objects.nonNull(aggregation)) {
+            result.setAggregation(BuiltinAggregator.fromValue(aggregation));
         }
-        if (dmn.getPreferredOrientation() != null) {
-            result.setPreferredOrientation(DecisionTableOrientation.fromValue(dmn.getPreferredOrientation().value()));
+        //JSITDecisionTableOrientation is a String JSO so convert into the real type
+        final String orientation = Js.uncheckedCast(dmn.getPreferredOrientation());
+        if (Objects.nonNull(orientation)) {
+            result.setPreferredOrientation(DecisionTableOrientation.fromValue(orientation));
         }
 
         result.setOutputLabel(dmn.getOutputLabel());
