@@ -22,17 +22,19 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 
 public class OutputClauseLiteralExpressionPropertyConverter {
 
-    public static OutputClauseLiteralExpression wbFromDMN(final JSITLiteralExpression dmn) {
+    public static OutputClauseLiteralExpression wbFromDMN(final JSITLiteralExpression dmn,
+                                                          final JSITDefinitions jsiDefinitions) {
         if (dmn == null) {
             return null;
         }
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
         final Text text = new Text(dmn.getText());
         final ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
         final OutputClauseLiteralExpression result = new OutputClauseLiteralExpression(id,

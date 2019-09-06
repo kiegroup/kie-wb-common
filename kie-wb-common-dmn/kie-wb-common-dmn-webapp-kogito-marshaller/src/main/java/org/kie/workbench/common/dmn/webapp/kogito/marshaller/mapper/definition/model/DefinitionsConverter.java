@@ -42,6 +42,7 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 public class DefinitionsConverter {
 
     public static Definitions wbFromDMN(final JSITDefinitions dmn,
+                                        final JSITDefinitions jsiDefinitions,
                                         final Map<JSITImport, JSITDefinitions> importDefinitions,
                                         final Map<JSITImport, PMMLDocumentMetadata> pmmlDocuments) {
         if (dmn == null) {
@@ -85,7 +86,8 @@ public class DefinitionsConverter {
             final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JsUtils.getUnwrappedElementsArray(wrappedItemDefinitions);
             for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
                 final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
-                final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition);
+                final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition,
+                                                                                                  jsiDefinitions);
                 if (Objects.nonNull(itemDefConverted)) {
                     itemDefConverted.setParent(result);
                     result.getItemDefinition().add(itemDefConverted);

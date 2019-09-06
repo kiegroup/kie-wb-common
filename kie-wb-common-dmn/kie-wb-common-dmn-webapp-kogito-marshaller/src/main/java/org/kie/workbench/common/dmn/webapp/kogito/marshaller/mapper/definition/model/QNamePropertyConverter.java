@@ -32,18 +32,19 @@ public class QNamePropertyConverter {
      * @return maybe null
      */
     public static QName wbFromDMN(final String qNameAsString,
-                                  final DMNModelInstrumentedBase parent) {
+                                  final DMNModelInstrumentedBase hasTypeRef,
+                                  final JSITDefinitions jsiDefinitions) {
         if (StringUtils.isEmpty(qNameAsString)) {
             return BuiltInType.UNDEFINED.asQName();
         }
         final javax.xml.namespace.QName qName = javax.xml.namespace.QName.valueOf(qNameAsString);
 
         //Convert DMN1.1 QName typeRefs to DMN1.2 (the editor only supports DMN1.2)
-        if (DMNModelInstrumentedBase.URI_FEEL.equals(parent.getNamespaceURI(qName.getPrefix()))) {
+        if (DMNModelInstrumentedBase.URI_FEEL.equals(hasTypeRef.getNamespaceURI(qName.getPrefix()))) {
             return new QName(QName.NULL_NS_URI, qName.getLocalPart());
         }
-        final String defaultNs = getDefaultNamespace(parent);
-        final String localNs = parent.getNamespaceURI(qName.getPrefix());
+        final String defaultNs = jsiDefinitions.getNamespace();
+        final String localNs = hasTypeRef.getNamespaceURI(qName.getPrefix());
         if (defaultNs.equalsIgnoreCase(localNs)) {
             return new QName(QName.NULL_NS_URI, qName.getLocalPart());
         }
@@ -74,16 +75,5 @@ public class QNamePropertyConverter {
         } else {
             return Optional.empty();
         }
-    }
-
-    public static String getDefaultNamespace(final DMNModelInstrumentedBase parent) {
-        if (parent instanceof JSITDefinitions) {
-            final JSITDefinitions def = (JSITDefinitions) parent;
-            return def.getNamespace();
-        } else if (!Objects.isNull(parent.getParent())) {
-            return getDefaultNamespace(parent.getParent());
-        }
-
-        return "";
     }
 }

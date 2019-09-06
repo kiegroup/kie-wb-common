@@ -42,6 +42,7 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
@@ -66,6 +67,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
 
     @Override
     public Node<View<BusinessKnowledgeModel>, ?> nodeFromDMN(final JSITBusinessKnowledgeModel dmn,
+                                                             final JSITDefinitions jsiDefinitions,
                                                              final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         @SuppressWarnings("unchecked")
         final Node<View<BusinessKnowledgeModel>, ?> node = (Node<View<BusinessKnowledgeModel>, ?>) factoryManager.newElement(dmn.getId(),
@@ -73,9 +75,10 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
-        final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), dmn);
+        final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), jsiDefinitions, dmn);
         final JSITFunctionDefinition dmnFunctionDefinition = dmn.getEncapsulatedLogic();
         final FunctionDefinition functionDefinition = FunctionDefinitionPropertyConverter.wbFromDMN(dmnFunctionDefinition,
+                                                                                                    jsiDefinitions,
                                                                                                     hasComponentWidthsConsumer);
         final BusinessKnowledgeModel bkm = new BusinessKnowledgeModel(id,
                                                                       description,

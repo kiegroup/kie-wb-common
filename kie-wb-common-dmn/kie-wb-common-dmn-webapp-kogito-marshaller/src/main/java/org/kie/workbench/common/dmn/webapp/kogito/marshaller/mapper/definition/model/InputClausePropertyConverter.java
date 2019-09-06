@@ -21,6 +21,7 @@ import org.kie.workbench.common.dmn.api.definition.model.InputClauseLiteralExpre
 import org.kie.workbench.common.dmn.api.definition.model.InputClauseUnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputClause;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
@@ -28,10 +29,11 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class InputClausePropertyConverter {
 
-    public static InputClause wbFromDMN(final JSITInputClause dmn) {
+    public static InputClause wbFromDMN(final JSITInputClause dmn,
+                                        final JSITDefinitions jsiDefinitions) {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final InputClauseLiteralExpression inputExpression = InputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getInputExpression());
+        final InputClauseLiteralExpression inputExpression = InputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getInputExpression(), jsiDefinitions);
         final InputClauseUnaryTests inputValues = InputClauseUnaryTestsPropertyConverter.wbFromDMN(dmn.getInputValues());
 
         final InputClause result = new InputClause(id,

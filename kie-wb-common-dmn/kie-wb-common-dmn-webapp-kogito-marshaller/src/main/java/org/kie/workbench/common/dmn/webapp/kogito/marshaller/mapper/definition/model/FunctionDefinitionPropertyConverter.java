@@ -35,6 +35,7 @@ import org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDo
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
@@ -45,15 +46,18 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class FunctionDefinitionPropertyConverter {
 
     public static FunctionDefinition wbFromDMN(final JSITFunctionDefinition dmn,
+                                               final JSITDefinitions jsiDefinitions,
                                                final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (dmn == null) {
             return null;
         }
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
         final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
         final Expression expression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
+                                                                            Js.uncheckedCast(dmn),
+                                                                            jsiDefinitions,
                                                                             hasComponentWidthsConsumer);
         final FunctionDefinition result = new FunctionDefinition(id,
                                                                  description,
@@ -87,7 +91,8 @@ public class FunctionDefinitionPropertyConverter {
             final JsArrayLike<JSITInformationItem> jsiInformationItems = JsUtils.getUnwrappedElementsArray(wrappedInformationItems);
             for (int i = 0; i < jsiInformationItems.getLength(); i++) {
                 final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.getAt(i));
-                final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
+                final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem,
+                                                                                               jsiDefinitions);
                 if (iiConverted != null) {
                     iiConverted.setParent(result);
                 }

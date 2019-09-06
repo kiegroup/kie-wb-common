@@ -27,6 +27,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -35,7 +36,8 @@ import static java.util.Optional.ofNullable;
 
 public class ItemDefinitionPropertyConverter {
 
-    public static ItemDefinition wbFromDMN(final JSITItemDefinition dmn) {
+    public static ItemDefinition wbFromDMN(final JSITItemDefinition dmn,
+                                           final JSITDefinitions jsiDefinitions) {
 
         if (dmn == null) {
             return null;
@@ -45,7 +47,8 @@ public class ItemDefinitionPropertyConverter {
         final Name name = new Name(dmn.getName());
 
         final Description description = wbDescriptionFromDMN(dmn);
-        final QName typeRef = wbTypeRefFromDMN(dmn);
+        final QName typeRef = wbTypeRefFromDMN(dmn,
+                                               jsiDefinitions);
 
         final String typeLanguage = dmn.getTypeLanguage();
         final boolean isCollection = dmn.getIsCollection();
@@ -61,7 +64,9 @@ public class ItemDefinitionPropertyConverter {
                                                      false);
 
         setUnaryTests(wb, dmn);
-        setItemComponent(wb, dmn);
+        setItemComponent(wb,
+                         dmn,
+                         jsiDefinitions);
 
         return wb;
     }
@@ -79,16 +84,21 @@ public class ItemDefinitionPropertyConverter {
     }
 
     static void setItemComponent(final ItemDefinition wb,
-                                 final JSITItemDefinition dmn) {
+                                 final JSITItemDefinition dmn,
+                                 final JSITDefinitions jsiDefinitions) {
         Stream.of(dmn.getItemComponent().asArray()).forEach(dmnChild -> {
-            wb.getItemComponent().add(wbChildFromDMN(wb, dmnChild));
+            wb.getItemComponent().add(wbChildFromDMN(wb,
+                                                     dmnChild,
+                                                     jsiDefinitions));
         });
     }
 
     static ItemDefinition wbChildFromDMN(final ItemDefinition wbParent,
-                                         final JSITItemDefinition dmnChild) {
+                                         final JSITItemDefinition dmnChild,
+                                         final JSITDefinitions jsiDefinitions) {
 
-        final ItemDefinition wbChild = wbFromDMN(dmnChild);
+        final ItemDefinition wbChild = wbFromDMN(dmnChild,
+                                                 jsiDefinitions);
 
         if (wbChild != null) {
             wbChild.setParent(wbParent);
@@ -101,8 +111,11 @@ public class ItemDefinitionPropertyConverter {
         return DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
     }
 
-    static QName wbTypeRefFromDMN(final JSITItemDefinition dmn) {
-        final QName wbQName = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+    static QName wbTypeRefFromDMN(final JSITItemDefinition dmn,
+                                  final JSITDefinitions jsiDefinitions) {
+        final QName wbQName = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(),
+                                                               dmn,
+                                                               jsiDefinitions);
         final QName undefinedQName = BuiltInType.UNDEFINED.asQName();
 
         return Objects.equals(wbQName, undefinedQName) ? null : wbQName;

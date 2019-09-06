@@ -26,13 +26,15 @@ import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionRule;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class DecisionRulePropertyConverter {
 
-    public static DecisionRule wbFromDMN(final JSITDecisionRule dmn) {
+    public static DecisionRule wbFromDMN(final JSITDecisionRule dmn,
+                                         final JSITDefinitions jsiDefinitions) {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
 
@@ -41,9 +43,9 @@ public class DecisionRulePropertyConverter {
         result.setDescription(description);
 
         final JsArrayLike<JSITUnaryTests> wrappedInputEntries = dmn.getInputEntry();
-        if(Objects.nonNull(wrappedInputEntries)) {
+        if (Objects.nonNull(wrappedInputEntries)) {
             final JsArrayLike<JSITUnaryTests> jsiInputEntries = JsUtils.getUnwrappedElementsArray(wrappedInputEntries);
-            for(int i=0; i<jsiInputEntries.getLength();i++) {
+            for (int i = 0; i < jsiInputEntries.getLength(); i++) {
                 final JSITUnaryTests jsiInputEntry = Js.uncheckedCast(jsiInputEntries.getAt(i));
                 final UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(jsiInputEntry);
                 if (Objects.nonNull(inputEntryConverted)) {
@@ -54,11 +56,11 @@ public class DecisionRulePropertyConverter {
         }
 
         final JsArrayLike<JSITLiteralExpression> wrappedOutputEntries = dmn.getOutputEntry();
-        if(Objects.nonNull(wrappedInputEntries)) {
+        if (Objects.nonNull(wrappedInputEntries)) {
             final JsArrayLike<JSITLiteralExpression> jsiOutputEntries = JsUtils.getUnwrappedElementsArray(wrappedOutputEntries);
-            for (int i=0; i<jsiOutputEntries.getLength();i++) {
+            for (int i = 0; i < jsiOutputEntries.getLength(); i++) {
                 final JSITLiteralExpression jsiOutputEntry = Js.uncheckedCast(jsiOutputEntries.getAt(i));
-                final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry);
+                final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry, jsiDefinitions);
                 if (Objects.nonNull(outputEntryConverted)) {
                     outputEntryConverted.setParent(result);
                     result.getOutputEntry().add(outputEntryConverted);

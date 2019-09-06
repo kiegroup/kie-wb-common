@@ -29,6 +29,7 @@ import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -37,10 +38,13 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class ListPropertyConverter {
 
     public static List wbFromDMN(final JSITList dmn,
+                                 final JSITDefinitions jsiDefinitions,
                                  final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         final Id id = new Id(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(),
+                                                               dmn,
+                                                               jsiDefinitions);
 
         final java.util.List<Expression> expression = new ArrayList<>();
         final JsArrayLike<JSITExpression> wrappedExpressions = dmn.getExpression();
@@ -50,6 +54,8 @@ public class ListPropertyConverter {
             for (int i = 0; i < jsiExpressions.getLength(); i++) {
                 final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.getAt(i));
                 Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
+                                                                              Js.uncheckedCast(dmn),
+                                                                              jsiDefinitions,
                                                                               hasComponentWidthsConsumer);
                 expression.add(eConverted);
             }
