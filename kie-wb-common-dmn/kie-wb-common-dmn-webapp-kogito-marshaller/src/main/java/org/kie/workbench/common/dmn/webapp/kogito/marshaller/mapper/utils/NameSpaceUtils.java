@@ -37,7 +37,9 @@ public class NameSpaceUtils {
             final String nsLocalPart = qName.getLocalPart();
             final String nsNamespaceURI = qName.getNamespaceURI();
             if (Objects.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, nsNamespaceURI)) {
-                namespaces.put(e.getValue(), nsLocalPart);
+                if (!Objects.equals(XMLConstants.XMLNS_ATTRIBUTE, nsLocalPart)) {
+                    namespaces.put(e.getValue(), nsLocalPart);
+                }
             }
         }
         return namespaces;
@@ -53,7 +55,9 @@ public class NameSpaceUtils {
             final String nsLocalPart = qName.getLocalPart();
             final String nsNamespaceURI = qName.getNamespaceURI();
             if (Objects.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, nsNamespaceURI)) {
-                namespaces.put(nsLocalPart, e.getValue());
+                if (!Objects.equals(XMLConstants.XMLNS_ATTRIBUTE, nsLocalPart)) {
+                    namespaces.put(nsLocalPart, e.getValue());
+                }
             }
         }
         return namespaces;
