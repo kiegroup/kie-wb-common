@@ -102,6 +102,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DecisionConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DecisionServiceConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DefinitionsConverter;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.IdPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.InputDataConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.ItemDefinitionPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.KnowledgeSourceConverter;
@@ -458,7 +459,7 @@ public class DMNMarshallerKogito {
                 final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(a),
                                                                                                                  ASSOCIATION_ID).asEdge();
 
-                final Id id = new Id(a.getId());
+                final Id id = IdPropertyConverter.wbFromDMN(a.getId());
                 final Description description = new Description(a.getDescription());
                 final Association definition = new Association(id, description);
                 myEdge.getContent().setDefinition(definition);

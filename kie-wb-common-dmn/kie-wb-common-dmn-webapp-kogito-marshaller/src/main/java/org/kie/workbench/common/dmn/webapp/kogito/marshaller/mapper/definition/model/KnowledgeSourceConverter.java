@@ -63,7 +63,7 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
         @SuppressWarnings("unchecked")
         final Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement(dmn.getId(),
                                                                                                                getDefinitionId(KnowledgeSource.class)).asNode();
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final KnowledgeSourceType ksType = new KnowledgeSourceType(dmn.getType());

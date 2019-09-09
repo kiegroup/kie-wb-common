@@ -40,7 +40,7 @@ public class RelationPropertyConverter {
     public static Relation wbFromDMN(final JSITRelation dmn,
                                      final JSITDefinitions jsiDefinitions,
                                      final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(),
                                                                dmn,
@@ -49,7 +49,7 @@ public class RelationPropertyConverter {
         final List<JSITInformationItem> column = Arrays.asList(dmn.getColumn().asArray());
         final List<JSITList> row = Arrays.asList(dmn.getRow().asArray());
 
-        final List<InformationItem> convertedColumn = column.stream().map(c->InformationItemPropertyConverter.wbFromDMN(c, jsiDefinitions)).collect(Collectors.toList());
+        final List<InformationItem> convertedColumn = column.stream().map(c -> InformationItemPropertyConverter.wbFromDMN(c, jsiDefinitions)).collect(Collectors.toList());
         final List<org.kie.workbench.common.dmn.api.definition.model.List> convertedRow = row.stream().map(r -> ListPropertyConverter.wbFromDMN(r,
                                                                                                                                                 jsiDefinitions,
                                                                                                                                                 hasComponentWidthsConsumer)).collect(Collectors.toList());

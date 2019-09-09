@@ -74,7 +74,7 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         @SuppressWarnings("unchecked")
         final Node<View<Decision>, ?> node = (Node<View<Decision>, ?>) factoryManager.newElement(dmn.getId(),
                                                                                                  getDefinitionId(Decision.class)).asNode();
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), jsiDefinitions, dmn);

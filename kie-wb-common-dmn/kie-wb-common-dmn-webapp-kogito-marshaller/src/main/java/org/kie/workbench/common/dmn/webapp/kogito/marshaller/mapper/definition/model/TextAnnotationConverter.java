@@ -53,7 +53,7 @@ public class TextAnnotationConverter implements NodeConverter<JSITTextAnnotation
         @SuppressWarnings("unchecked")
         final Node<View<TextAnnotation>, ?> node = (Node<View<TextAnnotation>, ?>) factoryManager.newElement(dmn.getId(),
                                                                                                              getDefinitionId(TextAnnotation.class)).asNode();
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Text text = new Text(dmn.getText());
         final TextFormat textFormat = new TextFormat(dmn.getTextFormat());

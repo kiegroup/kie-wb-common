@@ -27,13 +27,11 @@ import org.kie.workbench.common.dmn.api.definition.model.ImportDMN;
 import org.kie.workbench.common.dmn.api.definition.model.ImportPMML;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
-import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
-import org.kie.workbench.common.stunner.core.util.UUID;
 
 import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportType;
 
@@ -45,13 +43,12 @@ public final class ImportConverter {
         final Import result = createWBImport(dmn, definitions, pmmlDocument);
         final Map<QName, String> additionalAttributes = new HashMap<>();
         for (Map.Entry<javax.xml.namespace.QName, String> entry : dmn.getOtherAttributes().entrySet()) {
-            additionalAttributes.put(QNamePropertyConverter.wbFromDMN(entry.getKey().toString(), dmn ,definitions), entry.getValue());
+            additionalAttributes.put(QNamePropertyConverter.wbFromDMN(entry.getKey().toString(), dmn, definitions), entry.getValue());
         }
         result.setAdditionalAttributes(additionalAttributes);
-        final String id = dmn.getId();
         final String name = dmn.getName();
         final String description = dmn.getDescription();
-        result.setId(new Id(id != null ? id : UUID.uuid()));
+        result.setId(IdPropertyConverter.wbFromDMN(dmn.getId()));
         result.setName(new Name(name));
         result.setDescription(DescriptionPropertyConverter.wbFromDMN(description));
 

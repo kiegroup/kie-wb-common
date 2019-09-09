@@ -31,7 +31,7 @@ public class InputClausePropertyConverter {
 
     public static InputClause wbFromDMN(final JSITInputClause dmn,
                                         final JSITDefinitions jsiDefinitions) {
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final InputClauseLiteralExpression inputExpression = InputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getInputExpression(), jsiDefinitions);
         final InputClauseUnaryTests inputValues = InputClauseUnaryTestsPropertyConverter.wbFromDMN(dmn.getInputValues());
