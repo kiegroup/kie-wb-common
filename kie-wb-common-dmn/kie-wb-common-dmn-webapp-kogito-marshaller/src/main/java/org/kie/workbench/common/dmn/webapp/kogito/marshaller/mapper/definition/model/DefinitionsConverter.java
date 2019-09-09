@@ -80,31 +80,25 @@ public class DefinitionsConverter {
             }
         }
 
-        final JsArrayLike<JSITItemDefinition> wrappedItemDefinitions = dmn.getItemDefinition();
-        if (Objects.nonNull(wrappedItemDefinitions)) {
-            final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JsUtils.getUnwrappedElementsArray(wrappedItemDefinitions);
-            for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
-                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
-                final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition);
-                if (Objects.nonNull(itemDefConverted)) {
-                    itemDefConverted.setParent(result);
-                    result.getItemDefinition().add(itemDefConverted);
-                }
+        final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JSITDefinitions.getItemDefinition(dmn);
+        for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
+            final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
+            final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition);
+            if (Objects.nonNull(itemDefConverted)) {
+                itemDefConverted.setParent(result);
+                result.getItemDefinition().add(itemDefConverted);
             }
         }
 
-        final JsArrayLike<JSITImport> wrappedImports = dmn.getImport();
-        if (Objects.nonNull(wrappedImports)) {
-            final JsArrayLike<JSITImport> jsiImports = JsUtils.getUnwrappedElementsArray(wrappedImports);
-            for (int i = 0; i < jsiImports.getLength(); i++) {
-                final JSITImport jsiImport = Js.uncheckedCast(jsiImports.getAt(i));
-                final JSITDefinitions definitions = importDefinitions.get(jsiImport);
-                final PMMLDocumentMetadata pmmlDocument = pmmlDocuments.get(jsiImport);
-                final Import importConverted = ImportConverter.wbFromDMN(jsiImport, definitions, pmmlDocument);
-                if (Objects.nonNull(importConverted)) {
-                    importConverted.setParent(result);
-                    result.getImport().add(importConverted);
-                }
+        final JsArrayLike<JSITImport> jsiImports = JSITDefinitions.getImport(dmn);
+        for (int i = 0; i < jsiImports.getLength(); i++) {
+            final JSITImport jsiImport = Js.uncheckedCast(jsiImports.getAt(i));
+            final JSITDefinitions definitions = importDefinitions.get(jsiImport);
+            final PMMLDocumentMetadata pmmlDocument = pmmlDocuments.get(jsiImport);
+            final Import importConverted = ImportConverter.wbFromDMN(jsiImport, definitions, pmmlDocument);
+            if (Objects.nonNull(importConverted)) {
+                importConverted.setParent(result);
+                result.getImport().add(importConverted);
             }
         }
 

@@ -40,30 +40,24 @@ public class DecisionRulePropertyConverter {
         result.setId(id);
         result.setDescription(description);
 
-        final JsArrayLike<JSITUnaryTests> wrappedInputEntries = dmn.getInputEntry();
-        if (Objects.nonNull(wrappedInputEntries)) {
-            final JsArrayLike<JSITUnaryTests> jsiInputEntries = JsUtils.getUnwrappedElementsArray(wrappedInputEntries);
-            for (int i = 0; i < jsiInputEntries.getLength(); i++) {
-                final JSITUnaryTests jsiInputEntry = Js.uncheckedCast(jsiInputEntries.getAt(i));
-                final UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(jsiInputEntry);
-                if (Objects.nonNull(inputEntryConverted)) {
-                    inputEntryConverted.setParent(result);
-                    result.getInputEntry().add(inputEntryConverted);
-                }
+        final JsArrayLike<JSITUnaryTests> jsiInputEntries = JSITDecisionRule.getInputEntry(dmn);
+        for (int i = 0; i < jsiInputEntries.getLength(); i++) {
+            final JSITUnaryTests jsiInputEntry = Js.uncheckedCast(jsiInputEntries.getAt(i));
+            final UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(jsiInputEntry);
+            if (Objects.nonNull(inputEntryConverted)) {
+                inputEntryConverted.setParent(result);
+                result.getInputEntry().add(inputEntryConverted);
             }
         }
 
-        final JsArrayLike<JSITLiteralExpression> wrappedOutputEntries = dmn.getOutputEntry();
-        if (Objects.nonNull(wrappedInputEntries)) {
-            final JsArrayLike<JSITLiteralExpression> jsiOutputEntries = JsUtils.getUnwrappedElementsArray(wrappedOutputEntries);
-            for (int i = 0; i < jsiOutputEntries.getLength(); i++) {
-                final JSITLiteralExpression jsiOutputEntry = Js.uncheckedCast(jsiOutputEntries.getAt(i));
-                final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry);
-                if (Objects.nonNull(outputEntryConverted)) {
-                    outputEntryConverted.setParent(result);
-                    result.getOutputEntry().add(outputEntryConverted);
-                }
-            }/**/
+        final JsArrayLike<JSITLiteralExpression> jsiOutputEntries = JSITDecisionRule.getOutputEntry(dmn);
+        for (int i = 0; i < jsiOutputEntries.getLength(); i++) {
+            final JSITLiteralExpression jsiOutputEntry = Js.uncheckedCast(jsiOutputEntries.getAt(i));
+            final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry);
+            if (Objects.nonNull(outputEntryConverted)) {
+                outputEntryConverted.setParent(result);
+                result.getOutputEntry().add(outputEntryConverted);
+            }
         }
 
         return result;

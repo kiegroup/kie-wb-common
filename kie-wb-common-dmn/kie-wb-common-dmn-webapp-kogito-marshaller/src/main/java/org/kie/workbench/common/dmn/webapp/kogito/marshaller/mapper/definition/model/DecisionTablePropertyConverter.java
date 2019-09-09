@@ -51,41 +51,34 @@ public class DecisionTablePropertyConverter {
         result.setDescription(description);
         result.setTypeRef(typeRef);
 
-        final JsArrayLike<JSITInputClause> wrappedInputClauses = dmn.getInput();
-        if (Objects.nonNull(wrappedInputClauses)) {
-            final JsArrayLike<JSITInputClause> jsiInputClauses = JsUtils.getUnwrappedElementsArray(wrappedInputClauses);
-            for (int i = 0; i < jsiInputClauses.getLength(); i++) {
-                final JSITInputClause input = Js.uncheckedCast(jsiInputClauses.getAt(i));
-                final InputClause inputClauseConverted = InputClausePropertyConverter.wbFromDMN(input);
-                if (Objects.nonNull(inputClauseConverted)) {
-                    inputClauseConverted.setParent(result);
-                    result.getInput().add(inputClauseConverted);
-                }
+        final JsArrayLike<JSITInputClause> jsiInputClauses = JSITDecisionTable.getInput(dmn);
+        for (int i = 0; i < jsiInputClauses.getLength(); i++) {
+            final JSITInputClause input = Js.uncheckedCast(jsiInputClauses.getAt(i));
+            final InputClause inputClauseConverted = InputClausePropertyConverter.wbFromDMN(input);
+            if (Objects.nonNull(inputClauseConverted)) {
+                inputClauseConverted.setParent(result);
+                result.getInput().add(inputClauseConverted);
             }
         }
-        final JsArrayLike<JSITOutputClause> wrappedOutputClauses = dmn.getOutput();
-        if (Objects.nonNull(wrappedInputClauses)) {
-            final JsArrayLike<JSITOutputClause> jsiOutputClauses = JsUtils.getUnwrappedElementsArray(wrappedOutputClauses);
-            for (int i = 0; i < jsiOutputClauses.getLength(); i++) {
-                final JSITOutputClause output = Js.uncheckedCast(jsiOutputClauses.getAt(i));
-                final OutputClause outputClauseConverted = OutputClausePropertyConverter.wbFromDMN(output);
-                if (Objects.nonNull(outputClauseConverted)) {
-                    outputClauseConverted.setParent(result);
-                    result.getOutput().add(outputClauseConverted);
-                }
+
+        final JsArrayLike<JSITOutputClause> jsiOutputClauses = JSITDecisionTable.getOutput(dmn);
+        for (int i = 0; i < jsiOutputClauses.getLength(); i++) {
+            final JSITOutputClause output = Js.uncheckedCast(jsiOutputClauses.getAt(i));
+            final OutputClause outputClauseConverted = OutputClausePropertyConverter.wbFromDMN(output);
+            if (Objects.nonNull(outputClauseConverted)) {
+                outputClauseConverted.setParent(result);
+                result.getOutput().add(outputClauseConverted);
             }
         }
-        final JsArrayLike<JSITDecisionRule> wrappedDecisionRules = dmn.getRule();
-        if (Objects.nonNull(wrappedDecisionRules)) {
-            final JsArrayLike<JSITDecisionRule> jsiDecisionRules = JsUtils.getUnwrappedElementsArray(wrappedDecisionRules);
-            for (int i = 0; i < jsiDecisionRules.getLength(); i++) {
-                final JSITDecisionRule dr = Js.uncheckedCast(jsiDecisionRules.getAt(i));
-                final DecisionRule decisionRuleConverted = DecisionRulePropertyConverter.wbFromDMN(dr);
-                if (decisionRuleConverted != null) {
-                    decisionRuleConverted.setParent(result);
-                }
-                result.getRule().add(decisionRuleConverted);
+
+        final JsArrayLike<JSITDecisionRule> jsiDecisionRules = JSITDecisionTable.getRule(dmn);
+        for (int i = 0; i < jsiDecisionRules.getLength(); i++) {
+            final JSITDecisionRule dr = Js.uncheckedCast(jsiDecisionRules.getAt(i));
+            final DecisionRule decisionRuleConverted = DecisionRulePropertyConverter.wbFromDMN(dr);
+            if (decisionRuleConverted != null) {
+                decisionRuleConverted.setParent(result);
             }
+            result.getRule().add(decisionRuleConverted);
         }
 
         //JSITHitPolicy is a String JSO so convert into the real type

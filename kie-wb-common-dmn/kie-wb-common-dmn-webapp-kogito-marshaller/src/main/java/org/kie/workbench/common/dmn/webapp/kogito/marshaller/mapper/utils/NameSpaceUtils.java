@@ -23,13 +23,12 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class NameSpaceUtils {
 
     public static Map<String, String> extractNamespacesKeyedByUri(final JSITDMNElement jsiDMNElement) {
         final Map<String, String> namespaces = new HashMap<>();
-        final Map<QName, String> otherAttributes = JsUtils.toAttributesMap(jsiDMNElement.getOtherAttributes());
+        final Map<QName, String> otherAttributes = JSITDMNElement.getOtherAttributesMap(jsiDMNElement);
 
         //Filter otherAttributes by NameSpace definitions
         for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
@@ -47,7 +46,7 @@ public class NameSpaceUtils {
 
     public static Map<String, String> extractNamespacesKeyedByPrefix(final JSITDMNElement jsiDMNElement) {
         final Map<String, String> namespaces = new HashMap<>();
-        final Map<QName, String> otherAttributes = JsUtils.toAttributesMap(jsiDMNElement.getOtherAttributes());
+        final Map<QName, String> otherAttributes = JSITDMNElement.getOtherAttributesMap(jsiDMNElement);
 
         //Filter otherAttributes by NameSpace definitions
         for (Map.Entry<QName, String> e : otherAttributes.entrySet()) {
