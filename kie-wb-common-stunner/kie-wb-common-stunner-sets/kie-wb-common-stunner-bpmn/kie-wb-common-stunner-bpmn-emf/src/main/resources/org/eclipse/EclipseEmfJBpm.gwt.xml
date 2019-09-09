@@ -19,8 +19,6 @@
 <module>
 
   <inherits name="org.eclipse.EclipseEmfXmi"/>
-  <inherits name="org.eclipse.emf.ecore.Ecore"/>
-  <inherits name="org.eclipse.emf.emul.Emulation"/>
 
   <source path="bpmn2"/>
   <source path="dd"/>

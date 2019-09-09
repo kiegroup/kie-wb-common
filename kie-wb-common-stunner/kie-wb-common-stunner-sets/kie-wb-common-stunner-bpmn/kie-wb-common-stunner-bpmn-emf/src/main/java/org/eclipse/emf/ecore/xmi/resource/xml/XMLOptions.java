@@ -19,11 +19,10 @@ package org.eclipse.emf.ecore.xmi.resource.xml;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.xmi.EcoreBuilder;
 
 public class XMLOptions {
 
-    protected EcoreBuilder ecoreBuilder;
+    // protected EcoreBuilder ecoreBuilder;
 
     protected Map<String, URI> externalSchemaLocation;
 
@@ -31,10 +30,10 @@ public class XMLOptions {
 
     protected boolean processSchemaLocations;
 
-    public EcoreBuilder getEcoreBuilder()
+    /*public EcoreBuilder getEcoreBuilder()
     {
         return ecoreBuilder;
-    }
+    }*/
 
     public Map<String, URI> getExternalSchemaLocations() {
         return externalSchemaLocation;
@@ -48,10 +47,10 @@ public class XMLOptions {
         return processSchemaLocations;
     }
 
-    public void setEcoreBuilder(EcoreBuilder ecoreBuilder)
+    /*public void setEcoreBuilder(EcoreBuilder ecoreBuilder)
     {
         this.ecoreBuilder = ecoreBuilder;
-    }
+    }*/
 
     public void setExternalSchemaLocations(Map<String, URI> schemaLocations) {
         this.externalSchemaLocation = schemaLocations;

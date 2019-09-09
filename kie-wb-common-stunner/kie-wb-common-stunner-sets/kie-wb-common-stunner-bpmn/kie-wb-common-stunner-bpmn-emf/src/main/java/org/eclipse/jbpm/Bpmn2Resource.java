@@ -37,15 +37,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.URIServiceCallback;
-import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
-import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.resource.impl.URIHandlerImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
-import org.eclipse.emf.ecore.xmi.resource.xml.URIHandler;
 import org.eclipse.emf.ecore.xmi.resource.xml.XMLSave;
 import org.eclipse.emf.ecore.xmi.util.ElementHandler;
 import org.jboss.drools.DroolsPackage;
@@ -59,8 +52,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
     static final String URI_BPMN_DI = "http://www.omg.org/spec/BPMN/20100524/DI";
     static final String URI_DROOLS = "http://www.jboss.org/drools";
     static final String URI_BPSIM = "http://www.bpsim.org/schemas/1.0";
-    private QNameURIHandler uriHandler;
-    private BpmnXmlHelper xmlHelper = new BpmnXmlHelper(this);
+    private final QNameURIHandler uriHandler;
 
     static {
         initPackageRegistry(EPackage.Registry.INSTANCE,
@@ -73,31 +65,9 @@ public class Bpmn2Resource extends XMLResourceImpl {
         initGwtReflectTypes();
     }
 
-    public static Bpmn2Resource newResource() {
-        ResourceSetImpl resourceSet = new ResourceSetImpl();
-        Resource.Factory.Registry resourceFactoryRegistry = resourceSet.getResourceFactoryRegistry();
-        resourceFactoryRegistry.getExtensionToFactoryMap().put(
-                Resource.Factory.Registry.DEFAULT_EXTENSION, new ResourceFactoryImpl() {
-
-                    @Override
-                    public Resource createResource(URI uri) {
-                        return new Bpmn2Resource(uri);
-                    }
-                });
-
-
-        final Bpmn2Resource resource = (Bpmn2Resource) resourceSet
-                .createResource(URI.createURI("file://dummyUriWithValidSuffix.xml"));
-
-        return resource;
-    }
-
-    private Bpmn2Resource(URI uri) {
+    protected Bpmn2Resource(URI uri) {
         super(uri);
-        this.uriHandler = new QNameURIHandler(xmlHelper);
-        this.getDefaultLoadOptions().put(XMLResource.OPTION_URI_HANDLER, this.uriHandler);
-        this.getDefaultSaveOptions().put(XMLResource.OPTION_URI_HANDLER, this.uriHandler);
-
+        this.uriHandler = new QNameURIHandler(new BpmnXmlHelper(this));
     }
 
     public void load(Node node) throws IOException {
@@ -144,13 +114,13 @@ public class Bpmn2Resource extends XMLResourceImpl {
         final Map<Object, Object> options = createDefaultOptions();
         options.put(XMLResource.OPTION_DECLARE_XML, true);
         options.put(XMLResource.OPTION_ELEMENT_HANDLER, new ElementHandler(true));
-        options.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
+        options.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<>());
         return options;
     }
 
     Map<Object, Object> createLoadOptions() {
         Map<Object, Object> options = createDefaultOptions();
-        options.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap<Object, Object>());
+        options.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap<>());
         options.put(XMLResource.OPTION_DOM_USE_NAMESPACES_IN_SCOPE, true);
         return options;
     }
@@ -193,9 +163,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
         options.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, true);
         options.put(XMLResource.OPTION_DISABLE_NOTIFY, true);
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
-        //options.put(XMLResource.OPTION_RESOURCE_ENTITY_HANDLER, new ResourceEntityHandler());
-        options.put(XMLResource.OPTION_URI_HANDLER, new URIHandler.PlatformSchemeAware());
-        options.put(XMLResource.OPTION_URI_HANDLER, uriHandler);
+        //*important* to resolve property proxy (BasicEObjectImpl.eResolveProxy)
         options.put(XMLResource.OPTION_URI_HANDLER, uriHandler);
         return options;
     }

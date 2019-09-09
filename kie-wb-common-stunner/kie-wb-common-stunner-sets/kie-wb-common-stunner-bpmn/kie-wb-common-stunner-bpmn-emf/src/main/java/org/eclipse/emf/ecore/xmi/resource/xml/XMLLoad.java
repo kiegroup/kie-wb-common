@@ -92,6 +92,7 @@ public class XMLLoad {
 
 //    if (pool != null)
 //    {
+//      pool.releaseDefaultHandler((XMLDefaultHandler)handler, options);
 //    }
 
         attributesProxy = null;

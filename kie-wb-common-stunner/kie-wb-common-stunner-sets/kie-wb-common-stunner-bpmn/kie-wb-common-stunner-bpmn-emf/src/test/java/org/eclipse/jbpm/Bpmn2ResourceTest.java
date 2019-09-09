@@ -52,7 +52,7 @@ public class Bpmn2ResourceTest {
 
     @Before
     public void setUp() {
-        tested = spy(Bpmn2Resource.newResource());
+        tested = spy(Bpmn2ResourceFactory.getInstance().create());
     }
 
     @Test
