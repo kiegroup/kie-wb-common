@@ -240,7 +240,6 @@ public class DMNMarshallerKogito {
             final JSITDRGElement drgElement = Js.uncheckedCast(drgElements.get(i));
             final String id = drgElement.getId();
             final Node stunnerNode = dmnToStunner(drgElement,
-                                                  jsiDefinitions,
                                                   hasComponentWidthsConsumer,
                                                   importedDrgElements);
             elems.put(id,
@@ -429,7 +428,6 @@ public class DMNMarshallerKogito {
                     final String id = jsiArtifact.getId();
                     final JSITTextAnnotation jsiTextAnnotation = Js.uncheckedCast(jsiArtifact);
                     final Node<View<TextAnnotation>, ?> textAnnotation = textAnnotationConverter.nodeFromDMN(jsiTextAnnotation,
-                                                                                                             jsiDefinitions,
                                                                                                              hasComponentWidthsConsumer);
                     textAnnotations.put(id,
                                         textAnnotation);
@@ -484,12 +482,9 @@ public class DMNMarshallerKogito {
 
         final Node<?, ?> dmnDiagramRoot = findDMNDiagramRoot(graph);
         final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(jsiDefinitions,
-                                                                                  jsiDefinitions,
                                                                                   importDefinitions,
                                                                                   pmmlDocuments);
-        loadImportedItemDefinitions(definitionsStunnerPojo,
-                                    importDefinitions,
-                                    jsiDefinitions);
+        loadImportedItemDefinitions(definitionsStunnerPojo, importDefinitions);
         ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(definitionsStunnerPojo);
 
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
@@ -663,38 +658,30 @@ public class DMNMarshallerKogito {
     }
 
     private Node dmnToStunner(final JSITDRGElement dmn,
-                              final JSITDefinitions jsiDefinitions,
                               final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer,
                               final List<JSITDRGElement> importedDrgElements) {
 
         final Node node = createNode(dmn,
-                                     jsiDefinitions,
                                      hasComponentWidthsConsumer);
         return setAllowOnlyVisualChange(importedDrgElements, node);
     }
 
     private Node createNode(final JSITDRGElement dmn,
-                            final JSITDefinitions jsiDefinitions,
                             final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (JSITInputData.instanceOf(dmn)) {
             return inputDataConverter.nodeFromDMN(Js.uncheckedCast(dmn),
-                                                  jsiDefinitions,
                                                   hasComponentWidthsConsumer);
         } else if (JSITDecision.instanceOf(dmn)) {
             return decisionConverter.nodeFromDMN(Js.uncheckedCast(dmn),
-                                                 jsiDefinitions,
                                                  hasComponentWidthsConsumer);
         } else if (JSITBusinessKnowledgeModel.instanceOf(dmn)) {
             return bkmConverter.nodeFromDMN(Js.uncheckedCast(dmn),
-                                            jsiDefinitions,
                                             hasComponentWidthsConsumer);
         } else if (JSITKnowledgeSource.instanceOf(dmn)) {
             return knowledgeSourceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
-                                                        jsiDefinitions,
                                                         hasComponentWidthsConsumer);
         } else if (JSITDecisionService.instanceOf(dmn)) {
             return decisionServiceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
-                                                        jsiDefinitions,
                                                         hasComponentWidthsConsumer);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO
@@ -1038,10 +1025,7 @@ public class DMNMarshallerKogito {
             final JsArrayLike<JSITDRGElement> elements = JavaScriptObject.createArray().cast();
             definitions.setDrgElement(elements);
         }
-        nodes.values().forEach(n -> {
-            n.setParent(definitions);
-            JsUtils.add(definitions.getDrgElement(), n);
-        });
+        nodes.values().forEach(n -> JsUtils.add(definitions.getDrgElement(), n));
         if (Objects.isNull(definitions.getArtifact())) {
             final JsArrayLike<JSITArtifact> artifacts = JavaScriptObject.createArray().cast();
             definitions.setArtifact(artifacts);
@@ -1057,23 +1041,19 @@ public class DMNMarshallerKogito {
     }
 
     void loadImportedItemDefinitions(final Definitions definitions,
-                                     final Map<JSITImport, JSITDefinitions> importDefinitions,
-                                     final JSITDefinitions jsiDefinitions) {
-        definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions,
-                                                                            jsiDefinitions));
+                                     final Map<JSITImport, JSITDefinitions> importDefinitions) {
+        definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions));
     }
 
     void cleanImportedItemDefinitions(final Definitions definitions) {
         definitions.getItemDefinition().removeIf(ItemDefinition::isAllowOnlyVisualChange);
     }
 
-    List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions,
-                                                      final JSITDefinitions jsiDefinitions) {
+    List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions) {
         return dmnMarshallerImportsHelper
                 .getImportedItemDefinitions(importDefinitions)
                 .stream()
-                .map(importDefinition -> ItemDefinitionPropertyConverter.wbFromDMN(importDefinition,
-                                                                                   jsiDefinitions))
+                .map(ItemDefinitionPropertyConverter::wbFromDMN)
                 .peek(itemDefinition -> itemDefinition.setAllowOnlyVisualChange(true))
                 .collect(toList());
     }

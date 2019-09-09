@@ -25,15 +25,14 @@ import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
+import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition.Kind;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContext;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContextEntry;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 
@@ -41,11 +40,10 @@ public class ContextPropertyConverter {
 
     public static Context wbFromDMN(final JSITContext dmn,
                                     final JSITExpression parent,
-                                    final JSITDefinitions jsiDefinitions,
                                     final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
         final Context result = new Context(id,
                                            description,
                                            typeRef);
@@ -54,7 +52,7 @@ public class ContextPropertyConverter {
             final JsArrayLike<JSITContextEntry> jsiContextEntries = JsUtils.getUnwrappedElementsArray(wrappedContextEntries);
             for (int i = 0; i < jsiContextEntries.getLength(); i++) {
                 final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
-                final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, jsiDefinitions, hasComponentWidthsConsumer);
+                final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, hasComponentWidthsConsumer);
                 if (Objects.nonNull(ceConverted)) {
                     ceConverted.setParent(result);
                     result.getContextEntry().add(ceConverted);
@@ -65,7 +63,9 @@ public class ContextPropertyConverter {
         //No need to append a _default_ row if the Context is part of a JAVA or PMML FunctionDefinition
         if (JSITFunctionDefinition.instanceOf(parent)) {
             final JSITFunctionDefinition functionDefinition = Js.uncheckedCast(parent);
-            if (!functionDefinition.getKind().equals(JSITFunctionKind.FEEL)) {
+            final String sKind = Js.uncheckedCast(functionDefinition.getKind());
+            final Kind kind = Kind.fromValue(sKind);
+            if (!Kind.FEEL.equals(kind)) {
                 return result;
             }
         }
@@ -90,9 +90,6 @@ public class ContextPropertyConverter {
                                             result::setTypeRef);
         for (ContextEntry ce : wb.getContextEntry()) {
             final JSITContextEntry ceConverted = ContextEntryPropertyConverter.dmnFromWB(ce, componentWidthsConsumer);
-            if (ceConverted != null) {
-                ceConverted.setParent(result);
-            }
             JsUtils.add(result.getContextEntry(), ceConverted);
         }
 

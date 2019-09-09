@@ -148,18 +148,30 @@ public class FunctionDefinition extends Expression implements HasExpression {
 
     @Portable
     public enum Kind {
-        FEEL("F"),
-        JAVA("J"),
-        PMML("P");
+        FEEL("F", "FEEL"),
+        JAVA("J", "Java"),
+        PMML("P", "PMML");
 
         private final String code;
+        private final String value;
 
-        Kind(final String code) {
+        Kind(final String code,
+             final String value) {
             this.code = code;
+            this.value = value;
         }
 
         public String code() {
             return code;
+        }
+
+        public static Kind fromValue(final String value) {
+            for (Kind kind : Kind.values()) {
+                if (kind.value.equals(value)) {
+                    return kind;
+                }
+            }
+            throw new IllegalArgumentException(value);
         }
 
         public static FunctionDefinition.Kind determineFromString(final String code) {

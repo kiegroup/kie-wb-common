@@ -28,7 +28,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputData;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
@@ -49,7 +48,6 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
 
     @Override
     public Node<View<InputData>, ?> nodeFromDMN(final JSITInputData dmn,
-                                                final JSITDefinitions jsiDefinitions,
                                                 final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         @SuppressWarnings("unchecked")
         final Node<View<InputData>, ?> node = (Node<View<InputData>, ?>) factoryManager.newElement(dmn.getId(),
@@ -58,7 +56,6 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(),
-                                                                                                         jsiDefinitions,
                                                                                                          dmn);
         final InputData inputData = new InputData(id,
                                                   description,
@@ -87,9 +84,6 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         result.setName(source.getName().getValue());
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
-        if (variable != null) {
-            variable.setParent(result);
-        }
         result.setVariable(variable);
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
         return result;

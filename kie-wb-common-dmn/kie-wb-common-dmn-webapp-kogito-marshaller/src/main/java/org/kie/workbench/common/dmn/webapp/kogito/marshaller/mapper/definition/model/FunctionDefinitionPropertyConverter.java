@@ -35,7 +35,6 @@ import org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDo
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionKind;
@@ -46,18 +45,16 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class FunctionDefinitionPropertyConverter {
 
     public static FunctionDefinition wbFromDMN(final JSITFunctionDefinition dmn,
-                                               final JSITDefinitions jsiDefinitions,
                                                final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (dmn == null) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
         final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
         final Expression expression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                             Js.uncheckedCast(dmn),
-                                                                            jsiDefinitions,
                                                                             hasComponentWidthsConsumer);
         final FunctionDefinition result = new FunctionDefinition(id,
                                                                  description,
@@ -69,7 +66,7 @@ public class FunctionDefinitionPropertyConverter {
 
         //JSITFunctionKind is a String JSO so convert into the real type
         final String sKind = Js.uncheckedCast(dmn.getKind());
-        final JSITFunctionKind kind = JSITFunctionKind.valueOf(sKind);
+        final Kind kind = Kind.fromValue(sKind);
         switch (kind) {
             case FEEL:
                 result.setKind(Kind.FEEL);
@@ -91,8 +88,7 @@ public class FunctionDefinitionPropertyConverter {
             final JsArrayLike<JSITInformationItem> jsiInformationItems = JsUtils.getUnwrappedElementsArray(wrappedInformationItems);
             for (int i = 0; i < jsiInformationItems.getLength(); i++) {
                 final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.getAt(i));
-                final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem,
-                                                                                               jsiDefinitions);
+                final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
                 if (iiConverted != null) {
                     iiConverted.setParent(result);
                 }
@@ -174,9 +170,6 @@ public class FunctionDefinitionPropertyConverter {
 
         for (InformationItem ii : wb.getFormalParameter()) {
             final JSITInformationItem iiConverted = InformationItemPropertyConverter.dmnFromWB(ii);
-            if (iiConverted != null) {
-                iiConverted.setParent(result);
-            }
             JsUtils.add(result.getFormalParameter(), iiConverted);
         }
 

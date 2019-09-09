@@ -42,7 +42,6 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 public class DefinitionsConverter {
 
     public static Definitions wbFromDMN(final JSITDefinitions dmn,
-                                        final JSITDefinitions jsiDefinitions,
                                         final Map<JSITImport, JSITDefinitions> importDefinitions,
                                         final Map<JSITImport, PMMLDocumentMetadata> pmmlDocuments) {
         if (dmn == null) {
@@ -86,8 +85,7 @@ public class DefinitionsConverter {
             final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JsUtils.getUnwrappedElementsArray(wrappedItemDefinitions);
             for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
                 final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
-                final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition,
-                                                                                                  jsiDefinitions);
+                final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition);
                 if (Objects.nonNull(itemDefConverted)) {
                     itemDefConverted.setParent(result);
                     result.getItemDefinition().add(itemDefConverted);
@@ -130,23 +128,18 @@ public class DefinitionsConverter {
         result.setName(defaultName);
         result.setNamespace(defaultNamespace);
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        result.getNsContext().putAll(wb.getNsContext());
-        result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
-                                          defaultNamespace);
+
+        //TODO {manstis} Do we need to copy wb.getNsContext() into dmn.otherAttributes()?
+        //result.getNsContext().putAll(wb.getNsContext());
+        //result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(), defaultNamespace);
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
-            if (itemDefConverted != null) {
-                itemDefConverted.setParent(result);
-            }
             JsUtils.add(result.getItemDefinition(), itemDefConverted);
         }
 
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
-            if (importConverted != null) {
-                importConverted.setParent(result);
-            }
             JsUtils.add(result.getImport(), importConverted);
         }
 

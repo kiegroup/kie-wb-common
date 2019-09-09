@@ -20,7 +20,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -28,7 +27,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 interface NodeConverter<D, W extends org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase> {
 
     Node<View<W>, ?> nodeFromDMN(final D source,
-                                 final JSITDefinitions jsiDefinitions,
                                  final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer);
 
     D dmnFromNode(final Node<View<W>, ?> source,

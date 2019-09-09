@@ -26,15 +26,13 @@ import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionRule;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class DecisionRulePropertyConverter {
 
-    public static DecisionRule wbFromDMN(final JSITDecisionRule dmn,
-                                         final JSITDefinitions jsiDefinitions) {
+    public static DecisionRule wbFromDMN(final JSITDecisionRule dmn) {
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
 
@@ -60,7 +58,7 @@ public class DecisionRulePropertyConverter {
             final JsArrayLike<JSITLiteralExpression> jsiOutputEntries = JsUtils.getUnwrappedElementsArray(wrappedOutputEntries);
             for (int i = 0; i < jsiOutputEntries.getLength(); i++) {
                 final JSITLiteralExpression jsiOutputEntry = Js.uncheckedCast(jsiOutputEntries.getAt(i));
-                final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry, jsiDefinitions);
+                final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry);
                 if (Objects.nonNull(outputEntryConverted)) {
                     outputEntryConverted.setParent(result);
                     result.getOutputEntry().add(outputEntryConverted);
@@ -78,16 +76,10 @@ public class DecisionRulePropertyConverter {
 
         for (UnaryTests ie : wb.getInputEntry()) {
             final JSITUnaryTests inputEntryConverted = UnaryTestsPropertyConverter.dmnFromWB(ie);
-            if (inputEntryConverted != null) {
-                inputEntryConverted.setParent(result);
-            }
             JsUtils.add(result.getInputEntry(), inputEntryConverted);
         }
         for (LiteralExpression oe : wb.getOutputEntry()) {
             final JSITLiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.dmnFromWB(oe);
-            if (outputEntryConverted != null) {
-                outputEntryConverted.setParent(result);
-            }
             JsUtils.add(result.getOutputEntry(), outputEntryConverted);
         }
 
