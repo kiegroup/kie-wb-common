@@ -46,6 +46,7 @@ import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.project.client.resources.i18n.DMNProjectClientConstants;
 import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -55,6 +56,7 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.impl.DefaultEditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
@@ -116,6 +118,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Mock
     private DMNEditorSession dmnEditorSession;
+
+    @Mock
+    private DefaultEditorSession defaultEditorSession;
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -504,8 +509,30 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Test
     public void testOnMultiPageEditorSelectedPageEvent() {
+
+        final SessionPresenter sessionPresenter = mock(SessionPresenter.class);
+
+        doReturn(sessionPresenter).when(diagramEditor).getSessionPresenter();
+        when(sessionPresenter.getInstance()).thenReturn(dmnEditorSession);
+        when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
+
         diagramEditor.onMultiPageEditorSelectedPageEvent(mock(MultiPageEditorSelectedPageEvent.class));
+
         verify(searchBarComponent).disableSearch();
+    }
+
+    @Test
+    public void testOnMultiPageEditorSelectedPageEventWhenEditorIsNotInTheSameSession() {
+
+        final SessionPresenter sessionPresenter = mock(SessionPresenter.class);
+
+        doReturn(sessionPresenter).when(diagramEditor).getSessionPresenter();
+        when(sessionPresenter.getInstance()).thenReturn(dmnEditorSession);
+        when(sessionManager.getCurrentSession()).thenReturn(defaultEditorSession);
+
+        diagramEditor.onMultiPageEditorSelectedPageEvent(mock(MultiPageEditorSelectedPageEvent.class));
+
+        verify(searchBarComponent, never()).disableSearch();
     }
 
     @Test
