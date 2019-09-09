@@ -31,7 +31,7 @@ public class OutputClauseUnaryTestsPropertyConverter {
         if (dmn == null) {
             return null;
         }
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final QName key = new QName(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
                                     ConstraintType.CONSTRAINT_KEY,
                                     DMNModelInstrumentedBase.Namespace.KIE.getPrefix());

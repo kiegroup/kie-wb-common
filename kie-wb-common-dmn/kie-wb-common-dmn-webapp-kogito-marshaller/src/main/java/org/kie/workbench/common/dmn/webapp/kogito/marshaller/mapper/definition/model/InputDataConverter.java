@@ -54,7 +54,7 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
         @SuppressWarnings("unchecked")
         final Node<View<InputData>, ?> node = (Node<View<InputData>, ?>) factoryManager.newElement(dmn.getId(),
                                                                                                    getDefinitionId(InputData.class)).asNode();
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(),

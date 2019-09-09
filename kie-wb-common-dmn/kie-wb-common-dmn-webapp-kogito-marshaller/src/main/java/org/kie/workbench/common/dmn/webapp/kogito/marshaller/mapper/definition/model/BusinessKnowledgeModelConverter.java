@@ -72,7 +72,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         @SuppressWarnings("unchecked")
         final Node<View<BusinessKnowledgeModel>, ?> node = (Node<View<BusinessKnowledgeModel>, ?>) factoryManager.newElement(dmn.getId(),
                                                                                                                              getDefinitionId(BusinessKnowledgeModel.class)).asNode();
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), jsiDefinitions, dmn);

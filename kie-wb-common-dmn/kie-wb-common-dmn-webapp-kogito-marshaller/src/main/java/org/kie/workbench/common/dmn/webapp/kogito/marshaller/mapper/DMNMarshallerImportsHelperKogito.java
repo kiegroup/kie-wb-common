@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper;
 
-
 import org.kie.workbench.common.dmn.api.marshalling.DMNMarshallerImportsHelper;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;

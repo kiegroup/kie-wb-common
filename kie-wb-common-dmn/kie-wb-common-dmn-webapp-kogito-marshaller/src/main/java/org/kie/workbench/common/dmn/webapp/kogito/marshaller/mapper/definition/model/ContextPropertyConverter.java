@@ -43,7 +43,7 @@ public class ContextPropertyConverter {
                                     final JSITExpression parent,
                                     final JSITDefinitions jsiDefinitions,
                                     final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
         final Context result = new Context(id,
@@ -54,7 +54,7 @@ public class ContextPropertyConverter {
             final JsArrayLike<JSITContextEntry> jsiContextEntries = JsUtils.getUnwrappedElementsArray(wrappedContextEntries);
             for (int i = 0; i < jsiContextEntries.getLength(); i++) {
                 final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
-                final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, jsiDefinitions,  hasComponentWidthsConsumer);
+                final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, jsiDefinitions, hasComponentWidthsConsumer);
                 if (Objects.nonNull(ceConverted)) {
                     ceConverted.setParent(result);
                     result.getContextEntry().add(ceConverted);

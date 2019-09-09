@@ -43,7 +43,7 @@ public class ItemDefinitionPropertyConverter {
             return null;
         }
 
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Name name = new Name(dmn.getName());
 
         final Description description = wbDescriptionFromDMN(dmn);

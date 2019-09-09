@@ -40,7 +40,7 @@ public class ListPropertyConverter {
     public static List wbFromDMN(final JSITList dmn,
                                  final JSITDefinitions jsiDefinitions,
                                  final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(),
                                                                dmn,

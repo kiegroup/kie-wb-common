@@ -35,7 +35,7 @@ public class DecisionRulePropertyConverter {
 
     public static DecisionRule wbFromDMN(final JSITDecisionRule dmn,
                                          final JSITDefinitions jsiDefinitions) {
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
 
         final DecisionRule result = new DecisionRule();

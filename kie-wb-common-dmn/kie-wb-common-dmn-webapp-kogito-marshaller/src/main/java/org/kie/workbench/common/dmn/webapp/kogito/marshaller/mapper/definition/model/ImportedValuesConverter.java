@@ -18,11 +18,9 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import org.kie.workbench.common.dmn.api.definition.model.ImportedValues;
 import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
-import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImportedValues;
-import org.kie.workbench.common.stunner.core.util.UUID;
 
 public class ImportedValuesConverter {
 
@@ -40,12 +38,10 @@ public class ImportedValuesConverter {
                                                      importType,
                                                      importedElement,
                                                      expressionLanguage);
-        final String id = dmn.getId();
         final String name = dmn.getName();
         final String description = dmn.getDescription();
-        final String fallbackUUID = UUID.uuid();
-        wb.setId(new Id(id != null ? id : fallbackUUID));
-        wb.setName(new Name(name != null ? name : fallbackUUID));
+        wb.setId(IdPropertyConverter.wbFromDMN(dmn.getId()));
+        wb.setName(new Name(name != null ? name : wb.getId().getValue()));
         wb.setDescription(DescriptionPropertyConverter.wbFromDMN(description));
         return wb;
     }

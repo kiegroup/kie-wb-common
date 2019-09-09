@@ -44,7 +44,7 @@ public class DecisionTablePropertyConverter {
 
     public static DecisionTable wbFromDMN(final JSITDecisionTable dmn,
                                           final JSITDefinitions jsiDefinitions) {
-        final Id id = new Id(dmn.getId());
+        final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
 
