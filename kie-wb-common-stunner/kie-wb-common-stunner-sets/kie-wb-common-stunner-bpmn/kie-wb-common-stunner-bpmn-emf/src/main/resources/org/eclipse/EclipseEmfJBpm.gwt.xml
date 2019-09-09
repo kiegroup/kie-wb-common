@@ -23,5 +23,6 @@
   <source path="bpmn2"/>
   <source path="dd"/>
   <source path="jbpm"/>
+  <source path="jbpm/util"/>
 
 </module>
