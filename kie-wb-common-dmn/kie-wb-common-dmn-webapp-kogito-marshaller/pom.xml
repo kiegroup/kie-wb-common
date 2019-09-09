@@ -98,7 +98,6 @@
                 <include>**</include>
               </includes>
               <excludes>
-                <exclude>DMNModelInstrumentedBase.java</exclude>
                 <exclude>ComponentsWidthsExtension.java</exclude>
               </excludes>
             </fileset>

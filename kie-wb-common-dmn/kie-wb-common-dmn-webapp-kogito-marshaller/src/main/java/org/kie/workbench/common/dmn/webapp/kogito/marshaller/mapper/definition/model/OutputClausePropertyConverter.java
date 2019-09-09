@@ -22,7 +22,6 @@ import org.kie.workbench.common.dmn.api.definition.model.OutputClauseUnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITOutputClause;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
@@ -30,14 +29,12 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class OutputClausePropertyConverter {
 
-    public static OutputClause wbFromDMN(final JSITOutputClause dmn,
-                                         final JSITDefinitions jsiDefinitions) {
+    public static OutputClause wbFromDMN(final JSITOutputClause dmn) {
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final OutputClauseUnaryTests outputValues = OutputClauseUnaryTestsPropertyConverter.wbFromDMN(dmn.getOutputValues());
-        final OutputClauseLiteralExpression defaultOutputEntry = OutputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getDefaultOutputEntry(),
-                                                                                                                          jsiDefinitions);
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
+        final OutputClauseLiteralExpression defaultOutputEntry = OutputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getDefaultOutputEntry());
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
 
         final OutputClause result = new OutputClause();
         result.setId(id);
@@ -65,13 +62,11 @@ public class OutputClausePropertyConverter {
 
         final JSITUnaryTests outputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getOutputValues());
         if (outputValues != null && StringUtils.nonEmpty(outputValues.getText())) {
-            outputValues.setParent(result);
             result.setOutputValues(outputValues);
         }
 
         final JSITLiteralExpression defaultOutputEntry = LiteralExpressionPropertyConverter.dmnFromWB(wb.getDefaultOutputEntry());
         if (defaultOutputEntry != null && StringUtils.nonEmpty(defaultOutputEntry.getText())) {
-            defaultOutputEntry.setParent(result);
             result.setDefaultOutputEntry(defaultOutputEntry);
         }
 

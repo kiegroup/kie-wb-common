@@ -24,20 +24,18 @@ import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImportedValues;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 
 public class LiteralExpressionPropertyConverter {
 
-    public static LiteralExpression wbFromDMN(final JSITLiteralExpression dmn,
-                                              final JSITDefinitions jsiDefinitions) {
+    public static LiteralExpression wbFromDMN(final JSITLiteralExpression dmn) {
         if (dmn == null) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn, jsiDefinitions);
+        final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
         final Text text = new Text(dmn.getText() != null ? dmn.getText() : "");
         final ExpressionLanguage expressionLanguage = ExpressionLanguagePropertyConverter.wbFromDMN(dmn.getExpressionLanguage());
         final ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
@@ -63,9 +61,6 @@ public class LiteralExpressionPropertyConverter {
                                             result::setTypeRef);
         result.setText(wb.getText().getValue());
         final JSITImportedValues importedValues = ImportedValuesConverter.dmnFromWB(wb.getImportedValues());
-        if (importedValues != null) {
-            importedValues.setParent(result);
-        }
         result.setImportedValues(importedValues);
         return result;
     }

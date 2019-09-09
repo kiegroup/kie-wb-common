@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 
 import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.determineImportType;
 
@@ -43,7 +44,7 @@ public final class ImportConverter {
         final Import result = createWBImport(dmn, definitions, pmmlDocument);
         final Map<QName, String> additionalAttributes = new HashMap<>();
         for (Map.Entry<javax.xml.namespace.QName, String> entry : dmn.getOtherAttributes().entrySet()) {
-            additionalAttributes.put(QNamePropertyConverter.wbFromDMN(entry.getKey().toString(), dmn, definitions), entry.getValue());
+            additionalAttributes.put(QNamePropertyConverter.wbFromDMN(entry.getKey().toString()), entry.getValue());
         }
         result.setAdditionalAttributes(additionalAttributes);
         final String name = dmn.getName();
@@ -52,7 +53,7 @@ public final class ImportConverter {
         result.setName(new Name(name));
         result.setDescription(DescriptionPropertyConverter.wbFromDMN(description));
 
-        dmn.getNsContext().forEach((key, value) -> result.getNsContext().put(key, value));
+        NameSpaceUtils.extractNamespacesKeyedByPrefix(dmn).forEach((key, value) -> result.getNsContext().put(key, value));
 
         return result;
     }
@@ -90,7 +91,8 @@ public final class ImportConverter {
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.getOtherAttributes().putAll(additionalAttributes);
 
-        wb.getNsContext().forEach((key, value) -> result.getNsContext().put(key, value));
+        //TODO {manstis} Do we need to copy wb.getNsContext() into dmn.otherAttributes()?
+        //wb.getNsContext().forEach((key, value) -> result.getNsContext().put(key, value));
 
         return result;
     }

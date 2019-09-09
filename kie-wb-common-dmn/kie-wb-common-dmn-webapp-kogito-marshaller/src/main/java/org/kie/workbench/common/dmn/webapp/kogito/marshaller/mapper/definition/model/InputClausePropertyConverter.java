@@ -21,7 +21,6 @@ import org.kie.workbench.common.dmn.api.definition.model.InputClauseLiteralExpre
 import org.kie.workbench.common.dmn.api.definition.model.InputClauseUnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputClause;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
@@ -29,11 +28,10 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class InputClausePropertyConverter {
 
-    public static InputClause wbFromDMN(final JSITInputClause dmn,
-                                        final JSITDefinitions jsiDefinitions) {
+    public static InputClause wbFromDMN(final JSITInputClause dmn) {
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
-        final InputClauseLiteralExpression inputExpression = InputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getInputExpression(), jsiDefinitions);
+        final InputClauseLiteralExpression inputExpression = InputClauseLiteralExpressionPropertyConverter.wbFromDMN(dmn.getInputExpression());
         final InputClauseUnaryTests inputValues = InputClauseUnaryTestsPropertyConverter.wbFromDMN(dmn.getInputValues());
 
         final InputClause result = new InputClause(id,
@@ -58,13 +56,9 @@ public class InputClausePropertyConverter {
         final JSITLiteralExpression expression = LiteralExpressionPropertyConverter.dmnFromWB(wb.getInputExpression());
         final JSITUnaryTests inputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getInputValues());
 
-        if (expression != null) {
-            expression.setParent(result);
-        }
         result.setInputExpression(expression);
 
         if (inputValues != null && StringUtils.nonEmpty(inputValues.getText())) {
-            inputValues.setParent(result);
             result.setInputValues(inputValues);
         }
 

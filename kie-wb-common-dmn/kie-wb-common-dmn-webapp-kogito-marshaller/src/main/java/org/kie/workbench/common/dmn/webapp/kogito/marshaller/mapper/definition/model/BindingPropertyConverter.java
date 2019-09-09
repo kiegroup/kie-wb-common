@@ -25,7 +25,6 @@ import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBinding;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -34,16 +33,14 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class BindingPropertyConverter {
 
     public static Binding wbFromDMN(final JSITBinding dmn,
-                                    final JSITDefinitions jsiDefinitions,
                                     final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
         if (dmn == null) {
             return null;
         }
-        final InformationItem convertedParameter = InformationItemPropertyConverter.wbFromDMN(dmn.getParameter(), jsiDefinitions);
+        final InformationItem convertedParameter = InformationItemPropertyConverter.wbFromDMN(dmn.getParameter());
         final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
         final Expression convertedExpression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                                      Js.uncheckedCast(dmn),
-                                                                                     jsiDefinitions,
                                                                                      hasComponentWidthsConsumer);
 
         final Binding result = new Binding();
@@ -67,14 +64,7 @@ public class BindingPropertyConverter {
         final JSITInformationItem convertedParameter = InformationItemPropertyConverter.dmnFromWB(wb.getParameter());
         final JSITExpression convertedExpression = ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                                          componentWidthsConsumer);
-
-        if (convertedParameter != null) {
-            convertedParameter.setParent(result);
-        }
         result.setParameter(convertedParameter);
-        if (convertedExpression != null) {
-            convertedExpression.setParent(result);
-        }
         result.setExpression(convertedExpression);
 
         return result;

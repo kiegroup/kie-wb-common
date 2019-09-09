@@ -25,7 +25,6 @@ import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContextEntry;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -34,13 +33,11 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 public class ContextEntryPropertyConverter {
 
     public static ContextEntry wbFromDMN(final JSITContextEntry dmn,
-                                         final JSITDefinitions jsiDefinitions,
                                          final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        final InformationItem variable = InformationItemPropertyConverter.wbFromDMN(dmn.getVariable(), jsiDefinitions);
+        final InformationItem variable = InformationItemPropertyConverter.wbFromDMN(dmn.getVariable());
         final JSITExpression jsiExpression = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn.getExpression()));
         final Expression expression = ExpressionPropertyConverter.wbFromDMN(jsiExpression,
                                                                             Js.uncheckedCast(dmn),
-                                                                            jsiDefinitions,
                                                                             hasComponentWidthsConsumer);
 
         final ContextEntry result = new ContextEntry();
@@ -60,14 +57,8 @@ public class ContextEntryPropertyConverter {
         final JSITContextEntry result = new JSITContextEntry();
 
         final JSITInformationItem variable = InformationItemPropertyConverter.dmnFromWB(wb.getVariable());
-        if (variable != null) {
-            variable.setParent(result);
-        }
         final JSITExpression expression = ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                                 componentWidthsConsumer);
-        if (expression != null) {
-            expression.setParent(result);
-        }
 
         result.setVariable(variable);
         result.setExpression(expression);
