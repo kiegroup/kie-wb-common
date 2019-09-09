@@ -23,7 +23,7 @@ public class GenericServiceTaskValueTest {
 
     @Test
     public void testConstructor() {
-        GenericServiceTaskValue a = new GenericServiceTaskValue("aaa", "bbb", "ccc");
+        GenericServiceTaskValue a = new GenericServiceTaskValue("aaa", "bbb", "ccc", "ddd", "eee");
         Assert.assertEquals("aaa", a.getServiceImplementation());
         Assert.assertEquals("bbb", a.getServiceInterface());
         Assert.assertEquals("ccc", a.getServiceOperation());

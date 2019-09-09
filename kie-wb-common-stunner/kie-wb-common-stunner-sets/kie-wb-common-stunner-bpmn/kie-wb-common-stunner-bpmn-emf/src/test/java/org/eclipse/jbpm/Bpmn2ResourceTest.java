@@ -100,13 +100,13 @@ public class Bpmn2ResourceTest {
 
     @Test
     public void testCreateLoadOptions() {
-        Map<Object, Object> options = Bpmn2Resource.createLoadOptions();
+        Map<Object, Object> options = tested.createLoadOptions();
         assertCreateLoadOptions(options);
     }
 
     @Test
     public void testCreateSaveOptions() {
-        Map<Object, Object> options = Bpmn2Resource.createSaveOptions();
+        Map<Object, Object> options = tested.createSaveOptions();
         assertCreateSaveOptions(options);
     }
 

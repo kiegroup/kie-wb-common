@@ -27,7 +27,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 public class GenericServiceTaskValue {
 
-    private static final String JAVA = "Java"; // Default value
+    public static final String JAVA = "Java"; // Default value
 
     private String serviceImplementation = JAVA;
 
@@ -35,16 +35,24 @@ public class GenericServiceTaskValue {
 
     private String serviceOperation = "";
 
+    private String inMessageStructure = "";
+
+    private String outMessagetructure = "";
+
     public GenericServiceTaskValue() {
 
     }
 
     public GenericServiceTaskValue(@MapsTo("serviceImplementation") final String serviceImplementation,
                                    @MapsTo("serviceInterface") final String serviceInterface,
-                                   @MapsTo("serviceOperation") final String serviceOperation) {
+                                   @MapsTo("serviceOperation") final String serviceOperation,
+                                   @MapsTo("inMessageStructure") final String inMessageStructure,
+                                   @MapsTo("outMessagetructure") final String outMessagetructure) {
         this.serviceImplementation = serviceImplementation;
         this.serviceInterface = serviceInterface;
         this.serviceOperation = serviceOperation;
+        this.inMessageStructure = inMessageStructure;
+        this.outMessagetructure = outMessagetructure;
     }
 
     public String getServiceImplementation() {
@@ -69,6 +77,22 @@ public class GenericServiceTaskValue {
 
     public void setServiceOperation(String serviceOperation) {
         this.serviceOperation = serviceOperation;
+    }
+
+    public String getInMessageStructure() {
+        return inMessageStructure;
+    }
+
+    public void setInMessageStructure(String inMessageStructure) {
+        this.inMessageStructure = inMessageStructure;
+    }
+
+    public String getOutMessagetructure() {
+        return outMessagetructure;
+    }
+
+    public void setOutMessagetructure(String outMessagetructure) {
+        this.outMessagetructure = outMessagetructure;
     }
 
     @Override

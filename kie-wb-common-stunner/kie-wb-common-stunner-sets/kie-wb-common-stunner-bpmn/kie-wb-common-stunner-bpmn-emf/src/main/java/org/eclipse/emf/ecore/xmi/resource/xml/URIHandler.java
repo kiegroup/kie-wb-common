@@ -20,6 +20,7 @@ import org.eclipse.emf.common.util.URI;
 
 public class URIHandler {
 
+
     public static class PlatformSchemeAware extends URIHandler {
 
         @Override
@@ -49,5 +50,9 @@ public class URIHandler {
             }
         }
         return uri;
+    }
+
+    public URI getBaseURI() {
+        return baseURI;
     }
 }

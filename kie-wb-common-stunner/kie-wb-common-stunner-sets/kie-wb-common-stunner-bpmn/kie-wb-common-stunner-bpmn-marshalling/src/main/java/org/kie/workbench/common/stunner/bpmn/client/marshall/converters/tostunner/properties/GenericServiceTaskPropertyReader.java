@@ -19,6 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 import java.util.Optional;
 
 import org.eclipse.bpmn2.Interface;
+import org.eclipse.bpmn2.ItemDefinition;
+import org.eclipse.bpmn2.Message;
 import org.eclipse.bpmn2.Operation;
 import org.eclipse.bpmn2.ServiceTask;
 import org.eclipse.bpmn2.di.BPMNDiagram;
@@ -30,7 +32,7 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPropertyReader {
 
-    public static final String JAVA = "Java";
+    public static final String JAVA = GenericServiceTaskValue.JAVA;
     public static final String WEB_SERVICE = "WebService";
     private final ServiceTask task;
 
@@ -57,6 +59,19 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
                         .map(Operation::getName)
                         .orElse(null));
         value.setServiceOperation(operation);
+
+        //todo: checks
+        value.setInMessageStructure(Optional.ofNullable(task.getOperationRef())
+                                            .map(Operation::getInMessageRef)
+                                            .map(Message::getItemRef)
+                                            .map(ItemDefinition::getStructureRef)
+                                            .orElse(null));
+
+        value.setOutMessagetructure(Optional.ofNullable(task.getOperationRef())
+                                            .map(Operation::getOutMessageRef)
+                                            .map(Message::getItemRef)
+                                            .map(ItemDefinition::getStructureRef)
+                                            .orElse(null));
 
         final String serviceInterface = Optional.ofNullable(CustomAttribute.serviceInterface.of(task).get())
                 .filter(StringUtils::nonEmpty)

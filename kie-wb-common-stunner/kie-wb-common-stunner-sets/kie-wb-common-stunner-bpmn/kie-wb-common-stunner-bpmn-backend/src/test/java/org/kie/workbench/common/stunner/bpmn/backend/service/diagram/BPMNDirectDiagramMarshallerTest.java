@@ -466,6 +466,12 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("Java", serviceTaskValue.getServiceImplementation());
         assertEquals("org.acme.travels.service.FlightBookingService", serviceTaskValue.getServiceInterface());
         assertEquals("bookFlight", serviceTaskValue.getServiceOperation());
+        assertEquals("org.acme.travels.Trip", serviceTaskValue.getInMessageStructure());
+        assertEquals("org.acme.travels.Flight", serviceTaskValue.getOutMessagetructure());
+
+        String marshalled = tested.marshall(diagram);
+        assertTrue(marshalled.contains("structureRef=\"org.acme.travels.Flight\""));
+        assertTrue(marshalled.contains("structureRef=\"org.acme.travels.Trip\""));
     }
 
     @Test

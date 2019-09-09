@@ -14,6 +14,8 @@
  */
 package org.eclipse.bpmn2;
 
+import java.util.List;
+
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -94,7 +96,7 @@ public interface Operation extends BaseElement {
 	 *        extendedMetaData="kind='element' name='errorRef' namespace='http://www.omg.org/spec/BPMN/20100524/MODEL'"
 	 * @generated
 	 */
-	EList<org.eclipse.bpmn2.Error> getErrorRefs();
+	List<Error> getErrorRefs();
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.

@@ -28,15 +28,24 @@ import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.XMLParser;
 import org.eclipse.bpmn2.Bpmn2Package;
+import org.eclipse.bpmn2.QNameURIHandler;
 import org.eclipse.bpmn2.di.BpmnDiPackage;
 import org.eclipse.dd.dc.DcPackage;
 import org.eclipse.dd.di.DiPackage;
 import org.eclipse.emf.common.util.Reflect;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.URIServiceCallback;
+import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
+import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.resource.impl.URIHandlerImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
+import org.eclipse.emf.ecore.xmi.resource.xml.URIHandler;
 import org.eclipse.emf.ecore.xmi.resource.xml.XMLSave;
 import org.eclipse.emf.ecore.xmi.util.ElementHandler;
 import org.jboss.drools.DroolsPackage;
@@ -50,6 +59,8 @@ public class Bpmn2Resource extends XMLResourceImpl {
     static final String URI_BPMN_DI = "http://www.omg.org/spec/BPMN/20100524/DI";
     static final String URI_DROOLS = "http://www.jboss.org/drools";
     static final String URI_BPSIM = "http://www.bpsim.org/schemas/1.0";
+    private QNameURIHandler uriHandler;
+    private BpmnXmlHelper xmlHelper = new BpmnXmlHelper(this);
 
     static {
         initPackageRegistry(EPackage.Registry.INSTANCE,
@@ -63,10 +74,29 @@ public class Bpmn2Resource extends XMLResourceImpl {
     }
 
     public static Bpmn2Resource newResource() {
-        return new Bpmn2Resource();
+        ResourceSetImpl resourceSet = new ResourceSetImpl();
+        Resource.Factory.Registry resourceFactoryRegistry = resourceSet.getResourceFactoryRegistry();
+        resourceFactoryRegistry.getExtensionToFactoryMap().put(
+                Resource.Factory.Registry.DEFAULT_EXTENSION, new ResourceFactoryImpl() {
+
+                    @Override
+                    public Resource createResource(URI uri) {
+                        return new Bpmn2Resource(uri);
+                    }
+                });
+
+
+        final Bpmn2Resource resource = (Bpmn2Resource) resourceSet
+                .createResource(URI.createURI("file://dummyUriWithValidSuffix.xml"));
+
+        return resource;
     }
 
-    private Bpmn2Resource() {
+    private Bpmn2Resource(URI uri) {
+        super(uri);
+        this.uriHandler = new QNameURIHandler(xmlHelper);
+        this.getDefaultLoadOptions().put(XMLResource.OPTION_URI_HANDLER, this.uriHandler);
+        this.getDefaultSaveOptions().put(XMLResource.OPTION_URI_HANDLER, this.uriHandler);
 
     }
 
@@ -110,7 +140,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
         return GWT.create(XMLParser.class);
     }
 
-    static Map<Object, Object> createSaveOptions() {
+    Map<Object, Object> createSaveOptions() {
         final Map<Object, Object> options = createDefaultOptions();
         options.put(XMLResource.OPTION_DECLARE_XML, true);
         options.put(XMLResource.OPTION_ELEMENT_HANDLER, new ElementHandler(true));
@@ -118,7 +148,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
         return options;
     }
 
-    static Map<Object, Object> createLoadOptions() {
+    Map<Object, Object> createLoadOptions() {
         Map<Object, Object> options = createDefaultOptions();
         options.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap<Object, Object>());
         options.put(XMLResource.OPTION_DOM_USE_NAMESPACES_IN_SCOPE, true);
@@ -155,7 +185,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
         ColorPackageImpl.init();
     }
 
-    private static Map<Object, Object> createDefaultOptions() {
+    private Map<Object, Object> createDefaultOptions() {
         final Map<Object, Object> options = new HashMap<Object, Object>();
         options.put(XMLResource.OPTION_ENCODING, "UTF-8");
         options.put(XMLResource.OPTION_EXTENDED_META_DATA, new XmlExtendedMetadata());
@@ -163,6 +193,10 @@ public class Bpmn2Resource extends XMLResourceImpl {
         options.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, true);
         options.put(XMLResource.OPTION_DISABLE_NOTIFY, true);
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
+        //options.put(XMLResource.OPTION_RESOURCE_ENTITY_HANDLER, new ResourceEntityHandler());
+        options.put(XMLResource.OPTION_URI_HANDLER, new URIHandler.PlatformSchemeAware());
+        options.put(XMLResource.OPTION_URI_HANDLER, uriHandler);
+        options.put(XMLResource.OPTION_URI_HANDLER, uriHandler);
         return options;
     }
 }

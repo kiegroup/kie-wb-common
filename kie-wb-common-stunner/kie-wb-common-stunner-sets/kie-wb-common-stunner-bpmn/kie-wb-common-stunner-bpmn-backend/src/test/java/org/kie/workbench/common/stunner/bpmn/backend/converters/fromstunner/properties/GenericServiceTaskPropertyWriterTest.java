@@ -54,9 +54,9 @@ public class GenericServiceTaskPropertyWriterTest {
 
     @Test
     public void setAndTestJava() {
-        w.setServiceImplementation("Java");
-        w.setServiceOperation("setServiceOperation");
-        w.setServiceInterface("setServiceInterface");
+
+//        w.setServiceOperation("setServiceOperation");
+
         w.setSLADueDate(SLA_DUE_DATE);
         w.setAsync(false);
         w.setAdHocAutostart(false);
@@ -73,9 +73,9 @@ public class GenericServiceTaskPropertyWriterTest {
 
     @Test
     public void setAndTestWebService() {
-        w.setServiceImplementation("WebService");
-        w.setServiceOperation("setServiceOperation");
-        w.setServiceInterface("setServiceInterface");
+
+//        w.setServiceOperation("setServiceOperation");
+
         w.setSLADueDate(SLA_DUE_DATE);
         w.setAsync(false);
         w.setAdHocAutostart(false);

@@ -53,9 +53,8 @@ public class GenericServiceTaskPropertyReaderTest {
     public void setUp() {
         ServiceTask serviceTask = bpmn2.createServiceTask();
         GenericServiceTaskPropertyWriter writer = new GenericServiceTaskPropertyWriter(serviceTask, null);
-        writer.setServiceImplementation("WebService");
-        writer.setServiceInterface("setServiceInterface");
-        writer.setServiceOperation("setServiceOperation");
+
+//        writer.setServiceOperation("setServiceOperation");
         writer.setSLADueDate(SLA_DUE_DATE);
         writer.setAsync(false);
         writer.setAdHocAutostart(true);
