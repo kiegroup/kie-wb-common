@@ -83,17 +83,14 @@ public class FunctionDefinitionPropertyConverter {
                 break;
         }
 
-        final JsArrayLike<JSITInformationItem> wrappedInformationItems = dmn.getFormalParameter();
-        if (Objects.nonNull(wrappedInformationItems)) {
-            final JsArrayLike<JSITInformationItem> jsiInformationItems = JsUtils.getUnwrappedElementsArray(wrappedInformationItems);
-            for (int i = 0; i < jsiInformationItems.getLength(); i++) {
-                final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.getAt(i));
-                final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
-                if (iiConverted != null) {
-                    iiConverted.setParent(result);
-                }
-                result.getFormalParameter().add(iiConverted);
+        final JsArrayLike<JSITInformationItem> jsiInformationItems = JSITFunctionDefinition.getFormalParameter(dmn);
+        for (int i = 0; i < jsiInformationItems.getLength(); i++) {
+            final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.getAt(i));
+            final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
+            if (iiConverted != null) {
+                iiConverted.setParent(result);
             }
+            result.getFormalParameter().add(iiConverted);
         }
 
         return result;

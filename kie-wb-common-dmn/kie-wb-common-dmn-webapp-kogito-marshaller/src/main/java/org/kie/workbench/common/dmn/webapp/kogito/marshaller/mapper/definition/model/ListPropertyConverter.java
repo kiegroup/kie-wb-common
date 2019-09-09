@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -43,24 +42,22 @@ public class ListPropertyConverter {
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
 
         final java.util.List<Expression> expression = new ArrayList<>();
-        final JsArrayLike<JSITExpression> wrappedExpressions = dmn.getExpression();
         final List result = new List(id, description, typeRef, expression);
-        if (Objects.nonNull(wrappedExpressions)) {
-            final JsArrayLike<JSITExpression> jsiExpressions = JsUtils.getUnwrappedElementsArray(wrappedExpressions);
-            for (int i = 0; i < jsiExpressions.getLength(); i++) {
-                final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.getAt(i));
-                Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
-                                                                              Js.uncheckedCast(dmn),
-                                                                              hasComponentWidthsConsumer);
-                expression.add(eConverted);
-            }
+        final JsArrayLike<JSITExpression> jsiExpressions = JSITList.getExpression(dmn);
+        for (int i = 0; i < jsiExpressions.getLength(); i++) {
+            final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.getAt(i));
+            Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
+                                                                          Js.uncheckedCast(dmn),
+                                                                          hasComponentWidthsConsumer);
+            expression.add(eConverted);
+        }
 
-            for (Expression e : expression) {
-                if (e != null) {
-                    e.setParent(result);
-                }
+        for (Expression e : expression) {
+            if (e != null) {
+                e.setParent(result);
             }
         }
+
         return result;
     }
 

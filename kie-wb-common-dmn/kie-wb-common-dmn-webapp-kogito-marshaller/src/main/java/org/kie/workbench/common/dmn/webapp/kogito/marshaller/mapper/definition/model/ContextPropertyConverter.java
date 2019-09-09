@@ -47,16 +47,13 @@ public class ContextPropertyConverter {
         final Context result = new Context(id,
                                            description,
                                            typeRef);
-        final JsArrayLike<JSITContextEntry> wrappedContextEntries = dmn.getContextEntry();
-        if (Objects.nonNull(wrappedContextEntries)) {
-            final JsArrayLike<JSITContextEntry> jsiContextEntries = JsUtils.getUnwrappedElementsArray(wrappedContextEntries);
-            for (int i = 0; i < jsiContextEntries.getLength(); i++) {
-                final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
-                final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, hasComponentWidthsConsumer);
-                if (Objects.nonNull(ceConverted)) {
-                    ceConverted.setParent(result);
-                    result.getContextEntry().add(ceConverted);
-                }
+        final JsArrayLike<JSITContextEntry> jsiContextEntries = JSITContext.getContextEntry(dmn);
+        for (int i = 0; i < jsiContextEntries.getLength(); i++) {
+            final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
+            final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, hasComponentWidthsConsumer);
+            if (Objects.nonNull(ceConverted)) {
+                ceConverted.setParent(result);
+                result.getContextEntry().add(ceConverted);
             }
         }
 
