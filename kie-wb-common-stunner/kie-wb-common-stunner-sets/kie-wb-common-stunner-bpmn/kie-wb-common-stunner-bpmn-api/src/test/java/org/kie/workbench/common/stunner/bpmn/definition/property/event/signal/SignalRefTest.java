@@ -40,7 +40,13 @@ public class SignalRefTest {
 
     private static final String MVEL_INVALID_EXPRESSION = "#{.expression}";
 
-    private static final String MVEL_SYSTEM_PROPERTY = "#{System.getProperty(\"search.value\", \"default.value\")}";
+    private static final String MVEL_PARAM_EXPRESSION = "#{System.getProperty(\"search.value\", \"default.value\")}";
+
+    private static final String MIXED_MVEL_EXPRESSION = VALID_REF + "-" + MVEL_EXPRESSION ;
+
+    private static final String MIXED_MVEL_PARAM_EXPRESSION = VALID_REF + "-" + MVEL_PARAM_EXPRESSION ;
+
+    private static final String MIXED_EXPRESSION = VALID_REF + "-" + VALID_REF ;
 
     private Validator validator;
 
@@ -77,8 +83,8 @@ public class SignalRefTest {
     }
 
     @Test
-    public void testSignalRefWithMvelSystemProperty() {
-        SignalRef signalRef = new SignalRef(MVEL_SYSTEM_PROPERTY);
+    public void testSignalRefWithMvelParameterExpression() {
+        SignalRef signalRef = new SignalRef(MVEL_PARAM_EXPRESSION);
 
         Set<ConstraintViolation<SignalRef>> validations = validator.validate(signalRef);
 
@@ -110,5 +116,32 @@ public class SignalRefTest {
         Set<ConstraintViolation<SignalRef>> validations = validator.validate(signalRef);
 
         assertFalse(validations.isEmpty());
+    }
+
+    @Test
+    public void testSignalRefWithMixedMvelExpression() {
+        SignalRef signalRef = new SignalRef(MIXED_MVEL_EXPRESSION);
+
+        Set<ConstraintViolation<SignalRef>> validations = validator.validate(signalRef);
+
+        assertTrue(validations.isEmpty());
+    }
+
+    @Test
+    public void testSignalRefWithMixedMvelParamExpression() {
+        SignalRef signalRef = new SignalRef(MIXED_MVEL_PARAM_EXPRESSION);
+
+        Set<ConstraintViolation<SignalRef>> validations = validator.validate(signalRef);
+
+        assertTrue(validations.isEmpty());
+    }
+
+    @Test
+    public void testSignalRefWithMixedExpression() {
+        SignalRef signalRef = new SignalRef(MIXED_EXPRESSION);
+
+        Set<ConstraintViolation<SignalRef>> validations = validator.validate(signalRef);
+
+        assertTrue(validations.isEmpty());
     }
 }
