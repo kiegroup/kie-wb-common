@@ -46,7 +46,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -108,7 +108,7 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
     @Override
     @SuppressWarnings("unchecked")
     public JSITDecision dmnFromNode(final Node<View<Decision>, ?> node,
-                                    final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                    final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final Decision source = node.getContent().getDefinition();
         final JSITDecision d = new JSITDecision();
         d.setId(source.getId().getValue());

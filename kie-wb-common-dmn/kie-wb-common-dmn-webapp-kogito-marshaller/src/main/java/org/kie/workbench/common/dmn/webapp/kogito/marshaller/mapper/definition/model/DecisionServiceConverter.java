@@ -43,7 +43,7 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -102,7 +102,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
     @Override
     @SuppressWarnings("unchecked")
     public JSITDecisionService dmnFromNode(final Node<View<DecisionService>, ?> node,
-                                           final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                           final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final DecisionService source = node.getContent().getDefinition();
         final JSITDecisionService ds = new JSITDecisionService();
         ds.setId(source.getId().getValue());

@@ -41,7 +41,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -103,7 +103,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
     @Override
     @SuppressWarnings("unchecked")
     public JSITBusinessKnowledgeModel dmnFromNode(final Node<View<BusinessKnowledgeModel>, ?> node,
-                                                  final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                                  final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final BusinessKnowledgeModel source = node.getContent().getDefinition();
         final JSITBusinessKnowledgeModel result = new JSITBusinessKnowledgeModel();
         result.setId(source.getId().getValue());
@@ -119,7 +119,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         if (Objects.nonNull(wbFunctionDefinition)) {
             final String uuid = wbFunctionDefinition.getId().getValue();
             if (Objects.nonNull(uuid)) {
-                final JSIComponentWidths componentWidths = new JSIComponentWidths();
+                final JSITComponentWidths componentWidths = new JSITComponentWidths();
                 componentWidths.setDmnElementRef(uuid);
                 //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
                 //componentWidths.setWidth(wb.getComponentWidths());

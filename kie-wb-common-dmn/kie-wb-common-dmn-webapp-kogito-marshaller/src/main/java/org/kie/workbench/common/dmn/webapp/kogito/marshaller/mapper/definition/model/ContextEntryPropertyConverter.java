@@ -27,7 +27,7 @@ import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContextEntry;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class ContextEntryPropertyConverter {
@@ -53,7 +53,7 @@ public class ContextEntryPropertyConverter {
     }
 
     public static JSITContextEntry dmnFromWB(final ContextEntry wb,
-                                             final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                             final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final JSITContextEntry result = new JSITContextEntry();
 
         final JSITInformationItem variable = InformationItemPropertyConverter.dmnFromWB(wb.getVariable());

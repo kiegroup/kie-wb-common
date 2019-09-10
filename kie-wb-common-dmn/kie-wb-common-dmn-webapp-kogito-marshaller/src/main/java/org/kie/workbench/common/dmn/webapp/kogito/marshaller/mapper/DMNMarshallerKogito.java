@@ -96,8 +96,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JS
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNLabel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNStyle;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentsWidthsExtension;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.AssociationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DecisionConverter;
@@ -473,16 +473,16 @@ public class DMNMarshallerKogito {
         textAnnotations.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
 
         //Copy ComponentWidths information
-        final Optional<JSIComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
+        final Optional<JSITComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
         extension.ifPresent(componentsWidthsExtension -> {
             //This condition is required because a node with ComponentsWidthsExtension
             //can be imported from another diagram but the extension is not imported or present in this diagram.
             //TODO: This will be fixed in this JIRA: https://issues.jboss.org/browse/DROOLS-3934
             if (Objects.nonNull(componentsWidthsExtension.getComponentWidths())) {
                 hasComponentWidthsMap.entrySet().forEach(es -> {
-                    final JsArrayLike<JSIComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();
+                    final JsArrayLike<JSITComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();
                     for (int i = 0; i < jsiComponentWidths.getLength(); i++) {
-                        final JSIComponentWidths jsiWidths = jsiComponentWidths.getAt(i);
+                        final JSITComponentWidths jsiWidths = jsiComponentWidths.getAt(i);
                         if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
                             final List<Double> widths = es.getValue().getComponentWidths();
                             widths.clear();
@@ -810,7 +810,7 @@ public class DMNMarshallerKogito {
                 Math.abs((viewHeight / 2) - magnetRelativeY) < CENTRE_TOLERANCE;
     }
 
-    private Optional<JSIComponentsWidthsExtension> findComponentsWidthsExtension(final Optional<JSIDMNDiagram> dmnDDDiagram) {
+    private Optional<JSITComponentsWidthsExtension> findComponentsWidthsExtension(final Optional<JSIDMNDiagram> dmnDDDiagram) {
         if (!dmnDDDiagram.isPresent()) {
             return Optional.empty();
         }
@@ -826,9 +826,10 @@ public class DMNMarshallerKogito {
         final JsArrayLike<Object> extensions = dmnDDExtensions.getAny();
         if (!Objects.isNull(extensions)) {
             for (int i = 0; i < extensions.getLength(); i++) {
-                final Object extension = extensions.getAt(i);
-                if (JSIComponentsWidthsExtension.instanceOf(extension)) {
-                    final JSIComponentsWidthsExtension jsiExtension = Js.uncheckedCast(extension);
+                final Object wrapped = extensions.getAt(i);
+                final Object extension = JsUtils.getUnwrappedElement(wrapped);
+                if (JSITComponentsWidthsExtension.instanceOf(extension)) {
+                    final JSITComponentsWidthsExtension jsiExtension = Js.uncheckedCast(extension);
                     return Optional.of(jsiExtension);
                 }
             }
@@ -874,7 +875,7 @@ public class DMNMarshallerKogito {
         if (Objects.isNull(dmnDDDMNDiagram.getExtension())) {
             dmnDDDMNDiagram.setExtension(new JSIDiagramElement.JSIExtension());
         }
-        final JSIComponentsWidthsExtension componentsWidthsExtension = new JSIComponentsWidthsExtension();
+        final JSITComponentsWidthsExtension componentsWidthsExtension = new JSITComponentsWidthsExtension();
         final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
         //TODO {manstis} Need to setup ComponentWidthsExtension if it is not already present
         //if (Objects.isNull(extension.getAny())) {
@@ -882,7 +883,7 @@ public class DMNMarshallerKogito {
         //}
         //extension.setAny(ArrayUtils.add(extension.getAny().asArray(), componentsWidthsExtension));
 
-        final Consumer<JSIComponentWidths> componentWidthsConsumer = (cw) -> {
+        final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) -> {
             ArrayUtils.add(componentsWidthsExtension.getComponentWidths().asArray(), cw);
         };
 
@@ -1307,7 +1308,7 @@ public class DMNMarshallerKogito {
 
     @SuppressWarnings("unchecked")
     private JSITDRGElement stunnerToDMN(final Node<?, ?> node,
-                                        final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                        final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         if (node.getContent() instanceof View<?>) {
             View<?> view = (View<?>) node.getContent();
             if (view.getDefinition() instanceof InputData) {

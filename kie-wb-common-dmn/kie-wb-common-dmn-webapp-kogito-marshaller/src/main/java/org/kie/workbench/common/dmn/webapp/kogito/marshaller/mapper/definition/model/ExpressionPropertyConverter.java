@@ -39,7 +39,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 
 public class ExpressionPropertyConverter {
 
@@ -99,7 +99,7 @@ public class ExpressionPropertyConverter {
     }
 
     public static JSITExpression dmnFromWB(final Expression wb,
-                                           final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                           final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // reference above.
         if (wb == null) {
@@ -109,7 +109,7 @@ public class ExpressionPropertyConverter {
 
         final String uuid = wb.getId().getValue();
         if (Objects.nonNull(uuid)) {
-            final JSIComponentWidths componentWidths = new JSIComponentWidths();
+            final JSITComponentWidths componentWidths = new JSITComponentWidths();
             componentWidths.setDmnElementRef(uuid);
             //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
             //componentWidths.setWidth(wb.getComponentWidths());

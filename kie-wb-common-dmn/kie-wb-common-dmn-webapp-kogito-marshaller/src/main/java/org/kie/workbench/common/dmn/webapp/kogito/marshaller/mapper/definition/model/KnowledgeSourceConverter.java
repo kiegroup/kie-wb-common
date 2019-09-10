@@ -36,7 +36,7 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -84,7 +84,7 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
     @Override
     @SuppressWarnings("unchecked")
     public JSITKnowledgeSource dmnFromNode(final Node<View<KnowledgeSource>, ?> node,
-                                           final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                           final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final KnowledgeSource source = node.getContent().getDefinition();
         final JSITKnowledgeSource result = new JSITKnowledgeSource();
         result.setId(source.getId().getValue());

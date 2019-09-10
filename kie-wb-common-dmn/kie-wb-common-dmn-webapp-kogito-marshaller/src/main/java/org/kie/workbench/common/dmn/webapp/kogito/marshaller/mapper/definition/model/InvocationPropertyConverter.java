@@ -30,7 +30,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBinding;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInvocation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class InvocationPropertyConverter {
@@ -71,7 +71,7 @@ public class InvocationPropertyConverter {
     }
 
     public static JSITInvocation dmnFromWB(final Invocation wb,
-                                           final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                           final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         if (wb == null) {
             return null;
         }
