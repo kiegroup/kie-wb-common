@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.AbstractLayoutService;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.GraphProcessor;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Layout;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.VertexPosition;
@@ -53,12 +54,13 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.st
  * with a better node disposition and less edges crossing.
  */
 @Default
-public final class SugiyamaLayoutService extends AbstractLayoutService {
+public class SugiyamaLayoutService extends AbstractLayoutService {
 
     private final CycleBreaker cycleBreaker;
     private final VertexLayerer vertexLayerer;
     private final VertexOrdering vertexOrdering;
     private final VertexPositioning vertexPositioning;
+    private final GraphProcessor graphProcessor;
 
     /**
      * Default constructor.
@@ -66,16 +68,19 @@ public final class SugiyamaLayoutService extends AbstractLayoutService {
      * @param vertexLayerer The strategy used to choose the layer for each vertex.
      * @param vertexOrdering The strategy used to order vertices inside each layer.
      * @param vertexPositioning The strategy used to position vertices on screen (x,y coordinates).
+     * @param graphProcessor Applies some pre-process in the graph to extract the nodes to be used.
      */
     @Inject
     public SugiyamaLayoutService(final CycleBreaker cycleBreaker,
                                  final VertexLayerer vertexLayerer,
                                  final VertexOrdering vertexOrdering,
-                                 final VertexPositioning vertexPositioning) {
+                                 final VertexPositioning vertexPositioning,
+                                 final GraphProcessor graphProcessor) {
         this.cycleBreaker = cycleBreaker;
         this.vertexLayerer = vertexLayerer;
         this.vertexOrdering = vertexOrdering;
         this.vertexPositioning = vertexPositioning;
+        this.graphProcessor = graphProcessor;
     }
 
     /**
@@ -89,8 +94,9 @@ public final class SugiyamaLayoutService extends AbstractLayoutService {
     public Layout createLayout(final Graph<?, ?> graph) {
         final HashMap<String, Node> indexByUuid = new HashMap<>();
         final LayeredGraph reorderedGraph = new LayeredGraph();
+        final Iterable<? extends Node> nodes = graphProcessor.getNodes(graph);
 
-        for (final Node n : graph.nodes()) {
+        for (final Node n : nodes) {
 
             if (!(n.getContent() instanceof HasBounds)) {
                 continue;
@@ -101,18 +107,20 @@ public final class SugiyamaLayoutService extends AbstractLayoutService {
             for (final Object e : n.getInEdges()) {
                 if (e instanceof Edge) {
                     final Edge edge = (Edge) e;
-                    final String from = edge.getSourceNode().getUUID();
-                    final String to = n.getUUID();
+                    final String from = getId(edge.getSourceNode());
+                    final String to = getId(n);
                     reorderedGraph.addEdge(from, to);
+                    reorderedGraph.setVertexSize(getId(n), getWidth(n), getHeight(n));
                 }
             }
 
             for (final Object e : n.getOutEdges()) {
                 if (e instanceof Edge) {
                     final Edge edge = (Edge) e;
-                    final String to = edge.getTargetNode().getUUID();
-                    final String from = n.getUUID();
+                    final String to = getId(edge.getTargetNode());
+                    final String from = getId(n);
                     reorderedGraph.addEdge(from, to);
+                    reorderedGraph.setVertexSize(getId(n), getWidth(n), getHeight(n));
                 }
             }
         }
@@ -125,6 +133,22 @@ public final class SugiyamaLayoutService extends AbstractLayoutService {
 
         final List<GraphLayer> orderedLayers = reorderedGraph.getLayers();
         return buildLayout(indexByUuid, orderedLayers);
+    }
+
+    private int getHeight(final Node n) {
+        return (int) ((HasBounds) n.getContent()).getBounds().getHeight();
+    }
+
+    private int getWidth(final Node n) {
+        return (int) ((HasBounds) n.getContent()).getBounds().getWidth();
+    }
+
+    private String getId(final Node node) {
+        if (graphProcessor.isReplacedByAnotherNode(node.getUUID())) {
+            return graphProcessor.getReplaceNodeId(node.getUUID());
+        }
+
+        return node.getUUID();
     }
 
     private Layout buildLayout(final HashMap<String, Node> indexByUuid,

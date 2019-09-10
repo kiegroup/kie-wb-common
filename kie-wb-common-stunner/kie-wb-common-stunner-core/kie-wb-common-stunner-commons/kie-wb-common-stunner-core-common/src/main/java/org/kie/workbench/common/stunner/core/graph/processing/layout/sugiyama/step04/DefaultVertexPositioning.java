@@ -66,11 +66,12 @@ public final class DefaultVertexPositioning implements VertexPositioning {
 
         removeVirtualVertices(graph.getEdges(), vertices);
         removeVirtualVerticesFromLayers(layered.getLayers(), vertices);
-        calculateVerticesPosition(layered.getLayers(), arrangement);
+        calculateVerticesPosition(layered.getLayers(), arrangement, graph);
     }
 
     private void calculateVerticesPosition(final List<GraphLayer> layers,
-                                           final LayerArrangement arrangement) {
+                                           final LayerArrangement arrangement,
+                                           final ReorderedGraph graph) {
 
         final HashMap<Integer, Integer> layersWidth = new HashMap<>();
 
@@ -98,13 +99,13 @@ public final class DefaultVertexPositioning implements VertexPositioning {
         switch (arrangement) {
             case TopDown:
                 for (int i = 0; i < layers.size(); i++) {
-                    y = distributeVertices(layers, layersStartX, y, i);
+                    y = distributeVertices(layers, layersStartX, y, i, graph);
                 }
                 break;
 
             case BottomUp:
                 for (int i = layers.size() - 1; i >= 0; i--) {
-                    y = distributeVertices(layers, layersStartX, y, i);
+                    y = distributeVertices(layers, layersStartX, y, i, graph);
                 }
                 break;
         }
@@ -113,10 +114,13 @@ public final class DefaultVertexPositioning implements VertexPositioning {
     private int distributeVertices(final List<GraphLayer> layers,
                                    final HashMap<Integer, Integer> layersStartX,
                                    final int y,
-                                   final int i) {
+                                   final int i,
+                                   final ReorderedGraph graph) {
 
         final GraphLayer layer = layers.get(i);
         int x = layersStartX.get(i);
+
+        int highestY = 0;
 
         for (final Vertex v : layer.getVertices()) {
 
@@ -124,10 +128,11 @@ public final class DefaultVertexPositioning implements VertexPositioning {
             v.setY(y);
 
             x += DEFAULT_VERTEX_SPACE;
-            x += DEFAULT_VERTEX_WIDTH;
+            x += graph.getVertexWidth(v.getId());
+            highestY = Math.max(highestY, graph.getVertexHeight(v.getId()));
         }
 
-        return y + DEFAULT_LAYER_SPACE;
+        return y + highestY + DEFAULT_LAYER_SPACE;
     }
 
     private void removeVirtualVerticesFromLayers(final List<GraphLayer> layers,

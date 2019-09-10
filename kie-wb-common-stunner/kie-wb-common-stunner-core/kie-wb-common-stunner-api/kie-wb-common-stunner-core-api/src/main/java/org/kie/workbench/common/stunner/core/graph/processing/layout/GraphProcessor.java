@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.layout;
 
-import java.util.List;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 
-import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.OrientedEdge;
+public interface GraphProcessor {
 
-public interface ReorderedGraph {
+    Iterable<? extends Node> getNodes(final Graph<?, ?> graph);
 
-    List<OrientedEdge> getEdges();
+    default boolean isReplacedByAnotherNode(final String uuid) {
+        return false;
+    }
 
-    int getVertexHeight(final String vertexId);
-
-    int getVertexWidth(final String vertexId);
-
-    void setVertexSize(final String vertexId, final int width, final int height);
+    default String getReplaceNodeId(final String uuid) {
+        return uuid;
+    }
 }
