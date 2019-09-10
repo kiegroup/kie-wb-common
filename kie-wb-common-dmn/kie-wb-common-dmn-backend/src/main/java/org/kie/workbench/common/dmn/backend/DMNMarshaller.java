@@ -469,17 +469,11 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             return;
         }
 
-        for (int i = drgElements.size() - 1; i >= 0; i--) {
-            final org.kie.dmn.model.api.DRGElement element = drgElements.get(i);
-
-            final Optional<DMNShape> shape = dmnShapes.stream()
-                    .filter(s -> s.getDmnElementRef().getLocalPart().equals(element.getId()))
-                    .findFirst();
-
-            if (!shape.isPresent()) {
-                drgElements.remove(element);
-            }
-        }
+        drgElements.removeIf(element -> !dmnShapes.stream()
+                .filter(s -> Objects.equals(s.getDmnElementRef().getLocalPart(), element.getId()))
+                .findFirst()
+                .isPresent()
+        );
     }
 
     void updateIDsWithAlias(final HashMap<String, String> indexByUri,
