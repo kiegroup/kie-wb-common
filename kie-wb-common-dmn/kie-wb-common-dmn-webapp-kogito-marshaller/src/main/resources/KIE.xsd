@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-             xmlns:kie="http://www.drools.org/kie/dmn/1.2"
-             elementFormDefault="qualified"
-             attributeFormDefault="unqualified"
-             targetNamespace="http://www.drools.org/kie/dmn/1.2">
+           xmlns:kie="http://www.drools.org/kie/dmn/1.2"
+           targetNamespace="http://www.drools.org/kie/dmn/1.2"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
   <xs:complexType name="ComponentWidths">
     <xs:sequence>
       <xs:element type="xs:float" name="width" maxOccurs="unbounded" minOccurs="0"/>
@@ -15,7 +15,7 @@
       <xs:element type="kie:ComponentWidths" name="ComponentWidths" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="Attachment">
+  <xs:complexType name="attachment">
     <xs:simpleContent>
       <xs:extension base="xs:string">
         <xs:attribute type="xs:anyURI" name="url"/>

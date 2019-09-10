@@ -823,7 +823,17 @@ public class DMNMarshallerKogito {
         if (Objects.isNull(dmnDDExtensions.getAny())) {
             return Optional.empty();
         }
-        return Optional.ofNullable(dmnDDExtensions.getAny().getAt(0));
+        final JsArrayLike<Object> extensions = dmnDDExtensions.getAny();
+        if (!Objects.isNull(extensions)) {
+            for (int i = 0; i < extensions.getLength(); i++) {
+                final Object extension = extensions.getAt(i);
+                if (JSIComponentsWidthsExtension.instanceOf(extension)) {
+                    final JSIComponentsWidthsExtension jsiExtension = Js.uncheckedCast(extension);
+                    return Optional.of(jsiExtension);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     // ==================================

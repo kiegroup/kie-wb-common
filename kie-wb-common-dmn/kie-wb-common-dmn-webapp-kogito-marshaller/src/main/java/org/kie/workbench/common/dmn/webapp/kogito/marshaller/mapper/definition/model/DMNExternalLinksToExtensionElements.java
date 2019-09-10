@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.Objects;
 
+import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.api.property.dmn.DocumentationLinks;
@@ -31,14 +32,17 @@ class DMNExternalLinksToExtensionElements {
                                                        final org.kie.workbench.common.dmn.api.definition.model.DRGElement target) {
 
         if (!Objects.isNull(source.getExtensionElements())) {
-            final JsArrayLike<JSIAttachment> attachments = source.getExtensionElements().getAny();
-            if (!Objects.isNull(attachments)) {
-                for (int i = 0; i < attachments.getLength(); i++) {
-                    final JSIAttachment jsiAttachment = attachments.getAt(i);
-                    final DMNExternalLink external = new DMNExternalLink();
-                    external.setDescription(jsiAttachment.getName());
-                    external.setUrl(jsiAttachment.getUrl());
-                    target.getLinksHolder().getValue().addLink(external);
+            final JsArrayLike<Object> extensions = source.getExtensionElements().getAny();
+            if (!Objects.isNull(extensions)) {
+                for (int i = 0; i < extensions.getLength(); i++) {
+                    final Object extension = extensions.getAt(i);
+                    if (JSIAttachment.instanceOf(extension)) {
+                        final JSIAttachment jsiExtension = Js.uncheckedCast(extension);
+                        final DMNExternalLink external = new DMNExternalLink();
+                        external.setDescription(jsiExtension.getName());
+                        external.setUrl(jsiExtension.getUrl());
+                        target.getLinksHolder().getValue().addLink(external);
+                    }
                 }
             }
         }
