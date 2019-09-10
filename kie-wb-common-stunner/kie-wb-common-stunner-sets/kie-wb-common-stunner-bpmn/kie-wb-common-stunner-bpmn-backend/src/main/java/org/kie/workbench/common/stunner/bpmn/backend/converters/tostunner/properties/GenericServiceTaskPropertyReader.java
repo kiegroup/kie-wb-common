@@ -46,11 +46,7 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
         final String implementation = Optional.ofNullable(CustomAttribute.serviceImplementation.of(task).get())
                 .filter(StringUtils::nonEmpty)
                 .orElseGet(() -> task.getImplementation());
-        value.setServiceImplementation(Optional.ofNullable(implementation)
-                                               .filter(StringUtils::nonEmpty)
-                                               .filter(impl -> JAVA.equalsIgnoreCase(impl))
-                                               .map(java -> JAVA)//assert that matches "Java"
-                                               .orElse(WEB_SERVICE));
+        value.setServiceImplementation(getServiceImplementation(implementation));
 
         final String operation = Optional.ofNullable(CustomAttribute.serviceOperation.of(task).get())
                 .filter(StringUtils::nonEmpty)
@@ -60,7 +56,6 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
                         .orElse(null));
         value.setServiceOperation(operation);
 
-        //todo: checks
         value.setInMessageStructure(Optional.ofNullable(task.getOperationRef())
                                             .map(Operation::getInMessageRef)
                                             .map(Message::getItemRef)
@@ -72,8 +67,6 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
                                             .map(Message::getItemRef)
                                             .map(ItemDefinition::getStructureRef)
                                             .orElse(null));
-
-        value.setOutMessagetructure(task.getOperationRef().getOutMessageRef().getItemRef().getStructureRef());
 
         final String serviceInterface = Optional.ofNullable(CustomAttribute.serviceInterface.of(task).get())
                 .filter(StringUtils::nonEmpty)
@@ -87,6 +80,14 @@ public class GenericServiceTaskPropertyReader extends MultipleInstanceActivityPr
         value.setServiceInterface(serviceInterface);
 
         return value;
+    }
+
+    public static String getServiceImplementation(String implementation) {
+        return Optional.ofNullable(implementation)
+                .filter(StringUtils::nonEmpty)
+                .filter(impl -> JAVA.equalsIgnoreCase(impl))
+                .map(java -> JAVA)//assert that matches "Java"
+                .orElse(WEB_SERVICE);
     }
 
     public boolean isAsync() {

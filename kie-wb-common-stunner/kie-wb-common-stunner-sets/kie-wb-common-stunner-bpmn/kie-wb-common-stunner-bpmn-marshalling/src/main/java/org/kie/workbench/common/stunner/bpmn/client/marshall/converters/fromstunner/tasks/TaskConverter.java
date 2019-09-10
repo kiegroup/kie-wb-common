@@ -92,7 +92,7 @@ public class TaskConverter {
         p.setDocumentation(general.getDocumentation().getValue());
         p.setAbsoluteBounds(n);
         p.setSimulationSet(definition.getSimulationSet());
-        p.setServiceOperation(executionSet.getGenericServiceTaskInfo().getValue());
+        p.setValue(executionSet.getGenericServiceTaskInfo().getValue());
         p.setAsync(executionSet.getIsAsync().getValue());
         p.setAdHocAutostart(executionSet.getAdHocAutostart().getValue());
         if (Boolean.TRUE.equals(executionSet.getIsMultipleInstance().getValue())) {

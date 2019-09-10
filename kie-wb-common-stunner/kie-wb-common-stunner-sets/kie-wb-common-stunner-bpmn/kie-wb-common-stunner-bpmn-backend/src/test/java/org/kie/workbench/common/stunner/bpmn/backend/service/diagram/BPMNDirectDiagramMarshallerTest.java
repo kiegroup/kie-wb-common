@@ -470,8 +470,8 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("org.acme.travels.Flight", serviceTaskValue.getOutMessagetructure());
 
         String marshalled = tested.marshall(diagram);
-        assertTrue(marshalled.contains("structureRef=\"org.acme.travels.Flight\""));
-        assertTrue(marshalled.contains("structureRef=\"org.acme.travels.Trip\""));
+        assertTrue(marshalled.contains("<bpmn2:itemDefinition id=\"ServiceTask_1_InMessageType\" structureRef=\"org.acme.travels.Trip\"/>"));
+        assertTrue(marshalled.contains("<bpmn2:itemDefinition id=\"ServiceTask_1_OutMessageType\" structureRef=\"org.acme.travels.Flight\"/>"));
     }
 
     @Test

@@ -23,6 +23,7 @@ import org.eclipse.bpmn2.Operation;
 import org.eclipse.bpmn2.ServiceTask;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomElement;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.GenericServiceTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
@@ -34,8 +35,6 @@ public class GenericServiceTaskPropertyWriter extends MultipleInstanceActivityPr
 
     private final ServiceTask task;
     private final Interface iface;
-    private Message inMessage;
-    private Message outMessage;
 
     public GenericServiceTaskPropertyWriter(ServiceTask task, VariableScope variableScope) {
         super(task, variableScope);
@@ -43,14 +42,10 @@ public class GenericServiceTaskPropertyWriter extends MultipleInstanceActivityPr
         this.iface = bpmn2.createInterface();
     }
 
-    public void setServiceOperation(GenericServiceTaskValue value) {
-
+    public void setValue(GenericServiceTaskValue value) {
         //1 Implementation
         String serviceImplementation = value.getServiceImplementation();
-        if (!serviceImplementation.equals("Java")) {
-            serviceImplementation = "##WebService";
-        }
-        task.setImplementation(serviceImplementation);
+        task.setImplementation(GenericServiceTaskPropertyReader.getServiceImplementation(serviceImplementation));
         CustomAttribute.serviceImplementation.of(task).set(serviceImplementation);
 
         //-------------------------------------------------------------
@@ -59,6 +54,7 @@ public class GenericServiceTaskPropertyWriter extends MultipleInstanceActivityPr
         String serviceInterface = value.getServiceInterface();
 
         //in message
+        final Message inMessage;
         ItemDefinition itemDefinitionInMsg = bpmn2.createItemDefinition();
         itemDefinitionInMsg.setId(task.getId() + "_InMessageType");
         itemDefinitionInMsg.setStructureRef(value.getInMessageStructure());
@@ -70,6 +66,7 @@ public class GenericServiceTaskPropertyWriter extends MultipleInstanceActivityPr
         addRootElement(inMessage);
 
         //out message
+        final Message outMessage;
         ItemDefinition itemDefinitionOutMsg = bpmn2.createItemDefinition();
         itemDefinitionOutMsg.setId(task.getId() + "_OutMessageType");
         itemDefinitionOutMsg.setStructureRef(value.getOutMessagetructure());

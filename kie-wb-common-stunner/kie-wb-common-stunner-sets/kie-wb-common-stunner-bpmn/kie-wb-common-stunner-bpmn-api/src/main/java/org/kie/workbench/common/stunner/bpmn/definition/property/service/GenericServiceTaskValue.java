@@ -97,18 +97,23 @@ public class GenericServiceTaskValue {
 
     @Override
     public String toString() {
-        return "GenericServiceTaskValue{" +
-                "serviceImplementation='" + serviceImplementation + '\'' +
-                ", serviceInterface='" + serviceInterface + '\'' +
-                ", serviceOperation='" + serviceOperation + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("GenericServiceTaskValue{");
+        sb.append("serviceImplementation='").append(serviceImplementation).append('\'');
+        sb.append(", serviceInterface='").append(serviceInterface).append('\'');
+        sb.append(", serviceOperation='").append(serviceOperation).append('\'');
+        sb.append(", inMessageStructure='").append(inMessageStructure).append('\'');
+        sb.append(", outMessagetructure='").append(outMessagetructure).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(serviceImplementation),
                                          Objects.hashCode(serviceInterface),
-                                         Objects.hashCode(serviceOperation));
+                                         Objects.hashCode(serviceOperation),
+                                         Objects.hashCode(inMessageStructure),
+                                         Objects.hashCode(outMessagetructure));
     }
 
     @Override
@@ -117,7 +122,9 @@ public class GenericServiceTaskValue {
             GenericServiceTaskValue other = (GenericServiceTaskValue) o;
             return Objects.equals(serviceImplementation, other.serviceImplementation) &&
                     Objects.equals(serviceInterface, other.serviceInterface) &&
-                    Objects.equals(serviceOperation, other.serviceOperation);
+                    Objects.equals(serviceOperation, other.serviceOperation) &&
+                    Objects.equals(inMessageStructure, other.inMessageStructure) &&
+                    Objects.equals(outMessagetructure, other.outMessagetructure);
         }
         return false;
     }

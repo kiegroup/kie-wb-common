@@ -49,12 +49,19 @@ public class GenericServiceTaskPropertyReaderTest {
     @Mock
     private DefinitionResolver definitionResolver;
 
+    private GenericServiceTaskValue value;
+
     @Before
     public void setUp() {
         ServiceTask serviceTask = bpmn2.createServiceTask();
-        GenericServiceTaskPropertyWriter writer = new GenericServiceTaskPropertyWriter(serviceTask, null);
+        value = new GenericServiceTaskValue("java",
+                                            "serviceInterface",
+                                            "serviceOperation",
+                                            "inMessageStructure",
+                                            "outMessageStructure");
 
-//        writer.setServiceOperation("setServiceOperation");
+        GenericServiceTaskPropertyWriter writer = new GenericServiceTaskPropertyWriter(serviceTask, null);
+        writer.setValue(value);
         writer.setSLADueDate(SLA_DUE_DATE);
         writer.setAsync(false);
         writer.setAdHocAutostart(true);
@@ -75,11 +82,12 @@ public class GenericServiceTaskPropertyReaderTest {
     @Test
     public void getGenericServiceTask() {
         GenericServiceTaskValue task = reader.getGenericServiceTask();
-        assertEquals("setServiceOperation", task.getServiceOperation());
-        assertEquals("setServiceInterface", task.getServiceInterface());
-        assertEquals("WebService", task.getServiceImplementation());
+        assertEquals("Java", task.getServiceImplementation());
+        assertEquals("serviceOperation", task.getServiceOperation());
+        assertEquals("serviceInterface", task.getServiceInterface());
+        assertEquals("inMessageStructure", task.getInMessageStructure());
+        assertEquals("outMessageStructure", task.getOutMessagetructure());
         assertEquals(SLA_DUE_DATE_CDATA, reader.getSLADueDate());
-
         assertEquals(false, reader.isAsync());
         assertEquals(true, reader.isAdHocAutostart());
         assertNotNull(reader.getOnEntryAction());
