@@ -84,44 +84,11 @@ public class SafeDeleteNodeProcessor {
 
     @SuppressWarnings("unchecked")
     public void run(final Callback callback) {
-        final Deque<Node<View, Edge>> nodes = new ArrayDeque();
+        final Deque<Node<View, Edge>> nodes = createNodesDequeue();
         processedConnectors.clear();
 
         if (!keepChildren) {
-            childrenTraverseProcessor
-                    .setRootUUID(candidate.getUUID())
-                    .traverse(graph,
-                              new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
-
-                                  @Override
-                                  public void startNodeTraversal(final Node<View, Edge> node) {
-                                      super.startNodeTraversal(node);
-                                      if (isDockedNode(node)) {
-                                          //docked nodes will be handled on the #processNode
-                                          return;
-                                      }
-                                      nodes.add(node);
-                                  }
-
-                                  @Override
-                                  public boolean startNodeTraversal(final List<Node<View, Edge>> parents,
-                                                                    final Node<View, Edge> node) {
-                                      super.startNodeTraversal(parents,
-                                                               node);
-                                      if (isDockedNode(node)) {
-                                          //docked nodes will be handled on the #processNode
-                                          return true;
-                                      }
-                                      nodes.add(node);
-                                      return true;
-                                  }
-                              });
-        }
-        if (!keepChildren) {
-            // Process delete for children nodes
-            nodes.descendingIterator().forEachRemaining(node -> processNode(node,
-                                                                            callback,
-                                                                            false));
+            deleteChildren(callback, nodes);
         }
 
         // Process candidate's delete.
@@ -130,10 +97,51 @@ public class SafeDeleteNodeProcessor {
                     true);
     }
 
+    Deque<Node<View, Edge>> createNodesDequeue() {
+        return new ArrayDeque();
+    }
+
+    protected void deleteChildren(final Callback callback,
+                                  final Deque<Node<View, Edge>> nodes) {
+        childrenTraverseProcessor
+                .setRootUUID(candidate.getUUID())
+                .traverse(graph,
+                          new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
+
+                              @Override
+                              public void startNodeTraversal(final Node<View, Edge> node) {
+                                  super.startNodeTraversal(node);
+                                  if (isDockedNode(node)) {
+                                      //docked nodes will be handled on the #processNode
+                                      return;
+                                  }
+                                  nodes.add(node);
+                              }
+
+                              @Override
+                              public boolean startNodeTraversal(final List<Node<View, Edge>> parents,
+                                                                final Node<View, Edge> node) {
+                                  super.startNodeTraversal(parents,
+                                                           node);
+                                  if (isDockedNode(node)) {
+                                      //docked nodes will be handled on the #processNode
+                                      return true;
+                                  }
+                                  nodes.add(node);
+                                  return true;
+                              }
+                          });
+
+        // Process delete for children nodes
+        nodes.descendingIterator().forEachRemaining(node -> processNode(node,
+                                                                        callback,
+                                                                        false));
+    }
+
     @SuppressWarnings("unchecked")
-    private void processNode(final Node<?, Edge> node,
-                             final Callback callback,
-                             final boolean isTheCandidate) {
+    void processNode(final Node<?, Edge> node,
+                     final Callback callback,
+                     final boolean isTheCandidate) {
         //processing recursively docked nodes relative to the current node
         getDockedNodes(node).forEach(docked -> processNode(docked, callback, false));
 
