@@ -482,12 +482,13 @@ public class DMNMarshallerKogito {
                 hasComponentWidthsMap.entrySet().forEach(es -> {
                     final JsArrayLike<JSITComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();
                     for (int i = 0; i < jsiComponentWidths.getLength(); i++) {
-                        final JSITComponentWidths jsiWidths = jsiComponentWidths.getAt(i);
+                        final JSITComponentWidths jsiWidths = Js.uncheckedCast(jsiComponentWidths.getAt(i));
                         if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
                             final List<Double> widths = es.getValue().getComponentWidths();
                             widths.clear();
                             for (int w = 0; w < jsiWidths.getWidth().getLength(); w++) {
-                                widths.add((double) jsiWidths.getWidth().getAt(i));
+                                final double width = Js.castToDouble(jsiWidths.getWidth().getAt(w));
+                                widths.add(width);
                             }
                         }
                     }
