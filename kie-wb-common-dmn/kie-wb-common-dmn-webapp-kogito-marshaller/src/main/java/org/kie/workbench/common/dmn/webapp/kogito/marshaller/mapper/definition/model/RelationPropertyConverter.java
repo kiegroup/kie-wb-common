@@ -31,7 +31,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class RelationPropertyConverter {
@@ -64,7 +64,7 @@ public class RelationPropertyConverter {
     }
 
     public static JSITRelation dmnFromWB(final Relation wb,
-                                         final Consumer<JSIComponentWidths> componentWidthsConsumer) {
+                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final JSITRelation result = new JSITRelation();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));

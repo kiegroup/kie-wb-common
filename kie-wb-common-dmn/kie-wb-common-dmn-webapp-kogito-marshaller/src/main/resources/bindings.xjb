@@ -69,6 +69,6 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie"
         spaceName="KIE"/>
-  </jaxb:bindings><!---->
+  </jaxb:bindings>
 
 </jaxb:bindings>
