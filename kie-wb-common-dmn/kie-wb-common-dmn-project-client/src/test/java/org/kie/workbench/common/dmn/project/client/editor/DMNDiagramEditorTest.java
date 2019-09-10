@@ -56,7 +56,6 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
-import org.kie.workbench.common.stunner.core.client.session.impl.DefaultEditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
@@ -120,7 +119,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private DMNEditorSession dmnEditorSession;
 
     @Mock
-    private DefaultEditorSession defaultEditorSession;
+    private DMNEditorSession defaultEditorSession;
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
@@ -278,9 +277,12 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
             protected boolean isReadOnly() {
                 return DMNDiagramEditorTest.this.isReadOnly;
             }
-        });
 
-        doReturn(searchBarComponentWidget).when(diagramEditor).getWidget(searchBarComponentViewElement);
+            @Override
+            ElementWrapperWidget<?> getWidget(final HTMLElement element) {
+                return searchBarComponentWidget;
+            }
+        });
 
         return diagramEditor;
     }
@@ -516,6 +518,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         when(sessionPresenter.getInstance()).thenReturn(dmnEditorSession);
         when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
 
+        open();
+
         diagramEditor.onMultiPageEditorSelectedPageEvent(mock(MultiPageEditorSelectedPageEvent.class));
 
         verify(searchBarComponent).disableSearch();
@@ -529,6 +533,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         doReturn(sessionPresenter).when(diagramEditor).getSessionPresenter();
         when(sessionPresenter.getInstance()).thenReturn(dmnEditorSession);
         when(sessionManager.getCurrentSession()).thenReturn(defaultEditorSession);
+        when(defaultEditorSession.getExpressionEditor()).thenReturn(expressionEditor);
+
+        open();
 
         diagramEditor.onMultiPageEditorSelectedPageEvent(mock(MultiPageEditorSelectedPageEvent.class));
 
