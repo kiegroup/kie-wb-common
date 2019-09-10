@@ -923,6 +923,12 @@
                 <include>repositories/</include>
               </includes>
             </fileset>
+            <fileset>
+              <directory>${basedir}/src/main/webapp/model/</directory>
+              <includes>
+                <include>**.js</include>
+              </includes>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>

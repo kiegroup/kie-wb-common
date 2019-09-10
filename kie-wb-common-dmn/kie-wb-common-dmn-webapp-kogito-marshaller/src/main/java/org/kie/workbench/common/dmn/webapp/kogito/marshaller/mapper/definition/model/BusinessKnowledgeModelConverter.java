@@ -16,14 +16,10 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
@@ -45,8 +41,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -107,7 +103,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
     @Override
     @SuppressWarnings("unchecked")
     public JSITBusinessKnowledgeModel dmnFromNode(final Node<View<BusinessKnowledgeModel>, ?> node,
-                                                  final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                                  final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         final BusinessKnowledgeModel source = node.getContent().getDefinition();
         final JSITBusinessKnowledgeModel result = new JSITBusinessKnowledgeModel();
         result.setId(source.getId().getValue());
@@ -123,11 +119,10 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         if (Objects.nonNull(wbFunctionDefinition)) {
             final String uuid = wbFunctionDefinition.getId().getValue();
             if (Objects.nonNull(uuid)) {
-                final ComponentWidths componentWidths = new ComponentWidths();
-                componentWidths.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
-                                                           uuid,
-                                                           XMLConstants.DEFAULT_NS_PREFIX));
-                componentWidths.setWidths(new ArrayList<>(source.getEncapsulatedLogic().getComponentWidths()));
+                final JSIComponentWidths componentWidths = new JSIComponentWidths();
+                componentWidths.setDmnElementRef(uuid);
+                //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
+                //componentWidths.setWidth(wb.getComponentWidths());
                 componentWidthsConsumer.accept(componentWidths);
             }
         }

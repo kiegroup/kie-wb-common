@@ -30,8 +30,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 
 public class ListPropertyConverter {
 
@@ -62,7 +62,7 @@ public class ListPropertyConverter {
     }
 
     public static JSITList dmnFromWB(final List wb,
-                                     final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                     final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         final JSITList result = new JSITList();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));

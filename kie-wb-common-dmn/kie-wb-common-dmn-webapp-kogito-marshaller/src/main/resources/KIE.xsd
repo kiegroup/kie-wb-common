@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+             xmlns:kie="http://www.drools.org/kie/dmn/1.2"
+             elementFormDefault="qualified"
+             attributeFormDefault="unqualified"
+             targetNamespace="http://www.drools.org/kie/dmn/1.2">
+  <xs:complexType name="ComponentWidths">
+    <xs:sequence>
+      <xs:element type="xs:float" name="width" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="dmnElementRef"/>
+  </xs:complexType>
+  <xs:complexType name="ComponentsWidthsExtension">
+    <xs:sequence>
+      <xs:element type="kie:ComponentWidths" name="ComponentWidths" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Attachment">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:anyURI" name="url"/>
+        <xs:attribute type="xs:string" name="name"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

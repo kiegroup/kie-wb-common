@@ -16,13 +16,9 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
@@ -43,7 +39,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
 
 public class ExpressionPropertyConverter {
 
@@ -103,7 +99,7 @@ public class ExpressionPropertyConverter {
     }
 
     public static JSITExpression dmnFromWB(final Expression wb,
-                                           final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                           final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // reference above.
         if (wb == null) {
@@ -113,11 +109,10 @@ public class ExpressionPropertyConverter {
 
         final String uuid = wb.getId().getValue();
         if (Objects.nonNull(uuid)) {
-            final ComponentWidths componentWidths = new ComponentWidths();
-            componentWidths.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
-                                                       uuid,
-                                                       XMLConstants.DEFAULT_NS_PREFIX));
-            componentWidths.setWidths(new ArrayList<>(wb.getComponentWidths()));
+            final JSIComponentWidths componentWidths = new JSIComponentWidths();
+            componentWidths.setDmnElementRef(uuid);
+            //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
+            //componentWidths.setWidth(wb.getComponentWidths());
             componentWidthsConsumer.accept(componentWidths);
         }
 

@@ -68,7 +68,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceDividerLineY
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.ComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
@@ -97,6 +96,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JS
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNLabel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNStyle;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.AssociationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DecisionConverter;
@@ -108,7 +109,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.ArrayUtils;
@@ -473,29 +473,30 @@ public class DMNMarshallerKogito {
         textAnnotations.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
 
         //Copy ComponentWidths information
-        final Optional<ComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
+        final Optional<JSIComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
         extension.ifPresent(componentsWidthsExtension -> {
             //This condition is required because a node with ComponentsWidthsExtension
             //can be imported from another diagram but the extension is not imported or present in this diagram.
             //TODO: This will be fixed in this JIRA: https://issues.jboss.org/browse/DROOLS-3934
-            if (componentsWidthsExtension.getComponentsWidths() != null) {
+            if (Objects.nonNull(componentsWidthsExtension.getComponentWidths())) {
                 hasComponentWidthsMap.entrySet().forEach(es -> {
-                    componentsWidthsExtension
-                            .getComponentsWidths()
-                            .stream()
-                            .filter(componentWidths -> componentWidths.getDmnElementRef().getLocalPart().equals(es.getKey()))
-                            .findFirst()
-                            .ifPresent(componentWidths -> {
-                                final List<Double> widths = es.getValue().getComponentWidths();
-                                widths.clear();
-                                widths.addAll(componentWidths.getWidths());
-                            });
+                    final JsArrayLike<JSIComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();
+                    for (int i = 0; i < jsiComponentWidths.getLength(); i++) {
+                        final JSIComponentWidths jsiWidths = jsiComponentWidths.getAt(i);
+                        if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
+                            final List<Double> widths = es.getValue().getComponentWidths();
+                            widths.clear();
+                            for (int w = 0; w < jsiWidths.getWidth().getLength(); w++) {
+                                widths.add((double) jsiWidths.getWidth().getAt(i));
+                            }
+                        }
+                    }
                 });
             }
         });
 
         return graph;
-    }/**/
+    }
 
     void updateIDsWithAlias(final Map<String, String> indexByUri,
                             final List<JSITDRGElement> importedDrgElements) {
@@ -809,7 +810,7 @@ public class DMNMarshallerKogito {
                 Math.abs((viewHeight / 2) - magnetRelativeY) < CENTRE_TOLERANCE;
     }
 
-    private Optional<ComponentsWidthsExtension> findComponentsWidthsExtension(final Optional<JSIDMNDiagram> dmnDDDiagram) {
+    private Optional<JSIComponentsWidthsExtension> findComponentsWidthsExtension(final Optional<JSIDMNDiagram> dmnDDDiagram) {
         if (!dmnDDDiagram.isPresent()) {
             return Optional.empty();
         }
@@ -822,12 +823,7 @@ public class DMNMarshallerKogito {
         if (Objects.isNull(dmnDDExtensions.getAny())) {
             return Optional.empty();
         }
-        final List<Object> extensions = Arrays.asList(dmnDDExtensions.getAny());
-        return extensions
-                .stream()
-                .filter(extension -> extension instanceof ComponentsWidthsExtension)
-                .map(extension -> (ComponentsWidthsExtension) extension)
-                .findFirst();
+        return Optional.ofNullable(dmnDDExtensions.getAny().getAt(0));
     }
 
     // ==================================
@@ -868,16 +864,16 @@ public class DMNMarshallerKogito {
         if (Objects.isNull(dmnDDDMNDiagram.getExtension())) {
             dmnDDDMNDiagram.setExtension(new JSIDiagramElement.JSIExtension());
         }
-        final ComponentsWidthsExtension componentsWidthsExtension = new ComponentsWidthsExtension();
+        final JSIComponentsWidthsExtension componentsWidthsExtension = new JSIComponentsWidthsExtension();
         final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
-        if (Objects.isNull(extension.getAny())) {
-            extension.setAny(new Object[]{});
-        }
-        extension.setAny(ArrayUtils.add(extension.getAny(),
-                                        componentsWidthsExtension));
+        //TODO {manstis} Need to setup ComponentWidthsExtension if it is not already present
+        //if (Objects.isNull(extension.getAny())) {
+        //    extension.setAny(new Object[]{});
+        //}
+        //extension.setAny(ArrayUtils.add(extension.getAny().asArray(), componentsWidthsExtension));
 
-        final Consumer<ComponentWidths> componentWidthsConsumer = (cw) -> {
-            componentsWidthsExtension.getComponentsWidths().add(cw);
+        final Consumer<JSIComponentWidths> componentWidthsConsumer = (cw) -> {
+            ArrayUtils.add(componentsWidthsExtension.getComponentWidths().asArray(), cw);
         };
 
         //Iterate Graph processing nodes..
@@ -1301,7 +1297,7 @@ public class DMNMarshallerKogito {
 
     @SuppressWarnings("unchecked")
     private JSITDRGElement stunnerToDMN(final Node<?, ?> node,
-                                        final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                        final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         if (node.getContent() instanceof View<?>) {
             View<?> view = (View<?>) node.getContent();
             if (view.getDefinition() instanceof InputData) {

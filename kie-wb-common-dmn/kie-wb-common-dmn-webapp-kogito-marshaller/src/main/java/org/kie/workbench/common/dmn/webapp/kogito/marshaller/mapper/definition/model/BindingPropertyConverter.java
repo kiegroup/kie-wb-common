@@ -27,8 +27,8 @@ import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBinding;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
 
 public class BindingPropertyConverter {
 
@@ -56,7 +56,7 @@ public class BindingPropertyConverter {
     }
 
     public static JSITBinding dmnFromWB(final Binding wb,
-                                        final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                        final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         if (wb == null) {
             return null;
         }

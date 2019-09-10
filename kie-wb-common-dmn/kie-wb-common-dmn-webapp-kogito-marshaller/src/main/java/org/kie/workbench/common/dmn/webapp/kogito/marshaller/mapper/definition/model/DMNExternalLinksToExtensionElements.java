@@ -16,16 +16,14 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.api.property.dmn.DocumentationLinks;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ExternalLink;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIAttachment;
 
 class DMNExternalLinksToExtensionElements {
 
@@ -33,16 +31,14 @@ class DMNExternalLinksToExtensionElements {
                                                        final org.kie.workbench.common.dmn.api.definition.model.DRGElement target) {
 
         if (!Objects.isNull(source.getExtensionElements())) {
-            final Object[] any = source.getExtensionElements().getAny();
-            if (!Objects.isNull(any)) {
-                for (final Object obj : any) {
-                    if (obj instanceof ExternalLink) {
-                        final ExternalLink el = (ExternalLink) obj;
-                        final DMNExternalLink external = new DMNExternalLink();
-                        external.setDescription(el.getName());
-                        external.setUrl(el.getUrl());
-                        target.getLinksHolder().getValue().addLink(external);
-                    }
+            final JsArrayLike<JSIAttachment> attachments = source.getExtensionElements().getAny();
+            if (!Objects.isNull(attachments)) {
+                for (int i = 0; i < attachments.getLength(); i++) {
+                    final JSIAttachment jsiAttachment = attachments.getAt(i);
+                    final DMNExternalLink external = new DMNExternalLink();
+                    external.setDescription(jsiAttachment.getName());
+                    external.setUrl(jsiAttachment.getUrl());
+                    target.getLinksHolder().getValue().addLink(external);
                 }
             }
         }
@@ -57,27 +53,28 @@ class DMNExternalLinksToExtensionElements {
 
         final DocumentationLinks links = source.getLinksHolder().getValue();
         final JSITDMNElement.JSIExtensionElements elements = getOrCreateExtensionElements(target);
-        if (Objects.isNull(elements.getAny())) {
-            elements.setAny(new Object[]{});
-        }
-        final List<Object> extensions = Arrays.asList(elements.getAny());
-        removeAllExistingLinks(extensions);
-
-        for (final DMNExternalLink link : links.getLinks()) {
-            final ExternalLink external = new ExternalLink();
-            external.setName(link.getDescription());
-            external.setUrl(link.getUrl());
-            extensions.add(external);
-        }
-
-        elements.setAny(extensions.toArray());
-        target.setExtensionElements(elements);
+        //TODO {manstis} Need to make this work in a JSIxxx friendly way
+        //if (Objects.isNull(elements.getAny())) {
+        //    elements.setAny(new Object[]{});
+        //}
+        //final List<Object> extensions = Arrays.asList(elements.getAny());
+        //removeAllExistingLinks(extensions);
+        //
+        //for (final DMNExternalLink link : links.getLinks()) {
+        //    final JSIAttachment attachment = new JSIAttachment();
+        //    attachment.setName(link.getDescription());
+        //    attachment.setUrl(link.getUrl());
+        //    extensions.add(attachment);
+        //}
+        //
+        //elements.setAny(extensions.toArray());
+        //target.setExtensionElements(elements);
     }
 
-    private static void removeAllExistingLinks(final List<Object> extensions) {
-        final List<Object> existingLinks = extensions.stream().filter(obj -> obj instanceof ExternalLink).collect(Collectors.toList());
-        extensions.removeAll(existingLinks);
-    }
+    //private static void removeAllExistingLinks(final List<Object> extensions) {
+    //    final List<Object> existingLinks = extensions.stream().filter(obj -> obj instanceof ExternalLink).collect(Collectors.toList());
+    //    extensions.removeAll(existingLinks);
+    //}
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
         return target.getExtensionElements() == null
