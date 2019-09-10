@@ -29,7 +29,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.api.property.dmn.TextFormat;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -68,7 +68,7 @@ public class TextAnnotationConverter implements NodeConverter<JSITTextAnnotation
 
     @Override
     public JSITTextAnnotation dmnFromNode(final Node<View<TextAnnotation>, ?> node,
-                                          final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                          final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         final TextAnnotation source = node.getContent().getDefinition();
         final JSITTextAnnotation result = new JSITTextAnnotation();
         result.setId(source.getId().getValue());

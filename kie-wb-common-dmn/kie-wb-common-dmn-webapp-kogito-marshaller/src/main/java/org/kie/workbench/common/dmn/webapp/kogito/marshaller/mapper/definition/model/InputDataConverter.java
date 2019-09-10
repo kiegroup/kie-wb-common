@@ -30,7 +30,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputData;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSIComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -77,7 +77,7 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
 
     @Override
     public JSITInputData dmnFromNode(final Node<View<InputData>, ?> node,
-                                     final Consumer<ComponentWidths> componentWidthsConsumer) {
+                                     final Consumer<JSIComponentWidths> componentWidthsConsumer) {
         final InputData source = node.getContent().getDefinition();
         final JSITInputData result = new JSITInputData();
         result.setId(source.getId().getValue());
