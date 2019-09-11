@@ -35,7 +35,6 @@
     <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
   </properties>
   <dependencies>
-
     <!--Logs-->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -575,6 +574,11 @@
     <dependency>
       <groupId>com.google.elemental2</groupId>
       <artifactId>elemental2-dom</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
       <scope>provided</scope>
     </dependency>
 
