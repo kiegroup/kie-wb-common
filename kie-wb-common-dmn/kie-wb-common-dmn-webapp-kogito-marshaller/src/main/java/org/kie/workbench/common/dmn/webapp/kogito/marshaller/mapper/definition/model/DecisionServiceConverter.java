@@ -19,11 +19,12 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.DMNElementReference;
@@ -72,10 +73,44 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final Name name = new Name(dmn.getName());
         final InformationItemPrimary informationItem = InformationItemPrimaryPropertyConverter.wbFromDMN(dmn.getVariable(), dmn);
-        final List<DMNElementReference> outputDecision = Stream.of(dmn.getOutputDecision().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
-        final List<DMNElementReference> encapsulatedDecision = Stream.of(dmn.getEncapsulatedDecision().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
-        final List<DMNElementReference> inputDecision = Stream.of(dmn.getInputDecision().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
-        final List<DMNElementReference> inputData = Stream.of(dmn.getInputData().asArray()).map(DMNElementReferenceConverter::wbFromDMN).collect(Collectors.toList());
+
+        final List<DMNElementReference> outputDecision = new ArrayList<>();
+        final List<DMNElementReference> encapsulatedDecision = new ArrayList<>();
+        final List<DMNElementReference> inputDecision = new ArrayList<>();
+        final List<DMNElementReference> inputData = new ArrayList<>();
+
+        final JsArrayLike<JSITDMNElementReference> jsiOutputDecisions = JSITDecisionService.getOutputDecision(dmn);
+        if (Objects.nonNull(jsiOutputDecisions)) {
+            for (int i = 0; i < jsiOutputDecisions.getLength(); i++) {
+                final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.getAt(i));
+                outputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiOutputDecision));
+            }
+        }
+
+        final JsArrayLike<JSITDMNElementReference> jsiEncapsulatedDecisions = JSITDecisionService.getEncapsulatedDecision(dmn);
+        if (Objects.nonNull(jsiEncapsulatedDecisions)) {
+            for (int i = 0; i < jsiEncapsulatedDecisions.getLength(); i++) {
+                final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.getAt(i));
+                outputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiEncapsulatedDecision));
+            }
+        }
+
+        final JsArrayLike<JSITDMNElementReference> jsiInputDecisions = JSITDecisionService.getInputDecision(dmn);
+        if (Objects.nonNull(jsiInputDecisions)) {
+            for (int i = 0; i < jsiInputDecisions.getLength(); i++) {
+                final JSITDMNElementReference jsiInputDecision = Js.uncheckedCast(jsiInputDecisions.getAt(i));
+                inputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiInputDecision));
+            }
+        }
+
+        final JsArrayLike<JSITDMNElementReference> jsiInputDatas = JSITDecisionService.getInputData(dmn);
+        if (Objects.nonNull(jsiInputDatas)) {
+            for (int i = 0; i < jsiInputDatas.getLength(); i++) {
+                final JSITDMNElementReference jsiInputData = Js.uncheckedCast(jsiInputDatas.getAt(i));
+                inputData.add(DMNElementReferenceConverter.wbFromDMN(jsiInputData));
+            }
+        }
+
         final DecisionService decisionService = new DecisionService(id,
                                                                     description,
                                                                     name,

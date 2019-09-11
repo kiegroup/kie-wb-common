@@ -72,6 +72,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBoun
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIEdge;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIStyle;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITArtifact;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
@@ -460,8 +461,26 @@ public class DMNMarshallerKogito {
 
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
         final List<String> references = new ArrayList<>();
-        dmnDecisionServices.forEach(ds -> references.addAll(Arrays.stream(ds.getEncapsulatedDecision().asArray()).map(JSITDMNElementReference::getHref).collect(toList())));
-        dmnDecisionServices.forEach(ds -> references.addAll(Arrays.stream(ds.getOutputDecision().asArray()).map(JSITDMNElementReference::getHref).collect(toList())));
+        final List<JSITDecisionService> lstDecisionServices = new ArrayList<>(dmnDecisionServices);
+        for (int iDS = 0; iDS < lstDecisionServices.size(); iDS++) {
+            final JSITDecisionService jsiDecisionService = Js.uncheckedCast(lstDecisionServices.get(iDS));
+            final JsArrayLike<JSITDMNElementReference> jsiEncapsulatedDecisions = JSITDecisionService.getEncapsulatedDecision(jsiDecisionService);
+            if (Objects.nonNull(jsiEncapsulatedDecisions)) {
+                for (int i = 0; i < jsiEncapsulatedDecisions.getLength(); i++) {
+                    final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.getAt(i));
+                    references.add(jsiEncapsulatedDecision.getHref());
+                }
+            }
+
+            final JsArrayLike<JSITDMNElementReference> jsiOutputDecisions = JSITDecisionService.getOutputDecision(jsiDecisionService);
+            if (Objects.nonNull(jsiOutputDecisions)) {
+                for (int i = 0; i < jsiOutputDecisions.getLength(); i++) {
+                    final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.getAt(i));
+                    references.add(jsiOutputDecision.getHref());
+                }
+            }
+        }
+
         final Map<JSITDRGElement, Node> elementsToConnectToRoot = new HashMap<>();
         for (Entry<JSITDRGElement, Node> kv : elems.values()) {
             final JSITDRGElement element = Js.uncheckedCast(kv.getKey());
@@ -1196,7 +1215,10 @@ public class DMNMarshallerKogito {
         fontSetSetter.accept(fontSet);
 
         if (Objects.nonNull(drgShape.getDMNDecisionServiceDividerLine())) {
-            decisionServiceDividerLineYSetter.accept(drgShape.getDMNDecisionServiceDividerLine().getWaypoint().getAt(0).getY());
+            final JSIDMNDecisionServiceDividerLine divider = Js.uncheckedCast(drgShape.getDMNDecisionServiceDividerLine());
+            final JsArrayLike<JSIPoint> dividerPoints = JSIEdge.getWaypoint(divider);
+            final JSIPoint dividerY = Js.uncheckedCast(dividerPoints.getAt(0));
+            decisionServiceDividerLineYSetter.accept(dividerY.getY());
         }
     }
 
