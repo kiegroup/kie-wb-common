@@ -28,10 +28,12 @@ import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.XMLParser;
 import org.eclipse.bpmn2.Bpmn2Package;
+import org.eclipse.bpmn2.util.QNameURIHandler;
 import org.eclipse.bpmn2.di.BpmnDiPackage;
 import org.eclipse.dd.dc.DcPackage;
 import org.eclipse.dd.di.DiPackage;
 import org.eclipse.emf.common.util.Reflect;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -50,6 +52,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
     static final String URI_BPMN_DI = "http://www.omg.org/spec/BPMN/20100524/DI";
     static final String URI_DROOLS = "http://www.jboss.org/drools";
     static final String URI_BPSIM = "http://www.bpsim.org/schemas/1.0";
+    private final QNameURIHandler uriHandler;
 
     static {
         initPackageRegistry(EPackage.Registry.INSTANCE,
@@ -62,12 +65,9 @@ public class Bpmn2Resource extends XMLResourceImpl {
         initGwtReflectTypes();
     }
 
-    public static Bpmn2Resource newResource() {
-        return new Bpmn2Resource();
-    }
-
-    private Bpmn2Resource() {
-
+    protected Bpmn2Resource(URI uri) {
+        super(uri);
+        this.uriHandler = new QNameURIHandler(new BpmnXmlHelper(this));
     }
 
     public void load(Node node) throws IOException {
@@ -110,17 +110,17 @@ public class Bpmn2Resource extends XMLResourceImpl {
         return GWT.create(XMLParser.class);
     }
 
-    static Map<Object, Object> createSaveOptions() {
+    Map<Object, Object> createSaveOptions() {
         final Map<Object, Object> options = createDefaultOptions();
         options.put(XMLResource.OPTION_DECLARE_XML, true);
         options.put(XMLResource.OPTION_ELEMENT_HANDLER, new ElementHandler(true));
-        options.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<Object>());
+        options.put(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE, new ArrayList<>());
         return options;
     }
 
-    static Map<Object, Object> createLoadOptions() {
+    Map<Object, Object> createLoadOptions() {
         Map<Object, Object> options = createDefaultOptions();
-        options.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap<Object, Object>());
+        options.put(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP, new HashMap<>());
         options.put(XMLResource.OPTION_DOM_USE_NAMESPACES_IN_SCOPE, true);
         return options;
     }
@@ -155,7 +155,7 @@ public class Bpmn2Resource extends XMLResourceImpl {
         ColorPackageImpl.init();
     }
 
-    private static Map<Object, Object> createDefaultOptions() {
+    private Map<Object, Object> createDefaultOptions() {
         final Map<Object, Object> options = new HashMap<Object, Object>();
         options.put(XMLResource.OPTION_ENCODING, "UTF-8");
         options.put(XMLResource.OPTION_EXTENDED_META_DATA, new XmlExtendedMetadata());
@@ -163,6 +163,8 @@ public class Bpmn2Resource extends XMLResourceImpl {
         options.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, true);
         options.put(XMLResource.OPTION_DISABLE_NOTIFY, true);
         options.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD);
+        //*important* to resolve property proxy (BasicEObjectImpl.eResolveProxy)
+        options.put(XMLResource.OPTION_URI_HANDLER, uriHandler);
         return options;
     }
 }

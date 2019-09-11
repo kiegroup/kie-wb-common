@@ -71,6 +71,7 @@ public abstract class EventPropertyWriter extends PropertyWriter {
 
         ItemDefinition itemDefinition = bpmn2.createItemDefinition();
         itemDefinition.setId(Ids.messageItem(name));
+        itemDefinition.setStructureRef(messageRef.getStructure());
 
         Message message = bpmn2.createMessage();
         message.setName(name);
