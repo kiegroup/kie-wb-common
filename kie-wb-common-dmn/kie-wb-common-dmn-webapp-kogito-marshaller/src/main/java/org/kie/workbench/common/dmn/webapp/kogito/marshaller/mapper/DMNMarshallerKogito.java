@@ -222,11 +222,14 @@ public class DMNMarshallerKogito {
                                                                                                                 JsUtils.toList(jsiDefinitions.getImport()));
 
         // Map external DRGElements
+        final List<JSIDMNShape> dmnShapes = new ArrayList<>();
         final List<JSITDRGElement> importedDrgElements = new ArrayList<>();
         if (dmnDDDiagram.isPresent()) {
             final JSIDMNDiagram jsidmnDiagram = Js.uncheckedCast(dmnDDDiagram.get());
-            final List<JSIDMNShape> dmnShapes = getUniqueDMNShapes(jsidmnDiagram);
-            importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes, importDefinitions, jsiDefinitions));
+            dmnShapes.addAll(getUniqueDMNShapes(jsidmnDiagram));
+            importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes,
+                                                                     importDefinitions,
+                                                                     jsiDefinitions));
         }
 
         // Combine all explicit and imported elements into one
@@ -234,6 +237,9 @@ public class DMNMarshallerKogito {
         final Set<JSITDecisionService> dmnDecisionServices = new HashSet<>();
         drgElements.addAll(diagramDrgElements);
         drgElements.addAll(importedDrgElements);
+
+        // Remove DRGElements that doesn't have any local or imported shape.
+        removeDrgElementsWithoutShape(drgElements, dmnShapes);
 
         // Main conversion from DMN to Stunner
         final Map<String, Entry<JSITDRGElement, Node>> elems = new HashMap<>();
@@ -519,6 +525,17 @@ public class DMNMarshallerKogito {
         });
 
         return graph;
+    }
+
+    void removeDrgElementsWithoutShape(final List<JSITDRGElement> drgElements,
+                                       final List<JSIDMNShape> dmnShapes) {
+        // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
+        if (dmnShapes.size() == 0) {
+            return;
+        }
+
+        drgElements.removeIf(element -> dmnShapes.stream().noneMatch(s -> Objects.equals(s.getDmnElementRef().getLocalPart(),
+                                                                                         element.getId())));
     }
 
     void updateIDsWithAlias(final Map<String, String> indexByUri,
