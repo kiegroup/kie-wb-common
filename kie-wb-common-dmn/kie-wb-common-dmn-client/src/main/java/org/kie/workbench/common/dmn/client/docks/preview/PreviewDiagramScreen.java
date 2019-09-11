@@ -22,11 +22,11 @@ import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.client.widgets.canvas.StunnerBoundsProviderFactory;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionDiagramPreview;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionViewer;
@@ -75,7 +75,7 @@ public class PreviewDiagramScreen {
 
     @Inject
     public PreviewDiagramScreen(final SessionManager clientSessionManager,
-                                final @Any @Default ManagedInstance<SessionDiagramPreview<AbstractSession>> sessionPreviews,
+                                final @Any @DMNEditor ManagedInstance<SessionDiagramPreview<AbstractSession>> sessionPreviews,
                                 final View view) {
         this.clientSessionManager = clientSessionManager;
         this.sessionPreviews = sessionPreviews;
