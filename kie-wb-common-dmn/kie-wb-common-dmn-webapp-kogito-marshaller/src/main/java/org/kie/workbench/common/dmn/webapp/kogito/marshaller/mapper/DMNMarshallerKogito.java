@@ -417,26 +417,27 @@ public class DMNMarshallerKogito {
                 associations.add(jsiAssociation);
             }
         }
-        for (JSITAssociation a : associations) {
-            final String sourceId = getId(a.getSourceRef());
+        for (int i = 0; i < associations.size(); i++) {
+            final JSITAssociation jsiAssociation = Js.uncheckedCast(associations.get(i));
+            final String sourceId = getId(jsiAssociation.getSourceRef());
             final Node sourceNode = Optional.ofNullable(elems.get(sourceId)).map(Entry::getValue).orElse(textAnnotations.get(sourceId));
 
-            final String targetId = getId(a.getTargetRef());
+            final String targetId = getId(jsiAssociation.getTargetRef());
             final Node targetNode = Optional.ofNullable(elems.get(targetId)).map(Entry::getValue).orElse(textAnnotations.get(targetId));
 
             @SuppressWarnings("unchecked")
-            final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(a),
+            final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(jsiAssociation),
                                                                                                              ASSOCIATION_ID).asEdge();
 
-            final Id id = IdPropertyConverter.wbFromDMN(a.getId());
-            final Description description = new Description(a.getDescription());
+            final Id id = IdPropertyConverter.wbFromDMN(jsiAssociation.getId());
+            final Description description = new Description(jsiAssociation.getDescription());
             final Association definition = new Association(id, description);
             myEdge.getContent().setDefinition(definition);
 
             connectEdge(myEdge,
                         sourceNode,
                         targetNode);
-            setConnectionMagnets(myEdge, a.getId(), jsiDefinitions);
+            setConnectionMagnets(myEdge, jsiAssociation.getId(), jsiDefinitions);
         }
 
         //Ensure all locations are updated to relative for Stunner
@@ -485,10 +486,12 @@ public class DMNMarshallerKogito {
                         final JSITComponentWidths jsiWidths = Js.uncheckedCast(jsiComponentWidths.getAt(i));
                         if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
                             final List<Double> widths = es.getValue().getComponentWidths();
-                            widths.clear();
-                            for (int w = 0; w < jsiWidths.getWidth().getLength(); w++) {
-                                final double width = Js.castToDouble(jsiWidths.getWidth().getAt(w));
-                                widths.add(width);
+                            if (Objects.nonNull(jsiWidths.getWidth())) {
+                                widths.clear();
+                                for (int w = 0; w < jsiWidths.getWidth().getLength(); w++) {
+                                    final double width = Js.castToDouble(jsiWidths.getWidth().getAt(w));
+                                    widths.add(width);
+                                }
                             }
                         }
                     }
