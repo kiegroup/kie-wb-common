@@ -18,8 +18,9 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
+import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -80,10 +81,13 @@ public class ItemDefinitionPropertyConverter {
 
     static void setItemComponent(final ItemDefinition wb,
                                  final JSITItemDefinition dmn) {
-        Stream.of(dmn.getItemComponent().asArray()).forEach(dmnChild -> {
-            wb.getItemComponent().add(wbChildFromDMN(wb,
-                                                     dmnChild));
-        });
+        final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JSITItemDefinition.getItemComponent(dmn);
+        if (Objects.nonNull(jsiItemDefinitions)) {
+            for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
+                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
+                wb.getItemComponent().add(wbChildFromDMN(wb, jsiItemDefinition));
+            }
+        }
     }
 
     static ItemDefinition wbChildFromDMN(final ItemDefinition wbParent,
