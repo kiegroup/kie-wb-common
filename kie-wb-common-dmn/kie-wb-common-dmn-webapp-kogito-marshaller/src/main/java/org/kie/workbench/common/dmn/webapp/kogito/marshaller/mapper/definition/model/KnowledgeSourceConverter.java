@@ -37,7 +37,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -86,7 +85,7 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
     public JSITKnowledgeSource dmnFromNode(final Node<View<KnowledgeSource>, ?> node,
                                            final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final KnowledgeSource source = node.getContent().getDefinition();
-        final JSITKnowledgeSource result = new JSITKnowledgeSource();
+        final JSITKnowledgeSource result = JSITKnowledgeSource.newInstance();
         result.setId(source.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         result.setName(source.getName().getValue());
@@ -103,26 +102,26 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
                     if (drgElement instanceof Decision) {
-                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
+                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredDecision(ri);
-                        JsUtils.add(result.getAuthorityRequirement(), iReq);
+                        JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
-                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
+                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        JsUtils.add(result.getAuthorityRequirement(), iReq);
+                        JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
                     } else if (drgElement instanceof InputData) {
-                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
+                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredInput(ri);
-                        JsUtils.add(result.getAuthorityRequirement(), iReq);
+                        JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
                     } else {
                         throw new UnsupportedOperationException("wrong model definition.");
                     }

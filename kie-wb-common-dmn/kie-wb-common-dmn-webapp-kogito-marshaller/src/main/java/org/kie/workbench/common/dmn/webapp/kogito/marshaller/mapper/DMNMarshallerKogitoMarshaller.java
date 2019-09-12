@@ -72,7 +72,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.ArrayUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -275,7 +274,7 @@ public class DMNMarshallerKogitoMarshaller {
         any.setAt(any.getLength(), componentsWidthsExtension);
 
         final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) -> {
-            ArrayUtils.add(componentsWidthsExtension.getComponentWidths().asArray(), cw);
+            JSITComponentsWidthsExtension.addComponentWidths(componentsWidthsExtension, cw);
         };
 
         //Iterate Graph processing nodes..

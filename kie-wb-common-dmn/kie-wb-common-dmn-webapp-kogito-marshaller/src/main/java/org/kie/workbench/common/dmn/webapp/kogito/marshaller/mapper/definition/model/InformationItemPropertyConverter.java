@@ -44,7 +44,7 @@ public class InformationItemPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITInformationItem result = new JSITInformationItem();
+        final JSITInformationItem result = JSITInformationItem.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.setName(wb.getName().getValue());

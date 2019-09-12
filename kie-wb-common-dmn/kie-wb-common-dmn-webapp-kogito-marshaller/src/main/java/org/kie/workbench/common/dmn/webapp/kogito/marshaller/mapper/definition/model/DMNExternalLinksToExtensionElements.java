@@ -59,22 +59,20 @@ class DMNExternalLinksToExtensionElements {
 
         final DocumentationLinks links = source.getLinksHolder().getValue();
         final JSITDMNElement.JSIExtensionElements elements = getOrCreateExtensionElements(target);
+        if (Objects.isNull(elements.getAny())) {
+            elements.setAny(JsUtils.getNativeArray());
+        }
         //TODO {manstis} Need to make this work in a JSIxxx friendly way
-        //if (Objects.isNull(elements.getAny())) {
-        //    elements.setAny(new Object[]{});
-        //}
-        //final List<Object> extensions = Arrays.asList(elements.getAny());
-        //removeAllExistingLinks(extensions);
+//        final List<Object> extensions = Arrays.asList(elements.getAny());
+//        removeAllExistingLinks(extensions);
         //
-        //for (final DMNExternalLink link : links.getLinks()) {
-        //    final JSIAttachment attachment = new JSIAttachment();
-        //    attachment.setName(link.getDescription());
-        //    attachment.setUrl(link.getUrl());
-        //    extensions.add(attachment);
-        //}
-        //
-        //elements.setAny(extensions.toArray());
-        //target.setExtensionElements(elements);
+        for (final DMNExternalLink link : links.getLinks()) {
+            final JSITAttachment attachment = JSITAttachment.newInstance();
+            attachment.setName(link.getDescription());
+            attachment.setUrl(link.getUrl());
+            JSITDMNElement.JSIExtensionElements.addAny(elements, attachment);
+        }
+        target.setExtensionElements(elements);
     }
 
     //private static void removeAllExistingLinks(final List<Object> extensions) {
@@ -84,7 +82,7 @@ class DMNExternalLinksToExtensionElements {
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
         return target.getExtensionElements() == null
-                ? new JSITDMNElement.JSIExtensionElements()
+                ? JSITDMNElement.JSIExtensionElements.newInstance()
                 : target.getExtensionElements();
     }
 }

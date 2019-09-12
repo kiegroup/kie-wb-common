@@ -79,7 +79,7 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
     public JSITInputData dmnFromNode(final Node<View<InputData>, ?> node,
                                      final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final InputData source = node.getContent().getDefinition();
-        final JSITInputData result = new JSITInputData();
+        final JSITInputData result =  JSITInputData.newInstance();
         result.setId(source.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         result.setName(source.getName().getValue());

@@ -142,7 +142,7 @@ public class FunctionDefinitionPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITFunctionDefinition result = new JSITFunctionDefinition();
+        final JSITFunctionDefinition result = JSITFunctionDefinition.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
@@ -167,7 +167,7 @@ public class FunctionDefinitionPropertyConverter {
 
         for (InformationItem ii : wb.getFormalParameter()) {
             final JSITInformationItem iiConverted = InformationItemPropertyConverter.dmnFromWB(ii);
-            JsUtils.add(result.getFormalParameter(), iiConverted);
+            JSITFunctionDefinition.addFormalParameter(result, iiConverted);
         }
 
         return result;

@@ -105,25 +105,25 @@ public class DecisionTablePropertyConverter {
     }
 
     public static JSITDecisionTable dmnFromWB(final DecisionTable wb) {
-        final JSITDecisionTable result = new JSITDecisionTable();
+        final JSITDecisionTable result =  JSITDecisionTable.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         for (InputClause input : wb.getInput()) {
             final JSITInputClause c = InputClausePropertyConverter.dmnFromWB(input);
-            JsUtils.add(result.getInput(), c);
+            JSITDecisionTable.addInput(result, c);
         }
         for (OutputClause input : wb.getOutput()) {
             final JSITOutputClause c = OutputClausePropertyConverter.dmnFromWB(input);
-            JsUtils.add(result.getOutput(), c);
+            JSITDecisionTable.addOutput(result, c);
         }
         if (result.getOutput().getLength() == 1) {
             result.getOutput().getAt(0).setName(null); // DROOLS-3281
         }
         for (DecisionRule dr : wb.getRule()) {
             final JSITDecisionRule c = DecisionRulePropertyConverter.dmnFromWB(dr);
-            JsUtils.add(result.getRule(), c);
+            JSITDecisionTable.addRule(result, c);
         }
         if (wb.getHitPolicy() != null) {
             result.setHitPolicy(JSITHitPolicy.valueOf(wb.getHitPolicy().name()));
