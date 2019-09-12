@@ -24,6 +24,7 @@ import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.DocumentRoot;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.jbpm.Bpmn2Resource;
+import org.eclipse.jbpm.Bpmn2ResourceFactory;
 
 public class Bpmn2Marshalling {
 
@@ -32,7 +33,7 @@ public class Bpmn2Marshalling {
     private static Consumer<String> LOGGER = GWT::log;
 
     public static DocumentRoot unmarshall(final String raw) {
-        Bpmn2Resource bpmn2Resource = Bpmn2Resource.newResource();
+        Bpmn2Resource bpmn2Resource = Bpmn2ResourceFactory.getInstance().create();
         try {
             bpmn2Resource.load(raw);
         } catch (IOException e) {
@@ -46,7 +47,7 @@ public class Bpmn2Marshalling {
     }
 
     public static String marshall(final Definitions definitions) {
-        Bpmn2Resource bpmn2Resource = Bpmn2Resource.newResource();
+        Bpmn2Resource bpmn2Resource = Bpmn2ResourceFactory.getInstance().create();
         bpmn2Resource.getContents().add(definitions);
         String raw = "";
         try {

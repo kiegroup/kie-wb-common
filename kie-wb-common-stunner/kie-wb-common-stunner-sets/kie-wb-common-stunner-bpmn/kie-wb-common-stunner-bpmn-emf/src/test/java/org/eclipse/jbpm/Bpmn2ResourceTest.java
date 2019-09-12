@@ -25,11 +25,13 @@ import com.google.gwt.xml.client.XMLParser;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.di.BpmnDiPackage;
+import org.eclipse.bpmn2.util.QNameURIHandler;
 import org.eclipse.dd.dc.DcPackage;
 import org.eclipse.dd.di.DiPackage;
 import org.eclipse.emf.common.util.Reflect;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.resource.xml.URIHandler;
 import org.eclipse.emf.ecore.xmi.util.ElementHandler;
 import org.jboss.drools.DroolsPackage;
 import org.junit.Before;
@@ -52,7 +54,7 @@ public class Bpmn2ResourceTest {
 
     @Before
     public void setUp() {
-        tested = spy(Bpmn2Resource.newResource());
+        tested = spy(Bpmn2ResourceFactory.getInstance().create());
     }
 
     @Test
@@ -100,18 +102,18 @@ public class Bpmn2ResourceTest {
 
     @Test
     public void testCreateLoadOptions() {
-        Map<Object, Object> options = Bpmn2Resource.createLoadOptions();
+        Map<Object, Object> options = tested.createLoadOptions();
         assertCreateLoadOptions(options);
     }
 
     @Test
     public void testCreateSaveOptions() {
-        Map<Object, Object> options = Bpmn2Resource.createSaveOptions();
+        Map<Object, Object> options = tested.createSaveOptions();
         assertCreateSaveOptions(options);
     }
 
     private void assertCreateLoadOptions(Map<Object, Object> options) {
-        assertEquals(8, options.size());
+        assertEquals(9, options.size());
         assertTrue((Boolean) options.get(XMLResource.OPTION_DOM_USE_NAMESPACES_IN_SCOPE));
         assertTrue(options.get(XMLResource.OPTION_USE_XML_NAME_TO_FEATURE_MAP) instanceof Map);
         assertTrue((Boolean) options.get(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE));
@@ -120,10 +122,11 @@ public class Bpmn2ResourceTest {
         assertTrue((Boolean) options.get(XMLResource.OPTION_DISABLE_NOTIFY));
         assertEquals(XMLResource.OPTION_PROCESS_DANGLING_HREF_RECORD, options.get(XMLResource.OPTION_PROCESS_DANGLING_HREF));
         assertEquals("UTF-8", options.get(XMLResource.OPTION_ENCODING));
+        assertTrue(options.get(XMLResource.OPTION_URI_HANDLER) instanceof QNameURIHandler);
     }
 
     private void assertCreateSaveOptions(Map<Object, Object> options) {
-        assertEquals(9, options.size());
+        assertEquals(10, options.size());
         assertTrue((Boolean) options.get(XMLResource.OPTION_DECLARE_XML));
         assertTrue((Boolean) options.get(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE));
         assertTrue(options.get(XMLResource.OPTION_EXTENDED_META_DATA) instanceof XmlExtendedMetadata);
@@ -133,5 +136,6 @@ public class Bpmn2ResourceTest {
         assertEquals("UTF-8", options.get(XMLResource.OPTION_ENCODING));
         assertTrue(options.get(XMLResource.OPTION_ELEMENT_HANDLER) instanceof ElementHandler);
         assertTrue(options.get(XMLResource.OPTION_USE_CACHED_LOOKUP_TABLE) instanceof ArrayList);
+        assertTrue(options.get(XMLResource.OPTION_URI_HANDLER) instanceof QNameURIHandler);
     }
 }

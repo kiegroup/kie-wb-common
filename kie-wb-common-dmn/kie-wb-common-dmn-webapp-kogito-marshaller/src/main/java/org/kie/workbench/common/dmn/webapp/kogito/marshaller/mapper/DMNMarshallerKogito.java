@@ -72,6 +72,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBoun
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIEdge;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIStyle;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITArtifact;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
@@ -221,11 +222,14 @@ public class DMNMarshallerKogito {
                                                                                                                 JsUtils.toList(jsiDefinitions.getImport()));
 
         // Map external DRGElements
+        final List<JSIDMNShape> dmnShapes = new ArrayList<>();
         final List<JSITDRGElement> importedDrgElements = new ArrayList<>();
         if (dmnDDDiagram.isPresent()) {
             final JSIDMNDiagram jsidmnDiagram = Js.uncheckedCast(dmnDDDiagram.get());
-            final List<JSIDMNShape> dmnShapes = getUniqueDMNShapes(jsidmnDiagram);
-            importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes, importDefinitions, jsiDefinitions));
+            dmnShapes.addAll(getUniqueDMNShapes(jsidmnDiagram));
+            importedDrgElements.addAll(getImportedDrgElementsByShape(dmnShapes,
+                                                                     importDefinitions,
+                                                                     jsiDefinitions));
         }
 
         // Combine all explicit and imported elements into one
@@ -233,6 +237,9 @@ public class DMNMarshallerKogito {
         final Set<JSITDecisionService> dmnDecisionServices = new HashSet<>();
         drgElements.addAll(diagramDrgElements);
         drgElements.addAll(importedDrgElements);
+
+        // Remove DRGElements that doesn't have any local or imported shape.
+        removeDrgElementsWithoutShape(drgElements, dmnShapes);
 
         // Main conversion from DMN to Stunner
         final Map<String, Entry<JSITDRGElement, Node>> elems = new HashMap<>();
@@ -417,26 +424,27 @@ public class DMNMarshallerKogito {
                 associations.add(jsiAssociation);
             }
         }
-        for (JSITAssociation a : associations) {
-            final String sourceId = getId(a.getSourceRef());
+        for (int i = 0; i < associations.size(); i++) {
+            final JSITAssociation jsiAssociation = Js.uncheckedCast(associations.get(i));
+            final String sourceId = getId(jsiAssociation.getSourceRef());
             final Node sourceNode = Optional.ofNullable(elems.get(sourceId)).map(Entry::getValue).orElse(textAnnotations.get(sourceId));
 
-            final String targetId = getId(a.getTargetRef());
+            final String targetId = getId(jsiAssociation.getTargetRef());
             final Node targetNode = Optional.ofNullable(elems.get(targetId)).map(Entry::getValue).orElse(textAnnotations.get(targetId));
 
             @SuppressWarnings("unchecked")
-            final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(a),
+            final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(idOfDMNorWBUUID(jsiAssociation),
                                                                                                              ASSOCIATION_ID).asEdge();
 
-            final Id id = IdPropertyConverter.wbFromDMN(a.getId());
-            final Description description = new Description(a.getDescription());
+            final Id id = IdPropertyConverter.wbFromDMN(jsiAssociation.getId());
+            final Description description = new Description(jsiAssociation.getDescription());
             final Association definition = new Association(id, description);
             myEdge.getContent().setDefinition(definition);
 
             connectEdge(myEdge,
                         sourceNode,
                         targetNode);
-            setConnectionMagnets(myEdge, a.getId(), jsiDefinitions);
+            setConnectionMagnets(myEdge, jsiAssociation.getId(), jsiDefinitions);
         }
 
         //Ensure all locations are updated to relative for Stunner
@@ -459,8 +467,26 @@ public class DMNMarshallerKogito {
 
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
         final List<String> references = new ArrayList<>();
-        dmnDecisionServices.forEach(ds -> references.addAll(Arrays.stream(ds.getEncapsulatedDecision().asArray()).map(JSITDMNElementReference::getHref).collect(toList())));
-        dmnDecisionServices.forEach(ds -> references.addAll(Arrays.stream(ds.getOutputDecision().asArray()).map(JSITDMNElementReference::getHref).collect(toList())));
+        final List<JSITDecisionService> lstDecisionServices = new ArrayList<>(dmnDecisionServices);
+        for (int iDS = 0; iDS < lstDecisionServices.size(); iDS++) {
+            final JSITDecisionService jsiDecisionService = Js.uncheckedCast(lstDecisionServices.get(iDS));
+            final JsArrayLike<JSITDMNElementReference> jsiEncapsulatedDecisions = JSITDecisionService.getEncapsulatedDecision(jsiDecisionService);
+            if (Objects.nonNull(jsiEncapsulatedDecisions)) {
+                for (int i = 0; i < jsiEncapsulatedDecisions.getLength(); i++) {
+                    final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.getAt(i));
+                    references.add(jsiEncapsulatedDecision.getHref());
+                }
+            }
+
+            final JsArrayLike<JSITDMNElementReference> jsiOutputDecisions = JSITDecisionService.getOutputDecision(jsiDecisionService);
+            if (Objects.nonNull(jsiOutputDecisions)) {
+                for (int i = 0; i < jsiOutputDecisions.getLength(); i++) {
+                    final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.getAt(i));
+                    references.add(jsiOutputDecision.getHref());
+                }
+            }
+        }
+
         final Map<JSITDRGElement, Node> elementsToConnectToRoot = new HashMap<>();
         for (Entry<JSITDRGElement, Node> kv : elems.values()) {
             final JSITDRGElement element = Js.uncheckedCast(kv.getKey());
@@ -485,10 +511,12 @@ public class DMNMarshallerKogito {
                         final JSITComponentWidths jsiWidths = Js.uncheckedCast(jsiComponentWidths.getAt(i));
                         if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
                             final List<Double> widths = es.getValue().getComponentWidths();
-                            widths.clear();
-                            for (int w = 0; w < jsiWidths.getWidth().getLength(); w++) {
-                                final double width = Js.castToDouble(jsiWidths.getWidth().getAt(w));
-                                widths.add(width);
+                            if (Objects.nonNull(jsiWidths.getWidth())) {
+                                widths.clear();
+                                for (int w = 0; w < jsiWidths.getWidth().getLength(); w++) {
+                                    final double width = Js.castToDouble(jsiWidths.getWidth().getAt(w));
+                                    widths.add(width);
+                                }
                             }
                         }
                     }
@@ -497,6 +525,17 @@ public class DMNMarshallerKogito {
         });
 
         return graph;
+    }
+
+    void removeDrgElementsWithoutShape(final List<JSITDRGElement> drgElements,
+                                       final List<JSIDMNShape> dmnShapes) {
+        // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
+        if (dmnShapes.size() == 0) {
+            return;
+        }
+
+        drgElements.removeIf(element -> dmnShapes.stream().noneMatch(s -> Objects.equals(s.getDmnElementRef().getLocalPart(),
+                                                                                         element.getId())));
     }
 
     void updateIDsWithAlias(final Map<String, String> indexByUri,
@@ -1189,7 +1228,10 @@ public class DMNMarshallerKogito {
         fontSetSetter.accept(fontSet);
 
         if (Objects.nonNull(drgShape.getDMNDecisionServiceDividerLine())) {
-            decisionServiceDividerLineYSetter.accept(drgShape.getDMNDecisionServiceDividerLine().getWaypoint().getAt(0).getY());
+            final JSIDMNDecisionServiceDividerLine divider = Js.uncheckedCast(drgShape.getDMNDecisionServiceDividerLine());
+            final JsArrayLike<JSIPoint> dividerPoints = JSIEdge.getWaypoint(divider);
+            final JSIPoint dividerY = Js.uncheckedCast(dividerPoints.getAt(0));
+            decisionServiceDividerLineYSetter.accept(dividerY.getY());
         }
     }
 
