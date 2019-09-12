@@ -109,7 +109,7 @@ public class DefinitionsConverter {
         if (wb == null) {
             return null;
         }
-        final JSITDefinitions result = new JSITDefinitions();
+        final JSITDefinitions result = JSITDefinitions.newInstance();
 
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
         final String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
@@ -129,12 +129,12 @@ public class DefinitionsConverter {
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
-            JsUtils.add(result.getItemDefinition(), itemDefConverted);
+            JSITDefinitions.addItemDefinition(result, itemDefConverted);
         }
 
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
-            JsUtils.add(result.getImport(), importConverted);
+            JSITDefinitions.addImport(result, importConverted);
         }
 
         return result;

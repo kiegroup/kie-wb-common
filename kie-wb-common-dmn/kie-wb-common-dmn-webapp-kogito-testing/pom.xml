@@ -33,6 +33,8 @@
     <errai.jboss.home>${project.build.directory}/wildfly-${version.org.jboss.errai.wildfly}</errai.jboss.home>
     <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
     <version.thorntail>2.4.0.Final</version.thorntail>
+    <gwt.helper.includes>Marshaller</gwt.helper.includes>
+    <gwt.helper.rootDirectories>${project.parent.basedir}/</gwt.helper.rootDirectories>
   </properties>
 
   <dependencies>
@@ -756,7 +758,23 @@
     <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
 
     <plugins>
-
+      <!-- Include additional sources path for hot reload -->
+      <plugin>
+        <groupId>org.kie</groupId>
+        <artifactId>kie-gwthelper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <includes>${gwt.helper.includes}</includes> <!-- will include all GWT module whose configuration file name match that pattern -->
+              <rootDirectories>${gwt.helper.rootDirectories}</rootDirectories> <!-- will search inside those directories -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
