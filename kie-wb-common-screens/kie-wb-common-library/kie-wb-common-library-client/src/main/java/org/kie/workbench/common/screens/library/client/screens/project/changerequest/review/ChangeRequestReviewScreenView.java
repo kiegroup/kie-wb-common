@@ -73,6 +73,10 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
     private HTMLButtonElement rejectButton;
 
     @Inject
+    @DataField("close-button")
+    private HTMLButtonElement closeButton;
+
+    @Inject
     @DataField("accept-button")
     private HTMLButtonElement acceptButton;
 
@@ -129,6 +133,11 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
     }
 
     @Override
+    public void showCloseButton(boolean isVisible) {
+        this.closeButton.hidden = !isVisible;
+    }
+
+    @Override
     public void activateOverviewTab() {
         this.deactivateAllTabs();
         this.activate(this.overviewTabItem);
@@ -152,6 +161,7 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
         this.showAcceptButton(false);
         this.showRejectButton(false);
         this.showRevertButton(false);
+        this.showCloseButton(false);
         this.enableAcceptButton(true);
     }
 
@@ -173,6 +183,11 @@ public class ChangeRequestReviewScreenView implements ChangeRequestReviewScreenP
     @EventHandler("reject-button")
     public void onRejectClicked(final ClickEvent event) {
         presenter.reject();
+    }
+
+    @EventHandler("close-button")
+    public void onCloseClicked(final ClickEvent event) {
+        presenter.close();
     }
 
     @EventHandler("accept-button")

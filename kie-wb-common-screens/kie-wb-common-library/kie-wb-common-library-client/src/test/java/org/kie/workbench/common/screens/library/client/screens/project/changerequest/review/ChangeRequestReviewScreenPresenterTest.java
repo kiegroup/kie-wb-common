@@ -29,6 +29,7 @@ import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
+import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,6 +124,10 @@ public class ChangeRequestReviewScreenPresenterTest {
                                                                             anyString());
         doReturn(mock(Space.class)).when(workspaceProject).getSpace();
         doReturn(Optional.of(branch)).when(repository).getBranch("branch");
+
+        User user = mock(User.class);
+        doReturn("admin").when(user).getIdentifier();
+        doReturn(user).when(sessionInfo).getIdentity();
 
         this.presenter = spy(new ChangeRequestReviewScreenPresenter(view,
                                                                     ts,
@@ -322,6 +327,42 @@ public class ChangeRequestReviewScreenPresenterTest {
         verify(changeRequestService, never()).rejectChangeRequest(anyString(),
                                                                   anyString(),
                                                                   anyLong());
+    }
+
+    @Test
+    public void closeWhenIsAuthorTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("authorId")).set("admin");
+
+        presenter.close();
+
+        verify(changeRequestService).closeChangeRequest(anyString(),
+                                                        anyString(),
+                                                        anyLong());
+    }
+
+    @Test
+    public void closeWhenIsNotAuthorTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("authorId")).set("developer");
+
+        presenter.close();
+
+        verify(changeRequestService, never()).closeChangeRequest(anyString(),
+                                                                 anyString(),
+                                                                 anyLong());
     }
 
     @Test

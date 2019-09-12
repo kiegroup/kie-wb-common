@@ -297,6 +297,7 @@ public class PopulatedChangeRequestListPresenter {
             case REVERT_FAILED:
                 return new Image(LibraryImages.INSTANCE.changeRequestMergedStatus().getSafeUri());
             case REJECTED:
+            case CLOSED:
             default:
                 return new Image(LibraryImages.INSTANCE.changeRequestClosedStatus().getSafeUri());
         }
@@ -336,6 +337,7 @@ public class PopulatedChangeRequestListPresenter {
             statusList.add(ChangeRequestStatus.REJECTED);
             statusList.add(ChangeRequestStatus.REVERT_FAILED);
             statusList.add(ChangeRequestStatus.REVERTED);
+            statusList.add(ChangeRequestStatus.CLOSED);
         } else if (this.filterType.equals(FILTER_OPEN)) {
             statusList.add(ChangeRequestStatus.OPEN);
         } else {

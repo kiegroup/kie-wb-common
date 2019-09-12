@@ -80,6 +80,7 @@ public class ChangeRequestReviewScreenPresenter {
     private boolean overviewTabLoaded;
     private boolean changedFilesTabLoaded;
     private Repository repository;
+    private String authorId;
 
     @Inject
     public ChangeRequestReviewScreenPresenter(final View view,
@@ -207,6 +208,12 @@ public class ChangeRequestReviewScreenPresenter {
         this.doActionIfAllowed(this::revertChangeRequestAction);
     }
 
+    public void close() {
+        if (isUserAuthor()) {
+            closeChangeRequestAction();
+        }
+    }
+
     private void notifyOtherUsers(final String userWhoMadeUpdates) {
         if (!sessionInfo.getIdentity().getIdentifier().equals(userWhoMadeUpdates)) {
             fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestUpdatedMessage,
@@ -278,6 +285,7 @@ public class ChangeRequestReviewScreenPresenter {
 
     private RemoteCallback<ChangeRequest> loadChangeRequestCallback() {
         return (final ChangeRequest changeRequest) -> {
+            this.authorId = changeRequest.getAuthorId();
             this.resolveInvolvedBranches(changeRequest);
 
             this.setupOverviewScreen(changeRequest);
@@ -342,6 +350,7 @@ public class ChangeRequestReviewScreenPresenter {
                     final boolean canBeAccepted = !changeRequest.isConflict() &&
                             changeRequest.getChangedFilesCount() > 0;
 
+                    this.view.showCloseButton(isUserAuthor());
                     this.view.showRejectButton(true);
                     this.view.showAcceptButton(true);
                     this.view.enableAcceptButton(canBeAccepted);
@@ -352,13 +361,12 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void rejectChangeRequestAction() {
-        this.changeRequestService.call(v -> {
-            fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRejectMessage,
-                                            currentChangeRequestId),
-                                  NotificationEvent.NotificationType.SUCCESS);
-        }).rejectChangeRequest(workspaceProject.getSpace().getName(),
-                               repository.getAlias(),
-                               currentChangeRequestId);
+        this.changeRequestService.call(v -> fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRejectMessage,
+                                                                            currentChangeRequestId),
+                                                                  NotificationEvent.NotificationType.SUCCESS))
+                .rejectChangeRequest(workspaceProject.getSpace().getName(),
+                                     repository.getAlias(),
+                                     currentChangeRequestId);
     }
 
     private void acceptChangeRequestAction() {
@@ -409,6 +417,16 @@ public class ChangeRequestReviewScreenPresenter {
                                currentChangeRequestId);
     }
 
+    private void closeChangeRequestAction() {
+        this.changeRequestService.call(v -> {
+            fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestCloseMessage,
+                                            currentChangeRequestId),
+                                  NotificationEvent.NotificationType.SUCCESS);
+        }).closeChangeRequest(workspaceProject.getSpace().getName(),
+                              repository.getAlias(),
+                              currentChangeRequestId);
+    }
+
     private void fireNotificationEvent(final String message,
                                        final NotificationEvent.NotificationType type) {
         notificationEvent.fire(new NotificationEvent(message,
@@ -426,6 +444,10 @@ public class ChangeRequestReviewScreenPresenter {
         }
     }
 
+    private boolean isUserAuthor() {
+        return this.authorId.equals(this.sessionInfo.getIdentity().getIdentifier());
+    }
+
     public interface View extends UberElemental<ChangeRequestReviewScreenPresenter> {
 
         void setTitle(final String title);
@@ -441,6 +463,8 @@ public class ChangeRequestReviewScreenPresenter {
         void enableAcceptButton(final boolean isEnabled);
 
         void showRevertButton(final boolean isVisible);
+
+        void showCloseButton(final boolean isVisible);
 
         void activateOverviewTab();
 

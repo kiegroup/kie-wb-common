@@ -55,6 +55,13 @@ public class ChangeRequestUtilsTest {
     }
 
     @Test
+    public void formatStatusClosedTest() {
+        utils.formatStatus(ChangeRequestStatus.CLOSED);
+
+        verify(ts).getTranslation(LibraryConstants.ClosedStatus);
+    }
+
+    @Test
     public void formatStatusRevertedTest() {
         utils.formatStatus(ChangeRequestStatus.REVERTED);
 

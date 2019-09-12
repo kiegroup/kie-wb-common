@@ -54,6 +54,8 @@ public class ChangeRequestUtils {
                 return ts.getTranslation(LibraryConstants.RevertedStatus);
             case REVERT_FAILED:
                 return ts.getTranslation(LibraryConstants.RevertFailedStatus);
+            case CLOSED:
+                return ts.getTranslation(LibraryConstants.ClosedStatus);
             case OPEN:
             default:
                 return ts.getTranslation(LibraryConstants.OpenStatus);

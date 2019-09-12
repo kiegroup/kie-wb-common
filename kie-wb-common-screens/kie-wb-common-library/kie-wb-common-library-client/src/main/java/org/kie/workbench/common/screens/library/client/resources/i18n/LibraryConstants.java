@@ -390,6 +390,9 @@ public class LibraryConstants {
     public static final String RevertFailedTooltip = "RevertFailedTooltip";
 
     @TranslationKey(defaultValue = "")
+    public static final String ClosedStatus = "ClosedStatus";
+
+    @TranslationKey(defaultValue = "")
     public static final String Comments = "Comments";
 
     @TranslationKey(defaultValue = "")
@@ -649,6 +652,9 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String ChangeRequestRevertMessage = "ChangeRequestRevertMessage";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestCloseMessage = "ChangeRequestCloseMessage";
 
     @TranslationKey(defaultValue = "")
     public static final String ChangeRequestRevertFailMessage = "ChangeRequestRevertFailMessage";
