@@ -98,8 +98,9 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
                           final ServiceCallback<Diagram> callback) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
             doNewDiagram(callback);
+        } else {
+            doTransformation(xml, callback);
         }
-        doTransformation(xml, callback);
     }
 
     private void doNewDiagram(final ServiceCallback<Diagram> callback) {
