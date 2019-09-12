@@ -53,7 +53,7 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
-import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
+import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.uberfire.client.annotations.WorkbenchClientEditor;

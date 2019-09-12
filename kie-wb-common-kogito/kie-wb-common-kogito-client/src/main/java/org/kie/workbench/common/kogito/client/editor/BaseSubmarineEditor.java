@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.submarine.client.editor;
+package org.kie.workbench.common.kogito.client.editor;
 
 import java.util.Objects;
 import java.util.function.Supplier;

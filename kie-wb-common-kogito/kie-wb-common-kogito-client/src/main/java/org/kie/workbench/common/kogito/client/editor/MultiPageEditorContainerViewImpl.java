@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.submarine.client.editor;
+package org.kie.workbench.common.kogito.client.editor;
 
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.submarine.client.resources.i18n.SubmarineClientConstants;
+import org.kie.workbench.common.kogito.client.resources.i18n.SubmarineClientConstants;
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorImpl;
 import org.uberfire.client.views.pfly.multipage.PageImpl;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;

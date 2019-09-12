@@ -15,6 +15,6 @@
   -->
 <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee" bean-discovery-mode="none">
   <scan>
-    <exclude name="org.kie.workbench.common.submarine.client.**"/>
+    <exclude name="org.kie.workbench.common.kogito.client.**"/>
   </scan>
 </beans>

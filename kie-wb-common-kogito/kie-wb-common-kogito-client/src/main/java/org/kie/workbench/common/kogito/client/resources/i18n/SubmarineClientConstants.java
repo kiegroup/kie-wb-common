@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.submarine.api.resources.i18n;
+package org.kie.workbench.common.kogito.client.resources.i18n;
 
-public class SubmarineAPIConstants {
+import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 
+public class SubmarineClientConstants {
+
+    @TranslationKey(defaultValue = "")
+    public static final String KieEditorWrapperView_EditTabTitle = "KieEditorWrapperView.EditTabTitle";
 }
