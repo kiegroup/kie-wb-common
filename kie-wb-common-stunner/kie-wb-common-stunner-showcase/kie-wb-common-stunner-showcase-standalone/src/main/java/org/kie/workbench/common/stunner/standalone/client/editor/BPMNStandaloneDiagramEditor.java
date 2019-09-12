@@ -153,55 +153,6 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
         this.stateHolder = stateHolder;
     }
 
-//    @Override
-//    protected AbstractDiagramEditorCore<SubmarineMetadata, Diagram, DiagramResourceImpl> makeCore(final View view,
-//                                                                                                                    final TextEditorView xmlEditorView,
-//                                                                                                                    final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
-//                                                                                                                    final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-//                                                                                                                    final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
-//                                                                                                                    final Event<NotificationEvent> notificationEvent,
-//                                                                                                                    final ErrorPopupPresenter errorPopupPresenter,
-//                                                                                                                    final DiagramClientErrorHandler diagramClientErrorHandler,
-//                                                                                                                    final ClientTranslationService translationService) {
-//        return new DiagramEditorCore(view,
-//                                     xmlEditorView,
-//                                     editorSessionPresenterInstances,
-//                                     viewerSessionPresenterInstances,
-//                                     menuSessionItems,
-//                                     notificationEvent,
-//                                     errorPopupPresenter,
-//                                     diagramClientErrorHandler,
-//                                     translationService,
-//                                     () -> place) {
-//            @Override
-//            protected void saveOrUpdate(final String commitMessage) {
-//                doSaveAsXML(commitMessage);
-//            }
-//
-//            @Override
-//            protected void saveAsXML(final String commitMessage) {
-//                doSaveAsXML(commitMessage);
-//            }
-//
-//            private void doSaveAsXML(final String commitMessage) {
-//                stateHolder.saveFile(commitMessage,
-//                                     new ServiceCallback<String>() {
-//                                         @Override
-//                                         public void onSuccess(final String xml) {
-//                                             getSaveSuccessCallback(xml.hashCode()).callback(path);
-//                                             notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
-//                                             hideLoadingViews();
-//                                         }
-//
-//                                         @Override
-//                                         public void onError(final ClientRuntimeError error) {
-//                                             onSaveError(error);
-//                                         }
-//                                     });
-//            }
-//        };
-//    }
-
     @OnStartup
     @SuppressWarnings("unused")
     public void onStartup(final PlaceRequest place) {

@@ -28,7 +28,7 @@ import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.widgets.client.submarine.IsSubmarine;
+import org.kie.workbench.common.widgets.client.kogito.IsKogito;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
@@ -45,23 +45,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTest {
+public class KogitoKieAssetsDropdownTest extends AbstractKieAssetsDropdownTest {
 
     @Mock
-    private IsSubmarine isSubmarine;
+    private IsKogito isKogito;
 
     @Mock
     private Consumer<List<KieAssetsDropdownItem>> kieAssetsConsumer;
 
     @Mock
-    private SubmarineKieAssetsDropdownView viewlocalMock;
+    private KogitoKieAssetsDropdownView viewlocalMock;
 
     private KieAssetsDropdown dropdownLocal;
 
     @Before
     public void setup() {
-        when(isSubmarine.get()).thenReturn(false);
-        dropdownLocal = spy(new SubmarineKieAssetsDropdown(viewlocalMock, isSubmarine, dataProviderMock) {
+        when(isKogito.get()).thenReturn(false);
+        dropdownLocal = spy(new KogitoKieAssetsDropdown(viewlocalMock, isKogito, dataProviderMock) {
             {
                 onValueChangeHandler = onValueChangeHandlerMock;
                 this.kieAssets.addAll(assetList);
@@ -81,9 +81,9 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     }
 
     @Test
-    public void testLoadAssetsWhenEnvIsSubmarine() {
+    public void testLoadAssetsWhenEnvIsKogito() {
 
-        when(isSubmarine.get()).thenReturn(true);
+        when(isKogito.get()).thenReturn(true);
 
         getDropdown().loadAssets();
 
@@ -93,9 +93,9 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     }
 
     @Test
-    public void testLoadAssetsWhenEnvIsNotSubmarine() {
+    public void testLoadAssetsWhenEnvIsNotKogito() {
 
-        doReturn(kieAssetsConsumer).when((SubmarineKieAssetsDropdown) getDropdown()).getAssetListConsumer();
+        doReturn(kieAssetsConsumer).when((KogitoKieAssetsDropdown) getDropdown()).getAssetListConsumer();
 
         getDropdown().loadAssets();
 
@@ -111,8 +111,8 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     }
 
     @Test
-    public void testInitializeWhenItIsNotSubmarine() {
-        when(isSubmarine.get()).thenReturn(true);
+    public void testInitializeWhenItIsNotKogito() {
+        when(isKogito.get()).thenReturn(true);
         getDropdown().initialize();
         verify(getViewMock(), never()).refreshSelectPicker();
     }
@@ -137,8 +137,8 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
         }).collect(Collectors.toList());
 
         when(getViewMock().getValue()).thenReturn("item2");
-        ((SubmarineKieAssetsDropdown) getDropdown()).kieAssets.clear();
-        ((SubmarineKieAssetsDropdown) getDropdown()).kieAssets.addAll(kieAssets);
+        ((KogitoKieAssetsDropdown) getDropdown()).kieAssets.clear();
+        ((KogitoKieAssetsDropdown) getDropdown()).kieAssets.addAll(kieAssets);
         final Optional<KieAssetsDropdownItem> retrieved = getDropdown().getValue();
         assertTrue(retrieved.isPresent());
         assertEquals("item2", retrieved.get().getValue());
@@ -146,16 +146,16 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
 
     @Test
     public void testGetValueWhenOptionDoesNotExist() {
-        ((SubmarineKieAssetsDropdown) getDropdown()).kieAssets.clear();
+        ((KogitoKieAssetsDropdown) getDropdown()).kieAssets.clear();
         assertFalse(getDropdown().getValue().isPresent());
     }
 
     @Test
-    public void testGetValueWhenItIsSubmarine() {
+    public void testGetValueWhenItIsKogito() {
 
         final String expectedValue = "value";
 
-        when(isSubmarine.get()).thenReturn(true);
+        when(isKogito.get()).thenReturn(true);
         when(getViewMock().getValue()).thenReturn(expectedValue);
 
         final Optional<KieAssetsDropdownItem> value = getDropdown().getValue();
@@ -167,13 +167,13 @@ public class SubmarineKieAssetsDropdownTest extends AbstractKieAssetsDropdownTes
     @Test
     public void getAssetListConsumer() {
         final List<KieAssetsDropdownItem> expectedDropdownItems = new ArrayList<>();
-        ((SubmarineKieAssetsDropdown) getDropdown()).getAssetListConsumer().accept(expectedDropdownItems);
-        verify(((SubmarineKieAssetsDropdown) getDropdown()), times(1)).assetListConsumerMethod(eq(expectedDropdownItems));
+        ((KogitoKieAssetsDropdown) getDropdown()).getAssetListConsumer().accept(expectedDropdownItems);
+        verify(((KogitoKieAssetsDropdown) getDropdown()), times(1)).assetListConsumerMethod(eq(expectedDropdownItems));
     }
 
     @Test
     public void assetListConsumerMethod() {
-        ((SubmarineKieAssetsDropdown) getDropdown()).assetListConsumerMethod(assetList);
+        ((KogitoKieAssetsDropdown) getDropdown()).assetListConsumerMethod(assetList);
         assetList.forEach(item -> verify(getViewMock()).addValue(item));
         verify(getViewMock()).refreshSelectPicker();
         verify(getViewMock()).initialize();

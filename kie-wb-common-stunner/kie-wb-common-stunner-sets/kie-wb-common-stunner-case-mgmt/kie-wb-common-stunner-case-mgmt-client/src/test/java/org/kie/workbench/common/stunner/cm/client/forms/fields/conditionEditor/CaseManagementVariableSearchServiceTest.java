@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore("Needs Submarine backend")
+@Ignore("Needs Kogito backend")
 public class CaseManagementVariableSearchServiceTest extends VariableSearchServiceTest {
 
     @Override

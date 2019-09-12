@@ -58,7 +58,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore("Needs Submarine backend")
+@Ignore("Needs Kogito backend")
 public class BpmnFileIndexerTest extends BaseIndexingTest<BPMNDefinitionSetResourceType> {
 
     private final static List<String> PROCESS_IDS = Arrays.asList(new String[]{"hiring", "ParentProcess", "SubProcess", "multiple-rule-tasks", "org.jbpm.signal", "org.jbpm.broken"});

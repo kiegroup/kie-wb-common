@@ -23,11 +23,11 @@ import org.uberfire.ext.editor.commons.client.BaseEditorView;
 import org.uberfire.mvp.PlaceRequest;
 
 /**
- * This is a trimmed down {@code org.kie.workbench.common.widgets.metadata.client.KieEditor} for Submarine.
+ * This is a trimmed down {@code org.kie.workbench.common.widgets.metadata.client.KieEditor} for Kogito.
  * @param <CONTENT> The domain model of the editor
  */
 public abstract class MultiPageEditorContainerPresenter<CONTENT>
-        extends BaseSubmarineEditor<CONTENT>
+        extends BaseKogitoEditor<CONTENT>
         implements MultiPageEditorContainerView.Presenter {
 
     private MultiPageEditorContainerView multiPageEditorContainerView;

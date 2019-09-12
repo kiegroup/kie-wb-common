@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.kogito.client.resources.i18n.SubmarineClientConstants;
+import org.kie.workbench.common.kogito.client.resources.i18n.KogitoClientConstants;
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorImpl;
 import org.uberfire.client.views.pfly.multipage.PageImpl;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
@@ -50,7 +50,7 @@ public class MultiPageEditorContainerViewImpl
     @Override
     public void setEditorWidget(final IsWidget editorView) {
         addPage(new PageImpl(editorView,
-                             translationService.format(SubmarineClientConstants.KieEditorWrapperView_EditTabTitle)) {
+                             translationService.format(KogitoClientConstants.KieEditorWrapperView_EditTabTitle)) {
             @Override
             public void onFocus() {
                 presenter.onEditTabSelected();

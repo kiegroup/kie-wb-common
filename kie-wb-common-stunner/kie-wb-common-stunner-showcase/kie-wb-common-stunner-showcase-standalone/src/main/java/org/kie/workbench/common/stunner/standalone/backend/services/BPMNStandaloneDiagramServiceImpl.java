@@ -51,9 +51,9 @@ import org.uberfire.commons.uuid.UUID;
 
 @Service
 @ApplicationScoped
-public class BPMNSubmarineDiagramServiceImpl implements KogitoDiagramService {
+public class BPMNStandaloneDiagramServiceImpl implements KogitoDiagramService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BPMNSubmarineDiagramServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BPMNStandaloneDiagramServiceImpl.class);
 
     private static final String DIAGRAMS_PATH = "diagrams";
 
@@ -65,7 +65,7 @@ public class BPMNSubmarineDiagramServiceImpl implements KogitoDiagramService {
     private BPMNBackendService backendService;
     private BPMNDiagramFactory diagramFactory;
 
-    protected BPMNSubmarineDiagramServiceImpl() {
+    protected BPMNStandaloneDiagramServiceImpl() {
         // CDI proxy.
         this(null,
              null,
@@ -74,10 +74,10 @@ public class BPMNSubmarineDiagramServiceImpl implements KogitoDiagramService {
     }
 
     @Inject
-    public BPMNSubmarineDiagramServiceImpl(final DefinitionManager definitionManager,
-                                           final FactoryManager factoryManager,
-                                           final BPMNBackendService backendService,
-                                           final BPMNDiagramFactory diagramFactory) {
+    public BPMNStandaloneDiagramServiceImpl(final DefinitionManager definitionManager,
+                                            final FactoryManager factoryManager,
+                                            final BPMNBackendService backendService,
+                                            final BPMNDiagramFactory diagramFactory) {
         this.definitionManager = definitionManager;
         this.factoryManager = factoryManager;
         this.backendService = backendService;

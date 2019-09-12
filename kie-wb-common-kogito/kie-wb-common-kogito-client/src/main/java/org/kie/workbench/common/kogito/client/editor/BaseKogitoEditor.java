@@ -28,10 +28,10 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.Menus;
 
 /**
- * This is a trimmed down {@code org.uberfire.ext.editor.commons.client.BaseEditor} for Submarine.
+ * This is a trimmed down {@code org.uberfire.ext.editor.commons.client.BaseEditor} for Kogito.
  * @param <CONTENT> The domain model of the editor
  */
-public abstract class BaseSubmarineEditor<CONTENT> {
+public abstract class BaseKogitoEditor<CONTENT> {
 
     private boolean isReadOnly;
 
@@ -42,13 +42,13 @@ public abstract class BaseSubmarineEditor<CONTENT> {
     private PlaceRequest place;
     private Integer originalHash;
 
-    protected BaseSubmarineEditor() {
+    protected BaseKogitoEditor() {
         //CDI proxy
     }
 
-    protected BaseSubmarineEditor(final BaseEditorView baseView,
-                                  final FileMenuBuilder fileMenuBuilder,
-                                  final PlaceManager placeManager) {
+    protected BaseKogitoEditor(final BaseEditorView baseView,
+                               final FileMenuBuilder fileMenuBuilder,
+                               final PlaceManager placeManager) {
         this.baseEditorView = baseView;
         this.fileMenuBuilder = fileMenuBuilder;
         this.placeManager = placeManager;
@@ -135,7 +135,7 @@ public abstract class BaseSubmarineEditor<CONTENT> {
     }
 
     /**
-     * Used by Submarine to determine whether the content has unsaved changes.
+     * Used by Kogito to determine whether the content has unsaved changes.
      * @return true if there are unsaved changes.
      */
     public boolean isDirty() {
@@ -143,18 +143,18 @@ public abstract class BaseSubmarineEditor<CONTENT> {
     }
 
     /**
-     * Used by Submarine to set the content of the editor.
+     * Used by Kogito to set the content of the editor.
      */
     public abstract void setContent(final String value);
 
     /**
-     * Used by Submarine to get the content of the editor. This should return a {@link String}
+     * Used by Kogito to get the content of the editor. This should return a {@link String}
      * representation of the editors content to persist to an underlying persistent store.
      */
     public abstract Promise getContent();
 
     /**
-     * Used by Submarine to reset the editors "dirty" state following a successful save.
+     * Used by Kogito to reset the editors "dirty" state following a successful save.
      */
     public abstract void resetContentHash();
 }

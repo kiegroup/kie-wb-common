@@ -32,16 +32,16 @@ import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerEvent;
 
 @Dependent
 @Templated
-public class SubmarineKieAssetsDropdownView extends KieAssetsDropdownView implements SubmarineKieAssetsDropdown.View {
+public class KogitoKieAssetsDropdownView extends KieAssetsDropdownView implements KogitoKieAssetsDropdown.View {
 
     @DataField("fallback-input")
     protected final HTMLInputElement fallbackInput;
 
     @Inject
-    public SubmarineKieAssetsDropdownView(final HTMLSelectElement nativeSelect,
-                                          final HTMLInputElement fallbackInput,
-                                          final HTMLOptionElement htmlOptionElement,
-                                          final TranslationService translationService) {
+    public KogitoKieAssetsDropdownView(final HTMLSelectElement nativeSelect,
+                                       final HTMLInputElement fallbackInput,
+                                       final HTMLOptionElement htmlOptionElement,
+                                       final TranslationService translationService) {
         super(nativeSelect, htmlOptionElement, translationService);
         this.fallbackInput = fallbackInput;
     }

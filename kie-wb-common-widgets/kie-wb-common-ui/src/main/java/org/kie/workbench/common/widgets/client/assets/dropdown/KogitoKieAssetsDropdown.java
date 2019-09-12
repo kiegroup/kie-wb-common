@@ -20,22 +20,22 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.widgets.client.submarine.IsSubmarine;
+import org.kie.workbench.common.widgets.client.kogito.IsKogito;
 
-public abstract class SubmarineKieAssetsDropdown extends AbstractKieAssetsDropdown {
+public abstract class KogitoKieAssetsDropdown extends AbstractKieAssetsDropdown {
 
-    protected final IsSubmarine isSubmarine;
+    protected final IsKogito isKogito;
 
-    public SubmarineKieAssetsDropdown(final SubmarineKieAssetsDropdown.View view,
-                                      final IsSubmarine isSubmarine,
-                                      final KieAssetsDropdownItemsProvider dataProvider) {
+    public KogitoKieAssetsDropdown(final KogitoKieAssetsDropdown.View view,
+                                   final IsKogito isKogito,
+                                   final KieAssetsDropdownItemsProvider dataProvider) {
         super(view, dataProvider);
-        this.isSubmarine = isSubmarine;
+        this.isKogito = isKogito;
     }
 
     @Override
     public void loadAssets() {
-        if (isSubmarine.get()) {
+        if (isKogito.get()) {
             clear();
             initializeInput();
         } else {
@@ -45,25 +45,25 @@ public abstract class SubmarineKieAssetsDropdown extends AbstractKieAssetsDropdo
 
     @Override
     public void initialize() {
-        if (!isSubmarine.get()) {
+        if (!isKogito.get()) {
             super.initialize();
         }
     }
 
     @Override
     public void initializeDropdown() {
-        ((SubmarineKieAssetsDropdown.View) view).enableDropdownMode();
+        ((KogitoKieAssetsDropdown.View) view).enableDropdownMode();
         super.initializeDropdown();
     }
 
     protected void initializeInput() {
-        ((SubmarineKieAssetsDropdown.View) view).enableInputMode();
+        ((KogitoKieAssetsDropdown.View) view).enableInputMode();
         view.initialize();
     }
 
     @Override
     public Optional<KieAssetsDropdownItem> getValue() {
-        if (isSubmarine.get()) {
+        if (isKogito.get()) {
             return Optional.of(new KieAssetsDropdownItem("", "", view.getValue(), new HashMap<>()));
         } else {
             return super.getValue();

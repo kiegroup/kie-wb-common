@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.kogito.client;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+package org.kie.workbench.common.kogito.webapp.base.client.workarounds;
 
-@EntryPoint
-@Bundle("resources/i18n/SubmarineClientConstants.properties")
-public class SubmarineClientEntryPoint {
+import javax.enterprise.inject.Alternative;
 
+import org.kie.workbench.common.widgets.client.kogito.IsKogito;
+
+@Alternative
+public class MockIsKogito extends IsKogito {
+
+    public boolean get() {
+        return true;
+    }
 }

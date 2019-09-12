@@ -39,8 +39,8 @@ import org.uberfire.client.views.pfly.selectpicker.JQuerySelectPickerTarget;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.widgets.client.assets.dropdown.SubmarineKieAssetsDropdownView.HIDDEN_CSS_CLASS;
-import static org.kie.workbench.common.widgets.client.assets.dropdown.SubmarineKieAssetsDropdownView.SELECT_PICKER_SUBTEXT_ATTRIBUTE;
+import static org.kie.workbench.common.widgets.client.assets.dropdown.KogitoKieAssetsDropdownView.HIDDEN_CSS_CLASS;
+import static org.kie.workbench.common.widgets.client.assets.dropdown.KogitoKieAssetsDropdownView.SELECT_PICKER_SUBTEXT_ATTRIBUTE;
 import static org.kie.workbench.common.widgets.client.resources.i18n.KieWorkbenchWidgetsConstants.KieAssetsDropdownView_Select;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class SubmarineSubmarineKieAssetsDropdownViewTest {
+public class KogitoKieAssetsDropdownViewTest {
 
     @Mock
     private HTMLSelectElement nativeSelect;
@@ -60,7 +60,7 @@ public class SubmarineSubmarineKieAssetsDropdownViewTest {
     private HTMLOptionElement htmlOptionElement;
 
     @Mock
-    private SubmarineKieAssetsDropdown presenter;
+    private KogitoKieAssetsDropdown presenter;
 
     @Mock
     private JQuerySelectPicker dropdown;
@@ -68,12 +68,12 @@ public class SubmarineSubmarineKieAssetsDropdownViewTest {
     @Mock
     private TranslationService translationService;
 
-    private SubmarineKieAssetsDropdownView view;
+    private KogitoKieAssetsDropdownView view;
 
     @Before
     public void setup() {
 
-        view = Mockito.spy(new SubmarineKieAssetsDropdownView(nativeSelect, fallbackInput, htmlOptionElement, translationService));
+        view = Mockito.spy(new KogitoKieAssetsDropdownView(nativeSelect, fallbackInput, htmlOptionElement, translationService));
         view.init(presenter);
 
         doReturn(dropdown).when(view).dropdown();

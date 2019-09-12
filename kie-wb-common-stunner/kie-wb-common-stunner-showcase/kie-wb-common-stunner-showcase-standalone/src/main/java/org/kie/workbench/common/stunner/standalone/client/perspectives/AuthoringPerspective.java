@@ -39,13 +39,5 @@ public class AuthoringPerspective {
         perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BPMNDiagramsNavigatorScreen.SCREEN_ID)));
         return perspective;
     }
-
-    /*@Perspective
-    public PerspectiveDefinition buildSubmarinePerspective() {
-        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Authoring");
-        perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BPMNStandaloneDiagramEditor.EDITOR_ID)));
-        return perspective;
-    }*/
 }
 
