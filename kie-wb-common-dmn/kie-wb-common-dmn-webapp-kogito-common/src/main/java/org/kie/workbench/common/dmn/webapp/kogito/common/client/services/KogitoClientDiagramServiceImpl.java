@@ -192,11 +192,17 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         };
 
         try {
+            //TODO dmn12 is null
             final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
+            if (Objects.isNull(dmn12)) {
+                GWT.log("**************WARNING********************");
+                GWT.log("'dmn12' instance is null here - manually creating it to keep going on, but it is an error");
+                this.dmn12 = new DMN12();
+            }
             dmn12.setDefinitions(jsitDefinitions);
             MainJs.marshall(dmn12, jsCallback);
         } catch (Exception e) {
-            GWT.log(e.getMessage());
+            GWT.log(e.getMessage(), e);
         }
     }
 }
