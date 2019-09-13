@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -77,7 +78,7 @@ public class ChangedFilesScreenPresenter {
 
     public void setup(final ChangeRequest changeRequest,
                       final Consumer<Boolean> finishLoadingCallback,
-                      final Consumer<Integer> setChangedFilesCountCallback) {
+                      final IntConsumer setChangedFilesCountCallback) {
         changeRequestService.call((final List<ChangeRequestDiff> diffList) -> {
             setChangedFilesCountCallback.accept(diffList.size());
 

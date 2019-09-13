@@ -657,6 +657,9 @@ public class LibraryConstants {
     public static final String ChangeRequestCloseMessage = "ChangeRequestCloseMessage";
 
     @TranslationKey(defaultValue = "")
+    public static final String ChangeRequestReopenMessage = "ChangeRequestReopenMessage";
+
+    @TranslationKey(defaultValue = "")
     public static final String ChangeRequestRevertFailMessage = "ChangeRequestRevertFailMessage";
 
     @TranslationKey(defaultValue = "")

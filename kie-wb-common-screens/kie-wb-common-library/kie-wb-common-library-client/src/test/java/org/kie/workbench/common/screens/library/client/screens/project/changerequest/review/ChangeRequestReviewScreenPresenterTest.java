@@ -366,6 +366,42 @@ public class ChangeRequestReviewScreenPresenterTest {
     }
 
     @Test
+    public void reopenWhenIsAuthorTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("authorId")).set("admin");
+
+        presenter.reopen();
+
+        verify(changeRequestService).reopenChangeRequest(anyString(),
+                                                         anyString(),
+                                                         anyLong());
+    }
+
+    @Test
+    public void reopenWhenIsNotAuthorTest() throws NoSuchFieldException {
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))
+                .set(workspaceProject);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("repository"))
+                .set(repository);
+        new FieldSetter(presenter,
+                        ChangeRequestReviewScreenPresenter.class.getDeclaredField("authorId")).set("developer");
+
+        presenter.reopen();
+
+        verify(changeRequestService, never()).reopenChangeRequest(anyString(),
+                                                                  anyString(),
+                                                                  anyLong());
+    }
+
+    @Test
     public void acceptWhenHasPermissionTest() throws NoSuchFieldException {
         new FieldSetter(presenter,
                         ChangeRequestReviewScreenPresenter.class.getDeclaredField("workspaceProject"))

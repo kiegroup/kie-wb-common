@@ -31,7 +31,6 @@ import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.RepositoryContributorsUpdatedEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestListUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatusUpdatedEvent;
@@ -131,7 +130,6 @@ public class ProjectScreen {
     private Caller<LibraryService> libraryService;
     private ProjectScreen.View view;
     private Caller<ProjectScreenService> projectScreenService;
-    private Caller<ChangeRequestService> changeRequestService;
     private CopyPopUpPresenter copyPopUpPresenter;
     private ProjectNameValidator projectNameValidator;
     private Promises promises;
@@ -155,7 +153,6 @@ public class ProjectScreen {
                          final ManagedInstance<RenameProjectPopUpScreen> renameProjectPopUpScreen,
                          final Caller<LibraryService> libraryService,
                          final Caller<ProjectScreenService> projectScreenService,
-                         final Caller<ChangeRequestService> changeRequestService,
                          final CopyPopUpPresenter copyPopUpPresenter,
                          final ProjectNameValidator projectNameValidator,
                          final Promises promises,
@@ -176,7 +173,6 @@ public class ProjectScreen {
         this.deleteBranchPopUpScreen = deleteBranchPopUpScreen;
         this.renameProjectPopUpScreen = renameProjectPopUpScreen;
         this.libraryService = libraryService;
-        this.changeRequestService = changeRequestService;
         this.projectScreenService = projectScreenService;
         this.copyPopUpPresenter = copyPopUpPresenter;
         this.projectNameValidator = projectNameValidator;
@@ -289,7 +285,8 @@ public class ProjectScreen {
 
     public void onChangeRequestStatusUpdated(@Observes final ChangeRequestStatusUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier()) &&
-                event.getOldStatus() == ChangeRequestStatus.OPEN) {
+                (event.getOldStatus() == ChangeRequestStatus.OPEN ||
+                        event.getNewStatus() == ChangeRequestStatus.OPEN)) {
             this.setupChangeRequestList();
         }
     }

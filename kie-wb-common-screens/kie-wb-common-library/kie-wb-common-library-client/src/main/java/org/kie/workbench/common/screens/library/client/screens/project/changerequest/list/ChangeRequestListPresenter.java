@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.screens.project.changerequest.list;
 
-import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -74,7 +74,7 @@ public class ChangeRequestListPresenter {
         return view;
     }
 
-    public void setupList(final Consumer<Integer> openChangeRequestsCallback) {
+    public void setupList(final IntConsumer openChangeRequestsCallback) {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
         changeRequestService.call((final ChangeRequestCountSummary countSummary) -> {

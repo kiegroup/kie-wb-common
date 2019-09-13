@@ -134,7 +134,8 @@ public class PopulatedChangeRequestListPresenter {
 
     public void onChangeRequestStatusUpdated(@Observes final ChangeRequestStatusUpdatedEvent event) {
         if (event.getRepositoryId().equals(workspaceProject.getRepository().getIdentifier()) &&
-                event.getOldStatus() == ChangeRequestStatus.OPEN) {
+                (event.getOldStatus() == ChangeRequestStatus.OPEN ||
+                        event.getNewStatus() == ChangeRequestStatus.OPEN)) {
             this.refreshList();
         }
     }
@@ -356,11 +357,9 @@ public class PopulatedChangeRequestListPresenter {
     }
 
     private List<SelectOption> createFilterTypes() {
-        return new ArrayList<SelectOption>() {{
-            add(new SelectOptionImpl(FILTER_OPEN, ts.getTranslation(LibraryConstants.Open)));
-            add(new SelectOptionImpl(FILTER_CLOSED, ts.getTranslation(LibraryConstants.Closed)));
-            add(new SelectOptionImpl(FILTER_ALL, ts.getTranslation(LibraryConstants.ALL)));
-        }};
+        return Arrays.asList(new SelectOptionImpl(FILTER_OPEN, ts.getTranslation(LibraryConstants.Open)),
+                             new SelectOptionImpl(FILTER_CLOSED, ts.getTranslation(LibraryConstants.Closed)),
+                             new SelectOptionImpl(FILTER_ALL, ts.getTranslation(LibraryConstants.ALL)));
     }
 
     private int resolveCounter(final int numberOfChangeRequests,

@@ -28,7 +28,6 @@ import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
-import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
@@ -134,9 +133,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
     private LibraryService libraryService;
 
     @Mock
-    private ChangeRequestService changeRequestService;
-
-    @Mock
     private SettingsPresenter settingsPresenter;
 
     @Mock
@@ -190,7 +186,6 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
                                                               this.renameProjectPopUpScreenInstance,
                                                               new CallerMock<>(this.libraryService),
                                                               projectScreenServiceCaller,
-                                                              new CallerMock<>(this.changeRequestService),
                                                               copyPopUpPresenter,
                                                               projectNameValidator,
                                                               promises,

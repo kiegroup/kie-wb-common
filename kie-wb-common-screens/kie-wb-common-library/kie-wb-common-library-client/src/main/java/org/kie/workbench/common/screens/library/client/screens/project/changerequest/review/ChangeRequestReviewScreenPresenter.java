@@ -30,6 +30,7 @@ import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.RepositoryUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequest;
+import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestAlreadyOpenException;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatus;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestStatusUpdatedEvent;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestUpdatedEvent;
@@ -145,8 +146,10 @@ public class ChangeRequestReviewScreenPresenter {
     public void onChangeRequestStatusUpdated(@Observes final ChangeRequestStatusUpdatedEvent event) {
         if (event.getRepositoryId().equals(repository.getIdentifier())
                 && event.getChangeRequestId() == currentChangeRequestId) {
+            final boolean refreshChangedFiles = event.getNewStatus() == ChangeRequestStatus.OPEN;
+
             this.refreshContent(true,
-                                false);
+                                refreshChangedFiles);
             this.notifyOtherUsers(event.getUserId());
         }
     }
@@ -211,6 +214,12 @@ public class ChangeRequestReviewScreenPresenter {
     public void close() {
         if (isUserAuthor()) {
             closeChangeRequestAction();
+        }
+    }
+
+    public void reopen() {
+        if (isUserAuthor()) {
+            reopenChangeRequestAction();
         }
     }
 
@@ -343,19 +352,29 @@ public class ChangeRequestReviewScreenPresenter {
         projectController.canUpdateBranch(workspaceProject, targetBranch).then(userCanUpdateBranch -> {
             this.view.resetButtonState();
 
-            if (userCanUpdateBranch) {
-                if (changeRequest.getStatus() == ChangeRequestStatus.ACCEPTED) {
-                    this.view.showRevertButton(true);
-                } else if (changeRequest.getStatus() == ChangeRequestStatus.OPEN) {
-                    final boolean canBeAccepted = !changeRequest.isConflict() &&
+            switch (changeRequest.getStatus()) {
+                case ACCEPTED:
+                    this.view.showRevertButton(userCanUpdateBranch);
+                    break;
+                case OPEN:
+                    final boolean canBeAccepted = userCanUpdateBranch && !changeRequest.isConflict() &&
                             changeRequest.getChangedFilesCount() > 0;
 
-                    this.view.showCloseButton(isUserAuthor());
-                    this.view.showRejectButton(true);
-                    this.view.showAcceptButton(true);
+                    this.view.showRejectButton(userCanUpdateBranch);
+                    this.view.showAcceptButton(userCanUpdateBranch);
                     this.view.enableAcceptButton(canBeAccepted);
-                }
+                    this.view.showCloseButton(isUserAuthor());
+                    break;
+                case REJECTED:
+                case CLOSED:
+                    this.view.showReopenButton(isUserAuthor());
+                    break;
+                case REVERT_FAILED:
+                case REVERTED:
+                default:
+                    break;
             }
+
             return promises.resolve();
         });
     }
@@ -418,13 +437,41 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     private void closeChangeRequestAction() {
-        this.changeRequestService.call(v -> {
-            fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestCloseMessage,
-                                            currentChangeRequestId),
-                                  NotificationEvent.NotificationType.SUCCESS);
-        }).closeChangeRequest(workspaceProject.getSpace().getName(),
-                              repository.getAlias(),
-                              currentChangeRequestId);
+        this.changeRequestService.call(v -> fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestCloseMessage,
+                                                                            currentChangeRequestId),
+                                                                  NotificationEvent.NotificationType.SUCCESS))
+                .closeChangeRequest(workspaceProject.getSpace().getName(),
+                                    repository.getAlias(),
+                                    currentChangeRequestId);
+    }
+
+    private void reopenChangeRequestAction() {
+        this.changeRequestService.call(v -> fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestReopenMessage,
+                                                                            currentChangeRequestId),
+                                                                  NotificationEvent.NotificationType.SUCCESS),
+                                       reopenChangeRequestErrorCallback())
+                .reopenChangeRequest(workspaceProject.getSpace().getName(),
+                                     repository.getAlias(),
+                                     currentChangeRequestId);
+    }
+
+    private ErrorCallback<Object> reopenChangeRequestErrorCallback() {
+        return (message, throwable) -> {
+            busyIndicatorView.hideBusyIndicator();
+
+            if (throwable instanceof ChangeRequestAlreadyOpenException) {
+                final Long changeRequestId = ((ChangeRequestAlreadyOpenException) throwable).getChangeRequestId();
+                notificationEvent.fire(
+                        new NotificationEvent(ts.format(LibraryConstants.ChangeRequestAlreadyOpenMessage,
+                                                        changeRequestId,
+                                                        currentSourceBranch.getName(),
+                                                        currentTargetBranch.getName()),
+                                              NotificationEvent.NotificationType.WARNING));
+                return false;
+            }
+
+            return true;
+        };
     }
 
     private void fireNotificationEvent(final String message,
@@ -465,6 +512,8 @@ public class ChangeRequestReviewScreenPresenter {
         void showRevertButton(final boolean isVisible);
 
         void showCloseButton(final boolean isVisible);
+
+        void showReopenButton(final boolean isVisible);
 
         void activateOverviewTab();
 

@@ -72,7 +72,6 @@ public class SubmitChangeRequestScreenPresenter {
     private final Event<NotificationEvent> notificationEvent;
     private WorkspaceProject workspaceProject;
     private String currentBranchName;
-    private Branch defaultBranch;
     private String selectedBranch;
 
     @Inject
@@ -231,10 +230,10 @@ public class SubmitChangeRequestScreenPresenter {
     private void init() {
         this.currentBranchName = this.workspaceProject.getBranch().getName();
 
-        this.defaultBranch = this.workspaceProject.getRepository().getDefaultBranch()
+        final Branch defaultBranch = this.workspaceProject.getRepository().getDefaultBranch()
                 .orElseThrow(() -> new IllegalStateException("The default branch does not exist"));
 
-        this.selectedBranch = this.defaultBranch.getName();
+        this.selectedBranch = defaultBranch.getName();
         
         this.reset();
         this.setup();
