@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import jsinterop.base.Js;
@@ -33,12 +34,12 @@ class DMNExternalLinksToExtensionElements {
                                                        final org.kie.workbench.common.dmn.api.definition.model.DRGElement target) {
 
         if (!Objects.isNull(source.getExtensionElements())) {
-            final JsArrayLike<Object> extensions = source.getExtensionElements().getAny();
+            final List<Object> extensions = source.getExtensionElements().getAny();
             if (!Objects.isNull(extensions)) {
-                for (int i = 0; i < extensions.getLength(); i++) {
-                    final Object wrapped = extensions.getAt(i);
+                for (int i = 0; i < extensions.size(); i++) {
+                    final Object wrapped = extensions.get(i);
                     final Object extension = JsUtils.getUnwrappedElement(wrapped);
-                    if (JSITAttachment.instanceOf(extension)) {
+                    if (JSITAttachment.instanceOfJSITAttachment(extension)) {
                         final JSITAttachment jsiExtension = Js.uncheckedCast(extension);
                         final DMNExternalLink external = new DMNExternalLink();
                         external.setDescription(jsiExtension.getName());

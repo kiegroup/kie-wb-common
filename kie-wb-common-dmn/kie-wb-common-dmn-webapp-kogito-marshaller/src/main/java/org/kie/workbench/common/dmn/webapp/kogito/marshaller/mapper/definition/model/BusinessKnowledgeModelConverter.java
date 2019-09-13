@@ -42,7 +42,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -143,14 +142,14 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredKnowledge(ri);
-                        JsUtils.add(result.getKnowledgeRequirement(), iReq);
+                        result.addKnowledgeRequirement(iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        JsUtils.add(result.getAuthorityRequirement(), iReq);
+                        result.addAuthorityRequirement(iReq);
                     } else if (drgElement instanceof DecisionService) {
                         if (e.getContent() instanceof View && ((View) e.getContent()).getDefinition() instanceof KnowledgeRequirement) {
                             final JSITKnowledgeRequirement iReq = new JSITKnowledgeRequirement();
@@ -158,7 +157,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                             final JSITDMNElementReference ri = new JSITDMNElementReference();
                             ri.setHref(getHref(drgElement));
                             iReq.setRequiredKnowledge(ri);
-                            JsUtils.add(result.getKnowledgeRequirement(), iReq);
+                            result.addKnowledgeRequirement(iReq);
                         } else {
                             throw new UnsupportedOperationException("wrong model definition.");
                         }

@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
@@ -34,7 +34,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class ContextPropertyConverter {
 
@@ -47,9 +46,9 @@ public class ContextPropertyConverter {
         final Context result = new Context(id,
                                            description,
                                            typeRef);
-        final JsArrayLike<JSITContextEntry> jsiContextEntries = JSITContext.getContextEntry(dmn);
-        for (int i = 0; i < jsiContextEntries.getLength(); i++) {
-            final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
+        final List<JSITContextEntry> jsiContextEntries = dmn.getContextEntry();
+        for (int i = 0; i < jsiContextEntries.size(); i++) {
+            final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.get(i));
             final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, hasComponentWidthsConsumer);
             if (Objects.nonNull(ceConverted)) {
                 ceConverted.setParent(result);
@@ -58,7 +57,7 @@ public class ContextPropertyConverter {
         }
 
         //No need to append a _default_ row if the Context is part of a JAVA or PMML FunctionDefinition
-        if (JSITFunctionDefinition.instanceOf(parent)) {
+        if (JSITFunctionDefinition.instanceOfJSITFunctionDefinition(parent)) {
             final JSITFunctionDefinition functionDefinition = Js.uncheckedCast(parent);
             final String sKind = Js.uncheckedCast(functionDefinition.getKind());
             final Kind kind = Kind.fromValue(sKind);
@@ -87,17 +86,17 @@ public class ContextPropertyConverter {
                                             result::setTypeRef);
         for (ContextEntry ce : wb.getContextEntry()) {
             final JSITContextEntry ceConverted = ContextEntryPropertyConverter.dmnFromWB(ce, componentWidthsConsumer);
-            JsUtils.add(result.getContextEntry(), ceConverted);
+            result.addContextEntry(ceConverted);
         }
 
         //The UI appends a ContextEntry for the _default_ result that may contain an undefined Expression.
         //If this is the case then DMN does not require the ContextEntry to be written out to the XML.
         //Conversion of ContextEntries will always create a _mock_ LiteralExpression if no Expression has
         //been defined therefore remove the last entry from the org.kie.dmn.model if the WB had no Expression.
-        final int contextEntriesCount = result.getContextEntry().getLength();
+        final int contextEntriesCount = result.getContextEntry().size();
         if (contextEntriesCount > 0) {
             if (Objects.isNull(wb.getContextEntry().get(contextEntriesCount - 1).getExpression())) {
-                JsUtils.remove(result.getContextEntry(), contextEntriesCount - 1);
+                result.removeContextEntry(contextEntriesCount - 1);
             }
         }
 

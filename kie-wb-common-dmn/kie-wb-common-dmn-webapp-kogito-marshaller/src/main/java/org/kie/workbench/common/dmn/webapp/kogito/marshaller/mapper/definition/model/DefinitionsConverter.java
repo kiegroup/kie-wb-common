@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
@@ -34,7 +34,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
@@ -80,9 +79,9 @@ public class DefinitionsConverter {
             }
         }
 
-        final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JSITDefinitions.getItemDefinition(dmn);
-        for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
-            final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
+        final List<JSITItemDefinition> jsiItemDefinitions = dmn.getItemDefinition();
+        for (int i = 0; i < jsiItemDefinitions.size(); i++) {
+            final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.get(i));
             final ItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.wbFromDMN(jsiItemDefinition);
             if (Objects.nonNull(itemDefConverted)) {
                 itemDefConverted.setParent(result);
@@ -90,9 +89,9 @@ public class DefinitionsConverter {
             }
         }
 
-        final JsArrayLike<JSITImport> jsiImports = JSITDefinitions.getImport(dmn);
-        for (int i = 0; i < jsiImports.getLength(); i++) {
-            final JSITImport jsiImport = Js.uncheckedCast(jsiImports.getAt(i));
+        final List<JSITImport> jsiImports = dmn.getImport();
+        for (int i = 0; i < jsiImports.size(); i++) {
+            final JSITImport jsiImport = Js.uncheckedCast(jsiImports.get(i));
             final JSITDefinitions definitions = importDefinitions.get(jsiImport);
             final PMMLDocumentMetadata pmmlDocument = pmmlDocuments.get(jsiImport);
             final Import importConverted = ImportConverter.wbFromDMN(jsiImport, definitions, pmmlDocument);
@@ -129,12 +128,12 @@ public class DefinitionsConverter {
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
-            JsUtils.add(result.getItemDefinition(), itemDefConverted);
+            result.addItemDefinition(itemDefConverted);
         }
 
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
-            JsUtils.add(result.getImport(), importConverted);
+            result.addImport(importConverted);
         }
 
         return result;

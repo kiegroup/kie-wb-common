@@ -64,8 +64,8 @@ public final class ImportConverter {
         final LocationURI locationURI = new LocationURI(dmn.getLocationURI());
         if (Objects.equals(DMNImportTypes.DMN, determineImportType(dmn.getImportType()))) {
             final ImportDMN result = new ImportDMN(dmn.getNamespace(), locationURI, dmn.getImportType());
-            result.setDrgElementsCount(countDefinitionElement(definitions, () -> d -> d.getDrgElement().getLength()));
-            result.setItemDefinitionsCount(countDefinitionElement(definitions, () -> d -> d.getItemDefinition().getLength()));
+            result.setDrgElementsCount(countDefinitionElement(definitions, () -> d -> d.getDrgElement().size()));
+            result.setItemDefinitionsCount(countDefinitionElement(definitions, () -> d -> d.getItemDefinition().size()));
             return result;
         } else if (Objects.equals(DMNImportTypes.PMML, determineImportType(dmn.getImportType()))) {
             final ImportPMML result = new ImportPMML(dmn.getNamespace(), locationURI, dmn.getImportType());

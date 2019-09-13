@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -32,7 +31,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class RelationPropertyConverter {
 
@@ -42,8 +40,8 @@ public class RelationPropertyConverter {
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
 
-        final List<JSITInformationItem> column = Arrays.asList(dmn.getColumn().asArray());
-        final List<JSITList> row = Arrays.asList(dmn.getRow().asArray());
+        final List<JSITInformationItem> column = dmn.getColumn();
+        final List<JSITList> row = dmn.getRow();
 
         final List<InformationItem> convertedColumn = column.stream().map(InformationItemPropertyConverter::wbFromDMN).collect(Collectors.toList());
         final List<org.kie.workbench.common.dmn.api.definition.model.List> convertedRow = row.stream().map(r -> ListPropertyConverter.wbFromDMN(r,
@@ -73,12 +71,12 @@ public class RelationPropertyConverter {
 
         for (InformationItem iitem : wb.getColumn()) {
             final JSITInformationItem iitemConverted = InformationItemPropertyConverter.dmnFromWB(iitem);
-            JsUtils.add(result.getColumn(), iitemConverted);
+            result.addColumn(iitemConverted);
         }
 
         for (org.kie.workbench.common.dmn.api.definition.model.List list : wb.getRow()) {
             final JSITList listConverted = ListPropertyConverter.dmnFromWB(list, componentWidthsConsumer);
-            JsUtils.add(result.getRow(), listConverted);
+            result.addRow(listConverted);
         }
 
         return result;

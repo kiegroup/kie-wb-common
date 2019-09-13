@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -30,7 +30,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 import static java.util.Optional.ofNullable;
 
@@ -81,10 +80,10 @@ public class ItemDefinitionPropertyConverter {
 
     static void setItemComponent(final ItemDefinition wb,
                                  final JSITItemDefinition dmn) {
-        final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JSITItemDefinition.getItemComponent(dmn);
+        final List<JSITItemDefinition> jsiItemDefinitions = dmn.getItemComponent();
         if (Objects.nonNull(jsiItemDefinitions)) {
-            for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
-                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
+            for (int i = 0; i < jsiItemDefinitions.size(); i++) {
+                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.get(i));
                 wb.getItemComponent().add(wbChildFromDMN(wb, jsiItemDefinition));
             }
         }
@@ -132,7 +131,7 @@ public class ItemDefinitionPropertyConverter {
 
         for (ItemDefinition child : wb.getItemComponent()) {
             final JSITItemDefinition convertedChild = ItemDefinitionPropertyConverter.dmnFromWB(child);
-            JsUtils.add(result.getItemComponent(), convertedChild);
+            result.addItemComponent(convertedChild);
         }
 
         return result;

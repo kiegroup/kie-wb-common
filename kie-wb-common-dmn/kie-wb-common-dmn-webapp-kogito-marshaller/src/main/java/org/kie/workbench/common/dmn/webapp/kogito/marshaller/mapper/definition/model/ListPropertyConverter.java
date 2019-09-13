@@ -21,7 +21,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
@@ -31,7 +30,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class ListPropertyConverter {
 
@@ -43,9 +41,9 @@ public class ListPropertyConverter {
 
         final java.util.List<Expression> expression = new ArrayList<>();
         final List result = new List(id, description, typeRef, expression);
-        final JsArrayLike<JSITExpression> jsiExpressions = JSITList.getExpression(dmn);
-        for (int i = 0; i < jsiExpressions.getLength(); i++) {
-            final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.getAt(i));
+        final java.util.List<JSITExpression> jsiExpressions = dmn.getExpression();
+        for (int i = 0; i < jsiExpressions.size(); i++) {
+            final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.get(i));
             Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
                                                                           Js.uncheckedCast(dmn),
                                                                           hasComponentWidthsConsumer);
@@ -71,7 +69,7 @@ public class ListPropertyConverter {
 
         for (Expression e : wb.getExpression()) {
             final JSITExpression eConverted = ExpressionPropertyConverter.dmnFromWB(e, componentWidthsConsumer);
-            JsUtils.add(result.getExpression(), eConverted);
+            result.addExpression(eConverted);
         }
 
         return result;
