@@ -241,7 +241,7 @@ public class ChangeRequestReviewScreenPresenter {
     private void doActionIfAllowed(final Runnable action) {
         projectController.canUpdateBranch(workspaceProject,
                                           this.currentTargetBranch).then(userCanUpdateBranch -> {
-            if (userCanUpdateBranch) {
+            if (Boolean.TRUE.equals(userCanUpdateBranch)) {
                 action.run();
             }
 
@@ -392,7 +392,7 @@ public class ChangeRequestReviewScreenPresenter {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.Loading));
 
         this.changeRequestService.call((final Boolean succeeded) -> {
-            if (succeeded) {
+            if (Boolean.TRUE.equals(succeeded)) {
                 fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestAcceptMessage,
                                                 currentChangeRequestId),
                                       NotificationEvent.NotificationType.SUCCESS);
@@ -422,7 +422,7 @@ public class ChangeRequestReviewScreenPresenter {
 
     private void revertChangeRequestAction() {
         this.changeRequestService.call((final Boolean succeeded) -> {
-            if (succeeded) {
+            if (Boolean.TRUE.equals(succeeded)) {
                 fireNotificationEvent(ts.format(LibraryConstants.ChangeRequestRevertMessage,
                                                 currentChangeRequestId),
                                       NotificationEvent.NotificationType.SUCCESS);

@@ -67,77 +67,111 @@ public class ChangeRequestUtils {
                                      final int deletedLines) {
         if (changedFiles == 1) {
             if (addedLines == 0) {
-                if (deletedLines == 0) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFile);
-                } else if (deletedLines == 1) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneDeletion);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyDeletions,
-                                     deletedLines);
-                }
+                return formatFilesSummaryForOneFileZeroAdditions(deletedLines);
             } else if (addedLines == 1) {
-                if (deletedLines == 0) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAddition);
-                } else if (deletedLines == 1) {
-                    return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionOneDeletion);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionManyDeletions,
-                                     deletedLines);
-                }
+                return formatFilesSummaryForOneFileOneAddition(deletedLines);
             } else {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditions,
-                                     addedLines);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsOneDeletion,
-                                     addedLines);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsManyDeletions,
-                                     addedLines,
-                                     deletedLines);
-                }
+                return formatFilesSummaryForOneFileManyAdditions(addedLines,
+                                                                 deletedLines);
             }
         } else {
             if (addedLines == 0) {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFiles,
-                                     changedFiles);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneDeletion,
-                                     changedFiles);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyDeletions,
-                                     changedFiles,
-                                     deletedLines);
-                }
+                return formatFilesSummaryForManyFilesZeroAdditions(changedFiles,
+                                                                   deletedLines);
             } else if (addedLines == 1) {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAddition,
-                                     changedFiles);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionOneDeletion,
-                                     changedFiles);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionManyDeletions,
-                                     changedFiles,
-                                     deletedLines);
-                }
+                return formatFilesSummaryForManyFilesOneAddition(changedFiles,
+                                                                 deletedLines);
             } else {
-                if (deletedLines == 0) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditions,
-                                     changedFiles,
-                                     addedLines);
-                } else if (deletedLines == 1) {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsOneDeletion,
-                                     changedFiles,
-                                     addedLines);
-                } else {
-                    return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsManyDeletions,
-                                     changedFiles,
-                                     addedLines,
-                                     deletedLines);
-                }
+                return formatFilesSummaryForManyFilesManyAdditions(changedFiles,
+                                                                   addedLines,
+                                                                   deletedLines);
             }
+        }
+    }
+
+    private String formatFilesSummaryForOneFileZeroAdditions(final int deletedLines) {
+        if (deletedLines == 0) {
+            return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFile);
+        } else if (deletedLines == 1) {
+            return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneDeletion);
+        } else {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyDeletions,
+                             deletedLines);
+        }
+    }
+
+    private String formatFilesSummaryForOneFileOneAddition(final int deletedLines) {
+        if (deletedLines == 0) {
+            return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAddition);
+        } else if (deletedLines == 1) {
+            return ts.getTranslation(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionOneDeletion);
+        } else {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileOneAdditionManyDeletions,
+                             deletedLines);
+        }
+    }
+
+    private String formatFilesSummaryForOneFileManyAdditions(final int addedLines,
+                                                             final int deletedLines) {
+        if (deletedLines == 0) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditions,
+                             addedLines);
+        } else if (deletedLines == 1) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsOneDeletion,
+                             addedLines);
+        } else {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryOneFileManyAdditionsManyDeletions,
+                             addedLines,
+                             deletedLines);
+        }
+    }
+
+    private String formatFilesSummaryForManyFilesZeroAdditions(final int changedFiles,
+                                                               final int deletedLines) {
+        if (deletedLines == 0) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFiles,
+                             changedFiles);
+        } else if (deletedLines == 1) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneDeletion,
+                             changedFiles);
+        } else {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyDeletions,
+                             changedFiles,
+                             deletedLines);
+        }
+    }
+
+    private String formatFilesSummaryForManyFilesOneAddition(final int changedFiles,
+                                                             final int deletedLines) {
+        if (deletedLines == 0) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAddition,
+                             changedFiles);
+        } else if (deletedLines == 1) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionOneDeletion,
+                             changedFiles);
+        } else {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesOneAdditionManyDeletions,
+                             changedFiles,
+                             deletedLines);
+        }
+    }
+
+    private String formatFilesSummaryForManyFilesManyAdditions(final int changedFiles,
+                                                               final int addedLines,
+                                                               final int deletedLines) {
+        if (deletedLines == 0) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditions,
+                             changedFiles,
+                             addedLines);
+        } else if (deletedLines == 1) {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsOneDeletion,
+                             changedFiles,
+                             addedLines);
+        } else {
+            return ts.format(LibraryConstants.ChangeRequestFilesSummaryManyFilesManyAdditionsManyDeletions,
+                             changedFiles,
+                             addedLines,
+                             deletedLines);
         }
     }
 }

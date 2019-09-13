@@ -360,7 +360,7 @@ public class ProjectScreen {
 
     public void submitChangeRequest() {
         projectController.canSubmitChangeRequest(workspaceProject).then(userCanSubmitChangeRequest -> {
-            if (userCanSubmitChangeRequest) {
+            if (Boolean.TRUE.equals(userCanSubmitChangeRequest)) {
                 this.libraryPlaces.goToSubmitChangeRequestScreen();
             }
 

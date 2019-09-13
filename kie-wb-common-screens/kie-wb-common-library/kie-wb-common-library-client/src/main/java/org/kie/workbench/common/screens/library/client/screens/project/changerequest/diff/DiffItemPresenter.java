@@ -19,13 +19,13 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Random;
 import elemental2.dom.HTMLElement;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeRequestDiff;
 import org.guvnor.structure.repositories.changerequest.portable.ChangeType;
@@ -224,10 +224,10 @@ public class DiffItemPresenter {
     }
 
     private Map<String, String> createPathPlaceRequestParameters() {
-        return new HashMap<String, String>() {{
-            put("readOnly", "true");
-            put("hash", generateRandomHash());
-        }};
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("readOnly", "true");
+        parameters.put("hash", generateRandomHash());
+        return parameters;
     }
 
     private String generateRandomHash() {
@@ -235,11 +235,9 @@ public class DiffItemPresenter {
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 32;
 
-        Random random = new Random();
-
         StringBuilder buffer = new StringBuilder(targetStringLength);
         for (int i = 0; i < targetStringLength; i++) {
-            int randomLimitedInt = leftLimit + (random.nextInt() * (rightLimit - leftLimit + 1));
+            int randomLimitedInt = leftLimit + (Random.nextInt() * (rightLimit - leftLimit + 1));
             buffer.append((char) randomLimitedInt);
         }
         return buffer.toString();
