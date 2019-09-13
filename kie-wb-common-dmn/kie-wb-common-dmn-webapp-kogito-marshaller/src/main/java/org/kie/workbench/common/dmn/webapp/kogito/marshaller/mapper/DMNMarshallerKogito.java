@@ -519,7 +519,7 @@ public class DMNMarshallerKogito {
     void removeDrgElementsWithoutShape(final List<JSITDRGElement> drgElements,
                                        final List<JSIDMNShape> dmnShapes) {
         // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
-        if (dmnShapes.size() == 0) {
+        if (dmnShapes.isEmpty()) {
             return;
         }
 

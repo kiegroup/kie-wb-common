@@ -39,9 +39,11 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshalle
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -102,8 +104,9 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
                           final ServiceCallback<Diagram> callback) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
             doNewDiagram(callback);
+        } else {
+            doTransformation(xml, callback);
         }
-        doTransformation(xml, callback);
     }
 
     private void doNewDiagram(final ServiceCallback<Diagram> callback) {
@@ -145,26 +148,28 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     @SuppressWarnings("unchecked")
     private void doTransformation(final String xml,
                                   final ServiceCallback<Diagram> callback) {
-        final DMN12UnmarshallCallback jsCallback = dmn12 -> {
-            this.dmn12 = dmn12;
-            final Metadata metadata = buildMetadataInstance();
-            final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
-            final Graph graph = dmnMarshaller.unmarshall(metadata, definitions);
-
-            final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
-            final String title = diagramNode.getContent().getDefinition().getDefinitions().getName().getValue();
-            metadata.setTitle(title);
-
-            final Diagram diagram = dmnDiagramFactory.build(title, metadata, graph);
-            updateClientShapeSetId(diagram);
-
-            callback.onSuccess(diagram);
-        };
+        final Metadata metadata = buildMetadataInstance();
 
         try {
+
+            final DMN12UnmarshallCallback jsCallback = dmn12 -> {
+                this.dmn12 = dmn12;
+                final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
+                final Graph graph = dmnMarshaller.unmarshall(metadata, definitions);
+                final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
+                final String title = diagramNode.getContent().getDefinition().getDefinitions().getName().getValue();
+                metadata.setTitle(title);
+
+                final Diagram diagram = dmnDiagramFactory.build(title, metadata, graph);
+                updateClientShapeSetId(diagram);
+
+                callback.onSuccess(diagram);
+            };
+
             MainJs.unmarshall(xml, jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage());
+            callback.onError(new ClientRuntimeError(new DiagramParsingException(metadata, xml)));
         }
     }
 

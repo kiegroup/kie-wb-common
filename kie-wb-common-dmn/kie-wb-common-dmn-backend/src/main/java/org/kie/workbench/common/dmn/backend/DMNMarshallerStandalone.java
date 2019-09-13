@@ -460,12 +460,11 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         return graph;
     }
 
-    void removeDrgElementsWithoutShape(
-            final List<org.kie.dmn.model.api.DRGElement> drgElements,
-            final List<DMNShape> dmnShapes) {
+    void removeDrgElementsWithoutShape(final List<org.kie.dmn.model.api.DRGElement> drgElements,
+                                       final List<DMNShape> dmnShapes) {
 
-        if (dmnShapes.size() == 0) {
-            // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
+        // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
+        if (dmnShapes.isEmpty()) {
             return;
         }
 
