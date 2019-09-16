@@ -186,7 +186,7 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Override
     public void testOpen() {
         super.testOpen();
-        // TODO (Submarine): verify(presenter).addDocumentationPage(diagram);
+        // TODO (Kogito): verify(presenter).addDocumentationPage(diagram);
     }
 
     @Test

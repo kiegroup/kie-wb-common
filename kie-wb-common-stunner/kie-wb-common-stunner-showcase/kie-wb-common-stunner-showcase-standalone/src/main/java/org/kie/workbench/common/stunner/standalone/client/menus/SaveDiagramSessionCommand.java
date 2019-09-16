@@ -32,7 +32,7 @@ public class SaveDiagramSessionCommand extends AbstractClientSessionCommand<Edit
     @Override
     @SuppressWarnings("unchecked")
     public <V> void execute(final Callback<V> callback) {
-        // TODO: (Submarine) Export the SVG diagram
+        // TODO: (Kogito) Export the SVG diagram
     }
 
     @Override

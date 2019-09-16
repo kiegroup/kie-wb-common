@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
@@ -52,7 +53,6 @@ import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocu
 import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.kie.workbench.common.stunner.standalone.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.standalone.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
@@ -152,55 +152,6 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
         this.diagramServices = diagramServices;
         this.stateHolder = stateHolder;
     }
-
-//    @Override
-//    protected AbstractDiagramEditorCore<SubmarineMetadata, Diagram, DiagramResourceImpl> makeCore(final View view,
-//                                                                                                                    final TextEditorView xmlEditorView,
-//                                                                                                                    final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
-//                                                                                                                    final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-//                                                                                                                    final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
-//                                                                                                                    final Event<NotificationEvent> notificationEvent,
-//                                                                                                                    final ErrorPopupPresenter errorPopupPresenter,
-//                                                                                                                    final DiagramClientErrorHandler diagramClientErrorHandler,
-//                                                                                                                    final ClientTranslationService translationService) {
-//        return new DiagramEditorCore(view,
-//                                     xmlEditorView,
-//                                     editorSessionPresenterInstances,
-//                                     viewerSessionPresenterInstances,
-//                                     menuSessionItems,
-//                                     notificationEvent,
-//                                     errorPopupPresenter,
-//                                     diagramClientErrorHandler,
-//                                     translationService,
-//                                     () -> place) {
-//            @Override
-//            protected void saveOrUpdate(final String commitMessage) {
-//                doSaveAsXML(commitMessage);
-//            }
-//
-//            @Override
-//            protected void saveAsXML(final String commitMessage) {
-//                doSaveAsXML(commitMessage);
-//            }
-//
-//            private void doSaveAsXML(final String commitMessage) {
-//                stateHolder.saveFile(commitMessage,
-//                                     new ServiceCallback<String>() {
-//                                         @Override
-//                                         public void onSuccess(final String xml) {
-//                                             getSaveSuccessCallback(xml.hashCode()).callback(path);
-//                                             notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
-//                                             hideLoadingViews();
-//                                         }
-//
-//                                         @Override
-//                                         public void onError(final ClientRuntimeError error) {
-//                                             onSaveError(error);
-//                                         }
-//                                     });
-//            }
-//        };
-//    }
 
     @OnStartup
     @SuppressWarnings("unused")
