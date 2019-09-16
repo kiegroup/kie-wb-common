@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -27,15 +26,10 @@ import java.util.stream.Stream;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessage;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessageDecorator;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessageKeys;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessage;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageDecorator;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageKeys;
-import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest.Mode;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 
 /**
@@ -63,8 +57,8 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 public class Match<In, Out> {
 
     private final Class<?> outputType;
-    private final LinkedList<Case<?>> cases = new LinkedList<>();
-    private final LinkedList<Case<?>> strictCases = new LinkedList<>();
+    private final LinkedList<Case<In>> cases = new LinkedList<>();
+    private final LinkedList<Case<In>> strictCases = new LinkedList<>();
     private Function<In, Out> orElse;
     private Out defaultValue;
     private Optional<MarshallingMessageDecorator<In>> inputDecorator = Optional.empty();
@@ -124,12 +118,12 @@ public class Match<In, Out> {
      * handle a type by throwing an error.
      * Use when the implementation is still missing, but expected to exist
      */
-    public <Sub> Match<In, Out> missing(Class<Sub> type) {
-        return when_(type, reportMissing(type));
+    public <Sub> Match<In, Out> missing(Function<Sub, Boolean>  type, Class<? extends Sub> clazz) {
+        return when_(type, reportMissing(clazz));
     }
 
-    public <Sub> Match<In, Out> ignore(Class<Sub> type) {
-        return when_(type, ignored(type));
+    public <Sub> Match<In, Out> ignore(Function<Sub, Boolean>  type, Class<? extends Sub> clazz) {
+        return when_(type, ignored(clazz));
     }
 
     public Match<In, Out> orElse(Function<In, Out> then) {
@@ -157,7 +151,7 @@ public class Match<In, Out> {
         return this;
     }
 
-    private Result<Out> apply(In value, List<Case<?>> cases, Supplier<Result<Out>> fallback) {
+    private Result<Out> apply(In value, List<Case<In>> cases, Supplier<Result<Out>> fallback) {
         return cases.stream()
                 .map(c -> c.match(value))
                 .filter(Result::isSuccess)
