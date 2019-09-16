@@ -68,9 +68,6 @@
         <module>kie-wb-common-dmn-webapp-kogito-testing</module>
       </modules>
     </profile>
-  </profiles>
-
-  <profiles>
     <profile>
       <id>run-code-coverage</id>
       <properties>
