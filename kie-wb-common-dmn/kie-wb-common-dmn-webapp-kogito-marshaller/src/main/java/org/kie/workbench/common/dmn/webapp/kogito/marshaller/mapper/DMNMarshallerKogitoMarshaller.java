@@ -172,9 +172,6 @@ public class DMNMarshallerKogitoMarshaller {
             leftPoint.setX(v.getBounds().getUpperLeft().getX());
             final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
             leftPoint.setY(dlY);
-            if (Objects.isNull(dl.getWaypoint())) {
-                dl.setWaypoint(JsUtils.getNativeArray());
-            }
             JSIDMNDecisionServiceDividerLine.addWaypoint(dl, leftPoint);
             final JSIPoint rightPoint = JSIPoint.newInstance();
             rightPoint.setX(v.getBounds().getLowerRight().getX());
@@ -250,10 +247,6 @@ public class DMNMarshallerKogitoMarshaller {
             definitions.setDMNDI(JSIDMNDI.newInstance());
         }
         final JSIDMNDiagram dmnDDDMNDiagram = JSIDMNDiagram.newInstance();
-        if (Objects.isNull(definitions.getDMNDI().getDMNDiagram())) {
-            final JsArrayLike<JSIDMNDiagram> diagrams = JsUtils.getNativeArray();
-            definitions.getDMNDI().setDMNDiagram(diagrams);
-        }
         JSIDMNDI.addDMNDiagram(definitions.getDMNDI(), dmnDDDMNDiagram);
 
         //Convert relative positioning to absolute
@@ -267,15 +260,9 @@ public class DMNMarshallerKogitoMarshaller {
         }
         final JSITComponentsWidthsExtension componentsWidthsExtension = JSITComponentsWidthsExtension.newInstance();
         final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
-        if (Objects.isNull(extension.getAny())) {
-            extension.setAny(JsUtils.getNativeArray());
-        }
-        final JsArrayLike<Object> any = extension.getAny();
-        any.setAt(any.getLength(), componentsWidthsExtension);
+        JSIDiagramElement.JSIExtension.addAny(extension, componentsWidthsExtension);
 
-        final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) -> {
-            JSITComponentsWidthsExtension.addComponentWidths(componentsWidthsExtension, cw);
-        };
+        final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) -> JSITComponentsWidthsExtension.addComponentWidths(componentsWidthsExtension, cw);
 
         //Iterate Graph processing nodes..
         for (Node<?, ?> node : graph.nodes()) {
@@ -295,22 +282,12 @@ public class DMNMarshallerKogitoMarshaller {
                                   stunnerToDMN(node,
                                                componentWidthsConsumer));
                     }
-                    if (Objects.isNull(dmnDDDMNDiagram.getDMNDiagramElement())) {
-                        final JsArrayLike<JSIDiagramElement> elements = JsUtils.getNativeArray();
-                        dmnDDDMNDiagram.setDMNDiagramElement(elements);
-                    }
-
                     JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, stunnerToDDExt((View<? extends DMNElement>) view));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(),
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node,
                                                                             componentWidthsConsumer));
-                    if (Objects.isNull(dmnDDDMNDiagram.getDMNDiagramElement())) {
-                        final JsArrayLike<JSIDiagramElement> elements = JsUtils.getNativeArray();
-                        JSIDiagramElement object = elements.getAt(1);
-                        dmnDDDMNDiagram.setDMNDiagramElement(elements);
-                    }
                     JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, stunnerToDDExt((View<? extends DMNElement>) view));
 
                     final JsArrayLike<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
@@ -384,16 +361,7 @@ public class DMNMarshallerKogitoMarshaller {
                 }
             }
         }
-
-        if (Objects.isNull(definitions.getDrgElement())) {
-            final JsArrayLike<JSITDRGElement> elements = JsUtils.getNativeArray();
-            definitions.setDrgElement(elements);
-        }
         nodes.values().forEach(n -> JSITDefinitions.addDrgElement(definitions, n));
-        if (Objects.isNull(definitions.getArtifact())) {
-            final JsArrayLike<JSITArtifact> artifacts = JsUtils.getNativeArray();
-            definitions.setArtifact(artifacts);
-        }
         textAnnotations.values().forEach(text -> JSITDefinitions.addArtifact(definitions, text));
         JSIDMNDiagram.addAllDMNDiagramElement(dmnDDDMNDiagram, dmnEdges);
         return definitions;
