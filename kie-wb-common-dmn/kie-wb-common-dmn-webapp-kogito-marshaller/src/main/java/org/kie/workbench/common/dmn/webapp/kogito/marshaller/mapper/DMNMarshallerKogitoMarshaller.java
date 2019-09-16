@@ -308,6 +308,7 @@ public class DMNMarshallerKogitoMarshaller {
                                                                             componentWidthsConsumer));
                     if (Objects.isNull(dmnDDDMNDiagram.getDMNDiagramElement())) {
                         final JsArrayLike<JSIDiagramElement> elements = JsUtils.getNativeArray();
+                        JSIDiagramElement object = elements.getAt(1);
                         dmnDDDMNDiagram.setDMNDiagramElement(elements);
                     }
                     JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, stunnerToDDExt((View<? extends DMNElement>) view));

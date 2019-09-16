@@ -119,7 +119,8 @@ public class DecisionTablePropertyConverter {
             JSITDecisionTable.addOutput(result, c);
         }
         if (result.getOutput().getLength() == 1) {
-            result.getOutput().getAt(0).setName(null); // DROOLS-3281
+            final JSITOutputClause at = Js.uncheckedCast(result.getOutput().getAt(0));
+            at.setName(null); // DROOLS-3281
         }
         for (DecisionRule dr : wb.getRule()) {
             final JSITDecisionRule c = DecisionRulePropertyConverter.dmnFromWB(dr);
