@@ -32,7 +32,6 @@ import org.kie.workbench.common.dmn.client.DMNShapeSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12MarshallCallback;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12UnmarshallCallback;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -66,13 +65,31 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     //This path is needed by DiagramsNavigatorImpl's use of AbstractClientDiagramService.lookup(..) to retrieve a list of diagrams
     private static final String ROOT = "default://master@system/stunner/" + DIAGRAMS_PATH;
 
+    private static final String EMPTY_DIAGRAM_DMN_1_2 = "<?xml version=\"1.0\" ?>\n" +
+            "<dmn:definitions xmlns:dmn=\"http://www.omg.org/spec/DMN/20180521/MODEL/\" \n" +
+            "    xmlns:di=\"http://www.omg.org/spec/DMN/20180521/DI/\" \n" +
+            "    xmlns:kie=\"http://www.drools.org/kie/dmn/1.2\" \n" +
+            "    xmlns:feel=\"http://www.omg.org/spec/DMN/20180521/FEEL/\" \n" +
+            "    xmlns:dmndi=\"http://www.omg.org/spec/DMN/20180521/DMNDI/\" \n" +
+            "    xmlns:dc=\"http://www.omg.org/spec/DMN/20180521/DC/\" \n" +
+            "    expressionLanguage=\"http://www.omg.org/spec/DMN/20180521/FEEL/\" \n" +
+            "    typeLanguage=\"http://www.omg.org/spec/DMN/20180521/FEEL/\" >\n" +
+            "  <dmn:extensionElements></dmn:extensionElements>\n" +
+            "  <dmndi:DMNDI>\n" +
+            "    <dmndi:DMNDiagram>\n" +
+            "      <di:extension>\n" +
+            "        <kie:ComponentsWidthsExtension></kie:ComponentsWidthsExtension>\n" +
+            "      </di:extension>\n" +
+            "    </dmndi:DMNDiagram>\n" +
+            "  </dmndi:DMNDI>\n" +
+            "</dmn:definitions>";
+
     private DMNMarshallerKogito dmnMarshaller;
     private Caller<KogitoDiagramService> kogitoDiagramServiceCaller;
     private FactoryManager factoryManager;
     private DefinitionManager definitionManager;
     private DMNDiagramFactory dmnDiagramFactory;
     private Promises promises;
-    private DMN12 dmn12;
 
     public KogitoClientDiagramServiceImpl() {
         //CDI proxy
@@ -149,7 +166,6 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         try {
 
             final DMN12UnmarshallCallback jsCallback = dmn12 -> {
-                this.dmn12 = dmn12;
                 final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
                 final Graph graph = dmnMarshaller.unmarshall(metadata, definitions);
                 final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
@@ -174,7 +190,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.promisify(kogitoDiagramServiceCaller,
                                       s -> {
-                                          //resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
+                                          resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
                                           return s.transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present")));
                                       });
         }
@@ -187,14 +203,23 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
             return;
         }
 
-        final DMN12MarshallCallback jsCallback = xml -> {
-            final String breakpoint = xml;
-        };
-
         try {
+            //(1) Convert Graph into DMNs Definitions
             final JSITDefinitions jsitDefinitions = dmnMarshaller.marshall(graph);
-            dmn12.setDefinitions(jsitDefinitions);
-            MainJs.marshall(dmn12, jsCallback);
+
+            final DMN12UnmarshallCallback jsUnmarshallCallback = dmn12 -> {
+
+                final DMN12MarshallCallback jsMarshallCallback = xml -> {
+                    final String breakpoint = xml;
+                };
+
+                //(3) Add DMNs Definitions to jsonix DMN12 object for conversion to XML
+                dmn12.setDefinitions(jsitDefinitions);
+                MainJs.marshall(dmn12, jsMarshallCallback);
+            };
+
+            //(2) Instantiate a jsonix DMN12 JavaScript object; the only way appears to be to first convert XML into one
+            MainJs.unmarshall(EMPTY_DIAGRAM_DMN_1_2, jsUnmarshallCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage());
         }
