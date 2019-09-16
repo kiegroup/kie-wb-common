@@ -19,6 +19,7 @@
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
     xmlns:jsonix="http://jsonix.highsource.org/customizations"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:namespace="http://jaxb2-commons.dev.java.net/namespace-prefix"
     jaxb:extensionBindingPrefixes="jsonix">
 
   <!-- DC -->
@@ -29,6 +30,7 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc"
         spaceName="DC"/>
+    <namespace:prefix name="dc" />
   </jaxb:bindings>
 
   <!-- DI -->
@@ -39,6 +41,7 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di"
         spaceName="DI"/>
+    <namespace:prefix name="di" />
   </jaxb:bindings>
 
   <!-- DMNDI1.2 -->
@@ -49,6 +52,7 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12"
         spaceName="DMNDI12"/>
+    <namespace:prefix name="dmndi" />
   </jaxb:bindings>
 
   <!-- DMN1.2 -->
@@ -59,6 +63,7 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12"
         spaceName="DMN12"/>
+    <namespace:prefix name="di" />
   </jaxb:bindings>
 
   <!-- KIE EXTENSIONS -->
@@ -69,6 +74,7 @@
     <jsonix:packageMapping
         packageName="org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie"
         spaceName="KIE"/>
+    <namespace:prefix name="kie" />
   </jaxb:bindings>
 
 </jaxb:bindings>

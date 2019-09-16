@@ -10,7 +10,15 @@ MainJs = {
     unmarshall: function (text, callback) {
         console.log("out unmarshall");
         // Create Jsonix context
-        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE]);
+        const context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
+            namespacePrefixes: {
+                "http://www.omg.org/spec/DMN/20180521/MODEL/": "dmn",
+                "http://www.omg.org/spec/DMN/20180521/DI/": "di",
+                "http://www.drools.org/kie/dmn/1.2": "kie",
+                "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
+                "http://www.omg.org/spec/DMN/20180521/DC/": "dc"
+            }
+        });
 
         // Create unmarshaller
         var unmarshaller = context.createUnmarshaller();
@@ -20,7 +28,16 @@ MainJs = {
 
     marshall: function (value, callback) {
         console.log("outer marshall");
-        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE]);
+        // Create Jsonix context
+        const context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
+            namespacePrefixes: {
+                "http://www.omg.org/spec/DMN/20180521/MODEL/": "dmn",
+                "http://www.omg.org/spec/DMN/20180521/DI/": "di",
+                "http://www.drools.org/kie/dmn/1.2": "kie",
+                "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
+                "http://www.omg.org/spec/DMN/20180521/DC/": "dc"
+            }
+        });
 
         // Create unmarshaller
         var marshaller = context.createMarshaller();
