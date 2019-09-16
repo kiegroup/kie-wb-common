@@ -19,7 +19,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>org.kie.workbench</groupId>
-    <artifactId>kie-wb-common-submarine</artifactId>
+    <artifactId>kie-wb-common-kogito</artifactId>
     <version>7.28.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
