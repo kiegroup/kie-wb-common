@@ -52,9 +52,9 @@ public class DMNGraphProcessorTest {
         when(graph.nodes()).thenReturn(graphNodes);
 
         final Iterable<? extends Node> nodes = processor.getNodes(graph);
-        for (final Node r : nodes) {
-            assertTrue(graphNodes.contains(r));
-            assertFalse(processor.isReplacedByAnotherNode(r.getUUID()));
+        for (final Node node : nodes) {
+            assertTrue(graphNodes.contains(node));
+            assertFalse(processor.isReplacedByAnotherNode(node.getUUID()));
         }
     }
 

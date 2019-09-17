@@ -62,6 +62,7 @@ public class DMNGraphProcessor implements GraphProcessor {
     protected List<Node> getChildNodes(final Node node){
         return GraphUtils.getChildNodes(node);
     }
+
     @Override
     public boolean isReplacedByAnotherNode(final String uuid) {
         return replacedNodes.containsKey(uuid);
