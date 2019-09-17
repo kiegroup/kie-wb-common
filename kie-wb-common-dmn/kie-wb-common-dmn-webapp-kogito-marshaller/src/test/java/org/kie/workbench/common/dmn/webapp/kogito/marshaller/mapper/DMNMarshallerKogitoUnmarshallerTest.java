@@ -18,7 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper;
 
 import org.junit.Test;
 
-public class DMNMarshallerKogitoTest {
+public class DMNMarshallerKogitoUnmarshallerTest {
 
 
     public void setup() {

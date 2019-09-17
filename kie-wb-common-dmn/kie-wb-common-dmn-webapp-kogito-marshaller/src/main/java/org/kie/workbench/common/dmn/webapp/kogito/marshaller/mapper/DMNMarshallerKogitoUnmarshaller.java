@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -104,6 +103,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.DMNMarshallerUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -135,7 +135,7 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.defin
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 
 @ApplicationScoped
-public class DMNMarshallerKogito {
+public class DMNMarshallerKogitoUnmarshaller {
 
     private static final String INFO_REQ_ID = getDefinitionId(InformationRequirement.class);
     private static final String KNOWLEDGE_REQ_ID = getDefinitionId(KnowledgeRequirement.class);
@@ -154,13 +154,13 @@ public class DMNMarshallerKogito {
     private TextAnnotationConverter textAnnotationConverter;
     private DecisionServiceConverter decisionServiceConverter;
 
-    protected DMNMarshallerKogito() {
+    protected DMNMarshallerKogitoUnmarshaller() {
         this(null, null);
     }
 
     @Inject
-    public DMNMarshallerKogito(final FactoryManager factoryManager,
-                               final DMNMarshallerImportsHelperKogito dmnMarshallerImportsHelper) {
+    public DMNMarshallerKogitoUnmarshaller(final FactoryManager factoryManager,
+                                           final DMNMarshallerImportsHelperKogito dmnMarshallerImportsHelper) {
         this.factoryManager = factoryManager;
         this.dmnMarshallerImportsHelper = dmnMarshallerImportsHelper;
 
@@ -170,18 +170,6 @@ public class DMNMarshallerKogito {
         this.knowledgeSourceConverter = new KnowledgeSourceConverter(factoryManager);
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
-    }
-
-    private static Optional<JSIDMNDiagram> findDMNDiagram(final JSITDefinitions dmnXml) {
-        if (dmnXml.getDMNDI() == null) {
-            return Optional.empty();
-        }
-        final JsArrayLike<JSIDMNDiagram> elems = dmnXml.getDMNDI().getDMNDiagram();
-        if (elems.getLength() != 1) {
-            return Optional.empty();
-        } else {
-            return Optional.of(Js.uncheckedCast(elems.getAt(0)));
-        }
     }
 
     // ==================================
@@ -200,7 +188,7 @@ public class DMNMarshallerKogito {
 
         final JsArrayLike<JSITDRGElement> jsitDRGElements = JSITDefinitions.getDrgElement(jsiDefinitions);
         final List<JSITDRGElement> diagramDrgElements = JsUtils.toList(jsitDRGElements);
-        final Optional<JSIDMNDiagram> dmnDDDiagram = findDMNDiagram(jsiDefinitions);
+        final Optional<JSIDMNDiagram> dmnDDDiagram = findJSIDiagram(jsiDefinitions);
 
         // Get external DMN model information
         final Map<JSITImport, JSITDefinitions> importDefinitions = dmnMarshallerImportsHelper.getImportDefinitions(metadata,
@@ -447,7 +435,7 @@ public class DMNMarshallerKogito {
         elems.values().stream().map(Entry::getValue).forEach(graph::addNode);
         textAnnotations.values().forEach(graph::addNode);
 
-        final Node<?, ?> dmnDiagramRoot = findDMNDiagramRoot(graph);
+        final Node<?, ?> dmnDiagramRoot = DMNMarshallerUtils.findDMNDiagramRoot(graph);
         final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(jsiDefinitions,
                                                                                   importDefinitions,
                                                                                   pmmlDocuments);
@@ -516,8 +504,20 @@ public class DMNMarshallerKogito {
         return graph;
     }
 
-    void removeDrgElementsWithoutShape(final List<JSITDRGElement> drgElements,
-                                       final List<JSIDMNShape> dmnShapes) {
+    private Optional<JSIDMNDiagram> findJSIDiagram(final JSITDefinitions dmnXml) {
+        if (dmnXml.getDMNDI() == null) {
+            return Optional.empty();
+        }
+        final JsArrayLike<JSIDMNDiagram> elems = dmnXml.getDMNDI().getDMNDiagram();
+        if (elems.getLength() != 1) {
+            return Optional.empty();
+        } else {
+            return Optional.of(Js.uncheckedCast(elems.getAt(0)));
+        }
+    }
+
+    private void removeDrgElementsWithoutShape(final List<JSITDRGElement> drgElements,
+                                               final List<JSIDMNShape> dmnShapes) {
         // DMN 1.1 doesn't have DMNShape, so we include all DRGElements and create all the shapes.
         if (dmnShapes.isEmpty()) {
             return;
@@ -527,9 +527,8 @@ public class DMNMarshallerKogito {
                                                                                          element.getId())));
     }
 
-    void updateIDsWithAlias(final Map<String, String> indexByUri,
-                            final List<JSITDRGElement> importedDrgElements) {
-
+    private void updateIDsWithAlias(final Map<String, String> indexByUri,
+                                    final List<JSITDRGElement> importedDrgElements) {
         if (importedDrgElements.isEmpty()) {
             return;
         }
@@ -634,7 +633,7 @@ public class DMNMarshallerKogito {
      * Relationships are not created with the factory.
      * This method specializes to connect with an Edge containing a Child relationship the target Node.
      */
-    private static void connectDSChildEdge(Node dsNode, Node requiredNode) {
+    private void connectDSChildEdge(Node dsNode, Node requiredNode) {
         final String uuid = dsNode.getUUID() + "er" + requiredNode.getUUID();
         final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
         myEdge.setContent(new Child());
@@ -643,13 +642,8 @@ public class DMNMarshallerKogito {
                     requiredNode);
     }
 
-    private static String idOfDMNorWBUUID(JSITDMNElement dmn) {
+    private String idOfDMNorWBUUID(JSITDMNElement dmn) {
         return dmn.getId() != null ? dmn.getId() : UUID.uuid();
-    }
-
-    public static Node<?, ?> findDMNDiagramRoot(final Graph<?, Node<View, ?>> graph) {
-        return StreamSupport.stream(graph.nodes().spliterator(),
-                                    false).filter(n -> n.getContent().getDefinition() instanceof DMNDiagram).findFirst().orElseThrow(() -> new UnsupportedOperationException("TODO"));
     }
 
     private String getId(final JSITDMNElementReference er) {
@@ -688,9 +682,8 @@ public class DMNMarshallerKogito {
         }
     }
 
-    Node setAllowOnlyVisualChange(final List<JSITDRGElement> importedDrgElements,
-                                  final Node node) {
-
+    private Node setAllowOnlyVisualChange(final List<JSITDRGElement> importedDrgElements,
+                                          final Node node) {
         getDRGElement(node).ifPresent(drgElement -> {
             if (isImportedDRGElement(importedDrgElements, drgElement)) {
                 drgElement.setAllowOnlyVisualChange(true);
@@ -702,8 +695,7 @@ public class DMNMarshallerKogito {
         return node;
     }
 
-    Optional<DRGElement> getDRGElement(final Node node) {
-
+    private Optional<DRGElement> getDRGElement(final Node node) {
         final Object objectDefinition = DefinitionUtils.getElementDefinition(node);
 
         if (objectDefinition instanceof DRGElement) {
@@ -713,13 +705,13 @@ public class DMNMarshallerKogito {
         return Optional.empty();
     }
 
-    boolean isImportedDRGElement(final List<JSITDRGElement> importedDrgElements,
-                                 final JSITDRGElement drgElement) {
+    private boolean isImportedDRGElement(final List<JSITDRGElement> importedDrgElements,
+                                         final JSITDRGElement drgElement) {
         return isImportedIdNode(importedDrgElements, drgElement.getId());
     }
 
-    boolean isImportedDRGElement(final List<JSITDRGElement> importedDrgElements,
-                                 final DRGElement drgElement) {
+    private boolean isImportedDRGElement(final List<JSITDRGElement> importedDrgElements,
+                                         final DRGElement drgElement) {
         return isImportedIdNode(importedDrgElements, drgElement.getId().getValue());
     }
 
@@ -731,8 +723,8 @@ public class DMNMarshallerKogito {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void connectRootWithChild(final Node dmnDiagramRoot,
-                                            final Node child) {
+    private void connectRootWithChild(final Node dmnDiagramRoot,
+                                      final Node child) {
         final String uuid = UUID.uuid();
         final Edge<Child, Node> edge = new EdgeImpl<>(uuid);
         edge.setContent(new Child());
@@ -743,9 +735,9 @@ public class DMNMarshallerKogito {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void connectEdge(final Edge edge,
-                                   final Node source,
-                                   final Node target) {
+    private void connectEdge(final Edge edge,
+                             final Node source,
+                             final Node target) {
         edge.setSourceNode(source);
         edge.setTargetNode(target);
         source.getOutEdges().add(edge);
@@ -757,7 +749,7 @@ public class DMNMarshallerKogito {
                                       final String dmnEdgeElementRef,
                                       final JSITDefinitions dmnXml) {
         final ViewConnector connectionContent = (ViewConnector) edge.getContent();
-        final Optional<JSIDMNDiagram> dmnDiagram = findDMNDiagram(dmnXml);
+        final Optional<JSIDMNDiagram> dmnDiagram = findJSIDiagram(dmnXml);
 
         Optional<JSIDMNEdge> dmnEdge = Optional.empty();
         if (dmnDiagram.isPresent()) {
@@ -866,191 +858,12 @@ public class DMNMarshallerKogito {
         return Optional.empty();
     }
 
-    // ==================================
-    // MARSHALL
-    // ==================================
-
-    @SuppressWarnings("unchecked")
-   /* public JSITDefinitions marshall(final Graph<?, Node<View, ?>> graph) {
-        final Map<String, JSITDRGElement> nodes = new HashMap<>();
-        final Map<String, JSITTextAnnotation> textAnnotations = new HashMap<>();
-        final Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot(graph);
-        final Definitions definitionsStunnerPojo = dmnDiagramRoot.getContent().getDefinition().getDefinitions();
-        final List<JSIDMNEdge> dmnEdges = new ArrayList<>();
-
-        cleanImportedItemDefinitions(definitionsStunnerPojo);
-
-        final JSITDefinitions definitions = DefinitionsConverter.dmnFromWB(definitionsStunnerPojo);
-        if (Objects.isNull(definitions.getExtensionElements())) {
-            definitions.setExtensionElements(new JSITDMNElement.JSIExtensionElements());
-        }
-
-        if (Objects.isNull(definitions.getDMNDI())) {
-            definitions.setDMNDI(new JSIDMNDI());
-        }
-        final JSIDMNDiagram dmnDDDMNDiagram = new JSIDMNDiagram();
-        if (Objects.isNull(definitions.getDMNDI().getDMNDiagram())) {
-            final JsArrayLike<JSIDMNDiagram> diagrams = JavaScriptObject.createArray().cast();
-            definitions.getDMNDI().setDMNDiagram(diagrams);
-        }
-        JsUtils.add(definitions.getDMNDI().getDMNDiagram(), dmnDDDMNDiagram);
-
-        //Convert relative positioning to absolute
-        for (Node<?, ?> node : graph.nodes()) {
-            PointUtils.convertToAbsoluteBounds(node);
-        }
-
-        //Setup callback for marshalling ComponentWidths
-        if (Objects.isNull(dmnDDDMNDiagram.getExtension())) {
-            dmnDDDMNDiagram.setExtension(new JSIDiagramElement.JSIExtension());
-        }
-        final JSITComponentsWidthsExtension componentsWidthsExtension = new JSITComponentsWidthsExtension();
-        final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
-        //TODO {manstis} Need to setup ComponentWidthsExtension if it is not already present
-        //if (Objects.isNull(extension.getAny())) {
-        //    extension.setAny(new Object[]{});
-        //}
-        //extension.setAny(ArrayUtils.add(extension.getAny().asArray(), componentsWidthsExtension));
-
-        final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) -> {
-            ArrayUtils.add(componentsWidthsExtension.getComponentWidths().asArray(), cw);
-        };
-
-        //Iterate Graph processing nodes..
-        for (Node<?, ?> node : graph.nodes()) {
-            if (node.getContent() instanceof View<?>) {
-                final View<?> view = (View<?>) node.getContent();
-                if (view.getDefinition() instanceof DRGElement) {
-                    final DRGElement n = (DRGElement) view.getDefinition();
-                    if (view.getDefinition() instanceof DynamicReadOnly) {
-                        final DynamicReadOnly def = (DynamicReadOnly) view.getDefinition();
-                        if (!def.isAllowOnlyVisualChange()) {
-                            nodes.put(n.getId().getValue(),
-                                      stunnerToDMN(node,
-                                                   componentWidthsConsumer));
-                        }
-                    } else {
-                        nodes.put(n.getId().getValue(),
-                                  stunnerToDMN(node,
-                                               componentWidthsConsumer));
-                    }
-                    if (Objects.isNull(dmnDDDMNDiagram.getDMNDiagramElement())) {
-                        final JsArrayLike<JSIDiagramElement> elements = JavaScriptObject.createArray().cast();
-                        dmnDDDMNDiagram.setDMNDiagramElement(elements);
-                    }
-                    JsUtils.add(dmnDDDMNDiagram.getDMNDiagramElement(),
-                                stunnerToDDExt((View<? extends DMNElement>) view));
-                } else if (view.getDefinition() instanceof TextAnnotation) {
-                    final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
-                    textAnnotations.put(textAnnotation.getId().getValue(),
-                                        textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node,
-                                                                            componentWidthsConsumer));
-                    if (Objects.isNull(dmnDDDMNDiagram.getDMNDiagramElement())) {
-                        final JsArrayLike<JSIDiagramElement> elements = JavaScriptObject.createArray().cast();
-                        dmnDDDMNDiagram.setDMNDiagramElement(elements);
-                    }
-                    JsUtils.add(dmnDDDMNDiagram.getDMNDiagramElement(),
-                                stunnerToDDExt((View<? extends DMNElement>) view));
-
-                    final List<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
-                    final JSITAssociation[] aAssociations = new JSITAssociation[]{};
-                    associations.toArray(aAssociations);
-                    JsUtils.addAll(definitions.getArtifact(), aAssociations);
-                }
-
-                // DMNDI Edge management.
-                final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
-                for (Edge<?, ?> e : inEdges) {
-                    if (e.getContent() instanceof ViewConnector) {
-                        final ViewConnector connectionContent = (ViewConnector) e.getContent();
-                        if (connectionContent.getSourceConnection().isPresent() && connectionContent.getTargetConnection().isPresent()) {
-                            Point2D sourcePoint = ((Connection) connectionContent.getSourceConnection().get()).getLocation();
-                            Point2D targetPoint = ((Connection) connectionContent.getTargetConnection().get()).getLocation();
-                            if (sourcePoint == null) { // If the "connection source/target location is null" assume it's the centre of the shape.
-                                final Node<?, ?> sourceNode = e.getSourceNode();
-                                final View<?> sourceView = (View<?>) sourceNode.getContent();
-                                double xSource = xOfBound(upperLeftBound(sourceView));
-                                double ySource = yOfBound(upperLeftBound(sourceView));
-                                if (sourceView.getDefinition() instanceof DMNViewDefinition) {
-                                    DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) sourceView.getDefinition();
-                                    xSource += dmnViewDefinition.getDimensionsSet().getWidth().getValue() / 2;
-                                    ySource += dmnViewDefinition.getDimensionsSet().getHeight().getValue() / 2;
-                                }
-                                sourcePoint = Point2D.create(xSource, ySource);
-                            } else { // If it is non-null it is relative to the source/target shape location.
-                                final Node<?, ?> sourceNode = e.getSourceNode();
-                                final View<?> sourceView = (View<?>) sourceNode.getContent();
-                                double xSource = xOfBound(upperLeftBound(sourceView));
-                                double ySource = yOfBound(upperLeftBound(sourceView));
-                                sourcePoint = Point2D.create(xSource + sourcePoint.getX(), ySource + sourcePoint.getY());
-                            }
-                            if (targetPoint == null) { // If the "connection source/target location is null" assume it's the centre of the shape.
-                                double xTarget = xOfBound(upperLeftBound(view));
-                                double yTarget = yOfBound(upperLeftBound(view));
-                                if (view.getDefinition() instanceof DMNViewDefinition) {
-                                    DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) view.getDefinition();
-                                    xTarget += dmnViewDefinition.getDimensionsSet().getWidth().getValue() / 2;
-                                    yTarget += dmnViewDefinition.getDimensionsSet().getHeight().getValue() / 2;
-                                }
-                                targetPoint = Point2D.create(xTarget, yTarget);
-                            } else { // If it is non-null it is relative to the source/target shape location.
-                                final double xTarget = xOfBound(upperLeftBound(view));
-                                final double yTarget = yOfBound(upperLeftBound(view));
-                                targetPoint = Point2D.create(xTarget + targetPoint.getX(), yTarget + targetPoint.getY());
-                            }
-
-                            final JSIDMNEdge dmnEdge = new JSIDMNEdge();
-                            // DMNDI edge elementRef is uuid of Stunner edge,
-                            // with the only exception when edge contains as content a DMN Association (Association is an edge)
-                            String uuid = e.getUUID();
-                            if (e.getContent() instanceof View<?>) {
-                                final View<?> edgeView = (View<?>) e.getContent();
-                                if (edgeView.getDefinition() instanceof Association) {
-                                    uuid = ((Association) edgeView.getDefinition()).getId().getValue();
-                                }
-                            }
-                            dmnEdge.setId("dmnedge-" + uuid);
-                            dmnEdge.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
-                                                               uuid,
-                                                               XMLConstants.DEFAULT_NS_PREFIX));
-
-                            JsUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(sourcePoint));
-                            for (ControlPoint cp : connectionContent.getControlPoints()) {
-                                JsUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(cp.getLocation()));
-                            }
-                            JsUtils.add(dmnEdge.getWaypoint(), PointUtils.point2dToDMNDIPoint(targetPoint));
-                            dmnEdges.add(dmnEdge);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (Objects.isNull(definitions.getDrgElement())) {
-            final JsArrayLike<JSITDRGElement> elements = JavaScriptObject.createArray().cast();
-            definitions.setDrgElement(elements);
-        }
-        nodes.values().forEach(n -> JsUtils.add(definitions.getDrgElement(), n));
-        if (Objects.isNull(definitions.getArtifact())) {
-            final JsArrayLike<JSITArtifact> artifacts = JavaScriptObject.createArray().cast();
-            definitions.setArtifact(artifacts);
-        }
-        textAnnotations.values().forEach(text -> JsUtils.add(definitions.getArtifact(), text));
-
-        // add DMNEdge last.
-        final JSIDMNEdge[] aDMNEdges = new JSIDMNEdge[]{};
-        dmnEdges.toArray(aDMNEdges);
-        JsUtils.addAll(dmnDDDMNDiagram.getDMNDiagramElement(), aDMNEdges);
-
-        return definitions;
-    } */
-
-    void loadImportedItemDefinitions(final Definitions definitions,
-                                     final Map<JSITImport, JSITDefinitions> importDefinitions) {
+    private void loadImportedItemDefinitions(final Definitions definitions,
+                                             final Map<JSITImport, JSITDefinitions> importDefinitions) {
         definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions));
     }
 
-    List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions) {
+    private List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions) {
         return dmnMarshallerImportsHelper
                 .getImportedItemDefinitions(importDefinitions)
                 .stream()
@@ -1224,7 +1037,7 @@ public class DMNMarshallerKogito {
         }
     }
 
-    private static void mergeFontSet(FontSet fontSet, FontSet additional) {
+    private void mergeFontSet(FontSet fontSet, FontSet additional) {
         if (additional.getFontFamily() != null) {
             fontSet.setFontFamily(additional.getFontFamily());
         }
@@ -1235,6 +1048,4 @@ public class DMNMarshallerKogito {
             fontSet.setFontColour(additional.getFontColour());
         }
     }
-
-
 }
