@@ -47,7 +47,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBoun
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITArtifact;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
@@ -91,11 +90,6 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.defin
 @ApplicationScoped
 public class DMNMarshallerKogitoMarshaller {
 
-    private static final double CENTRE_TOLERANCE = 1.0;
-
-//    private final FactoryManager factoryManager;
-//    private final DMNMarshallerImportsHelperKogito dmnMarshallerImportsHelper;
-
     private InputDataConverter inputDataConverter;
     private DecisionConverter decisionConverter;
     private BusinessKnowledgeModelConverter bkmConverter;
@@ -117,11 +111,9 @@ public class DMNMarshallerKogitoMarshaller {
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
     }
 
-
     // ==================================
     // MARSHALL
     // ==================================
-
 
     @SuppressWarnings("unchecked")
     private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v) {
@@ -221,12 +213,9 @@ public class DMNMarshallerKogitoMarshaller {
         }
     }
 
-
-
     // ==================================
     // MARSHALL
     // ==================================
-
 
     @SuppressWarnings("unchecked")
     public JSITDefinitions marshall(final Graph<?, Node<View, ?>> graph) {

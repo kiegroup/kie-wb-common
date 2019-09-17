@@ -111,8 +111,14 @@ public class ExpressionPropertyConverter {
         if (Objects.nonNull(uuid)) {
             final JSITComponentWidths componentWidths = JSITComponentWidths.newInstance();
             componentWidths.setDmnElementRef(uuid);
-            //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
-            //componentWidths.setWidth(wb.getComponentWidths());
+            wb.getComponentWidths()
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .forEach(w -> {
+                        final double dw = w;
+                        final float fw = (float) dw;
+                        JSITComponentWidths.addWidth(componentWidths, fw);
+                    });
             componentWidthsConsumer.accept(componentWidths);
         }
 
