@@ -117,7 +117,7 @@ public class ItemDefinitionPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITItemDefinition result = new JSITItemDefinition();
+        final JSITItemDefinition result = JSITItemDefinition.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.setName(wb.getName().getValue());
@@ -132,7 +132,7 @@ public class ItemDefinitionPropertyConverter {
 
         for (ItemDefinition child : wb.getItemComponent()) {
             final JSITItemDefinition convertedChild = ItemDefinitionPropertyConverter.dmnFromWB(child);
-            JsUtils.add(result.getItemComponent(), convertedChild);
+            JSITItemDefinition.addItemComponent(result, convertedChild);
         }
 
         return result;

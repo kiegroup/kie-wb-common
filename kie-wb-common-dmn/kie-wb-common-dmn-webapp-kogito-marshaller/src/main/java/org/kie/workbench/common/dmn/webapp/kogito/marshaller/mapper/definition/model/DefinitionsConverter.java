@@ -34,7 +34,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
@@ -109,7 +108,7 @@ public class DefinitionsConverter {
         if (wb == null) {
             return null;
         }
-        final JSITDefinitions result = new JSITDefinitions();
+        final JSITDefinitions result = JSITDefinitions.newInstance();
 
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
         final String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
@@ -129,12 +128,12 @@ public class DefinitionsConverter {
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
-            JsUtils.add(result.getItemDefinition(), itemDefConverted);
+            JSITDefinitions.addItemDefinition(result, itemDefConverted);
         }
 
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
-            JsUtils.add(result.getImport(), importConverted);
+            JSITDefinitions.addImport(result, importConverted);
         }
 
         return result;

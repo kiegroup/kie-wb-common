@@ -66,7 +66,7 @@ public class UnaryTestsPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITUnaryTests result = new JSITUnaryTests();
+        final JSITUnaryTests result = JSITUnaryTests.newInstance();
         result.setId(wb.getId().getValue());
         result.setText(wb.getText().getValue());
 

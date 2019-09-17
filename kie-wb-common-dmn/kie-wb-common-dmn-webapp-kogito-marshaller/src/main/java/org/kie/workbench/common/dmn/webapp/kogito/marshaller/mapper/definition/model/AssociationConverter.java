@@ -16,14 +16,15 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.Association;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -33,12 +34,12 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.defin
 public class AssociationConverter {
 
     @SuppressWarnings("unchecked")
-    public static List<JSITAssociation> dmnFromWB(final Node<View<TextAnnotation>, ?> node) {
+    public static JsArrayLike<JSITAssociation> dmnFromWB(final Node<View<TextAnnotation>, ?> node) {
         final TextAnnotation ta = node.getContent().getDefinition();
-        final JSITDMNElementReference ta_elementReference = new JSITDMNElementReference();
+        final JSITDMNElementReference ta_elementReference = JSITDMNElementReference.newInstance();
         ta_elementReference.setHref(new StringBuilder("#").append(ta.getId().getValue()).toString());
 
-        final List<JSITAssociation> result = new ArrayList<>();
+        final JsArrayLike<JSITAssociation> result = JsUtils.getNativeArray();
 
         final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for (Edge<?, ?> e : inEdges) {
@@ -47,15 +48,15 @@ public class AssociationConverter {
                 final View<?> view = (View<?>) sourceNode.getContent();
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
-                    final JSITDMNElementReference sourceRef = new JSITDMNElementReference();
+                    final JSITDMNElementReference sourceRef = JSITDMNElementReference.newInstance();
                     sourceRef.setHref(getHref(drgElement));
 
-                    final JSITAssociation adding = new JSITAssociation();
+                    final JSITAssociation adding = JSITAssociation.newInstance();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
                     adding.setDescription(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
                     adding.setSourceRef(sourceRef);
                     adding.setTargetRef(ta_elementReference);
-                    result.add(adding);
+                    result.setAt(result.getLength(), adding);
                 }
             }
         }
@@ -66,15 +67,15 @@ public class AssociationConverter {
                 final View<?> view = (View<?>) targetNode.getContent();
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
-                    final JSITDMNElementReference targetRef = new JSITDMNElementReference();
+                    final JSITDMNElementReference targetRef = JSITDMNElementReference.newInstance();
                     targetRef.setHref(getHref(drgElement));
 
-                    final JSITAssociation adding = new JSITAssociation();
+                    final JSITAssociation adding = JSITAssociation.newInstance();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
                     adding.setDescription(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
                     adding.setSourceRef(ta_elementReference);
                     adding.setTargetRef(targetRef);
-                    result.add(adding);
+                    result.setAt(result.getLength(), adding);
                 }
             }
         }

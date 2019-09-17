@@ -63,6 +63,17 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         this.factoryManager = factoryManager;
     }
 
+    private static boolean isOutputDecision(final View<?> childView,
+                                            final View<DecisionService> decisionServiceView) {
+        //ChildViewY is absolute
+        //DecisionServiceViewY is absolute
+        //DecisionServiceViewLineY is relative to the DecisionService
+        final double childViewY = childView.getBounds().getUpperLeft().getY();
+        final double decisionServiceViewY = decisionServiceView.getBounds().getUpperLeft().getY();
+        final double decisionServiceViewLineY = decisionServiceView.getDefinition().getDividerLineY().getValue();
+        return childViewY < decisionServiceViewY + decisionServiceViewLineY;
+    }
+
     @Override
     public Node<View<DecisionService>, ?> nodeFromDMN(final JSITDecisionService dmn,
                                                       final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
@@ -139,7 +150,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
     public JSITDecisionService dmnFromNode(final Node<View<DecisionService>, ?> node,
                                            final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final DecisionService source = node.getContent().getDefinition();
-        final JSITDecisionService ds = new JSITDecisionService();
+        final JSITDecisionService ds = JSITDecisionService.newInstance();
         ds.setId(source.getId().getValue());
         ds.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         ds.setName(source.getName().getValue());
@@ -169,7 +180,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                     final DRGElement drgElement = (DRGElement) targetNodeView.getDefinition();
                     if (drgElement instanceof Decision) {
                         final Decision decision = (Decision) drgElement;
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(new StringBuilder("#").append(decision.getId().getValue()).toString());
                         if (isOutputDecision(targetNode.getContent(), node.getContent())) {
                             candidate_outputDecision.add(ri);
@@ -190,7 +201,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         reqInputs.stream()
                 .sorted(Comparator.comparing(x -> x.getName().getValue()))
                 .map(x -> {
-                    final JSITDMNElementReference ri = new JSITDMNElementReference();
+                    final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                     return ri;
                 })
@@ -198,7 +209,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         reqDecisions.stream()
                 .sorted(Comparator.comparing(x -> x.getName().getValue()))
                 .map(x -> {
-                    final JSITDMNElementReference ri = new JSITDMNElementReference();
+                    final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                     return ri;
                 })
@@ -255,16 +266,5 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                 }
             }
         }
-    }
-
-    private static boolean isOutputDecision(final View<?> childView,
-                                            final View<DecisionService> decisionServiceView) {
-        //ChildViewY is absolute
-        //DecisionServiceViewY is absolute
-        //DecisionServiceViewLineY is relative to the DecisionService
-        final double childViewY = childView.getBounds().getUpperLeft().getY();
-        final double decisionServiceViewY = decisionServiceView.getBounds().getUpperLeft().getY();
-        final double decisionServiceViewLineY = decisionServiceView.getDefinition().getDividerLineY().getValue();
-        return childViewY < decisionServiceViewY + decisionServiceViewLineY;
     }
 }

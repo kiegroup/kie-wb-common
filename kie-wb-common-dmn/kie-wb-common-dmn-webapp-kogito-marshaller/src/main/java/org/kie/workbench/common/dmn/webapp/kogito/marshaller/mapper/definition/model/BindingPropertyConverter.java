@@ -60,7 +60,7 @@ public class BindingPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITBinding result = new JSITBinding();
+        final JSITBinding result = JSITBinding.newInstance();
         final JSITInformationItem convertedParameter = InformationItemPropertyConverter.dmnFromWB(wb.getParameter());
         final JSITExpression convertedExpression = ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                                          componentWidthsConsumer);

@@ -35,6 +35,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogitoMarshaller;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -67,6 +68,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     private static final String ROOT = "default://master@system/stunner/" + DIAGRAMS_PATH;
 
     private DMNMarshallerKogito dmnMarshaller;
+    private DMNMarshallerKogitoMarshaller actualMarshaller;
     private Caller<KogitoDiagramService> kogitoDiagramServiceCaller;
     private FactoryManager factoryManager;
     private DefinitionManager definitionManager;
@@ -80,12 +82,14 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
 
     @Inject
     public KogitoClientDiagramServiceImpl(final DMNMarshallerKogito dmnMarshaller,
+                                          final DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller,
                                           final Caller<KogitoDiagramService> kogitoDiagramServiceCaller,
                                           final FactoryManager factoryManager,
                                           final DefinitionManager definitionManager,
                                           final DMNDiagramFactory dmnDiagramFactory,
                                           final Promises promises) {
         this.dmnMarshaller = dmnMarshaller;
+        this.actualMarshaller = dmnMarshallerKogitoMarshaller;
         this.kogitoDiagramServiceCaller = kogitoDiagramServiceCaller;
         this.factoryManager = factoryManager;
         this.definitionManager = definitionManager;
@@ -174,7 +178,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.promisify(kogitoDiagramServiceCaller,
                                       s -> {
-                                          //resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
+                                          resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
                                           return s.transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present")));
                                       });
         }
@@ -189,14 +193,21 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
 
         final DMN12MarshallCallback jsCallback = xml -> {
             final String breakpoint = xml;
+            GWT.log(breakpoint);
         };
-
         try {
-            final JSITDefinitions jsitDefinitions = dmnMarshaller.marshall(graph);
-            dmn12.setDefinitions(jsitDefinitions);
-            MainJs.marshall(dmn12, jsCallback);
+            if (!Objects.isNull(dmn12)) {
+                GWT.log("**************WARNING********************");
+                GWT.log("For the moment being this works only after 'loading' a DMN");
+                final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
+                dmn12.setDefinitions(jsitDefinitions);
+                MainJs.marshall(dmn12, jsCallback);
+            } else {
+                GWT.log("**************WARNING********************");
+                GWT.log("For the moment being this does not works after 'creating' a DM");
+            }
         } catch (Exception e) {
-            GWT.log(e.getMessage());
+            GWT.log(e.getMessage(), e);
         }
     }
 }

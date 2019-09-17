@@ -70,7 +70,7 @@ public class TextAnnotationConverter implements NodeConverter<JSITTextAnnotation
     public JSITTextAnnotation dmnFromNode(final Node<View<TextAnnotation>, ?> node,
                                           final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final TextAnnotation source = node.getContent().getDefinition();
-        final JSITTextAnnotation result = new JSITTextAnnotation();
+        final JSITTextAnnotation result = JSITTextAnnotation.newInstance();
         result.setId(source.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         result.setText(source.getText().getValue());

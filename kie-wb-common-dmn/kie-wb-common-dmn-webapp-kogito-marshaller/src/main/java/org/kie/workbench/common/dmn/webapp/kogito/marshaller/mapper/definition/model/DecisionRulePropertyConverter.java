@@ -64,17 +64,17 @@ public class DecisionRulePropertyConverter {
     }
 
     public static JSITDecisionRule dmnFromWB(final DecisionRule wb) {
-        final JSITDecisionRule result = new JSITDecisionRule();
+        final JSITDecisionRule result = JSITDecisionRule.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
 
         for (UnaryTests ie : wb.getInputEntry()) {
             final JSITUnaryTests inputEntryConverted = UnaryTestsPropertyConverter.dmnFromWB(ie);
-            JsUtils.add(result.getInputEntry(), inputEntryConverted);
+            JSITDecisionRule.addInputEntry(result, inputEntryConverted);
         }
         for (LiteralExpression oe : wb.getOutputEntry()) {
             final JSITLiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.dmnFromWB(oe);
-            JsUtils.add(result.getOutputEntry(), outputEntryConverted);
+            JSITDecisionRule.addOutputEntry(result, outputEntryConverted);
         }
 
         return result;

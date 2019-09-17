@@ -103,13 +103,13 @@ public class ExpressionPropertyConverter {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // reference above.
         if (wb == null) {
-            final JSITLiteralExpression mockedExpression = new JSITLiteralExpression();
+            final JSITLiteralExpression mockedExpression = JSITLiteralExpression.newInstance();
             return mockedExpression;
         }
 
         final String uuid = wb.getId().getValue();
         if (Objects.nonNull(uuid)) {
-            final JSITComponentWidths componentWidths = new JSITComponentWidths();
+            final JSITComponentWidths componentWidths = JSITComponentWidths.newInstance();
             componentWidths.setDmnElementRef(uuid);
             //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
             //componentWidths.setWidth(wb.getComponentWidths());

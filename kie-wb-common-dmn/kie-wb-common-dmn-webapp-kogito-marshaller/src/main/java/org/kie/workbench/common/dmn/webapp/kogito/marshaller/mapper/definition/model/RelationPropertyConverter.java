@@ -65,7 +65,7 @@ public class RelationPropertyConverter {
 
     public static JSITRelation dmnFromWB(final Relation wb,
                                          final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        final JSITRelation result = new JSITRelation();
+        final JSITRelation result = JSITRelation.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
@@ -73,12 +73,12 @@ public class RelationPropertyConverter {
 
         for (InformationItem iitem : wb.getColumn()) {
             final JSITInformationItem iitemConverted = InformationItemPropertyConverter.dmnFromWB(iitem);
-            JsUtils.add(result.getColumn(), iitemConverted);
+            JSITRelation.addColumn(result, iitemConverted);
         }
 
         for (org.kie.workbench.common.dmn.api.definition.model.List list : wb.getRow()) {
             final JSITList listConverted = ListPropertyConverter.dmnFromWB(list, componentWidthsConsumer);
-            JsUtils.add(result.getRow(), listConverted);
+            JSITRelation.addRow(result, listConverted);
         }
 
         return result;
