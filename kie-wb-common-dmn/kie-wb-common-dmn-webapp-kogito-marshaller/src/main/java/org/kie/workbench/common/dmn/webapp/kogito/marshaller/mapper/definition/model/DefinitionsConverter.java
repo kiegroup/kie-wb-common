@@ -16,9 +16,13 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -122,9 +126,18 @@ public class DefinitionsConverter {
         result.setNamespace(defaultNamespace);
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
 
-        //TODO {manstis} Do we need to copy wb.getNsContext() into dmn.otherAttributes()?
-        //result.getNsContext().putAll(wb.getNsContext());
-        //result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(), defaultNamespace);
+        final Map<QName, String> otherAttributes = new HashMap<>();
+        wb.getNsContext().forEach((k, v) -> {
+            otherAttributes.put(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                                          XMLConstants.XMLNS_ATTRIBUTE,
+                                          k),
+                                v);
+        });
+        otherAttributes.putIfAbsent(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                                              XMLConstants.XMLNS_ATTRIBUTE,
+                                              DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix()),
+                                    defaultNamespace);
+        result.setOtherAttributes(otherAttributes);
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);

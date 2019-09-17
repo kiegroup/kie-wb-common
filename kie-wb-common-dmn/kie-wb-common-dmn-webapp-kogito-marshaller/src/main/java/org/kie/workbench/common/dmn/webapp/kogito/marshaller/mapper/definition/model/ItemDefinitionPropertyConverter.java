@@ -30,7 +30,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 import static java.util.Optional.ofNullable;
 

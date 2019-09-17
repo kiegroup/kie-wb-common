@@ -28,7 +28,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionRule;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITUnaryTests;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 public class DecisionRulePropertyConverter {
 
