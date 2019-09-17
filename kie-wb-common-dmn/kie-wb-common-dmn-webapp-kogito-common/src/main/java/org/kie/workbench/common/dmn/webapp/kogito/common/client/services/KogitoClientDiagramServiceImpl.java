@@ -69,7 +69,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
 
     private DMNMarshallerKogito dmnMarshaller;
     private DMNMarshallerKogitoMarshaller actualMarshaller;
-    private Caller<KogitoDiagramService> submarineDiagramServiceCaller;
+    private Caller<KogitoDiagramService> kogitoDiagramServiceCaller;
     private FactoryManager factoryManager;
     private DefinitionManager definitionManager;
     private DMNDiagramFactory dmnDiagramFactory;
@@ -83,14 +83,14 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     @Inject
     public KogitoClientDiagramServiceImpl(final DMNMarshallerKogito dmnMarshaller,
                                           final DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller,
-                                          final Caller<KogitoDiagramService> submarineDiagramServiceCaller,
+                                          final Caller<KogitoDiagramService> kogitoDiagramServiceCaller,
                                           final FactoryManager factoryManager,
                                           final DefinitionManager definitionManager,
                                           final DMNDiagramFactory dmnDiagramFactory,
                                           final Promises promises) {
         this.dmnMarshaller = dmnMarshaller;
         this.actualMarshaller = dmnMarshallerKogitoMarshaller;
-        this.submarineDiagramServiceCaller = submarineDiagramServiceCaller;
+        this.kogitoDiagramServiceCaller = kogitoDiagramServiceCaller;
         this.factoryManager = factoryManager;
         this.definitionManager = definitionManager;
         this.dmnDiagramFactory = dmnDiagramFactory;
@@ -176,7 +176,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     @Override
     public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
-            return promises.promisify(submarineDiagramServiceCaller,
+            return promises.promisify(kogitoDiagramServiceCaller,
                                       s -> {
                                           resource.projectDiagram().ifPresent(diagram -> testClientSideMarshaller(diagram.getGraph()));
                                           return s.transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present")));

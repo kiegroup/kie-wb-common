@@ -20,7 +20,7 @@ import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 public class KogitoClientMessages {
 
     @TranslationKey(defaultValue = "File '{0}' already exists.")
-    public static final String FILE_ALREADY_EXISTS0 = "SubmarineClientDiagramService.fileAlreadyExists0";
+    public static final String FILE_ALREADY_EXISTS0 = "KogitoClientDiagramService.fileAlreadyExists0";
 
     @TranslationKey(defaultValue = "Properties")
     public static final String PROPERTIES_DOCK_TITLE = "DiagramEditorPropertiesDock.title";

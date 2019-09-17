@@ -42,7 +42,7 @@ public class BPMNStandaloneClientDiagramServiceImpl implements KogitoClientDiagr
 
     private ShapeManager shapeManager;
     private Caller<VFSService> vfsServiceCaller;
-    private Caller<KogitoDiagramService> submarineDiagramServiceCaller;
+    private Caller<KogitoDiagramService> kogitoDiagramServiceCaller;
     private Promises promises;
 
     public BPMNStandaloneClientDiagramServiceImpl() {
@@ -52,11 +52,11 @@ public class BPMNStandaloneClientDiagramServiceImpl implements KogitoClientDiagr
     @Inject
     public BPMNStandaloneClientDiagramServiceImpl(final ShapeManager shapeManager,
                                                   final Caller<VFSService> vfsServiceCaller,
-                                                  final Caller<KogitoDiagramService> submarineDiagramServiceCaller,
+                                                  final Caller<KogitoDiagramService> kogitoDiagramServiceCaller,
                                                   final Promises promises) {
         this.shapeManager = shapeManager;
         this.vfsServiceCaller = vfsServiceCaller;
-        this.submarineDiagramServiceCaller = submarineDiagramServiceCaller;
+        this.kogitoDiagramServiceCaller = kogitoDiagramServiceCaller;
         this.promises = promises;
     }
 
@@ -73,12 +73,12 @@ public class BPMNStandaloneClientDiagramServiceImpl implements KogitoClientDiagr
         vfsServiceCaller.call((RemoteCallback<String>) callback::onSuccess).readAllString(path);
     }
 
-    //Submarine requirements
+    //Kogito requirements
 
     @Override
     public void transform(final String xml,
                           final ServiceCallback<Diagram> callback) {
-        submarineDiagramServiceCaller.call((Diagram d) -> {
+        kogitoDiagramServiceCaller.call((Diagram d) -> {
             updateClientMetadata(d);
             callback.onSuccess(d);
         }).transform(xml);
@@ -87,7 +87,7 @@ public class BPMNStandaloneClientDiagramServiceImpl implements KogitoClientDiagr
     @Override
     public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
-            return promises.promisify(submarineDiagramServiceCaller,
+            return promises.promisify(kogitoDiagramServiceCaller,
                                       s -> {
                                           return s.transform(resource.projectDiagram().orElseThrow(() -> new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present")));
                                       });

@@ -29,6 +29,8 @@ import javax.enterprise.event.Event;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.logging.client.LogConfiguration;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerPresenter;
+import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
@@ -48,8 +50,6 @@ import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramResourceImpl;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.resources.i18n.KogitoClientConstants;
-import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerPresenter;
-import org.kie.workbench.common.submarine.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
@@ -203,14 +203,14 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
     }
 
     protected AbstractDiagramEditorCore<Metadata, Diagram, KogitoDiagramResourceImpl, DiagramEditorProxy<KogitoDiagramResourceImpl>> makeCore(final View view,
-                                                                                                                                                    final TextEditorView xmlEditorView,
-                                                                                                                                                    final Event<NotificationEvent> notificationEvent,
-                                                                                                                                                    final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
-                                                                                                                                                    final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                                                                                                                                    final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
-                                                                                                                                                    final ErrorPopupPresenter errorPopupPresenter,
-                                                                                                                                                    final DiagramClientErrorHandler diagramClientErrorHandler,
-                                                                                                                                                    final ClientTranslationService translationService) {
+                                                                                                                                              final TextEditorView xmlEditorView,
+                                                                                                                                              final Event<NotificationEvent> notificationEvent,
+                                                                                                                                              final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                                                                                                                              final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                                                                                                                              final AbstractDiagramEditorMenuSessionItems<?> menuSessionItems,
+                                                                                                                                              final ErrorPopupPresenter errorPopupPresenter,
+                                                                                                                                              final DiagramClientErrorHandler diagramClientErrorHandler,
+                                                                                                                                              final ClientTranslationService translationService) {
         return new DiagramEditorCore(view,
                                      xmlEditorView,
                                      notificationEvent,

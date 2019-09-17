@@ -35,27 +35,27 @@ public class MockRefactoringQueryServiceImpl extends RefactoringQueryServiceImpl
 
     @Override
     public int queryHitCount(final RefactoringPageRequest request) {
-        throw new UnsupportedOperationException("Not available in Submarine");
+        throw new UnsupportedOperationException("Not available in Kogito");
     }
 
     @Override
     public PageResponse<RefactoringPageRow> query(final RefactoringPageRequest request) {
-        throw new UnsupportedOperationException("Not available in Submarine");
+        throw new UnsupportedOperationException("Not available in Kogito");
     }
 
     @Override
     public List<RefactoringPageRow> query(final String queryName,
                                           final Set<ValueIndexTerm> queryTerms) {
-        throw new UnsupportedOperationException("Not available in Submarine");
+        throw new UnsupportedOperationException("Not available in Kogito");
     }
 
     @Override
     public PageResponse<RefactoringPageRow> queryToPageResponse(final QueryOperationRequest request) {
-        throw new UnsupportedOperationException("Not available in Submarine");
+        throw new UnsupportedOperationException("Not available in Kogito");
     }
 
     @Override
     public List<RefactoringPageRow> queryToList(final QueryOperationRequest request) {
-        throw new UnsupportedOperationException("Not available in Submarine");
+        throw new UnsupportedOperationException("Not available in Kogito");
     }
 }

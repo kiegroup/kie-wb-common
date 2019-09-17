@@ -4,7 +4,7 @@
   <parent>
     <artifactId>kie-wb-common</artifactId>
     <groupId>org.kie.workbench</groupId>
-    <version>7.27.0-SNAPSHOT</version>
+    <version>7.28.0-SNAPSHOT</version>
   </parent>
   <artifactId>kie-wb-common-ala</artifactId>
   <name>KIE Workbench Common ALA :: Parent</name>
@@ -23,4 +23,14 @@
     <module>kie-wb-common-ala-openshift</module>
     <module>kie-wb-common-ala-provisioning-pipelines</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <!-- TODO: erase the profile once this module is able to build with code coverage enabled -->
+      <id>run-code-coverage</id>
+      <properties>
+        <code.coverage.disabled>true</code.coverage.disabled>
+      </properties>
+    </profile>
+  </profiles>
 </project>

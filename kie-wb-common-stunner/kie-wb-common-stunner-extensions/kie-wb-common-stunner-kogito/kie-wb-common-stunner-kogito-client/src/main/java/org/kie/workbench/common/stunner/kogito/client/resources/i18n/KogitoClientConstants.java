@@ -17,17 +17,17 @@ package org.kie.workbench.common.stunner.kogito.client.resources.i18n;
 
 public class KogitoClientConstants {
 
-    public static final String DOWNLOAD_DIAGRAM = "org.kie.workbench.common.stunner.submarine.client.editor.DownloadDiagram";
+    public static final String DOWNLOAD_DIAGRAM = "org.kie.workbench.common.stunner.kogito.client.editor.DownloadDiagram";
 
-    public static final String CONFIRM_ACTION = "org.kie.workbench.common.stunner.submarine.client.editor.ConfirmAction";
+    public static final String CONFIRM_ACTION = "org.kie.workbench.common.stunner.kogito.client.editor.ConfirmAction";
 
-    public static final String ON_ERROR_CONFIRM_UNDO_LAST_ACTION = "org.kie.workbench.common.stunner.submarine.client.editor.OnErrorConfirmUndoLastAction";
+    public static final String ON_ERROR_CONFIRM_UNDO_LAST_ACTION = "org.kie.workbench.common.stunner.kogito.client.editor.OnErrorConfirmUndoLastAction";
 
-    public static final String DIAGRAM_SAVE_SUCCESSFUL = "org.kie.workbench.common.stunner.submarine.client.editor.DiagramSaveSuccessful";
+    public static final String DIAGRAM_SAVE_SUCCESSFUL = "org.kie.workbench.common.stunner.kogito.client.editor.DiagramSaveSuccessful";
 
-    public static final String DIAGRAM_EDITOR_DEFAULT_TITLE = "org.kie.workbench.common.stunner.submarine.client.editor.DiagramEditorDefaultTitle";
+    public static final String DIAGRAM_EDITOR_DEFAULT_TITLE = "org.kie.workbench.common.stunner.kogito.client.editor.DiagramEditorDefaultTitle";
 
-    public static final String DIAGRAM_PARSING_ERROR = "org.kie.workbench.common.stunner.submarine.client.editor.DiagramParsingError";
+    public static final String DIAGRAM_PARSING_ERROR = "org.kie.workbench.common.stunner.kogito.client.editor.DiagramParsingError";
 
-    public static final String DOCUMENTATION = "org.kie.workbench.common.stunner.submarine.client.editor.Documentation";
+    public static final String DOCUMENTATION = "org.kie.workbench.common.stunner.kogito.client.editor.Documentation";
 }

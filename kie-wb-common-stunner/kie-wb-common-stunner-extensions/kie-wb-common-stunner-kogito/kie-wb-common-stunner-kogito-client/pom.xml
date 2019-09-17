@@ -20,7 +20,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-kogito</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.27.0-SNAPSHOT</version>
+    <version>7.28.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +30,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <java.module.name>org.kie.wb.common.submarine.client</java.module.name>
+    <java.module.name>org.kie.wb.common.kogito.client</java.module.name>
   </properties>
 
   <dependencies>
@@ -133,7 +133,7 @@
     <!-- Kogito -->
     <dependency>
       <groupId>org.kie.workbench</groupId>
-      <artifactId>kie-wb-common-submarine-client</artifactId>
+      <artifactId>kie-wb-common-kogito-client</artifactId>
     </dependency>
 
     <!-- GWT -->

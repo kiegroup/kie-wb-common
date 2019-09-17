@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * Using this interface just to easily identify all types resulting from the functional decomposition being performed
- * during the submarine initiative refactoring.
+ * during the kogito initiative refactoring.
  * Any component, service or whatever managed bean that requires access to any remote context should, at least, provide
- * two implementations for its declared SubmarineContext subtype:
+ * two implementations for its declared KogitoContext subtype:
  * <ul>
- * <li>The "Standalone" implementation - This implementation targets submarine based editors - it should depend as less as possible on backend</li>
+ * <li>The "Standalone" implementation - This implementation targets kogito based editors - it should depend as less as possible on backend</li>
  * <li>The "Project" implementation - This implementation targets KIE Workbench based editors - it's able to depend on all KIE related services</li>
  * </ul>
  */

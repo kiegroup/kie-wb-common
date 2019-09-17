@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common</artifactId>
     <groupId>org.kie.workbench</groupId>
-    <version>7.27.0-SNAPSHOT</version>
+    <version>7.28.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -218,6 +218,13 @@
           <name>full</name>
         </property>
       </activation>
+    </profile>
+    <profile>
+      <id>run-code-coverage</id>
+      <properties>
+        <!-- To avoid failing the build with Sonar analysis due to insufficient coverage.-->
+        <jacoco.haltOnFailure>false</jacoco.haltOnFailure>
+      </properties>
     </profile>
   </profiles>
 
