@@ -39,7 +39,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdated;
+import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdatedEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.screens.project.changerequest.ChangeRequestUtils;
@@ -154,7 +154,7 @@ public class ChangeRequestReviewScreenPresenter {
         }
     }
 
-    public void onRepositoryFileListUpdated(@Observes final RepositoryFileListUpdated event) {
+    public void onRepositoryFileListUpdated(@Observes final RepositoryFileListUpdatedEvent event) {
         if (event.getRepositoryId().equals(repository.getIdentifier())) {
             final String updatedBranch = event.getBranchName();
 

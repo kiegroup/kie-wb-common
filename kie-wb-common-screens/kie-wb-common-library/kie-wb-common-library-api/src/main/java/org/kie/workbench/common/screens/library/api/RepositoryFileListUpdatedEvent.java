@@ -20,16 +20,18 @@ import java.util.Objects;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.uberfire.commons.clusterapi.Clustered;
 
 @Portable
-public class RepositoryFileListUpdated {
+@Clustered
+public class RepositoryFileListUpdatedEvent {
 
     private final String repositoryId;
 
     private final String branchName;
 
-    public RepositoryFileListUpdated(final @MapsTo("repositoryId") String repositoryId,
-                                     final @MapsTo("branchName") String branchName) {
+    public RepositoryFileListUpdatedEvent(final @MapsTo("repositoryId") String repositoryId,
+                                          final @MapsTo("branchName") String branchName) {
         this.repositoryId = repositoryId;
         this.branchName = branchName;
     }
@@ -50,7 +52,7 @@ public class RepositoryFileListUpdated {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RepositoryFileListUpdated that = (RepositoryFileListUpdated) o;
+        RepositoryFileListUpdatedEvent that = (RepositoryFileListUpdatedEvent) o;
         return repositoryId.equals(that.repositoryId) &&
                 Objects.equals(branchName, that.branchName);
     }

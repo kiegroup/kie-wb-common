@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
-import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdated;
+import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdatedEvent;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.ext.metadata.event.BatchIndexEvent;
 import org.uberfire.ext.metadata.event.IndexEvent;
@@ -36,13 +36,13 @@ import org.uberfire.java.nio.fs.jgit.JGitPathImpl;
 public class LibraryFileUpdateNotifier {
 
     private final WorkspaceProjectService workspaceProjectService;
-    private final Event<RepositoryFileListUpdated> repositoryFileListUpdated;
+    private final Event<RepositoryFileListUpdatedEvent> repositoryFileListUpdatedEvent;
 
     @Inject
     public LibraryFileUpdateNotifier(final WorkspaceProjectService workspaceProjectService,
-                                     final Event<RepositoryFileListUpdated> repositoryFileListUpdated) {
+                                     final Event<RepositoryFileListUpdatedEvent> repositoryFileListUpdatedEvent) {
         this.workspaceProjectService = workspaceProjectService;
-        this.repositoryFileListUpdated = repositoryFileListUpdated;
+        this.repositoryFileListUpdatedEvent = repositoryFileListUpdatedEvent;
     }
 
     public void onBatchIndexEvent(@Observes final BatchIndexEvent event) {
@@ -68,11 +68,11 @@ public class LibraryFileUpdateNotifier {
                     final String branchName = (path instanceof JGitPathImpl) ?
                             ((JGitPathImpl) path).getRefTree() : null;
 
-                    return new RepositoryFileListUpdated(repositoryId,
-                                                         branchName);
+                    return new RepositoryFileListUpdatedEvent(repositoryId,
+                                                              branchName);
                 })
                 .distinct()
-                .forEach(repositoryFileListUpdated::fire);
+                .forEach(repositoryFileListUpdatedEvent::fire);
     }
 
     Path getPath(final String pathStr) {

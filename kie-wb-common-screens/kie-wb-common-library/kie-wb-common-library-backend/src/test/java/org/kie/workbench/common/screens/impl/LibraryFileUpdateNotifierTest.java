@@ -30,7 +30,7 @@ import org.guvnor.structure.repositories.Repository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdated;
+import org.kie.workbench.common.screens.library.api.RepositoryFileListUpdatedEvent;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -56,12 +56,12 @@ public class LibraryFileUpdateNotifierTest {
     private WorkspaceProjectService workspaceProjectService;
 
     @Mock
-    private Event<RepositoryFileListUpdated> repositoryFileListUpdated;
+    private Event<RepositoryFileListUpdatedEvent> repositoryFileListUpdatedEvent;
 
     @Before
     public void setup() {
         libraryFileUpdateNotifier = spy(new LibraryFileUpdateNotifier(workspaceProjectService,
-                                                                      repositoryFileListUpdated));
+                                                                      repositoryFileListUpdatedEvent));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class LibraryFileUpdateNotifierTest {
 
         libraryFileUpdateNotifier.onBatchIndexEvent(event);
 
-        verify(repositoryFileListUpdated, never()).fire(any(RepositoryFileListUpdated.class));
+        verify(repositoryFileListUpdatedEvent, never()).fire(any(RepositoryFileListUpdatedEvent.class));
     }
 
     @Test
@@ -85,8 +85,8 @@ public class LibraryFileUpdateNotifierTest {
 
         libraryFileUpdateNotifier.onBatchIndexEvent(buildBatchIndexEvent(indexEvents));
 
-        verify(repositoryFileListUpdated, times(1))
-                .fire(any(RepositoryFileListUpdated.class));
+        verify(repositoryFileListUpdatedEvent, times(1))
+                .fire(any(RepositoryFileListUpdatedEvent.class));
     }
 
     @Test
@@ -108,8 +108,8 @@ public class LibraryFileUpdateNotifierTest {
 
         libraryFileUpdateNotifier.onBatchIndexEvent(buildBatchIndexEvent(indexEvents));
 
-        verify(repositoryFileListUpdated, times(3))
-                .fire(any(RepositoryFileListUpdated.class));
+        verify(repositoryFileListUpdatedEvent, times(3))
+                .fire(any(RepositoryFileListUpdatedEvent.class));
     }
 
     @Test
@@ -127,8 +127,8 @@ public class LibraryFileUpdateNotifierTest {
 
         libraryFileUpdateNotifier.onBatchIndexEvent(buildBatchIndexEvent(indexEvents));
 
-        verify(repositoryFileListUpdated, times(2))
-                .fire(any(RepositoryFileListUpdated.class));
+        verify(repositoryFileListUpdatedEvent, times(2))
+                .fire(any(RepositoryFileListUpdatedEvent.class));
     }
 
     private IndexEvent.NewlyIndexedEvent buildIndexedEvent(final String pathStr) {
