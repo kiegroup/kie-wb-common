@@ -110,7 +110,7 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
     public JSITDecision dmnFromNode(final Node<View<Decision>, ?> node,
                                     final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final Decision source = node.getContent().getDefinition();
-        final JSITDecision d = new JSITDecision();
+        final JSITDecision d = JSITDecision.newInstance();
         d.setId(source.getId().getValue());
         d.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         d.setName(source.getName().getValue());
@@ -131,43 +131,43 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
                     if (drgElement instanceof Decision) {
-                        final JSITInformationRequirement iReq = new JSITInformationRequirement();
+                        final JSITInformationRequirement iReq = JSITInformationRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredDecision(ri);
-                        JsUtils.add(d.getInformationRequirement(), iReq);
+                        JSITDecision.addInformationRequirement(d, iReq);
                     } else if (drgElement instanceof BusinessKnowledgeModel) {
-                        final JSITKnowledgeRequirement iReq = new JSITKnowledgeRequirement();
+                        final JSITKnowledgeRequirement iReq = JSITKnowledgeRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredKnowledge(ri);
-                        JsUtils.add(d.getKnowledgeRequirement(), iReq);
+                        JSITDecision.addKnowledgeRequirement(d, iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
-                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
+                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        JsUtils.add(d.getAuthorityRequirement(), iReq);
+                        JSITDecision.addAuthorityRequirement(d, iReq);
                     } else if (drgElement instanceof InputData) {
-                        final JSITInformationRequirement iReq = new JSITInformationRequirement();
+                        final JSITInformationRequirement iReq = JSITInformationRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = new JSITDMNElementReference();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredInput(ri);
-                        JsUtils.add(d.getInformationRequirement(), iReq);
+                        JSITDecision.addInformationRequirement(d, iReq);
                     } else if (drgElement instanceof DecisionService) {
                         if (e.getContent() instanceof Child) {
                             // Stunner relationship of this Decision be encapsulated by the DecisionService, not managed here.
                         } else if (e.getContent() instanceof View && ((View) e.getContent()).getDefinition() instanceof KnowledgeRequirement) {
-                            final JSITKnowledgeRequirement iReq = new JSITKnowledgeRequirement();
+                            final JSITKnowledgeRequirement iReq = JSITKnowledgeRequirement.newInstance();
                             iReq.setId(e.getUUID());
-                            final JSITDMNElementReference ri = new JSITDMNElementReference();
+                            final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                             ri.setHref(getHref(drgElement));
                             iReq.setRequiredKnowledge(ri);
-                            JsUtils.add(d.getKnowledgeRequirement(), iReq);
+                            JSITDecision.addKnowledgeRequirement(d, iReq);
                         } else {
                             throw new UnsupportedOperationException("wrong model definition.");
                         }

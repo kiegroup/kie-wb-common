@@ -80,14 +80,14 @@ public class ContextPropertyConverter {
 
     public static JSITContext dmnFromWB(final Context wb,
                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        final JSITContext result = new JSITContext();
+        final JSITContext result =  JSITContext.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
                                             result::setTypeRef);
         for (ContextEntry ce : wb.getContextEntry()) {
             final JSITContextEntry ceConverted = ContextEntryPropertyConverter.dmnFromWB(ce, componentWidthsConsumer);
-            JsUtils.add(result.getContextEntry(), ceConverted);
+            JSITContext.addContextEntry(result, ceConverted);
         }
 
         //The UI appends a ContextEntry for the _default_ result that may contain an undefined Expression.
@@ -97,7 +97,7 @@ public class ContextPropertyConverter {
         final int contextEntriesCount = result.getContextEntry().getLength();
         if (contextEntriesCount > 0) {
             if (Objects.isNull(wb.getContextEntry().get(contextEntriesCount - 1).getExpression())) {
-                JsUtils.remove(result.getContextEntry(), contextEntriesCount - 1);
+                JSITContext.removeContextEntry(result, contextEntriesCount - 1);
             }
         }
 

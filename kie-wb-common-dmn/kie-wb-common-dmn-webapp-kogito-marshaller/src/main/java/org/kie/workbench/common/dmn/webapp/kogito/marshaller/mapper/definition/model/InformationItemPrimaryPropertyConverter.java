@@ -50,7 +50,7 @@ public class InformationItemPrimaryPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITInformationItem result = new JSITInformationItem();
+        final JSITInformationItem result = JSITInformationItem.newInstance();
         final QName typeRef = wb.getTypeRef();
 
         result.setId(wb.getId().getValue());

@@ -50,7 +50,7 @@ public class InputClausePropertyConverter {
     }
 
     public static JSITInputClause dmnFromWB(final InputClause wb) {
-        final JSITInputClause result = new JSITInputClause();
+        final JSITInputClause result = JSITInputClause.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         final JSITLiteralExpression expression = LiteralExpressionPropertyConverter.dmnFromWB(wb.getInputExpression());

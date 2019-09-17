@@ -75,7 +75,7 @@ public class InvocationPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITInvocation result = new JSITInvocation();
+        final JSITInvocation result = JSITInvocation.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
@@ -87,7 +87,7 @@ public class InvocationPropertyConverter {
 
         for (Binding b : wb.getBinding()) {
             final JSITBinding bConverted = BindingPropertyConverter.dmnFromWB(b, componentWidthsConsumer);
-            JsUtils.add(result.getBinding(), bConverted);
+            JSITInvocation.addBinding(result, bConverted);
         }
 
         return result;

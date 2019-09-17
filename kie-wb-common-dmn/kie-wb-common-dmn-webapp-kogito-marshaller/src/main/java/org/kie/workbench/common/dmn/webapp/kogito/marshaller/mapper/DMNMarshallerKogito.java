@@ -35,17 +35,14 @@ import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
-import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Association;
 import org.kie.workbench.common.dmn.api.definition.model.AuthorityRequirement;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
-import org.kie.workbench.common.dmn.api.definition.model.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
@@ -68,8 +65,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceDividerLineY
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIEdge;
@@ -90,16 +85,13 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDI;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDecisionServiceDividerLine;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDiagram;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNEdge;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNLabel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNStyle;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentsWidthsExtension;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.AssociationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DecisionConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DecisionServiceConverter;
@@ -112,9 +104,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.FontSetPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.ArrayUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
-import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -126,7 +116,6 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
-import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
@@ -196,7 +185,7 @@ public class DMNMarshallerKogito {
     }
 
     // ==================================
-    // MARSHALL
+    // UNMARSHALL
     // ==================================
 
     @SuppressWarnings("unchecked")
@@ -878,11 +867,11 @@ public class DMNMarshallerKogito {
     }
 
     // ==================================
-    // UNMARSHALL
+    // MARSHALL
     // ==================================
 
     @SuppressWarnings("unchecked")
-    public JSITDefinitions marshall(final Graph<?, Node<View, ?>> graph) {
+   /* public JSITDefinitions marshall(final Graph<?, Node<View, ?>> graph) {
         final Map<String, JSITDRGElement> nodes = new HashMap<>();
         final Map<String, JSITTextAnnotation> textAnnotations = new HashMap<>();
         final Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot(graph);
@@ -1054,15 +1043,11 @@ public class DMNMarshallerKogito {
         JsUtils.addAll(dmnDDDMNDiagram.getDMNDiagramElement(), aDMNEdges);
 
         return definitions;
-    }
+    } */
 
     void loadImportedItemDefinitions(final Definitions definitions,
                                      final Map<JSITImport, JSITDefinitions> importDefinitions) {
         definitions.getItemDefinition().addAll(getWbImportedItemDefinitions(importDefinitions));
-    }
-
-    void cleanImportedItemDefinitions(final Definitions definitions) {
-        definitions.getItemDefinition().removeIf(ItemDefinition::isAllowOnlyVisualChange);
     }
 
     List<ItemDefinition> getWbImportedItemDefinitions(final Map<JSITImport, JSITDefinitions> importDefinitions) {
@@ -1251,128 +1236,5 @@ public class DMNMarshallerKogito {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v) {
-        final JSIDMNShape result = new JSIDMNShape();
-        result.setId("dmnshape-" + v.getDefinition().getId().getValue());
-        result.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
-                                          v.getDefinition().getId().getValue(),
-                                          XMLConstants.DEFAULT_NS_PREFIX));
-        final JSIBounds bounds = new JSIBounds();
-        result.setBounds(bounds);
-        bounds.setX(xOfBound(upperLeftBound(v)));
-        bounds.setY(yOfBound(upperLeftBound(v)));
-        result.setStyle(new JSIDMNStyle());
-        result.setDMNLabel(new JSIDMNLabel());
 
-        if (v.getDefinition() instanceof Decision) {
-            final Decision d = (Decision) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof InputData) {
-            InputData d = (InputData) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
-            final BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof KnowledgeSource) {
-            final KnowledgeSource d = (KnowledgeSource) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof TextAnnotation) {
-            final TextAnnotation d = (TextAnnotation) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof DecisionService) {
-            final DecisionService d = (DecisionService) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-            final JSIDMNDecisionServiceDividerLine dl = new JSIDMNDecisionServiceDividerLine();
-            final JSIPoint leftPoint = new JSIPoint();
-            leftPoint.setX(v.getBounds().getUpperLeft().getX());
-            final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
-            leftPoint.setY(dlY);
-            JsUtils.add(dl.getWaypoint(), leftPoint);
-            final JSIPoint rightPoint = new JSIPoint();
-            rightPoint.setX(v.getBounds().getLowerRight().getX());
-            rightPoint.setY(dlY);
-            JsUtils.add(dl.getWaypoint(), rightPoint);
-            result.setDMNDecisionServiceDividerLine(dl);
-        }
-        return result;
-    }
-
-    private static void applyFontStyle(final FontSet fontSet,
-                                       final JSIDMNShape result) {
-        if (!(result.getStyle() instanceof JSIDMNStyle)) {
-            return;
-        }
-        final JSIDMNStyle shapeStyle = (JSIDMNStyle) result.getStyle();
-        final JSIColor fontColor = ColorUtils.dmnFromWB(fontSet.getFontColour().getValue());
-        shapeStyle.setFontColor(fontColor);
-        if (Objects.nonNull(fontSet.getFontFamily().getValue())) {
-            shapeStyle.setFontFamily(fontSet.getFontFamily().getValue());
-        }
-        if (Objects.nonNull(fontSet.getFontSize().getValue())) {
-            shapeStyle.setFontSize(fontSet.getFontSize().getValue());
-        }
-    }
-
-    private static void applyBounds(final RectangleDimensionsSet dimensionsSet,
-                                    final JSIBounds bounds) {
-        if (null != dimensionsSet.getWidth().getValue() &&
-                null != dimensionsSet.getHeight().getValue()) {
-            bounds.setWidth(dimensionsSet.getWidth().getValue());
-            bounds.setHeight(dimensionsSet.getHeight().getValue());
-        }
-    }
-
-    private static void applyBackgroundStyles(final BackgroundSet bgset,
-                                              final JSIDMNShape result) {
-        if (!(result.getStyle() instanceof JSIDMNStyle)) {
-            return;
-        }
-        final JSIDMNStyle style = (JSIDMNStyle) result.getStyle();
-        if (Objects.nonNull(bgset.getBgColour().getValue())) {
-            style.setFillColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
-        }
-        if (Objects.nonNull(bgset.getBorderColour().getValue())) {
-            style.setStrokeColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private JSITDRGElement stunnerToDMN(final Node<?, ?> node,
-                                        final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        if (node.getContent() instanceof View<?>) {
-            View<?> view = (View<?>) node.getContent();
-            if (view.getDefinition() instanceof InputData) {
-                return inputDataConverter.dmnFromNode((Node<View<InputData>, ?>) node,
-                                                      componentWidthsConsumer);
-            } else if (view.getDefinition() instanceof Decision) {
-                return decisionConverter.dmnFromNode((Node<View<Decision>, ?>) node,
-                                                     componentWidthsConsumer);
-            } else if (view.getDefinition() instanceof BusinessKnowledgeModel) {
-                return bkmConverter.dmnFromNode((Node<View<BusinessKnowledgeModel>, ?>) node,
-                                                componentWidthsConsumer);
-            } else if (view.getDefinition() instanceof KnowledgeSource) {
-                return knowledgeSourceConverter.dmnFromNode((Node<View<KnowledgeSource>, ?>) node,
-                                                            componentWidthsConsumer);
-            } else if (view.getDefinition() instanceof DecisionService) {
-                return decisionServiceConverter.dmnFromNode((Node<View<DecisionService>, ?>) node,
-                                                            componentWidthsConsumer);
-            } else {
-                throw new UnsupportedOperationException("TODO"); // TODO
-            }
-        }
-        throw new RuntimeException("wrong diagram structure to marshall");
-    }
 }
