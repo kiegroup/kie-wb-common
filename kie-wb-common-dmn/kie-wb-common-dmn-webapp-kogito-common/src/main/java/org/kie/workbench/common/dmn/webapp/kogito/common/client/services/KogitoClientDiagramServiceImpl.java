@@ -196,16 +196,23 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
             GWT.log(breakpoint);
         };
         try {
-            if (!Objects.isNull(dmn12)) {
+            final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
+            org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
+            jsiName.setPrefix("dmn");
+            jsiName.setLocalPart("definitions");
+            String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
+            jsiName.setKey(key);
+            String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
+            jsiName.setString(string);
+//            if (Objects.isNull(dmn12)) {
                 GWT.log("**************WARNING********************");
-                GWT.log("For the moment being this works only after 'loading' a DMN");
-                final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
-                dmn12.setDefinitions(jsitDefinitions);
-                MainJs.marshall(dmn12, jsCallback);
-            } else {
-                GWT.log("**************WARNING********************");
-                GWT.log("For the moment being this does not works after 'creating' a DM");
-            }
+                GWT.log("Creating dmn12");
+                this.dmn12 = DMN12.newWrappedInstance(jsiName, jsitDefinitions);
+//            } else {
+//                dmn12.setName(jsiName);
+//                dmn12.setValue(jsitDefinitions);
+//            }
+            MainJs.marshall(dmn12, jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage(), e);
         }
