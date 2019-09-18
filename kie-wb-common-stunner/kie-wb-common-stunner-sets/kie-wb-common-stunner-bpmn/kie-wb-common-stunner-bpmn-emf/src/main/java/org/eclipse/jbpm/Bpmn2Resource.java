@@ -28,7 +28,6 @@ import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.XMLParser;
 import org.eclipse.bpmn2.Bpmn2Package;
-import org.eclipse.bpmn2.util.QNameURIHandler;
 import org.eclipse.bpmn2.di.BpmnDiPackage;
 import org.eclipse.dd.dc.DcPackage;
 import org.eclipse.dd.di.DiPackage;
