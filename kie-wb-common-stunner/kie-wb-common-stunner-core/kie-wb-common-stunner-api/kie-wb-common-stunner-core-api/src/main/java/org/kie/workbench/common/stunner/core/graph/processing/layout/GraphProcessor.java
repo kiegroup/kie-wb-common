@@ -32,7 +32,7 @@ public interface GraphProcessor {
     Iterable<? extends Node> getNodes(final Graph<?, ?> graph);
 
     /**
-     * Checks if some exiting node in the graph is replaced for another one to perform automatic layout.
+     * Checks if some existing node in the graph is replaced for another one to perform automatic layout.
      * For example, a node inside another node.
      * @param uuid The uuid of the node.
      * @return True if the node is replaced by another one, false if it is not.
@@ -44,7 +44,7 @@ public interface GraphProcessor {
     /**
      * Gets the UUID of the node to be considered instead for some specific node.
      * @param uuid The UUID of the specific node.
-     * @return The new UUID to be considered to perform automatic layout.
+     * @return The new UUID to be considered to perform automatic layout, if `isReplacedByAnotherNode(uuiid)` is false, it returns `uuid`.
      */
     default String getReplaceNodeId(final String uuid) {
         return uuid;
