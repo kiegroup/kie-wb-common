@@ -26,13 +26,11 @@ public class VerifierWebWorkerConnectionImpl
         implements VerifierWebWorkerConnection {
 
     private static final Logger LOGGER = Logger.getLogger("DTable Analyzer");
-
-    private Worker worker = null;
-
     private final Poster poster;
     private final Receiver receiver;
     private final Initialize initialize;
     private final String pathToVerifier;
+    private Worker worker = null;
 
     public VerifierWebWorkerConnectionImpl(final Initialize initialize,
                                            final String pathToVerifier,
@@ -56,7 +54,8 @@ public class VerifierWebWorkerConnectionImpl
         worker = Worker.create(pathToVerifier);
 
         poster.setUp(worker);
-        receiver.setUp(worker);
+        receiver.setUp(worker,
+                       () -> terminate());
     }
 
     @Override

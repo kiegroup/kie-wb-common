@@ -25,12 +25,14 @@ import org.jboss.errai.enterprise.client.jaxrs.MarshallingWrapper;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.services.verifier.api.client.api.WebWorkerException;
 import org.kie.workbench.common.services.verifier.api.client.api.WebWorkerLogMessage;
+import org.uberfire.mvp.Command;
 
 public class Receiver {
 
     private static final Logger LOGGER = Logger.getLogger("DTable Analyzer");
 
     private AnalysisReporter reporter;
+    private Command command = null;
 
     public Receiver(final AnalysisReporter reporter) {
         this.reporter = PortablePreconditions.checkNotNull("reporter",
@@ -47,12 +49,13 @@ public class Receiver {
 
             LOGGER.finest("Receiving: " + json);
 
-            final Object o = MarshallingWrapper.fromJSON(json);
+            final Object o = fromJSON(json);
 
             if (o instanceof WebWorkerLogMessage) {
                 LOGGER.info("Web Worker log message: " + ((WebWorkerLogMessage) o).getMessage());
             } else if (o instanceof WebWorkerException) {
                 LOGGER.severe("Web Worker failed: " + ((WebWorkerException) o).getMessage());
+                shutdown();
             } else if (o instanceof Status) {
                 reporter.sendStatus((Status) o);
             } else if (o instanceof Issues) {
@@ -64,7 +67,19 @@ public class Receiver {
         }
     }
 
-    public void setUp(final Worker worker) {
+    public Object fromJSON(String json) {
+        return MarshallingWrapper.fromJSON(json);
+    }
+
+    public void shutdown() {
+        if (command != null) {
+            command.execute();
+        }
+    }
+
+    public void setUp(final Worker worker,
+                      final Command command) {
+        this.command = command;
         worker.setOnMessage(messageEvent -> received(messageEvent.getDataAsString()));
     }
 }
