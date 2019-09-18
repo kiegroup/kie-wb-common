@@ -129,13 +129,13 @@ public class DefinitionsConverter {
         final Map<QName, String> otherAttributes = new HashMap<>();
         wb.getNsContext().forEach((k, v) -> {
             otherAttributes.put(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
-                                          XMLConstants.XMLNS_ATTRIBUTE,
-                                          k),
+                                          k,
+                                          XMLConstants.DEFAULT_NS_PREFIX),
                                 v);
         });
         otherAttributes.putIfAbsent(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
-                                              XMLConstants.XMLNS_ATTRIBUTE,
-                                              DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix()),
+                                              DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                              XMLConstants.DEFAULT_NS_PREFIX),
                                     defaultNamespace);
         result.setOtherAttributes(otherAttributes);
 
