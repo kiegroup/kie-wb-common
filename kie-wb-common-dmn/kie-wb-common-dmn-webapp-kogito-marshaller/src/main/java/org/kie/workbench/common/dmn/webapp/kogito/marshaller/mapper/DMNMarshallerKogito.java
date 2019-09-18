@@ -29,6 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
@@ -67,6 +68,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceDividerLineY
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
@@ -180,6 +182,11 @@ public class DMNMarshallerKogito {
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
     }
 
+    @PostConstruct
+    public void init() {
+        MainJs.initializeJsInteropConstructors();
+    }
+
     private static Optional<JSIDMNDiagram> findDMNDiagram(final JSITDefinitions dmnXml) {
         if (dmnXml.getDMNDI() == null) {
             return Optional.empty();
@@ -199,6 +206,7 @@ public class DMNMarshallerKogito {
     @SuppressWarnings("unchecked")
     public Graph unmarshall(final Metadata metadata,
                             final JSITDefinitions jsiDefinitions) {
+
         final Map<String, HasComponentWidths> hasComponentWidthsMap = new HashMap<>();
         final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer = (uuid, hcw) -> {
             if (Objects.nonNull(uuid)) {
