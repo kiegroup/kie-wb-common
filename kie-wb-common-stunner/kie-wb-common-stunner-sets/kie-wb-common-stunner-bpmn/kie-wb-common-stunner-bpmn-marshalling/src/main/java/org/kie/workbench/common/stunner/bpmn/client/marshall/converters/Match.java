@@ -56,33 +56,31 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
  */
 public class Match<In, Out> {
 
-    private final Class<?> outputType;
-    private final LinkedList<Case<In>> cases = new LinkedList<>();
-    private final LinkedList<Case<In>> strictCases = new LinkedList<>();
+    private final LinkedList<Case> cases = new LinkedList<>();
+    private final LinkedList<Case> strictCases = new LinkedList<>();
     private Function<In, Out> orElse;
     private Out defaultValue;
-    private Optional<MarshallingMessageDecorator<In>> inputDecorator = Optional.empty();
-    private Optional<MarshallingMessageDecorator<Out>> outputDecorator = Optional.empty();
+    private Optional<MarshallingMessageDecorator> inputDecorator = Optional.empty();
+    private Optional<MarshallingMessageDecorator> outputDecorator = Optional.empty();
     private Mode mode = Mode.AUTO;
 
-    public Match(Class<?> outputType) {
-        this.outputType = outputType;
+    public Match() {
     }
 
-    public static <In, Out> Match<In, Out> of(Class<In> inputType, Class<Out> outputType) {
-        return new Match<>(outputType);
+    public static <In, Out> Match<In, Out> of() {
+        return new Match<>();
     }
 
     public static <In, Out> Match<In, Node<? extends View<? extends Out>, ?>> ofNode(Class<In> inputType, Class<Out> outputType) {
-        return new Match<>(outputType);
+        return new Match<>();
     }
 
-    public static <In, Out> Match<Node<? extends View<? extends In>, ?>, Out> fromNode(Class<In> inputType, Class<Out> outputType) {
-        return new Match<>(outputType);
+    public static <In, Out> Match<Node<? extends View<?>, ?>, Out> fromNode(Class<In> inputType, Class<Out> outputType) {
+        return new Match<>();
     }
 
     public static <In, Out> Match<In, Edge<? extends View<? extends Out>, ?>> ofEdge(Class<In> inputType, Class<Out> outputType) {
-        return new Match<>(outputType);
+        return new Match<>();
     }
 
     private static <T, U> Function<T, Result<U>> reportMissing(Class<?> expectedClass) {
@@ -94,7 +92,7 @@ public class Match<In, Out> {
                                         .orElse("null -- expected " + expectedClass.getCanonicalName()));
     }
 
-    private <T> Function<T, Result<Out>> ignored(Class<?> expectedClass) {
+    private <T extends In> Function<T, Result<Out>> ignored(Class<?> expectedClass) {
         return t ->
                 Result.ignored(
                         "Ignored: " +
@@ -104,12 +102,12 @@ public class Match<In, Out> {
                         defaultValue, MarshallingMessage.builder().message("Ignored " + t).build());
     }
 
-    public <Sub> Match<In, Out> when(Function<Sub, Boolean>  type, Function<Sub, Out> then) {
-        Function<Sub, Result<Out>> thenWrapped = sub -> Result.of(then.apply(sub));
+    public <T extends In> Match<In, Out> when(Function<T, Boolean> type, Function<T, Out> then) {
+        Function<T, Result<Out>> thenWrapped = sub -> Result.of(then.apply(sub));
         return when_(type, thenWrapped);
     }
 
-    private <Sub> Match<In, Out> when_(Function<Sub, Boolean> type, Function<Sub, Result<Out>> then) {
+    private <T extends In> Match<In, Out> when_(Function<T, Boolean> type, Function<T, Result<Out>> then) {
         cases.add(new Case(type, then));
         return this;
     }
@@ -118,11 +116,11 @@ public class Match<In, Out> {
      * handle a type by throwing an error.
      * Use when the implementation is still missing, but expected to exist
      */
-    public <Sub> Match<In, Out> missing(Function<Sub, Boolean>  type, Class<? extends Sub> clazz) {
+    public <T extends In> Match<In, Out> missing(Function<In, Boolean> type, Class<T> clazz) {
         return when_(type, reportMissing(clazz));
     }
 
-    public <Sub> Match<In, Out> ignore(Function<Sub, Boolean>  type, Class<? extends Sub> clazz) {
+    public <T extends In> Match<In, Out> ignore(Function<In, Boolean> type, Class<T> clazz) {
         return when_(type, ignored(clazz));
     }
 
@@ -146,12 +144,12 @@ public class Match<In, Out> {
         return this;
     }
 
-    public <Sub> Match<In, Out> mode(Mode mode) {
+    public Match<In, Out> mode(Mode mode) {
         this.mode = mode;
         return this;
     }
 
-    private Result<Out> apply(In value, List<Case<In>> cases, Supplier<Result<Out>> fallback) {
+    private <T extends In> Result<Out> apply(T value, List<Case> cases, Supplier<Result<Out>> fallback) {
         return cases.stream()
                 .map(c -> c.match(value))
                 .filter(Result::isSuccess)
@@ -159,7 +157,7 @@ public class Match<In, Out> {
                 .orElseGet(fallback);
     }
 
-    public Result<Out> apply(In value) {
+    public <T extends In>Result<Out> apply(T value) {
         //First apply strict cases if matches, Second the generic cases, and as default the fallback
         return apply(value,
                      strictCases,
@@ -168,7 +166,7 @@ public class Match<In, Out> {
                                  () -> applyFallback(value)));
     }
 
-    private Result<Out> applyFallback(In value) {
+    private <T extends In> Result<Out> applyFallback(T value) {
         if (Mode.ERROR.equals(mode)) {
             //throw an Exception in case the mode is set to ERROR, avoid to apply the fallback
             //throw new IllegalStateException("Element has no match on marshalling: " + value);
@@ -192,7 +190,7 @@ public class Match<In, Out> {
                                                     getIgnoreMessage(value)));
         } else {
             //fallback is applied only in case of AUTO mode.
-            final Out result = orElse.apply(value);
+            final Out result = orElse.apply((In)value);
             return Result.of(result,
                              MarshallingMessage.builder()
                                      .message("Converted element: " + value + "to: " + result)
@@ -205,7 +203,7 @@ public class Match<In, Out> {
         }
     }
 
-    private MarshallingMessage getIgnoreMessage(In value) {
+    private <T extends In> MarshallingMessage getIgnoreMessage(T value) {
         return MarshallingMessage.builder()
                 .message("Ignored element " + value)
                 .messageKey(MarshallingMessageKeys.ignoredElement)
@@ -225,7 +223,7 @@ public class Match<In, Out> {
                                       .build());
     }
 
-    private <T> String getValueType(T value, Optional<MarshallingMessageDecorator<T>> decorator) {
+    private <T> String getValueType(T value, Optional<MarshallingMessageDecorator> decorator) {
         return decorator
                 .map(d -> d.getType(value))
                 .orElseGet(() -> Optional.ofNullable(value)
@@ -234,11 +232,11 @@ public class Match<In, Out> {
                         .orElse(""));
     }
 
-    private <T> String getValueName(T value, Optional<MarshallingMessageDecorator<T>> decorator) {
+    private <T extends In> String getValueName(T value, Optional<MarshallingMessageDecorator> decorator) {
         return decorator.map(d -> d.getName(value)).orElseGet(() -> String.valueOf(value));
     }
 
-    private class Case<T> {
+    private class Case<T extends In> {
 
         public final Function<T, Boolean> when;
         public final Function<T, Result<Out>> then;

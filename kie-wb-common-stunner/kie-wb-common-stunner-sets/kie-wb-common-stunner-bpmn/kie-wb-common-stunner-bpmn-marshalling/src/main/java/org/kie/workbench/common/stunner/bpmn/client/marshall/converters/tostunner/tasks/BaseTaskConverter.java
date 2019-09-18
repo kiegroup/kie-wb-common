@@ -94,7 +94,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
 
     @Override
     public Result<BpmnNode> convert(Task task) {
-        return Match.of(Task.class, BpmnNode.class)
+        return Match.<Task, BpmnNode>of()
                 .when(e -> e instanceof org.eclipse.bpmn2.BusinessRuleTask, this::businessRuleTask)
                 .when(e -> e instanceof org.eclipse.bpmn2.ScriptTask, this::scriptTask)
                 .when(e -> e instanceof org.eclipse.bpmn2.UserTask, this::userTask)
@@ -108,21 +108,6 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
                 .outputDecorator(BPMNElementDecorators.bpmnNodeDecorator())
                 .mode(getMode())
                 .apply(task);
-
-//        // TODO (TiagoD): Use of BPMNElementDecorators
-//        if (task instanceof org.eclipse.bpmn2.BusinessRuleTask) {
-//            return Result.success(businessRuleTask((org.eclipse.bpmn2.BusinessRuleTask) task));
-//        }
-//        if (task instanceof org.eclipse.bpmn2.ScriptTask) {
-//            return Result.success(scriptTask((org.eclipse.bpmn2.ScriptTask) task));
-//        }
-//        if (task instanceof org.eclipse.bpmn2.UserTask) {
-//            return Result.success(userTask((org.eclipse.bpmn2.UserTask) task));
-//        }
-//        if (task instanceof org.eclipse.bpmn2.ServiceTask) {
-//            return Result.success(serviceTaskResolver(task));
-//        }
-//        return ConverterUtils.ignore("Task", task);
     }
 
     private BpmnNode jbpmServiceTask(Task task) {

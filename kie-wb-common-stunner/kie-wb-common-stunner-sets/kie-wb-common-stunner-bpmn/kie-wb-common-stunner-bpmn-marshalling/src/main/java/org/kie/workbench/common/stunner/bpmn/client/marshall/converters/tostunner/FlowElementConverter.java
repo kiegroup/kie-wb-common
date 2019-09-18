@@ -18,6 +18,9 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CallActivity;
+import org.eclipse.bpmn2.DataObject;
+import org.eclipse.bpmn2.DataObjectReference;
+import org.eclipse.bpmn2.DataStoreReference;
 import org.eclipse.bpmn2.EndEvent;
 import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Gateway;
@@ -28,6 +31,8 @@ import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.TextAnnotation;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.BPMNElementDecorators;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 
@@ -41,40 +46,25 @@ public class FlowElementConverter extends AbstractConverter {
     }
 
     public Result<BpmnNode> convertNode(FlowElement flowElement) {
-        // TODO (TiagoD): Use of BPMNElementDecorators
-        if (flowElement instanceof StartEvent) {
-            return converterFactory.startEventConverter().convert((StartEvent) flowElement);
-        }
-        if (flowElement instanceof EndEvent) {
-            return converterFactory.endEventConverter().convert((EndEvent) flowElement);
-        }
-        if (flowElement instanceof BoundaryEvent) {
-            return converterFactory.intermediateCatchEventConverter().convertBoundaryEvent((BoundaryEvent) flowElement);
-        }
-        if (flowElement instanceof IntermediateCatchEvent) {
-            return converterFactory.intermediateCatchEventConverter().convert((IntermediateCatchEvent) flowElement);
-        }
-        if (flowElement instanceof IntermediateThrowEvent) {
-            return converterFactory.intermediateThrowEventConverter().convert((IntermediateThrowEvent) flowElement);
-        }
-        if (flowElement instanceof Task) {
-            return converterFactory.taskConverter().convert((Task) flowElement);
-        }
-        if (flowElement instanceof Gateway) {
-            return converterFactory.gatewayConverter().convert((Gateway) flowElement);
-        }
-        if (flowElement instanceof SubProcess) {
-            return converterFactory.subProcessConverter().convertSubProcess((SubProcess) flowElement);
-        }
-        if (flowElement instanceof CallActivity) {
-            return converterFactory.callActivityConverter().convert((CallActivity) flowElement);
-        }
-        if (flowElement instanceof TextAnnotation) {
-            return converterFactory.textAnnotationConverter().convert((TextAnnotation) flowElement);
-        }
-        if (flowElement instanceof SequenceFlow) {
-            return Result.ignored("sequence flow");
-        }
-        return ConverterUtils.ignore("FlowElement", flowElement);
+        return Match.<FlowElement,Result<BpmnNode>>of()
+                .when(e -> e instanceof StartEvent, converterFactory.startEventConverter()::convert)
+                .when(e -> e instanceof EndEvent, converterFactory.endEventConverter()::convert)
+                .when(e -> e instanceof BoundaryEvent, converterFactory.intermediateCatchEventConverter()::convertBoundaryEvent)
+                .when(e -> e instanceof IntermediateCatchEvent, converterFactory.intermediateCatchEventConverter()::convert)
+                .when(e -> e instanceof IntermediateThrowEvent, converterFactory.intermediateThrowEventConverter()::convert)
+                .when(e -> e instanceof Task, converterFactory.taskConverter()::convert)
+                .when(e -> e instanceof Gateway, converterFactory.gatewayConverter()::convert)
+                .when(e -> e instanceof SubProcess, converterFactory.subProcessConverter()::convertSubProcess)
+                .when(e -> e instanceof CallActivity, converterFactory.callActivityConverter()::convert)
+                .when(e -> e instanceof TextAnnotation, converterFactory.textAnnotationConverter()::convert)
+                .ignore(e -> e instanceof DataStoreReference, DataStoreReference.class)
+                .ignore(e -> e instanceof DataObjectReference, DataObjectReference.class)
+                .ignore(e -> e instanceof DataObject, DataObject.class)
+                .defaultValue(Result.ignored("FlowElement not found", getNotFoundMessage(flowElement)))
+                //.inputDecorator(BPMNElementDecorators.flowElementDecorator())
+                //.outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
+                .mode(getMode())
+                .apply(flowElement)
+                .value();
     }
 }
