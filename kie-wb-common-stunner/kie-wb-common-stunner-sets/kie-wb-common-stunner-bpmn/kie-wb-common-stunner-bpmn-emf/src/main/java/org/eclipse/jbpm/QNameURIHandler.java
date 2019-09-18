@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.eclipse.bpmn2.util;
+package org.eclipse.jbpm;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xmi.resource.xml.URIHandler;
