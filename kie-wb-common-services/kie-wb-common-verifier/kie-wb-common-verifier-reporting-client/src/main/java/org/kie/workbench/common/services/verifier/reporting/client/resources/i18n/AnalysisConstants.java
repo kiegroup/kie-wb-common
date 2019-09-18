@@ -49,8 +49,7 @@ public interface AnalysisConstants
 
     String ValueForAnActionIsSetTwice();
 
-    String RedundantConditionsNote1P1(String patternName,
-                                      String factField);
+    String RedundantConditionsNote1P1(String origin);
 
     String AffectedRows();
 
@@ -75,13 +74,12 @@ public interface AnalysisConstants
     String DeficientRowsP2();
 
     String ImpossibleMatchNote1P1(String rowNumber,
-                                  String factField,
-                                  String factType);
+                                  String conditionPattern);
 
     String ImpossibleMatchNote1P2(String condition1,
                                   String condition2);
 
-    String ImpossibleMatchP1(String factField);
+    String ImpossibleMatchP1();
 
     String MissingConditionP1();
 

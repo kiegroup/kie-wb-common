@@ -83,12 +83,11 @@ public class ExplanationProvider {
                         .startNote()
                         .addParagraph(
                                 AnalysisConstants.INSTANCE.ImpossibleMatchNote1P1((impossibleMatchIssue.getRuleId()),
-                                                                                  impossibleMatchIssue.getFieldName(),
-                                                                                  impossibleMatchIssue.getFieldFactType()))
+                                                                                  impossibleMatchIssue.toString()))
                         .addParagraph(AnalysisConstants.INSTANCE.ImpossibleMatchNote1P2(impossibleMatchIssue.getConflictedItem(),
                                                                                         impossibleMatchIssue.getConflictingItem()))
                         .end()
-                        .addParagraph(AnalysisConstants.INSTANCE.ImpossibleMatchP1(impossibleMatchIssue.getFieldName()))
+                        .addParagraph(AnalysisConstants.INSTANCE.ImpossibleMatchP1())
                         .toHTML();
 
             case MISSING_ACTION:
@@ -134,8 +133,7 @@ public class ExplanationProvider {
                 RedundantConditionsIssue redundantConditionsIssue = (RedundantConditionsIssue) issue;
                 return new Explanation()
                         .startNote()
-                        .addParagraph(AnalysisConstants.INSTANCE.RedundantConditionsNote1P1(redundantConditionsIssue.getFactType(),
-                                                                                            redundantConditionsIssue.getName()))
+                        .addParagraph(AnalysisConstants.INSTANCE.RedundantConditionsNote1P1(redundantConditionsIssue.getName()))
                         .addParagraph(AnalysisConstants.INSTANCE.RedundantConditionsNote1P2(redundantConditionsIssue.getFirstItem(),
                                                                                             redundantConditionsIssue.getSecondItem()))
                         .end()
