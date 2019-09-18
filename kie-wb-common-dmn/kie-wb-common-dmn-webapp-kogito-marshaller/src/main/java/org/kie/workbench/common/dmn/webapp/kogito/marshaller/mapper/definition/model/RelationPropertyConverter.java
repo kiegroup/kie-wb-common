@@ -16,12 +16,13 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
+import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
@@ -41,20 +42,27 @@ public class RelationPropertyConverter {
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
 
-        final List<JSITInformationItem> column = Arrays.asList(dmn.getColumn().asArray());
-        final List<JSITList> row = Arrays.asList(dmn.getRow().asArray());
+        final List<InformationItem> convertedColumns = new ArrayList<>();
+        final JsArrayLike<JSITInformationItem> jsiColumns = JSITRelation.getColumn(dmn);
+        for (int i = 0; i < jsiColumns.getLength(); i++) {
+            final JSITInformationItem jsiColumn = Js.uncheckedCast(jsiColumns.getAt(i));
+            convertedColumns.add(InformationItemPropertyConverter.wbFromDMN(jsiColumn));
+        }
 
-        final List<InformationItem> convertedColumn = column.stream().map(InformationItemPropertyConverter::wbFromDMN).collect(Collectors.toList());
-        final List<org.kie.workbench.common.dmn.api.definition.model.List> convertedRow = row.stream().map(r -> ListPropertyConverter.wbFromDMN(r,
-                                                                                                                                                hasComponentWidthsConsumer)).collect(Collectors.toList());
+        final List<org.kie.workbench.common.dmn.api.definition.model.List> convertedRows = new ArrayList<>();
+        final JsArrayLike<JSITList> jsiRows = JSITRelation.getRow(dmn);
+        for (int i = 0; i < jsiRows.getLength(); i++) {
+            final JSITList jsiRow = Js.uncheckedCast(jsiRows.getAt(i));
+            convertedRows.add(ListPropertyConverter.wbFromDMN(jsiRow, hasComponentWidthsConsumer));
+        }
 
-        final Relation result = new Relation(id, description, typeRef, convertedColumn, convertedRow);
-        for (InformationItem c : convertedColumn) {
+        final Relation result = new Relation(id, description, typeRef, convertedColumns, convertedRows);
+        for (InformationItem c : convertedColumns) {
             if (c != null) {
                 c.setParent(result);
             }
         }
-        for (org.kie.workbench.common.dmn.api.definition.model.List r : convertedRow) {
+        for (org.kie.workbench.common.dmn.api.definition.model.List r : convertedRows) {
             if (r != null) {
                 r.setParent(result);
             }
