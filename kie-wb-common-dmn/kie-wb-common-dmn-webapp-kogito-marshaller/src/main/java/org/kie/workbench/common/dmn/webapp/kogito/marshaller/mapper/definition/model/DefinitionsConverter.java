@@ -116,11 +116,30 @@ public class DefinitionsConverter {
         final String defaultNamespace = !StringUtils.isEmpty(wb.getNamespace().getValue())
                 ? wb.getNamespace().getValue()
                 : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
+        // TODO FOR THE MOMENT BEING THE TWO FOLLOWING PROPERTIES ARE EMPTY/NULL: SETTING HARDCODED VALUES
+        final String expressionLanguage = (wb.getExpressionLanguage() != null && !(StringUtils.isEmpty(wb.getExpressionLanguage().getValue()))) ? wb.getExpressionLanguage().getValue() : "http://www.omg.org/spec/DMN/20180521/FEEL/";
+        final String typeLanguage = (!StringUtils.isEmpty(wb.getTypeLanguage())) ? wb.getTypeLanguage() : "http://www.omg.org/spec/DMN/20180521/FEEL/";
+
 
         result.setId(defaultId);
         result.setName(defaultName);
         result.setNamespace(defaultNamespace);
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
+        if (!StringUtils.isEmpty(description)) {
+            result.setDescription(description);
+        }
+        result.setExpressionLanguage(expressionLanguage);
+        result.setTypeLanguage(typeLanguage);
+
+        final Map<javax.xml.namespace.QName, String> otherAttributes = OtherAttributesConverter.fromMap(wb.getNsContext());
+        OtherAttributesConverter.addEntry(otherAttributes, "id", result.getId());
+        OtherAttributesConverter.addEntry(otherAttributes, "name", result.getName());
+        OtherAttributesConverter.addEntry(otherAttributes, "expressionLanguage", result.getExpressionLanguage());
+        OtherAttributesConverter.addEntry(otherAttributes, "typeLanguage", result.getTypeLanguage());
+        OtherAttributesConverter.addEntry(otherAttributes, "namespace", result.getNamespace());
+      //  result.setOtherAttributes(otherAttributes);
+
+
 
         //TODO {manstis} Do we need to copy wb.getNsContext() into dmn.otherAttributes()?
         //result.getNsContext().putAll(wb.getNsContext());

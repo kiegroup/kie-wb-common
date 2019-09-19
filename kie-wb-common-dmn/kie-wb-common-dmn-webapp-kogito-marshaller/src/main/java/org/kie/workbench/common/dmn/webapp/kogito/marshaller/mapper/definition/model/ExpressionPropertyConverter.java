@@ -127,7 +127,7 @@ public class ExpressionPropertyConverter {
 
         if (wb instanceof IsLiteralExpression) {
             final JSITLiteralExpression unwrappedJSITLiteralExpression = LiteralExpressionPropertyConverter.dmnFromWB((IsLiteralExpression) wb);
-            final JSITLiteralExpression wrappedJSITLiteralExpression = getWrappedJSITLiteralExpression(unwrappedJSITLiteralExpression, "dmn", "literalexpression");
+            final JSITLiteralExpression wrappedJSITLiteralExpression = getWrappedJSITLiteralExpression(unwrappedJSITLiteralExpression, "dmn", "literalExpression");
             return wrappedJSITLiteralExpression;
         } else if (wb instanceof Context) {
             final JSITContext unwrappedJSITContext = ContextPropertyConverter.dmnFromWB((Context) wb,
