@@ -21,6 +21,7 @@ import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 @JsType(namespace = JsPackage.GLOBAL)
 public class QName {
@@ -43,6 +44,18 @@ public class QName {
     @JsProperty(name = "prefix")
     public final native void setPrefix(final String prefix);
 
+    @JsProperty(name = "key")
+    public final native String getKey();
+
+    @JsProperty(name = "key")
+    public final native void setKey(String key);
+
+    @JsProperty(name = "string")
+    public final native String getString();
+
+    @JsProperty(name = "string")
+    public final native void setString(String string);
+
     @JsConstructor
     public QName(final String namespaceURI,
                  final String localPart,
@@ -64,6 +77,11 @@ public class QName {
                     "prefix cannot be \"null\" when creating a QName");
         }
         setPrefix(prefix);
+        String key = "{" + getNamespaceURI() + "}" + getLocalPart();
+        setKey(key);
+        String usedPrefix = !StringUtils.isEmpty(getPrefix()) ? getPrefix() + ":" : "";
+        String string = "{" + getNamespaceURI() + "}" + usedPrefix + getLocalPart();
+        setString(string);
     }
 
     @Override

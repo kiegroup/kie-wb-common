@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
@@ -209,10 +210,9 @@ public class WrapperUtils {
         } else {
             namespaceURI = XMLConstants.NULL_NS_URI;
         }
-        JSIName jsiName = QNamePropertyConverter.getJSINameFromQName(new org.kie.workbench.common.dmn.api.property.dmn.QName(namespaceURI,
-                                                                                                                             v.getDefinition().getId().getValue(),
-                                                                                                                             XMLConstants.DEFAULT_NS_PREFIX));
-        result.setDmnElementRef(Js.uncheckedCast(jsiName));
+        result.setDmnElementRef(new QName(namespaceURI,
+                                          v.getDefinition().getId().getValue(),
+                                          XMLConstants.DEFAULT_NS_PREFIX));
         final JSIBounds bounds = JSIBounds.newInstance();
         result.setBounds(bounds);
         bounds.setX(xOfBound(upperLeftBound(v)));

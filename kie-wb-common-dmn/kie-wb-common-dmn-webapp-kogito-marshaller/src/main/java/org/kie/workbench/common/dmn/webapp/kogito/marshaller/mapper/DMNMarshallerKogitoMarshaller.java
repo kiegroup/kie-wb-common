@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -247,10 +248,9 @@ public class DMNMarshallerKogitoMarshaller {
                             }
                             dmnEdge.setId("dmnedge-" + uuid);
                             String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
-                            JSIName jsiName = QNamePropertyConverter.getJSINameFromQName(new org.kie.workbench.common.dmn.api.property.dmn.QName(namespaceURI,
-                                                                                                    uuid,
-                                                                                                    XMLConstants.DEFAULT_NS_PREFIX));
-                            dmnEdge.setDmnElementRef(Js.uncheckedCast(jsiName));
+                            dmnEdge.setDmnElementRef(new QName(namespaceURI,
+                                                               uuid,
+                                                               XMLConstants.DEFAULT_NS_PREFIX));
 
                             JSIDMNEdge.addWaypoint(dmnEdge, PointUtils.point2dToDMNDIPoint(sourcePoint));
                             for (ControlPoint cp : connectionContent.getControlPoints()) {
