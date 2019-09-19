@@ -120,7 +120,6 @@ public abstract class KieEditor<T>
     protected PerspectiveManager perspectiveManager;
     private ViewDRLSourceWidget sourceWidget;
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
-    protected boolean saveWithComments = true;
 
     protected KieEditor() {
     }

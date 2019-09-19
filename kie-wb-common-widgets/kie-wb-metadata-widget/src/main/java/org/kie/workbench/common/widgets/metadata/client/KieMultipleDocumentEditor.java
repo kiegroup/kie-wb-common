@@ -622,7 +622,7 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
             if (versionRecordManager.isCurrentLatest()) {
                 editorView.alertReadOnly();
             } else {
-                versionRecordManager.restoreToCurrentVersion();
+                versionRecordManager.restoreToCurrentVersion(saveWithComments);
             }
             return;
         }
