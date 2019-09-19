@@ -30,7 +30,7 @@ import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGr
  * A graph that can be reordered in order to reduce edge crossing.
  * @see LayoutService
  */
-public final class LayeredGraph implements ReorderedGraph {
+public class LayeredGraph implements ReorderedGraph {
 
     private final List<String> vertices;
     private final List<OrientedEdge> edges;

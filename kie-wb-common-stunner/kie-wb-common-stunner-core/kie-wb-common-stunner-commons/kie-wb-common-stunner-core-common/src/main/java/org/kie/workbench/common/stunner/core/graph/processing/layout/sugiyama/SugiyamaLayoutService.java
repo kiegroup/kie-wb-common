@@ -61,6 +61,7 @@ public class SugiyamaLayoutService extends AbstractLayoutService {
     private final VertexOrdering vertexOrdering;
     private final VertexPositioning vertexPositioning;
     private final GraphProcessor graphProcessor;
+    static final LayerArrangement DEFAULT_LAYER_ARRANGEMENT = LayerArrangement.BottomUp;
 
     /**
      * Default constructor.
@@ -92,58 +93,83 @@ public class SugiyamaLayoutService extends AbstractLayoutService {
      */
     @Override
     public Layout createLayout(final Graph<?, ?> graph) {
-        final HashMap<String, Node> indexByUuid = new HashMap<>();
-        final LayeredGraph reorderedGraph = new LayeredGraph();
+
         final Iterable<? extends Node> nodes = graphProcessor.getNodes(graph);
+        final HashMap<String, Node> indexByUuid = createIndex(nodes);
+        final LayeredGraph layeredGraph = createLayeredGraph(indexByUuid.values());
 
+        this.cycleBreaker.breakCycle(layeredGraph);
+        this.vertexLayerer.createLayers(layeredGraph);
+        this.vertexOrdering.orderVertices(layeredGraph);
+        this.vertexPositioning.calculateVerticesPositions(layeredGraph,
+                                                          DEFAULT_LAYER_ARRANGEMENT);
+
+        final List<GraphLayer> orderedLayers = layeredGraph.getLayers();
+        return buildLayout(indexByUuid, orderedLayers);
+    }
+
+    HashMap<String, Node> createIndex(final Iterable<? extends Node> nodes) {
+
+        final HashMap<String, Node> indexByUuid = new HashMap<>();
         for (final Node n : nodes) {
-
             if (!(n.getContent() instanceof HasBounds)) {
                 continue;
             }
 
             indexByUuid.put(n.getUUID(), n);
-
-            for (final Object e : n.getInEdges()) {
-                if (e instanceof Edge) {
-                    final Edge edge = (Edge) e;
-                    final String from = getId(edge.getSourceNode());
-                    final String to = getId(n);
-                    reorderedGraph.addEdge(from, to);
-                    reorderedGraph.setVertexSize(getId(n), getWidth(n), getHeight(n));
-                }
-            }
-
-            for (final Object e : n.getOutEdges()) {
-                if (e instanceof Edge) {
-                    final Edge edge = (Edge) e;
-                    final String to = getId(edge.getTargetNode());
-                    final String from = getId(n);
-                    reorderedGraph.addEdge(from, to);
-                    reorderedGraph.setVertexSize(getId(n), getWidth(n), getHeight(n));
-                }
-            }
         }
 
-        this.cycleBreaker.breakCycle(reorderedGraph);
-        this.vertexLayerer.createLayers(reorderedGraph);
-        this.vertexOrdering.orderVertices(reorderedGraph);
-        this.vertexPositioning.calculateVerticesPositions(reorderedGraph,
-                                                          LayerArrangement.BottomUp);
-
-        final List<GraphLayer> orderedLayers = reorderedGraph.getLayers();
-        return buildLayout(indexByUuid, orderedLayers);
+        return indexByUuid;
     }
 
-    private int getHeight(final Node n) {
+    LayeredGraph createLayeredGraph(final Iterable<? extends Node> nodes) {
+
+        final LayeredGraph layeredGraph = getLayeredGraph();
+        for (final Node n : nodes) {
+            addInEdges(layeredGraph, n);
+            addOutEdges(layeredGraph, n);
+        }
+
+        return layeredGraph;
+    }
+
+    LayeredGraph getLayeredGraph() {
+        return new LayeredGraph();
+    }
+
+    void addOutEdges(final LayeredGraph layeredGraph, final Node n) {
+        for (final Object e : n.getOutEdges()) {
+            if (e instanceof Edge) {
+                final Edge edge = (Edge) e;
+                final String to = getId(edge.getTargetNode());
+                final String from = getId(n);
+                layeredGraph.addEdge(from, to);
+                layeredGraph.setVertexSize(getId(n), getWidth(n), getHeight(n));
+            }
+        }
+    }
+
+    void addInEdges(final LayeredGraph layeredGraph, final Node n) {
+        for (final Object e : n.getInEdges()) {
+            if (e instanceof Edge) {
+                final Edge edge = (Edge) e;
+                final String from = getId(edge.getSourceNode());
+                final String to = getId(n);
+                layeredGraph.addEdge(from, to);
+                layeredGraph.setVertexSize(getId(n), getWidth(n), getHeight(n));
+            }
+        }
+    }
+
+    int getHeight(final Node n) {
         return (int) ((HasBounds) n.getContent()).getBounds().getHeight();
     }
 
-    private int getWidth(final Node n) {
+    int getWidth(final Node n) {
         return (int) ((HasBounds) n.getContent()).getBounds().getWidth();
     }
 
-    private String getId(final Node node) {
+    String getId(final Node node) {
         if (graphProcessor.isReplacedByAnotherNode(node.getUUID())) {
             return graphProcessor.getReplaceNodeId(node.getUUID());
         }
@@ -151,8 +177,8 @@ public class SugiyamaLayoutService extends AbstractLayoutService {
         return node.getUUID();
     }
 
-    private Layout buildLayout(final HashMap<String, Node> indexByUuid,
-                               final List<GraphLayer> layers) {
+    Layout buildLayout(final HashMap<String, Node> indexByUuid,
+                       final List<GraphLayer> layers) {
 
         final Layout layout = new Layout();
 
