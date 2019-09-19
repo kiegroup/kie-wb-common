@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
@@ -53,7 +55,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAt
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.QNamePropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
@@ -264,6 +265,12 @@ public class WrapperUtils {
             result.setDMNDecisionServiceDividerLine(dl);
         }
         result.setStyle(getWrappedJSIDMNStyle(style));
+        Map<String, String> otherAttributes = new HashMap<>();
+        otherAttributes.put("id", result.getId());
+        otherAttributes.put("dmnElementRef", result.getDmnElementRef().getLocalPart());
+        otherAttributes.put("isCollapsed", String.valueOf(result.getIsCollapsed()));
+        // TODO {gcardosi} enable when everything works because it raise Circular issue with JSON.stringify
+       // result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
         return result;
     }
 

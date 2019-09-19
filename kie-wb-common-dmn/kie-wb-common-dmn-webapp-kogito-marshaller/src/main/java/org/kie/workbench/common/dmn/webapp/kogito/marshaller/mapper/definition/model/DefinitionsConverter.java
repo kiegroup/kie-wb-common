@@ -137,6 +137,7 @@ public class DefinitionsConverter {
         OtherAttributesConverter.addEntry(otherAttributes, "expressionLanguage", result.getExpressionLanguage());
         OtherAttributesConverter.addEntry(otherAttributes, "typeLanguage", result.getTypeLanguage());
         OtherAttributesConverter.addEntry(otherAttributes, "namespace", result.getNamespace());
+        // TODO {gcardosi} enable when everything works because it raise Circular issue with JSON.stringify
       //  result.setOtherAttributes(otherAttributes);
 
 
