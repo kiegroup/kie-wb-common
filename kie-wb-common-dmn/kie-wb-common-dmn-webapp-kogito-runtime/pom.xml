@@ -1000,6 +1000,18 @@
           </execution>
         </executions>
       </plugin>
+      <!-- Exclude generated code from checkstyle validation -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <excludes>
+            org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/**/*,
+            org/kie/workbench/common/dmn/webapp/kogito/marshaller/mapper/JsUtils.java,
+            org/kie/workbench/common/dmn/webapp/kogito/marshaller/mapper/JSIName.java
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
 
   </build>

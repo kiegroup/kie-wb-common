@@ -40,26 +40,17 @@ import org.kie.workbench.common.dmn.api.definition.model.InputData;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
-import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITArtifact;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecision;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputData;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDI;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDecisionServiceDividerLine;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDiagram;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNEdge;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNLabel;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNStyle;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.AssociationConverter;
@@ -70,7 +61,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.InputDataConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.TextAnnotationConverter;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -87,6 +77,10 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMa
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.upperLeftBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.xOfBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.yOfBound;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSIDMNEdge;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSIDMNShape;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITComponentsWidthsExtension;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITDRGElement;
 
 @ApplicationScoped
 public class DMNMarshallerKogitoMarshaller {
@@ -123,103 +117,103 @@ public class DMNMarshallerKogitoMarshaller {
     // ==================================
 
 
-    @SuppressWarnings("unchecked")
-    private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v) {
-        final JSIDMNShape result = JSIDMNShape.newInstance();
-        result.setId("dmnshape-" + v.getDefinition().getId().getValue());
-        result.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
-                                          v.getDefinition().getId().getValue(),
-                                          XMLConstants.DEFAULT_NS_PREFIX));
-        final JSIBounds bounds = JSIBounds.newInstance();
-        result.setBounds(bounds);
-        bounds.setX(xOfBound(upperLeftBound(v)));
-        bounds.setY(yOfBound(upperLeftBound(v)));
-        result.setStyle(JSIDMNStyle.newInstance());
-        result.setDMNLabel(JSIDMNLabel.newInstance());
+   // @SuppressWarnings("unchecked")
+//    private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v) {
+//        final JSIDMNShape result = JSIDMNShape.newInstance();
+//        result.setId("dmnshape-" + v.getDefinition().getId().getValue());
+//        result.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
+//                                          v.getDefinition().getId().getValue(),
+//                                          XMLConstants.DEFAULT_NS_PREFIX));
+//        final JSIBounds bounds = JSIBounds.newInstance();
+//        result.setBounds(bounds);
+//        bounds.setX(xOfBound(upperLeftBound(v)));
+//        bounds.setY(yOfBound(upperLeftBound(v)));
+//        result.setStyle(JSIDMNStyle.newInstance());
+//        result.setDMNLabel(JSIDMNLabel.newInstance());
+//
+//        if (v.getDefinition() instanceof Decision) {
+//            final Decision d = (Decision) v.getDefinition();
+//            applyBounds(d.getDimensionsSet(), bounds);
+//            applyBackgroundStyles(d.getBackgroundSet(), result);
+//            applyFontStyle(d.getFontSet(), result);
+//        } else if (v.getDefinition() instanceof InputData) {
+//            InputData d = (InputData) v.getDefinition();
+//            applyBounds(d.getDimensionsSet(), bounds);
+//            applyBackgroundStyles(d.getBackgroundSet(), result);
+//            applyFontStyle(d.getFontSet(), result);
+//        } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
+//            final BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
+//            applyBounds(d.getDimensionsSet(), bounds);
+//            applyBackgroundStyles(d.getBackgroundSet(), result);
+//            applyFontStyle(d.getFontSet(), result);
+//        } else if (v.getDefinition() instanceof KnowledgeSource) {
+//            final KnowledgeSource d = (KnowledgeSource) v.getDefinition();
+//            applyBounds(d.getDimensionsSet(), bounds);
+//            applyBackgroundStyles(d.getBackgroundSet(), result);
+//            applyFontStyle(d.getFontSet(), result);
+//        } else if (v.getDefinition() instanceof TextAnnotation) {
+//            final TextAnnotation d = (TextAnnotation) v.getDefinition();
+//            applyBounds(d.getDimensionsSet(), bounds);
+//            applyBackgroundStyles(d.getBackgroundSet(), result);
+//            applyFontStyle(d.getFontSet(), result);
+//        } else if (v.getDefinition() instanceof DecisionService) {
+//            final DecisionService d = (DecisionService) v.getDefinition();
+//            applyBounds(d.getDimensionsSet(), bounds);
+//            applyBackgroundStyles(d.getBackgroundSet(), result);
+//            applyFontStyle(d.getFontSet(), result);
+//            final JSIDMNDecisionServiceDividerLine dl = JSIDMNDecisionServiceDividerLine.newInstance();
+//            final JSIPoint leftPoint = JSIPoint.newInstance();
+//            leftPoint.setX(v.getBounds().getUpperLeft().getX());
+//            final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
+//            leftPoint.setY(dlY);
+//            JSIDMNDecisionServiceDividerLine.addWaypoint(dl, leftPoint);
+//            final JSIPoint rightPoint = JSIPoint.newInstance();
+//            rightPoint.setX(v.getBounds().getLowerRight().getX());
+//            rightPoint.setY(dlY);
+//            JSIDMNDecisionServiceDividerLine.addWaypoint(dl, rightPoint);
+//            result.setDMNDecisionServiceDividerLine(dl);
+//        }
+//        return result;
+//    }
 
-        if (v.getDefinition() instanceof Decision) {
-            final Decision d = (Decision) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof InputData) {
-            InputData d = (InputData) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
-            final BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof KnowledgeSource) {
-            final KnowledgeSource d = (KnowledgeSource) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof TextAnnotation) {
-            final TextAnnotation d = (TextAnnotation) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-        } else if (v.getDefinition() instanceof DecisionService) {
-            final DecisionService d = (DecisionService) v.getDefinition();
-            applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
-            final JSIDMNDecisionServiceDividerLine dl = JSIDMNDecisionServiceDividerLine.newInstance();
-            final JSIPoint leftPoint = JSIPoint.newInstance();
-            leftPoint.setX(v.getBounds().getUpperLeft().getX());
-            final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
-            leftPoint.setY(dlY);
-            JSIDMNDecisionServiceDividerLine.addWaypoint(dl, leftPoint);
-            final JSIPoint rightPoint = JSIPoint.newInstance();
-            rightPoint.setX(v.getBounds().getLowerRight().getX());
-            rightPoint.setY(dlY);
-            JSIDMNDecisionServiceDividerLine.addWaypoint(dl, rightPoint);
-            result.setDMNDecisionServiceDividerLine(dl);
-        }
-        return result;
-    }
-
-    private static void applyFontStyle(final FontSet fontSet,
-                                       final JSIDMNShape result) {
-        if (!(result.getStyle() instanceof JSIDMNStyle)) {
-            return;
-        }
-        final JSIDMNStyle shapeStyle = (JSIDMNStyle) result.getStyle();
-        final JSIColor fontColor = ColorUtils.dmnFromWB(fontSet.getFontColour().getValue());
-        shapeStyle.setFontColor(fontColor);
-        if (Objects.nonNull(fontSet.getFontFamily().getValue())) {
-            shapeStyle.setFontFamily(fontSet.getFontFamily().getValue());
-        }
-        if (Objects.nonNull(fontSet.getFontSize().getValue())) {
-            shapeStyle.setFontSize(fontSet.getFontSize().getValue());
-        }
-    }
-
-    private static void applyBounds(final RectangleDimensionsSet dimensionsSet,
-                                    final JSIBounds bounds) {
-        if (null != dimensionsSet.getWidth().getValue() &&
-                null != dimensionsSet.getHeight().getValue()) {
-            bounds.setWidth(dimensionsSet.getWidth().getValue());
-            bounds.setHeight(dimensionsSet.getHeight().getValue());
-        }
-    }
-
-    private static void applyBackgroundStyles(final BackgroundSet bgset,
-                                              final JSIDMNShape result) {
-        if (!(result.getStyle() instanceof JSIDMNStyle)) {
-            return;
-        }
-        final JSIDMNStyle style = (JSIDMNStyle) result.getStyle();
-        if (Objects.nonNull(bgset.getBgColour().getValue())) {
-            style.setFillColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
-        }
-        if (Objects.nonNull(bgset.getBorderColour().getValue())) {
-            style.setStrokeColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
-        }
-    }
+//    private static void applyFontStyle(final FontSet fontSet,
+//                                       final JSIDMNShape result) {
+//        if (!(result.getStyle() instanceof JSIDMNStyle)) {
+//            return;
+//        }
+//        final JSIDMNStyle shapeStyle = (JSIDMNStyle) result.getStyle();
+//        final JSIColor fontColor = ColorUtils.dmnFromWB(fontSet.getFontColour().getValue());
+//        shapeStyle.setFontColor(fontColor);
+//        if (Objects.nonNull(fontSet.getFontFamily().getValue())) {
+//            shapeStyle.setFontFamily(fontSet.getFontFamily().getValue());
+//        }
+//        if (Objects.nonNull(fontSet.getFontSize().getValue())) {
+//            shapeStyle.setFontSize(fontSet.getFontSize().getValue());
+//        }
+//    }
+//
+//    private static void applyBounds(final RectangleDimensionsSet dimensionsSet,
+//                                    final JSIBounds bounds) {
+//        if (null != dimensionsSet.getWidth().getValue() &&
+//                null != dimensionsSet.getHeight().getValue()) {
+//            bounds.setWidth(dimensionsSet.getWidth().getValue());
+//            bounds.setHeight(dimensionsSet.getHeight().getValue());
+//        }
+//    }
+//
+//    private static void applyBackgroundStyles(final BackgroundSet bgset,
+//                                              final JSIDMNShape result) {
+//        if (!(result.getStyle() instanceof JSIDMNStyle)) {
+//            return;
+//        }
+//        final JSIDMNStyle style = (JSIDMNStyle) result.getStyle();
+//        if (Objects.nonNull(bgset.getBgColour().getValue())) {
+//            style.setFillColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+//        }
+//        if (Objects.nonNull(bgset.getBorderColour().getValue())) {
+//            style.setStrokeColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
+//        }
+//    }
 
 
 
@@ -260,7 +254,8 @@ public class DMNMarshallerKogitoMarshaller {
         }
         final JSITComponentsWidthsExtension componentsWidthsExtension = JSITComponentsWidthsExtension.newInstance();
         final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
-        JSIDiagramElement.JSIExtension.addAny(extension, componentsWidthsExtension);
+        JSITComponentsWidthsExtension wrappedComponentsWidthsExtension = getWrappedJSITComponentsWidthsExtension(componentsWidthsExtension);
+        JSIDiagramElement.JSIExtension.addAny(extension, wrappedComponentsWidthsExtension);
 
         final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) -> JSITComponentsWidthsExtension.addComponentWidths(componentsWidthsExtension, cw);
 
@@ -282,13 +277,14 @@ public class DMNMarshallerKogitoMarshaller {
                                   stunnerToDMN(node,
                                                componentWidthsConsumer));
                     }
-                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, stunnerToDDExt((View<? extends DMNElement>) view));
+
+                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(),
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node,
                                                                             componentWidthsConsumer));
-                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, stunnerToDDExt((View<? extends DMNElement>) view));
+                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view));
 
                     final JsArrayLike<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     JSITDefinitions.addAllArtifact(definitions, associations);
@@ -361,9 +357,20 @@ public class DMNMarshallerKogitoMarshaller {
                 }
             }
         }
-        nodes.values().forEach(n -> JSITDefinitions.addDrgElement(definitions, n));
+        nodes.values().forEach(n -> {
+            String localPart = "UNKNOWN";
+            if (JSITDecision.instanceOf(n)) {
+                localPart = "decision";
+            } else if (JSITInputData.instanceOf(n)) {
+                localPart = "inputData";
+            }
+            JSITDRGElement toAdd = getWrappedJSITDRGElement(n, "dmn", localPart);
+            JSITDefinitions.addDrgElement(definitions, toAdd);
+        });
         textAnnotations.values().forEach(text -> JSITDefinitions.addArtifact(definitions, text));
-        JSIDMNDiagram.addAllDMNDiagramElement(dmnDDDMNDiagram, dmnEdges);
+        for (int i = 0; i < dmnEdges.getLength(); i ++) {
+            JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNEdge(dmnEdges.getAt(i)));
+        }
         return definitions;
     }
 
@@ -372,7 +379,7 @@ public class DMNMarshallerKogitoMarshaller {
     }
 
     @SuppressWarnings("unchecked")
-    private JSITDRGElement stunnerToDMN(final Node<?, ?> node,
+    public JSITDRGElement stunnerToDMN(final Node<?, ?> node,
                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         if (node.getContent() instanceof View<?>) {
             View<?> view = (View<?>) node.getContent();

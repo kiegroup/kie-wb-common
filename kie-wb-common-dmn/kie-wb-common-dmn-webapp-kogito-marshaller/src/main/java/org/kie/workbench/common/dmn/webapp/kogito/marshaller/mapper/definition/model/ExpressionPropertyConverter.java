@@ -41,6 +41,14 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITContext;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITDecisionTable;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITFunctionDefinition;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITInvocation;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITList;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITLiteralExpression;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITRelation;
+
 public class ExpressionPropertyConverter {
 
     public static Expression wbFromDMN(final JSITExpression dmn,
@@ -104,7 +112,8 @@ public class ExpressionPropertyConverter {
         // reference above.
         if (wb == null) {
             final JSITLiteralExpression mockedExpression = JSITLiteralExpression.newInstance();
-            return mockedExpression;
+            final JSITLiteralExpression wrappedMockedExpression = getWrappedJSITLiteralExpression(mockedExpression, "dmn", "literalExpression");
+            return wrappedMockedExpression;
         }
 
         final String uuid = wb.getId().getValue();
@@ -117,24 +126,38 @@ public class ExpressionPropertyConverter {
         }
 
         if (wb instanceof IsLiteralExpression) {
-            return LiteralExpressionPropertyConverter.dmnFromWB((IsLiteralExpression) wb);
+            final JSITLiteralExpression unwrappedJSITLiteralExpression = LiteralExpressionPropertyConverter.dmnFromWB((IsLiteralExpression) wb);
+            final JSITLiteralExpression wrappedJSITLiteralExpression = getWrappedJSITLiteralExpression(unwrappedJSITLiteralExpression, "dmn", "literalexpression");
+            return wrappedJSITLiteralExpression;
         } else if (wb instanceof Context) {
-            return ContextPropertyConverter.dmnFromWB((Context) wb,
-                                                      componentWidthsConsumer);
+            final JSITContext unwrappedJSITContext = ContextPropertyConverter.dmnFromWB((Context) wb,
+                                                                                        componentWidthsConsumer);
+            final JSITContext wrappedJSITContext = getWrappedJSITContext(unwrappedJSITContext, "UNKNOWN", "UNKNOWN");
+            return wrappedJSITContext;
         } else if (wb instanceof Relation) {
-            return RelationPropertyConverter.dmnFromWB((Relation) wb,
-                                                       componentWidthsConsumer);
+            final JSITRelation unwrappedJSITRelation = RelationPropertyConverter.dmnFromWB((Relation) wb,
+                                                                                           componentWidthsConsumer);
+            final JSITRelation wrappedJSITRelation = getWrappedJSITRelation(unwrappedJSITRelation, "UNKNOWN", "UNKNOWN");
+            return wrappedJSITRelation;
         } else if (wb instanceof List) {
-            return ListPropertyConverter.dmnFromWB((List) wb,
-                                                   componentWidthsConsumer);
+            final JSITList unwrappedJSITList = ListPropertyConverter.dmnFromWB((List) wb,
+                                                                               componentWidthsConsumer);
+            final JSITList wrappedJSITList = getWrappedJSITList(unwrappedJSITList, "UNKNOWN", "UNKNOWN");
+            return wrappedJSITList;
         } else if (wb instanceof Invocation) {
-            return InvocationPropertyConverter.dmnFromWB((Invocation) wb,
-                                                         componentWidthsConsumer);
+            final JSITInvocation unwrappedJSITInvocation = InvocationPropertyConverter.dmnFromWB((Invocation) wb,
+                                                                                                 componentWidthsConsumer);
+            final JSITInvocation wrappedJSITInvocation = getWrappedJSITInvocation(unwrappedJSITInvocation, "UNKNOWN", "UNKNOWN");
+            return wrappedJSITInvocation;
         } else if (wb instanceof FunctionDefinition) {
-            return FunctionDefinitionPropertyConverter.dmnFromWB((FunctionDefinition) wb,
-                                                                 componentWidthsConsumer);
+            final JSITFunctionDefinition unwrappedJSITFunctionDefinition = FunctionDefinitionPropertyConverter.dmnFromWB((FunctionDefinition) wb,
+                                                                                                                         componentWidthsConsumer);
+            final JSITFunctionDefinition wrappedJSITFunctionDefinition = getWrappedJSITFunctionDefinition(unwrappedJSITFunctionDefinition, "UNKNOWN", "UNKNOWN");
+            return wrappedJSITFunctionDefinition;
         } else if (wb instanceof DecisionTable) {
-            return DecisionTablePropertyConverter.dmnFromWB((DecisionTable) wb);
+            final JSITDecisionTable unwrappedJSITDecisionTable = DecisionTablePropertyConverter.dmnFromWB((DecisionTable) wb);
+            final JSITDecisionTable wrappedJSITDecisionTable = getWrappedJSITDecisionTable(unwrappedJSITDecisionTable, "UNKNOWN", "UNKNOWN");
+            return wrappedJSITDecisionTable;
         }
         return null;
     }

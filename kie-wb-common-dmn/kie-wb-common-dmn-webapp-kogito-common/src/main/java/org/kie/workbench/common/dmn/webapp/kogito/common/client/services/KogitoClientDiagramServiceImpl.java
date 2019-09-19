@@ -197,21 +197,20 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         };
         try {
             final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
-            org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
-            jsiName.setPrefix("dmn");
-            jsiName.setLocalPart("definitions");
-            String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
-            jsiName.setKey(key);
-            String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
-            jsiName.setString(string);
-//            if (Objects.isNull(dmn12)) {
+            if (Objects.isNull(dmn12)) {
                 GWT.log("**************WARNING********************");
-                GWT.log("Creating dmn12");
-                this.dmn12 = DMN12.newWrappedInstance(jsiName, jsitDefinitions);
-//            } else {
-//                dmn12.setName(jsiName);
-//                dmn12.setValue(jsitDefinitions);
-//            }
+                GWT.log("Instantiating dmn12 because it is null");
+                org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
+                jsiName.setPrefix("dmn");
+                jsiName.setLocalPart("definitions");
+                String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
+                jsiName.setKey(key);
+                String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
+                jsiName.setString(string);
+                dmn12 = Js.uncheckedCast(JsUtils.newWrappedInstance());
+                JsUtils.setNameOnWrapped(dmn12, jsiName);
+            }
+            JsUtils.setValueOnWrapped(dmn12, jsitDefinitions);
             MainJs.marshall(dmn12, jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage(), e);

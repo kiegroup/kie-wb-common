@@ -26,6 +26,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAttachment;
 
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITAttachment;
+
 class DMNExternalLinksToExtensionElements {
 
     static void loadExternalLinksFromExtensionElements(final JSITDRGElement source,
@@ -65,10 +67,13 @@ class DMNExternalLinksToExtensionElements {
             final JSITAttachment attachment = JSITAttachment.newInstance();
             attachment.setName(link.getDescription());
             attachment.setUrl(link.getUrl());
-            JSITDMNElement.JSIExtensionElements.addAny(elements, attachment);
+            JSITAttachment wrappedJSITAttachment = getWrappedJSITAttachment(attachment, "dmn", "TOFIX");
+            JSITDMNElement.JSIExtensionElements.addAny(elements, wrappedJSITAttachment);
         }
         target.setExtensionElements(elements);
     }
+
+
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
         return target.getExtensionElements() == null
