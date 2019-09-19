@@ -46,6 +46,7 @@ import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.HrefBuilder.getHref;
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
@@ -106,7 +107,10 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         final BusinessKnowledgeModel source = node.getContent().getDefinition();
         final JSITBusinessKnowledgeModel result = JSITBusinessKnowledgeModel.newInstance();
         result.setId(source.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        String description = DescriptionPropertyConverter.dmnFromWB(source.getDescription());
+        if (!StringUtils.isEmpty(description)) {
+            result.setDescription(description);
+        }
         result.setName(source.getName().getValue());
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);

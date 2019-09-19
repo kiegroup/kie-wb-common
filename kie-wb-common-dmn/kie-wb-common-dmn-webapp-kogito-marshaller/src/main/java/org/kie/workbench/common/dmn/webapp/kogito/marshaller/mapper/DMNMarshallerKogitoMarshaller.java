@@ -82,8 +82,10 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.defin
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.yOfBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSIDMNEdge;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSIDMNShape;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITAssociation;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITComponentsWidthsExtension;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITDRGElement;
+import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITTextAnnotation;
 
 @ApplicationScoped
 public class DMNMarshallerKogitoMarshaller {
@@ -184,7 +186,11 @@ public class DMNMarshallerKogitoMarshaller {
                     JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view));
 
                     final JsArrayLike<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
-                    JSITDefinitions.addAllArtifact(definitions, associations);
+                    for (int i = 0; i < associations.getLength(); i ++) {
+                        JSITAssociation wrappedJSITAssociation = getWrappedJSITAssociation(associations.getAt(i));
+                        JSITDefinitions.addArtifact(definitions, wrappedJSITAssociation);
+                    }
+
                 }
 
                 // DMNDI Edge management.
@@ -270,7 +276,10 @@ public class DMNMarshallerKogitoMarshaller {
             JSITDRGElement toAdd = getWrappedJSITDRGElement(n, "dmn", localPart);
             JSITDefinitions.addDrgElement(definitions, toAdd);
         });
-        textAnnotations.values().forEach(text -> JSITDefinitions.addArtifact(definitions, text));
+        textAnnotations.values().forEach(text -> {
+            JSITTextAnnotation wrappedText = getWrappedJSITTextAnnotation(text);
+            JSITDefinitions.addArtifact(definitions, wrappedText);
+        });
         for (int i = 0; i < dmnEdges.getLength(); i ++) {
             JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNEdge(dmnEdges.getAt(i)));
         }

@@ -34,6 +34,7 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContext;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionTable;
@@ -42,6 +43,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITList;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITLiteralExpression;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITRelation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDecisionServiceDividerLine;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNEdge;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNLabel;
@@ -62,6 +64,22 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.defin
  * Class used to holds all common <b>wrapping</b> methods
  */
 public class WrapperUtils {
+
+    public static JSITAssociation getWrappedJSITAssociation(JSITAssociation toWrap) {
+        JSITAssociation toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(toWrap));
+        JSIName jsiName = JSITTextAnnotation.getJSIName();
+        updateJSIName(jsiName, "dmn", "UNKNOWN");
+        JsUtils.setNameOnWrapped(toReturn, jsiName);
+        return toReturn;
+    }
+
+    public static JSITTextAnnotation getWrappedJSITTextAnnotation(JSITTextAnnotation toWrap) {
+        JSITTextAnnotation toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(toWrap));
+        JSIName jsiName = JSITTextAnnotation.getJSIName();
+        updateJSIName(jsiName, "dmn", "textAnnotation");
+        JsUtils.setNameOnWrapped(toReturn, jsiName);
+        return toReturn;
+    }
 
     public static JSIDMNStyle getWrappedJSIDMNStyle(JSIDMNStyle toWrap) {
         JSIDMNStyle toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(toWrap));
@@ -189,6 +207,8 @@ public class WrapperUtils {
         bounds.setY(yOfBound(upperLeftBound(v)));
         result.setStyle(getWrappedJSIDMNStyle(JSIDMNStyle.newInstance()));
         result.setDMNLabel(JSIDMNLabel.newInstance());
+        // TODO {gcardosi}: HARDCODED
+        result.setIsCollapsed(false);
 
         if (v.getDefinition() instanceof Decision) {
             final Decision d = (Decision) v.getDefinition();

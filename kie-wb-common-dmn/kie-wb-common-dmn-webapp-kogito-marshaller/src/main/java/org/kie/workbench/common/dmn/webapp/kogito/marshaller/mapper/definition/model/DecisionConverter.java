@@ -53,6 +53,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.HrefBuilder.getHref;
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
@@ -112,15 +113,27 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         final Decision source = node.getContent().getDefinition();
         final JSITDecision d = JSITDecision.newInstance();
         d.setId(source.getId().getValue());
-        d.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        String description = DescriptionPropertyConverter.dmnFromWB(source.getDescription());
+        if (!StringUtils.isEmpty(description)) {
+            d.setDescription(description);
+        }
         d.setName(source.getName().getValue());
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
         d.setVariable(variable);
         final JSITExpression expression = ExpressionPropertyConverter.dmnFromWB(source.getExpression(),
                                                                                 componentWidthsConsumer);
-        d.setExpression(expression);
-        d.setQuestion(QuestionPropertyConverter.dmnFromWB(source.getQuestion()));
-        d.setAllowedAnswers(AllowedAnswersPropertyConverter.dmnFromWB(source.getAllowedAnswers()));
+
+        if (expression != null) {
+            d.setExpression(expression);
+        }
+        final String question = QuestionPropertyConverter.dmnFromWB(source.getQuestion());
+        if (!StringUtils.isEmpty(question)) {
+            d.setQuestion(question);
+        }
+        final String allowedAnswers = AllowedAnswersPropertyConverter.dmnFromWB(source.getAllowedAnswers());
+        if (!StringUtils.isEmpty(allowedAnswers)) {
+            d.setAllowedAnswers(allowedAnswers);
+        }
 
         // DMN spec table 2: Requirements connection rules
         final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();

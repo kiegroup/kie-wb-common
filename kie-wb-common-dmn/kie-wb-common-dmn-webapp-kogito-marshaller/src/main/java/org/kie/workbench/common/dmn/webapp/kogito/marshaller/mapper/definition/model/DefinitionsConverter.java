@@ -116,7 +116,7 @@ public class DefinitionsConverter {
         final String defaultNamespace = !StringUtils.isEmpty(wb.getNamespace().getValue())
                 ? wb.getNamespace().getValue()
                 : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
-        // TODO FOR THE MOMENT BEING THE TWO FOLLOWING PROPERTIES ARE EMPTY/NULL: SETTING HARDCODED VALUES
+        // TODO {gcardosi} FOR THE MOMENT BEING THE TWO FOLLOWING PROPERTIES ARE EMPTY/NULL: SETTING HARDCODED VALUES
         final String expressionLanguage = (wb.getExpressionLanguage() != null && !(StringUtils.isEmpty(wb.getExpressionLanguage().getValue()))) ? wb.getExpressionLanguage().getValue() : "http://www.omg.org/spec/DMN/20180521/FEEL/";
         final String typeLanguage = (!StringUtils.isEmpty(wb.getTypeLanguage())) ? wb.getTypeLanguage() : "http://www.omg.org/spec/DMN/20180521/FEEL/";
 

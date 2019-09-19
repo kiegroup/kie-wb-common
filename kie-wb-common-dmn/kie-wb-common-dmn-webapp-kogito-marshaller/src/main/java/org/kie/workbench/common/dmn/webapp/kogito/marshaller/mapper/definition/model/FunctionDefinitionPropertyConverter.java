@@ -41,6 +41,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class FunctionDefinitionPropertyConverter {
 
@@ -144,24 +145,29 @@ public class FunctionDefinitionPropertyConverter {
         }
         final JSITFunctionDefinition result = JSITFunctionDefinition.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
+        String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
+        if (!StringUtils.isEmpty(description)) {
+            result.setDescription(description);
+        }
+        if (wb.getTypeRef() != null) {
+            QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
+        }
         result.setExpression(ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                    componentWidthsConsumer));
 
         final Kind kind = wb.getKind();
         switch (kind) {
             case FEEL:
-                result.setKind(JSITFunctionKind.FEEL);
+                result.setKind(Js.uncheckedCast(JSITFunctionKind.FEEL.value()));
                 break;
             case JAVA:
-                result.setKind(JSITFunctionKind.JAVA);
+                result.setKind(Js.uncheckedCast(JSITFunctionKind.JAVA.value()));
                 break;
             case PMML:
-                result.setKind(JSITFunctionKind.PMML);
+                result.setKind(Js.uncheckedCast(JSITFunctionKind.PMML.value()));
                 break;
             default:
-                result.setKind(JSITFunctionKind.FEEL);
+                result.setKind(Js.uncheckedCast(JSITFunctionKind.FEEL.value()));
                 break;
         }
 

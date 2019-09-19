@@ -34,6 +34,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITCo
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 
@@ -81,7 +82,10 @@ public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.
         final InputData source = node.getContent().getDefinition();
         final JSITInputData result =  JSITInputData.newInstance();
         result.setId(source.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        String description = DescriptionPropertyConverter.dmnFromWB(source.getDescription());
+        if (!StringUtils.isEmpty(description)) {
+            result.setDescription(description);
+        }
         result.setName(source.getName().getValue());
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
         result.setVariable(variable);

@@ -57,11 +57,15 @@ public class LiteralExpressionPropertyConverter {
         }
         final JSITLiteralExpression result = JSITLiteralExpression.newInstance();
         result.setId(wb.getId().getValue());
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
-                                            result::setTypeRef);
+        if (wb.getTypeRef() != null) {
+            QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
+                                                result::setTypeRef);
+        }
         result.setText(wb.getText().getValue());
         final JSITImportedValues importedValues = ImportedValuesConverter.dmnFromWB(wb.getImportedValues());
-        result.setImportedValues(importedValues);
+        if (importedValues != null) {
+            result.setImportedValues(importedValues);
+        }
         return result;
     }
 }
