@@ -71,7 +71,7 @@ public class WrapperUtils {
     public static JSITAssociation getWrappedJSITAssociation(JSITAssociation toWrap) {
         JSITAssociation toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(toWrap));
         JSIName jsiName = JSITTextAnnotation.getJSIName();
-        updateJSIName(jsiName, "dmn", "UNKNOWN");
+        updateJSIName(jsiName, "dmn", "association");
         JsUtils.setNameOnWrapped(toReturn, jsiName);
         return toReturn;
     }
