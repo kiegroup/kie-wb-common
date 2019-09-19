@@ -16,9 +16,13 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -31,6 +35,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
@@ -54,8 +59,9 @@ public class DefinitionsConverter {
         result.setId(id);
         result.setName(name);
         result.setNamespace(new Text(namespace));
-        result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
-                                          namespace);
+        result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(), namespace);
+        result.setExpressionLanguage(ExpressionLanguagePropertyConverter.wbFromDMN(dmn.getExpressionLanguage()));
+        result.setTypeLanguage(dmn.getTypeLanguage());
         result.setDescription(description);
 
         final Map<String, String> namespaces = NameSpaceUtils.extractNamespacesKeyedByPrefix(dmn);
@@ -116,10 +122,6 @@ public class DefinitionsConverter {
         final String defaultNamespace = !StringUtils.isEmpty(wb.getNamespace().getValue())
                 ? wb.getNamespace().getValue()
                 : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();
-        // TODO {gcardosi} FOR THE MOMENT BEING THE TWO FOLLOWING PROPERTIES ARE EMPTY/NULL: SETTING HARDCODED VALUES
-        final String expressionLanguage = (wb.getExpressionLanguage() != null && !(StringUtils.isEmpty(wb.getExpressionLanguage().getValue()))) ? wb.getExpressionLanguage().getValue() : "http://www.omg.org/spec/DMN/20180521/FEEL/";
-        final String typeLanguage = (!StringUtils.isEmpty(wb.getTypeLanguage())) ? wb.getTypeLanguage() : "http://www.omg.org/spec/DMN/20180521/FEEL/";
-
 
         result.setId(defaultId);
         result.setName(defaultName);
@@ -128,23 +130,20 @@ public class DefinitionsConverter {
         if (!StringUtils.isEmpty(description)) {
             result.setDescription(description);
         }
-        result.setExpressionLanguage(expressionLanguage);
-        result.setTypeLanguage(typeLanguage);
+        result.setExpressionLanguage(ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage()));
+        result.setTypeLanguage(wb.getTypeLanguage());
 
-        final Map<javax.xml.namespace.QName, String> otherAttributes = OtherAttributesConverter.fromMap(wb.getNsContext());
-        OtherAttributesConverter.addEntry(otherAttributes, "id", result.getId());
-        OtherAttributesConverter.addEntry(otherAttributes, "name", result.getName());
-        OtherAttributesConverter.addEntry(otherAttributes, "expressionLanguage", result.getExpressionLanguage());
-        OtherAttributesConverter.addEntry(otherAttributes, "typeLanguage", result.getTypeLanguage());
-        OtherAttributesConverter.addEntry(otherAttributes, "namespace", result.getNamespace());
-        // TODO {gcardosi} enable when everything works because it raise Circular issue with JSON.stringify
-      //  result.setOtherAttributes(otherAttributes);
-
-
-
-        //TODO {manstis} Do we need to copy wb.getNsContext() into dmn.otherAttributes()?
-        //result.getNsContext().putAll(wb.getNsContext());
-        //result.getNsContext().putIfAbsent(DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(), defaultNamespace);
+        final Map<QName, String> otherAttributes = new HashMap<>();
+        wb.getNsContext().forEach((k, v) -> {
+            //TODO {manstis} jsonix does not like marshalling xmlns="a url" so remove the default namespace :-(
+            if (!Objects.equals(k, DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
+                otherAttributes.put(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                                              k,
+                                              XMLConstants.DEFAULT_NS_PREFIX),
+                                    v);
+            }
+        });
+        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);

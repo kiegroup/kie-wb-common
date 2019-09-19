@@ -127,7 +127,6 @@
                 <include>JSIName.java</include>
               </includes>
             </fileset>
-
           </filesets>
         </configuration>
       </plugin>

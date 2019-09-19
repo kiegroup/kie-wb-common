@@ -22,6 +22,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.xml.XMLConstants;
+
+import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
 import org.kie.workbench.common.dmn.api.definition.model.ImportDMN;
 import org.kie.workbench.common.dmn.api.definition.model.ImportPMML;
@@ -30,6 +33,7 @@ import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
@@ -81,18 +85,28 @@ public final class ImportConverter {
         result.setImportType(wb.getImportType());
         result.setLocationURI(wb.getLocationURI().getValue());
         result.setNamespace(wb.getNamespace());
-        final Map<javax.xml.namespace.QName, String> additionalAttributes = new HashMap<>();
+        final Map<javax.xml.namespace.QName, String> otherAttributes = new HashMap<>();
         for (Map.Entry<QName, String> entry : wb.getAdditionalAttributes().entrySet()) {
             QNamePropertyConverter.dmnFromWB(entry.getKey())
-                    .ifPresent(qName -> additionalAttributes.put(qName, entry.getValue()));
+                    .ifPresent(qName -> otherAttributes.put(qName, entry.getValue()));
         }
+        wb.getNsContext().forEach((k, v) -> {
+            //TODO {manstis} jsonix does not like marshalling xmlns="a url" so remove the default namespace :-(
+            if (!Objects.equals(k, DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
+                otherAttributes.put(new javax.xml.namespace.QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                                                                  k,
+                                                                  XMLConstants.DEFAULT_NS_PREFIX),
+                                    v);
+            }
+        });
+        otherAttributes.remove(new javax.xml.namespace.QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                                                             DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix(),
+                                                             XMLConstants.DEFAULT_NS_PREFIX));
+
         result.setId(wb.getId().getValue());
         result.setName(wb.getName().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        result.getOtherAttributes().putAll(additionalAttributes);
-
-        //TODO {manstis} Do we need to copy wb.getNsContext() into dmn.otherAttributes()?
-        //wb.getNsContext().forEach((key, value) -> result.getNsContext().put(key, value));
+        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         return result;
     }

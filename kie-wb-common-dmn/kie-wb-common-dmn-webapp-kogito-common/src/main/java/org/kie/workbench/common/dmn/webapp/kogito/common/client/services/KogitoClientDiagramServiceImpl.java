@@ -74,7 +74,6 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     private DefinitionManager definitionManager;
     private DMNDiagramFactory dmnDiagramFactory;
     private Promises promises;
-    private DMN12 dmn12;
 
     public KogitoClientDiagramServiceImpl() {
         //CDI proxy
@@ -153,7 +152,6 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         try {
 
             final DMN12UnmarshallCallback jsCallback = dmn12 -> {
-                this.dmn12 = dmn12;
                 final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
                 final Graph graph = dmnMarshaller.unmarshall(metadata, definitions);
                 final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
@@ -197,20 +195,20 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         };
         try {
             final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
-            if (Objects.isNull(dmn12)) {
-                GWT.log("**************WARNING********************");
-                GWT.log("Instantiating dmn12 because it is null");
-                org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
-                jsiName.setPrefix("dmn");
-                jsiName.setLocalPart("definitions");
-                String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
-                jsiName.setKey(key);
-                String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
-                jsiName.setString(string);
-                dmn12 = Js.uncheckedCast(JsUtils.newWrappedInstance());
-                JsUtils.setNameOnWrapped(dmn12, jsiName);
-            }
+            GWT.log("**************WARNING********************");
+            GWT.log("Instantiating dmn12 because it is null");
+            org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
+            jsiName.setPrefix("dmn");
+            jsiName.setLocalPart("definitions");
+            String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
+            jsiName.setKey(key);
+            String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
+            jsiName.setString(string);
+
+            final DMN12 dmn12 = Js.uncheckedCast(JsUtils.newWrappedInstance());
+            JsUtils.setNameOnWrapped(dmn12, jsiName);
             JsUtils.setValueOnWrapped(dmn12, jsitDefinitions);
+
             MainJs.marshall(dmn12, jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage(), e);
