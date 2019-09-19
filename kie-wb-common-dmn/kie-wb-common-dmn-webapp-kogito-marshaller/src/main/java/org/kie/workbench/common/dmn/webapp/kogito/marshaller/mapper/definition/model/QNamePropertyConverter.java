@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class QNamePropertyConverter {
@@ -49,6 +50,19 @@ public class QNamePropertyConverter {
         return new QName(qName.getNamespaceURI(),
                          qName.getLocalPart(),
                          qName.getPrefix());
+    }
+
+    public static JSIName getJSINameFromQName(QName source) {
+        JSIName toReturn = JSIName.newInstance();
+        toReturn.setNamespaceURI(source.getNamespaceURI());
+        toReturn.setLocalPart(source.getLocalPart());
+        toReturn.setPrefix(source.getPrefix());
+        String key = "{" + toReturn.getNamespaceURI() + "}" + toReturn.getLocalPart();
+        toReturn.setKey(key);
+        String prefix = !StringUtils.isEmpty(toReturn.getPrefix()) ? toReturn.getPrefix() + ":"  : "";
+        String string = "{" + toReturn.getNamespaceURI() + "}" + prefix + toReturn.getLocalPart();
+        toReturn.setString(string);
+        return toReturn;
     }
 
     /*

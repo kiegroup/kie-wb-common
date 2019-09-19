@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -64,6 +63,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.DefinitionsConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.InputDataConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.KnowledgeSourceConverter;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.QNamePropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
@@ -246,9 +246,11 @@ public class DMNMarshallerKogitoMarshaller {
                                 }
                             }
                             dmnEdge.setId("dmnedge-" + uuid);
-                            dmnEdge.setDmnElementRef(new QName(XMLConstants.NULL_NS_URI,
-                                                               uuid,
-                                                               XMLConstants.DEFAULT_NS_PREFIX));
+                            String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
+                            JSIName jsiName = QNamePropertyConverter.getJSINameFromQName(new org.kie.workbench.common.dmn.api.property.dmn.QName(namespaceURI,
+                                                                                                    uuid,
+                                                                                                    XMLConstants.DEFAULT_NS_PREFIX));
+                            dmnEdge.setDmnElementRef(Js.uncheckedCast(jsiName));
 
                             JSIDMNEdge.addWaypoint(dmnEdge, PointUtils.point2dToDMNDIPoint(sourcePoint));
                             for (ControlPoint cp : connectionContent.getControlPoints()) {

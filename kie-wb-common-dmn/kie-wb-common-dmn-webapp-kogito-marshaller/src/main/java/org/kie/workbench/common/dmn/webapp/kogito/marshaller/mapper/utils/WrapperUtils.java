@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
@@ -34,7 +33,6 @@ import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColor;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIStyle;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITContext;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
@@ -54,8 +52,10 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAt
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.QNamePropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.ColorUtils;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.upperLeftBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.xOfBound;
@@ -192,7 +192,8 @@ public class WrapperUtils {
         toUpdate.setLocalPart(localPart);
         String key = "{" + toUpdate.getNamespaceURI() + "}" + toUpdate.getLocalPart();
         toUpdate.setKey(key);
-        String string = "{" + toUpdate.getNamespaceURI() + "}" + toUpdate.getPrefix() + ":" + toUpdate.getLocalPart();
+        prefix = !StringUtils.isEmpty(toUpdate.getPrefix()) ? toUpdate.getPrefix() + ":" : "";
+        String string = "{" + toUpdate.getNamespaceURI() + "}" + prefix + toUpdate.getLocalPart();
         toUpdate.setString(string);
     }
 
@@ -208,10 +209,10 @@ public class WrapperUtils {
         } else {
             namespaceURI = XMLConstants.NULL_NS_URI;
         }
-
-        result.setDmnElementRef(new QName(namespaceURI,
-                                          v.getDefinition().getId().getValue(),
-                                          XMLConstants.DEFAULT_NS_PREFIX));
+        JSIName jsiName = QNamePropertyConverter.getJSINameFromQName(new org.kie.workbench.common.dmn.api.property.dmn.QName(namespaceURI,
+                                                                                                                             v.getDefinition().getId().getValue(),
+                                                                                                                             XMLConstants.DEFAULT_NS_PREFIX));
+        result.setDmnElementRef(Js.uncheckedCast(jsiName));
         final JSIBounds bounds = JSIBounds.newInstance();
         result.setBounds(bounds);
         bounds.setX(xOfBound(upperLeftBound(v)));
