@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.Association;
@@ -187,7 +188,7 @@ public class DMNMarshallerKogitoMarshaller {
 
                     final JsArrayLike<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     for (int i = 0; i < associations.getLength(); i ++) {
-                        JSITAssociation wrappedJSITAssociation = getWrappedJSITAssociation(associations.getAt(i));
+                        JSITAssociation wrappedJSITAssociation = getWrappedJSITAssociation(Js.uncheckedCast(associations.getAt(i)));
                         JSITDefinitions.addArtifact(definitions, wrappedJSITAssociation);
                     }
 
@@ -281,7 +282,7 @@ public class DMNMarshallerKogitoMarshaller {
             JSITDefinitions.addArtifact(definitions, wrappedText);
         });
         for (int i = 0; i < dmnEdges.getLength(); i ++) {
-            JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNEdge(dmnEdges.getAt(i)));
+            JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdges.getAt(i))));
         }
         return definitions;
     }
