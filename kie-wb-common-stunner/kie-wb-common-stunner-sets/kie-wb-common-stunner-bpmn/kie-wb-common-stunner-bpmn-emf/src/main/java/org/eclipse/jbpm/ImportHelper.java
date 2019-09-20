@@ -18,7 +18,7 @@
  * Provides static helper methods for dealing with imports.
  *
  */
-package org.eclipse.bpmn2.util;
+package org.eclipse.jbpm;
 
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.DocumentRoot;

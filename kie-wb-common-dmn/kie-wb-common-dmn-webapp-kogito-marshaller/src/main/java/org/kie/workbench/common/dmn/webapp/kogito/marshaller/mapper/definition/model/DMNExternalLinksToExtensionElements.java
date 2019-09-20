@@ -26,15 +26,13 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAttachment;
 
-import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITAttachment;
-
 class DMNExternalLinksToExtensionElements {
 
     static void loadExternalLinksFromExtensionElements(final JSITDRGElement source,
                                                        final org.kie.workbench.common.dmn.api.definition.model.DRGElement target) {
 
         if (!Objects.isNull(source.getExtensionElements())) {
-            final JsArrayLike<Object> extensions =  JSITDMNElement.JSIExtensionElements.getAny(source.getExtensionElements());
+            final JsArrayLike<Object> extensions = JSITDMNElement.JSIExtensionElements.getAny(source.getExtensionElements());
             if (!Objects.isNull(extensions)) {
                 for (int i = 0; i < extensions.getLength(); i++) {
                     final Object extension = extensions.getAt(i);
@@ -59,21 +57,29 @@ class DMNExternalLinksToExtensionElements {
 
         final DocumentationLinks links = source.getLinksHolder().getValue();
         final JSITDMNElement.JSIExtensionElements elements = getOrCreateExtensionElements(target);
-        //TODO {manstis} Need to make this work in a JSIxxx friendly way
-//        final List<Object> extensions = Arrays.asList(elements.getAny());
-//        removeAllExistingLinks(extensions);
-        //
+
+        removeAllExistingLinks(elements);
+
         for (final DMNExternalLink link : links.getLinks()) {
             final JSITAttachment attachment = JSITAttachment.newInstance();
             attachment.setName(link.getDescription());
             attachment.setUrl(link.getUrl());
-            JSITAttachment wrappedJSITAttachment = getWrappedJSITAttachment(attachment, "dmn", "TOFIX");
-            JSITDMNElement.JSIExtensionElements.addAny(elements, wrappedJSITAttachment);
+            JSITDMNElement.JSIExtensionElements.addAny(elements, attachment);
         }
         target.setExtensionElements(elements);
     }
 
-
+    private static void removeAllExistingLinks(final JSITDMNElement.JSIExtensionElements elements) {
+        final JSITDMNElement.JSIExtensionElements others = JSITDMNElement.JSIExtensionElements.newInstance();
+        final JsArrayLike<Object> any = JSITDMNElement.JSIExtensionElements.getAny(elements);
+        for (int i = 0; i < any.getLength(); i++) {
+            final Object extension = any.getAt(i);
+            if (!JSITAttachment.instanceOf(extension)) {
+                JSITDMNElement.JSIExtensionElements.addAny(others, extension);
+            }
+        }
+        elements.setAny(others.getAny());
+    }
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
         return target.getExtensionElements() == null

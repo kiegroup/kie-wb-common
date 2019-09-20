@@ -124,8 +124,14 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
             if (Objects.nonNull(uuid)) {
                 final JSITComponentWidths componentWidths = JSITComponentWidths.newInstance();
                 componentWidths.setDmnElementRef(uuid);
-                //TODO {manstis} Need to convert WB's widths to something JSIxxx friendly
-//                componentWidths.setWidth(wb.getComponentWidths());
+                source.getEncapsulatedLogic().getComponentWidths()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach(w -> {
+                            final double dw = w;
+                            final float fw = (float) dw;
+                            JSITComponentWidths.addWidth(componentWidths, fw);
+                        });
                 componentWidthsConsumer.accept(componentWidths);
             }
         }
@@ -150,7 +156,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                     } else if (drgElement instanceof KnowledgeSource) {
                         final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri =  JSITDMNElementReference.newInstance();
+                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
                         JSITBusinessKnowledgeModel.addAuthorityRequirement(result, iReq);

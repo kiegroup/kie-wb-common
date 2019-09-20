@@ -66,6 +66,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.DMNMarshallerUtils;
 import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -77,7 +78,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
-import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito.findDMNDiagramRoot;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.upperLeftBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.xOfBound;
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils.yOfBound;
@@ -90,11 +90,6 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils
 
 @ApplicationScoped
 public class DMNMarshallerKogitoMarshaller {
-
-    private static final double CENTRE_TOLERANCE = 1.0;
-
-//    private final FactoryManager factoryManager;
-//    private final DMNMarshallerImportsHelperKogito dmnMarshallerImportsHelper;
 
     private InputDataConverter inputDataConverter;
     private DecisionConverter decisionConverter;
@@ -121,12 +116,11 @@ public class DMNMarshallerKogitoMarshaller {
     // MARSHALL
     // ==================================
 
-
     @SuppressWarnings("unchecked")
     public JSITDefinitions marshall(final Graph<?, Node<View, ?>> graph) {
         final Map<String, JSITDRGElement> nodes = new HashMap<>();
         final Map<String, JSITTextAnnotation> textAnnotations = new HashMap<>();
-        final Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot(graph);
+        final Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) DMNMarshallerUtils.findDMNDiagramRoot(graph);
         final Definitions definitionsStunnerPojo = dmnDiagramRoot.getContent().getDefinition().getDefinitions();
         final JsArrayLike<JSIDMNEdge> dmnEdges = JsUtils.getNativeArray();
 
@@ -187,11 +181,10 @@ public class DMNMarshallerKogitoMarshaller {
                     JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view));
 
                     final JsArrayLike<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
-                    for (int i = 0; i < associations.getLength(); i ++) {
+                    for (int i = 0; i < associations.getLength(); i++) {
                         JSITAssociation wrappedJSITAssociation = getWrappedJSITAssociation(Js.uncheckedCast(associations.getAt(i)));
                         JSITDefinitions.addArtifact(definitions, wrappedJSITAssociation);
                     }
-
                 }
 
                 // DMNDI Edge management.
@@ -282,7 +275,7 @@ public class DMNMarshallerKogitoMarshaller {
             JSITTextAnnotation wrappedText = getWrappedJSITTextAnnotation(text);
             JSITDefinitions.addArtifact(definitions, wrappedText);
         });
-        for (int i = 0; i < dmnEdges.getLength(); i ++) {
+        for (int i = 0; i < dmnEdges.getLength(); i++) {
             JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdges.getAt(i))));
         }
         return definitions;
@@ -294,7 +287,7 @@ public class DMNMarshallerKogitoMarshaller {
 
     @SuppressWarnings("unchecked")
     public JSITDRGElement stunnerToDMN(final Node<?, ?> node,
-                                        final Consumer<JSITComponentWidths> componentWidthsConsumer) {
+                                       final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         if (node.getContent() instanceof View<?>) {
             View<?> view = (View<?>) node.getContent();
             if (view.getDefinition() instanceof InputData) {

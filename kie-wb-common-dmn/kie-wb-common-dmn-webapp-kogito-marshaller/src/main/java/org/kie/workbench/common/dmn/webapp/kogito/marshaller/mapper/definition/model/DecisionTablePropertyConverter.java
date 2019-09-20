@@ -104,7 +104,7 @@ public class DecisionTablePropertyConverter {
     }
 
     public static JSITDecisionTable dmnFromWB(final DecisionTable wb) {
-        final JSITDecisionTable result =  JSITDecisionTable.newInstance();
+        final JSITDecisionTable result = JSITDecisionTable.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);

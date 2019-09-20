@@ -79,7 +79,7 @@ public class ContextPropertyConverter {
 
     public static JSITContext dmnFromWB(final Context wb,
                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        final JSITContext result =  JSITContext.newInstance();
+        final JSITContext result = JSITContext.newInstance();
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),

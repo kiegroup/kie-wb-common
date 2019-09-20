@@ -18,7 +18,6 @@ package org.eclipse.jbpm;
 
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Import;
-import org.eclipse.bpmn2.util.ImportHelper;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.xmi.resource.xml.XMLHelper;

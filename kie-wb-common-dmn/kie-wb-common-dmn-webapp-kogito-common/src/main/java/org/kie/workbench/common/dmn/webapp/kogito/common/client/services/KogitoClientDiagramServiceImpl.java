@@ -34,8 +34,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.DMN12UnmarshallCallback;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogito;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogitoMarshaller;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogitoUnmarshaller;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -67,8 +67,8 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     //This path is needed by DiagramsNavigatorImpl's use of AbstractClientDiagramService.lookup(..) to retrieve a list of diagrams
     private static final String ROOT = "default://master@system/stunner/" + DIAGRAMS_PATH;
 
-    private DMNMarshallerKogito dmnMarshaller;
-    private DMNMarshallerKogitoMarshaller actualMarshaller;
+    private DMNMarshallerKogitoUnmarshaller dmnMarshallerKogitoUnmarshaller;
+    private DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller;
     private Caller<KogitoDiagramService> kogitoDiagramServiceCaller;
     private FactoryManager factoryManager;
     private DefinitionManager definitionManager;
@@ -80,15 +80,15 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     }
 
     @Inject
-    public KogitoClientDiagramServiceImpl(final DMNMarshallerKogito dmnMarshaller,
+    public KogitoClientDiagramServiceImpl(final DMNMarshallerKogitoUnmarshaller dmnMarshallerKogitoUnmarshaller,
                                           final DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller,
                                           final Caller<KogitoDiagramService> kogitoDiagramServiceCaller,
                                           final FactoryManager factoryManager,
                                           final DefinitionManager definitionManager,
                                           final DMNDiagramFactory dmnDiagramFactory,
                                           final Promises promises) {
-        this.dmnMarshaller = dmnMarshaller;
-        this.actualMarshaller = dmnMarshallerKogitoMarshaller;
+        this.dmnMarshallerKogitoUnmarshaller = dmnMarshallerKogitoUnmarshaller;
+        this.dmnMarshallerKogitoMarshaller = dmnMarshallerKogitoMarshaller;
         this.kogitoDiagramServiceCaller = kogitoDiagramServiceCaller;
         this.factoryManager = factoryManager;
         this.definitionManager = definitionManager;
@@ -153,7 +153,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
 
             final DMN12UnmarshallCallback jsCallback = dmn12 -> {
                 final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
-                final Graph graph = dmnMarshaller.unmarshall(metadata, definitions);
+                final Graph graph = dmnMarshallerKogitoUnmarshaller.unmarshall(metadata, definitions);
                 final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
                 final String title = diagramNode.getContent().getDefinition().getDefinitions().getName().getValue();
                 metadata.setTitle(title);
@@ -194,7 +194,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
             GWT.log(breakpoint);
         };
         try {
-            final JSITDefinitions jsitDefinitions = actualMarshaller.marshall(graph);
+            final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);
             GWT.log("**************WARNING********************");
             GWT.log("Instantiating dmn12 because it is null");
             org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
