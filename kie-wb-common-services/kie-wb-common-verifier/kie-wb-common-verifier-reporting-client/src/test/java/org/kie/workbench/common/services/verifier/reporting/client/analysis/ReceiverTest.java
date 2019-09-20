@@ -16,12 +16,15 @@
 package org.kie.workbench.common.services.verifier.reporting.client.analysis;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import com.google.gwt.webworker.client.MessageEvent;
 import com.google.gwt.webworker.client.MessageHandler;
 import com.google.gwt.webworker.client.Worker;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.drools.verifier.api.Status;
+import org.drools.verifier.api.reporting.IllegalVerifierStateIssue;
+import org.drools.verifier.api.reporting.Issue;
 import org.drools.verifier.api.reporting.Issues;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +33,9 @@ import org.kie.workbench.common.services.verifier.api.client.api.WebWorkerExcept
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.uberfire.mvp.Command;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.mock;
@@ -45,8 +49,8 @@ public class ReceiverTest {
     private Worker worker;
     @Captor
     private ArgumentCaptor<MessageHandler> messageHandlerArgumentCaptor;
-    @Mock
-    private Command shutdownCommand;
+    @Captor
+    private ArgumentCaptor<Set> setArgumentCaptor;
     @Mock
     private AnalysisReporter reporter;
     private Receiver receiver;
@@ -54,7 +58,7 @@ public class ReceiverTest {
     private Object returnObject;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         receiver = new Receiver(reporter) {
             @Override
@@ -63,8 +67,7 @@ public class ReceiverTest {
             }
         };
 
-        receiver.setUp(worker,
-                       shutdownCommand);
+        receiver.setUp(worker);
         verify(worker).setOnMessage(messageHandlerArgumentCaptor.capture());
     }
 
@@ -94,7 +97,11 @@ public class ReceiverTest {
         messageHandlerArgumentCaptor.getValue().onMessage(mock(MessageEvent.class));
 
         verify(reporter, never()).sendStatus(any());
-        verify(reporter, never()).sendReport(anySet());
-        verify(shutdownCommand).execute();
+        verify(reporter).sendReport(setArgumentCaptor.capture());
+        verify(worker).terminate();
+
+        final Set<Issue> issues = setArgumentCaptor.getValue();
+        assertEquals(1, issues.size());
+        assertTrue(issues.iterator().next() instanceof IllegalVerifierStateIssue);
     }
 }

@@ -15,18 +15,15 @@
  */
 package org.kie.workbench.common.services.verifier.reporting.client.analysis;
 
+import com.google.gwt.webworker.client.Worker;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.verifier.api.client.api.Initialize;
 import org.kie.workbench.common.services.verifier.api.client.api.RequestStatus;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
-import org.uberfire.mvp.Command;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -35,9 +32,6 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class VerifierWebWorkerConnectionImplTest {
-
-    @Captor
-    private ArgumentCaptor<Command> shutdownCommandCaptor;
 
     private VerifierWebWorkerConnection verifierWebWorkerConnection;
 
@@ -50,13 +44,20 @@ public class VerifierWebWorkerConnectionImplTest {
     @Mock
     private Receiver receiver;
 
+    @Mock
+    private Worker worker;
+
     @Before
-    public void setUp() throws
-            Exception {
+    public void setUp() {
         verifierWebWorkerConnection = spy(new VerifierWebWorkerConnectionImpl(initialize,
                                                                               "verifier/dtableVerifier/dtableVerifier.nocache.js",
                                                                               poster,
-                                                                              receiver));
+                                                                              receiver) {
+            @Override
+            protected Worker createWorker() {
+                return worker;
+            }
+        });
     }
 
     @Test
@@ -65,8 +66,7 @@ public class VerifierWebWorkerConnectionImplTest {
         verifierWebWorkerConnection.activate();
 
         verify(receiver).activate();
-        verify(receiver).setUp(any(),
-                               shutdownCommandCaptor.capture());
+        verify(receiver).setUp(any());
 
         verify(poster).setUp(any());
         verify(poster).post(any(Initialize.class));
@@ -84,8 +84,7 @@ public class VerifierWebWorkerConnectionImplTest {
 
         verify(receiver).activate();
         verify(receiver,
-               never()).setUp(any(),
-                              shutdownCommandCaptor.capture());
+               never()).setUp(any());
 
         verify(poster,
                never()).setUp(any());
@@ -96,25 +95,10 @@ public class VerifierWebWorkerConnectionImplTest {
     public void terminateCanBeCalledEvenIfWorkerHasNotBeenActivated() throws
             Exception {
 
-        verifierWebWorkerConnection.terminate();
-
-        assertTrue("You shall pass!",
-                   true);
-    }
-
-    @Test
-    public void commandShutDown() throws
-            Exception {
         verifierWebWorkerConnection.activate();
 
-        verify(receiver).activate();
-        verify(receiver).setUp(any(),
-                               shutdownCommandCaptor.capture());
+        verifierWebWorkerConnection.terminate();
 
-        verify(verifierWebWorkerConnection, never()).terminate();
-
-        shutdownCommandCaptor.getValue().execute();
-
-        verify(verifierWebWorkerConnection).terminate();
+        verify(worker).terminate();
     }
 }

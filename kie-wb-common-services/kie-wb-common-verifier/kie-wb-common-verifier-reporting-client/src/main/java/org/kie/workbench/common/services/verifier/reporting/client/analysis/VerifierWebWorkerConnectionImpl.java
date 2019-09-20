@@ -51,11 +51,14 @@ public class VerifierWebWorkerConnectionImpl
     }
 
     private void startWorker() {
-        worker = Worker.create(pathToVerifier);
+        worker = createWorker();
 
         poster.setUp(worker);
-        receiver.setUp(worker,
-                       () -> terminate());
+        receiver.setUp(worker);
+    }
+
+    protected Worker createWorker() {
+        return Worker.create(pathToVerifier);
     }
 
     @Override

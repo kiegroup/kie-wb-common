@@ -20,19 +20,20 @@ import java.util.logging.Logger;
 
 import com.google.gwt.webworker.client.Worker;
 import org.drools.verifier.api.Status;
+import org.drools.verifier.api.reporting.IllegalVerifierStateIssue;
+import org.drools.verifier.api.reporting.Issue;
 import org.drools.verifier.api.reporting.Issues;
 import org.jboss.errai.enterprise.client.jaxrs.MarshallingWrapper;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.services.verifier.api.client.api.WebWorkerException;
 import org.kie.workbench.common.services.verifier.api.client.api.WebWorkerLogMessage;
-import org.uberfire.mvp.Command;
 
 public class Receiver {
 
     private static final Logger LOGGER = Logger.getLogger("DTable Analyzer");
 
     private AnalysisReporter reporter;
-    private Command command = null;
+    private Worker worker;
 
     public Receiver(final AnalysisReporter reporter) {
         this.reporter = PortablePreconditions.checkNotNull("reporter",
@@ -72,14 +73,18 @@ public class Receiver {
     }
 
     public void shutdown() {
-        if (command != null) {
-            command.execute();
+
+        if (worker != null) {
+            worker.terminate();
         }
+
+        final HashSet<Issue> issues = new HashSet<>();
+        issues.add(new IllegalVerifierStateIssue());
+        reporter.sendReport(issues);
     }
 
-    public void setUp(final Worker worker,
-                      final Command command) {
-        this.command = command;
+    public void setUp(final Worker worker) {
+        this.worker = worker;
         worker.setOnMessage(messageEvent -> received(messageEvent.getDataAsString()));
     }
 }
