@@ -59,7 +59,7 @@ public class BPMNElementDecorators {
                                                       .getName());
     }
 
-    public static MarshallingMessageDecorator<Result> resultBpmnDecorator() {
+    public static <T> MarshallingMessageDecorator<Result<T>> resultBpmnDecorator() {
         return MarshallingMessageDecorator.of(r ->
                                               {
                                                   BpmnNode o = (BpmnNode) r.value();

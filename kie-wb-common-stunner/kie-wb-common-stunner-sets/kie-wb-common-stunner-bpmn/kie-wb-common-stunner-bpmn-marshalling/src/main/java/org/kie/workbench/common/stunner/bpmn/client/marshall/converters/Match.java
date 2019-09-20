@@ -120,7 +120,7 @@ public class Match<In, Out> {
         return when_(type, reportMissing(clazz));
     }
 
-    public <T extends In> Match<In, Out> ignore(Function<In, Boolean> type, Class<T> clazz) {
+    public <T extends In> Match<In, Out> ignore(Function<T, Boolean> type, Class<T> clazz) {
         return when_(type, ignored(clazz));
     }
 

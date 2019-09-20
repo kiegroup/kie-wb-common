@@ -27,6 +27,7 @@ import bpsim.ResourceParameters;
 import bpsim.TimeParameters;
 import bpsim.UniformDistributionType;
 import org.eclipse.emf.common.util.EList;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
@@ -90,27 +91,27 @@ public class Simulations {
         Parameter processingTime = timeParams.getProcessingTime();
         ParameterValue paramValue = processingTime.getParameterValue().get(0);
 
-        if (paramValue instanceof NormalDistributionType) {
-            NormalDistributionType ndt = (NormalDistributionType) paramValue;
-            simulationSet.getMean().setValue(ndt.getMean());
-            simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
-            simulationSet.getDistributionType().setValue("normal");
-            return simulationSet;
-        } else if (paramValue instanceof UniformDistributionType) {
-            UniformDistributionType udt = (UniformDistributionType) paramValue;
-            simulationSet.getMin().setValue(udt.getMin());
-            simulationSet.getMax().setValue(udt.getMax());
-            simulationSet.getDistributionType().setValue("uniform");
-            return simulationSet;
-        } else if (paramValue instanceof PoissonDistributionType) {
-            PoissonDistributionType pdt = (PoissonDistributionType) paramValue;
-            simulationSet.getMean().setValue(pdt.getMean());
-            simulationSet.getDistributionType().setValue("poisson");
-            return simulationSet;
-        } else {
-            // TODO: Kogito
-            throw new UnsupportedOperationException(paramValue.getClass().toString());
-        }
+        return Match.<ParameterValue, SimulationAttributeSet>of()
+                .<NormalDistributionType>when(e -> e instanceof NormalDistributionType, ndt -> {
+                    simulationSet.getMean().setValue(ndt.getMean());
+                    simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
+                    simulationSet.getDistributionType().setValue("normal");
+                    return simulationSet;
+                })
+                .<UniformDistributionType>when(e -> e instanceof UniformDistributionType, udt -> {
+                    simulationSet.getMin().setValue(udt.getMin());
+                    simulationSet.getMax().setValue(udt.getMax());
+                    simulationSet.getDistributionType().setValue("uniform");
+                    return simulationSet;
+                })
+                .<PoissonDistributionType>when(e -> e instanceof PoissonDistributionType, pdt -> {
+                    simulationSet.getMean().setValue(pdt.getMean());
+                    simulationSet.getDistributionType().setValue("poisson");
+                    return simulationSet;
+                })
+                .apply(paramValue)
+                .asSuccess()
+                .value();
     }
 
     private static Double extractDouble(Parameter parameter) {

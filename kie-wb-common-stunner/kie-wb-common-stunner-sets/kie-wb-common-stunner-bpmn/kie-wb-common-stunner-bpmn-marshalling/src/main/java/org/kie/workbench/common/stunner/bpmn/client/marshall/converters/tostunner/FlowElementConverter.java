@@ -26,7 +26,6 @@ import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
-import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.Task;
@@ -34,7 +33,6 @@ import org.eclipse.bpmn2.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.BPMNElementDecorators;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 
 public class FlowElementConverter extends AbstractConverter {
 
@@ -46,23 +44,33 @@ public class FlowElementConverter extends AbstractConverter {
     }
 
     public Result<BpmnNode> convertNode(FlowElement flowElement) {
-        return Match.<FlowElement,Result<BpmnNode>>of()
-                .when(e -> e instanceof StartEvent, converterFactory.startEventConverter()::convert)
-                .when(e -> e instanceof EndEvent, converterFactory.endEventConverter()::convert)
-                .when(e -> e instanceof BoundaryEvent, converterFactory.intermediateCatchEventConverter()::convertBoundaryEvent)
-                .when(e -> e instanceof IntermediateCatchEvent, converterFactory.intermediateCatchEventConverter()::convert)
-                .when(e -> e instanceof IntermediateThrowEvent, converterFactory.intermediateThrowEventConverter()::convert)
-                .when(e -> e instanceof Task, converterFactory.taskConverter()::convert)
-                .when(e -> e instanceof Gateway, converterFactory.gatewayConverter()::convert)
-                .when(e -> e instanceof SubProcess, converterFactory.subProcessConverter()::convertSubProcess)
-                .when(e -> e instanceof CallActivity, converterFactory.callActivityConverter()::convert)
-                .when(e -> e instanceof TextAnnotation, converterFactory.textAnnotationConverter()::convert)
+        return Match.<FlowElement, Result<BpmnNode>>of()
+                .<StartEvent>when(e -> e instanceof StartEvent,
+                                  converterFactory.startEventConverter()::convert)
+                .<EndEvent>when(e -> e instanceof EndEvent,
+                                converterFactory.endEventConverter()::convert)
+                .<BoundaryEvent>when(e -> e instanceof BoundaryEvent,
+                                     converterFactory.intermediateCatchEventConverter()::convertBoundaryEvent)
+                .<IntermediateCatchEvent>when(e -> e instanceof IntermediateCatchEvent,
+                                              converterFactory.intermediateCatchEventConverter()::convert)
+                .<IntermediateThrowEvent>when(e -> e instanceof IntermediateThrowEvent,
+                                              converterFactory.intermediateThrowEventConverter()::convert)
+                .<Task>when(e -> e instanceof Task,
+                            converterFactory.taskConverter()::convert)
+                .<Gateway>when(e -> e instanceof Gateway,
+                               converterFactory.gatewayConverter()::convert)
+                .<SubProcess>when(e -> e instanceof SubProcess,
+                                  converterFactory.subProcessConverter()::convertSubProcess)
+                .<CallActivity>when(e -> e instanceof CallActivity,
+                                    converterFactory.callActivityConverter()::convert)
+                .<TextAnnotation>when(e -> e instanceof TextAnnotation,
+                                      converterFactory.textAnnotationConverter()::convert)
                 .ignore(e -> e instanceof DataStoreReference, DataStoreReference.class)
                 .ignore(e -> e instanceof DataObjectReference, DataObjectReference.class)
                 .ignore(e -> e instanceof DataObject, DataObject.class)
                 .defaultValue(Result.ignored("FlowElement not found", getNotFoundMessage(flowElement)))
-                //.inputDecorator(BPMNElementDecorators.flowElementDecorator())
-                //.outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
+                .inputDecorator(BPMNElementDecorators.flowElementDecorator())
+                .outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
                 .mode(getMode())
                 .apply(flowElement)
                 .value();

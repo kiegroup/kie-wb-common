@@ -20,6 +20,7 @@ import org.eclipse.bpmn2.BaseElement;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessage;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessageKeys;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.BPMNElementDecorators;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 
 public abstract class AbstractConverter {
@@ -38,7 +39,7 @@ public abstract class AbstractConverter {
         return MarshallingMessage.builder()
                 .type(Violation.Type.WARNING)
                 .messageKey(MarshallingMessageKeys.ignoredUnknownElement)
-                // TODO: Kogito - .messageArguments(BPMNElementDecorators.baseElementDecorator().getName(baseElement))
+                .messageArguments(BPMNElementDecorators.baseElementDecorator().getName(baseElement))
                 .build();
     }
 }

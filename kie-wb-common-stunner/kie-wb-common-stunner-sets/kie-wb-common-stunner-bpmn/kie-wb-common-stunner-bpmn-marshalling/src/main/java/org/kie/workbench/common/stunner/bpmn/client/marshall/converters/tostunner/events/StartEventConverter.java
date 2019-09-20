@@ -28,6 +28,7 @@ import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.AbstractConverter;
@@ -37,7 +38,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.EventDefinitionReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.StartCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
@@ -87,30 +87,16 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
             case 0:
                 return Result.success(noneEvent(event));
             case 1:
-                // TODO (TiagoD): Use of BPMNElementDecorators
-                EventDefinition e = eventDefinitions.get(0);
-                if (e instanceof SignalEventDefinition) {
-                    return Result.success(signalEvent(event, (SignalEventDefinition) e));
-                }
-                if (e instanceof MessageEventDefinition) {
-                    return Result.success(messageEvent(event, (MessageEventDefinition) e));
-                }
-                if (e instanceof TimerEventDefinition) {
-                    return Result.success(timerEvent(event, (TimerEventDefinition) e));
-                }
-                if (e instanceof ErrorEventDefinition) {
-                    return Result.success(errorEvent(event, (ErrorEventDefinition) e));
-                }
-                if (e instanceof ConditionalEventDefinition) {
-                    return Result.success(conditionalEvent(event, (ConditionalEventDefinition) e));
-                }
-                if (e instanceof EscalationEventDefinition) {
-                    return Result.success(escalationEvent(event, (EscalationEventDefinition) e));
-                }
-                if (e instanceof CompensateEventDefinition) {
-                    return Result.success(compensationEvent(event, (CompensateEventDefinition) e));
-                }
-                return ConverterUtils.ignore("StartEvent", event);
+                return Match.<EventDefinition, BpmnNode>of()
+                        .<SignalEventDefinition>when(e -> e instanceof SignalEventDefinition, e -> signalEvent(event, e))
+                        .<MessageEventDefinition>when(e -> e instanceof MessageEventDefinition, e -> messageEvent(event, e))
+                        .<TimerEventDefinition>when(e -> e instanceof TimerEventDefinition, e -> timerEvent(event, e))
+                        .<ErrorEventDefinition>when(e -> e instanceof ErrorEventDefinition, e -> errorEvent(event, e))
+                        .<ConditionalEventDefinition>when(e -> e instanceof ConditionalEventDefinition, e -> conditionalEvent(event, e))
+                        .<EscalationEventDefinition>when(e -> e instanceof EscalationEventDefinition, e -> escalationEvent(event, e))
+                        .<CompensateEventDefinition>when(e -> e instanceof CompensateEventDefinition, e -> compensationEvent(event, e))
+                        .mode(getMode())
+                        .apply(eventDefinitions.get(0));
             default:
                 throw new UnsupportedOperationException("Multiple event definitions not supported for start event");
         }

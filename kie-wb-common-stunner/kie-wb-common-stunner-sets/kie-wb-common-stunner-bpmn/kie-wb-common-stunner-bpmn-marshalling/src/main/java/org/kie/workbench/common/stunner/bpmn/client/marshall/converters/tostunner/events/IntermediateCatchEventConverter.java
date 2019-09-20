@@ -17,6 +17,8 @@
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.events;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CatchEvent;
@@ -29,7 +31,9 @@ import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.eclipse.bpmn2.impl.EventDefinitionImpl;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.AbstractConverter;
@@ -38,7 +42,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.CatchEventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.EventDefinitionReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
@@ -88,31 +91,19 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
             case 0:
                 throw new UnsupportedOperationException("An intermediate catch event should contain exactly one definition");
             case 1:
-                // TODO (TiagoD): Use of BPMNElementDecorators
-                EventDefinition e = eventDefinitions.get(0);
-                if (e instanceof TimerEventDefinition) {
-                    return Result.success(timerEvent(event, (TimerEventDefinition) e));
-                }
-                if (e instanceof SignalEventDefinition) {
-                    return Result.success(signalEvent(event, (SignalEventDefinition) e));
-                }
-                if (e instanceof MessageEventDefinition) {
-                    return Result.success(messageEvent(event, (MessageEventDefinition) e));
-                }
-                if (e instanceof ErrorEventDefinition) {
-                    return Result.success(errorEvent(event, (ErrorEventDefinition) e));
-                }
-                if (e instanceof ConditionalEventDefinition) {
-                    return Result.success(conditionalEvent(event, (ConditionalEventDefinition) e));
-                }
-                if (e instanceof EscalationEventDefinition) {
-                    return Result.success(escalationEvent(event, (EscalationEventDefinition) e));
-                }
-                if (e instanceof CompensateEventDefinition) {
-                    return Result.success(compensationEvent(event, (CompensateEventDefinition) e));
-                }
-                return ConverterUtils.ignore("IntermediateCatchEvent", event);
-
+                return Match.<EventDefinition, Result<BpmnNode>>of()
+                        .<TimerEventDefinition>when(e -> e instanceof TimerEventDefinition, e -> timerEvent(event, e))
+                        .<SignalEventDefinition>when(e -> e instanceof SignalEventDefinition, e -> signalEvent(event, e))
+                        .<MessageEventDefinition>when(e -> e instanceof MessageEventDefinition, e -> messageEvent(event, e))
+                        .<ErrorEventDefinition>when(e -> e instanceof ErrorEventDefinition, e -> errorEvent(event, e))
+                        .<ConditionalEventDefinition>when(e -> e instanceof ConditionalEventDefinition, e -> conditionalEvent(event, e))
+                        .<EscalationEventDefinition>when(e -> e instanceof EscalationEventDefinition, e -> escalationEvent(event, e))
+                        .<CompensateEventDefinition>when(e -> e instanceof CompensateEventDefinition,
+                                                         e -> compensationEvent(event, e))
+                        .defaultValue(Result.ignored("Ignored IntermediateCatchEvent", getNotFoundMessage(event)))
+                        .mode(getMode())
+                        .apply(eventDefinitions.get(0))
+                        .value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate catch event");
         }
@@ -125,36 +116,35 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
             case 0:
                 throw new UnsupportedOperationException("A boundary event should contain exactly one definition");
             case 1:
-                // TODO (TiagoD): Use of BPMNElementDecorators
-                EventDefinition e = eventDefinitions.get(0);
-                if (e instanceof SignalEventDefinition) {
-                    return Result.success(signalEvent(event, (SignalEventDefinition) e).docked());
-                }
-                if (e instanceof TimerEventDefinition) {
-                    return Result.success(timerEvent(event, (TimerEventDefinition) e).docked());
-                }
-                if (e instanceof MessageEventDefinition) {
-                    return Result.success(messageEvent(event, (MessageEventDefinition) e).docked());
-                }
-                if (e instanceof ErrorEventDefinition) {
-                    return Result.success(errorEvent(event, (ErrorEventDefinition) e).docked());
-                }
-                if (e instanceof ConditionalEventDefinition) {
-                    return Result.success(conditionalEvent(event, (ConditionalEventDefinition) e).docked());
-                }
-                if (e instanceof EscalationEventDefinition) {
-                    return Result.success(escalationEvent(event, (EscalationEventDefinition) e).docked());
-                }
-                if (e instanceof CompensateEventDefinition) {
-                    return Result.success(compensationEvent(event, (CompensateEventDefinition) e).docked());
-                }
-                return ConverterUtils.ignore("IntermediateCatchEvent (Boundary)", event);
+                Result<BpmnNode> result = Match.<EventDefinition, Result<BpmnNode>>of()
+                        .<SignalEventDefinition>when(e -> e instanceof SignalEventDefinition, e -> signalEvent(event, e))
+                        .<TimerEventDefinition>when(e -> e instanceof TimerEventDefinition, e -> timerEvent(event, e))
+                        .<MessageEventDefinition>when(e -> e instanceof MessageEventDefinition, e -> messageEvent(event, e))
+                        .<ErrorEventDefinition>when(e -> e instanceof ErrorEventDefinition, e -> errorEvent(event, e))
+                        .<ConditionalEventDefinition>when(e -> e instanceof ConditionalEventDefinition, e -> conditionalEvent(event, e))
+                        .<EscalationEventDefinition>when(e -> e instanceof EscalationEventDefinition, e -> escalationEvent(event, e))
+                        .<CompensateEventDefinition>when(e -> e instanceof CompensateEventDefinition, e -> compensationEvent(event, e))
+                        //TODO:kogito verify this ignore
+                        //.<BoundaryEventImpl>ignore(e -> e instanceof BoundaryEventImpl,BoundaryEventImpl.class)
+                        .<EventDefinitionImpl>ignore(e -> event.getClass().equals(EventDefinitionImpl.class),
+                                                     EventDefinitionImpl.class)
+                        .defaultValue(Result.ignored("BoundaryEvent ignored", getNotFoundMessage(event)))
+                        .mode(getMode())
+                        .apply(eventDefinitions.get(0))
+                        .value();
+                return Optional.of(result)
+                        .map(Result::value)
+                        .filter(Objects::nonNull)
+                        .map(BpmnNode::docked)
+                        .map(node -> Result.success(node))
+                        .orElse(result);
+
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for boundary event");
         }
     }
 
-    private BpmnNode errorEvent(CatchEvent event, ErrorEventDefinition e) {
+    private Result<BpmnNode> errorEvent(CatchEvent event, ErrorEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateErrorEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class);
 
@@ -185,10 +175,10 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode signalEvent(CatchEvent event, SignalEventDefinition e) {
+    private Result<BpmnNode> signalEvent(CatchEvent event, SignalEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateSignalEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class);
 
@@ -219,10 +209,10 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode timerEvent(CatchEvent event, TimerEventDefinition e) {
+    private Result<BpmnNode> timerEvent(CatchEvent event, TimerEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateTimerEvent>, Edge> node = factoryManager.newNode(nodeId, IntermediateTimerEvent.class);
 
@@ -249,10 +239,10 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode messageEvent(CatchEvent event, MessageEventDefinition e) {
+    private Result<BpmnNode> messageEvent(CatchEvent event, MessageEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateMessageEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class);
 
@@ -278,15 +268,16 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
                         new CancelActivity(p.isCancelActivity()),
                         new SLADueDate(p.getSlaDueDate()),
                         new MessageRef(EventDefinitionReader.messageRefOf(e),
-                                       EventDefinitionReader.messageRefStructureOf(e)))
+                                       EventDefinitionReader.messageRefStructureOf(e))
+                )
         );
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode conditionalEvent(CatchEvent event, ConditionalEventDefinition e) {
+    private Result<BpmnNode> conditionalEvent(CatchEvent event, ConditionalEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateConditionalEvent>, Edge> node = factoryManager.newNode(nodeId, IntermediateConditionalEvent.class);
 
@@ -313,11 +304,11 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode escalationEvent(CatchEvent event,
-                                     EscalationEventDefinition e) {
+    private Result<BpmnNode> escalationEvent(CatchEvent event,
+                                             EscalationEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateEscalationEvent>, Edge> node = factoryManager.newNode(nodeId,
                                                                                     IntermediateEscalationEvent.class);
@@ -349,11 +340,11 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 
-    private BpmnNode compensationEvent(CatchEvent event,
-                                       CompensateEventDefinition e) {
+    private Result<BpmnNode> compensationEvent(CatchEvent event,
+                                               CompensateEventDefinition e) {
         String nodeId = event.getId();
         Node<View<IntermediateCompensationEvent>, Edge> node = factoryManager.newNode(nodeId,
                                                                                       IntermediateCompensationEvent.class);
@@ -379,6 +370,6 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        return BpmnNode.of(node, p);
+        return Result.success(BpmnNode.of(node, p));
     }
 }
