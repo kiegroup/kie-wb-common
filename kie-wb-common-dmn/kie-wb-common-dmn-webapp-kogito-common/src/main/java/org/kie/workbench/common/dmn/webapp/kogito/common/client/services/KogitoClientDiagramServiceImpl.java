@@ -190,8 +190,13 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         }
 
         final DMN12MarshallCallback jsCallback = xml -> {
-            final String breakpoint = xml;
+            String breakpoint = xml;
+            //TODO {gcardosi} marshalled xml does not start with "xml" tag: for the moment being manually add it
+            if (!breakpoint.startsWith("<?xml version=\"1.0\" ?>")) {
+                breakpoint = "<?xml version=\"1.0\" ?>\r\n" + breakpoint;
+            }
             GWT.log(breakpoint);
+
         };
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);

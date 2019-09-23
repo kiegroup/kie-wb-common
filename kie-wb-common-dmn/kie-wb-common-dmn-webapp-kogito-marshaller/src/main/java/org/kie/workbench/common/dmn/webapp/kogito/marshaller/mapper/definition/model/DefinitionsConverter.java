@@ -130,9 +130,15 @@ public class DefinitionsConverter {
         if (!StringUtils.isEmpty(description)) {
             result.setDescription(description);
         }
-        result.setExpressionLanguage(ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage()));
-        result.setTypeLanguage(wb.getTypeLanguage());
-
+        //TODO {gcardosi} "expressionLanguage" attribute is not present in marshalled xml - manually add it
+        final String typeLanguage = wb.getTypeLanguage();
+        String expressionLanguage = !StringUtils.isEmpty(ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage())) ? ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage()) : typeLanguage;
+        if (!StringUtils.isEmpty(typeLanguage)) {
+            result.setTypeLanguage(typeLanguage);
+        }
+        if (!StringUtils.isEmpty(expressionLanguage)) {
+            result.setExpressionLanguage(expressionLanguage);
+        }
         final Map<QName, String> otherAttributes = new HashMap<>();
         wb.getNsContext().forEach((k, v) -> {
             //TODO {manstis} jsonix does not like marshalling xmlns="a url" so remove the default namespace :-(

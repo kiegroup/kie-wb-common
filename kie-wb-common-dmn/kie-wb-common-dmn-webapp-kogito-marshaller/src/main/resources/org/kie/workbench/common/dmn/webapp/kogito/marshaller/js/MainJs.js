@@ -16,7 +16,8 @@ MainJs = {
                 "http://www.omg.org/spec/DMN/20180521/DI/": "di",
                 "http://www.drools.org/kie/dmn/1.2": "kie",
                 "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
-                "http://www.omg.org/spec/DMN/20180521/DC/": "dc"
+                "http://www.omg.org/spec/DMN/20180521/DC/": "dc",
+                "http://www.omg.org/spec/DMN/20180521/FEEL/": "feel"
             }
         });
 
@@ -35,7 +36,8 @@ MainJs = {
                 "http://www.omg.org/spec/DMN/20180521/DI/": "di",
                 "http://www.drools.org/kie/dmn/1.2": "kie",
                 "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
-                "http://www.omg.org/spec/DMN/20180521/DC/": "dc"
+                "http://www.omg.org/spec/DMN/20180521/DC/": "dc",
+                "http://www.omg.org/spec/DMN/20180521/FEEL/": "feel"
             }
         });
 
