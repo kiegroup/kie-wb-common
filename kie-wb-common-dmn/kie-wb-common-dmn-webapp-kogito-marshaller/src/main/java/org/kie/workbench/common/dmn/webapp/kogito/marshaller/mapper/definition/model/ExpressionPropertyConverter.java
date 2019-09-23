@@ -136,33 +136,28 @@ public class ExpressionPropertyConverter {
             final JSITLiteralExpression wrappedJSITLiteralExpression = getWrappedJSITLiteralExpression(unwrappedJSITLiteralExpression, "dmn", "literalExpression");
             return wrappedJSITLiteralExpression;
         } else if (wb instanceof Context) {
-            final JSITContext unwrappedJSITContext = ContextPropertyConverter.dmnFromWB((Context) wb,
-                                                                                        componentWidthsConsumer);
-            final JSITContext wrappedJSITContext = getWrappedJSITContext(unwrappedJSITContext, "UNKNOWN", "UNKNOWN");
+            final JSITContext unwrappedJSITContext = ContextPropertyConverter.dmnFromWB((Context) wb, componentWidthsConsumer);
+            final JSITContext wrappedJSITContext = getWrappedJSITContext(unwrappedJSITContext, "dmn", "context");
             return wrappedJSITContext;
         } else if (wb instanceof Relation) {
-            final JSITRelation unwrappedJSITRelation = RelationPropertyConverter.dmnFromWB((Relation) wb,
-                                                                                           componentWidthsConsumer);
-            final JSITRelation wrappedJSITRelation = getWrappedJSITRelation(unwrappedJSITRelation, "UNKNOWN", "UNKNOWN");
+            final JSITRelation unwrappedJSITRelation = RelationPropertyConverter.dmnFromWB((Relation) wb, componentWidthsConsumer);
+            final JSITRelation wrappedJSITRelation = getWrappedJSITRelation(unwrappedJSITRelation, "dmn", "relation");
             return wrappedJSITRelation;
         } else if (wb instanceof List) {
-            final JSITList unwrappedJSITList = ListPropertyConverter.dmnFromWB((List) wb,
-                                                                               componentWidthsConsumer);
-            final JSITList wrappedJSITList = getWrappedJSITList(unwrappedJSITList, "UNKNOWN", "UNKNOWN");
+            final JSITList unwrappedJSITList = ListPropertyConverter.dmnFromWB((List) wb, componentWidthsConsumer);
+            final JSITList wrappedJSITList = getWrappedJSITList(unwrappedJSITList, "dmn", "list");
             return wrappedJSITList;
         } else if (wb instanceof Invocation) {
-            final JSITInvocation unwrappedJSITInvocation = InvocationPropertyConverter.dmnFromWB((Invocation) wb,
-                                                                                                 componentWidthsConsumer);
-            final JSITInvocation wrappedJSITInvocation = getWrappedJSITInvocation(unwrappedJSITInvocation, "UNKNOWN", "UNKNOWN");
+            final JSITInvocation unwrappedJSITInvocation = InvocationPropertyConverter.dmnFromWB((Invocation) wb, componentWidthsConsumer);
+            final JSITInvocation wrappedJSITInvocation = getWrappedJSITInvocation(unwrappedJSITInvocation, "dmn", "invocation");
             return wrappedJSITInvocation;
         } else if (wb instanceof FunctionDefinition) {
-            final JSITFunctionDefinition unwrappedJSITFunctionDefinition = FunctionDefinitionPropertyConverter.dmnFromWB((FunctionDefinition) wb,
-                                                                                                                         componentWidthsConsumer);
-            final JSITFunctionDefinition wrappedJSITFunctionDefinition = getWrappedJSITFunctionDefinition(unwrappedJSITFunctionDefinition, "UNKNOWN", "UNKNOWN");
+            final JSITFunctionDefinition unwrappedJSITFunctionDefinition = FunctionDefinitionPropertyConverter.dmnFromWB((FunctionDefinition) wb, componentWidthsConsumer);
+            final JSITFunctionDefinition wrappedJSITFunctionDefinition = getWrappedJSITFunctionDefinition(unwrappedJSITFunctionDefinition, "dmn", "functionDefinition");
             return wrappedJSITFunctionDefinition;
         } else if (wb instanceof DecisionTable) {
             final JSITDecisionTable unwrappedJSITDecisionTable = DecisionTablePropertyConverter.dmnFromWB((DecisionTable) wb);
-            final JSITDecisionTable wrappedJSITDecisionTable = getWrappedJSITDecisionTable(unwrappedJSITDecisionTable, "UNKNOWN", "UNKNOWN");
+            final JSITDecisionTable wrappedJSITDecisionTable = getWrappedJSITDecisionTable(unwrappedJSITDecisionTable, "dmn", "decisionTable");
             return wrappedJSITDecisionTable;
         }
         return null;
