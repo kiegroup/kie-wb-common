@@ -22,6 +22,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class InformationItemPropertyConverter {
 
@@ -46,7 +47,11 @@ public class InformationItemPropertyConverter {
         }
         final JSITInformationItem result = JSITInformationItem.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
+        // TODO {gcardosi} removed because not present in original json if null
+        if (!StringUtils.isEmpty(description)) {
+            result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        }
         result.setName(wb.getName().getValue());
         // TODO {gcardosi} removed because not present in original json
         // QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);

@@ -84,10 +84,12 @@ class DMNExternalLinksToExtensionElements {
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
         // TODO {gcardosi} add because  present in original json
-        JSITDMNElement.JSIExtensionElements jsiExtensionElements = JSITDMNElement.JSIExtensionElements.newInstance();
-        jsiExtensionElements.setAny(JsUtils.getNativeArray());
-        return target.getExtensionElements() == null
-                ? jsiExtensionElements
+        JSITDMNElement.JSIExtensionElements toReturn = target.getExtensionElements() == null
+                ? JSITDMNElement.JSIExtensionElements.newInstance()
                 : target.getExtensionElements();
+        if (Objects.isNull(toReturn)) {
+            toReturn.setAny(JsUtils.getNativeArray());
+        }
+        return toReturn;
     }
 }

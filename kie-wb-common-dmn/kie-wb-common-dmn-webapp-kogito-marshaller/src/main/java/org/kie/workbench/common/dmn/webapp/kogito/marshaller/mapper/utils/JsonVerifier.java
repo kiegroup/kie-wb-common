@@ -29,17 +29,29 @@ public class JsonVerifier {
 
     private static final String WARNING = "*******************WARNING*******************";
     private static final String OTHER_ATTRIBUTES = "otherAttributes";
-    private static final String H_$ = "H$";
+    private static final String H_$ = "$H";
 
     public static void compareJSITDefinitions(JSITDefinitions original, JSITDefinitions marshalled) {
-        JSONValue originalJSONValue = getJSONValue(asString(original));
-        JSONValue marshalledJSONValue = getJSONValue(asString(marshalled));
+        final String originalString = asString(original);
+        final String marshalledString = asString(marshalled);
+        checkCircularIssue(originalString, "originalString");
+        checkCircularIssue(marshalledString, "marshalledString");
+        JSONValue originalJSONValue = getJSONValue(originalString);
+        JSONValue marshalledJSONValue = getJSONValue(marshalledString);
         if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
             compareJSONValue(originalJSONValue, marshalledJSONValue);
         } else {
             GWT.log(WARNING);
             GWT.log("originalJSONValue is  null ? " + Objects.isNull(originalJSONValue));
             GWT.log("marshalledJSONValue is  null ? " + Objects.isNull(marshalledJSONValue));
+        }
+    }
+
+    private static void checkCircularIssue(String toCheck, String name) {
+        if (toCheck.contains("Circular~")) {
+            GWT.log(WARNING);
+            GWT.log(name + " contains Circular issue");
+            GWT.log(toCheck);
         }
     }
 
@@ -134,13 +146,15 @@ public class JsonVerifier {
         JSONObject marshalledJSONObject = marshalled.isObject();
         JSONArray originalJSONArray = original.isArray();
         JSONArray marshalledJSONArray = marshalled.isArray();
+        boolean toReturn = true;
         if (checkNotNull(originalJSONObject, originalJSONObject)) {
-            return compareJSONObjectForArray(originalJSONObject, marshalledJSONObject);
+            toReturn = compareJSONObjectForArray(originalJSONObject, marshalledJSONObject);
         } else if (checkNotNull(originalJSONArray, marshalledJSONArray)) {
-            return compareJSONArray(originalJSONArray, marshalledJSONArray);
+            toReturn = compareJSONArray(originalJSONArray, marshalledJSONArray);
         } else {
-            return original.equals(marshalled);
+            toReturn = original.equals(marshalled);
         }
+        return toReturn;
     }
 
     private static boolean compareJSONObjectForArray(JSONObject original, JSONObject marshalled) {
@@ -154,12 +168,13 @@ public class JsonVerifier {
     private static boolean checkKeysForArray(JSONObject original, JSONObject marshalled) {
         final Set<String> originalKeys = original.keySet();
         final Set<String> marshalledKeys = marshalled.keySet();
+        boolean toReturn = true;
         for (String originalKey : originalKeys) {
             // TODO {gcardosi} to remove after otherattributes are populated
             if (!marshalledKeys.contains(originalKey) && !OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
                 GWT.log(WARNING);
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
-                return false;
+                toReturn =  false;
             }
         }
         for (String marshalledKey : marshalledKeys) {
@@ -168,18 +183,20 @@ public class JsonVerifier {
                 GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
             }
         }
-        return true;
+        return toReturn;
     }
 
     private static boolean compareJSONObjectKeyForArray(JSONObject original, JSONObject marshalled, String key) {
         final JSONValue originalJSONValue = original.get(key);
         final JSONValue marshalledJSONValue = marshalled.get(key);
+        boolean toReturn = true;
         if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
-            return compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
+            toReturn = compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
         } else {
             // TODO {gcardosi} to remove after otherattributes are populated
-            return !OTHER_ATTRIBUTES.equals(key) && !H_$.equals(key);
+            toReturn = !OTHER_ATTRIBUTES.equals(key) && !H_$.equals(key);
         }
+        return toReturn;
     }
 
     private static boolean checkNotNull(JSONValue original, JSONValue marshalled) {
@@ -203,6 +220,25 @@ public class JsonVerifier {
     }
 
     private static native <D> String asString(D toConvert) /*-{
-        return JSON.stringify(toConvert);
+
+        function serializer(replacer, cycleReplacer) {
+            var stack = [], keys = []
+
+            if (cycleReplacer == null) cycleReplacer = function (key, value) {
+                if (stack[0] === value) return "[Circular ~]"
+                return "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]"
+            }
+            return function (key, value) {
+                if (stack.length > 0) {
+                    var thisPos = stack.indexOf(this)
+                    ~thisPos ? stack.splice(thisPos + 1) : stack.push(this)
+                    ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key)
+                    if (~stack.indexOf(value)) value = cycleReplacer.call(this, key, value)
+                } else stack.push(value)
+
+                return replacer == null ? value : replacer.call(this, key, value)
+            }
+        }
+        return JSON.stringify(toConvert, serializer(null, null), 2)
     }-*/;
 }

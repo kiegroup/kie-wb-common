@@ -262,7 +262,8 @@ public class WrapperUtils {
         otherAttributes.put("id", result.getId());
         otherAttributes.put("dmnElementRef", result.getDmnElementRef().getLocalPart());
         otherAttributes.put("isCollapsed", String.valueOf(result.getIsCollapsed()));
-        result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
+        // TODO {gcardosi} removed due to circular issue
+//        result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
         return result;
     }
 
