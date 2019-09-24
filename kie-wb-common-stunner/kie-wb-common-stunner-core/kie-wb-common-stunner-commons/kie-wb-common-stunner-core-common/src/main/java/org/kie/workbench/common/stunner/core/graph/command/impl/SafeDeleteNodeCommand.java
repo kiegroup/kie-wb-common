@@ -248,8 +248,8 @@ public class SafeDeleteNodeCommand extends AbstractGraphCompositeCommand {
         };
     }
 
-    private void createChangeParentCommands(final Element<?> canvas,
-                                            final Node<?, Edge> candidate) {
+    void createChangeParentCommands(final Element<?> canvas,
+                                    final Node<?, Edge> candidate) {
         final List<Node> childNodes = GraphUtils.getChildNodes(candidate);
         for (final Node n : childNodes) {
             safeDeleteCallback.ifPresent(c -> c.moveChildToCanvasRoot(canvas.asNode(), n));
