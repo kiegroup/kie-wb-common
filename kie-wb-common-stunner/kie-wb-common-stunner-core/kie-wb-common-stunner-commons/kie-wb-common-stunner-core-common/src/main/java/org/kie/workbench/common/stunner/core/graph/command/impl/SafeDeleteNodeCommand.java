@@ -122,6 +122,10 @@ public class SafeDeleteNodeCommand extends AbstractGraphCompositeCommand {
         this.safeDeleteCallback = Optional.ofNullable(safeDeleteCallback);
     }
 
+    public Optional<SafeDeleteNodeCommandCallback> getSafeDeleteCallback() {
+        return safeDeleteCallback;
+    }
+
     public boolean shouldKeepChildren(final Node<Definition<?>, Edge> candidate) {
         return false;
     }

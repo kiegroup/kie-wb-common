@@ -62,6 +62,10 @@ public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
         return candidate;
     }
 
+    public SafeDeleteNodeCommand.Options getOptions() {
+        return options;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
@@ -83,6 +87,10 @@ public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
     public String toString() {
         return getClass().getSimpleName() +
                 " [candidate=" + toUUID(getCandidate()) + "]";
+    }
+
+    public CanvasDeleteProcessor getDeleteProcessor() {
+        return deleteProcessor;
     }
 
     public static class CanvasDeleteProcessor implements SafeDeleteNodeCommand.SafeDeleteNodeCommandCallback {
