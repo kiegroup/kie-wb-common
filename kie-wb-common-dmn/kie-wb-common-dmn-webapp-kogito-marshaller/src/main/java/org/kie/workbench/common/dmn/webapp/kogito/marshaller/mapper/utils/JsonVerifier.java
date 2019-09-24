@@ -27,13 +27,15 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 
 public class JsonVerifier {
 
+    private static final String WARNING = "*******************WARNING*******************";
+
     public static void compareJSITDefinitions(JSITDefinitions original, JSITDefinitions marshalled) {
-        JSONValue originalJSONValue = getJSONObject(asString(original));
-        JSONValue marshalledJSONValue = getJSONObject(asString(marshalled));
+        JSONValue originalJSONValue = getJSONValue(asString(original));
+        JSONValue marshalledJSONValue = getJSONValue(asString(marshalled));
         if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
             compareJSONValue(originalJSONValue, marshalledJSONValue);
         } else {
-            GWT.log("**************WARNING********************");
+            GWT.log(WARNING);
             GWT.log("originalJSONValue is  null ? " + Objects.isNull(originalJSONValue));
             GWT.log("marshalledJSONValue is  null ? " + Objects.isNull(marshalledJSONValue));
         }
@@ -49,7 +51,7 @@ public class JsonVerifier {
         } else if (checkNotNull(originalJSONArray, marshalledJSONArray)) {
             compareJSONArray(originalJSONArray, marshalledJSONArray);
         } else if (!original.equals(marshalled)) {
-            GWT.log("**************WARNING********************");
+            GWT.log(WARNING);
             GWT.log("original expected : " + limitedString(original));
             GWT.log("marshalled retrieved : " + limitedString(marshalled));
         }
@@ -66,19 +68,19 @@ public class JsonVerifier {
         final Set<String> originalKeys = original.keySet();
         final Set<String> marshalledKeys = marshalled.keySet();
         if (originalKeys.size() != marshalledKeys.size()) {
-            GWT.log("**************WARNING********************");
+            GWT.log(WARNING);
             GWT.log("original keys expected : " + originalKeys.size());
             GWT.log("marshalled keys retrieved : " + marshalledKeys.size());
         }
         for (String originalKey : originalKeys) {
             if (!marshalledKeys.contains(originalKey)) {
-                GWT.log("**************WARNING********************");
+                GWT.log(WARNING);
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
             }
         }
         for (String marshalledKey : marshalledKeys) {
             if (!originalKeys.contains(marshalledKey)) {
-                GWT.log("**************WARNING********************");
+                GWT.log(WARNING);
                 GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
             }
         }
@@ -90,7 +92,7 @@ public class JsonVerifier {
         if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
             compareJSONValue(originalJSONValue, marshalledJSONValue);
         } else {
-            GWT.log("**************WARNING********************");
+            GWT.log(WARNING);
             GWT.log("original " + limitedString(original) + ":" + key + " is null ? " + Objects.isNull(originalJSONValue));
             GWT.log("marshalled " + limitedString(marshalled) + ":" + key + " is null ? " + Objects.isNull(marshalledJSONValue));
         }
@@ -98,21 +100,21 @@ public class JsonVerifier {
 
     private static boolean compareJSONArray(JSONArray original, JSONArray marshalled) {
         if (original.size() != marshalled.size()) {
-            GWT.log("**************WARNING********************");
+            GWT.log(WARNING);
             GWT.log("original size expected " + original.size());
             GWT.log("marshalled size retrieved " + marshalled.size());
         }
         boolean toReturn = true;
         for (int i = 0; i < original.size(); i++) {
             boolean retrieved = false;
-            for (int j = 0; j < marshalled.size(); j ++) {
-                if(compareJSONValueForArray(original.get(i), marshalled.get(j))) {
+            for (int j = 0; j < marshalled.size(); j++) {
+                if (compareJSONValueForArray(original.get(i), marshalled.get(j))) {
                     retrieved = true;
                     break;
                 }
             }
             if (!retrieved) {
-                GWT.log("**************WARNING********************");
+                GWT.log(WARNING);
                 GWT.log("original expected " + limitedString(original.get(i)) + " not found in " + limitedString(marshalled));
                 toReturn = false;
             }
@@ -137,12 +139,30 @@ public class JsonVerifier {
     }
 
     private static boolean compareJSONObjectForArray(JSONObject original, JSONObject marshalled) {
-        checkKeys(original, marshalled);
-        boolean toReturn = true;
+        boolean toReturn = checkKeysForArray(original, marshalled);
         for (String originalKey : original.keySet()) {
             toReturn = toReturn && compareJSONObjectKeyForArray(original, marshalled, originalKey);
         }
         return toReturn;
+    }
+
+    private static boolean checkKeysForArray(JSONObject original, JSONObject marshalled) {
+        final Set<String> originalKeys = original.keySet();
+        final Set<String> marshalledKeys = marshalled.keySet();
+        for (String originalKey : originalKeys) {
+            if (!marshalledKeys.contains(originalKey) && !"otherAttributes".equals(originalKey) && !"H$".equals(originalKey)) {
+                GWT.log(WARNING);
+                GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
+                return false;
+            }
+        }
+        for (String marshalledKey : marshalledKeys) {
+            if (!originalKeys.contains(marshalledKey)) {
+                GWT.log(WARNING);
+                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
+            }
+        }
+        return true;
     }
 
     private static boolean compareJSONObjectKeyForArray(JSONObject original, JSONObject marshalled, String key) {
@@ -151,7 +171,7 @@ public class JsonVerifier {
         if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
             return compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
         } else {
-            return false;
+            return !"otherAttributes".equals(key) && !"H$".equals(key);
         }
     }
 
@@ -162,14 +182,6 @@ public class JsonVerifier {
     private static JSONValue getJSONValue(String jsonString) {
         try {
             return JSONParser.parseStrict(jsonString);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private static JSONObject getJSONObject(String jsonString) {
-        try {
-            return getJSONValue(jsonString).isObject();
         } catch (Exception e) {
             return null;
         }
