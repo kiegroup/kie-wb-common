@@ -7,7 +7,7 @@
  */
 MainJs = {
 
-    unmarshall: function (text, callback) {
+    unmarshall: function (text, dynamicNamespace, callback) {
         console.log("out unmarshall");
         // Create Jsonix context
         const context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
@@ -27,17 +27,23 @@ MainJs = {
         callback(toReturn);
     },
 
-    marshall: function (value, callback) {
-        console.log("outer marshall");
+    marshall: function (value, dynamicNamespace, callback) {
+        console.log("outer marshall " + dynamicNamespace);
+        var prefixes = {};
+        prefixes[dynamicNamespace] = "";
+        prefixes["http://www.omg.org/spec/DMN/20180521/MODEL/"] = "dmn";
+
         // Create Jsonix context
         const context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
             namespacePrefixes: {
-                "http://www.omg.org/spec/DMN/20180521/MODEL/": "dmn",
-                "http://www.omg.org/spec/DMN/20180521/DI/": "di",
-                "http://www.drools.org/kie/dmn/1.2": "kie",
-                "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
-                "http://www.omg.org/spec/DMN/20180521/DC/": "dc",
-                "http://www.omg.org/spec/DMN/20180521/FEEL/": "feel"
+                prefixes
+                // dynamicNamespace : "",
+                // "http://www.omg.org/spec/DMN/20180521/MODEL/": "dmn",
+                // "http://www.omg.org/spec/DMN/20180521/DI/": "di",
+                // "http://www.drools.org/kie/dmn/1.2": "kie",
+                // "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
+                // "http://www.omg.org/spec/DMN/20180521/DC/": "dc",
+                // "http://www.omg.org/spec/DMN/20180521/FEEL/": "feel"
             }
         });
 

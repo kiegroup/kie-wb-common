@@ -84,12 +84,11 @@ public final class KogitoClientSideMarshalling {
             jsiName.setKey(key);
             String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
             jsiName.setString(string);
-
             final DMN12 dmn12 = Js.uncheckedCast(JsUtils.newWrappedInstance());
             JsUtils.setNameOnWrapped(dmn12, jsiName);
             JsUtils.setValueOnWrapped(dmn12, jsitDefinitions);
 
-            MainJs.marshall(dmn12, jsCallback);
+            MainJs.marshall(dmn12, jsitDefinitions.getNamespace(), jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage(), e);
             rejectCallbackFn.onInvoke(e);
