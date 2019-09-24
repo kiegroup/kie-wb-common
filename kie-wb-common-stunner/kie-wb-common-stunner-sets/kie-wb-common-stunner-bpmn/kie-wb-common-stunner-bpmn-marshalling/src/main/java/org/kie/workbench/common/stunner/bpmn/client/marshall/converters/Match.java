@@ -102,12 +102,12 @@ public class Match<In, Out> {
                         defaultValue, MarshallingMessage.builder().message("Ignored " + t).build());
     }
 
-    public <T extends In> Match<In, Out> when(Function<T, Boolean> type, Function<T, Out> then) {
+    public <T extends In> Match<In, Out> when(Function<?, Boolean> type, Function<T, Out> then) {
         Function<T, Result<Out>> thenWrapped = sub -> Result.of(then.apply(sub));
         return when_(type, thenWrapped);
     }
 
-    private <T extends In> Match<In, Out> when_(Function<T, Boolean> type, Function<T, Result<Out>> then) {
+    private <T extends In> Match<In, Out> when_(Function<?, Boolean> type, Function<T, Result<Out>> then) {
         cases.add(new Case(type, then));
         return this;
     }
@@ -236,17 +236,17 @@ public class Match<In, Out> {
         return decorator.map(d -> d.getName(value)).orElseGet(() -> String.valueOf(value));
     }
 
-    private class Case<T extends In> {
+    private class Case<In> {
 
-        public final Function<T, Boolean> when;
-        public final Function<T, Result<Out>> then;
+        public final Function<In, Boolean> when;
+        public final Function<In, Result<Out>> then;
 
-        private Case(Function<T, Boolean> when, Function<T, Result<Out>> then) {
+        private Case(Function<In, Boolean> when, Function<In, Result<Out>> then) {
             this.when = when;
             this.then = then;
         }
 
-        public Result<Out> match(T value) {
+        public Result<Out> match(In value) {
             return when.apply(value) ?
                     then.apply(value) : getFailure(value);
         }
