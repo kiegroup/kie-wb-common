@@ -678,7 +678,7 @@ public class DMNMarshallerKogitoUnmarshaller {
             return decisionServiceConverter.nodeFromDMN(Js.uncheckedCast(dmn),
                                                         hasComponentWidthsConsumer);
         } else {
-            throw new UnsupportedOperationException("TODO"); // TODO
+            throw new UnsupportedOperationException("Unsupported DRGElement type [" + dmn.getTYPE_NAME() + "]");
         }
     }
 

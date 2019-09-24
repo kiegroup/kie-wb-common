@@ -130,9 +130,8 @@ public class DefinitionsConverter {
         if (!StringUtils.isEmpty(description)) {
             result.setDescription(description);
         }
-        //TODO {gcardosi} "expressionLanguage" attribute is not present in marshalled xml - manually add it
         final String typeLanguage = wb.getTypeLanguage();
-        String expressionLanguage = !StringUtils.isEmpty(ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage())) ? ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage()) : typeLanguage;
+        final String expressionLanguage = ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage());
         if (!StringUtils.isEmpty(typeLanguage)) {
             result.setTypeLanguage(typeLanguage);
         }
@@ -141,8 +140,9 @@ public class DefinitionsConverter {
         }
         final Map<QName, String> otherAttributes = new HashMap<>();
         wb.getNsContext().forEach((k, v) -> {
-            //jsonix does not like marshalling xmlns="a url" so remove the default namespace.
-            //The default namespace is now set when jsonix is invoked in MainJs.marshall(dmn12)
+            // jsonix does not like marshalling xmlns="a url" so remove the default namespace.
+            // The default namespace is now set when jsonix is invoked in MainJs.marshall(dmn12)
+            // See https://github.com/highsource/jsonix/issues/227
             if (!Objects.equals(k, DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
                 otherAttributes.put(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                                               k,

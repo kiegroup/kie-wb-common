@@ -310,7 +310,7 @@ public class DMNMarshallerKogitoMarshaller {
                 return decisionServiceConverter.dmnFromNode((Node<View<DecisionService>, ?>) node,
                                                             componentWidthsConsumer);
             } else {
-                throw new UnsupportedOperationException("TODO"); // TODO
+                throw new UnsupportedOperationException("Unsupported View type [" + view.getDefinition().getClass().getName() + "]");
             }
         }
         throw new RuntimeException("wrong diagram structure to marshall");
