@@ -172,13 +172,17 @@ public class DMNMarshallerKogitoMarshaller {
                                                componentWidthsConsumer));
                     }
 
-                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view));
+                    String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
+                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view,
+                                                                                              namespaceURI));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(),
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node,
                                                                             componentWidthsConsumer));
-                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view));
+                    String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
+                    JSIDMNDiagram.addDMNDiagramElement(dmnDDDMNDiagram, getWrappedJSIDMNShape((View<? extends DMNElement>) view,
+                                                                                              namespaceURI));
 
                     final JsArrayLike<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     for (int i = 0; i < associations.getLength(); i++) {
