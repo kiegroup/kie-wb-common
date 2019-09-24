@@ -16,10 +16,12 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
@@ -58,10 +60,12 @@ public class InvocationPropertyConverter {
             convertedExpression.setParent(result);
         }
 
-        for (JSITBinding b : dmn.getBinding().asArray()) {
-            final Binding bConverted = BindingPropertyConverter.wbFromDMN(b,
+        final JsArrayLike<JSITBinding> jsiBindings = JSITInvocation.getBinding(dmn);
+        for (int i = 0; i < jsiBindings.getLength(); i++) {
+            final JSITBinding jsiBinding = Js.uncheckedCast(jsiBindings.getAt(i));
+            final Binding bConverted = BindingPropertyConverter.wbFromDMN(jsiBinding,
                                                                           hasComponentWidthsConsumer);
-            if (bConverted != null) {
+            if (Objects.nonNull(bConverted)) {
                 bConverted.setParent(result);
             }
             result.getBinding().add(bConverted);
