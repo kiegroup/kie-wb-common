@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.OrientedEdgeImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.layout.ReorderedGraph;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.Vertex;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.GraphLayer;
 import org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.LayeredGraph;
@@ -37,9 +38,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.DefaultVertexPositioning.DEFAULT_LAYER_HORIZONTAL_PADDING;
+import static org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.DefaultVertexPositioning.DEFAULT_LAYER_VERTICAL_PADDING;
 import static org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.DefaultVertexPositioning.DEFAULT_VERTEX_SPACE;
 import static org.kie.workbench.common.stunner.core.graph.processing.layout.sugiyama.step04.VertexPositioning.DEFAULT_VERTEX_WIDTH;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -53,6 +56,98 @@ public class DefaultVertexPositioningTest {
     @Before
     public void setup() {
         tested = spy(new DefaultVertexPositioning());
+    }
+
+    @Test
+    public void testArrangeVertices() {
+
+        final GraphLayer layer1 = mock(GraphLayer.class);
+        final GraphLayer layer2 = mock(GraphLayer.class);
+        final List<GraphLayer> layers = Arrays.asList(layer1, layer2);
+        final ReorderedGraph graph = mock(ReorderedGraph.class);
+        final HashMap hash = mock(HashMap.class);
+        final HashMap layersStartX = mock(HashMap.class);
+        final int largestWidth = 100;
+        final int newY = 17;
+        doReturn(hash).when(tested).createHashForLayersWidth();
+        doReturn(largestWidth).when(tested).calculateLayersWidth(layers, hash);
+        doReturn(layersStartX).when(tested).getLayersStartX(layers.size(), hash, largestWidth);
+
+        doReturn(newY).when(tested).distributeVertices(layers,
+                                                       layersStartX,
+                                                       DEFAULT_LAYER_VERTICAL_PADDING,
+                                                       0,
+                                                       graph);
+
+        doReturn(newY).when(tested).distributeVertices(layers,
+                                                       layersStartX,
+                                                       newY,
+                                                       1,
+                                                       graph);
+        tested.arrangeVertices(layers,
+                               LayerArrangement.TopDown,
+                               graph);
+
+        final InOrder inOrder = inOrder(tested);
+
+        inOrder.verify(tested).distributeVertices(layers,
+                                                  layersStartX,
+                                                  DEFAULT_LAYER_VERTICAL_PADDING,
+                                                  0,
+                                                  graph);
+
+        inOrder.verify(tested).distributeVertices(layers,
+                                                  layersStartX,
+                                                  newY,
+                                                  1,
+                                                  graph);
+    }
+
+    @Test
+    public void testArrangeVerticesBottomUp() {
+
+        final GraphLayer layer1 = mock(GraphLayer.class);
+        final GraphLayer layer2 = mock(GraphLayer.class);
+        final List<GraphLayer> layers = Arrays.asList(layer1, layer2);
+        final ReorderedGraph graph = mock(ReorderedGraph.class);
+        final HashMap hash = mock(HashMap.class);
+        final HashMap layersStartX = mock(HashMap.class);
+        final int largestWidth = 100;
+        final int newY = 17;
+        doReturn(hash).when(tested).createHashForLayersWidth();
+        doReturn(largestWidth).when(tested).calculateLayersWidth(layers, hash);
+        doReturn(layersStartX).when(tested).getLayersStartX(layers.size(), hash, largestWidth);
+
+        doReturn(newY).when(tested).distributeVertices(layers,
+                                                       layersStartX,
+                                                       newY,
+                                                       0,
+                                                       graph);
+
+        doReturn(newY).when(tested).distributeVertices(layers,
+                                                       layersStartX,
+                                                       DEFAULT_LAYER_VERTICAL_PADDING,
+                                                       1,
+                                                       graph);
+        tested.arrangeVertices(layers,
+                               LayerArrangement.BottomUp,
+                               graph);
+
+        final InOrder inOrder = inOrder(tested);
+
+        inOrder.verify(tested).distributeVertices(layers,
+                                                  layersStartX,
+                                                  DEFAULT_LAYER_VERTICAL_PADDING,
+                                                  1,
+                                                  graph);
+
+        inOrder.verify(tested).distributeVertices(layers,
+                                                  layersStartX,
+                                                  newY,
+                                                  0,
+                                                  graph);
+
+
     }
 
     @Test

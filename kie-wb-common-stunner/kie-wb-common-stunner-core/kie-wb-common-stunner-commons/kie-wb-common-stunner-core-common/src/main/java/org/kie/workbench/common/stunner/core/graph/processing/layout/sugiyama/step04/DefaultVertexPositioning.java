@@ -44,7 +44,7 @@ public class DefaultVertexPositioning implements VertexPositioning {
     static final int DEFAULT_VERTEX_SPACE = 75;
     private static final int DEFAULT_LAYER_SPACE = 125;
     static final int DEFAULT_LAYER_HORIZONTAL_PADDING = 50;
-    private static final int DEFAULT_LAYER_VERTICAL_PADDING = 50;
+    static final int DEFAULT_LAYER_VERTICAL_PADDING = 50;
 
     /*
      * Pre:
@@ -136,11 +136,11 @@ public class DefaultVertexPositioning implements VertexPositioning {
         return largestWidth;
     }
 
-    private int distributeVertices(final List<GraphLayer> layers,
-                                   final HashMap<Integer, Integer> layersStartX,
-                                   final int y,
-                                   final int i,
-                                   final ReorderedGraph graph) {
+    int distributeVertices(final List<GraphLayer> layers,
+                           final HashMap<Integer, Integer> layersStartX,
+                           final int y,
+                           final int i,
+                           final ReorderedGraph graph) {
 
         final GraphLayer layer = layers.get(i);
         int x = layersStartX.get(i);
