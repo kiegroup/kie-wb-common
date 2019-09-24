@@ -35,6 +35,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
@@ -141,7 +142,8 @@ public class DefinitionsConverter {
         }
         final Map<QName, String> otherAttributes = new HashMap<>();
         wb.getNsContext().forEach((k, v) -> {
-            //TODO {manstis} jsonix does not like marshalling xmlns="a url" so remove the default namespace :-(
+            //jsonix does not like marshalling xmlns="a url" so remove the default namespace.
+            //The default namespace is now set when jsonix is invoked in MainJs.marshall(dmn12)
             if (!Objects.equals(k, DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
                 otherAttributes.put(new QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                                               k,
@@ -149,7 +151,7 @@ public class DefinitionsConverter {
                                     v);
             }
         });
-//        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
+        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         // TODO {gcardosi} add because  present in original json
         if (Objects.isNull(result.getItemDefinition())) {

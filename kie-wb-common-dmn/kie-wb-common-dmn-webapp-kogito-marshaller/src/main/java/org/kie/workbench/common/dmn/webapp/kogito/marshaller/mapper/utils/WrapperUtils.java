@@ -164,8 +164,9 @@ public class WrapperUtils {
         return toReturn;
     }
 
-    public static JSIDMNShape getWrappedJSIDMNShape(final View<? extends DMNElement> v) {
-        JSIDMNShape unwrappedJSIDMNShape = stunnerToDDExt(v);
+    public static JSIDMNShape getWrappedJSIDMNShape(final View<? extends DMNElement> v,
+                                                    final String namespaceURI) {
+        JSIDMNShape unwrappedJSIDMNShape = stunnerToDDExt(v, namespaceURI);
         JSIDMNShape toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(unwrappedJSIDMNShape));
         JSIName jsiName = JSIDMNShape.getJSIName();
         updateJSIName(jsiName, "dmndi", "DMNShape");
@@ -199,18 +200,10 @@ public class WrapperUtils {
         toUpdate.setString(string);
     }
 
-    private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v) {
+    private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v,
+                                              final String namespaceURI) {
         final JSIDMNShape result = JSIDMNShape.newInstance();
         result.setId("dmnshape-" + v.getDefinition().getId().getValue());
-
-        // TODO {gcardosi} The "original" json (unmarshalled) contains also "key" and "string" properties;
-        // beside that, the "namespaceURI is different - do not know where it comes from right now
-        String namespaceURI;
-        if (v.getDefinition().getParent() != null) {
-            namespaceURI = v.getDefinition().getParent().getDefaultNamespace();
-        } else {
-            namespaceURI = XMLConstants.NULL_NS_URI;
-        }
         result.setDmnElementRef(new QName(namespaceURI,
                                           v.getDefinition().getId().getValue(),
                                           XMLConstants.DEFAULT_NS_PREFIX));
@@ -270,7 +263,7 @@ public class WrapperUtils {
         otherAttributes.put("dmnElementRef", result.getDmnElementRef().getLocalPart());
         otherAttributes.put("isCollapsed", String.valueOf(result.getIsCollapsed()));
         // TODO {gcardosi} enable when everything works because it raise Circular issue with JSON.stringify
-       // result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
+        // result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
         return result;
     }
 
