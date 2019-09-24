@@ -145,13 +145,18 @@ public class FunctionDefinitionPropertyConverter {
         }
         final JSITFunctionDefinition result = JSITFunctionDefinition.newInstance();
         result.setId(wb.getId().getValue());
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getFormalParameter())) {
+            result.setFormalParameter(JsUtils.getNativeArray());
+        }
         String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
         if (!StringUtils.isEmpty(description)) {
             result.setDescription(description);
         }
-        if (wb.getTypeRef() != null) {
-            QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
-        }
+        // TODO {gcardosi} removed because not present in original json
+//        if (wb.getTypeRef() != null) {
+//            QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
+//        }
         result.setExpression(ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                    componentWidthsConsumer));
 

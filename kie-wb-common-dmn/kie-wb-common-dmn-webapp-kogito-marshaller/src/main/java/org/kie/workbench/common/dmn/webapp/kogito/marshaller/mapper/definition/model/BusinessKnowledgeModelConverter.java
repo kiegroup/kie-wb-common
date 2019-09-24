@@ -42,6 +42,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -112,6 +113,15 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
             result.setDescription(description);
         }
         result.setName(source.getName().getValue());
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getKnowledgeRequirement())) {
+            result.setKnowledgeRequirement(JsUtils.getNativeArray());
+        }
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getAuthorityRequirement())) {
+            result.setAuthorityRequirement(JsUtils.getNativeArray());
+        }
+
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
         result.setVariable(variable);

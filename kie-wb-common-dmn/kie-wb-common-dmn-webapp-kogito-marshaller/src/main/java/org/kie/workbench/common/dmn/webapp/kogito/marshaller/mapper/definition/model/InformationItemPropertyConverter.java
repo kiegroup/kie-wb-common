@@ -48,8 +48,8 @@ public class InformationItemPropertyConverter {
         result.setId(wb.getId().getValue());
         result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         result.setName(wb.getName().getValue());
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
-                                            result::setTypeRef);
+        // TODO {gcardosi} removed because not present in original json
+        // QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         return result;
     }
 }

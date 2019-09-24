@@ -25,6 +25,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.DocumentationLinks;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAttachment;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
 class DMNExternalLinksToExtensionElements {
 
@@ -82,8 +83,11 @@ class DMNExternalLinksToExtensionElements {
     }
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
+        // TODO {gcardosi} add because  present in original json
+        JSITDMNElement.JSIExtensionElements jsiExtensionElements = JSITDMNElement.JSIExtensionElements.newInstance();
+        jsiExtensionElements.setAny(JsUtils.getNativeArray());
         return target.getExtensionElements() == null
-                ? JSITDMNElement.JSIExtensionElements.newInstance()
+                ? jsiExtensionElements
                 : target.getExtensionElements();
     }
 }

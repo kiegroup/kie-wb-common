@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -133,6 +134,18 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         final String allowedAnswers = AllowedAnswersPropertyConverter.dmnFromWB(source.getAllowedAnswers());
         if (!StringUtils.isEmpty(allowedAnswers)) {
             d.setAllowedAnswers(allowedAnswers);
+        }
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(d.getInformationRequirement())) {
+            d.setInformationRequirement(JsUtils.getNativeArray());
+        }
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(d.getKnowledgeRequirement())) {
+            d.setKnowledgeRequirement(JsUtils.getNativeArray());
+        }
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(d.getAuthorityRequirement())) {
+            d.setAuthorityRequirement(JsUtils.getNativeArray());
         }
 
         // DMN spec table 2: Requirements connection rules

@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.NameSpaceUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
@@ -150,11 +151,18 @@ public class DefinitionsConverter {
         });
 //        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getItemDefinition())) {
+            result.setItemDefinition(JsUtils.getNativeArray());
+        }
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
             JSITDefinitions.addItemDefinition(result, itemDefConverted);
         }
-
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getImport())) {
+            result.setImport(JsUtils.getNativeArray());
+        }
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
             JSITDefinitions.addImport(result, importConverted);

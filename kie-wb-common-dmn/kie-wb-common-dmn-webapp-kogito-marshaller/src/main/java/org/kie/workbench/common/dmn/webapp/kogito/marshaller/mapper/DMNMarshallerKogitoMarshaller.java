@@ -128,7 +128,8 @@ public class DMNMarshallerKogitoMarshaller {
 
         final JSITDefinitions definitions = DefinitionsConverter.dmnFromWB(definitionsStunnerPojo);
         if (Objects.isNull(definitions.getExtensionElements())) {
-            definitions.setExtensionElements(JSITDMNElement.JSIExtensionElements.newInstance());
+            JSITDMNElement.JSIExtensionElements jsiExtensionElements = JSITDMNElement.JSIExtensionElements.newInstance();
+            definitions.setExtensionElements(jsiExtensionElements);
         }
 
         if (Objects.isNull(definitions.getDMNDI())) {

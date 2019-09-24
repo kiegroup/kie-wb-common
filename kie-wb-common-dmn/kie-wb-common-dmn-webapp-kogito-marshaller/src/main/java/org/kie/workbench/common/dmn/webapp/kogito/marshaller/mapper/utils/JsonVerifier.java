@@ -96,15 +96,62 @@ public class JsonVerifier {
         }
     }
 
-    private static void compareJSONArray(JSONArray original, JSONArray marshalled) {
+    private static boolean compareJSONArray(JSONArray original, JSONArray marshalled) {
         if (original.size() != marshalled.size()) {
             GWT.log("**************WARNING********************");
             GWT.log("original size expected " + original.size());
             GWT.log("marshalled size retrieved " + marshalled.size());
         }
-        int limit = Math.min(original.size(), marshalled.size());
-        for (int i = 0; i < limit; i++) {
-            compareJSONValue(original.get(i), marshalled.get(i));
+        boolean toReturn = true;
+        for (int i = 0; i < original.size(); i++) {
+            boolean retrieved = false;
+            for (int j = 0; j < marshalled.size(); j ++) {
+                if(compareJSONValueForArray(original.get(i), marshalled.get(j))) {
+                    retrieved = true;
+                    break;
+                }
+            }
+            if (!retrieved) {
+                GWT.log("**************WARNING********************");
+                GWT.log("original expected " + limitedString(original.get(i)) + " not found in " + limitedString(marshalled));
+                toReturn = false;
+            }
+        }
+        return toReturn;
+    }
+
+    // COPY'N'PASTE - TO BE DONE BETTER
+
+    private static boolean compareJSONValueForArray(JSONValue original, JSONValue marshalled) {
+        JSONObject originalJSONObject = original.isObject();
+        JSONObject marshalledJSONObject = marshalled.isObject();
+        JSONArray originalJSONArray = original.isArray();
+        JSONArray marshalledJSONArray = marshalled.isArray();
+        if (checkNotNull(originalJSONObject, originalJSONObject)) {
+            return compareJSONObjectForArray(originalJSONObject, marshalledJSONObject);
+        } else if (checkNotNull(originalJSONArray, marshalledJSONArray)) {
+            return compareJSONArray(originalJSONArray, marshalledJSONArray);
+        } else {
+            return original.equals(marshalled);
+        }
+    }
+
+    private static boolean compareJSONObjectForArray(JSONObject original, JSONObject marshalled) {
+        checkKeys(original, marshalled);
+        boolean toReturn = true;
+        for (String originalKey : original.keySet()) {
+            toReturn = toReturn && compareJSONObjectKeyForArray(original, marshalled, originalKey);
+        }
+        return toReturn;
+    }
+
+    private static boolean compareJSONObjectKeyForArray(JSONObject original, JSONObject marshalled, String key) {
+        final JSONValue originalJSONValue = original.get(key);
+        final JSONValue marshalledJSONValue = marshalled.get(key);
+        if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
+            return compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
+        } else {
+            return false;
         }
     }
 

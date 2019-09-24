@@ -56,7 +56,8 @@ public class InformationItemPrimaryPropertyConverter {
         result.setId(wb.getId().getValue());
         result.setName(getParentName(parent));
 
-        QNamePropertyConverter.setDMNfromWB(typeRef, result::setTypeRef);
+        // TODO {gcardosi} removed because not present in original json
+        //QNamePropertyConverter.setDMNfromWB(typeRef, result::setTypeRef);
 
         return result;
     }
