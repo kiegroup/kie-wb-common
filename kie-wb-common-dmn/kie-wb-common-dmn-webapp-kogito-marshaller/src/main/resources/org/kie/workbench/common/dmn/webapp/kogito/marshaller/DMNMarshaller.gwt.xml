@@ -21,6 +21,9 @@
   <inherits name="jsinterop.base.Base"/>
   <inherits name="org.kie.workbench.common.dmn.DMNAPI"/>
 
+  <!-- JSON COMPARATOR - TO BE REMOVED -->
+  <inherits name="com.google.gwt.json.JSON"/>
+
   <!-- We don't need to support IE10 or older -->
   <!-- There is no "ie11" permutation. IE11 uses the Firefox one (gecko1_8) -->
   <set-property name="user.agent" value="gecko1_8,safari"/>
