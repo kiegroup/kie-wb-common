@@ -1,6 +1,6 @@
 /**
  * == READ ME ==
- * 
+ *
  * This file has been manually modified to include *ALL* mappings (and not just DMN12)
  *
  * @type {{marshall: MainJs.marshall, unmarshall: MainJs.unmarshall}}
@@ -10,16 +10,7 @@ MainJs = {
     unmarshall: function (text, dynamicNamespace, callback) {
         console.log("out unmarshall");
         // Create Jsonix context
-        const context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
-            namespacePrefixes: {
-                "http://www.omg.org/spec/DMN/20180521/MODEL/": "dmn",
-                "http://www.omg.org/spec/DMN/20180521/DI/": "di",
-                "http://www.drools.org/kie/dmn/1.2": "kie",
-                "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
-                "http://www.omg.org/spec/DMN/20180521/DC/": "dc",
-                "http://www.omg.org/spec/DMN/20180521/FEEL/": "feel"
-            }
-        });
+        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE]);
 
         // Create unmarshaller
         var unmarshaller = context.createUnmarshaller();
@@ -27,19 +18,19 @@ MainJs = {
         callback(toReturn);
     },
 
-    marshall: function (value, dynamicNamespace, callback) {
-        console.log("outer marshall " + dynamicNamespace);
+    marshall: function (value, defaultNamespace, callback) {
+        console.log("outer marshall");
         // Create Jsonix context
-        const context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
-            namespacePrefixes: {
-                dynamicNamespace : "",
-                "http://www.omg.org/spec/DMN/20180521/MODEL/": "dmn",
-                "http://www.omg.org/spec/DMN/20180521/DI/": "di",
-                "http://www.drools.org/kie/dmn/1.2": "kie",
-                "http://www.omg.org/spec/DMN/20180521/DMNDI/": "dmndi",
-                "http://www.omg.org/spec/DMN/20180521/DC/": "dc",
-                "http://www.omg.org/spec/DMN/20180521/FEEL/": "feel"
-            }
+        var namespaces = {};
+        namespaces[defaultNamespace] = "";
+        namespaces["http://www.omg.org/spec/DMN/20180521/MODEL/"] = "dmn";
+        namespaces["http://www.omg.org/spec/DMN/20180521/DI/"] = "di";
+        namespaces["http://www.drools.org/kie/dmn/1.2"] = "kie";
+        namespaces["http://www.omg.org/spec/DMN/20180521/DMNDI/"] = "dmndi";
+        namespaces["http://www.omg.org/spec/DMN/20180521/DC/"] = "dc";
+        namespaces["http://www.omg.org/spec/DMN/20180521/FEEL/"] = "feel";
+        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
+            namespacePrefixes: namespaces
         });
 
         // Create unmarshaller

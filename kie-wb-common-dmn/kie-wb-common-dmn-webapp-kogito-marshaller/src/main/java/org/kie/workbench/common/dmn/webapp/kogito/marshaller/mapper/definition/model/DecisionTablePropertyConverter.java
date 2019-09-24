@@ -30,10 +30,8 @@ import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBuiltinAggregator;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionRule;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionTable;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionTableOrientation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITHitPolicy;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputClause;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITOutputClause;
@@ -126,13 +124,37 @@ public class DecisionTablePropertyConverter {
             JSITDecisionTable.addRule(result, c);
         }
         if (wb.getHitPolicy() != null) {
-            result.setHitPolicy(JSITHitPolicy.valueOf(wb.getHitPolicy().name()));
+            switch (wb.getHitPolicy()) {
+                case ANY:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.ANY.value()));
+                    break;
+                case COLLECT:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.COLLECT.value()));
+                    break;
+                case FIRST:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.FIRST.value()));
+                    break;
+                case UNIQUE:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.UNIQUE.value()));
+                    break;
+                case PRIORITY:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.PRIORITY.value()));
+                    break;
+                case RULE_ORDER:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.RULE_ORDER.value()));
+                    break;
+                case OUTPUT_ORDER:
+                    result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.OUTPUT_ORDER.value()));
+                    break;
+            }
         }
         if (wb.getAggregation() != null) {
-            result.setAggregation(JSITBuiltinAggregator.valueOf(wb.getAggregation().name()));
+            final String wbBuiltinAggregator = wb.getAggregation().value();
+            result.setAggregation(Js.uncheckedCast(wbBuiltinAggregator));
         }
         if (wb.getPreferredOrientation() != null) {
-            result.setPreferredOrientation(JSITDecisionTableOrientation.valueOf(wb.getPreferredOrientation().name()));
+            final String wbPreferredOrientation = wb.getPreferredOrientation().value();
+            result.setPreferredOrientation(Js.uncheckedCast(wbPreferredOrientation));
         }
 
         result.setOutputLabel(wb.getOutputLabel());
