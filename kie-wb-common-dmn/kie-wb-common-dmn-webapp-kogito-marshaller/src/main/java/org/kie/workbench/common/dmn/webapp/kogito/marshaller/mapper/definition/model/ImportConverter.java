@@ -91,7 +91,9 @@ public final class ImportConverter {
                     .ifPresent(qName -> otherAttributes.put(qName, entry.getValue()));
         }
         wb.getNsContext().forEach((k, v) -> {
-            //TODO {manstis} jsonix does not like marshalling xmlns="a url" so remove the default namespace :-(
+            // jsonix does not like marshalling xmlns="a url" so remove the default namespace.
+            // The default namespace is now set when jsonix is invoked in MainJs.marshall(dmn12)
+            // See https://github.com/highsource/jsonix/issues/227
             if (!Objects.equals(k, DMNModelInstrumentedBase.Namespace.DEFAULT.getPrefix())) {
                 otherAttributes.put(new javax.xml.namespace.QName(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
                                                                   k,

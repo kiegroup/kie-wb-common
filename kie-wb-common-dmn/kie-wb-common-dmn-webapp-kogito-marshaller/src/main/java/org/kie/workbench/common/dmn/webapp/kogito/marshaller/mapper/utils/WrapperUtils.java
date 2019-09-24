@@ -262,8 +262,7 @@ public class WrapperUtils {
         otherAttributes.put("id", result.getId());
         otherAttributes.put("dmnElementRef", result.getDmnElementRef().getLocalPart());
         otherAttributes.put("isCollapsed", String.valueOf(result.getIsCollapsed()));
-        // TODO {gcardosi} enable when everything works because it raise Circular issue with JSON.stringify
-        // result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
+        result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
         return result;
     }
 
