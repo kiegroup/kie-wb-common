@@ -136,6 +136,8 @@ public class DMNMarshallerKogitoMarshaller {
             definitions.setDMNDI(JSIDMNDI.newInstance());
         }
         final JSIDMNDiagram dmnDDDMNDiagram = JSIDMNDiagram.newInstance();
+        // TODO {gcardosi} add because  present in original json
+        dmnDDDMNDiagram.setDMNDiagramElement(JsUtils.getNativeArray());
         JSIDMNDI.addDMNDiagram(definitions.getDMNDI(), dmnDDDMNDiagram);
 
         //Convert relative positioning to absolute

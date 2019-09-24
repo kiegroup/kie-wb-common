@@ -28,6 +28,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 public class JsonVerifier {
 
     private static final String WARNING = "*******************WARNING*******************";
+    private static final String OTHER_ATTRIBUTES = "otherAttributes";
+    private static final String H_$ = "H$";
 
     public static void compareJSITDefinitions(JSITDefinitions original, JSITDefinitions marshalled) {
         JSONValue originalJSONValue = getJSONValue(asString(original));
@@ -60,7 +62,10 @@ public class JsonVerifier {
     private static void compareJSONObject(JSONObject original, JSONObject marshalled) {
         checkKeys(original, marshalled);
         for (String originalKey : original.keySet()) {
-            compareJSONObjectKey(original, marshalled, originalKey);
+            // TODO {gcardosi} to remove after otherattributes are populated
+            if ( !OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
+                compareJSONObjectKey(original, marshalled, originalKey);
+            }
         }
     }
 
@@ -150,7 +155,8 @@ public class JsonVerifier {
         final Set<String> originalKeys = original.keySet();
         final Set<String> marshalledKeys = marshalled.keySet();
         for (String originalKey : originalKeys) {
-            if (!marshalledKeys.contains(originalKey) && !"otherAttributes".equals(originalKey) && !"H$".equals(originalKey)) {
+            // TODO {gcardosi} to remove after otherattributes are populated
+            if (!marshalledKeys.contains(originalKey) && !OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
                 GWT.log(WARNING);
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
                 return false;
@@ -171,7 +177,8 @@ public class JsonVerifier {
         if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
             return compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
         } else {
-            return !"otherAttributes".equals(key) && !"H$".equals(key);
+            // TODO {gcardosi} to remove after otherattributes are populated
+            return !OTHER_ATTRIBUTES.equals(key) && !H_$.equals(key);
         }
     }
 

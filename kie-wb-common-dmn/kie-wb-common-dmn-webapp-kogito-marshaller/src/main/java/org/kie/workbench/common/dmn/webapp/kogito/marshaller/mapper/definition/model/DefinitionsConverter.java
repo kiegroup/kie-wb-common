@@ -165,6 +165,14 @@ public class DefinitionsConverter {
         if (Objects.isNull(result.getImport())) {
             result.setImport(JsUtils.getNativeArray());
         }
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getDrgElement())) {
+            result.setDrgElement(JsUtils.getNativeArray());
+        }
+        // TODO {gcardosi} add because  present in original json
+        if (Objects.isNull(result.getArtifact())) {
+            result.setArtifact(JsUtils.getNativeArray());
+        }
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
             JSITDefinitions.addImport(result, importConverted);
