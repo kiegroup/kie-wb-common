@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
@@ -258,17 +256,17 @@ public class WrapperUtils {
             result.setDMNDecisionServiceDividerLine(dl);
         }
         result.setStyle(getWrappedJSIDMNStyle(style));
-        final Map<QName, String> otherAttributes = new HashMap<>();
-        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-                                      "id",
-                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
-        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-                                      "dmnElementRef",
-                                      XMLConstants.DEFAULT_NS_PREFIX),  result.getDmnElementRef().getLocalPart());
-        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-                                      "isCollapsed",
-                                      XMLConstants.DEFAULT_NS_PREFIX), String.valueOf(result.getIsCollapsed()));
-        // TODO {gcardosi} removed due to circulare issue in json
+        // TODO {gcardosi} commented out as per {manstis} suggestion
+//        final Map<QName, String> otherAttributes = new HashMap<>();
+//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+//                                      "id",
+//                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
+//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+//                                      "dmnElementRef",
+//                                      XMLConstants.DEFAULT_NS_PREFIX),  result.getDmnElementRef().getLocalPart());
+//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+//                                      "isCollapsed",
+//                                      XMLConstants.DEFAULT_NS_PREFIX), String.valueOf(result.getIsCollapsed()));
 //        result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
         return result;
     }
