@@ -72,6 +72,7 @@ class DMNExternalLinksToExtensionElements {
 
     private static void removeAllExistingLinks(final JSITDMNElement.JSIExtensionElements elements) {
         final JSITDMNElement.JSIExtensionElements others = JSITDMNElement.JSIExtensionElements.newInstance();
+        others.setAny(Js.uncheckedCast(JsUtils.getNativeArray()));
         final JsArrayLike<Object> any = JSITDMNElement.JSIExtensionElements.getAny(elements);
         for (int i = 0; i < any.getLength(); i++) {
             final Object extension = any.getAt(i);
