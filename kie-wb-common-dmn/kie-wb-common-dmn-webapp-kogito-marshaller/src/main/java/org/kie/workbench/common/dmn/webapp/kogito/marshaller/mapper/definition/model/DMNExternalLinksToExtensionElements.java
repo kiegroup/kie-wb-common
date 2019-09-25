@@ -72,6 +72,8 @@ class DMNExternalLinksToExtensionElements {
 
     private static void removeAllExistingLinks(final JSITDMNElement.JSIExtensionElements elements) {
         final JSITDMNElement.JSIExtensionElements others = JSITDMNElement.JSIExtensionElements.newInstance();
+        // TODO {gcardosi} add because present in original json
+        others.setAny(JsUtils.getNativeArray());
         final JsArrayLike<Object> any = JSITDMNElement.JSIExtensionElements.getAny(elements);
         for (int i = 0; i < any.getLength(); i++) {
             final Object extension = any.getAt(i);
@@ -87,7 +89,7 @@ class DMNExternalLinksToExtensionElements {
         JSITDMNElement.JSIExtensionElements toReturn = target.getExtensionElements() == null
                 ? JSITDMNElement.JSIExtensionElements.newInstance()
                 : target.getExtensionElements();
-        if (Objects.isNull(toReturn)) {
+        if (!Objects.isNull(toReturn) && Objects.isNull(toReturn.getAny())) {
             toReturn.setAny(JsUtils.getNativeArray());
         }
         return toReturn;

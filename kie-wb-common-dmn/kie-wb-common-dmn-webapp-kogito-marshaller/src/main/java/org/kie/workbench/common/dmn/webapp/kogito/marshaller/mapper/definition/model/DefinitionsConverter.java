@@ -151,6 +151,12 @@ public class DefinitionsConverter {
                                     v);
             }
         });
+        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+                                      "id",
+                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
+        otherAttributes.put(new QName("",
+                                      "name",
+                                      XMLConstants.NULL_NS_URI), result.getName());
         JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         // TODO {gcardosi} add because  present in original json

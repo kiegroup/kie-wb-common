@@ -16,10 +16,15 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
@@ -37,6 +42,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBusinessKnowledgeModel;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITFunctionDefinition;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
@@ -121,6 +127,15 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         if (Objects.isNull(result.getAuthorityRequirement())) {
             result.setAuthorityRequirement(JsUtils.getNativeArray());
         }
+        // TODO {gcardosi} add because  present in original json
+        final Map<QName, String> otherAttributes = new HashMap<>();
+        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+                                      "id",
+                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
+        otherAttributes.put(new QName("",
+                                      "name",
+                                      XMLConstants.NULL_NS_URI), result.getName());
+        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
