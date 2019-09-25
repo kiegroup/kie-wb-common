@@ -170,7 +170,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
             //TODO {gcardosi} retrieve correct "xmlns" namespace
             MainJs.unmarshall(xml, "UNKNOWN", jsCallback);
         } catch (Exception e) {
-            GWT.log(e.getMessage());
+            GWT.log(e.getMessage(), e);
             callback.onError(new ClientRuntimeError(new DiagramParsingException(metadata, xml)));
         }
     }
@@ -195,16 +195,12 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
 
         final DMN12MarshallCallback jsCallback = xml -> {
             String breakpoint = xml;
-            //TODO {gcardosi} marshalled xml does not start with "xml" tag: for the moment being manually add it
             if (!breakpoint.startsWith("<?xml version=\"1.0\" ?>")) {
-                breakpoint = "<?xml version=\"1.0\" ?>\r\n" + breakpoint;
+                breakpoint = "<?xml version=\"1.0\" ?>" + breakpoint;
             }
-            GWT.log(breakpoint);
         };
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);
-            GWT.log("**************WARNING********************");
-            GWT.log("Instantiating dmn12 because it is null");
             org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
             jsiName.setPrefix("dmn");
             jsiName.setLocalPart("definitions");

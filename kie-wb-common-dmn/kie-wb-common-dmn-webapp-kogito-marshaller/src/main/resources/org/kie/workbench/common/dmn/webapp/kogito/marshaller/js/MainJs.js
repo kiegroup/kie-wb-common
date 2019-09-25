@@ -8,7 +8,6 @@
 MainJs = {
 
     unmarshall: function (text, dynamicNamespace, callback) {
-        console.log("out unmarshall");
         // Create Jsonix context
         var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE]);
 
@@ -19,7 +18,6 @@ MainJs = {
     },
 
     marshall: function (value, defaultNamespace, callback) {
-        console.log("outer marshall");
         // Create Jsonix context
         var namespaces = {};
         namespaces[defaultNamespace] = "";

@@ -84,23 +84,19 @@ public class JsonVerifier {
     private static void checkKeys(JSONObject original, JSONObject marshalled) {
         final Set<String> originalKeys = original.keySet();
         final Set<String> marshalledKeys = marshalled.keySet();
-        if (originalKeys.size() != marshalledKeys.size()) {
-            GWT.log(WARNING);
-            GWT.log("original keys expected : " + originalKeys.size());
-            GWT.log("marshalled keys retrieved : " + marshalledKeys.size());
-        }
         for (String originalKey : originalKeys) {
             if (!marshalledKeys.contains(originalKey)) {
                 GWT.log(WARNING);
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
             }
         }
-        for (String marshalledKey : marshalledKeys) {
-            if (!originalKeys.contains(marshalledKey)) {
-                GWT.log(WARNING);
-                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
-            }
-        }
+        // Ignore this
+//        for (String marshalledKey : marshalledKeys) {
+//            if (!originalKeys.contains(marshalledKey)) {
+//                GWT.log(WARNING);
+//                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
+//            }
+//        }
     }
 
     private static void compareJSONObjectKey(JSONObject original, JSONObject marshalled, String key) {
@@ -116,11 +112,6 @@ public class JsonVerifier {
     }
 
     private static boolean compareJSONArray(JSONArray original, JSONArray marshalled) {
-        if (original.size() != marshalled.size()) {
-            GWT.log(WARNING);
-            GWT.log("original size expected " + original.size());
-            GWT.log("marshalled size retrieved " + marshalled.size());
-        }
         boolean toReturn = true;
         for (int i = 0; i < original.size(); i++) {
             boolean retrieved = false;
@@ -153,10 +144,6 @@ public class JsonVerifier {
             toReturn = compareJSONArray(originalJSONArray, marshalledJSONArray);
         } else {
             toReturn = original.equals(marshalled);
-            if (!toReturn) {
-                GWT.log(WARNING);
-                GWT.log("expected " + original + " retrieved " + marshalled);
-            }
         }
         return toReturn;
     }
@@ -181,12 +168,13 @@ public class JsonVerifier {
                 toReturn = false;
             }
         }
-        for (String marshalledKey : marshalledKeys) {
-            if (!originalKeys.contains(marshalledKey)) {
-                GWT.log(WARNING);
-                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
-            }
-        }
+        // Ignoring this
+//        for (String marshalledKey : marshalledKeys) {
+//            if (!originalKeys.contains(marshalledKey)) {
+//                GWT.log(WARNING);
+//                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
+//            }
+//        }
         return toReturn;
     }
 

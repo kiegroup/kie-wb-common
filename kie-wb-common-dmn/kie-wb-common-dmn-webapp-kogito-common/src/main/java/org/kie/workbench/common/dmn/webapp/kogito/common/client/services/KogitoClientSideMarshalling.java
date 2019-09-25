@@ -75,8 +75,6 @@ public final class KogitoClientSideMarshalling {
 
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);
-            GWT.log("**************WARNING********************");
-            GWT.log("Instantiating dmn12 because it is null");
             org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
             jsiName.setPrefix("dmn");
             jsiName.setLocalPart("definitions");
