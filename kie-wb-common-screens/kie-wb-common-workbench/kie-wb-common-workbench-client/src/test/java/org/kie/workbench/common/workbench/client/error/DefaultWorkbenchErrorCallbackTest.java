@@ -94,6 +94,7 @@ public class DefaultWorkbenchErrorCallbackTest {
     public void testIsServerOfflineException() {
         assertTrue(isServerOfflineException(new Exception("Script error. (:0)")));
         assertTrue(isServerOfflineException(new Exception("Error parsing JSON: SyntaxError: Unexpected token � in JSON at position 1")));
+        assertTrue(isServerOfflineException(new Exception("Error parsing JSON: SyntaxError: JSON.parse: unexpected character at line 1 column 2 of the JSON data")));
         assertFalse(isServerOfflineException(new Exception("test")));
         assertFalse(isServerOfflineException(new Exception("")));
     }
