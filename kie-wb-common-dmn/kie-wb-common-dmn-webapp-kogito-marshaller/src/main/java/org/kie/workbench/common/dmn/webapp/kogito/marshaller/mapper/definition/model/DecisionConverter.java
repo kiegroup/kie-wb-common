@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -114,10 +115,8 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         final Decision source = node.getContent().getDefinition();
         final JSITDecision d = JSITDecision.newInstance();
         d.setId(source.getId().getValue());
-        String description = DescriptionPropertyConverter.dmnFromWB(source.getDescription());
-        if (!StringUtils.isEmpty(description)) {
-            d.setDescription(description);
-        }
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        description.ifPresent(d::setDescription);
         d.setName(source.getName().getValue());
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
         d.setVariable(variable);

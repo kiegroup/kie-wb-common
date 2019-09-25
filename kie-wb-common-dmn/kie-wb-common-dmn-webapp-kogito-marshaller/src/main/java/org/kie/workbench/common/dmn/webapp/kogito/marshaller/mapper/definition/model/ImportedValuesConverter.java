@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Optional;
+
 import org.kie.workbench.common.dmn.api.definition.model.ImportedValues;
 import org.kie.workbench.common.dmn.api.property.dmn.ExpressionLanguage;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
@@ -57,7 +59,8 @@ public class ImportedValuesConverter {
         dmn.setImportedElement(wb.getImportedElement());
         dmn.setId(wb.getId().getValue());
         dmn.setName(wb.getName().getValue());
-        dmn.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(dmn::setDescription);
         dmn.setExpressionLanguage(ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage()));
         return dmn;
     }

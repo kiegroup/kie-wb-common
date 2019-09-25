@@ -57,11 +57,7 @@ public class LiteralExpressionPropertyConverter {
         }
         final JSITLiteralExpression result = JSITLiteralExpression.newInstance();
         result.setId(wb.getId().getValue());
-        // TODO {gcardosi} removed because not present in original json
-//        if (wb.getTypeRef() != null) {
-//            QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
-//                                                result::setTypeRef);
-//        }
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         result.setText(wb.getText().getValue());
         final JSITImportedValues importedValues = ImportedValuesConverter.dmnFromWB(wb.getImportedValues());
         if (importedValues != null) {

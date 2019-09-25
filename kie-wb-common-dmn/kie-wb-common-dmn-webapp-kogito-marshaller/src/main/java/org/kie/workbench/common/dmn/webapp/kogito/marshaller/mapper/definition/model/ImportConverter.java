@@ -107,7 +107,8 @@ public final class ImportConverter {
 
         result.setId(wb.getId().getValue());
         result.setName(wb.getName().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
         JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         return result;

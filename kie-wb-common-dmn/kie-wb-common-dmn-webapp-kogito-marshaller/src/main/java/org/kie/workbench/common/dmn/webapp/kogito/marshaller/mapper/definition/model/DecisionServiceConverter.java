@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -152,7 +153,8 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         final DecisionService source = node.getContent().getDefinition();
         final JSITDecisionService ds = JSITDecisionService.newInstance();
         ds.setId(source.getId().getValue());
-        ds.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        description.ifPresent(ds::setDescription);
         ds.setName(source.getName().getValue());
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
         ds.setVariable(variable);

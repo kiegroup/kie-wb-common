@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -47,7 +48,6 @@ import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.HrefBuilder.getHref;
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
@@ -108,10 +108,8 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         final BusinessKnowledgeModel source = node.getContent().getDefinition();
         final JSITBusinessKnowledgeModel result = JSITBusinessKnowledgeModel.newInstance();
         result.setId(source.getId().getValue());
-        String description = DescriptionPropertyConverter.dmnFromWB(source.getDescription());
-        if (!StringUtils.isEmpty(description)) {
-            result.setDescription(description);
-        }
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        description.ifPresent(result::setDescription);
         result.setName(source.getName().getValue());
         // TODO {gcardosi} add because  present in original json
         if (Objects.isNull(result.getKnowledgeRequirement())) {

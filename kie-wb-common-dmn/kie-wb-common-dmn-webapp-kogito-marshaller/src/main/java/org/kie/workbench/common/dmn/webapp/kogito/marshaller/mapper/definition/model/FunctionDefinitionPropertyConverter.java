@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -41,7 +42,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class FunctionDefinitionPropertyConverter {
 
@@ -149,14 +149,9 @@ public class FunctionDefinitionPropertyConverter {
         if (Objects.isNull(result.getFormalParameter())) {
             result.setFormalParameter(JsUtils.getNativeArray());
         }
-        String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
-        if (!StringUtils.isEmpty(description)) {
-            result.setDescription(description);
-        }
-        // TODO {gcardosi} removed because not present in original json
-//        if (wb.getTypeRef() != null) {
-//            QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
-//        }
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         result.setExpression(ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                    componentWidthsConsumer));
 

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -127,10 +128,8 @@ public class DefinitionsConverter {
         result.setId(defaultId);
         result.setName(defaultName);
         result.setNamespace(defaultNamespace);
-        final String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
-        if (!StringUtils.isEmpty(description)) {
-            result.setDescription(description);
-        }
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
         final String typeLanguage = wb.getTypeLanguage();
         final String expressionLanguage = ExpressionLanguagePropertyConverter.dmnFromWB(wb.getExpressionLanguage());
         if (!StringUtils.isEmpty(typeLanguage)) {

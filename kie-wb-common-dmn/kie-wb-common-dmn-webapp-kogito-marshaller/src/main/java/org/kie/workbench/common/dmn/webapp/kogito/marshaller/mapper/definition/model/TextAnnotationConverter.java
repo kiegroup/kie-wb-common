@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -72,7 +73,8 @@ public class TextAnnotationConverter implements NodeConverter<JSITTextAnnotation
         final TextAnnotation source = node.getContent().getDefinition();
         final JSITTextAnnotation result = JSITTextAnnotation.newInstance();
         result.setId(source.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        description.ifPresent(result::setDescription);
         result.setText(source.getText().getValue());
         result.setTextFormat(source.getTextFormat().getValue());
         return result;

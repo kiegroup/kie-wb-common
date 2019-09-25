@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -81,9 +82,9 @@ public class ContextPropertyConverter {
                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final JSITContext result = JSITContext.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
-                                            result::setTypeRef);
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         for (ContextEntry ce : wb.getContextEntry()) {
             final JSITContextEntry ceConverted = ContextEntryPropertyConverter.dmnFromWB(ce, componentWidthsConsumer);
             JSITContext.addContextEntry(result, ceConverted);

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.HasName;
@@ -56,9 +55,7 @@ public class InformationItemPrimaryPropertyConverter {
         result.setName(getParentName(parent));
 
         final QName typeRef = wb.getTypeRef();
-        if (!Objects.isNull(typeRef)) {
-            QNamePropertyConverter.setDMNfromWB(typeRef, result::setTypeRef);
-        }
+        QNamePropertyConverter.setDMNfromWB(typeRef, result::setTypeRef);
 
         return result;
     }

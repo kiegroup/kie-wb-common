@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Optional;
+
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClauseLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClauseUnaryTests;
@@ -58,7 +60,8 @@ public class OutputClausePropertyConverter {
         final JSITOutputClause result = JSITOutputClause.newInstance();
         result.setId(wb.getId().getValue());
         result.setName(wb.getName());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
 
         final JSITUnaryTests outputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getOutputValues());
         if (outputValues != null && StringUtils.nonEmpty(outputValues.getText())) {

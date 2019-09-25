@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -74,9 +75,9 @@ public class RelationPropertyConverter {
                                          final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final JSITRelation result = JSITRelation.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
-                                            result::setTypeRef);
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         for (InformationItem iitem : wb.getColumn()) {
             final JSITInformationItem iitemConverted = InformationItemPropertyConverter.dmnFromWB(iitem);

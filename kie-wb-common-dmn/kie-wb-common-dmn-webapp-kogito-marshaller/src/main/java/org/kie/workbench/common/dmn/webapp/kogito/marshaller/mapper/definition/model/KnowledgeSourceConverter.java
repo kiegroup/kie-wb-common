@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -88,7 +89,8 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
         final KnowledgeSource source = node.getContent().getDefinition();
         final JSITKnowledgeSource result = JSITKnowledgeSource.newInstance();
         result.setId(source.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
+        description.ifPresent(result::setDescription);
         result.setName(source.getName().getValue());
         result.setType(source.getType().getValue());
         result.setLocationURI(source.getLocationURI().getValue());

@@ -57,7 +57,8 @@ public class QNamePropertyConverter {
     public static void setDMNfromWB(final QName qname,
                                     final Consumer<String> setter) {
         if (qname != null) {
-            setter.accept(dmnFromWB(qname).map(javax.xml.namespace.QName::toString).orElse(null));
+            final Optional<javax.xml.namespace.QName> dmnTypeRef = dmnFromWB(qname);
+            dmnTypeRef.ifPresent(typeRef -> setter.accept(typeRef.toString()));
         }
     }
 

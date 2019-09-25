@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.Objects;
+import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -24,7 +24,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class InformationItemPropertyConverter {
 
@@ -49,16 +48,11 @@ public class InformationItemPropertyConverter {
         }
         final JSITInformationItem result = JSITInformationItem.newInstance();
         result.setId(wb.getId().getValue());
-        String description = DescriptionPropertyConverter.dmnFromWB(wb.getDescription());
-        // TODO {gcardosi} removed because not present in original json if null
-        if (!StringUtils.isEmpty(description)) {
-            result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
-        }
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
         result.setName(wb.getName().getValue());
-        final QName typeRef = wb.getTypeRef();
-        if (!Objects.isNull(typeRef)) {
-             QNamePropertyConverter.setDMNfromWB(typeRef, result::setTypeRef);
-        }
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
+
         return result;
     }
 }

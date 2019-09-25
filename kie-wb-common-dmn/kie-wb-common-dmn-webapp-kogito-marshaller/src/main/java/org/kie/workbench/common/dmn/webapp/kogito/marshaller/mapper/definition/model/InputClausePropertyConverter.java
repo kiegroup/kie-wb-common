@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Optional;
+
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.InputClauseLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.InputClauseUnaryTests;
@@ -52,7 +54,8 @@ public class InputClausePropertyConverter {
     public static JSITInputClause dmnFromWB(final InputClause wb) {
         final JSITInputClause result = JSITInputClause.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
         final JSITLiteralExpression expression = LiteralExpressionPropertyConverter.dmnFromWB(wb.getInputExpression());
         final JSITUnaryTests inputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getInputValues());
 

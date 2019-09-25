@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -104,7 +105,8 @@ public class DecisionTablePropertyConverter {
     public static JSITDecisionTable dmnFromWB(final DecisionTable wb) {
         final JSITDecisionTable result = JSITDecisionTable.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         for (InputClause input : wb.getInput()) {

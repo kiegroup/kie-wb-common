@@ -118,10 +118,10 @@ public class ItemDefinitionPropertyConverter {
         }
         final JSITItemDefinition result = JSITItemDefinition.newInstance();
         result.setId(wb.getId().getValue());
-        result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
+        description.ifPresent(result::setDescription);
         result.setName(wb.getName().getValue());
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
-                                            result::setTypeRef);
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
 
         result.setTypeLanguage(wb.getTypeLanguage());
         result.setIsCollection(wb.isIsCollection());

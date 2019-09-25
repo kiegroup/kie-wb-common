@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -30,7 +31,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.HrefBuilder.getHref;
 
@@ -56,10 +56,8 @@ public class AssociationConverter {
 
                     final JSITAssociation adding = JSITAssociation.newInstance();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
-                    final String description = DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription());
-                    if (!StringUtils.isEmpty(description)) {
-                        adding.setDescription(description);
-                    }
+                    final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
+                    description.ifPresent(adding::setDescription);
                     adding.setSourceRef(sourceRef);
                     adding.setTargetRef(ta_elementReference);
                     adding.setAssociationDirection(Js.uncheckedCast(JSITAssociationDirection.NONE.value()));
@@ -79,10 +77,8 @@ public class AssociationConverter {
 
                     final JSITAssociation adding = JSITAssociation.newInstance();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
-                    final String description = DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription());
-                    if (!StringUtils.isEmpty(description)) {
-                        adding.setDescription(description);
-                    }
+                    final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
+                    description.ifPresent(adding::setDescription);
                     adding.setSourceRef(ta_elementReference);
                     adding.setTargetRef(targetRef);
                     adding.setAssociationDirection(Js.uncheckedCast(JSITAssociationDirection.NONE.value()));
