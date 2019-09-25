@@ -18,16 +18,19 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.List;
 
+import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.Association;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociationDirection;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.HrefBuilder.getHref;
 
@@ -53,9 +56,13 @@ public class AssociationConverter {
 
                     final JSITAssociation adding = JSITAssociation.newInstance();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
-                    adding.setDescription(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
+                    final String description = DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription());
+                    if (!StringUtils.isEmpty(description)) {
+                        adding.setDescription(description);
+                    }
                     adding.setSourceRef(sourceRef);
                     adding.setTargetRef(ta_elementReference);
+                    adding.setAssociationDirection(Js.uncheckedCast(JSITAssociationDirection.NONE.value()));
                     result.setAt(result.getLength(), adding);
                 }
             }
@@ -72,9 +79,13 @@ public class AssociationConverter {
 
                     final JSITAssociation adding = JSITAssociation.newInstance();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
-                    adding.setDescription(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
+                    final String description = DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription());
+                    if (!StringUtils.isEmpty(description)) {
+                        adding.setDescription(description);
+                    }
                     adding.setSourceRef(ta_elementReference);
                     adding.setTargetRef(targetRef);
+                    adding.setAssociationDirection(Js.uncheckedCast(JSITAssociationDirection.NONE.value()));
                     result.setAt(result.getLength(), adding);
                 }
             }
