@@ -127,15 +127,6 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         if (Objects.isNull(result.getAuthorityRequirement())) {
             result.setAuthorityRequirement(JsUtils.getNativeArray());
         }
-        // TODO {gcardosi} add because  present in original json
-        final Map<QName, String> otherAttributes = new HashMap<>();
-        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-                                      "id",
-                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
-        otherAttributes.put(new QName("",
-                                      "name",
-                                      XMLConstants.NULL_NS_URI), result.getName());
-        JSITDMNElement.setOtherAttributesMap(result, otherAttributes);
 
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
         final JSITInformationItem variable = InformationItemPrimaryPropertyConverter.dmnFromWB(source.getVariable(), source);
