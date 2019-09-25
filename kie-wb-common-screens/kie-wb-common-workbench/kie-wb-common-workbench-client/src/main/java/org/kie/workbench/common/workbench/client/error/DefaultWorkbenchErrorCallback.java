@@ -78,7 +78,8 @@ public class DefaultWorkbenchErrorCallback {
         String message = throwable.getMessage();
         List<String> messages = Arrays.asList(
                 "Script error. (:0)",
-                "Error parsing JSON: SyntaxError: Unexpected token � in JSON at position 1");
+                "Error parsing JSON: SyntaxError: Unexpected token � in JSON at position 1",
+                "Error parsing JSON: SyntaxError: JSON.parse: unexpected character at line 1 column 2 of the JSON data");
 
         return cause == null
             && message != null
