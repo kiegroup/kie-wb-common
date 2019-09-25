@@ -37,6 +37,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -91,6 +92,7 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
         result.setName(source.getName().getValue());
         result.setType(source.getType().getValue());
         result.setLocationURI(source.getLocationURI().getValue());
+        result.setAuthorityRequirement(JsUtils.getNativeArray());
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
 
         // DMN spec table 2: Requirements connection rules
