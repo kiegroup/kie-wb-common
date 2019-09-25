@@ -258,11 +258,17 @@ public class WrapperUtils {
             result.setDMNDecisionServiceDividerLine(dl);
         }
         result.setStyle(getWrappedJSIDMNStyle(style));
-        Map<String, String> otherAttributes = new HashMap<>();
-        otherAttributes.put("id", result.getId());
-        otherAttributes.put("dmnElementRef", result.getDmnElementRef().getLocalPart());
-        otherAttributes.put("isCollapsed", String.valueOf(result.getIsCollapsed()));
-        // TODO {gcardosi} removed due to circular issue
+        final Map<QName, String> otherAttributes = new HashMap<>();
+        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+                                      "id",
+                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
+        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+                                      "dmnElementRef",
+                                      XMLConstants.DEFAULT_NS_PREFIX),  result.getDmnElementRef().getLocalPart());
+        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
+                                      "isCollapsed",
+                                      XMLConstants.DEFAULT_NS_PREFIX), String.valueOf(result.getIsCollapsed()));
+        // TODO {gcardosi} removed due to circulare issue in json
 //        result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
         return result;
     }

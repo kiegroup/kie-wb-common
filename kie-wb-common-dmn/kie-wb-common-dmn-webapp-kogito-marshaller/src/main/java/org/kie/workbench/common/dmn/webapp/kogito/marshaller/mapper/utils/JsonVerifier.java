@@ -75,7 +75,7 @@ public class JsonVerifier {
         checkKeys(original, marshalled);
         for (String originalKey : original.keySet()) {
             // TODO {gcardosi} to remove after otherattributes are populated
-            if ( !OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
+            if (!OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
                 compareJSONObjectKey(original, marshalled, originalKey);
             }
         }
@@ -153,6 +153,10 @@ public class JsonVerifier {
             toReturn = compareJSONArray(originalJSONArray, marshalledJSONArray);
         } else {
             toReturn = original.equals(marshalled);
+            if (!toReturn) {
+                GWT.log(WARNING);
+                GWT.log("expected " + original + " retrieved " + marshalled);
+            }
         }
         return toReturn;
     }
@@ -174,7 +178,7 @@ public class JsonVerifier {
             if (!marshalledKeys.contains(originalKey) && !OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
                 GWT.log(WARNING);
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
-                toReturn =  false;
+                toReturn = false;
             }
         }
         for (String marshalledKey : marshalledKeys) {
@@ -190,11 +194,9 @@ public class JsonVerifier {
         final JSONValue originalJSONValue = original.get(key);
         final JSONValue marshalledJSONValue = marshalled.get(key);
         boolean toReturn = true;
-        if (checkNotNull(originalJSONValue, marshalledJSONValue)) {
-            toReturn = compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
-        } else {
-            // TODO {gcardosi} to remove after otherattributes are populated
-            toReturn = !OTHER_ATTRIBUTES.equals(key) && !H_$.equals(key);
+        // TODO {gcardosi} to remove after otherattributes are populated
+        if (!OTHER_ATTRIBUTES.equals(key) && !H_$.equals(key)) {
+            toReturn = checkNotNull(originalJSONValue, marshalledJSONValue) && compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
         }
         return toReturn;
     }
@@ -239,6 +241,7 @@ public class JsonVerifier {
                 return replacer == null ? value : replacer.call(this, key, value)
             }
         }
+
         return JSON.stringify(toConvert, serializer(null, null), 2)
     }-*/;
 }
