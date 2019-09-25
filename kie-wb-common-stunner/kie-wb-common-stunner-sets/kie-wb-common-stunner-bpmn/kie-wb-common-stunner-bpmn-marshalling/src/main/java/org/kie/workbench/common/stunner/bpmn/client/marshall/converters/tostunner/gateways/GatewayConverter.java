@@ -18,6 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import org.eclipse.bpmn2.Gateway;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.BPMNElementDecorators;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.AbstractConverter;
@@ -25,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.NodeConverter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.GatewayPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.EventGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
@@ -51,21 +52,22 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         this.propertyReaderFactory = propertyReaderFactory;
     }
 
-    public Result<BpmnNode> convert(Gateway gateway) {
-        // TODO (TiagoD): Use of BPMNElementDecorators
-        if (gateway instanceof org.eclipse.bpmn2.ParallelGateway) {
-            return parallelGateway(gateway);
-        }
-        if (gateway instanceof org.eclipse.bpmn2.ExclusiveGateway) {
-            return exclusiveGateway(gateway);
-        }
-        if (gateway instanceof org.eclipse.bpmn2.InclusiveGateway) {
-            return inclusiveGateway(gateway);
-        }
-        if (gateway instanceof org.eclipse.bpmn2.EventBasedGateway) {
-            return eventGateway(gateway);
-        }
-        return ConverterUtils.ignore("Gateway", gateway);
+    public Result<BpmnNode> convert(org.eclipse.bpmn2.Gateway gateway) {
+        return Match.<Gateway, Result<BpmnNode>>of()
+                .<org.eclipse.bpmn2.ParallelGateway>when(e -> e instanceof org.eclipse.bpmn2.ParallelGateway,
+                                                         this::parallelGateway)
+                .<org.eclipse.bpmn2.ExclusiveGateway>when(e -> e instanceof org.eclipse.bpmn2.ExclusiveGateway,
+                                                          this::exclusiveGateway)
+                .<org.eclipse.bpmn2.InclusiveGateway>when(e -> e instanceof org.eclipse.bpmn2.InclusiveGateway,
+                                                          this::inclusiveGateway)
+                .<org.eclipse.bpmn2.EventBasedGateway>when(e -> e instanceof org.eclipse.bpmn2.EventBasedGateway,
+                                                           this::eventGateway)
+                .defaultValue(Result.ignored("Gateway not found"))
+                .inputDecorator(BPMNElementDecorators.flowElementDecorator())
+                .outputDecorator(BPMNElementDecorators.resultBpmnDecorator())
+                .mode(getMode())
+                .apply(gateway)
+                .value();
     }
 
     private Result<BpmnNode> inclusiveGateway(Gateway gateway) {

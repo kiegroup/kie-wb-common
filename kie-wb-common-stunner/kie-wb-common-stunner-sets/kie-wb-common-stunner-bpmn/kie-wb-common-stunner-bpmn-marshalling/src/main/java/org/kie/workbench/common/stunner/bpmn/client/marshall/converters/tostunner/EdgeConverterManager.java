@@ -23,6 +23,7 @@ import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.associations.AssociationConverter;
@@ -47,15 +48,12 @@ public class EdgeConverterManager extends AbstractConverter {
     }
 
     public Result<BpmnEdge> convertEdge(BaseElement baseElement, Map<String, BpmnNode> nodes) {
-        if (baseElement instanceof SequenceFlow) {
-            return sequenceFlowConverter.convertEdge((SequenceFlow) baseElement, nodes);
-        }
-        if (baseElement instanceof BoundaryEvent) {
-            return boundaryEventConverter.convertEdge((BoundaryEvent) baseElement, nodes);
-        }
-        if (baseElement instanceof Association) {
-            return associationConverter.convertEdge((Association) baseElement, nodes);
-        }
-        return Result.ignored("Not an Edge element");
+        return Match.<BaseElement, Result<BpmnEdge>>of()
+                .<SequenceFlow>when(e -> e instanceof SequenceFlow, e -> sequenceFlowConverter.convertEdge(e, nodes))
+                .<BoundaryEvent>when(e -> e instanceof BoundaryEvent, e -> boundaryEventConverter.convertEdge(e, nodes))
+                .<Association>when(e -> e instanceof Association, e -> associationConverter.convertEdge(e, nodes))
+                .defaultValue(Result.ignored("Not an Edge element", getNotFoundMessage(baseElement)))
+                .apply(baseElement)
+                .value();
     }
 }

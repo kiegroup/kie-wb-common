@@ -18,8 +18,13 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import java.util.Optional;
 
+import org.eclipse.bpmn2.ManualTask;
+import org.eclipse.bpmn2.ReceiveTask;
+import org.eclipse.bpmn2.SendTask;
 import org.eclipse.bpmn2.Task;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.BPMNElementDecorators;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomAttribute;
@@ -89,20 +94,20 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
 
     @Override
     public Result<BpmnNode> convert(Task task) {
-        // TODO (TiagoD): Use of BPMNElementDecorators
-        if (task instanceof org.eclipse.bpmn2.BusinessRuleTask) {
-            return Result.success(businessRuleTask((org.eclipse.bpmn2.BusinessRuleTask) task));
-        }
-        if (task instanceof org.eclipse.bpmn2.ScriptTask) {
-            return Result.success(scriptTask((org.eclipse.bpmn2.ScriptTask) task));
-        }
-        if (task instanceof org.eclipse.bpmn2.UserTask) {
-            return Result.success(userTask((org.eclipse.bpmn2.UserTask) task));
-        }
-        if (task instanceof org.eclipse.bpmn2.ServiceTask) {
-            return Result.success(serviceTaskResolver(task));
-        }
-        return ConverterUtils.ignore("Task", task);
+        return Match.<Task, BpmnNode>of()
+                .when(e -> e instanceof org.eclipse.bpmn2.BusinessRuleTask, this::businessRuleTask)
+                .when(e -> e instanceof org.eclipse.bpmn2.ScriptTask, this::scriptTask)
+                .when(e -> e instanceof org.eclipse.bpmn2.UserTask, this::userTask)
+                .when(e -> e instanceof org.eclipse.bpmn2.ServiceTask, this::serviceTaskResolver)
+                .when(e -> org.eclipse.bpmn2.impl.TaskImpl.class.equals(e.getClass()), this::defaultTaskResolver)
+                .missing(e -> e instanceof ManualTask, ManualTask.class)
+                .missing(e -> e instanceof ServiceTask, SendTask.class)
+                .missing(e -> e instanceof ReceiveTask, ReceiveTask.class)
+                .orElse(this::defaultTaskResolver)
+                .inputDecorator(BPMNElementDecorators.flowElementDecorator())
+                .outputDecorator(BPMNElementDecorators.bpmnNodeDecorator())
+                .mode(getMode())
+                .apply(task);
     }
 
     private BpmnNode jbpmServiceTask(Task task) {
