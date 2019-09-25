@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
@@ -53,8 +55,10 @@ public class InformationItemPropertyConverter {
             result.setDescription(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         }
         result.setName(wb.getName().getValue());
-        // TODO {gcardosi} removed because not present in original json
-        // QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
+        final QName typeRef = wb.getTypeRef();
+        if (!Objects.isNull(typeRef)) {
+             QNamePropertyConverter.setDMNfromWB(typeRef, result::setTypeRef);
+        }
         return result;
     }
 }
