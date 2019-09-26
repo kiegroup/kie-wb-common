@@ -16,16 +16,24 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import elemental2.dom.KeyboardEvent;
 import org.gwtbootstrap3.client.ui.DropDown;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
+import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.Div;
+import org.jboss.errai.common.client.dom.Element;
+import org.jboss.errai.common.client.dom.EventListener;
 import org.jboss.errai.common.client.dom.Input;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -48,6 +56,13 @@ import static org.uberfire.client.views.pfly.selectpicker.JQuerySelectPicker.$;
 @ApplicationScoped
 public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl implements NameAndDataTypePopoverView {
 
+    static final String TYPE_SELECTOR_BUTTON_SELECTOR = "button.dropdown-toggle.btn-default";
+    static final String MANAGER_BUTTON_SELECTOR = "#typeButton";
+    static final String TAB_KEY = "Tab";
+    static final String ESCAPE_KEY = "Escape";
+    static final String ESC_KEY = "Esc";
+    static final String ENTER_KEY = "Enter";
+
     @DataField("nameEditor")
     private Input nameEditor;
 
@@ -61,6 +76,14 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
     private Span dataTypeLabel;
 
     private Presenter presenter;
+
+    private String previousName;
+
+    private String currentName;
+
+    private QName previousTypeRef;
+
+    private QName currentTypeRef;
 
     private BootstrapSelectDropDownMonitor monitor;
 
@@ -166,17 +189,122 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
     public void init(final Presenter presenter) {
         this.presenter = presenter;
 
-        typeRefEditor.addValueChangeHandler(e -> presenter.setTypeRef(e.getValue()));
+        typeRefEditor.addValueChangeHandler(e -> currentTypeRef = e.getValue());
+
+        setKeyDownListeners();
+    }
+
+    public QName getCurrentTypeRef() {
+        return currentTypeRef;
+    }
+
+    public String getCurrentName() {
+        return currentName;
+    }
+
+    void setKeyDownListeners() {
+        popoverElement.addEventListener(BrowserEvents.KEYDOWN,
+                                        getKeyDownEventListener(),
+                                        false);
+
+        final Element managerButton = getManagerButton();
+        managerButton.addEventListener(BrowserEvents.KEYDOWN,
+                                       getManagerButtonKeyDownEventListener(),
+                                       false);
+
+        final Element typeSelectorButton = getTypeSelectorButton();
+        typeSelectorButton.addEventListener(BrowserEvents.KEYDOWN,
+                                            getTypeSelectorKeyDownEventListener(),
+                                            false);
+    }
+
+    EventListener getTypeSelectorKeyDownEventListener() {
+        return (e) -> typeSelectorKeyDownEventListener(e);
+    }
+
+    EventListener getManagerButtonKeyDownEventListener() {
+        return (e) -> managerButtonKeyDownEventListener(e);
+    }
+
+    EventListener getKeyDownEventListener() {
+        return (e) -> keyDownEventListener(e);
+    }
+
+    Button getTypeSelectorButton() {
+        return (Button) getElement().querySelector(TYPE_SELECTOR_BUTTON_SELECTOR);
+    }
+
+    Button getManagerButton() {
+        return (Button) getElement().querySelector(MANAGER_BUTTON_SELECTOR);
+    }
+
+    void typeSelectorKeyDownEventListener(final Object event) {
+        if (event instanceof KeyboardEvent) {
+            final KeyboardEvent keyEvent = (KeyboardEvent) event;
+            if (isEnterKeyPressed(keyEvent)) {
+                hide(true);
+                keyEvent.preventDefault();
+            } else if (isEscapeKeyPressed(keyEvent)) {
+                reset();
+                hide(false);
+            } else if (isTabKeyPressed(keyEvent)) {
+                if (keyEvent.shiftKey) {
+                    final Button managerButton = getManagerButton();
+                    managerButton.focus();
+                } else {
+                    nameEditor.focus();
+                }
+                keyEvent.preventDefault();
+            }
+        }
+    }
+
+    void managerButtonKeyDownEventListener(final Object event) {
+        if (event instanceof KeyboardEvent) {
+            final KeyboardEvent keyEvent = (KeyboardEvent) event;
+            if (isEscapeKeyPressed(keyEvent)) {
+                reset();
+                hide(false);
+            }
+        }
+    }
+
+    void keyDownEventListener(final Object event) {
+        if (event instanceof KeyboardEvent) {
+            final KeyboardEvent keyEvent = (KeyboardEvent) event;
+            if (isEnterKeyPressed(keyEvent)) {
+                hide(true);
+                keyEvent.stopPropagation();
+            } else if (isEscapeKeyPressed(keyEvent)) {
+                reset();
+                hide(false);
+            }
+        }
+    }
+
+    boolean isTabKeyPressed(final KeyboardEvent event) {
+        return Objects.equals(event.key, TAB_KEY);
+    }
+
+    boolean isEscapeKeyPressed(final KeyboardEvent event) {
+        return Objects.equals(event.key, ESC_KEY) || Objects.equals(event.key, ESCAPE_KEY);
+    }
+
+    boolean isEnterKeyPressed(final KeyboardEvent event) {
+        return Objects.equals(event.key, ENTER_KEY);
     }
 
     @Override
     public void setDMNModel(final DMNModelInstrumentedBase dmnModel) {
         typeRefEditor.setDMNModel(dmnModel);
+        previousTypeRef = typeRefEditor.getValue();
     }
 
     @Override
     public void initName(final String name) {
         nameEditor.setValue(name);
+        previousName = name;
+        currentName = name;
     }
 
     @Override
@@ -192,14 +320,63 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
     @Override
     public void hide() {
+        hide(true);
+    }
+
+    public void hide(boolean applyChanges) {
         nameEditor.blur();
         monitor.hide();
+        if (applyChanges) {
+            applyChanges();
+        }
     }
 
     @EventHandler("nameEditor")
     @SuppressWarnings("unused")
     void onNameChange(final BlurEvent event) {
-        presenter.setName(nameEditor.getValue());
+        currentName = nameEditor.getValue();
+    }
+
+    void applyChanges() {
+        presenter.setName(currentName);
+        if (!Objects.isNull(currentTypeRef)) {
+            presenter.setTypeRef(currentTypeRef);
+        }
+    }
+
+    void reset() {
+        nameEditor.setValue(previousName);
+        if (!Objects.isNull(previousTypeRef)) {
+            typeRefEditor.setValue(previousTypeRef);
+        }
+        previousTypeRef = null;
+        currentTypeRef = null;
+    }
+
+    @EventHandler("nameEditor")
+    public void onNameEditorKeyDown(final KeyDownEvent event) {
+        if (isEnter(event)) {
+            hide(true);
+        } else if (isEsc(event)) {
+            reset();
+            hide(false);
+        } else if (event.isShiftKeyDown() && isTab(event)) {
+            final Button typeSelectorButton = getTypeSelectorButton();
+            typeSelectorButton.focus();
+            event.preventDefault();
+        }
+    }
+
+    boolean isTab(final KeyDownEvent event) {
+        return Objects.equals(event.getNativeKeyCode(), KeyCodes.KEY_TAB);
+    }
+
+    boolean isEsc(final KeyDownEvent event) {
+        return Objects.equals(event.getNativeKeyCode(), KeyCodes.KEY_ESCAPE);
+    }
+
+    boolean isEnter(final KeyDownEvent event) {
+        return Objects.equals(event.getNativeKeyCode(), KeyCodes.KEY_ENTER);
     }
 
     public void onDataTypePageNavTabActiveEvent(final @Observes DataTypePageTabActiveEvent event) {
