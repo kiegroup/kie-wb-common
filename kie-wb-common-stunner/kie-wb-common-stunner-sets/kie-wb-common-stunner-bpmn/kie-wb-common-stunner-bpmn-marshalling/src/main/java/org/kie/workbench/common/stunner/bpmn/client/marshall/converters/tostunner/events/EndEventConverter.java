@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import java.util.List;
 
+import org.eclipse.bpmn2.CancelEventDefinition;
 import org.eclipse.bpmn2.CompensateEventDefinition;
 import org.eclipse.bpmn2.EndEvent;
 import org.eclipse.bpmn2.ErrorEventDefinition;
@@ -27,6 +28,7 @@ import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TerminateEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.AbstractConverter;
@@ -36,7 +38,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.ThrowEventPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndEscalationEvent;
@@ -82,28 +83,22 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
             case 0:
                 return Result.success(endNoneEvent(event));
             case 1:
-                // TODO (TiagoD): Use of BPMNElementDecorators
-                EventDefinition e = eventDefinitions.get(0);
-                if (e instanceof TerminateEventDefinition) {
-                    return Result.success(terminateEndEvent(event, (TerminateEventDefinition) e));
-                }
-                if (e instanceof SignalEventDefinition) {
-                    return Result.success(signalEventDefinition(event, (SignalEventDefinition) e));
-                }
-                if (e instanceof MessageEventDefinition) {
-                    return Result.success(messageEventDefinition(event, (MessageEventDefinition) e));
-                }
-                if (e instanceof ErrorEventDefinition) {
-                    return Result.success(errorEventDefinition(event, (ErrorEventDefinition) e));
-                }
-                if (e instanceof EscalationEventDefinition) {
-                    return Result.success(escalationEventDefinition(event, (EscalationEventDefinition) e));
-                }
-                if (e instanceof CompensateEventDefinition) {
-                    return Result.success(compensationEventDefinition(event, (CompensateEventDefinition) e));
-                }
-                return ConverterUtils.ignore("EndEvent", event);
-
+                return Match.<EventDefinition, BpmnNode>of()
+                        .<TerminateEventDefinition>when(e -> e instanceof TerminateEventDefinition,
+                                                        e -> terminateEndEvent(event, e))
+                        .<SignalEventDefinition>when(e -> e instanceof SignalEventDefinition,
+                                                     e -> signalEventDefinition(event, e))
+                        .<MessageEventDefinition>when(e -> e instanceof MessageEventDefinition,
+                                                      e -> messageEventDefinition(event, e))
+                        .<ErrorEventDefinition>when(e -> e instanceof ErrorEventDefinition,
+                                                    e -> errorEventDefinition(event, e))
+                        .<EscalationEventDefinition>when(e -> e instanceof EscalationEventDefinition,
+                                                         e -> escalationEventDefinition(event, e))
+                        .<CompensateEventDefinition>when(e -> e instanceof CompensateEventDefinition,
+                                                         e -> compensationEventDefinition(event, e))
+                        .missing(e -> e instanceof CancelEventDefinition, CancelEventDefinition.class)
+                        .mode(getMode())
+                        .apply(eventDefinitions.get(0));
             default:
                 throw new UnsupportedOperationException("Multiple event definitions not supported for end event");
         }

@@ -23,17 +23,24 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters;
             at com.google.gwt.dev.jjs.impl.GwtAstBuilder.getOrCreateLambdaStatement(GwtAstBuilder.java:3829)
  */
 
+import java.util.Optional;
+
+import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.FlowElement;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessageDecorator;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BpmnNode;
+
 public class BPMNElementDecorators {
 
-    /*public static <T extends FlowElement> MarshallingMessageDecorator<T> flowElementDecorator() {
+    public static <T extends FlowElement> MarshallingMessageDecorator<T> flowElementDecorator() {
         return MarshallingMessageDecorator.of(o -> Optional.ofNullable(o.getName())
                                                       .orElseGet(o::getId),
-                                              g -> g.getClass().getSimpleName());
+                                              g -> g.getClass().getName());
     }
 
     public static <T extends BaseElement> MarshallingMessageDecorator<T> baseElementDecorator() {
         return MarshallingMessageDecorator.of(BaseElement::getId,
-                                              g -> g.getClass().getSimpleName());
+                                              g -> g.getClass().getName());
     }
 
     public static <T extends BpmnNode> MarshallingMessageDecorator<T> bpmnNodeDecorator() {
@@ -49,10 +56,10 @@ public class BPMNElementDecorators {
                                                       .getContent()
                                                       .getDefinition()
                                                       .getClass()
-                                                      .getSimpleName());
+                                                      .getName());
     }
 
-    public static MarshallingMessageDecorator<Result> resultBpmnDecorator() {
+    public static <T> MarshallingMessageDecorator<Result<T>> resultBpmnDecorator() {
         return MarshallingMessageDecorator.of(r ->
                                               {
                                                   BpmnNode o = (BpmnNode) r.value();
@@ -70,7 +77,7 @@ public class BPMNElementDecorators {
                                                           .getContent()
                                                           .getDefinition()
                                                           .getClass()
-                                                          .getSimpleName();
+                                                          .getName();
                                               });
-    }*/
+    }
 }

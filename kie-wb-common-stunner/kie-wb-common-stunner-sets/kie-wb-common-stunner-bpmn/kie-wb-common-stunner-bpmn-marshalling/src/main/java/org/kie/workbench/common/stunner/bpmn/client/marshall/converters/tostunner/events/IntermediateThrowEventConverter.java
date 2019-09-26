@@ -19,12 +19,15 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 import java.util.List;
 
 import org.eclipse.bpmn2.CompensateEventDefinition;
+import org.eclipse.bpmn2.ConditionalEventDefinition;
+import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.EscalationEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.AbstractConverter;
@@ -34,7 +37,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.ThrowEventPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateCompensationEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
@@ -76,21 +78,15 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
             case 0:
                 throw new UnsupportedOperationException("An intermediate throw event should contain exactly one definition");
             case 1:
-                // TODO (TiagoD): Use of BPMNElementDecorators
-                final EventDefinition e = eventDefinitions.get(0);
-                if (e instanceof SignalEventDefinition) {
-                    return Result.success(signalEvent(event, (SignalEventDefinition) e));
-                }
-                if (e instanceof MessageEventDefinition) {
-                    return Result.success(messageEvent(event, (MessageEventDefinition) e));
-                }
-                if (e instanceof EscalationEventDefinition) {
-                    return Result.success(escalationEvent(event, (EscalationEventDefinition) e));
-                }
-                if (e instanceof CompensateEventDefinition) {
-                    return Result.success(compensationEvent(event, (CompensateEventDefinition) e));
-                }
-                return ConverterUtils.ignore("IntermediateThrowEvent", event);
+                return Match.<EventDefinition, BpmnNode>of()
+                        .<SignalEventDefinition>when(e -> e instanceof SignalEventDefinition, e -> signalEvent(event, e))
+                        .<MessageEventDefinition>when(e -> e instanceof MessageEventDefinition, e -> messageEvent(event, e))
+                        .<EscalationEventDefinition>when(e -> e instanceof EscalationEventDefinition, e -> escalationEvent(event, e))
+                        .<CompensateEventDefinition>when(e -> e instanceof CompensateEventDefinition, e -> compensationEvent(event, e))
+                        .<ErrorEventDefinition>missing(e -> e instanceof ErrorEventDefinition, ErrorEventDefinition.class)
+                        .<ConditionalEventDefinition>missing(e -> e instanceof ConditionalEventDefinition, ConditionalEventDefinition.class)
+                        .mode(getMode())
+                        .apply(eventDefinitions.get(0));
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate throw event");
         }
