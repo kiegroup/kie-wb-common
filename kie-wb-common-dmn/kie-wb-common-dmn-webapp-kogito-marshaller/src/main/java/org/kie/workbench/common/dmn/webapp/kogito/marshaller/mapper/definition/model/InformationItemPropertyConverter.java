@@ -46,7 +46,7 @@ public class InformationItemPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITInformationItem result = JSITInformationItem.newInstance();
+        final JSITInformationItem result = new JSITInformationItem();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);

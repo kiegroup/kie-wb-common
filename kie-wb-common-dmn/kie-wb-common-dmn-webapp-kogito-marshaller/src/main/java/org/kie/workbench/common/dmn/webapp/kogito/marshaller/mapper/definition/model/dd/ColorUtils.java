@@ -21,7 +21,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIColo
 public class ColorUtils {
 
     public static JSIColor dmnFromWB(final String colorString) {
-        final JSIColor result = JSIColor.newInstance();
+        final JSIColor result = new JSIColor();
 
         //Copied from java.awt.Color.decode(String) for "pure client-side" implementation
         try {

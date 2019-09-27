@@ -40,7 +40,7 @@ public class PointUtils {
     }
 
     public static JSIPoint point2dToDMNDIPoint(final Point2D point2d) {
-        final JSIPoint result = JSIPoint.newInstance();
+        final JSIPoint result = new JSIPoint();
         result.setX(point2d.getX());
         result.setY(point2d.getY());
         return result;

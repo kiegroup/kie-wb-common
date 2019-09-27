@@ -80,7 +80,7 @@ public class InvocationPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITInvocation result = JSITInvocation.newInstance();
+        final JSITInvocation result = new JSITInvocation();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);

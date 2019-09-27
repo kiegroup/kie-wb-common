@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
@@ -49,9 +49,9 @@ public class DecisionTablePropertyConverter {
         result.setDescription(description);
         result.setTypeRef(typeRef);
 
-        final JsArrayLike<JSITInputClause> jsiInputClauses = JSITDecisionTable.getInput(dmn);
-        for (int i = 0; i < jsiInputClauses.getLength(); i++) {
-            final JSITInputClause input = Js.uncheckedCast(jsiInputClauses.getAt(i));
+        final List<JSITInputClause> jsiInputClauses = dmn.getInput();
+        for (int i = 0; i < jsiInputClauses.size(); i++) {
+            final JSITInputClause input = Js.uncheckedCast(jsiInputClauses.get(i));
             final InputClause inputClauseConverted = InputClausePropertyConverter.wbFromDMN(input);
             if (Objects.nonNull(inputClauseConverted)) {
                 inputClauseConverted.setParent(result);
@@ -59,9 +59,9 @@ public class DecisionTablePropertyConverter {
             }
         }
 
-        final JsArrayLike<JSITOutputClause> jsiOutputClauses = JSITDecisionTable.getOutput(dmn);
-        for (int i = 0; i < jsiOutputClauses.getLength(); i++) {
-            final JSITOutputClause output = Js.uncheckedCast(jsiOutputClauses.getAt(i));
+        final List<JSITOutputClause> jsiOutputClauses = dmn.getOutput();
+        for (int i = 0; i < jsiOutputClauses.size(); i++) {
+            final JSITOutputClause output = Js.uncheckedCast(jsiOutputClauses.get(i));
             final OutputClause outputClauseConverted = OutputClausePropertyConverter.wbFromDMN(output);
             if (Objects.nonNull(outputClauseConverted)) {
                 outputClauseConverted.setParent(result);
@@ -69,9 +69,9 @@ public class DecisionTablePropertyConverter {
             }
         }
 
-        final JsArrayLike<JSITDecisionRule> jsiDecisionRules = JSITDecisionTable.getRule(dmn);
-        for (int i = 0; i < jsiDecisionRules.getLength(); i++) {
-            final JSITDecisionRule dr = Js.uncheckedCast(jsiDecisionRules.getAt(i));
+        final List<JSITDecisionRule> jsiDecisionRules = dmn.getRule();
+        for (int i = 0; i < jsiDecisionRules.size(); i++) {
+            final JSITDecisionRule dr = Js.uncheckedCast(jsiDecisionRules.get(i));
             final DecisionRule decisionRuleConverted = DecisionRulePropertyConverter.wbFromDMN(dr);
             if (decisionRuleConverted != null) {
                 decisionRuleConverted.setParent(result);
@@ -103,7 +103,7 @@ public class DecisionTablePropertyConverter {
     }
 
     public static JSITDecisionTable dmnFromWB(final DecisionTable wb) {
-        final JSITDecisionTable result = JSITDecisionTable.newInstance();
+        final JSITDecisionTable result = new JSITDecisionTable();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);
@@ -111,19 +111,19 @@ public class DecisionTablePropertyConverter {
 
         for (InputClause input : wb.getInput()) {
             final JSITInputClause c = InputClausePropertyConverter.dmnFromWB(input);
-            JSITDecisionTable.addInput(result, c);
+            result.getInput().add(c);
         }
         for (OutputClause input : wb.getOutput()) {
             final JSITOutputClause c = OutputClausePropertyConverter.dmnFromWB(input);
-            JSITDecisionTable.addOutput(result, c);
+            result.getOutput().add(c);
         }
-        if (result.getOutput().getLength() == 1) {
-            final JSITOutputClause at = Js.uncheckedCast(result.getOutput().getAt(0));
+        if (result.getOutput().size() == 1) {
+            final JSITOutputClause at = Js.uncheckedCast(result.getOutput().get(0));
             at.setName(null); // DROOLS-3281
         }
         for (DecisionRule dr : wb.getRule()) {
             final JSITDecisionRule c = DecisionRulePropertyConverter.dmnFromWB(dr);
-            JSITDecisionTable.addRule(result, c);
+            result.getRule().add(c);
         }
         if (wb.getHitPolicy() != null) {
             switch (wb.getHitPolicy()) {

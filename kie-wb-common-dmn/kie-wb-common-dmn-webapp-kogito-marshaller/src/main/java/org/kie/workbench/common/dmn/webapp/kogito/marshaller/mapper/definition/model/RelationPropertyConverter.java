@@ -23,7 +23,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
@@ -44,16 +43,16 @@ public class RelationPropertyConverter {
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
 
         final List<InformationItem> convertedColumns = new ArrayList<>();
-        final JsArrayLike<JSITInformationItem> jsiColumns = JSITRelation.getColumn(dmn);
-        for (int i = 0; i < jsiColumns.getLength(); i++) {
-            final JSITInformationItem jsiColumn = Js.uncheckedCast(jsiColumns.getAt(i));
+        final List<JSITInformationItem> jsiColumns = dmn.getColumn();
+        for (int i = 0; i < jsiColumns.size(); i++) {
+            final JSITInformationItem jsiColumn = Js.uncheckedCast(jsiColumns.get(i));
             convertedColumns.add(InformationItemPropertyConverter.wbFromDMN(jsiColumn));
         }
 
         final List<org.kie.workbench.common.dmn.api.definition.model.List> convertedRows = new ArrayList<>();
-        final JsArrayLike<JSITList> jsiRows = JSITRelation.getRow(dmn);
-        for (int i = 0; i < jsiRows.getLength(); i++) {
-            final JSITList jsiRow = Js.uncheckedCast(jsiRows.getAt(i));
+        final List<JSITList> jsiRows = dmn.getRow();
+        for (int i = 0; i < jsiRows.size(); i++) {
+            final JSITList jsiRow = Js.uncheckedCast(jsiRows.get(i));
             convertedRows.add(ListPropertyConverter.wbFromDMN(jsiRow, hasComponentWidthsConsumer));
         }
 
@@ -73,7 +72,7 @@ public class RelationPropertyConverter {
 
     public static JSITRelation dmnFromWB(final Relation wb,
                                          final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        final JSITRelation result = JSITRelation.newInstance();
+        final JSITRelation result = new JSITRelation();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);
@@ -81,12 +80,12 @@ public class RelationPropertyConverter {
 
         for (InformationItem iitem : wb.getColumn()) {
             final JSITInformationItem iitemConverted = InformationItemPropertyConverter.dmnFromWB(iitem);
-            JSITRelation.addColumn(result, iitemConverted);
+            result.getColumn().add(iitemConverted);
         }
 
         for (org.kie.workbench.common.dmn.api.definition.model.List list : wb.getRow()) {
             final JSITList listConverted = ListPropertyConverter.dmnFromWB(list, componentWidthsConsumer);
-            JSITRelation.addRow(result, listConverted);
+            result.getRow().add(listConverted);
         }
 
         return result;

@@ -16,13 +16,14 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
@@ -84,9 +85,9 @@ public class FunctionDefinitionPropertyConverter {
                 break;
         }
 
-        final JsArrayLike<JSITInformationItem> jsiInformationItems = JSITFunctionDefinition.getFormalParameter(dmn);
-        for (int i = 0; i < jsiInformationItems.getLength(); i++) {
-            final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.getAt(i));
+        final List<JSITInformationItem> jsiInformationItems = dmn.getFormalParameter();
+        for (int i = 0; i < jsiInformationItems.size(); i++) {
+            final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.get(i));
             final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
             if (iiConverted != null) {
                 iiConverted.setParent(result);
@@ -143,11 +144,11 @@ public class FunctionDefinitionPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITFunctionDefinition result = JSITFunctionDefinition.newInstance();
+        final JSITFunctionDefinition result = new JSITFunctionDefinition();
         result.setId(wb.getId().getValue());
         // TODO {gcardosi} add because  present in original json
         if (Objects.isNull(result.getFormalParameter())) {
-            result.setFormalParameter(JsUtils.getNativeArray());
+            result.setFormalParameter(new ArrayList<>());
         }
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);
@@ -173,7 +174,7 @@ public class FunctionDefinitionPropertyConverter {
 
         for (InformationItem ii : wb.getFormalParameter()) {
             final JSITInformationItem iiConverted = InformationItemPropertyConverter.dmnFromWB(ii);
-            JSITFunctionDefinition.addFormalParameter(result, iiConverted);
+            result.getFormalParameter().add(iiConverted);
         }
 
         return result;

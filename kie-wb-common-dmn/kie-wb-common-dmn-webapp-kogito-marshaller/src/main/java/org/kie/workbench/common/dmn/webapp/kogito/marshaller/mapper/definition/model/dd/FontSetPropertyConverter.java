@@ -38,7 +38,7 @@ public class FontSetPropertyConverter {
     }
 
     public static JSIDMNStyle dmnFromWB(final FontSet wb) {
-        final JSIDMNStyle result = JSIDMNStyle.newInstance();
+        final JSIDMNStyle result = new JSIDMNStyle();
         if (Objects.nonNull(wb.getFontFamily().getValue())) {
             result.setFontFamily(wb.getFontFamily().getValue());
         }

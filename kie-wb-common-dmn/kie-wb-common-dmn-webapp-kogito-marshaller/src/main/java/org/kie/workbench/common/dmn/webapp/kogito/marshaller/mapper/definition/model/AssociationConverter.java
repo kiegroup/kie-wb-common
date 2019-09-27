@@ -16,18 +16,17 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.Association;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociationDirection;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -37,12 +36,12 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.defin
 public class AssociationConverter {
 
     @SuppressWarnings("unchecked")
-    public static JsArrayLike<JSITAssociation> dmnFromWB(final Node<View<TextAnnotation>, ?> node) {
+    public static List<JSITAssociation> dmnFromWB(final Node<View<TextAnnotation>, ?> node) {
         final TextAnnotation ta = node.getContent().getDefinition();
-        final JSITDMNElementReference ta_elementReference = JSITDMNElementReference.newInstance();
+        final JSITDMNElementReference ta_elementReference = new JSITDMNElementReference();
         ta_elementReference.setHref(new StringBuilder("#").append(ta.getId().getValue()).toString());
 
-        final JsArrayLike<JSITAssociation> result = JsUtils.getNativeArray();
+        final List<JSITAssociation> result = new ArrayList<>();
 
         final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for (Edge<?, ?> e : inEdges) {
@@ -51,17 +50,17 @@ public class AssociationConverter {
                 final View<?> view = (View<?>) sourceNode.getContent();
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
-                    final JSITDMNElementReference sourceRef = JSITDMNElementReference.newInstance();
+                    final JSITDMNElementReference sourceRef = new JSITDMNElementReference();
                     sourceRef.setHref(getHref(drgElement));
 
-                    final JSITAssociation adding = JSITAssociation.newInstance();
+                    final JSITAssociation adding = new JSITAssociation();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
                     final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
                     description.ifPresent(adding::setDescription);
                     adding.setSourceRef(sourceRef);
                     adding.setTargetRef(ta_elementReference);
                     adding.setAssociationDirection(Js.uncheckedCast(JSITAssociationDirection.NONE.value()));
-                    result.setAt(result.getLength(), adding);
+                    result.add(adding);
                 }
             }
         }
@@ -72,17 +71,17 @@ public class AssociationConverter {
                 final View<?> view = (View<?>) targetNode.getContent();
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
-                    final JSITDMNElementReference targetRef = JSITDMNElementReference.newInstance();
+                    final JSITDMNElementReference targetRef = new JSITDMNElementReference();
                     targetRef.setHref(getHref(drgElement));
 
-                    final JSITAssociation adding = JSITAssociation.newInstance();
+                    final JSITAssociation adding = new JSITAssociation();
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
                     final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(((View<Association>) e.getContent()).getDefinition().getDescription()));
                     description.ifPresent(adding::setDescription);
                     adding.setSourceRef(ta_elementReference);
                     adding.setTargetRef(targetRef);
                     adding.setAssociationDirection(Js.uncheckedCast(JSITAssociationDirection.NONE.value()));
-                    result.setAt(result.getLength(), adding);
+                    result.add(adding);
                 }
             }
         }

@@ -200,19 +200,19 @@ public class WrapperUtils {
 
     private static JSIDMNShape stunnerToDDExt(final View<? extends DMNElement> v,
                                               final String namespaceURI) {
-        final JSIDMNShape result = JSIDMNShape.newInstance();
+        final JSIDMNShape result = new JSIDMNShape();
         result.setId("dmnshape-" + v.getDefinition().getId().getValue());
         result.setDmnElementRef(new QName(namespaceURI,
                                           v.getDefinition().getId().getValue(),
                                           XMLConstants.DEFAULT_NS_PREFIX));
-        final JSIBounds bounds = JSIBounds.newInstance();
+        final JSIBounds bounds = new JSIBounds();
         result.setBounds(bounds);
         bounds.setX(xOfBound(upperLeftBound(v)));
         bounds.setY(yOfBound(upperLeftBound(v)));
-        result.setDMNLabel(JSIDMNLabel.newInstance());
+        result.setDMNLabel(new JSIDMNLabel());
         // TODO {gcardosi}: HARDCODED
         result.setIsCollapsed(false);
-        final JSIDMNStyle style = JSIDMNStyle.newInstance();
+        final JSIDMNStyle style = new JSIDMNStyle();
         if (v.getDefinition() instanceof Decision) {
             final Decision d = (Decision) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
@@ -243,16 +243,16 @@ public class WrapperUtils {
             applyBounds(d.getDimensionsSet(), bounds);
             applyBackgroundStyles(d.getBackgroundSet(), style);
             applyFontStyle(d.getFontSet(), style);
-            final JSIDMNDecisionServiceDividerLine dl = JSIDMNDecisionServiceDividerLine.newInstance();
-            final JSIPoint leftPoint = JSIPoint.newInstance();
+            final JSIDMNDecisionServiceDividerLine dl = new JSIDMNDecisionServiceDividerLine();
+            final JSIPoint leftPoint = new JSIPoint();
             leftPoint.setX(v.getBounds().getUpperLeft().getX());
             final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
             leftPoint.setY(dlY);
-            JSIDMNDecisionServiceDividerLine.addWaypoint(dl, leftPoint);
-            final JSIPoint rightPoint = JSIPoint.newInstance();
+            dl.getWaypoint().add(leftPoint);
+            final JSIPoint rightPoint = new JSIPoint();
             rightPoint.setX(v.getBounds().getLowerRight().getX());
             rightPoint.setY(dlY);
-            JSIDMNDecisionServiceDividerLine.addWaypoint(dl, rightPoint);
+            dl.getWaypoint().add(rightPoint);
             result.setDMNDecisionServiceDividerLine(dl);
         }
         result.setStyle(getWrappedJSIDMNStyle(style));

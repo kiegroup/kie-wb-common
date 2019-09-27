@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.DMNElementReference;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
@@ -46,7 +45,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -91,34 +89,34 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         final List<DMNElementReference> inputDecision = new ArrayList<>();
         final List<DMNElementReference> inputData = new ArrayList<>();
 
-        final JsArrayLike<JSITDMNElementReference> jsiOutputDecisions = JSITDecisionService.getOutputDecision(dmn);
+        final List<JSITDMNElementReference> jsiOutputDecisions = dmn.getOutputDecision();
         if (Objects.nonNull(jsiOutputDecisions)) {
-            for (int i = 0; i < jsiOutputDecisions.getLength(); i++) {
-                final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.getAt(i));
+            for (int i = 0; i < jsiOutputDecisions.size(); i++) {
+                final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.get(i));
                 outputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiOutputDecision));
             }
         }
 
-        final JsArrayLike<JSITDMNElementReference> jsiEncapsulatedDecisions = JSITDecisionService.getEncapsulatedDecision(dmn);
+        final List<JSITDMNElementReference> jsiEncapsulatedDecisions = dmn.getEncapsulatedDecision();
         if (Objects.nonNull(jsiEncapsulatedDecisions)) {
-            for (int i = 0; i < jsiEncapsulatedDecisions.getLength(); i++) {
-                final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.getAt(i));
+            for (int i = 0; i < jsiEncapsulatedDecisions.size(); i++) {
+                final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.get(i));
                 outputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiEncapsulatedDecision));
             }
         }
 
-        final JsArrayLike<JSITDMNElementReference> jsiInputDecisions = JSITDecisionService.getInputDecision(dmn);
+        final List<JSITDMNElementReference> jsiInputDecisions = dmn.getInputDecision();
         if (Objects.nonNull(jsiInputDecisions)) {
-            for (int i = 0; i < jsiInputDecisions.getLength(); i++) {
-                final JSITDMNElementReference jsiInputDecision = Js.uncheckedCast(jsiInputDecisions.getAt(i));
+            for (int i = 0; i < jsiInputDecisions.size(); i++) {
+                final JSITDMNElementReference jsiInputDecision = Js.uncheckedCast(jsiInputDecisions.get(i));
                 inputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiInputDecision));
             }
         }
 
-        final JsArrayLike<JSITDMNElementReference> jsiInputDatas = JSITDecisionService.getInputData(dmn);
+        final List<JSITDMNElementReference> jsiInputDatas = dmn.getInputData();
         if (Objects.nonNull(jsiInputDatas)) {
-            for (int i = 0; i < jsiInputDatas.getLength(); i++) {
-                final JSITDMNElementReference jsiInputData = Js.uncheckedCast(jsiInputDatas.getAt(i));
+            for (int i = 0; i < jsiInputDatas.size(); i++) {
+                final JSITDMNElementReference jsiInputData = Js.uncheckedCast(jsiInputDatas.get(i));
                 inputData.add(DMNElementReferenceConverter.wbFromDMN(jsiInputData));
             }
         }
@@ -151,7 +149,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
     public JSITDecisionService dmnFromNode(final Node<View<DecisionService>, ?> node,
                                            final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final DecisionService source = node.getContent().getDefinition();
-        final JSITDecisionService ds = JSITDecisionService.newInstance();
+        final JSITDecisionService ds = new JSITDecisionService();
         ds.setId(source.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         description.ifPresent(ds::setDescription);
@@ -182,7 +180,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                     final DRGElement drgElement = (DRGElement) targetNodeView.getDefinition();
                     if (drgElement instanceof Decision) {
                         final Decision decision = (Decision) drgElement;
-                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
+                        final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(new StringBuilder("#").append(decision.getId().getValue()).toString());
                         if (isOutputDecision(targetNode.getContent(), node.getContent())) {
                             candidate_outputDecision.add(ri);
@@ -203,7 +201,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         reqInputs.stream()
                 .sorted(Comparator.comparing(x -> x.getName().getValue()))
                 .map(x -> {
-                    final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
+                    final JSITDMNElementReference ri = new JSITDMNElementReference();
                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                     return ri;
                 })
@@ -211,7 +209,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         reqDecisions.stream()
                 .sorted(Comparator.comparing(x -> x.getName().getValue()))
                 .map(x -> {
-                    final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
+                    final JSITDMNElementReference ri = new JSITDMNElementReference();
                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                     return ri;
                 })
@@ -233,7 +231,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         return ds;
     }
 
-    private void reconcileExistingAndCandidate(final JsArrayLike<JSITDMNElementReference> targetList,
+    private void reconcileExistingAndCandidate(final List<JSITDMNElementReference> targetList,
                                                final List<JSITDMNElementReference> existingList,
                                                final List<JSITDMNElementReference> candidateList) {
         final List<JSITDMNElementReference> existing = new ArrayList<>(existingList);
@@ -241,11 +239,11 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         for (JSITDMNElementReference e : existing) {
             boolean existingIsAlsoCandidate = candidate.removeIf(er -> er.getHref().equals(e.getHref()));
             if (existingIsAlsoCandidate) {
-                JsUtils.add(targetList, e);
+                targetList.add(e);
             }
         }
         for (JSITDMNElementReference c : candidate) {
-            JsUtils.add(targetList, c);
+            targetList.add(c);
         }
     }
 

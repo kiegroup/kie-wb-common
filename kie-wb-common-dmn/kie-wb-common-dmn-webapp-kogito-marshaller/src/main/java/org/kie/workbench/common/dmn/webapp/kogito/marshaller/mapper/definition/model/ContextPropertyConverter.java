@@ -80,7 +80,7 @@ public class ContextPropertyConverter {
 
     public static JSITContext dmnFromWB(final Context wb,
                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        final JSITContext result = JSITContext.newInstance();
+        final JSITContext result = new JSITContext();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);
@@ -94,7 +94,7 @@ public class ContextPropertyConverter {
         //If this is the case then DMN does not require the ContextEntry to be written out to the XML.
         //Conversion of ContextEntries will always create a _mock_ LiteralExpression if no Expression has
         //been defined therefore remove the last entry from the org.kie.dmn.model if the WB had no Expression.
-        final int contextEntriesCount = result.getContextEntry().getLength();
+        final int contextEntriesCount = result.getContextEntry().size();
         if (contextEntriesCount > 0) {
             if (Objects.isNull(wb.getContextEntry().get(contextEntriesCount - 1).getExpression())) {
                 JSITContext.removeContextEntry(result, contextEntriesCount - 1);

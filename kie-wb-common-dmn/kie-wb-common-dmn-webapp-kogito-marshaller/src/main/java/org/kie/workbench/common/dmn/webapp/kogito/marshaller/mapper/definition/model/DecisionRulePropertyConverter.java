@@ -64,7 +64,7 @@ public class DecisionRulePropertyConverter {
     }
 
     public static JSITDecisionRule dmnFromWB(final DecisionRule wb) {
-        final JSITDecisionRule result = JSITDecisionRule.newInstance();
+        final JSITDecisionRule result = new JSITDecisionRule();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);

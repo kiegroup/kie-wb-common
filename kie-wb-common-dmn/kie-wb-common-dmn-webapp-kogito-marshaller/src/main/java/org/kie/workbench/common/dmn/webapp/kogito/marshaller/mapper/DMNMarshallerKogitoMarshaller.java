@@ -122,22 +122,22 @@ public class DMNMarshallerKogitoMarshaller {
         final Map<String, JSITTextAnnotation> textAnnotations = new HashMap<>();
         final Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) DMNMarshallerUtils.findDMNDiagramRoot(graph);
         final Definitions definitionsStunnerPojo = dmnDiagramRoot.getContent().getDefinition().getDefinitions();
-        final JsArrayLike<JSIDMNEdge> dmnEdges = JsUtils.getNativeArray();
+        final JsArrayLike<JSIDMNEdge> dmnEdges = new ArrayList<>();
 
         cleanImportedItemDefinitions(definitionsStunnerPojo);
 
         final JSITDefinitions definitions = DefinitionsConverter.dmnFromWB(definitionsStunnerPojo);
         if (Objects.isNull(definitions.getExtensionElements())) {
-            JSITDMNElement.JSIExtensionElements jsiExtensionElements = JSITDMNElement.JSIExtensionElements.newInstance();
+            JSITDMNElement.JSIExtensionElements jsiExtensionElements = new JSITDMNElement.JSIExtensionElements();
             definitions.setExtensionElements(jsiExtensionElements);
         }
 
         if (Objects.isNull(definitions.getDMNDI())) {
-            definitions.setDMNDI(JSIDMNDI.newInstance());
+            definitions.setDMNDI(new JSIDMNDI());
         }
-        final JSIDMNDiagram dmnDDDMNDiagram = JSIDMNDiagram.newInstance();
+        final JSIDMNDiagram dmnDDDMNDiagram = new JSIDMNDiagram();
         // TODO {gcardosi} add because  present in original json
-        dmnDDDMNDiagram.setDMNDiagramElement(JsUtils.getNativeArray());
+        dmnDDDMNDiagram.setDMNDiagramElement(new ArrayList<>());
         JSIDMNDI.addDMNDiagram(definitions.getDMNDI(), dmnDDDMNDiagram);
 
         //Convert relative positioning to absolute
@@ -147,9 +147,9 @@ public class DMNMarshallerKogitoMarshaller {
 
         //Setup callback for marshalling ComponentWidths
         if (Objects.isNull(dmnDDDMNDiagram.getExtension())) {
-            dmnDDDMNDiagram.setExtension(JSIDiagramElement.JSIExtension.newInstance());
+            dmnDDDMNDiagram.setExtension(new JSIDiagramElement.JSIExtension());
         }
-        final JSITComponentsWidthsExtension componentsWidthsExtension = JSITComponentsWidthsExtension.newInstance();
+        final JSITComponentsWidthsExtension componentsWidthsExtension = new JSITComponentsWidthsExtension();
         final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
         JSITComponentsWidthsExtension wrappedComponentsWidthsExtension = getWrappedJSITComponentsWidthsExtension(componentsWidthsExtension);
         JSIDiagramElement.JSIExtension.addAny(extension, wrappedComponentsWidthsExtension);
@@ -235,7 +235,7 @@ public class DMNMarshallerKogitoMarshaller {
                                 targetPoint = Point2D.create(xTarget + targetPoint.getX(), yTarget + targetPoint.getY());
                             }
 
-                            final JSIDMNEdge dmnEdge = JSIDMNEdge.newInstance();
+                            final JSIDMNEdge dmnEdge = new JSIDMNEdge();
                             // DMNDI edge elementRef is uuid of Stunner edge,
                             // with the only exception when edge contains as content a DMN Association (Association is an edge)
                             String uuid = e.getUUID();
@@ -264,15 +264,15 @@ public class DMNMarshallerKogitoMarshaller {
         }
         nodes.values().forEach(n -> {
             String localPart = "UNKNOWN";
-            if (JSITBusinessKnowledgeModel.instanceOf(n)) {
+            if (n instanceof JSITBusinessKnowledgeModel) {
                 localPart = "businessKnowledgeModel";
-            } else if (JSITDecision.instanceOf(n)) {
+            } else if (n instanceof JSITDecision) {
                 localPart = "decision";
-            } else if (JSITDecisionService.instanceOf(n)) {
+            } else if (n instanceof JSITDecisionService) {
                 localPart = "decisionService";
-            } else if (JSITInputData.instanceOf(n)) {
+            } else if (n instanceof JSITInputData) {
                 localPart = "inputData";
-            } else if (JSITKnowledgeSource.instanceOf(n)) {
+            } else if (n instanceof JSITKnowledgeSource) {
                 localPart = "knowledgeSource";
             }
             JSITDRGElement toAdd = getWrappedJSITDRGElement(n, "dmn", localPart);

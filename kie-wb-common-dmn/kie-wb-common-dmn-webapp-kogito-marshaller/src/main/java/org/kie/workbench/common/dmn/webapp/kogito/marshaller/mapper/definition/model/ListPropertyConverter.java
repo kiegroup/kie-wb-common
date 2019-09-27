@@ -22,7 +22,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
@@ -43,9 +42,9 @@ public class ListPropertyConverter {
 
         final java.util.List<Expression> expression = new ArrayList<>();
         final List result = new List(id, description, typeRef, expression);
-        final JsArrayLike<JSITExpression> jsiExpressions = JSITList.getExpression(dmn);
-        for (int i = 0; i < jsiExpressions.getLength(); i++) {
-            final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.getAt(i));
+        final java.util.List<JSITExpression> jsiExpressions = dmn.getExpression();
+        for (int i = 0; i < jsiExpressions.size(); i++) {
+            final JSITExpression jsitExpression = Js.uncheckedCast(jsiExpressions.get(i));
             Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
                                                                           Js.uncheckedCast(dmn),
                                                                           hasComponentWidthsConsumer);
@@ -63,7 +62,7 @@ public class ListPropertyConverter {
 
     public static JSITList dmnFromWB(final List wb,
                                      final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        final JSITList result = JSITList.newInstance();
+        final JSITList result = new JSITList();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);
@@ -71,7 +70,7 @@ public class ListPropertyConverter {
 
         for (Expression e : wb.getExpression()) {
             final JSITExpression eConverted = ExpressionPropertyConverter.dmnFromWB(e, componentWidthsConsumer);
-            JSITList.addExpression(result, eConverted);
+            result.getExpression().add(eConverted);
         }
 
         return result;

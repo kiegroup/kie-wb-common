@@ -38,7 +38,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -87,14 +86,14 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
     public JSITKnowledgeSource dmnFromNode(final Node<View<KnowledgeSource>, ?> node,
                                            final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         final KnowledgeSource source = node.getContent().getDefinition();
-        final JSITKnowledgeSource result = JSITKnowledgeSource.newInstance();
+        final JSITKnowledgeSource result = new JSITKnowledgeSource();
         result.setId(source.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         description.ifPresent(result::setDescription);
         result.setName(source.getName().getValue());
         result.setType(source.getType().getValue());
         result.setLocationURI(source.getLocationURI().getValue());
-        result.setAuthorityRequirement(JsUtils.getNativeArray());
+        result.setAuthorityRequirement(new ArrayList<>());
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, result);
 
         // DMN spec table 2: Requirements connection rules
@@ -106,23 +105,23 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
                     if (drgElement instanceof Decision) {
-                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
+                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
+                        final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredDecision(ri);
                         JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
-                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
+                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
+                        final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
                         JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
                     } else if (drgElement instanceof InputData) {
-                        final JSITAuthorityRequirement iReq = JSITAuthorityRequirement.newInstance();
+                        final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
-                        final JSITDMNElementReference ri = JSITDMNElementReference.newInstance();
+                        final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredInput(ri);
                         JSITKnowledgeSource.addAuthorityRequirement(result, iReq);

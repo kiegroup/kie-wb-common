@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -80,10 +80,10 @@ public class ItemDefinitionPropertyConverter {
 
     static void setItemComponent(final ItemDefinition wb,
                                  final JSITItemDefinition dmn) {
-        final JsArrayLike<JSITItemDefinition> jsiItemDefinitions = JSITItemDefinition.getItemComponent(dmn);
+        final List<JSITItemDefinition> jsiItemDefinitions = dmn.getItemComponent();
         if (Objects.nonNull(jsiItemDefinitions)) {
-            for (int i = 0; i < jsiItemDefinitions.getLength(); i++) {
-                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.getAt(i));
+            for (int i = 0; i < jsiItemDefinitions.size(); i++) {
+                final JSITItemDefinition jsiItemDefinition = Js.uncheckedCast(jsiItemDefinitions.get(i));
                 wb.getItemComponent().add(wbChildFromDMN(wb, jsiItemDefinition));
             }
         }
@@ -116,7 +116,7 @@ public class ItemDefinitionPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITItemDefinition result = JSITItemDefinition.newInstance();
+        final JSITItemDefinition result = new JSITItemDefinition();
         result.setId(wb.getId().getValue());
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(wb.getDescription()));
         description.ifPresent(result::setDescription);
@@ -131,7 +131,7 @@ public class ItemDefinitionPropertyConverter {
 
         for (ItemDefinition child : wb.getItemComponent()) {
             final JSITItemDefinition convertedChild = ItemDefinitionPropertyConverter.dmnFromWB(child);
-            JSITItemDefinition.addItemComponent(result, convertedChild);
+            result.getItemComponent().add(convertedChild);
         }
 
         return result;

@@ -55,7 +55,7 @@ public class LiteralExpressionPropertyConverter {
         if (wb == null) {
             return null;
         }
-        final JSITLiteralExpression result = JSITLiteralExpression.newInstance();
+        final JSITLiteralExpression result = new JSITLiteralExpression();
         result.setId(wb.getId().getValue());
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         result.setText(wb.getText().getValue());
