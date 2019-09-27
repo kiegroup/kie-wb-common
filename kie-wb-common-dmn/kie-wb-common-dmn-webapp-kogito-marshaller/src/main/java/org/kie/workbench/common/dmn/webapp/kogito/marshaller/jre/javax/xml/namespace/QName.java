@@ -21,6 +21,7 @@ import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 @JsType(namespace = JsPackage.GLOBAL)
 public class QName {
@@ -79,7 +80,9 @@ public class QName {
 
         //jsonix JSON properties
         setKey(toString());
-        setString(toString());
+        final String usedPrefix = !StringUtils.isEmpty(getPrefix()) ? getPrefix() + ":" : "";
+        final String string = "{" + getNamespaceURI() + "}" + usedPrefix + getLocalPart();
+        setString(string);
     }
 
     @Override
