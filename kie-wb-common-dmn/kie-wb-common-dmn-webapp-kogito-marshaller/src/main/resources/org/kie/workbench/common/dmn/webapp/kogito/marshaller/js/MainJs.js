@@ -11,42 +11,107 @@ MainJs = {
 
     initializeJsInteropConstructors: function () {
 
-        var extraTypes = [{typeName: 'Name', namespace: ''}];
+        var extraTypes = [{typeName: 'Name', namespace: null}];
         var mappings = this.mappings;
+        var types;
+        var baseTypes;
+        var innerTypes;
 
         function flatMap(list, lambda) {
             return Array.prototype.concat.apply([], list.map(lambda));
         }
 
         function getTypes() {
-            return flatMap(mappings, function (mapping) {
 
-                return mapping.typeInfos.map(function (typeInfo) {
-                    return {
-                        typeName: typeInfo.localName,
-                        namespace: mapping.name
-                    };
-                });
-            }).concat(extraTypes);
+            if (types === undefined) {
+                types = flatMap(mappings, function (mapping) {
+
+                    return mapping.typeInfos.map(function (typeInfo) {
+                        return {
+                            typeName: typeInfo.localName,
+                            namespace: mapping.name
+                        };
+                    });
+                }).concat(extraTypes);
+            }
+
+            return types;
         }
 
-        function createFunction(typeInfo) {
-            var typeName = [typeInfo.namespace, typeInfo.typeName].join(".");
+        function getBaseTypes() {
+            if (baseTypes === undefined) {
+                baseTypes = getTypes().filter(function (typeInfo) {
+                    return typeInfo.typeName.split('.').length === 1;
+                });
+            }
+            return baseTypes;
+        }
+
+        function getInnerTypes() {
+            if (innerTypes === undefined) {
+                innerTypes = getTypes().filter(function (typeInfo) {
+                    return typeInfo.typeName.split('.').length > 1;
+                });
+            }
+            return innerTypes;
+        }
+
+        function getJsInteropTypeName(namespace, klass) {
+
+            var prefix = 'JsInterop__ConstructorAPI__DMN';
+            var classPrefix = 'JSI';
+            var presentValues = function (value) {
+                return value;
+            };
+
+            return [prefix, namespace, classPrefix + klass].filter(presentValues).join('__');
+        }
+
+        function createFunction(typeName) {
             return new Function('return { "TYPE_NAME" : "' + typeName + '" }');
         }
 
-        function createConstructor(typeInfo) {
-            var functionName = "JsInterop__ConstructorAPI__DMN__JSI" + typeInfo.typeName;
+        function createBaseClassConstructor(typeInfo) {
+
+            var typeName;
+            var functionName = getJsInteropTypeName(typeInfo.namespace, typeInfo.typeName);
 
             if (window[functionName] === undefined) {
-                window[functionName] = createFunction(typeInfo);
+                typeName = typeInfo.namespace === null ? typeInfo.typeName : [typeInfo.namespace, typeInfo.typeName].join(".");
+                window[functionName] = createFunction(typeName);
             }
         }
 
-        console.log("Generating JsInterop constructors.");
+        function createInnerClassConstructor(typeInfo) {
 
-        getTypes().forEach(function (typeInfo) {
-            createConstructor(typeInfo);
+            var typeName;
+            var typeNameParts = typeInfo.typeName.split('.');
+            var functionName = getJsInteropTypeName(typeInfo.namespace, typeNameParts[0]);
+
+            if (typeNameParts.length !== 2) {
+                console.error('Constructor generation error. Unexpected type: ', typeInfo.typeName);
+                return;
+            }
+
+            if (window[functionName] === undefined) {
+                console.error('Constructor generation error. The base class needs to have a constructor: ', functionName);
+                return;
+            }
+
+            typeName = [typeInfo.namespace, typeInfo.typeName].join(".");
+            window[functionName][typeNameParts[1]] = createFunction(typeName);
+        }
+
+        console.log('Generating JsInterop constructors.');
+
+        // Create base classes constructors
+        getBaseTypes().forEach(function (typeInfo) {
+            createBaseClassConstructor(typeInfo);
+        });
+
+        // Create inner classes constructors
+        getInnerTypes().forEach(function (typeInfo) {
+            createInnerClassConstructor(typeInfo);
         });
     },
 
