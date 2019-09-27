@@ -7,9 +7,52 @@
  */
 MainJs = {
 
+    mappings: [DC, DI, DMNDI12, DMN12, KIE],
+
+    initializeJsInteropConstructors: function () {
+
+        var extraTypes = [{typeName: 'Name', namespace: ''}];
+        var mappings = this.mappings;
+
+        function flatMap(list, lambda) {
+            return Array.prototype.concat.apply([], list.map(lambda));
+        }
+
+        function getTypes() {
+            return flatMap(mappings, function (mapping) {
+
+                return mapping.typeInfos.map(function (typeInfo) {
+                    return {
+                        typeName: typeInfo.localName,
+                        namespace: mapping.name
+                    };
+                });
+            }).concat(extraTypes);
+        }
+
+        function createFunction(typeInfo) {
+            var typeName = [typeInfo.namespace, typeInfo.typeName].join(".");
+            return new Function('return { "TYPE_NAME" : "' + typeName + '" }');
+        }
+
+        function createConstructor(typeInfo) {
+            var functionName = "JsInterop__ConstructorAPI__DMN__JSI" + typeInfo.typeName;
+
+            if (window[functionName] === undefined) {
+                window[functionName] = createFunction(typeInfo);
+            }
+        }
+
+        console.log("Generating JsInterop constructors.");
+
+        getTypes().forEach(function (typeInfo) {
+            createConstructor(typeInfo);
+        });
+    },
+
     unmarshall: function (text, dynamicNamespace, callback) {
         // Create Jsonix context
-        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE]);
+        var context = new Jsonix.Context(this.mappings);
 
         // Create unmarshaller
         var unmarshaller = context.createUnmarshaller();
@@ -27,7 +70,7 @@ MainJs = {
         namespaces["http://www.omg.org/spec/DMN/20180521/DMNDI/"] = "dmndi";
         namespaces["http://www.omg.org/spec/DMN/20180521/DC/"] = "dc";
         namespaces["http://www.omg.org/spec/DMN/20180521/FEEL/"] = "feel";
-        var context = new Jsonix.Context([DC, DI, DMNDI12, DMN12, KIE], {
+        var context = new Jsonix.Context(this.mappings, {
             namespacePrefixes: namespaces
         });
 
