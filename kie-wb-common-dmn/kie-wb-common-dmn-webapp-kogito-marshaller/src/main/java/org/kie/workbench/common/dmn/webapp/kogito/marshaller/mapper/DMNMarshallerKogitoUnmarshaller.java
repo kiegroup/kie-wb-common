@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
@@ -62,6 +63,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceDividerLineY
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIStyle;
@@ -167,6 +169,11 @@ public class DMNMarshallerKogitoUnmarshaller {
         this.knowledgeSourceConverter = new KnowledgeSourceConverter(factoryManager);
         this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager);
+    }
+
+    @PostConstruct
+    public void init() {
+        MainJs.initializeJsInteropConstructors();
     }
 
     // ==================================
