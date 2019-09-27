@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
@@ -61,9 +61,9 @@ public class InvocationPropertyConverter {
             convertedExpression.setParent(result);
         }
 
-        final JsArrayLike<JSITBinding> jsiBindings = JSITInvocation.getBinding(dmn);
-        for (int i = 0; i < jsiBindings.getLength(); i++) {
-            final JSITBinding jsiBinding = Js.uncheckedCast(jsiBindings.getAt(i));
+        final List<JSITBinding> jsiBindings = dmn.getBinding();
+        for (int i = 0; i < jsiBindings.size(); i++) {
+            final JSITBinding jsiBinding = Js.uncheckedCast(jsiBindings.get(i));
             final Binding bConverted = BindingPropertyConverter.wbFromDMN(jsiBinding,
                                                                           hasComponentWidthsConsumer);
             if (Objects.nonNull(bConverted)) {
@@ -92,7 +92,7 @@ public class InvocationPropertyConverter {
 
         for (Binding b : wb.getBinding()) {
             final JSITBinding bConverted = BindingPropertyConverter.dmnFromWB(b, componentWidthsConsumer);
-            JSITInvocation.addBinding(result, bConverted);
+            result.getBinding().add(bConverted);
         }
 
         return result;

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -42,7 +41,7 @@ public class ImportedItemDefinitionConverter {
                                                    final String prefix) {
 
         final String nameWithPrefix = prefix + "." + itemDefinition.getName();
-        final List<JSITItemDefinition> itemComponents = Arrays.asList(itemDefinition.getItemComponent().asArray());
+        final List<JSITItemDefinition> itemComponents = itemDefinition.getItemComponent();
 
         if (itemDefinition.getTypeRef() != null && !isBuiltInType(itemDefinition.getTypeRef())) {
             itemDefinition.setTypeRef(makeQNameWithPrefix(itemDefinition.getTypeRef(), prefix).toString());

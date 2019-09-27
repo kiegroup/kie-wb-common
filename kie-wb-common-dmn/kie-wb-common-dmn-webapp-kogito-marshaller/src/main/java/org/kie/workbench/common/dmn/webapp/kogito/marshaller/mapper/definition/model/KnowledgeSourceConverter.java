@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -110,21 +111,21 @@ public class KnowledgeSourceConverter implements NodeConverter<JSITKnowledgeSour
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredDecision(ri);
-                        JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
+                        result.addAuthorityRequirement(iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
+                        result.addAuthorityRequirement(iReq);
                     } else if (drgElement instanceof InputData) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredInput(ri);
-                        JSITKnowledgeSource.addAuthorityRequirement(result, iReq);
+                        result.addAuthorityRequirement(iReq);
                     } else {
                         throw new UnsupportedOperationException("wrong model definition.");
                     }

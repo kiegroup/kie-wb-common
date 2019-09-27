@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
@@ -47,9 +47,9 @@ public class ContextPropertyConverter {
         final Context result = new Context(id,
                                            description,
                                            typeRef);
-        final JsArrayLike<JSITContextEntry> jsiContextEntries = JSITContext.getContextEntry(dmn);
-        for (int i = 0; i < jsiContextEntries.getLength(); i++) {
-            final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.getAt(i));
+        final List<JSITContextEntry> jsiContextEntries = dmn.getContextEntry();
+        for (int i = 0; i < jsiContextEntries.size(); i++) {
+            final JSITContextEntry jsiContextentry = Js.uncheckedCast(jsiContextEntries.get(i));
             final ContextEntry ceConverted = ContextEntryPropertyConverter.wbFromDMN(jsiContextentry, hasComponentWidthsConsumer);
             if (Objects.nonNull(ceConverted)) {
                 ceConverted.setParent(result);
@@ -87,7 +87,7 @@ public class ContextPropertyConverter {
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         for (ContextEntry ce : wb.getContextEntry()) {
             final JSITContextEntry ceConverted = ContextEntryPropertyConverter.dmnFromWB(ce, componentWidthsConsumer);
-            JSITContext.addContextEntry(result, ceConverted);
+            result.getContextEntry().add(ceConverted);
         }
 
         //The UI appends a ContextEntry for the _default_ result that may contain an undefined Expression.
@@ -97,7 +97,7 @@ public class ContextPropertyConverter {
         final int contextEntriesCount = result.getContextEntry().size();
         if (contextEntriesCount > 0) {
             if (Objects.isNull(wb.getContextEntry().get(contextEntriesCount - 1).getExpression())) {
-                JSITContext.removeContextEntry(result, contextEntriesCount - 1);
+                result.removeContextEntry(contextEntriesCount - 1);
             }
         }
 

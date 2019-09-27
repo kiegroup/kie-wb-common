@@ -6,17 +6,17 @@ DMN to test (src/test/resources)
 
 | FILE  | STATUS (*) | OWNER |
 |---|---|---|
-|diagram-bkm-complex.dmn|D|gcardosi|
-|diagram-bkm-simple.dmn|D|gcardosi|
-|diagram-complex.dmn|D|gcardosi|
-|diagram-decision-context.dmn|D|gcardosi|
-|diagram-decision-decision-table.dmn|D|gcardosi|
-|diagram-decision-function-definition.dmn|D|gcardosi|
-|diagram-decision-invocation.dmn|D|gcardosi|
-|diagram-decision-literal-expression.dmn|D|manstis|
-|diagram-decision-relation.dmn|D|gcardosi|
-|diagram-empty.dmn|D|gcardosi|
-|diagram-input-data.dmn|D|gcardosi|
-|diagram-knowledge-source.dmn|D|gcardosi|
+|diagram-bkm-complex.dmn|TBD|gcardosi|
+|diagram-bkm-simple.dmn|TBD|manstis|
+|diagram-complex.dmn|TBD|gcardosi|
+|diagram-decision-context.dmn|TBD|manstis|
+|diagram-decision-decision-table.dmn|TBD|gcardosi|
+|diagram-decision-function-definition.dmn|TBD|manstis|
+|diagram-decision-invocation.dmn|TBD|gcardosi|
+|diagram-decision-literal-expression.dmn|TBD|manstis|
+|diagram-decision-relation.dmn|TBD|gcardosi|
+|diagram-empty.dmn|TBD|manstis|
+|diagram-input-data.dmn|TBD|gcardosi|
+|diagram-knowledge-source.dmn|TBD|manstis|
 
 (*) STATUS: TBD = to be done; WIP = work in progress; D = done

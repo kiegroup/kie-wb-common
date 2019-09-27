@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
@@ -40,9 +40,9 @@ public class DecisionRulePropertyConverter {
         result.setId(id);
         result.setDescription(description);
 
-        final JsArrayLike<JSITUnaryTests> jsiInputEntries = JSITDecisionRule.getInputEntry(dmn);
-        for (int i = 0; i < jsiInputEntries.getLength(); i++) {
-            final JSITUnaryTests jsiInputEntry = Js.uncheckedCast(jsiInputEntries.getAt(i));
+        final List<JSITUnaryTests> jsiInputEntries = dmn.getInputEntry();
+        for (int i = 0; i < jsiInputEntries.size(); i++) {
+            final JSITUnaryTests jsiInputEntry = Js.uncheckedCast(jsiInputEntries.get(i));
             final UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(jsiInputEntry);
             if (Objects.nonNull(inputEntryConverted)) {
                 inputEntryConverted.setParent(result);
@@ -50,9 +50,9 @@ public class DecisionRulePropertyConverter {
             }
         }
 
-        final JsArrayLike<JSITLiteralExpression> jsiOutputEntries = JSITDecisionRule.getOutputEntry(dmn);
-        for (int i = 0; i < jsiOutputEntries.getLength(); i++) {
-            final JSITLiteralExpression jsiOutputEntry = Js.uncheckedCast(jsiOutputEntries.getAt(i));
+        final List<JSITLiteralExpression> jsiOutputEntries = dmn.getOutputEntry();
+        for (int i = 0; i < jsiOutputEntries.size(); i++) {
+            final JSITLiteralExpression jsiOutputEntry = Js.uncheckedCast(jsiOutputEntries.get(i));
             final LiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.wbFromDMN(jsiOutputEntry);
             if (Objects.nonNull(outputEntryConverted)) {
                 outputEntryConverted.setParent(result);
@@ -71,11 +71,11 @@ public class DecisionRulePropertyConverter {
 
         for (UnaryTests ie : wb.getInputEntry()) {
             final JSITUnaryTests inputEntryConverted = UnaryTestsPropertyConverter.dmnFromWB(ie);
-            JSITDecisionRule.addInputEntry(result, inputEntryConverted);
+            result.addInputEntry(inputEntryConverted);
         }
         for (LiteralExpression oe : wb.getOutputEntry()) {
             final JSITLiteralExpression outputEntryConverted = LiteralExpressionPropertyConverter.dmnFromWB(oe);
-            JSITDecisionRule.addOutputEntry(result, outputEntryConverted);
+            result.addOutputEntry(outputEntryConverted);
         }
 
         return result;
