@@ -349,6 +349,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         if (!Objects.isNull(previousTypeRef)) {
             typeRefEditor.setValue(previousTypeRef);
         }
+        currentName = previousName;
         previousTypeRef = null;
         currentTypeRef = null;
     }
