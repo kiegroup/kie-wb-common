@@ -16,10 +16,9 @@
 package org.kie.workbench.common.stunner.project.client.editor;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
@@ -44,9 +43,7 @@ public class ProjectDiagramEditorViewTest {
     private static final int HEIGHT = 20;
 
     private SimplePanel parent;
-
     private ResizeFlowPanel editorPanel;
-
     private ProjectDiagramEditorView tested;
 
     @Before
@@ -75,13 +72,7 @@ public class ProjectDiagramEditorViewTest {
     @Test
     public void testOnResizeWithEditor() {
         //Any Widget implementing RequiresResize will suffice
-        final ScrollPanel editor = GWT.create(ScrollPanel.class);
-        when(editorPanel.getWidgetCount()).thenReturn(1);
-        when(editorPanel.getWidget(eq(0))).thenReturn(editor);
-
         tested.onResize();
-
-        verify(tested).setPixelSize(eq(WIDTH), eq(HEIGHT));
         verify(editorPanel).onResize();
     }
 
