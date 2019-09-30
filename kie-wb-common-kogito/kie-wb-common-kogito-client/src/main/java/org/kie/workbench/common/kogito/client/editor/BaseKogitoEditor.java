@@ -36,7 +36,6 @@ public abstract class BaseKogitoEditor<CONTENT> {
     private boolean isReadOnly;
 
     private BaseEditorView baseEditorView;
-    private FileMenuBuilder fileMenuBuilder;
     private PlaceManager placeManager;
     private Menus menus;
     private PlaceRequest place;
@@ -47,10 +46,8 @@ public abstract class BaseKogitoEditor<CONTENT> {
     }
 
     protected BaseKogitoEditor(final BaseEditorView baseView,
-                               final FileMenuBuilder fileMenuBuilder,
                                final PlaceManager placeManager) {
         this.baseEditorView = baseView;
-        this.fileMenuBuilder = fileMenuBuilder;
         this.placeManager = placeManager;
     }
 

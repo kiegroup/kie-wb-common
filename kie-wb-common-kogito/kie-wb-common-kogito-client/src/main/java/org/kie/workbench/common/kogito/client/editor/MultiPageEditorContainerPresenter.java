@@ -37,11 +37,9 @@ public abstract class MultiPageEditorContainerPresenter<CONTENT>
     }
 
     protected MultiPageEditorContainerPresenter(final BaseEditorView baseEditorView,
-                                                final FileMenuBuilder fileMenuBuilder,
                                                 final PlaceManager placeManager,
                                                 final MultiPageEditorContainerView multiPageEditorContainerView) {
         super(baseEditorView,
-              fileMenuBuilder,
               placeManager);
         this.multiPageEditorContainerView = multiPageEditorContainerView;
     }
