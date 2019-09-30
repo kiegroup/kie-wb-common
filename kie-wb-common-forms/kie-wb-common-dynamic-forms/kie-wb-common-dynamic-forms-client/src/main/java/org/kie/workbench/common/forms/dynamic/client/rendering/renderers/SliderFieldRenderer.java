@@ -51,7 +51,7 @@ public class SliderFieldRenderer extends FieldRenderer<SliderBaseDefinition, Sli
 
         int precision = field.getPrecision().intValue();
         NumberFormat format = createFormatter(precision);
-        slider.setFormatter((Double value) -> format.format(value));
+        slider.setFormatter(format::format);
 
         SliderFormGroup formGroup = formGroupsInstance.get();
 
@@ -87,8 +87,8 @@ public class SliderFieldRenderer extends FieldRenderer<SliderBaseDefinition, Sli
 
     @Override
     public Converter getConverter() {
-        if (field.getStandaloneClassName() == Integer.class.getName()
-                || field.getStandaloneClassName() == "int") {
+        if (field.getStandaloneClassName().equals(Integer.class.getName())
+                || field.getStandaloneClassName().equals("int")) {
             return new IntegerToDoubleConverter();
         }
         return null;

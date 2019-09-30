@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.selectors.listBox;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.google.gwt.user.client.ui.HTML;
 import org.gwtbootstrap3.client.ui.ValueListBox;
@@ -75,7 +75,7 @@ public abstract class AbstractListBoxFieldRenderer<FIELD extends ListBoxBaseDefi
             widgetList.setName(fieldNS);
             widgetList.setEnabled(!field.getReadOnly());
             refreshSelectorOptions();
-            
+
             formGroup.render(inputId,
                              widgetList,
                              field);
@@ -89,7 +89,7 @@ public abstract class AbstractListBoxFieldRenderer<FIELD extends ListBoxBaseDefi
     @Override
     protected void refreshInput(Map<TYPE, String> optionsValues,
                                 TYPE selectedValue) {
-        List<TYPE> values = optionsValues.keySet().stream().collect(Collectors.toList());
+        List<TYPE> values = new ArrayList<>(optionsValues.keySet());
 
         if (field.getAddEmptyOption()) {
             if (!values.contains(null)) {

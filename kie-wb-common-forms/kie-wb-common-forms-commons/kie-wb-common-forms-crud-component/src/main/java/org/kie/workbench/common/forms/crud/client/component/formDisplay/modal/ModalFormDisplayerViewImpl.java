@@ -20,12 +20,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
-import org.gwtbootstrap3.client.shared.event.ModalHiddenHandler;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.ModalBody;
@@ -77,42 +73,22 @@ public class ModalFormDisplayerViewImpl extends Composite implements ModalFormDi
         modal.setRemoveOnHide(true);
 
         modalBody = new ModalBody();
-
         modalBody.add(this);
-
         modal.add(modalBody);
 
         submit = new Button(translationService.getTranslation(CrudComponentConstants.ModalFormDisplayerViewImplAccept));
-
         submit.setType(ButtonType.PRIMARY);
-
         cancel = new Button(translationService.getTranslation(CrudComponentConstants.ModalFormDisplayerViewImplCancel));
+        ModalFooter footer = new ModalFooter();
+        footer.add(submit);
+        footer.add(cancel);
+        modal.add(footer);
 
-        modal.add(new ModalFooter() {{
-            add(submit);
-            add(cancel);
-        }});
+        submit.addClickHandler(event -> presenter.submitForm());
 
-        submit.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.submitForm();
-            }
-        });
+        cancel.addClickHandler(event -> doCancel());
 
-        cancel.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                doCancel();
-            }
-        });
-
-        modal.addHiddenHandler(new ModalHiddenHandler() {
-            @Override
-            public void onHidden(ModalHiddenEvent evt) {
-                doCancel();
-            }
-        });
+        modal.addHiddenHandler(evt -> doCancel());
     }
 
     @Override

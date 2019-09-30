@@ -103,12 +103,12 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         layoutGenerator.init(new LayoutColumnDefinition[]{new LayoutColumnDefinition(ColSpan.SPAN_12)});
 
         if (form.getFields().size() > 0) {
-            boolean separeateInputsAndOutputs = form.getModel() instanceof TaskFormModel;
+            boolean separateInputsAndOutputs = form.getModel() instanceof TaskFormModel;
 
-            boolean mightAddOtuputsLabel = form.getFields().get(0).getReadOnly();
+            boolean mightAddOutputsLabel = form.getFields().get(0).getReadOnly();
 
-            if (separeateInputsAndOutputs) {
-                if (mightAddOtuputsLabel) {
+            if (separateInputsAndOutputs) {
+                if (mightAddOutputsLabel) {
                     layoutGenerator.addComponent(generateHTMLElement(INPUTS),
                                                  new LayoutSettings());
                 } else {
@@ -119,8 +119,8 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
 
             for (FieldDefinition fieldDefinition : form.getFields()) {
 
-                if (separeateInputsAndOutputs && mightAddOtuputsLabel && !fieldDefinition.getReadOnly()) {
-                    mightAddOtuputsLabel = false;
+                if (separateInputsAndOutputs && mightAddOutputsLabel && !fieldDefinition.getReadOnly()) {
+                    mightAddOutputsLabel = false;
                     layoutGenerator.addComponent(generateHTMLElement(OUTPUTS),
                                                  new LayoutSettings());
                 }
@@ -159,40 +159,43 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
 
         LayoutTemplate layout = formDefinition.getLayoutTemplate();
 
-        if(layout != null) {
+        if (layout != null) {
             Optional<LayoutRow> optionalRow = layout.getRows().stream()
                     .filter(row -> rowContainsField(row, fieldDefinition))
                     .findAny();
 
-            if(optionalRow.isPresent()) {
+            if (optionalRow.isPresent()) {
                 LayoutRow row = optionalRow.get();
-                Optional<LayoutColumn> optionalColumn  = getFieldColumn(row, fieldDefinition);
+                Optional<LayoutColumn> optionalColumn = getFieldColumn(row, fieldDefinition);
 
-                if(optionalColumn.isPresent()) {
+                if (optionalColumn.isPresent()) {
                     LayoutColumn column = optionalColumn.get();
 
-                    LayoutComponent component = getFieldComponent(column, fieldDefinition).get();
+                    Optional<LayoutComponent> optionalComponent = getFieldComponent(column, fieldDefinition);
+                    if (optionalComponent.isPresent()) {
+                        LayoutComponent component = optionalComponent.get();
 
-                    column.getLayoutComponents().remove(component);
+                        column.getLayoutComponents().remove(component);
 
-                    if(column.getLayoutComponents().isEmpty()) {
-                        row.getLayoutColumns().remove(column);
+                        if (column.getLayoutComponents().isEmpty()) {
+                            row.getLayoutColumns().remove(column);
 
-                        if(row.getLayoutColumns().isEmpty()) {
-                            layout.getRows().remove(row);
-                        } else {
-                            int span = Integer.decode(column.getSpan());
+                            if (row.getLayoutColumns().isEmpty()) {
+                                layout.getRows().remove(row);
+                            } else {
+                                int span = Integer.decode(column.getSpan());
 
-                            LayoutColumn firstColumn = row.getLayoutColumns().get(0);
+                                LayoutColumn firstColumn = row.getLayoutColumns().get(0);
 
-                            int fistSpan = Integer.decode(firstColumn.getSpan());
+                                int fistSpan = Integer.decode(firstColumn.getSpan());
 
-                            LayoutColumn newFirstColumn = new LayoutColumn(String.valueOf(span + fistSpan), firstColumn.getHeight(), firstColumn.getProperties());
+                                LayoutColumn newFirstColumn = new LayoutColumn(String.valueOf(span + fistSpan), firstColumn.getHeight(), firstColumn.getProperties());
 
-                            firstColumn.getLayoutComponents().forEach(newFirstColumn::add);
-                            firstColumn.getRows().forEach(newFirstColumn::addRow);
+                                firstColumn.getLayoutComponents().forEach(newFirstColumn::add);
+                                firstColumn.getRows().forEach(newFirstColumn::addRow);
 
-                            Collections.replaceAll(row.getLayoutColumns(), firstColumn, newFirstColumn);
+                                Collections.replaceAll(row.getLayoutColumns(), firstColumn, newFirstColumn);
+                            }
                         }
                     }
                 }
@@ -201,7 +204,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
     }
 
     protected boolean rowContainsField(final LayoutRow row, final FieldDefinition fieldDefinition) {
-        if(!row.getLayoutColumns().isEmpty()) {
+        if (!row.getLayoutColumns().isEmpty()) {
             return getFieldColumn(row, fieldDefinition).isPresent();
         }
         return false;
@@ -268,10 +271,8 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
     }
 
     private void verifyNestedForm(final FormDefinition nestedForm, final GenerationContext<SOURCE> context) {
-        if(nestedForm != null && nestedForm.getFields().isEmpty() && !supportsEmptyNestedForms()) {
-            if(nestedForm != null) {
-                context.getContextForms().remove(nestedForm.getId());
-            }
+        if (nestedForm != null && nestedForm.getFields().isEmpty() && !supportsEmptyNestedForms()) {
+            context.getContextForms().remove(nestedForm.getId());
             throw new RuntimeException("Not Supported empty Nested forms");
         }
     }
@@ -285,7 +286,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
 
     private FormDefinition createNewFormDefinition(final String modelType, final GenerationContext<SOURCE> context) {
 
-        if(bannedModelTypes.contains(modelType)) {
+        if (bannedModelTypes.contains(modelType)) {
             throw new IllegalArgumentException("Cannot extract fields for '" + modelType + "'");
         }
 

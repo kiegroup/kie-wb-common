@@ -161,9 +161,9 @@ public class DocumentFieldRendererViewImpl extends Composite implements Document
 
                 DocumentData data = new DocumentData(document.get("contentId").isString().stringValue(),
                                                      document.get("fileName").isString().stringValue(),
-                                                     new Double(document.get("size").isNumber().doubleValue()).longValue(),
+                                                     (long) document.get("size").isNumber().doubleValue(),
                                                      null,
-                                                     new Double(document.get("lastModified").isNumber().doubleValue()).longValue());
+                                                     (long) document.get("lastModified").isNumber().doubleValue());
 
                 setValue(data, true);
             } else if (response.get("error").isNull() != null) {

@@ -201,10 +201,7 @@ public class EditorFieldLayoutComponent extends FieldLayoutComponent implements 
             if (renderingContext != null) {
                 return renderingContext.getRootForm().getId();
             }
-            if (formId.isPresent()) {
-                return formId.get();
-            }
-            return formId.isPresent() ? formId.get() : "";
+            return formId.orElse("");
         } else if (FIELD_ID.equals(key)) {
             if (field != null) {
                 return field.getId();
@@ -260,7 +257,7 @@ public class EditorFieldLayoutComponent extends FieldLayoutComponent implements 
         }
 
         if (!fieldId.isPresent()) {
-            fieldId = Optional.ofNullable(properties.get(FIELD_ID));
+            fieldId = Optional.of(properties.get(FIELD_ID));
         }
 
         if (!formId.isPresent()) {

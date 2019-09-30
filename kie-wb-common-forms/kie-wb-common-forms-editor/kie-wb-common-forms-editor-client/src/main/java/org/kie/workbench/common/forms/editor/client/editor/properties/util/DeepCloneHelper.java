@@ -29,8 +29,13 @@ public class DeepCloneHelper {
         if(instance == null) {
             return null;
         }
-        
-        return doDeepClone(instance).deepUnwrap();
+
+        BindableProxy<T> proxy = doDeepClone(instance);
+        if (proxy == null) {
+            return null;
+        }
+
+        return proxy.deepUnwrap();
     }
 
     private static <T> BindableProxy<T> doDeepClone(T instance) {

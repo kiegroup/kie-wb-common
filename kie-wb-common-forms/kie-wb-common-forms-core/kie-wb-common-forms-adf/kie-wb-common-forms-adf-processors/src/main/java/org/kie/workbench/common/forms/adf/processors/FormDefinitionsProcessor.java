@@ -37,7 +37,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.uberfire.annotations.processors.AbstractErrorAbsorbingProcessor;
 import org.uberfire.annotations.processors.GenerationCompleteCallback;
-import org.uberfire.annotations.processors.exceptions.GenerationException;
 
 import static org.kie.workbench.common.forms.adf.processors.FormDefinitionsProcessor.FIELD_DEFINITION_ANNOTATION;
 import static org.kie.workbench.common.forms.adf.processors.FormDefinitionsProcessor.FORM_DEFINITON_ANNOTATION;
@@ -53,8 +52,6 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
     public static final String FIELD_DEFINITION_ANNOTATION = "org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition";
 
     private GenerationCompleteCallback callback = null;
-
-    private SourceGenerationContext context;
 
     public FormDefinitionsProcessor() {
 
@@ -82,7 +79,7 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
             return false;
         }
 
-        context = new SourceGenerationContext(processingEnv, roundEnvironment);
+        SourceGenerationContext context = new SourceGenerationContext(processingEnv, roundEnvironment);
 
         new FieldDefinitionModifierGenerator(context).generate();
         new FormDefinitionGenerator(context).generate();
@@ -115,7 +112,7 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
                 callback.generationComplete(code.toString());
             }
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
-                                                     "Succesfully Generated sources for [" + context.getForms().size() + "] FormDefinitions & [" + context.getFieldDefinitions().size() + "] FieldDefinitions");
+                                                     "Successfully Generated sources for [" + context.getForms().size() + "] FormDefinitions & [" + context.getFieldDefinitions().size() + "] FieldDefinitions");
         } else {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
                                                      "No FormDefinitions found on module");
@@ -124,7 +121,7 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
         return true;
     }
 
-    protected StringBuffer writeTemplate(String templateName, Map<String, Object> context) throws GenerationException {
+    protected StringBuffer writeTemplate(String templateName, Map<String, Object> context) throws IOException, TemplateException {
         //Generate code
         final StringWriter sw = new StringWriter();
         final BufferedWriter bw = new BufferedWriter(sw);
@@ -135,25 +132,14 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
         // Template class tried to read from the stream it resulted in IOException. Changing the code to
         // 'getResource(templateName).openStream()' seems to be a sensible workaround
         try (InputStream templateIs = this.getClass().getResource(templateName).openStream()) {
-            Configuration config = new Configuration();
-
             Template template = new Template("",
                                              new InputStreamReader(templateIs),
-                                             config);
-
+                                             new Configuration());
             template.process(context,
                              bw);
-        } catch (IOException ioe) {
-            throw new GenerationException(ioe);
-        } catch (TemplateException te) {
-            throw new GenerationException(te);
         } finally {
-            try {
-                bw.close();
-                sw.close();
-            } catch (IOException ioe) {
-                throw new GenerationException(ioe);
-            }
+            bw.close();
+            sw.close();
         }
         return sw.getBuffer();
     }

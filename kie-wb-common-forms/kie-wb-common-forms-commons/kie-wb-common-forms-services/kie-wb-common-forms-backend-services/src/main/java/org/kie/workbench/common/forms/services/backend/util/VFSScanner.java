@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.io.FilenameUtils;
 import org.uberfire.io.IOService;
+import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 
@@ -65,7 +66,9 @@ public class VFSScanner<TYPE> {
 
     private void scanPath(final Path path) {
         if (Files.isDirectory(path)) {
-            ioService.newDirectoryStream(path).forEach(this::scanPath);
+            try (DirectoryStream<Path> directory = ioService.newDirectoryStream(path)) {
+                directory.forEach(this::scanPath);
+            }
         } else {
             String filename = path.getFileName().toString();
             String extension = FilenameUtils.getExtension(filename);

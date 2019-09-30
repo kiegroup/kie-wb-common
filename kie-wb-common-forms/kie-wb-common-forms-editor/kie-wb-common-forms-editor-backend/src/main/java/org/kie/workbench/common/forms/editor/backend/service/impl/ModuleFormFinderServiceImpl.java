@@ -115,16 +115,11 @@ public class ModuleFormFinderServiceImpl implements ModuleFormFinderService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        List<String> moduleFormsIds = moduleForms.stream()
-                .map(FormDefinition::getId)
-                .collect(Collectors.toList());
-
         Map<String, String> dependenciesForms = buildInfoService.getBuildInfo(module).getKieModuleMetaDataIgnoringErrors().getForms();
 
         return dependenciesForms.values().stream()
                 .map(serializer::deserialize)
                 .filter(predicate)
-                .filter(formDefinition -> !moduleFormsIds.contains(formDefinition))
                 .collect(Collectors.toCollection(() -> moduleForms));
     }
 
