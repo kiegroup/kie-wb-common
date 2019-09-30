@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.backend.service;
 
 import java.util.Arrays;
 
+import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +27,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.io.IOService;
+import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.FileSystem;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -44,6 +47,9 @@ public class BackendFileSystemManagerTest {
 
     @Mock
     private IOService ioService;
+
+    @Mock
+    private CommentedOptionFactory optionFactory;
 
     @Mock
     private FileSystem fileSystem;
@@ -66,7 +72,8 @@ public class BackendFileSystemManagerTest {
                 .fromString(ASSET2_CONTENT)
                 .build();
         when(path.getFileSystem()).thenReturn(fileSystem);
-        tested = new BackendFileSystemManager(ioService);
+        tested = new BackendFileSystemManager(ioService,
+                                              optionFactory);
     }
 
     @Test
@@ -85,8 +92,13 @@ public class BackendFileSystemManagerTest {
                       message);
         verify(ioService, times(1)).createDirectories(eq(path));
         verify(ioService, times(1)).startBatch(eq(fileSystem));
-        verify(ioService, times(1)).write(eq(asset1Path), bytesCaptor1.capture());
-        verify(ioService, times(1)).write(eq(asset2Path), bytesCaptor2.capture());
+        verify(ioService, times(1)).write(eq(asset1Path),
+                                          bytesCaptor1.capture(),
+                                          any(CommentedOption.class));
+        verify(ioService, times(1)).write(eq(asset2Path),
+                                          bytesCaptor2.capture(),
+                                          any(CommentedOption.class));
+        verify(optionFactory, times(2)).makeCommentedOption(eq(message));
         verify(ioService, times(1)).endBatch();
         final byte[] bytes1 = bytesCaptor1.getValue();
         final String expectedContent1 = new String(bytes1, BackendFileSystemManager.UT8);

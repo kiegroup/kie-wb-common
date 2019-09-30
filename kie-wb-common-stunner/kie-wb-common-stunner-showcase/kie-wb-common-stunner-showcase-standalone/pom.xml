@@ -626,6 +626,17 @@
       <artifactId>uberfire-structure-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-structure-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.uberfire</groupId>
+          <artifactId>uberfire-servlet-security</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <!-- Required by uberfire-project-client -->
     <dependency>
       <groupId>org.uberfire</groupId>

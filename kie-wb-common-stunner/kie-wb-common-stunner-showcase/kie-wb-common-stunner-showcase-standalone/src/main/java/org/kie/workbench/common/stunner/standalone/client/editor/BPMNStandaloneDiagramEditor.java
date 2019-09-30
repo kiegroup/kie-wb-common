@@ -45,7 +45,6 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditor;
@@ -84,9 +83,6 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
 
     public static final String EDITOR_ID = "BPMNStandaloneDiagramEditor";
 
-    private final SessionManager sessionManager;
-    private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private final Event<NotificationEvent> notificationEvent;
 
     private final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock;
@@ -116,7 +112,6 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
                                        final DocumentationView documentationView,
                                        final SessionManager sessionManager,
                                        final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                       final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                        final DiagramEditorPreviewAndExplorerDock diagramPreviewAndExplorerDock,
                                        final DiagramEditorPropertiesDock diagramPropertiesDock,
                                        final LayoutHelper layoutHelper,
@@ -138,9 +133,6 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
               diagramClientErrorHandler,
               translationService,
               documentationView);
-        this.sessionManager = sessionManager;
-        this.sessionCommandManager = sessionCommandManager;
-        this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.notificationEvent = notificationEvent;
 
         this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
