@@ -165,8 +165,8 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
 
                 callback.onSuccess(diagram);
             };
-
-            MainJs.unmarshall(xml, jsCallback);
+            //TODO {gcardosi} retrieve correct "xmlns" namespace
+            MainJs.unmarshall(xml, "UNKNOWN", jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage());
             callback.onError(new ClientRuntimeError(new DiagramParsingException(metadata, xml)));
@@ -201,7 +201,7 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
                 GWT.log("For the moment being this works only after 'loading' a DMN");
                 final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);
                 dmn12.setDefinitions(jsitDefinitions);
-                MainJs.marshall(dmn12, jsCallback);
+                MainJs.marshall(dmn12, jsitDefinitions.getNamespace(), jsCallback);
             } else {
                 GWT.log("**************WARNING********************");
                 GWT.log("For the moment being this does not works after 'creating' a DM");

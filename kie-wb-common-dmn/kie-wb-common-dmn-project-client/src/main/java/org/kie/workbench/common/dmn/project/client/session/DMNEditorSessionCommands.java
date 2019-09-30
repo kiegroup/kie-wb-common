@@ -72,6 +72,6 @@ public class DMNEditorSessionCommands extends EditorSessionCommands {
     }
 
     public PerformAutomaticLayoutCommand getPerformAutomaticLayoutCommand() {
-        return get(PerformAutomaticLayoutCommand.class);
+        return get(DMNPerformAutomaticLayoutCommand.class);
     }
 }

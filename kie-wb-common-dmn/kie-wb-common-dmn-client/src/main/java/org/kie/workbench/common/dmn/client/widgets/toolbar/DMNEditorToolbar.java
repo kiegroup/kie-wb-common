@@ -128,8 +128,8 @@ public class DMNEditorToolbar
         return (SaveToolbarCommand) toolbar.getCommand(13);
     }
 
-    public PerformAutomaticLayoutToolbarCommand getPerformAutomaticLayoutToolbarCommand() {
-        return (PerformAutomaticLayoutToolbarCommand) toolbar.getCommand(14);
+    public DMNPerformAutomaticLayoutToolbarCommand getPerformAutomaticLayoutToolbarCommand() {
+        return (DMNPerformAutomaticLayoutToolbarCommand) toolbar.getCommand(14);
     }
 
     @Override
