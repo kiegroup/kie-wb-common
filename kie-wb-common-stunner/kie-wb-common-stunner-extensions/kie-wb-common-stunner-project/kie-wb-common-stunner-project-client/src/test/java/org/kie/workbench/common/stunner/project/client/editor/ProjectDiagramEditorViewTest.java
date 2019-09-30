@@ -16,8 +16,9 @@
 package org.kie.workbench.common.stunner.project.client.editor;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -39,9 +41,7 @@ public class ProjectDiagramEditorViewTest {
     private static final int HEIGHT = 20;
 
     private SimplePanel parent;
-
     private ResizeFlowPanel editorPanel;
-
     private ProjectDiagramEditorView tested;
 
     @Before
@@ -67,20 +67,28 @@ public class ProjectDiagramEditorViewTest {
     @Test
     public void testOnResizeWithEditor() {
         //Any Widget implementing RequiresResize will suffice
-        final ScrollPanel editor = GWT.create(ScrollPanel.class);
-        when(editorPanel.getWidgetCount()).thenReturn(1);
-        when(editorPanel.getWidget(eq(0))).thenReturn(editor);
-
         tested.onResize();
-
-        verify(tested).setPixelSize(eq(WIDTH), eq(HEIGHT));
         verify(editorPanel).onResize();
     }
 
     @Test
-    public void testOnResizeWithNoEditor() {
-        tested.onResize();
+    public void testOnAttach() {
+        Element elm = mock(Element.class);
+        Element parentElement = mock(Element.class);
+        Style style = mock(Style.class);
 
-        verify(tested).setPixelSize(eq(WIDTH), eq(HEIGHT));
+        doCallRealMethod().when(tested).onAttach();
+
+        when(tested.getElement()).thenReturn(elm);
+        when(elm.getParentElement()).thenReturn(parentElement);
+        when(parentElement.getStyle()).thenReturn(style);
+        when(elm.getStyle()).thenReturn(style);
+
+        tested.onAttach();
+
+        verify(tested).onAttach();
+        verify(style).setHeight(100, Style.Unit.PCT);
+        verify(style).setWidth(100, Style.Unit.PCT);
+        verify(style).setDisplay(Style.Display.TABLE);
     }
 }
