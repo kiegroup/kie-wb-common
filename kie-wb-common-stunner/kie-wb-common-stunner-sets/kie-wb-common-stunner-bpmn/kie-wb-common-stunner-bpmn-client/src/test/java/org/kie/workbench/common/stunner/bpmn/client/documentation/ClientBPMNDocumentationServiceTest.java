@@ -51,7 +51,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.WSDLImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -172,6 +175,11 @@ public class ClientBPMNDocumentationServiceTest {
     private static final String ICON_HTML = "icon image";
     private static final String ASSIGNEMNTS_CAPTION = "ASSIGNEMNTS_CAPTION";
     private static final String SLA_DUE_DATE = "";
+    private static final String CLASS_NAME = "CLASS_NAME";
+    private static final String LOCATION = "LOCATION";
+    private static final String NAMESPACE = "NAMESPACE";
+    private static final String EMPTY_VALUE = "";
+    private static final String HIDDEN = "hidden";
 
     private ClientBPMNDocumentationService tested;
 
@@ -244,6 +252,8 @@ public class ClientBPMNDocumentationServiceTest {
 
     private EmbeddedSubprocess embeddedSubprocess;
 
+    private Imports imports;
+
     private GlobalVariables globalVariables;
 
     @Mock
@@ -299,6 +309,16 @@ public class ClientBPMNDocumentationServiceTest {
         globalVariables = new GlobalVariables(GLOBAL_VARIABLES);
         slaDueDate = new SLADueDate(SLA_DUE_DATE);
 
+        ImportsValue importsValue = new ImportsValue();
+        importsValue.addImport(new DefaultImport(CLASS_NAME + "1"));
+        importsValue.addImport(new DefaultImport(CLASS_NAME + "2"));
+        importsValue.addImport(new DefaultImport(CLASS_NAME + "3"));
+        importsValue.addImport(new WSDLImport(LOCATION + "1", NAMESPACE + "1"));
+        importsValue.addImport(new WSDLImport(LOCATION + "2", NAMESPACE + "2"));
+        importsValue.addImport(new WSDLImport(LOCATION + "3", NAMESPACE + "3"));
+        importsValue.addImport(new WSDLImport(LOCATION + "4", NAMESPACE + "4"));
+        imports = new Imports(importsValue);
+
         diagramSet = new DiagramSet(processName,
                                     processDocumentation,
                                     processId,
@@ -307,7 +327,7 @@ public class ClientBPMNDocumentationServiceTest {
                                     adHoc,
                                     processInstanceDescription,
                                     globalVariables,
-                                    new Imports(),
+                                    imports,
                                     executable,
                                     slaDueDate);
         //ProcessData
@@ -490,6 +510,30 @@ public class ClientBPMNDocumentationServiceTest {
         assertEquals(general.getName(), PROCESS_NAME);
         assertEquals(general.getPkg(), PROCESS_PACKAGE);
         assertEquals(general.getVersion(), PROCESS_VERSION);
+
+        final org.kie.workbench.common.stunner.bpmn.documentation.model.general.Imports importsDoc = process.getImports();
+        final org.kie.workbench.common.stunner.bpmn.documentation.model.general.Imports.DefaultImport[] defaultImportsDoc = importsDoc.getDefaultImports();
+        final org.kie.workbench.common.stunner.bpmn.documentation.model.general.Imports.WSDLImport[] wsdlImportsDoc = importsDoc.getWSDLImports();
+
+        assertEquals(EMPTY_VALUE, importsDoc.getDefaultImportsHidden());
+        assertEquals(EMPTY_VALUE, importsDoc.getWSDLImportsHidden());
+        assertEquals(EMPTY_VALUE, importsDoc.getImportsTableHidden());
+        assertEquals(HIDDEN, importsDoc.getNoImportsHidden());
+        assertEquals(3, importsDoc.getTotalDefaultImports(), 0);
+        assertEquals(4, importsDoc.getTotalWSDLImports(), 0);
+
+        assertEquals(defaultImportsDoc[0].getClassName(), CLASS_NAME + "1");
+        assertEquals(defaultImportsDoc[1].getClassName(), CLASS_NAME + "2");
+        assertEquals(defaultImportsDoc[2].getClassName(), CLASS_NAME + "3");
+
+        assertEquals(wsdlImportsDoc[0].getLocation(), LOCATION + "1");
+        assertEquals(wsdlImportsDoc[0].getNamespace(), NAMESPACE + "1");
+        assertEquals(wsdlImportsDoc[1].getLocation(), LOCATION + "2");
+        assertEquals(wsdlImportsDoc[1].getNamespace(), NAMESPACE + "2");
+        assertEquals(wsdlImportsDoc[2].getLocation(), LOCATION + "3");
+        assertEquals(wsdlImportsDoc[2].getNamespace(), NAMESPACE + "3");
+        assertEquals(wsdlImportsDoc[3].getLocation(), LOCATION + "4");
+        assertEquals(wsdlImportsDoc[3].getNamespace(), NAMESPACE + "4");
 
         final ProcessVariablesTotal dataTotal = process.getDataTotal();
         assertEquals(dataTotal.getTotal(), 6, 0);
