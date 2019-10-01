@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
-import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.editor.commons.client.BaseEditorView;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;

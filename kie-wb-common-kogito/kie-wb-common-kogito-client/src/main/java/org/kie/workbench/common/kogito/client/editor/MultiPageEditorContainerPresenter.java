@@ -16,7 +16,6 @@
 package org.kie.workbench.common.kogito.client.editor;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.widgets.multipage.Page;
 import org.uberfire.ext.editor.commons.client.BaseEditorView;
