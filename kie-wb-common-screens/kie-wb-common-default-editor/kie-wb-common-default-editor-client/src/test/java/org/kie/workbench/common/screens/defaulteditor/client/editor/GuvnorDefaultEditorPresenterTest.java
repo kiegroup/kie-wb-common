@@ -16,18 +16,22 @@
 
 package org.kie.workbench.common.screens.defaulteditor.client.editor;
 
-import com.google.gwtmockito.GwtMockitoTestRunner;
 import java.util.Optional;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.shared.metadata.MetadataService;
+import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.messageconsole.client.console.widget.button.AlertsButtonMenuItemBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.screens.defaulteditor.service.DefaultEditorService;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilderImpl;
 import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateValidator;
+import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -35,11 +39,20 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
 import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilder;
+import org.uberfire.mocks.CallerMock;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.promise.SyncPromises;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class GuvnorDefaultEditorPresenterTest {
@@ -66,6 +79,18 @@ public class GuvnorDefaultEditorPresenterTest {
     @Mock
     protected MenuItem alertsButtonMenuItem;
 
+    @Mock
+    protected DefaultEditorService defaultEditorServiceMock;
+
+    @Mock
+    protected MetadataService metadataServiceMock;
+
+    @Mock
+    protected EventSourceMock<NotificationEvent> notificationEvent;
+
+    @Mock
+    protected OverviewWidgetPresenter overviewWidgetMock;
+
     protected Promises promises;
 
     protected GuvnorDefaultEditorPresenter presenter;
@@ -82,6 +107,11 @@ public class GuvnorDefaultEditorPresenterTest {
                 versionRecordManager = GuvnorDefaultEditorPresenterTest.this.versionRecordManager;
                 alertsButtonMenuItemBuilder = GuvnorDefaultEditorPresenterTest.this.alertsButtonMenuItemBuilder;
                 promises = GuvnorDefaultEditorPresenterTest.this.promises;
+                defaultEditorService = new CallerMock<>(defaultEditorServiceMock);
+                metadataService = new CallerMock<>(metadataServiceMock);
+                metadata = new Metadata();
+                notification = notificationEvent;
+                overviewWidget = overviewWidgetMock;
             }
         });
 
@@ -95,6 +125,7 @@ public class GuvnorDefaultEditorPresenterTest {
 
         presenter.makeMenuBar();
 
+        verify(fileMenuBuilder).addSave(any(MenuItem.class));
         verify(fileMenuBuilder).addCopy(any(Path.class),
                                         any(AssetUpdateValidator.class));
         verify(fileMenuBuilder).addRename(any(Path.class),
@@ -103,6 +134,16 @@ public class GuvnorDefaultEditorPresenterTest {
                                           any(AssetUpdateValidator.class));
         verify(fileMenuBuilder).addNewTopLevelMenu(alertsButtonMenuItem);
         verify(presenter).addDownloadMenuItem(fileMenuBuilder);
+    }
+
+    @Test
+    public void testSave() {
+
+        presenter.save("save");
+
+        verify(metadataServiceMock).saveMetadata(any(),
+                                                 any(),
+                                                 eq("save"));
     }
 
     @Test
