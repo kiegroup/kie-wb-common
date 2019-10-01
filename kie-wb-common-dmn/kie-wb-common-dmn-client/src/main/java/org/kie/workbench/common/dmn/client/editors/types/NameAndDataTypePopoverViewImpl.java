@@ -27,6 +27,7 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.KeyboardEvent;
 import org.gwtbootstrap3.client.ui.DropDown;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
@@ -62,6 +63,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
     static final String ESCAPE_KEY = "Escape";
     static final String ESC_KEY = "Esc";
     static final String ENTER_KEY = "Enter";
+    static final String DROPDOWN_ELEMENT_SELECTOR = ".bs-container.btn-group.bootstrap-select.show-tick.input-group-btn";
 
     @DataField("nameEditor")
     private Input nameEditor;
@@ -106,7 +108,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
         static final String BOOTSTRAP_SELECT_HIDDEN_EVENT = "hidden.bs.select";
 
-        boolean isSelectDropDownShown = false;
+        static final String OPEN_CLASS = "open";
 
         private final ParameterizedCommand<Optional<String>> commandShow;
 
@@ -120,19 +122,13 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
         void show(final Optional<String> editorTitle) {
             commandShow.execute(editorTitle);
-
-            //Track state of drop-down element
-            kieDataTypeSelect().on(BOOTSTRAP_SELECT_SHOWN_EVENT, (event) -> isSelectDropDownShown = true);
-            kieDataTypeSelect().on(BOOTSTRAP_SELECT_HIDDEN_EVENT, (event) -> isSelectDropDownShown = false);
-
-            isSelectDropDownShown = false;
         }
 
         void hide() {
             kieDataTypeSelect().off(BOOTSTRAP_SELECT_SHOWN_EVENT);
 
             //If drop-down is visible defer closure of popover until drop-down has closed.
-            if (isSelectDropDownShown) {
+            if (isVisible()) {
                 kieDataTypeSelect().on(BOOTSTRAP_SELECT_HIDDEN_EVENT, (event) -> onHide());
             } else {
                 onHide();
@@ -142,6 +138,18 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         void onHide() {
             kieDataTypeSelect().off(BOOTSTRAP_SELECT_HIDDEN_EVENT);
             commandHide.execute();
+        }
+
+        boolean isVisible() {
+            final elemental2.dom.Element menuElement = getMenuElement();
+            return Optional
+                    .ofNullable(menuElement)
+                    .map(element -> element.classList.contains(OPEN_CLASS))
+                    .orElse(false);
+        }
+
+        elemental2.dom.Element getMenuElement() {
+            return DomGlobal.document.querySelector(DROPDOWN_ELEMENT_SELECTOR);
         }
 
         /**
@@ -316,6 +324,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
     @Override
     public void show(final Optional<String> editorTitle) {
         monitor.show(editorTitle);
+        nameEditor.focus();
     }
 
     @Override
