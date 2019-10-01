@@ -23,8 +23,6 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
 
-// TODO: (kogito) Remove class?
-
 @Dependent
 @Typed(BPMNStandaloneEditorMenuSessionItems.class)
 public class BPMNStandaloneEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionItems<BPMNStandaloneEditorMenuItemsBuilder> {

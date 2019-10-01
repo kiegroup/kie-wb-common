@@ -16,13 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters;
 
-/*
-    TODO: Kogito: Using those methods results in some error during gwt compilation
-        java.lang.NullPointerException
-            at com.google.gwt.dev.jjs.ast.JClassLiteral.getType(JClassLiteral.java:58)
-            at com.google.gwt.dev.jjs.impl.GwtAstBuilder.getOrCreateLambdaStatement(GwtAstBuilder.java:3829)
- */
-
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;

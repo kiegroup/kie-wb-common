@@ -23,8 +23,6 @@ import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.session.command.ManagedClientSessionCommands;
 import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommands;
 
-// TODO: (kogito) Remove class?
-
 @Dependent
 @BPMN
 public class BPMNStandaloneEditorSessionCommands extends EditorSessionCommands {
