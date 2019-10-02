@@ -10,9 +10,9 @@ DMN to test (src/test/resources)
 |diagram-bkm-simple.dmn|TBD|manstis|
 |diagram-complex.dmn|D|gcardosi|
 |diagram-decision-context.dmn|TBD|manstis|
-|diagram-decision-decision-table.dmn|WIP|gcardosi|
+|diagram-decision-decision-table.dmn|D|gcardosi|
 |diagram-decision-function-definition.dmn|TBD|manstis|
-|diagram-decision-invocation.dmn|TBD|gcardosi|
+|diagram-decision-invocation.dmn|WIP|gcardosi|
 |diagram-decision-literal-expression.dmn|TBD|manstis|
 |diagram-decision-relation.dmn|TBD|gcardosi|
 |diagram-empty.dmn|TBD|manstis|
