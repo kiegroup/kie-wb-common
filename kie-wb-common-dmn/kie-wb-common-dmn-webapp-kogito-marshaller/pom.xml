@@ -31,7 +31,7 @@
 
   <properties>
     <version.jsonix-scripts>3.0.0</version.jsonix-scripts>
-    <version.gwt-jsonix-schema-compiler>1.0c</version.gwt-jsonix-schema-compiler>
+    <version.gwt-jsonix-schema-compiler>1.0d</version.gwt-jsonix-schema-compiler>
     <version.jaxb2-basics>0.12.0</version.jaxb2-basics>
     <version.jaxb2-namespace-prefix>1.3</version.jaxb2-namespace-prefix>
     <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
