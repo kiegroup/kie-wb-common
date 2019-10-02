@@ -57,6 +57,7 @@ public final class MapSelectionControl<H extends AbstractCanvasHandler>
     private MouseClickHandler layerClickHandler;
     private final Map<String, Boolean> items = new HashMap<>();
     private boolean readonly;
+    private boolean isCanvasSelectionEventAdded = false;
 
     public static <H extends AbstractCanvasHandler> MapSelectionControl<H> build(final Consumer<CanvasSelectionEvent> selectionEventConsumer,
                                                                                  final Consumer<CanvasClearSelectionEvent> clearSelectionEventConsumer) {
@@ -81,9 +82,10 @@ public final class MapSelectionControl<H extends AbstractCanvasHandler>
                     clearSelection(false);
                     final String canvasRootUUID = getRootUUID();
                     fireCanvasClear();
-                    if (null != canvasRootUUID) {
+                    if (null != canvasRootUUID && !isCanvasSelectionEventAdded) {
                         selectionEventConsumer.accept(new CanvasSelectionEvent(canvasHandler,
                                                                                canvasRootUUID));
+                        isCanvasSelectionEventAdded = true;
                     }
                 }
             }

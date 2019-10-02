@@ -177,6 +177,36 @@ public class MapSelectionControlTest {
     }
 
     @Test
+    public void testLayerClickAndSelectRootElementOnlyOnce() {
+        tested.init(canvasHandler);
+        final ArgumentCaptor<MouseClickHandler> clickHandlerArgumentCaptor =
+                ArgumentCaptor.forClass(MouseClickHandler.class);
+        verify(canvas,
+               times(1)).addHandler(eq(ViewEventType.MOUSE_CLICK),
+                                    clickHandlerArgumentCaptor.capture());
+        final MouseClickHandler clickHandler = clickHandlerArgumentCaptor.getValue();
+        final MouseClickEvent event = new MouseClickEvent(12,
+                                                          20,
+                                                          30,
+                                                          40);
+        event.setButtonLeft(true);
+        event.setShiftKeyDown(false);
+        // Handle Click Event twice and verify SelectedElement Event gets added only once
+        clickHandler.handle(event);
+        clickHandler.handle(event);
+
+        final ArgumentCaptor<CanvasSelectionEvent> elementSelectedEventArgumentCaptor =
+                ArgumentCaptor.forClass(CanvasSelectionEvent.class);
+        verify(elementSelectedEvent,
+               times(1)).fire(elementSelectedEventArgumentCaptor.capture());
+        verify(clearSelectionEvent,
+               times(2)).fire(any(CanvasClearSelectionEvent.class));
+        final CanvasSelectionEvent ese = elementSelectedEventArgumentCaptor.getValue();
+        assertEquals(ROOT_UUID,
+                     ese.getIdentifiers().iterator().next());
+    }
+
+    @Test
     public void testLayerClickAndClear() {
         when(metadata.getCanvasRootUUID()).thenReturn(null);
         tested.init(canvasHandler);
