@@ -7,7 +7,7 @@ DMN to test (src/test/resources)
 | FILE  | STATUS (*) | OWNER |
 |---|---|---|
 |diagram-bkm-complex.dmn|D|gcardosi|
-|diagram-bkm-simple.dmn|WIP|gcardosi|
+|diagram-bkm-simple.dmn|D|gcardosi|
 |diagram-complex.dmn|D|gcardosi|
 |diagram-decision-context.dmn|D|gcardosi|
 |diagram-decision-decision-table.dmn|D|gcardosi|
