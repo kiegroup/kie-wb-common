@@ -15,7 +15,7 @@ DMN to test (src/test/resources)
 |diagram-decision-invocation.dmn|D|gcardosi|
 |diagram-decision-literal-expression.dmn|TBD|manstis|
 |diagram-decision-relation.dmn|D|gcardosi|
-|diagram-empty.dmn|WIP|manstis|
+|diagram-empty.dmn|WIP|gcardosi|
 |diagram-input-data.dmn|D|gcardosi|
 |diagram-knowledge-source.dmn|D|gcardosi|
 
