@@ -11,9 +11,9 @@ DMN to test (src/test/resources)
 |diagram-complex.dmn|D|gcardosi|
 |diagram-decision-context.dmn|TBD|manstis|
 |diagram-decision-decision-table.dmn|D|gcardosi|
-|diagram-decision-function-definition.dmn|TBD|manstis|
+|diagram-decision-function-definition.dmn|WIP|gcardosi|
 |diagram-decision-invocation.dmn|D|gcardosi|
-|diagram-decision-literal-expression.dmn|WIP|gcardosi|
+|diagram-decision-literal-expression.dmn|D|gcardosi|
 |diagram-decision-relation.dmn|D|gcardosi|
 |diagram-empty.dmn|D|gcardosi|
 |diagram-input-data.dmn|D|gcardosi|
