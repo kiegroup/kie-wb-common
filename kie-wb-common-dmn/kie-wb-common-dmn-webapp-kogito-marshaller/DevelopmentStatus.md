@@ -14,9 +14,9 @@ DMN to test (src/test/resources)
 |diagram-decision-function-definition.dmn|TBD|manstis|
 |diagram-decision-invocation.dmn|D|gcardosi|
 |diagram-decision-literal-expression.dmn|TBD|manstis|
-|diagram-decision-relation.dmn|WIP|gcardosi|
+|diagram-decision-relation.dmn|D|gcardosi|
 |diagram-empty.dmn|TBD|manstis|
-|diagram-input-data.dmn|TBD|gcardosi|
+|diagram-input-data.dmn|WIP|gcardosi|
 |diagram-knowledge-source.dmn|TBD|manstis|
 
 (*) STATUS: TBD = to be done; WIP = work in progress; D = done
