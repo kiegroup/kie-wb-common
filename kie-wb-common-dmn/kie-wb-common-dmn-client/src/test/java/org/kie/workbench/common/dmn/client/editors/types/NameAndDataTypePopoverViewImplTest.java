@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -56,6 +57,7 @@ import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeP
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -193,11 +195,13 @@ public class NameAndDataTypePopoverViewImplTest {
 
         final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
         doReturn(true).when(view).isEnterKeyPressed(keyboardEvent);
+        doNothing().when(view).hide(true);
 
         view.typeSelectorKeyDownEventListener(keyboardEvent);
 
         verify(view).hide(true);
         verify(keyboardEvent).preventDefault();
+        verify(view).onClosedByKeyboard();
     }
 
     @Test
@@ -206,11 +210,16 @@ public class NameAndDataTypePopoverViewImplTest {
         final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
         doReturn(false).when(view).isEnterKeyPressed(keyboardEvent);
         doReturn(true).when(view).isEscapeKeyPressed(keyboardEvent);
+        final NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor monitor = mock(NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor.class);
+        doReturn(monitor).when(view).getMonitor();
+        final elemental2.dom.Element menuElement = mock(elemental2.dom.Element.class);
+        doReturn(menuElement).when(monitor).getMenuElement();
 
         view.typeSelectorKeyDownEventListener(keyboardEvent);
 
         verify(view).reset();
         verify(view).hide(false);
+        verify(view).onClosedByKeyboard();
     }
 
     @Test
@@ -249,11 +258,16 @@ public class NameAndDataTypePopoverViewImplTest {
         final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
         doReturn(false).when(view).isEnterKeyPressed(keyboardEvent);
         doReturn(true).when(view).isEscapeKeyPressed(keyboardEvent);
+        final NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor monitor = mock(NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor.class);
+        doReturn(monitor).when(view).getMonitor();
+        final elemental2.dom.Element menuElement = mock(elemental2.dom.Element.class);
+        doReturn(menuElement).when(monitor).getMenuElement();
 
         view.managerButtonKeyDownEventListener(keyboardEvent);
 
         verify(view).hide(false);
         verify(view).reset();
+        verify(view).onClosedByKeyboard();
     }
 
     @Test
@@ -262,11 +276,13 @@ public class NameAndDataTypePopoverViewImplTest {
         final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
         doReturn(false).when(view).isEnterKeyPressed(keyboardEvent);
         doReturn(true).when(view).isEscapeKeyPressed(keyboardEvent);
+        doNothing().when(view).hide(false);
 
         view.managerButtonKeyDownEventListener(keyboardEvent);
 
         verify(view).hide(false);
         verify(view).reset();
+        verify(view).onClosedByKeyboard();
     }
 
     @Test
@@ -319,12 +335,14 @@ public class NameAndDataTypePopoverViewImplTest {
     public void testOnNameEditorKeyDownEnter() {
 
         final KeyDownEvent keyDownEvent = mock(KeyDownEvent.class);
+        doNothing().when(view).hide(true);
 
         doReturn(true).when(view).isEnter(keyDownEvent);
 
         view.onNameEditorKeyDown(keyDownEvent);
 
         verify(view).hide(true);
+        verify(view).onClosedByKeyboard();
     }
 
     @Test
@@ -333,11 +351,16 @@ public class NameAndDataTypePopoverViewImplTest {
         final KeyDownEvent keyDownEvent = mock(KeyDownEvent.class);
         doReturn(false).when(view).isEnter(keyDownEvent);
         doReturn(true).when(view).isEsc(keyDownEvent);
+        final NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor monitor = mock(NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor.class);
+        doReturn(monitor).when(view).getMonitor();
+        final elemental2.dom.Element menuElement = mock(elemental2.dom.Element.class);
+        doReturn(menuElement).when(monitor).getMenuElement();
 
         view.onNameEditorKeyDown(keyDownEvent);
 
         verify(view).reset();
         verify(view).hide(false);
+        verify(view).onClosedByKeyboard();
     }
 
     @Test
@@ -354,6 +377,7 @@ public class NameAndDataTypePopoverViewImplTest {
 
         verify(typeSelectorButton).focus();
         verify(keyDownEvent).preventDefault();
+        verify(view, never()).onClosedByKeyboard();
     }
 
     @Test
@@ -452,6 +476,11 @@ public class NameAndDataTypePopoverViewImplTest {
 
     @Test
     public void testHideBeforeShown() {
+        final NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor monitor = mock(NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor.class);
+        doReturn(monitor).when(view).getMonitor();
+        final elemental2.dom.Element menuElement = mock(elemental2.dom.Element.class);
+        doReturn(menuElement).when(monitor).getMenuElement();
+
         view.hide();
 
         verify(popover, never()).hide();
@@ -460,12 +489,17 @@ public class NameAndDataTypePopoverViewImplTest {
 
     @Test
     public void testHideAfterShown() {
+
+        final NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor monitor = mock(NameAndDataTypePopoverViewImpl.BootstrapSelectDropDownMonitor.class);
+        doReturn(monitor).when(view).getMonitor();
+        final elemental2.dom.Element menuElement = mock(elemental2.dom.Element.class);
+        doReturn(menuElement).when(monitor).getMenuElement();
+
         view.show(Optional.empty());
         view.hide();
 
         verify(nameEditor).blur();
-        verify(popover).hide();
-        verify(popover).destroy();
+        verify(monitor).hide();
     }
 
     @Test
@@ -480,8 +514,42 @@ public class NameAndDataTypePopoverViewImplTest {
 
     @Test
     public void testOnDataTypePageNavTabActiveEvent() {
+        doNothing().when(view).hide(true);
+
         view.onDataTypePageNavTabActiveEvent(mock(DataTypePageTabActiveEvent.class));
 
         verify(view).hide();
+    }
+
+    @Test
+    public void testOnClosedByKeyboard() {
+        final Consumer consumer = mock(Consumer.class);
+        final Optional opt = Optional.of(consumer);
+        doReturn(opt).when(view).getClosedByKeyboardCallback();
+
+        view.onClosedByKeyboard();
+
+        verify(consumer).accept(view);
+    }
+
+    @Test
+    public void testSetOnClosedByKeyboardCallback() {
+        final Consumer consumer = mock(Consumer.class);
+        view.setOnClosedByKeyboardCallback(consumer);
+
+        final Optional<Consumer> actual = view.getClosedByKeyboardCallback();
+
+        assertTrue(actual.isPresent());
+        assertEquals(consumer, actual.get());
+    }
+
+    @Test
+    public void testSetOnClosedByKeyboardCallbackNullCallback() {
+        view.setOnClosedByKeyboardCallback(null);
+
+        final Optional<Consumer> actual = view.getClosedByKeyboardCallback();
+
+        assertFalse(actual.isPresent());
+        assertEquals(Optional.empty(), actual);
     }
 }

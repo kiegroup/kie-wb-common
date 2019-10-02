@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -88,6 +89,25 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
     private QName currentTypeRef;
 
     private BootstrapSelectDropDownMonitor monitor;
+
+    private Optional<Consumer> closedByKeyboardCallback;
+
+    @Override
+    public void setOnClosedByKeyboardCallback(final Consumer callback) {
+        if (Objects.isNull(callback)) {
+            closedByKeyboardCallback = Optional.empty();
+        } else {
+            closedByKeyboardCallback = Optional.of(callback);
+        }
+    }
+
+    public void onClosedByKeyboard() {
+        getClosedByKeyboardCallback().ifPresent(c -> c.accept(this));
+    }
+
+    Optional<Consumer> getClosedByKeyboardCallback() {
+        return closedByKeyboardCallback;
+    }
 
     /**
      * This is a workaround for dismissing a Bootstrap {@link Select} {@link DropDown} child element when
@@ -191,6 +211,8 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         //GWT runs into an infinite loop if these are defined as method references :-(
         this.monitor = new BootstrapSelectDropDownMonitor((editorTitle) -> NameAndDataTypePopoverViewImpl.super.show(editorTitle),
                                                           () -> NameAndDataTypePopoverViewImpl.super.hide());
+
+        this.closedByKeyboardCallback = Optional.empty();
     }
 
     @Override
@@ -252,9 +274,11 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
             if (isEnterKeyPressed(keyEvent)) {
                 hide(true);
                 keyEvent.preventDefault();
+                onClosedByKeyboard();
             } else if (isEscapeKeyPressed(keyEvent)) {
                 reset();
                 hide(false);
+                onClosedByKeyboard();
             } else if (isTabKeyPressed(keyEvent)) {
                 if (keyEvent.shiftKey) {
                     final Button managerButton = getManagerButton();
@@ -273,6 +297,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
             if (isEscapeKeyPressed(keyEvent)) {
                 reset();
                 hide(false);
+                onClosedByKeyboard();
             }
         }
     }
@@ -283,9 +308,11 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
             if (isEnterKeyPressed(keyEvent)) {
                 hide(true);
                 keyEvent.stopPropagation();
+                onClosedByKeyboard();
             } else if (isEscapeKeyPressed(keyEvent)) {
                 reset();
                 hide(false);
+                onClosedByKeyboard();
             }
         }
     }
@@ -323,7 +350,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
     @Override
     public void show(final Optional<String> editorTitle) {
-        monitor.show(editorTitle);
+        getMonitor().show(editorTitle);
         nameEditor.focus();
     }
 
@@ -334,10 +361,14 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
     public void hide(boolean applyChanges) {
         nameEditor.blur();
-        monitor.hide();
+        getMonitor().hide();
         if (applyChanges) {
             applyChanges();
         }
+    }
+
+    BootstrapSelectDropDownMonitor getMonitor() {
+        return monitor;
     }
 
     @EventHandler("nameEditor")
@@ -367,9 +398,11 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
     public void onNameEditorKeyDown(final KeyDownEvent event) {
         if (isEnter(event)) {
             hide(true);
+            onClosedByKeyboard();
         } else if (isEsc(event)) {
             reset();
             hide(false);
+            onClosedByKeyboard();
         } else if (event.isShiftKeyDown() && isTab(event)) {
             final Button typeSelectorButton = getTypeSelectorButton();
             typeSelectorButton.focus();
