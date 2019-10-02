@@ -552,4 +552,39 @@ public class NameAndDataTypePopoverViewImplTest {
         assertFalse(actual.isPresent());
         assertEquals(Optional.empty(), actual);
     }
+
+    @Test
+    public void testKeyDownEventListenerEnterKey() {
+        final KeyboardEvent event = mock(KeyboardEvent.class);
+
+        doNothing().when(view).hide(true);
+        doNothing().when(view).onClosedByKeyboard();
+
+        doReturn(true).when(view).isEnterKeyPressed(event);
+
+        view.keyDownEventListener(event);
+
+        verify(view).hide(true);
+        verify(event).stopPropagation();
+        verify(view).onClosedByKeyboard();
+        verify(view, never()).isEscapeKeyPressed(event);
+    }
+
+    @Test
+    public void testKeyDownEventListenerEscKey() {
+        final KeyboardEvent event = mock(KeyboardEvent.class);
+
+        doNothing().when(view).hide(false);
+        doNothing().when(view).reset();
+        doNothing().when(view).onClosedByKeyboard();
+
+        doReturn(false).when(view).isEnterKeyPressed(event);
+        doReturn(true).when(view).isEscapeKeyPressed(event);
+
+        view.keyDownEventListener(event);
+
+        verify(view).hide(false);
+        verify(view).reset();
+        verify(view).onClosedByKeyboard();
+    }
 }

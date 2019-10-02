@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.editors.types;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import elemental2.dom.KeyboardEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
