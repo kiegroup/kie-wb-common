@@ -12,9 +12,9 @@ DMN to test (src/test/resources)
 |diagram-decision-context.dmn|TBD|manstis|
 |diagram-decision-decision-table.dmn|D|gcardosi|
 |diagram-decision-function-definition.dmn|TBD|manstis|
-|diagram-decision-invocation.dmn|WIP|gcardosi|
+|diagram-decision-invocation.dmn|D|gcardosi|
 |diagram-decision-literal-expression.dmn|TBD|manstis|
-|diagram-decision-relation.dmn|TBD|gcardosi|
+|diagram-decision-relation.dmn|WIP|gcardosi|
 |diagram-empty.dmn|TBD|manstis|
 |diagram-input-data.dmn|TBD|gcardosi|
 |diagram-knowledge-source.dmn|TBD|manstis|
