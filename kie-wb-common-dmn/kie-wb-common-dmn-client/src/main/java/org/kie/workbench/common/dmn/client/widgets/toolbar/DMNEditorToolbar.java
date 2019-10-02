@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToJ
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPdfToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPngToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.PasteToolbarCommand;
-import org.kie.workbench.common.stunner.client.widgets.toolbar.command.PerformAutomaticLayoutToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.RedoToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.SaveToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.SwitchGridToolbarCommand;
@@ -70,7 +69,7 @@ public class DMNEditorToolbar
                 .register(CutToolbarCommand.class)
                 .register(PasteToolbarCommand.class)
                 .register(SaveToolbarCommand.class)
-                .register(PerformAutomaticLayoutToolbarCommand.class);
+                .register(DMNPerformAutomaticLayoutToolbarCommand.class);
     }
 
     public VisitGraphToolbarCommand getVisitGraphToolbarCommand() {
@@ -129,8 +128,8 @@ public class DMNEditorToolbar
         return (SaveToolbarCommand) toolbar.getCommand(13);
     }
 
-    public PerformAutomaticLayoutToolbarCommand getPerformAutomaticLayoutToolbarCommand() {
-        return (PerformAutomaticLayoutToolbarCommand) toolbar.getCommand(14);
+    public DMNPerformAutomaticLayoutToolbarCommand getPerformAutomaticLayoutToolbarCommand() {
+        return (DMNPerformAutomaticLayoutToolbarCommand) toolbar.getCommand(14);
     }
 
     @Override
