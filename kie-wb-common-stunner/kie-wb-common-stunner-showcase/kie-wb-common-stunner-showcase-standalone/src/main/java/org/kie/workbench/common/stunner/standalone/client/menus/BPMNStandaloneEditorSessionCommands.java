@@ -38,8 +38,6 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.Validat
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommands;
 
-// TODO: (kogito) Remove class?
-
 @Dependent
 @BPMN
 public class BPMNStandaloneEditorSessionCommands extends EditorSessionCommands {
@@ -65,7 +63,6 @@ public class BPMNStandaloneEditorSessionCommands extends EditorSessionCommands {
                 .register(ExportToRawFormatSessionCommand.class)
                 .register(CopySelectionSessionCommand.class)
                 .register(PasteSelectionSessionCommand.class)
-                .register(CutSelectionSessionCommand.class)
-                .register(SaveDiagramSessionCommand.class);
+                .register(CutSelectionSessionCommand.class);
     }
 }

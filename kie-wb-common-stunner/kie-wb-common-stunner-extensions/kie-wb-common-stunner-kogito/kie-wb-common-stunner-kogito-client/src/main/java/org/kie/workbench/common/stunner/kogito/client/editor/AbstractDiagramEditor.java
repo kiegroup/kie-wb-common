@@ -181,7 +181,6 @@ public abstract class AbstractDiagramEditor extends MultiPageEditorContainerPres
                                  final ClientTranslationService translationService,
                                  final DocumentationView documentationView) {
         super(view,
-              fileMenuBuilder,
               placeManager,
               multiPageEditorContainerView);
         this.menuSessionItems = menuSessionItems;

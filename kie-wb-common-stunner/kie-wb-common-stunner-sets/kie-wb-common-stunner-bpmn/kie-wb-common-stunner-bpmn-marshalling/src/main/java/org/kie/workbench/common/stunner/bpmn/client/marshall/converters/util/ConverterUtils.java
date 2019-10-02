@@ -28,17 +28,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ConverterUtils {
 
-    // TODO: Kogito - check usages for this, as this method should never be called....
-    public static <I, O> O getSafeUnsupportedValue(I input,
-                                                   Function<I, O> value,
-                                                   Function<I, O> defaultValue) {
-        try {
-            return value.apply(input);
-        } catch (UnsupportedOperationException e) {
-            return defaultValue.apply(input);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static <T> Node<View<T>, Edge> cast(Node<?, ?> node) {
         return (Node<View<T>, Edge>) node;
@@ -50,17 +39,6 @@ public class ConverterUtils {
 
     public static boolean isEmpty(CharSequence str) {
         return null == str || str.length() == 0;
-    }
-
-    public static boolean isAssignableFrom(Class<?> candidate,
-                                           Object instance) {
-        return isAssignableFrom(candidate, instance.getClass());
-    }
-
-    // TODO: Kogito - Need for class inheritance here?
-    public static boolean isAssignableFrom(Class<?> candidate,
-                                           Class<?> type) {
-        return candidate == type;
     }
 
     public static Result<PropertyWriter> resultIgnored(Object o) {
@@ -77,15 +55,6 @@ public class ConverterUtils {
 
     public static <U> Result<U> ignore(String name, Object o) {
         return Result.ignored(name + " [" + o.getClass().getName() + "] not supported.");
-    }
-
-    public static <T, U> Function<T, Result<U>> reportMissing(Class<?> expectedClass) {
-        return t ->
-                Result.failure(
-                        "Not yet implemented: " +
-                                Optional.ofNullable(t)
-                                        .map(o -> o.getClass().getCanonicalName())
-                                        .orElse("null -- expected " + expectedClass.getCanonicalName()));
     }
 
     public <T> Function<T, Result> ignored(Class<?> expectedClass, final Object defaultValue) {

@@ -41,7 +41,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.GraphBuilder;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -55,7 +54,6 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
-import org.kie.workbench.common.stunner.core.util.UUID;
 
 @ApplicationScoped
 public class BPMNClientMarshalling {
@@ -93,10 +91,6 @@ public class BPMNClientMarshalling {
         final ConverterFactory converterFactory = new ConverterFactory(buildingContext, propertyWriterFactory);
         final DefinitionsConverter definitionsConverter = new DefinitionsConverter(converterFactory, propertyWriterFactory);
         final Definitions definitions = definitionsConverter.toDefinitions();
-        // TODO: Kogito - Why is diagrams id empty now? The id is not empty on 7.x stream...
-        if (ConverterUtils.isEmpty(definitions.getId())) {
-            definitions.setId(UUID.uuid());
-        }
         return Bpmn2Marshalling.marshall(definitions);
     }
 

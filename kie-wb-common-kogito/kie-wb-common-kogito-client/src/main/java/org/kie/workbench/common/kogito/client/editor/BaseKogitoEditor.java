@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
-import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.editor.commons.client.BaseEditorView;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
@@ -36,7 +35,6 @@ public abstract class BaseKogitoEditor<CONTENT> {
     private boolean isReadOnly;
 
     private BaseEditorView baseEditorView;
-    private FileMenuBuilder fileMenuBuilder;
     private PlaceManager placeManager;
     private Menus menus;
     private PlaceRequest place;
@@ -47,10 +45,8 @@ public abstract class BaseKogitoEditor<CONTENT> {
     }
 
     protected BaseKogitoEditor(final BaseEditorView baseView,
-                               final FileMenuBuilder fileMenuBuilder,
                                final PlaceManager placeManager) {
         this.baseEditorView = baseView;
-        this.fileMenuBuilder = fileMenuBuilder;
         this.placeManager = placeManager;
     }
 
