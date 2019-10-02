@@ -12,95 +12,14 @@ MainJs = {
     initializeJsInteropConstructors: function (constructorsMap) {
 
         var extraTypes = [{typeName: 'Name', namespace: null}];
-        // var mappings = this.mappings;
-        // var types;
-        // var baseTypes;
-        // var innerTypes;
-
-        // function flatMap(list, lambda) {
-        //     return Array.prototype.concat.apply([], list.map(lambda));
-        // }
-
-        // function getTypes() {
-        //
-        //     if (types === undefined) {
-        //         types = flatMap(mappings, function (mapping) {
-        //
-        //             return mapping.typeInfos.map(function (typeInfo) {
-        //                 return {
-        //                     typeName: typeInfo.localName,
-        //                     namespace: mapping.name
-        //                 };
-        //             });
-        //         }).concat(extraTypes);
-        //     }
-        //
-        //     return types;
-        // }
-
-        // function getBaseTypes() {
-        //     if (baseTypes === undefined) {
-        //         baseTypes = getTypes().filter(function (typeInfo) {
-        //             return typeInfo.typeName.split('.').length === 1;
-        //         });
-        //     }
-        //     return baseTypes;
-        // }
-
-        // function getInnerTypes() {
-        //     if (innerTypes === undefined) {
-        //         innerTypes = getTypes().filter(function (typeInfo) {
-        //             return typeInfo.typeName.split('.').length > 1;
-        //         });
-        //     }
-        //     return innerTypes;
-        // }
-
-        // function getJsInteropTypeName(namespace, klass) {
-        //
-        //     var prefix = 'JsInterop__ConstructorAPI__DMN';
-        //     var classPrefix = 'JSI';
-        //     var presentValues = function (value) {
-        //         return value;
-        //     };
-        //
-        //     return [prefix, namespace, classPrefix + klass].filter(presentValues).join('__');
-        // }
 
         function createFunction(typeName) {
             return new Function('return { "TYPE_NAME" : "' + typeName + '" }');
         }
 
-        // function createBaseClassConstructor(typeInfo) {
-        //
-        //     var typeName;
-        //     var functionName = getJsInteropTypeName(typeInfo.namespace, typeInfo.typeName);
-        //
-        //     if (window[functionName] === undefined) {
-        //         typeName = typeInfo.namespace === null ? typeInfo.typeName : [typeInfo.namespace, typeInfo.typeName].join(".");
-        //         window[functionName] = createFunction(typeName);
-        //     }
-        // }
-
-        // function createInnerClassConstructor(typeInfo) {
-        //
-        //     var typeName;
-        //     var typeNameParts = typeInfo.typeName.split('.');
-        //     var functionName = getJsInteropTypeName(typeInfo.namespace, typeNameParts[0]);
-        //
-        //     if (typeNameParts.length !== 2) {
-        //         console.error('Constructor generation error. Unexpected type: ', typeInfo.typeName);
-        //         return;
-        //     }
-        //
-        //     if (window[functionName] === undefined) {
-        //         console.error('Constructor generation error. The base class needs to have a constructor: ', functionName);
-        //         return;
-        //     }
-        //
-        //     typeName = [typeInfo.namespace, typeInfo.typeName].join(".");
-        //     window[functionName][typeNameParts[1]] = createFunction(typeName);
-        // }
+        function createNoTypedFunction() {
+            return new Function('return { }');
+        }
 
         function createConstructor(value) {
             console.log("Create createConstructor " + value)
@@ -113,9 +32,17 @@ MainJs = {
             console.log("nameSpace " + nameSpace)
             console.log("typeName " + typeName)
             if (nameSpace != null) {
-                window[nameSpace][name] = createFunction(typeName);
+                if (typeName != null) {
+                    window[nameSpace][name] = createFunction(typeName);
+                } else {
+                    window[nameSpace][name] = createNoTypedFunction();
+                }
             } else {
-                window[name] = createFunction(typeName);
+                if (typeName != null) {
+                    window[name] = createFunction(typeName);
+                } else {
+                    window[name] = createNoTypedFunction();
+                }
             }
         }
 
@@ -143,21 +70,10 @@ MainJs = {
         console.log('Generating JsInterop constructors.');
 
         for (const property in constructorsMap) {
-            if(constructorsMap.hasOwnProperty(property)) {
+            if (constructorsMap.hasOwnProperty(property)) {
                 iterateKeyValueEntry(property, constructorsMap[property])
             }
         }
-
-
-        // // Create base classes constructors
-        // getBaseTypes().forEach(function (typeInfo) {
-        //     createBaseClassConstructor(typeInfo);
-        // });
-        //
-        // // Create inner classes constructors
-        // getInnerTypes().forEach(function (typeInfo) {
-        //     createInnerClassConstructor(typeInfo);
-        // });
     },
 
     unmarshall: function (text, dynamicNamespace, callback) {

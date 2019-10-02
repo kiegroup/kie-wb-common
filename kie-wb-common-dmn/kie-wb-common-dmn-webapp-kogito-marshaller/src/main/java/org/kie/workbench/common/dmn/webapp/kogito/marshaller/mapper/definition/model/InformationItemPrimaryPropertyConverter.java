@@ -61,7 +61,7 @@ public class InformationItemPrimaryPropertyConverter {
     }
 
     static String getParentName(final Object parent) {
-        if (parent instanceof JSITNamedElement) {
+        if (JSITNamedElement.instanceOf(parent)) {
             final JSITNamedElement namedElement = (JSITNamedElement) parent;
             final Optional<String> name = Optional.ofNullable(namedElement.getName());
             return name.orElse(DEFAULT_NAME);

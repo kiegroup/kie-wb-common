@@ -270,15 +270,15 @@ public class DMNMarshallerKogitoMarshaller {
         }
         nodes.values().forEach(n -> {
             String localPart = "UNKNOWN";
-            if (n instanceof JSITBusinessKnowledgeModel) {
+            if (JSITBusinessKnowledgeModel.instanceOf(n)) {
                 localPart = "businessKnowledgeModel";
-            } else if (n instanceof JSITDecision) {
+            } else if (JSITDecision.instanceOf(n)) {
                 localPart = "decision";
-            } else if (n instanceof JSITDecisionService) {
+            } else if (JSITDecisionService.instanceOf(n)) {
                 localPart = "decisionService";
-            } else if (n instanceof JSITInputData) {
+            } else if (JSITInputData.instanceOf(n)) {
                 localPart = "inputData";
-            } else if (n instanceof JSITKnowledgeSource) {
+            } else if (JSITKnowledgeSource.instanceOf(n)) {
                 localPart = "knowledgeSource";
             }
             JSITDRGElement toAdd = getWrappedJSITDRGElement(n, "dmn", localPart);
