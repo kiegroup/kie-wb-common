@@ -173,7 +173,7 @@ public class DMNMarshallerKogitoUnmarshaller {
 
     @PostConstruct
     public void init() {
-        MainJs.initializeJsInteropConstructors();
+        MainJs.initializeJsInteropConstructors(MainJs.getConstructorsMap());
     }
 
     // ==================================
@@ -492,7 +492,7 @@ public class DMNMarshallerKogitoUnmarshaller {
                             if (Objects.nonNull(jsiWidths.getWidth())) {
                                 widths.clear();
                                 for (int w = 0; w < jsiWidths.getWidth().size(); w++) {
-                                    final double width = Js.castToDouble(jsiWidths.getWidth().get(w));
+                                    final double width = jsiWidths.getWidth().get(w).doubleValue();
                                     widths.add(width);
                                 }
                             }

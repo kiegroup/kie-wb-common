@@ -131,7 +131,7 @@ public class ItemDefinitionPropertyConverter {
 
         for (ItemDefinition child : wb.getItemComponent()) {
             final JSITItemDefinition convertedChild = ItemDefinitionPropertyConverter.dmnFromWB(child);
-            result.getItemComponent().add(convertedChild);
+            result.addItemComponent(convertedChild);
         }
 
         return result;

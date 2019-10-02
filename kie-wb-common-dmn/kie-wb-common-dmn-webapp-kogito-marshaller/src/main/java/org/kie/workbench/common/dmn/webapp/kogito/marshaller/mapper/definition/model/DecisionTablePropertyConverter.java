@@ -111,11 +111,11 @@ public class DecisionTablePropertyConverter {
 
         for (InputClause input : wb.getInput()) {
             final JSITInputClause c = InputClausePropertyConverter.dmnFromWB(input);
-            result.getInput().add(c);
+            result.addInput(c);
         }
         for (OutputClause input : wb.getOutput()) {
             final JSITOutputClause c = OutputClausePropertyConverter.dmnFromWB(input);
-            result.getOutput().add(c);
+            result.addOutput(c);
         }
         if (result.getOutput().size() == 1) {
             final JSITOutputClause at = Js.uncheckedCast(result.getOutput().get(0));
@@ -123,7 +123,7 @@ public class DecisionTablePropertyConverter {
         }
         for (DecisionRule dr : wb.getRule()) {
             final JSITDecisionRule c = DecisionRulePropertyConverter.dmnFromWB(dr);
-            result.getRule().add(c);
+            result.addRule(c);
         }
         if (wb.getHitPolicy() != null) {
             switch (wb.getHitPolicy()) {

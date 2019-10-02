@@ -126,7 +126,7 @@ public class ExpressionPropertyConverter {
                     .forEach(w -> {
                         final double dw = w;
                         final float fw = (float) dw;
-                        componentWidths.getWidth().add(fw);
+                        componentWidths.addWidth(fw);
                     });
             componentWidthsConsumer.accept(componentWidths);
         }

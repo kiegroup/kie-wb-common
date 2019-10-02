@@ -65,7 +65,7 @@ class DMNExternalLinksToExtensionElements {
             final JSITAttachment attachment = new JSITAttachment();
             attachment.setName(link.getDescription());
             attachment.setUrl(link.getUrl());
-            elements.getAny().add(attachment);
+            elements.addAny(attachment);
         }
         target.setExtensionElements(elements);
     }
@@ -78,7 +78,7 @@ class DMNExternalLinksToExtensionElements {
         for (int i = 0; i < any.size(); i++) {
             final Object extension = any.get(i);
             if (!JSITAttachment.instanceOf(extension)) {
-                others.getAny().add(extension);
+                others.addAny(extension);
             }
         }
         elements.setAny(others.getAny());

@@ -80,12 +80,12 @@ public class RelationPropertyConverter {
 
         for (InformationItem iitem : wb.getColumn()) {
             final JSITInformationItem iitemConverted = InformationItemPropertyConverter.dmnFromWB(iitem);
-            result.getColumn().add(iitemConverted);
+            result.addColumn(iitemConverted);
         }
 
         for (org.kie.workbench.common.dmn.api.definition.model.List list : wb.getRow()) {
             final JSITList listConverted = ListPropertyConverter.dmnFromWB(list, componentWidthsConsumer);
-            result.getRow().add(listConverted);
+            result.addRow(listConverted);
         }
 
         return result;

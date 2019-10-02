@@ -87,7 +87,7 @@ public class ContextPropertyConverter {
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         for (ContextEntry ce : wb.getContextEntry()) {
             final JSITContextEntry ceConverted = ContextEntryPropertyConverter.dmnFromWB(ce, componentWidthsConsumer);
-            result.getContextEntry().add(ceConverted);
+            result.addContextEntry(ceConverted);
         }
 
         //The UI appends a ContextEntry for the _default_ result that may contain an undefined Expression.

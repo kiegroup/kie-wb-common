@@ -70,7 +70,7 @@ public class ListPropertyConverter {
 
         for (Expression e : wb.getExpression()) {
             final JSITExpression eConverted = ExpressionPropertyConverter.dmnFromWB(e, componentWidthsConsumer);
-            result.getExpression().add(eConverted);
+            result.addExpression(eConverted);
         }
 
         return result;

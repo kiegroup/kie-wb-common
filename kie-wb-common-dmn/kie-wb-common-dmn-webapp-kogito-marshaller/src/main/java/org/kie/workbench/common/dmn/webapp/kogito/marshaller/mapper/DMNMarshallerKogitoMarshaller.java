@@ -116,7 +116,7 @@ public class DMNMarshallerKogitoMarshaller {
 
     @PostConstruct
     public void init() {
-        MainJs.initializeJsInteropConstructors();
+        MainJs.initializeJsInteropConstructors(MainJs.getConstructorsMap());
     }
 
     // ==================================
@@ -145,7 +145,7 @@ public class DMNMarshallerKogitoMarshaller {
         final JSIDMNDiagram dmnDDDMNDiagram = new JSIDMNDiagram();
         // TODO {gcardosi} add because  present in original json
         dmnDDDMNDiagram.setDMNDiagramElement(new ArrayList<>());
-        definitions.getDMNDI().getDMNDiagram().add(dmnDDDMNDiagram);
+        definitions.getDMNDI().addDMNDiagram(dmnDDDMNDiagram);
 
         //Convert relative positioning to absolute
         for (Node<?, ?> node : graph.nodes()) {
@@ -159,9 +159,9 @@ public class DMNMarshallerKogitoMarshaller {
         final JSITComponentsWidthsExtension componentsWidthsExtension = new JSITComponentsWidthsExtension();
         final JSIDiagramElement.JSIExtension extension = dmnDDDMNDiagram.getExtension();
         JSITComponentsWidthsExtension wrappedComponentsWidthsExtension = getWrappedJSITComponentsWidthsExtension(componentsWidthsExtension);
-        extension.getAny().add(wrappedComponentsWidthsExtension);
+        extension.addAny(wrappedComponentsWidthsExtension);
 
-        final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) ->  componentsWidthsExtension.getComponentWidths().add(cw);
+        final Consumer<JSITComponentWidths> componentWidthsConsumer = (cw) ->  componentsWidthsExtension.addComponentWidths(cw);
 
         //Iterate Graph processing nodes..
         for (Node<?, ?> node : graph.nodes()) {
@@ -183,7 +183,7 @@ public class DMNMarshallerKogitoMarshaller {
                     }
 
                     String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
-                    dmnDDDMNDiagram.getDMNDiagramElement().add(getWrappedJSIDMNShape((View<? extends DMNElement>) view,
+                    dmnDDDMNDiagram.addDMNDiagramElement(getWrappedJSIDMNShape((View<? extends DMNElement>) view,
                                                                                               namespaceURI));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
@@ -191,13 +191,13 @@ public class DMNMarshallerKogitoMarshaller {
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node,
                                                                             componentWidthsConsumer));
                     String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
-                    dmnDDDMNDiagram.getDMNDiagramElement().add(getWrappedJSIDMNShape((View<? extends DMNElement>) view,
+                    dmnDDDMNDiagram.addDMNDiagramElement(getWrappedJSIDMNShape((View<? extends DMNElement>) view,
                                                                                               namespaceURI));
 
                     final List<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     for (int i = 0; i < associations.size(); i++) {
                         JSITAssociation wrappedJSITAssociation = getWrappedJSITAssociation(Js.uncheckedCast(associations.get(i)));
-                        definitions.getArtifact().add(wrappedJSITAssociation);
+                        definitions.addArtifact(wrappedJSITAssociation);
                     }
                 }
 
@@ -257,11 +257,11 @@ public class DMNMarshallerKogitoMarshaller {
                             dmnEdge.setDmnElementRef(new QName(namespaceURI,
                                                                uuid,
                                                                XMLConstants.DEFAULT_NS_PREFIX));
-                            dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(sourcePoint));
+                            dmnEdge.addWaypoint(PointUtils.point2dToDMNDIPoint(sourcePoint));
                             for (ControlPoint cp : connectionContent.getControlPoints()) {
-                                dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(cp.getLocation()));
+                                dmnEdge.addWaypoint(PointUtils.point2dToDMNDIPoint(cp.getLocation()));
                             }
-                            dmnEdge.getWaypoint().add(PointUtils.point2dToDMNDIPoint(targetPoint));
+                            dmnEdge.addWaypoint(PointUtils.point2dToDMNDIPoint(targetPoint));
                             dmnEdges.add(dmnEdge);
                         }
                     }
@@ -282,14 +282,14 @@ public class DMNMarshallerKogitoMarshaller {
                 localPart = "knowledgeSource";
             }
             JSITDRGElement toAdd = getWrappedJSITDRGElement(n, "dmn", localPart);
-            definitions.getDrgElement().add(toAdd);
+            definitions.addDrgElement(toAdd);
         });
         textAnnotations.values().forEach(text -> {
             JSITTextAnnotation wrappedText = getWrappedJSITTextAnnotation(text);
-            definitions.getArtifact().add(wrappedText);
+            definitions.addArtifact(wrappedText);
         });
         for (int i = 0; i < dmnEdges.size(); i++) {
-            dmnDDDMNDiagram.getDMNDiagramElement().add(getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdges.get(i))));
+            dmnDDDMNDiagram.addDMNDiagramElement(getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdges.get(i))));
         }
         return definitions;
     }

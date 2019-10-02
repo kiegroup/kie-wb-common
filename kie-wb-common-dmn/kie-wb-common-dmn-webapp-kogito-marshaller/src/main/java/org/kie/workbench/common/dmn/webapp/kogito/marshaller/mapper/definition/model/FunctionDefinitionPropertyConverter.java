@@ -174,7 +174,7 @@ public class FunctionDefinitionPropertyConverter {
 
         for (InformationItem ii : wb.getFormalParameter()) {
             final JSITInformationItem iiConverted = InformationItemPropertyConverter.dmnFromWB(ii);
-            result.getFormalParameter().add(iiConverted);
+            result.addFormalParameter(iiConverted);
         }
 
         return result;

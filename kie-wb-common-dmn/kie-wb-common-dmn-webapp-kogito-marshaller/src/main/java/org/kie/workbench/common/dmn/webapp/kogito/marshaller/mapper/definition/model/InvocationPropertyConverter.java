@@ -92,7 +92,7 @@ public class InvocationPropertyConverter {
 
         for (Binding b : wb.getBinding()) {
             final JSITBinding bConverted = BindingPropertyConverter.dmnFromWB(b, componentWidthsConsumer);
-            result.getBinding().add(bConverted);
+            result.addBinding(bConverted);
         }
 
         return result;

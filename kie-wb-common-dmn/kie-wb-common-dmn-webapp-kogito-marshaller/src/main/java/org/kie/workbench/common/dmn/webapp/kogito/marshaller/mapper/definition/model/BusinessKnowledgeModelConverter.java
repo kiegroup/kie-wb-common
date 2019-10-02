@@ -138,7 +138,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                         .forEach(w -> {
                             final double dw = w;
                             final float fw = (float) dw;
-                            componentWidths.getWidth().add(fw);
+                            componentWidths.addWidth(fw);
                         });
                 componentWidthsConsumer.accept(componentWidths);
             }
@@ -160,14 +160,14 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredKnowledge(ri);
-                        result.getKnowledgeRequirement().add(iReq);
+                        result.addKnowledgeRequirement(iReq);
                     } else if (drgElement instanceof KnowledgeSource) {
                         final JSITAuthorityRequirement iReq = new JSITAuthorityRequirement();
                         iReq.setId(e.getUUID());
                         final JSITDMNElementReference ri = new JSITDMNElementReference();
                         ri.setHref(getHref(drgElement));
                         iReq.setRequiredAuthority(ri);
-                        result.getAuthorityRequirement().add(iReq);
+                        result.addAuthorityRequirement(iReq);
                     } else if (drgElement instanceof DecisionService) {
                         if (e.getContent() instanceof View && ((View) e.getContent()).getDefinition() instanceof KnowledgeRequirement) {
                             final JSITKnowledgeRequirement iReq = new JSITKnowledgeRequirement();
@@ -175,7 +175,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                             final JSITDMNElementReference ri = new JSITDMNElementReference();
                             ri.setHref(getHref(drgElement));
                             iReq.setRequiredKnowledge(ri);
-                            result.getKnowledgeRequirement().add(iReq);
+                            result.addKnowledgeRequirement(iReq);
                         } else {
                             throw new UnsupportedOperationException("wrong model definition.");
                         }

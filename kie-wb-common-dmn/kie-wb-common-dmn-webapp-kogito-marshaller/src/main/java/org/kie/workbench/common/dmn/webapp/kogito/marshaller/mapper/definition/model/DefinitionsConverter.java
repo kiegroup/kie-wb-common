@@ -164,7 +164,7 @@ public class DefinitionsConverter {
         }
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
-            result.getItemDefinition().add(itemDefConverted);
+            result.addItemDefinition(itemDefConverted);
         }
         // TODO {gcardosi} add because  present in original json
         if (Objects.isNull(result.getImport())) {
@@ -180,7 +180,7 @@ public class DefinitionsConverter {
         }
         for (Import i : wb.getImport()) {
             final JSITImport importConverted = ImportConverter.dmnFromWb(i);
-            result.getImport().add(importConverted);
+            result.addImport(importConverted);
         }
 
         return result;

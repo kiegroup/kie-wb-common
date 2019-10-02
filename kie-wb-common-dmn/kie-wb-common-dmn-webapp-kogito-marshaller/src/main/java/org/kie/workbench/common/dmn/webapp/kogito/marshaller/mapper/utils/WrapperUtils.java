@@ -248,11 +248,11 @@ public class WrapperUtils {
             leftPoint.setX(v.getBounds().getUpperLeft().getX());
             final double dlY = v.getBounds().getUpperLeft().getY() + d.getDividerLineY().getValue();
             leftPoint.setY(dlY);
-            dl.getWaypoint().add(leftPoint);
+            dl.addWaypoint(leftPoint);
             final JSIPoint rightPoint = new JSIPoint();
             rightPoint.setX(v.getBounds().getLowerRight().getX());
             rightPoint.setY(dlY);
-            dl.getWaypoint().add(rightPoint);
+            dl.addWaypoint(rightPoint);
             result.setDMNDecisionServiceDividerLine(dl);
         }
         result.setStyle(getWrappedJSIDMNStyle(style));
