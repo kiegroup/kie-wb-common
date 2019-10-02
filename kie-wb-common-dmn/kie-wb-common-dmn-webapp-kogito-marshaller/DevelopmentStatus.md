@@ -8,9 +8,9 @@ DMN to test (src/test/resources)
 |---|---|---|
 |diagram-bkm-complex.dmn|D|gcardosi|
 |diagram-bkm-simple.dmn|TBD|manstis|
-|diagram-complex.dmn|WIP|gcardosi|
+|diagram-complex.dmn|D|gcardosi|
 |diagram-decision-context.dmn|TBD|manstis|
-|diagram-decision-decision-table.dmn|TBD|gcardosi|
+|diagram-decision-decision-table.dmn|WIP|gcardosi|
 |diagram-decision-function-definition.dmn|TBD|manstis|
 |diagram-decision-invocation.dmn|TBD|gcardosi|
 |diagram-decision-literal-expression.dmn|TBD|manstis|
