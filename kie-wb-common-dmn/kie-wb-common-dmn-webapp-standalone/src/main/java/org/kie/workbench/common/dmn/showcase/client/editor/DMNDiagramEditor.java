@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -101,7 +101,7 @@ import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
-@ApplicationScoped
+@Dependent
 @DiagramEditor
 @WorkbenchScreen(identifier = DMNDiagramEditor.EDITOR_ID)
 public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPresenter {
