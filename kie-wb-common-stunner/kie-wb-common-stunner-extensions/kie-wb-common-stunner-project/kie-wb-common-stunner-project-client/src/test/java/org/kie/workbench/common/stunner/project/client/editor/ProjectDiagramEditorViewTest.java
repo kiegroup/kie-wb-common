@@ -29,9 +29,11 @@ import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class ProjectDiagramEditorViewTest {
@@ -52,6 +54,9 @@ public class ProjectDiagramEditorViewTest {
         when(tested.getParent()).thenReturn(parent);
         when(parent.getOffsetWidth()).thenReturn(WIDTH);
         when(parent.getOffsetHeight()).thenReturn(HEIGHT);
+
+        doCallRealMethod().when(tested).onAttach();
+
         parent.setWidget(tested);
     }
 
@@ -73,22 +78,25 @@ public class ProjectDiagramEditorViewTest {
 
     @Test
     public void testOnAttach() {
+        testOnAttach(true);
+        testOnAttach(false);
+    }
+
+    public void testOnAttach(boolean parentExists) {
+        tested = spy(new ProjectDiagramEditorView(editorPanel));
         Element elm = mock(Element.class);
         Element parentElement = mock(Element.class);
         Style style = mock(Style.class);
 
-        doCallRealMethod().when(tested).onAttach();
-
         when(tested.getElement()).thenReturn(elm);
-        when(elm.getParentElement()).thenReturn(parentElement);
         when(parentElement.getStyle()).thenReturn(style);
         when(elm.getStyle()).thenReturn(style);
+        when(elm.getParentElement()).thenReturn(parentExists ? parentElement : null);
 
         tested.onAttach();
-
         verify(tested).onAttach();
-        verify(style).setHeight(100, Style.Unit.PCT);
-        verify(style).setWidth(100, Style.Unit.PCT);
-        verify(style).setDisplay(Style.Display.TABLE);
+        verify(style, parentExists ? times(1) : never()).setHeight(100, Style.Unit.PCT);
+        verify(style, parentExists ? times(1) : never()).setWidth(100, Style.Unit.PCT);
+        verify(style, parentExists ? times(1) : never()).setDisplay(Style.Display.TABLE);
     }
 }
