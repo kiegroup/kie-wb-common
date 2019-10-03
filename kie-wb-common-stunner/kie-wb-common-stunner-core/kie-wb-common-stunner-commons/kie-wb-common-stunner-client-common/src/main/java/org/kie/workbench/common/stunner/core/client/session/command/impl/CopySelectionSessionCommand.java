@@ -105,9 +105,9 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
                                              .toArray(Element[]::new));
                 final Set<String> clipboardNodes =
                         clipboardControl.getElements().stream()
-                        .filter(element -> element instanceof Node)
-                        .map(Element::getUUID)
-                        .collect(Collectors.toSet());
+                                .filter(element -> element instanceof Node)
+                                .map(Element::getUUID)
+                                .collect(Collectors.toSet());
 
                 clipboardControl.getEdgeMap().clear();
                 clipboardControl.getEdgeMap().putAll(clipboardControl.getElements().stream()
