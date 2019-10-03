@@ -154,7 +154,18 @@ public class CopySelectionSessionCommandTest extends BaseSessionCommandKeyboardS
         assertEquals(1, clipboardControl.getEdgeMap().size());
         assertEquals(clipboardControl.getEdgeMap().get(graphInstance.edge1.getUUID()).getSource(), graphInstance.startNode.getUUID());
         assertEquals(clipboardControl.getEdgeMap().get(graphInstance.edge1.getUUID()).getTarget(), graphInstance.intermNode.getUUID());
-    }
+
+        when(selectionControl.getSelectedItems()).thenReturn(Arrays.asList(
+                graphInstance.startNode.getUUID(),
+                graphInstance.intermNode.getUUID())
+        );
+
+        copySelectionSessionCommand.execute(callback);
+        verify(clipboardControl, times(1))
+                .set(graphInstance.startNode, graphInstance.intermNode);
+        // edge map should not contain only node - node 
+        assertEquals(0, clipboardControl.getEdgeMap().size());
+      }
 
     @Override
     protected CopySelectionSessionCommand getCommand() {

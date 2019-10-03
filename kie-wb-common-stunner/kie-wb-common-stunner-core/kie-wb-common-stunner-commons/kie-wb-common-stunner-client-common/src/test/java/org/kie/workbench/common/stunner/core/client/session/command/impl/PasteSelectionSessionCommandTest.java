@@ -437,10 +437,23 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
 
         pasteSelectionSessionCommand.setTestEdgeFoundInCanvas(true);
         assertEquals(false, pasteSelectionSessionCommand.isEdgeFoundInCanvas(graphInstance.edge2));
+        Node source = graphInstance.edge2.getSourceNode();
+        Node target = graphInstance.edge2.getTargetNode();
+
         graphInstance.edge2.setSourceNode(null);
+        assertEquals(false, pasteSelectionSessionCommand.isEdgeFoundInCanvas(graphInstance.edge2));
+
         graphInstance.edge2.setTargetNode(null);
+        assertEquals(false, pasteSelectionSessionCommand.isEdgeFoundInCanvas(graphInstance.edge2));
+
+        graphInstance.edge2.setSourceNode(source);
+        assertEquals(false, pasteSelectionSessionCommand.isEdgeFoundInCanvas(graphInstance.edge2));
+
+        pasteSelectionSessionCommand.setTestEdgeFoundInCanvas(false);
+        pasteSelectionSessionCommand.setTestEdgeFoundInClipboard(false);
 
         assertEquals(false, pasteSelectionSessionCommand.isEdgeFoundInCanvas(graphInstance.edge2));
+        assertEquals(false, pasteSelectionSessionCommand.isEdgeFoundInClipboard(graphInstance.edge2));
     }
 
     @Override
