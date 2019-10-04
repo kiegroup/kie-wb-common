@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.docks.navigator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
@@ -95,7 +96,7 @@ public class DecisionNavigatorChildrenTraverse {
 
             return getItems()
                     .stream()
-                    .filter(item -> item.getUUID().equals(node.getUUID()))
+                    .filter(item -> Objects.equals(item.getUUID(), node.getUUID()))
                     .findFirst();
         }
     }
