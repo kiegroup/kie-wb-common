@@ -51,6 +51,13 @@
       <artifactId>kie-wb-common-stunner-core-common</artifactId>
     </dependency>
 
+    <!-- Required to generate the DefinitionSet adaptors -->
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-processors</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-project-api</artifactId>
@@ -70,6 +77,13 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-adf-base</artifactId>
+    </dependency>
+
+    <!-- Required to generate the Properties Panel form adaptors -->
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-adf-processors</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
