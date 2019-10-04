@@ -40,11 +40,6 @@
       <artifactId>validation-api</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
-
     <!-- Stunner -->
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
@@ -53,30 +48,7 @@
 
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-client-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-core-common</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-kogito-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-shapes-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-processors</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -89,13 +61,6 @@
       <artifactId>kie-wb-common-stunner-forms-api</artifactId>
     </dependency>
 
-    <!-- GWT -->
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- Form Modeler API -->
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
@@ -105,12 +70,6 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-adf-base</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-forms-adf-processors</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -157,11 +116,6 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-commons</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-project-api</artifactId>
     </dependency>
 
@@ -176,6 +130,18 @@
       <artifactId>kie-dmn-model</artifactId>
     </dependency>
 
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
