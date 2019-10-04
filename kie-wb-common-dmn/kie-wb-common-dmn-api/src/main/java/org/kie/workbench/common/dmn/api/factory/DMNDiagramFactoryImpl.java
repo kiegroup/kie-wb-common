@@ -41,8 +41,8 @@ public class DMNDiagramFactoryImpl
 
     @Override
     public Diagram doBuild(final String name,
-                                    final Metadata metadata,
-                                    final Graph<DefinitionSet, ?> graph) {
+                           final Metadata metadata,
+                           final Graph<DefinitionSet, ?> graph) {
         final Diagram result = new DiagramImpl(name,
                                                graph,
                                                metadata);

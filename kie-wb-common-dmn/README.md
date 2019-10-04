@@ -1,5 +1,5 @@
-Modules
-=======
+Graphical DMN modeling tool
+===========================
 
 This module contains various children for different purposes.
 

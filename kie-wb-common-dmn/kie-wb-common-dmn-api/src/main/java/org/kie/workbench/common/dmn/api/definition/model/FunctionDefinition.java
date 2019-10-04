@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.api.definition.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
@@ -167,15 +168,15 @@ public class FunctionDefinition extends Expression implements HasExpression {
 
         public static Kind fromValue(final String value) {
             for (Kind kind : Kind.values()) {
-                if (kind.value.equals(value)) {
+                if (Objects.equals(kind.value, value)) {
                     return kind;
                 }
             }
-            throw new IllegalArgumentException(value);
+            throw new IllegalArgumentException("FunctionKind [" + value + "] is not supported.");
         }
 
         public static FunctionDefinition.Kind determineFromString(final String code) {
-            return code == null ? null : (FEEL.code.equals(code) ? FEEL : (JAVA.code.equals(code) ? JAVA : (PMML.code.equals(code) ? PMML : null)));
+            return code == null ? null : Objects.equals(FEEL.code, code) ? FEEL : (Objects.equals(JAVA.code, code) ? JAVA : (Objects.equals(PMML.code, code) ? PMML : null));
         }
     }
 }

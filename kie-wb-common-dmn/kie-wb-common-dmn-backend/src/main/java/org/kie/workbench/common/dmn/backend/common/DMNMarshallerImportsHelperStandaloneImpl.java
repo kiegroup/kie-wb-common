@@ -134,7 +134,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
 
         if (imports.size() > 0) {
             for (final String xml : getOtherDMNDiagramsXML(metadata)) {
-                try (StringReader sr = toStringReader(xml)) {
+                try (final StringReader sr = toStringReader(xml)) {
                     final Definitions definitions = marshaller.unmarshal(sr);
                     findImportByDefinitions(definitions, imports).ifPresent(anImport -> {
                         importXML.put(anImport, xml);

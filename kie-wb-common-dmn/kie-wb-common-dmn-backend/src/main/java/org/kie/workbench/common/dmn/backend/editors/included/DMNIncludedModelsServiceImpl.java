@@ -54,7 +54,7 @@ public class DMNIncludedModelsServiceImpl implements DMNIncludedModelsService {
 
     private final DMNIncludedNodesFilter includedNodesFilter;
 
-    private final PMMLIncludedDocumentsFilter includedDocumentsFilter;/**/
+    private final PMMLIncludedDocumentsFilter includedDocumentsFilter;
 
     private final DMNMarshallerImportsHelperStandalone importsHelper;
 
