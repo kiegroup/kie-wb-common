@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ import org.uberfire.workbench.model.menu.Menus;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 
-public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
+public abstract class BaseDMNDiagramEditor extends AbstractDiagramEditor {
 
     public static final String PERSPECTIVE_ID = "AuthoringPerspective";
 
@@ -121,35 +121,35 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
 
     private final KogitoClientDiagramService diagramServices;
 
-    public BaseKogitoDMNDiagramEditor(final View view,
-                                      final FileMenuBuilder fileMenuBuilder,
-                                      final PlaceManager placeManager,
-                                      final MultiPageEditorContainerView multiPageEditorContainerView,
-                                      final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
-                                      final Event<NotificationEvent> notificationEvent,
-                                      final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
-                                      final TextEditorView xmlEditorView,
-                                      final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
-                                      final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                      final DMNEditorMenuSessionItems menuSessionItems,
-                                      final ErrorPopupPresenter errorPopupPresenter,
-                                      final DiagramClientErrorHandler diagramClientErrorHandler,
-                                      final ClientTranslationService translationService,
-                                      final DocumentationView<Diagram> documentationView,
-                                      final DMNEditorSearchIndex editorSearchIndex,
-                                      final SearchBarComponent<DMNSearchableElement> searchBarComponent,
-                                      final SessionManager sessionManager,
-                                      final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                      final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
-                                      final DecisionNavigatorDock decisionNavigatorDock,
-                                      final DiagramEditorPropertiesDock diagramPropertiesDock,
-                                      final PreviewDiagramDock diagramPreviewAndExplorerDock,
-                                      final LayoutHelper layoutHelper,
-                                      final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
-                                      final DataTypesPage dataTypesPage,
-                                      final IncludedModelsPage includedModelsPage,
-                                      final IncludedModelsPageStateProviderImpl importsPageProvider,
-                                      final KogitoClientDiagramService diagramServices) {
+    public BaseDMNDiagramEditor(final View view,
+                                final FileMenuBuilder fileMenuBuilder,
+                                final PlaceManager placeManager,
+                                final MultiPageEditorContainerView multiPageEditorContainerView,
+                                final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
+                                final Event<NotificationEvent> notificationEvent,
+                                final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
+                                final TextEditorView xmlEditorView,
+                                final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                final DMNEditorMenuSessionItems menuSessionItems,
+                                final ErrorPopupPresenter errorPopupPresenter,
+                                final DiagramClientErrorHandler diagramClientErrorHandler,
+                                final ClientTranslationService translationService,
+                                final DocumentationView<Diagram> documentationView,
+                                final DMNEditorSearchIndex editorSearchIndex,
+                                final SearchBarComponent<DMNSearchableElement> searchBarComponent,
+                                final SessionManager sessionManager,
+                                final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
+                                final DecisionNavigatorDock decisionNavigatorDock,
+                                final DiagramEditorPropertiesDock diagramPropertiesDock,
+                                final PreviewDiagramDock diagramPreviewAndExplorerDock,
+                                final LayoutHelper layoutHelper,
+                                final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
+                                final DataTypesPage dataTypesPage,
+                                final IncludedModelsPage includedModelsPage,
+                                final IncludedModelsPageStateProviderImpl importsPageProvider,
+                                final KogitoClientDiagramService diagramServices) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -437,7 +437,7 @@ public abstract class BaseKogitoDMNDiagramEditor extends AbstractDiagramEditor {
 
                                       @Override
                                       public void onError(final ClientRuntimeError error) {
-                                          BaseKogitoDMNDiagramEditor.this.getEditor().onLoadError(error);
+                                          BaseDMNDiagramEditor.this.getEditor().onLoadError(error);
                                       }
                                   });
     }

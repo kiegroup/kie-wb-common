@@ -18,10 +18,8 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.workarounds;
 
 import javax.enterprise.inject.Alternative;
 
-import org.kie.workbench.common.widgets.client.kogito.IsKogito;
-
 @Alternative
-public class MockIsKogito extends IsKogito {
+public class IsKogito extends org.kie.workbench.common.widgets.client.kogito.IsKogito {
 
     public boolean get() {
         return true;

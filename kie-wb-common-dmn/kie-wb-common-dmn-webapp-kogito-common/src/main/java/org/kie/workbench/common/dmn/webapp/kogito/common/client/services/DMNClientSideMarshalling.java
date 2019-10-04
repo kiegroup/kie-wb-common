@@ -25,6 +25,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN12;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogitoMarshaller;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -34,15 +35,14 @@ import org.uberfire.client.promise.Promises;
 
 /**
  * Holder for the final client-side marshaller integration.
- * These methods should be pasted into KogitoClientDiagramServiceImpl
+ * These methods should be pasted into DMNClientDiagramServiceImpl
  */
 @SuppressWarnings("unused")
-public final class KogitoClientSideMarshalling {
+public final class DMNClientSideMarshalling {
 
     private DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller;
     private Promises promises;
 
-    //@Override
     public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
             return promises.create((resolveCallbackFn, rejectCallbackFn) -> {
@@ -75,13 +75,13 @@ public final class KogitoClientSideMarshalling {
 
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);
-            org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
+            final JSIName jsiName = JSITDefinitions.getJSIName();
             jsiName.setPrefix("dmn");
             jsiName.setLocalPart("definitions");
-            String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
+            final String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
             jsiName.setKey(key);
-            String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
-            jsiName.setString(string);
+            final String keyString = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
+            jsiName.setString(keyString);
             final DMN12 dmn12 = Js.uncheckedCast(JsUtils.newWrappedInstance());
             JsUtils.setNameOnWrapped(dmn12, jsiName);
             JsUtils.setValueOnWrapped(dmn12, jsitDefinitions);

@@ -110,9 +110,8 @@ public class KogitoDiagramServiceImpl implements KogitoDiagramService {
     private Diagram doTransformation(final String xml) {
         final String defSetId = getDefinitionSetId(dmnBackendService);
         final Metadata metadata = buildMetadataInstance(defSetId);
-        final InputStream is = new ByteArrayInputStream(xml.getBytes());
 
-        try {
+        try (final InputStream is = new ByteArrayInputStream(xml.getBytes())) {
             final DMNMarshallerStandalone dmnMarshaller = (DMNMarshallerStandalone) dmnBackendService.getDiagramMarshaller();
             final Graph<DefinitionSet, ?> graph = dmnMarshaller.unmarshall(metadata, is);
             final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);

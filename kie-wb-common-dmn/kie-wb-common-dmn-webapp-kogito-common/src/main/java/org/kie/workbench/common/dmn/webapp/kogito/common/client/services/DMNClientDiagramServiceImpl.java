@@ -36,6 +36,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.DMN1
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogitoMarshaller;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.DMNMarshallerKogitoUnmarshaller;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.JsonVerifier;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -61,7 +62,7 @@ import org.uberfire.client.promise.Promises;
 import org.uberfire.commons.uuid.UUID;
 
 @ApplicationScoped
-public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramService {
+public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
 
     private static final String DIAGRAMS_PATH = "diagrams";
 
@@ -78,18 +79,18 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
     // TODO {gcardosi} only for developing/debugging purpose - to be removed
     private JSITDefinitions unmarshalledDefinitions;
 
-    public KogitoClientDiagramServiceImpl() {
+    public DMNClientDiagramServiceImpl() {
         //CDI proxy
     }
 
     @Inject
-    public KogitoClientDiagramServiceImpl(final DMNMarshallerKogitoUnmarshaller dmnMarshallerKogitoUnmarshaller,
-                                          final DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller,
-                                          final Caller<KogitoDiagramService> kogitoDiagramServiceCaller,
-                                          final FactoryManager factoryManager,
-                                          final DefinitionManager definitionManager,
-                                          final DMNDiagramFactory dmnDiagramFactory,
-                                          final Promises promises) {
+    public DMNClientDiagramServiceImpl(final DMNMarshallerKogitoUnmarshaller dmnMarshallerKogitoUnmarshaller,
+                                       final DMNMarshallerKogitoMarshaller dmnMarshallerKogitoMarshaller,
+                                       final Caller<KogitoDiagramService> kogitoDiagramServiceCaller,
+                                       final FactoryManager factoryManager,
+                                       final DefinitionManager definitionManager,
+                                       final DMNDiagramFactory dmnDiagramFactory,
+                                       final Promises promises) {
         this.dmnMarshallerKogitoUnmarshaller = dmnMarshallerKogitoUnmarshaller;
         this.dmnMarshallerKogitoMarshaller = dmnMarshallerKogitoMarshaller;
         this.kogitoDiagramServiceCaller = kogitoDiagramServiceCaller;
@@ -201,13 +202,13 @@ public class KogitoClientDiagramServiceImpl implements KogitoClientDiagramServic
         };
         try {
             final JSITDefinitions jsitDefinitions = dmnMarshallerKogitoMarshaller.marshall(graph);
-            org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName jsiName = JSITDefinitions.getJSIName();
+            final JSIName jsiName = JSITDefinitions.getJSIName();
             jsiName.setPrefix("dmn");
             jsiName.setLocalPart("definitions");
-            String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
+            final String key = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getLocalPart();
             jsiName.setKey(key);
-            String string = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
-            jsiName.setString(string);
+            final String keyString = "{" + jsiName.getNamespaceURI() + "}" + jsiName.getPrefix() + ":" + jsiName.getLocalPart();
+            jsiName.setString(keyString);
             if (!Objects.isNull(unmarshalledDefinitions)) {
                 JsonVerifier.compareJSITDefinitions(unmarshalledDefinitions, jsitDefinitions);
             }

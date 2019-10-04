@@ -32,6 +32,10 @@ import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.backend.editors.included.DMNIncludedModelsServiceImpl;
 import org.uberfire.backend.vfs.Path;
 
+/**
+ * kogito lacks the ability to query the environment (VSCode etc) for additional files.
+ * Therefore this implementation of the service returns empty collections for all methods.
+ */
 @Service
 @Specializes
 public class MockDMNIncludedModelsServiceImpl extends DMNIncludedModelsServiceImpl {
