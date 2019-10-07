@@ -18,6 +18,9 @@ package javax.xml;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 
+/**
+ * GWT Super-source version of javax.xml.XMLConstants.
+ */
 @SuppressWarnings("unused")
 @JsType(namespace = JsPackage.GLOBAL)
 public final class XMLConstants {
