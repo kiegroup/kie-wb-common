@@ -23,7 +23,6 @@ public class ColorUtils {
     public static JSIColor dmnFromWB(final String colorString) {
         final JSIColor result = new JSIColor();
 
-        //Copied from java.awt.Color.decode(String) for "pure client-side" implementation
         try {
             final Integer intval = Integer.decode(colorString);
             final int i = intval.intValue();

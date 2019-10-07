@@ -57,14 +57,14 @@ public class RelationPropertyConverter {
         }
 
         final Relation result = new Relation(id, description, typeRef, convertedColumns, convertedRows);
-        for (InformationItem c : convertedColumns) {
-            if (c != null) {
-                c.setParent(result);
+        for (InformationItem column : convertedColumns) {
+            if (column != null) {
+                column.setParent(result);
             }
         }
-        for (org.kie.workbench.common.dmn.api.definition.model.List r : convertedRows) {
-            if (r != null) {
-                r.setParent(result);
+        for (org.kie.workbench.common.dmn.api.definition.model.List row : convertedRows) {
+            if (row != null) {
+                row.setParent(result);
             }
         }
         return result;

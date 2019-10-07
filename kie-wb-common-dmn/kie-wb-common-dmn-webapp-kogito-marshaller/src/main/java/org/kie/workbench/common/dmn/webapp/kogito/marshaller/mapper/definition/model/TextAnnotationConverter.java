@@ -37,7 +37,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 
-public class TextAnnotationConverter implements NodeConverter<JSITTextAnnotation, org.kie.workbench.common.dmn.api.definition.model.TextAnnotation> {
+public class TextAnnotationConverter implements NodeConverter<JSITTextAnnotation, TextAnnotation> {
 
     private FactoryManager factoryManager;
 

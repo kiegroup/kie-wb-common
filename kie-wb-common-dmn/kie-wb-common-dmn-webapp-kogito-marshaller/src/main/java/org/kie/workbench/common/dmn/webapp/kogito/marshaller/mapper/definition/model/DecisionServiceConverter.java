@@ -53,7 +53,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 
-public class DecisionServiceConverter implements NodeConverter<JSITDecisionService, org.kie.workbench.common.dmn.api.definition.model.DecisionService> {
+public class DecisionServiceConverter implements NodeConverter<JSITDecisionService, DecisionService> {
 
     private FactoryManager factoryManager;
 

@@ -26,25 +26,11 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class QNamePropertyConverter {
 
-    /**
-     * @return maybe null
-     */
     public static QName wbFromDMN(final String qNameAsString) {
         if (StringUtils.isEmpty(qNameAsString)) {
             return BuiltInType.UNDEFINED.asQName();
         }
         final javax.xml.namespace.QName qName = javax.xml.namespace.QName.valueOf(qNameAsString);
-
-        //TODO {manstis} QNames are preserved with their original DMN version information...
-//        //Convert DMN1.1 QName typeRefs to DMN1.2 (the editor only supports DMN1.2)
-//        if (DMNModelInstrumentedBase.URI_FEEL.equals(hasTypeRef.getNamespaceURI(qName.getPrefix()))) {
-//            return new QName(QName.NULL_NS_URI, qName.getLocalPart());
-//        }
-//        final String defaultNs = jsiDefinitions.getNamespace();
-//        final String localNs = hasTypeRef.getNamespaceURI(qName.getPrefix());
-//        if (defaultNs.equalsIgnoreCase(localNs)) {
-//            return new QName(QName.NULL_NS_URI, qName.getLocalPart());
-//        }
 
         return new QName(qName.getNamespaceURI(),
                          qName.getLocalPart(),

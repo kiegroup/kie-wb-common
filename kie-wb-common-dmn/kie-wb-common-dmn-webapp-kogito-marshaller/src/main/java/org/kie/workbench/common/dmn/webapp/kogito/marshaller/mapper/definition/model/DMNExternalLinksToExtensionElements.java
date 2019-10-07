@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import jsinterop.base.Js;
+import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.api.property.dmn.DocumentationLinks;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
@@ -30,7 +31,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAt
 class DMNExternalLinksToExtensionElements {
 
     static void loadExternalLinksFromExtensionElements(final JSITDRGElement source,
-                                                       final org.kie.workbench.common.dmn.api.definition.model.DRGElement target) {
+                                                       final DRGElement target) {
 
         if (!Objects.isNull(source.getExtensionElements())) {
             final List<Object> extensions = source.getExtensionElements().getAny();
@@ -49,7 +50,7 @@ class DMNExternalLinksToExtensionElements {
         }
     }
 
-    static void loadExternalLinksIntoExtensionElements(final org.kie.workbench.common.dmn.api.definition.model.DRGElement source,
+    static void loadExternalLinksIntoExtensionElements(final DRGElement source,
                                                        final JSITDRGElement target) {
 
         if (Objects.isNull(source.getLinksHolder()) || Objects.isNull(source.getLinksHolder().getValue())) {

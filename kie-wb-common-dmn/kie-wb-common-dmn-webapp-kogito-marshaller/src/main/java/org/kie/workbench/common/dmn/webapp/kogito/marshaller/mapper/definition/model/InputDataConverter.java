@@ -38,7 +38,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 
-public class InputDataConverter implements NodeConverter<JSITInputData, org.kie.workbench.common.dmn.api.definition.model.InputData> {
+public class InputDataConverter implements NodeConverter<JSITInputData, InputData> {
 
     private FactoryManager factoryManager;
 
