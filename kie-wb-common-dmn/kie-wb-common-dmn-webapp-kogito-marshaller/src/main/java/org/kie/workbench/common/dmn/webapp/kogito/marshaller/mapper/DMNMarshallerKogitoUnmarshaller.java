@@ -481,7 +481,6 @@ public class DMNMarshallerKogitoUnmarshaller {
         extension.ifPresent(componentsWidthsExtension -> {
             //This condition is required because a node with ComponentsWidthsExtension
             //can be imported from another diagram but the extension is not imported or present in this diagram.
-            //TODO: This will be fixed in this JIRA: https://issues.jboss.org/browse/DROOLS-3934
             if (Objects.nonNull(componentsWidthsExtension.getComponentWidths())) {
                 hasComponentWidthsMap.entrySet().forEach(es -> {
                     final List<JSITComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();

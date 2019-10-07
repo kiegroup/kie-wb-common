@@ -69,7 +69,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.m
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.DMNMarshallerUtils;
-import org.kie.workbench.common.forms.adf.definitions.DynamicReadOnly;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -168,16 +167,9 @@ public class DMNMarshallerKogitoMarshaller {
             if (node.getContent() instanceof View<?>) {
                 final View<?> view = (View<?>) node.getContent();
                 if (view.getDefinition() instanceof DRGElement) {
-                    final DRGElement n = (DRGElement) view.getDefinition();
-                    if (view.getDefinition() instanceof DynamicReadOnly) {
-                        final DynamicReadOnly def = (DynamicReadOnly) view.getDefinition();
-                        if (!def.isAllowOnlyVisualChange()) {
-                            nodes.put(n.getId().getValue(),
-                                      stunnerToDMN(node,
-                                                   componentWidthsConsumer));
-                        }
-                    } else {
-                        nodes.put(n.getId().getValue(),
+                    final DRGElement drgElement = (DRGElement) view.getDefinition();
+                    if (!drgElement.isAllowOnlyVisualChange()) {
+                        nodes.put(drgElement.getId().getValue(),
                                   stunnerToDMN(node,
                                                componentWidthsConsumer));
                     }
@@ -209,36 +201,34 @@ public class DMNMarshallerKogitoMarshaller {
                         if (connectionContent.getSourceConnection().isPresent() && connectionContent.getTargetConnection().isPresent()) {
                             Point2D sourcePoint = ((Connection) connectionContent.getSourceConnection().get()).getLocation();
                             Point2D targetPoint = ((Connection) connectionContent.getTargetConnection().get()).getLocation();
-                            if (sourcePoint == null) { // If the "connection source/target location is null" assume it's the centre of the shape.
-                                final Node<?, ?> sourceNode = e.getSourceNode();
-                                final View<?> sourceView = (View<?>) sourceNode.getContent();
-                                double xSource = xOfBound(upperLeftBound(sourceView));
-                                double ySource = yOfBound(upperLeftBound(sourceView));
+                            final Node<?, ?> sourceNode = e.getSourceNode();
+                            final View<?> sourceView = (View<?>) sourceNode.getContent();
+                            double xSource = xOfBound(upperLeftBound(sourceView));
+                            double ySource = yOfBound(upperLeftBound(sourceView));
+                            double xTarget = xOfBound(upperLeftBound(view));
+                            double yTarget = yOfBound(upperLeftBound(view));
+                            if (sourcePoint == null) {
+                                // If the "connection source/target location is null" assume it's the centre of the shape.
                                 if (sourceView.getDefinition() instanceof DMNViewDefinition) {
-                                    final DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) sourceView.getDefinition();
+                                    DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) sourceView.getDefinition();
                                     xSource += dmnViewDefinition.getDimensionsSet().getWidth().getValue() / 2;
                                     ySource += dmnViewDefinition.getDimensionsSet().getHeight().getValue() / 2;
                                 }
                                 sourcePoint = Point2D.create(xSource, ySource);
-                            } else { // If it is non-null it is relative to the source/target shape location.
-                                final Node<?, ?> sourceNode = e.getSourceNode();
-                                final View<?> sourceView = (View<?>) sourceNode.getContent();
-                                double xSource = xOfBound(upperLeftBound(sourceView));
-                                double ySource = yOfBound(upperLeftBound(sourceView));
+                            } else {
+                                // If it is non-null it is relative to the source/target shape location.
                                 sourcePoint = Point2D.create(xSource + sourcePoint.getX(), ySource + sourcePoint.getY());
                             }
-                            if (targetPoint == null) { // If the "connection source/target location is null" assume it's the centre of the shape.
-                                double xTarget = xOfBound(upperLeftBound(view));
-                                double yTarget = yOfBound(upperLeftBound(view));
+                            if (targetPoint == null) {
+                                // If the "connection source/target location is null" assume it's the centre of the shape.
                                 if (view.getDefinition() instanceof DMNViewDefinition) {
-                                    final DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) view.getDefinition();
+                                    DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) view.getDefinition();
                                     xTarget += dmnViewDefinition.getDimensionsSet().getWidth().getValue() / 2;
                                     yTarget += dmnViewDefinition.getDimensionsSet().getHeight().getValue() / 2;
                                 }
                                 targetPoint = Point2D.create(xTarget, yTarget);
-                            } else { // If it is non-null it is relative to the source/target shape location.
-                                final double xTarget = xOfBound(upperLeftBound(view));
-                                final double yTarget = yOfBound(upperLeftBound(view));
+                            } else {
+                                // If it is non-null it is relative to the source/target shape location.
                                 targetPoint = Point2D.create(xTarget + targetPoint.getX(), yTarget + targetPoint.getY());
                             }
 
