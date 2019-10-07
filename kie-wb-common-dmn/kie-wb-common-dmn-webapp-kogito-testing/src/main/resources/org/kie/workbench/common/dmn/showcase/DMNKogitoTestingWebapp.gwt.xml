@@ -18,6 +18,7 @@
 
 <module>
 
+  <inherits name="org.uberfire.UberfireWorkbenchBackend"/>
   <inherits name="org.kie.workbench.common.dmn.webapp.kogito.common.DMNWebappKogitoCommon"/>
 
   <extend-property name="locale" values="es"/>
