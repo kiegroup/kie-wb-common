@@ -111,11 +111,11 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
         final Optional<String> description = Optional.ofNullable(DescriptionPropertyConverter.dmnFromWB(source.getDescription()));
         description.ifPresent(result::setDescription);
         result.setName(source.getName().getValue());
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(result.getKnowledgeRequirement())) {
             result.setKnowledgeRequirement(new ArrayList<>());
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(result.getAuthorityRequirement())) {
             result.setAuthorityRequirement(new ArrayList<>());
         }
@@ -135,11 +135,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                 source.getEncapsulatedLogic().getComponentWidths()
                         .stream()
                         .filter(Objects::nonNull)
-                        .forEach(w -> {
-                            final double dw = w;
-                            final float fw = (float) dw;
-                            componentWidths.addWidth(fw);
-                        });
+                        .forEach(w -> componentWidths.addWidth(new Float(w)));
                 componentWidthsConsumer.accept(componentWidths);
             }
         }

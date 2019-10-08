@@ -49,7 +49,6 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JS
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNLabel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNStyle;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITAttachment;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentsWidthsExtension;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JSIName;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
@@ -141,14 +140,6 @@ public class WrapperUtils {
     public static JSITLiteralExpression getWrappedJSITLiteralExpression(JSITLiteralExpression toWrap, String prefix, String localPart) {
         JSITLiteralExpression toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(toWrap));
         JSIName jsiName = JSITLiteralExpression.getJSIName();
-        updateJSIName(jsiName, prefix, localPart);
-        JsUtils.setNameOnWrapped(toReturn, jsiName);
-        return toReturn;
-    }
-
-    public static JSITAttachment getWrappedJSITAttachment(JSITAttachment toWrap, String prefix, String localPart) {
-        JSITAttachment toReturn = Js.uncheckedCast(JsUtils.getWrappedElement(toWrap));
-        JSIName jsiName = JSITAttachment.getJSIName();
         updateJSIName(jsiName, prefix, localPart);
         JsUtils.setNameOnWrapped(toReturn, jsiName);
         return toReturn;
@@ -256,18 +247,7 @@ public class WrapperUtils {
             result.setDMNDecisionServiceDividerLine(dl);
         }
         result.setStyle(getWrappedJSIDMNStyle(style));
-        // TODO {gcardosi} commented out as per {manstis} suggestion
-//        final Map<QName, String> otherAttributes = new HashMap<>();
-//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-//                                      "id",
-//                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
-//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-//                                      "dmnElementRef",
-//                                      XMLConstants.DEFAULT_NS_PREFIX),  result.getDmnElementRef().getLocalPart());
-//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-//                                      "isCollapsed",
-//                                      XMLConstants.DEFAULT_NS_PREFIX), String.valueOf(result.getIsCollapsed()));
-//        result.setOtherAttributes(Js.uncheckedCast(otherAttributes));
+
         return result;
     }
 

@@ -62,7 +62,7 @@ public class ContextPropertyConverter {
             final JSITFunctionDefinition functionDefinition = Js.uncheckedCast(parent);
             final String sKind = Js.uncheckedCast(functionDefinition.getKind());
             final Kind kind = Kind.fromValue(sKind);
-            if (!Kind.FEEL.equals(kind)) {
+            if (!Objects.equals(Kind.FEEL, kind)) {
                 return result;
             }
         }

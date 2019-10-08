@@ -64,7 +64,7 @@ public class JsonVerifier {
             compareJSONObject(originalJSONObject, marshalledJSONObject);
         } else if (checkNotNull(originalJSONArray, marshalledJSONArray)) {
             compareJSONArray(originalJSONArray, marshalledJSONArray);
-        } else if (!original.equals(marshalled)) {
+        } else if (!Objects.equals(original, marshalled)) {
             GWT.log(WARNING);
             GWT.log("original expected : " + limitedString(original));
             GWT.log("marshalled retrieved : " + limitedString(marshalled));
@@ -74,8 +74,8 @@ public class JsonVerifier {
     private static void compareJSONObject(JSONObject original, JSONObject marshalled) {
         checkKeys(original, marshalled);
         for (String originalKey : original.keySet()) {
-            // TODO {gcardosi} to remove after otherattributes are populated
-            if (!OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
+            // TODO {gcardosi} to remove after otherAttributes are populated
+            if (!Objects.equals(OTHER_ATTRIBUTES, originalKey) && !Objects.equals(H_$, originalKey)) {
                 compareJSONObjectKey(original, marshalled, originalKey);
             }
         }
@@ -90,13 +90,6 @@ public class JsonVerifier {
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
             }
         }
-        // Ignore this
-//        for (String marshalledKey : marshalledKeys) {
-//            if (!originalKeys.contains(marshalledKey)) {
-//                GWT.log(WARNING);
-//                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
-//            }
-//        }
     }
 
     private static void compareJSONObjectKey(JSONObject original, JSONObject marshalled, String key) {
@@ -143,7 +136,7 @@ public class JsonVerifier {
         } else if (checkNotNull(originalJSONArray, marshalledJSONArray)) {
             toReturn = compareJSONArray(originalJSONArray, marshalledJSONArray);
         } else {
-            toReturn = original.equals(marshalled);
+            toReturn = Objects.equals(original, marshalled);
         }
         return toReturn;
     }
@@ -161,20 +154,13 @@ public class JsonVerifier {
         final Set<String> marshalledKeys = marshalled.keySet();
         boolean toReturn = true;
         for (String originalKey : originalKeys) {
-            // TODO {gcardosi} to remove after otherattributes are populated
-            if (!marshalledKeys.contains(originalKey) && !OTHER_ATTRIBUTES.equals(originalKey) && !H_$.equals(originalKey)) {
+            // TODO {gcardosi} to remove after otherAttributes are populated
+            if (!marshalledKeys.contains(originalKey) && !Objects.equals(OTHER_ATTRIBUTES, originalKey) && !Objects.equals(H_$, originalKey)) {
                 GWT.log(WARNING);
                 GWT.log("original key " + originalKey + " missing in marshalled " + limitedString(marshalled));
                 toReturn = false;
             }
         }
-        // Ignoring this
-//        for (String marshalledKey : marshalledKeys) {
-//            if (!originalKeys.contains(marshalledKey)) {
-//                GWT.log(WARNING);
-//                GWT.log("marshalled key " + marshalledKey + " not expected  in " + limitedString(original));
-//            }
-//        }
         return toReturn;
     }
 
@@ -182,8 +168,8 @@ public class JsonVerifier {
         final JSONValue originalJSONValue = original.get(key);
         final JSONValue marshalledJSONValue = marshalled.get(key);
         boolean toReturn = true;
-        // TODO {gcardosi} to remove after otherattributes are populated
-        if (!OTHER_ATTRIBUTES.equals(key) && !H_$.equals(key)) {
+        // TODO {gcardosi} to remove after otherAttributes are populated
+        if (!Objects.equals(OTHER_ATTRIBUTES, key) && !Objects.equals(H_$, key)) {
             toReturn = checkNotNull(originalJSONValue, marshalledJSONValue) && compareJSONValueForArray(originalJSONValue, marshalledJSONValue);
         }
         return toReturn;

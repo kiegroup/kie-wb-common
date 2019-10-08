@@ -45,7 +45,7 @@ public class AssociationConverter {
 
         final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for (Edge<?, ?> e : inEdges) {
-            Node<?, ?> sourceNode = e.getSourceNode();
+            final Node<?, ?> sourceNode = e.getSourceNode();
             if (sourceNode.getContent() instanceof View<?>) {
                 final View<?> view = (View<?>) sourceNode.getContent();
                 if (view.getDefinition() instanceof DRGElement) {

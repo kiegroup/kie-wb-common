@@ -73,7 +73,7 @@ public class DecisionTablePropertyConverter {
         for (int i = 0; i < jsiDecisionRules.size(); i++) {
             final JSITDecisionRule dr = Js.uncheckedCast(jsiDecisionRules.get(i));
             final DecisionRule decisionRuleConverted = DecisionRulePropertyConverter.wbFromDMN(dr);
-            if (decisionRuleConverted != null) {
+            if (Objects.nonNull(decisionRuleConverted)) {
                 decisionRuleConverted.setParent(result);
             }
             result.getRule().add(decisionRuleConverted);

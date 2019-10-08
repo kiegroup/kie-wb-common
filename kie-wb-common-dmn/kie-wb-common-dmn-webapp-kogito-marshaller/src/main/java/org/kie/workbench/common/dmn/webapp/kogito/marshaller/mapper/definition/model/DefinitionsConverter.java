@@ -149,16 +149,9 @@ public class DefinitionsConverter {
                                     v);
             }
         });
-        // TODO {gcardosi} commented out as per {manstis} suggestion
-//        otherAttributes.put(new QName(XMLConstants.NULL_NS_URI,
-//                                      "id",
-//                                      XMLConstants.DEFAULT_NS_PREFIX), result.getId());
-//        otherAttributes.put(new QName("",
-//                                      "name",
-//                                      XMLConstants.NULL_NS_URI), result.getName());
         result.setOtherAttributes(otherAttributes);
 
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(result.getItemDefinition())) {
             result.setItemDefinition(new ArrayList<>());
         }
@@ -166,15 +159,15 @@ public class DefinitionsConverter {
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
             result.addItemDefinition(itemDefConverted);
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(result.getImport())) {
             result.setImport(new ArrayList<>());
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(result.getDrgElement())) {
             result.setDrgElement(new ArrayList<>());
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(result.getArtifact())) {
             result.setArtifact(new ArrayList<>());
         }

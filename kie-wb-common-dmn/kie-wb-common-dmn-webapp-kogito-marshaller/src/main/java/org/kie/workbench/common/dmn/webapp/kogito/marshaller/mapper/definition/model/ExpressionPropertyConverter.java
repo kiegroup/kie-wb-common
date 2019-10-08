@@ -123,11 +123,7 @@ public class ExpressionPropertyConverter {
             wb.getComponentWidths()
                     .stream()
                     .filter(Objects::nonNull)
-                    .forEach(w -> {
-                        final double dw = w;
-                        final float fw = (float) dw;
-                        componentWidths.addWidth(fw);
-                    });
+                    .forEach(w -> componentWidths.addWidth(new Float(w)));
             componentWidthsConsumer.accept(componentWidths);
         }
 

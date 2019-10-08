@@ -44,7 +44,7 @@ public class ContextEntryPropertyConverter {
         if (variable != null) {
             variable.setParent(result);
             result.setVariable(variable);
-        }/**/
+        }
         if (expression != null) {
             expression.setParent(result);
             result.setExpression(expression);

@@ -32,6 +32,6 @@ public class DMNMarshallerUtils {
         return StreamSupport.stream(graph.nodes().spliterator(), false)
                 .filter(n -> n.getContent().getDefinition() instanceof DMNDiagram)
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException("TODO"));
+                .orElseThrow(() -> new IllegalStateException("DMNDiagram root not found."));
     }
 }

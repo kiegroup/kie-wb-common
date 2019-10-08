@@ -135,15 +135,15 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         if (!StringUtils.isEmpty(allowedAnswers)) {
             d.setAllowedAnswers(allowedAnswers);
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(d.getInformationRequirement())) {
             d.setInformationRequirement(new ArrayList<>());
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(d.getKnowledgeRequirement())) {
             d.setKnowledgeRequirement(new ArrayList<>());
         }
-        // TODO {gcardosi} add because  present in original json
+        // Add because it is present in the original JSON when unmarshalling
         if (Objects.isNull(d.getAuthorityRequirement())) {
             d.setAuthorityRequirement(new ArrayList<>());
         }
