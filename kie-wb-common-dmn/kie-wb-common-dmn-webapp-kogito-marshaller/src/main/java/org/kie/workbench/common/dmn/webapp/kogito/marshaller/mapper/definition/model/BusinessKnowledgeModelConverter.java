@@ -84,10 +84,10 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<JSITBusine
                                                                       new GeneralRectangleDimensionsSet());
         node.getContent().setDefinition(bkm);
 
-        if (informationItem != null) {
+        if (Objects.nonNull(informationItem)) {
             informationItem.setParent(bkm);
         }
-        if (functionDefinition != null) {
+        if (Objects.nonNull(functionDefinition)) {
             functionDefinition.setParent(bkm);
         }
 

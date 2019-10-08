@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
@@ -46,10 +47,10 @@ public class OutputClausePropertyConverter {
         result.setDefaultOutputEntry(defaultOutputEntry);
         result.setTypeRef(typeRef);
 
-        if (outputValues != null) {
+        if (Objects.nonNull(outputValues)) {
             outputValues.setParent(result);
         }
-        if (defaultOutputEntry != null) {
+        if (Objects.nonNull(defaultOutputEntry)) {
             defaultOutputEntry.setParent(result);
         }
 
@@ -64,12 +65,12 @@ public class OutputClausePropertyConverter {
         description.ifPresent(result::setDescription);
 
         final JSITUnaryTests outputValues = UnaryTestsPropertyConverter.dmnFromWB(wb.getOutputValues());
-        if (outputValues != null && StringUtils.nonEmpty(outputValues.getText())) {
+        if (Objects.nonNull(outputValues) && StringUtils.nonEmpty(outputValues.getText())) {
             result.setOutputValues(outputValues);
         }
 
         final JSITLiteralExpression defaultOutputEntry = LiteralExpressionPropertyConverter.dmnFromWB(wb.getDefaultOutputEntry());
-        if (defaultOutputEntry != null && StringUtils.nonEmpty(defaultOutputEntry.getText())) {
+        if (Objects.nonNull(defaultOutputEntry) && StringUtils.nonEmpty(defaultOutputEntry.getText())) {
             result.setDefaultOutputEntry(defaultOutputEntry);
         }
 

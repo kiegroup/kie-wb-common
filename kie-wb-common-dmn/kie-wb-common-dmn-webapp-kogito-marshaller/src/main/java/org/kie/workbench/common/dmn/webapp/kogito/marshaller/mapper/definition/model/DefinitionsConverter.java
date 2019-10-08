@@ -49,7 +49,7 @@ public class DefinitionsConverter {
     public static Definitions wbFromDMN(final JSITDefinitions dmn,
                                         final Map<JSITImport, JSITDefinitions> importDefinitions,
                                         final Map<JSITImport, PMMLDocumentMetadata> pmmlDocuments) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
@@ -112,14 +112,14 @@ public class DefinitionsConverter {
     }
 
     public static JSITDefinitions dmnFromWB(final Definitions wb) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITDefinitions result = new JSITDefinitions();
 
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
-        final String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
-        final String defaultName = (wb.getName() != null) ? wb.getName().getValue() : UUID.uuid(8);
+        final String defaultId = Objects.nonNull(wb.getId()) ? wb.getId().getValue() : UUID.uuid();
+        final String defaultName = Objects.nonNull(wb.getName()) ? wb.getName().getValue() : UUID.uuid(8);
         final String defaultNamespace = !StringUtils.isEmpty(wb.getNamespace().getValue())
                 ? wb.getNamespace().getValue()
                 : DMNModelInstrumentedBase.Namespace.DEFAULT.getUri() + UUID.uuid();

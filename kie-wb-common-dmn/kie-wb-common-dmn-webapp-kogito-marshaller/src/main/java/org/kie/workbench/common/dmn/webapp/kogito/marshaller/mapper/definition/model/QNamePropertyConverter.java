@@ -42,14 +42,14 @@ public class QNamePropertyConverter {
      */
     public static void setDMNfromWB(final QName qname,
                                     final Consumer<String> setter) {
-        if (qname != null) {
+        if (Objects.nonNull(qname)) {
             final Optional<javax.xml.namespace.QName> dmnTypeRef = dmnFromWB(qname);
             dmnTypeRef.ifPresent(typeRef -> setter.accept(typeRef.toString()));
         }
     }
 
     public static Optional<javax.xml.namespace.QName> dmnFromWB(final QName wb) {
-        if (wb != null) {
+        if (Objects.nonNull(wb)) {
             if (Objects.equals(wb, BuiltInType.UNDEFINED.asQName())) {
                 return Optional.empty();
             }

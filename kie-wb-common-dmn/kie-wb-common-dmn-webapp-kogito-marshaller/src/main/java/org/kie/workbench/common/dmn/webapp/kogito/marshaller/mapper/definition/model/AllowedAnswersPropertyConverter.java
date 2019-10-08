@@ -16,13 +16,15 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.dmn.api.property.dmn.AllowedAnswers;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class AllowedAnswersPropertyConverter {
 
     public static AllowedAnswers wbFromDMN(final String dmn) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return new AllowedAnswers("");
         } else {
             return new AllowedAnswers(dmn);
@@ -30,7 +32,7 @@ public class AllowedAnswersPropertyConverter {
     }
 
     public static String dmnFromWB(final AllowedAnswers wb) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         } else if (StringUtils.isEmpty(wb.getValue())) {
             return null;

@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -34,7 +35,7 @@ public class BindingPropertyConverter {
 
     public static Binding wbFromDMN(final JSITBinding dmn,
                                     final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final InformationItem convertedParameter = InformationItemPropertyConverter.wbFromDMN(dmn.getParameter());
@@ -44,11 +45,11 @@ public class BindingPropertyConverter {
                                                                                      hasComponentWidthsConsumer);
 
         final Binding result = new Binding();
-        if (convertedParameter != null) {
+        if (Objects.nonNull(convertedParameter)) {
             convertedParameter.setParent(result);
         }
         result.setParameter(convertedParameter);
-        if (convertedExpression != null) {
+        if (Objects.nonNull(convertedExpression)) {
             convertedExpression.setParent(result);
         }
         result.setExpression(convertedExpression);
@@ -57,7 +58,7 @@ public class BindingPropertyConverter {
 
     public static JSITBinding dmnFromWB(final Binding wb,
                                         final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITBinding result = new JSITBinding();

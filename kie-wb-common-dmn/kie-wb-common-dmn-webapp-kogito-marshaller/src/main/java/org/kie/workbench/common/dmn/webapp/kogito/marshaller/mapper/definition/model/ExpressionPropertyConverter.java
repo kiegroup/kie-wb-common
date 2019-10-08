@@ -110,7 +110,7 @@ public class ExpressionPropertyConverter {
                                            final Consumer<JSITComponentWidths> componentWidthsConsumer) {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // reference above.
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             final JSITLiteralExpression mockedExpression = new JSITLiteralExpression();
             final JSITLiteralExpression wrappedMockedExpression = getWrappedJSITLiteralExpression(mockedExpression, "dmn", "literalExpression");
             return wrappedMockedExpression;

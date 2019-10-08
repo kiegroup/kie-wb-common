@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -41,11 +42,11 @@ public class ContextEntryPropertyConverter {
                                                                             hasComponentWidthsConsumer);
 
         final ContextEntry result = new ContextEntry();
-        if (variable != null) {
+        if (Objects.nonNull(variable)) {
             variable.setParent(result);
             result.setVariable(variable);
         }
-        if (expression != null) {
+        if (Objects.nonNull(expression)) {
             expression.setParent(result);
             result.setExpression(expression);
         }

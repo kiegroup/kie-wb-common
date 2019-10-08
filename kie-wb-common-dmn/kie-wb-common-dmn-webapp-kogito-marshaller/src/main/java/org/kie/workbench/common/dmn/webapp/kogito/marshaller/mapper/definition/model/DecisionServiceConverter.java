@@ -135,7 +135,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                                                                     new DecisionServiceDividerLineY());
         node.getContent().setDefinition(decisionService);
 
-        if (informationItem != null) {
+        if (Objects.nonNull(informationItem)) {
             informationItem.setParent(decisionService);
         }
 

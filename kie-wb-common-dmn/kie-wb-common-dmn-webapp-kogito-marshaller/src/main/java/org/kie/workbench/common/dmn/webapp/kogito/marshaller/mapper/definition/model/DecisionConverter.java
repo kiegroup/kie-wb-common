@@ -98,10 +98,10 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         decision.setAllowedAnswers(AllowedAnswersPropertyConverter.wbFromDMN(dmn.getAllowedAnswers()));
         node.getContent().setDefinition(decision);
 
-        if (informationItem != null) {
+        if (Objects.nonNull(informationItem)) {
             informationItem.setParent(decision);
         }
-        if (expression != null) {
+        if (Objects.nonNull(expression)) {
             expression.setParent(decision);
         }
 
@@ -124,7 +124,7 @@ public class DecisionConverter implements NodeConverter<JSITDecision, org.kie.wo
         final JSITExpression expression = ExpressionPropertyConverter.dmnFromWB(source.getExpression(),
                                                                                 componentWidthsConsumer);
 
-        if (expression != null) {
+        if (Objects.nonNull(expression)) {
             d.setExpression(expression);
         }
         final String question = QuestionPropertyConverter.dmnFromWB(source.getQuestion());

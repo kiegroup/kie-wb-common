@@ -87,7 +87,7 @@ class DMNExternalLinksToExtensionElements {
 
     private static JSITDMNElement.JSIExtensionElements getOrCreateExtensionElements(final JSITDRGElement target) {
         // Add because it is present in the original JSON when unmarshalling
-        JSITDMNElement.JSIExtensionElements toReturn = target.getExtensionElements() == null
+        JSITDMNElement.JSIExtensionElements toReturn = Objects.isNull(target.getExtensionElements())
                 ? new JSITDMNElement.JSIExtensionElements()
                 : target.getExtensionElements();
         if (!Objects.isNull(toReturn) && Objects.isNull(toReturn.getAny())) {

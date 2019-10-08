@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.dmn.api.definition.model.ImportedValues;
 import org.kie.workbench.common.dmn.api.definition.model.InputClauseLiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -27,7 +29,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 public class InputClauseLiteralExpressionPropertyConverter {
 
     public static InputClauseLiteralExpression wbFromDMN(final JSITLiteralExpression dmn) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
@@ -40,7 +42,7 @@ public class InputClauseLiteralExpressionPropertyConverter {
                                                                                      typeRef,
                                                                                      text,
                                                                                      importedValues);
-        if (importedValues != null) {
+        if (Objects.nonNull(importedValues)) {
             importedValues.setParent(result);
         }
         return result;

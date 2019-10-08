@@ -16,12 +16,14 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.dmn.api.definition.model.ConstraintType;
 
 public class ConstraintTypeFieldPropertyConverter {
 
     public static ConstraintType wbFromDMN(final String constraintType) {
-        if (constraintType == null) {
+        if (Objects.isNull(constraintType)) {
             return null;
         } else {
             return ConstraintType.fromString(constraintType);
@@ -29,7 +31,7 @@ public class ConstraintTypeFieldPropertyConverter {
     }
 
     public static String dmnFromWB(final ConstraintType constraintType) {
-        if (constraintType == null) {
+        if (Objects.isNull(constraintType)) {
             return null;
         }
         return constraintType.value();

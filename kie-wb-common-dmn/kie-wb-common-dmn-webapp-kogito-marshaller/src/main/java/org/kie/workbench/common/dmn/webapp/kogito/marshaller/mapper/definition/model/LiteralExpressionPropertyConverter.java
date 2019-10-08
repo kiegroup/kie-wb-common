@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.dmn.api.definition.model.ImportedValues;
 import org.kie.workbench.common.dmn.api.definition.model.IsLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
@@ -30,13 +32,13 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 public class LiteralExpressionPropertyConverter {
 
     public static LiteralExpression wbFromDMN(final JSITLiteralExpression dmn) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
         final Description description = DescriptionPropertyConverter.wbFromDMN(dmn.getDescription());
         final QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
-        final Text text = new Text(dmn.getText() != null ? dmn.getText() : "");
+        final Text text = new Text(Objects.nonNull(dmn.getText()) ? dmn.getText() : "");
         final ExpressionLanguage expressionLanguage = ExpressionLanguagePropertyConverter.wbFromDMN(dmn.getExpressionLanguage());
         final ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
         final LiteralExpression result = new LiteralExpression(id,
@@ -45,14 +47,14 @@ public class LiteralExpressionPropertyConverter {
                                                                text,
                                                                importedValues,
                                                                expressionLanguage);
-        if (importedValues != null) {
+        if (Objects.nonNull(importedValues)) {
             importedValues.setParent(result);
         }
         return result;
     }
 
     public static JSITLiteralExpression dmnFromWB(final IsLiteralExpression wb) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITLiteralExpression result = new JSITLiteralExpression();
@@ -60,7 +62,7 @@ public class LiteralExpressionPropertyConverter {
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         result.setText(wb.getText().getValue());
         final JSITImportedValues importedValues = ImportedValuesConverter.dmnFromWB(wb.getImportedValues());
-        if (importedValues != null) {
+        if (Objects.nonNull(importedValues)) {
             result.setImportedValues(importedValues);
         }
         return result;

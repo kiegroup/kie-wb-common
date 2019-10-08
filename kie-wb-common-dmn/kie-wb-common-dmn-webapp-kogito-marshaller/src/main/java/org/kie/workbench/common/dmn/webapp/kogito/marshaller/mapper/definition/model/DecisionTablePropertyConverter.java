@@ -125,7 +125,7 @@ public class DecisionTablePropertyConverter {
             final JSITDecisionRule c = DecisionRulePropertyConverter.dmnFromWB(dr);
             result.addRule(c);
         }
-        if (wb.getHitPolicy() != null) {
+        if (Objects.nonNull(wb.getHitPolicy())) {
             switch (wb.getHitPolicy()) {
                 case ANY:
                     result.setHitPolicy(Js.uncheckedCast(JSITHitPolicy.ANY.value()));
@@ -150,11 +150,11 @@ public class DecisionTablePropertyConverter {
                     break;
             }
         }
-        if (wb.getAggregation() != null) {
+        if (Objects.nonNull(wb.getAggregation())) {
             final String wbBuiltinAggregator = wb.getAggregation().value();
             result.setAggregation(Js.uncheckedCast(wbBuiltinAggregator));
         }
-        if (wb.getPreferredOrientation() != null) {
+        if (Objects.nonNull(wb.getPreferredOrientation())) {
             final String wbPreferredOrientation = wb.getPreferredOrientation().value();
             result.setPreferredOrientation(Js.uncheckedCast(wbPreferredOrientation));
         }

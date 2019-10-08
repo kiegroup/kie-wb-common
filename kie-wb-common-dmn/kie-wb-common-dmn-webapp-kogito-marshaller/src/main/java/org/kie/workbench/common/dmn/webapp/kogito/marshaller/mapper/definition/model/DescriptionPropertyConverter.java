@@ -16,13 +16,15 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class DescriptionPropertyConverter {
 
     public static Description wbFromDMN(final String description) {
-        if (description == null) {
+        if (Objects.isNull(description)) {
             return new Description("");
         } else {
             return new Description(description);
@@ -30,7 +32,7 @@ public class DescriptionPropertyConverter {
     }
 
     public static String dmnFromWB(final Description description) {
-        if (description == null) {
+        if (Objects.isNull(description)) {
             return null;
         } else if (StringUtils.isEmpty(description.getValue())) {
             return null;

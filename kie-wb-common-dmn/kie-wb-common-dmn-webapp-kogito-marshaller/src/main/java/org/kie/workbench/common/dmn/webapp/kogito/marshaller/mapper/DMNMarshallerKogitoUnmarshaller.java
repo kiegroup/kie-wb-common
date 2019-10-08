@@ -481,7 +481,7 @@ public class DMNMarshallerKogitoUnmarshaller {
     }
 
     private Optional<JSIDMNDiagram> findJSIDiagram(final JSITDefinitions dmnXml) {
-        if (dmnXml.getDMNDI() == null) {
+        if (Objects.isNull(dmnXml.getDMNDI())) {
             return Optional.empty();
         }
         final List<JSIDMNDiagram> elems = dmnXml.getDMNDI().getDMNDiagram();
@@ -620,7 +620,7 @@ public class DMNMarshallerKogitoUnmarshaller {
     }
 
     private String idOfDMNorWBUUID(final JSITDMNElement dmn) {
-        return dmn.getId() != null ? dmn.getId() : UUID.uuid();
+        return Objects.nonNull(dmn.getId()) ? dmn.getId() : UUID.uuid();
     }
 
     private String getId(final JSITDMNElementReference er) {
@@ -1034,13 +1034,13 @@ public class DMNMarshallerKogitoUnmarshaller {
 
     private void mergeFontSet(final FontSet fontSet,
                               final FontSet additional) {
-        if (additional.getFontFamily() != null) {
+        if (Objects.nonNull(additional.getFontFamily())) {
             fontSet.setFontFamily(additional.getFontFamily());
         }
-        if (additional.getFontSize() != null) {
+        if (Objects.nonNull(additional.getFontSize())) {
             fontSet.setFontSize(additional.getFontSize());
         }
-        if (additional.getFontColour() != null) {
+        if (Objects.nonNull(additional.getFontColour())) {
             fontSet.setFontColour(additional.getFontColour());
         }
     }

@@ -37,7 +37,7 @@ public class ItemDefinitionPropertyConverter {
 
     public static ItemDefinition wbFromDMN(final JSITItemDefinition dmn) {
 
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
 
@@ -94,7 +94,7 @@ public class ItemDefinitionPropertyConverter {
 
         final ItemDefinition wbChild = wbFromDMN(dmnChild);
 
-        if (wbChild != null) {
+        if (Objects.nonNull(wbChild)) {
             wbChild.setParent(wbParent);
         }
 
@@ -113,7 +113,7 @@ public class ItemDefinitionPropertyConverter {
     }
 
     public static JSITItemDefinition dmnFromWB(final ItemDefinition wb) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITItemDefinition result = new JSITItemDefinition();

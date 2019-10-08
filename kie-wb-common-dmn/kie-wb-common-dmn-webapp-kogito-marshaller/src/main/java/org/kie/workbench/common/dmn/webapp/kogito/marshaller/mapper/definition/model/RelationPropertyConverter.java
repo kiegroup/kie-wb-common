@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -58,12 +59,12 @@ public class RelationPropertyConverter {
 
         final Relation result = new Relation(id, description, typeRef, convertedColumns, convertedRows);
         for (InformationItem column : convertedColumns) {
-            if (column != null) {
+            if (Objects.nonNull(column)) {
                 column.setParent(result);
             }
         }
         for (org.kie.workbench.common.dmn.api.definition.model.List row : convertedRows) {
-            if (row != null) {
+            if (Objects.nonNull(row)) {
                 row.setParent(result);
             }
         }

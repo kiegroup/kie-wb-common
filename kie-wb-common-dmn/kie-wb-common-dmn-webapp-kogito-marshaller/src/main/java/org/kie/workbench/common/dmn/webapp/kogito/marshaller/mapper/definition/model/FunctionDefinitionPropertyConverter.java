@@ -48,7 +48,7 @@ public class FunctionDefinitionPropertyConverter {
 
     public static FunctionDefinition wbFromDMN(final JSITFunctionDefinition dmn,
                                                final BiConsumer<String, HasComponentWidths> hasComponentWidthsConsumer) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
@@ -62,7 +62,7 @@ public class FunctionDefinitionPropertyConverter {
                                                                  description,
                                                                  typeRef,
                                                                  expression);
-        if (expression != null) {
+        if (Objects.nonNull(expression)) {
             expression.setParent(result);
         }
 
@@ -89,7 +89,7 @@ public class FunctionDefinitionPropertyConverter {
         for (int i = 0; i < jsiInformationItems.size(); i++) {
             final JSITInformationItem jsiInformationItem = Js.uncheckedCast(jsiInformationItems.get(i));
             final InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(jsiInformationItem);
-            if (iiConverted != null) {
+            if (Objects.nonNull(iiConverted)) {
                 iiConverted.setParent(result);
             }
             result.getFormalParameter().add(iiConverted);
@@ -141,7 +141,7 @@ public class FunctionDefinitionPropertyConverter {
 
     public static JSITFunctionDefinition dmnFromWB(final FunctionDefinition wb,
                                                    final Consumer<JSITComponentWidths> componentWidthsConsumer) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITFunctionDefinition result = new JSITFunctionDefinition();

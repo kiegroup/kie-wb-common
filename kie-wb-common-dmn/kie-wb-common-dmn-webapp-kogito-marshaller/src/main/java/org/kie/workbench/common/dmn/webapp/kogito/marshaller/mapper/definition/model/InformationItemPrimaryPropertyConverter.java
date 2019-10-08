@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.HasName;
@@ -33,7 +34,7 @@ public class InformationItemPrimaryPropertyConverter {
 
     public static InformationItemPrimary wbFromDMN(final JSITInformationItem dmn,
                                                    final Object parent) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
@@ -47,7 +48,7 @@ public class InformationItemPrimaryPropertyConverter {
 
     public static JSITInformationItem dmnFromWB(final InformationItemPrimary wb,
                                                 final DMNModelInstrumentedBase parent) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITInformationItem result = new JSITInformationItem();

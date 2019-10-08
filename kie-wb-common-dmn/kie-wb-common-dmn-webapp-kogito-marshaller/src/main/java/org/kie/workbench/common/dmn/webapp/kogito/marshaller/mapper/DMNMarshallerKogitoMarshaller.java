@@ -229,7 +229,7 @@ public class DMNMarshallerKogitoMarshaller {
                             double ySource = yOfBound(upperLeftBound(sourceView));
                             double xTarget = xOfBound(upperLeftBound(view));
                             double yTarget = yOfBound(upperLeftBound(view));
-                            if (sourcePoint == null) {
+                            if (Objects.isNull(sourcePoint)) {
                                 // If the "connection source/target location is null" assume it's the centre of the shape.
                                 if (sourceView.getDefinition() instanceof DMNViewDefinition) {
                                     DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) sourceView.getDefinition();
@@ -241,7 +241,7 @@ public class DMNMarshallerKogitoMarshaller {
                                 // If it is non-null it is relative to the source/target shape location.
                                 sourcePoint = Point2D.create(xSource + sourcePoint.getX(), ySource + sourcePoint.getY());
                             }
-                            if (targetPoint == null) {
+                            if (Objects.isNull(targetPoint)) {
                                 // If the "connection source/target location is null" assume it's the centre of the shape.
                                 if (view.getDefinition() instanceof DMNViewDefinition) {
                                     DMNViewDefinition dmnViewDefinition = (DMNViewDefinition) view.getDefinition();

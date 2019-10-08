@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
@@ -41,10 +42,10 @@ public class InputClausePropertyConverter {
                                                    inputExpression,
                                                    inputValues);
 
-        if (inputExpression != null) {
+        if (Objects.nonNull(inputExpression)) {
             inputExpression.setParent(result);
         }
-        if (inputValues != null) {
+        if (Objects.nonNull(inputValues)) {
             inputValues.setParent(result);
         }
 
@@ -61,7 +62,7 @@ public class InputClausePropertyConverter {
 
         result.setInputExpression(expression);
 
-        if (inputValues != null && StringUtils.nonEmpty(inputValues.getText())) {
+        if (Objects.nonNull(inputValues) && StringUtils.nonEmpty(inputValues.getText())) {
             result.setInputValues(inputValues);
         }
 

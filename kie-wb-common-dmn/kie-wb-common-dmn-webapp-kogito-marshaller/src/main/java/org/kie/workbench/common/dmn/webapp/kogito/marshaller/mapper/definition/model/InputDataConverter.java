@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -67,7 +68,7 @@ public class InputDataConverter implements NodeConverter<JSITInputData, InputDat
                                                   new GeneralRectangleDimensionsSet());
         node.getContent().setDefinition(inputData);
 
-        if (informationItem != null) {
+        if (Objects.nonNull(informationItem)) {
             informationItem.setParent(inputData);
         }
 

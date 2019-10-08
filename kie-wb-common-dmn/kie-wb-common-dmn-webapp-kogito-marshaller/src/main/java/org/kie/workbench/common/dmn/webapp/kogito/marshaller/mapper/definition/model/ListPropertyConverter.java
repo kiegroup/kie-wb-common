@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -52,7 +53,7 @@ public class ListPropertyConverter {
         }
 
         for (Expression e : expression) {
-            if (e != null) {
+            if (Objects.nonNull(e)) {
                 e.setParent(result);
             }
         }

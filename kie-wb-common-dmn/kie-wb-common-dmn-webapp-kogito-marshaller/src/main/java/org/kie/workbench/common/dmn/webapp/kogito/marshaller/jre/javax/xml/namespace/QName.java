@@ -15,6 +15,8 @@
  */
 package javax.xml.namespace;
 
+import java.util.Objects;
+
 import javax.xml.XMLConstants;
 
 import jsinterop.annotations.JsConstructor;
@@ -63,18 +65,18 @@ public class QName {
     public QName(final String namespaceURI,
                  final String localPart,
                  final String prefix) {
-        if (namespaceURI == null) {
+        if (Objects.isNull(namespaceURI)) {
             setNamespaceURI(XMLConstants.NULL_NS_URI);
         } else {
             setNamespaceURI(namespaceURI);
         }
 
-        if (localPart == null) {
+        if (Objects.isNull(localPart)) {
             throw new IllegalArgumentException("local part cannot be \"null\" when creating a QName");
         }
         setLocalPart(localPart);
 
-        if (prefix == null) {
+        if (Objects.isNull(prefix)) {
             throw new IllegalArgumentException("prefix cannot be \"null\" when creating a QName");
         }
         setPrefix(prefix);
@@ -98,7 +100,7 @@ public class QName {
     public static QName valueOf(final String qNameAsString) {
 
         // null is not valid
-        if (qNameAsString == null) {
+        if (Objects.isNull(qNameAsString)) {
             throw new IllegalArgumentException("cannot create QName from \"null\"");
         }
 

@@ -37,7 +37,7 @@ import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.N
 public class UnaryTestsPropertyConverter {
 
     public static UnaryTests wbFromDMN(final JSITUnaryTests dmn) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
@@ -63,7 +63,7 @@ public class UnaryTestsPropertyConverter {
     }
 
     public static JSITUnaryTests dmnFromWB(final IsUnaryTests wb) {
-        if (wb == null) {
+        if (Objects.isNull(wb)) {
             return null;
         }
         final JSITUnaryTests result = new JSITUnaryTests();

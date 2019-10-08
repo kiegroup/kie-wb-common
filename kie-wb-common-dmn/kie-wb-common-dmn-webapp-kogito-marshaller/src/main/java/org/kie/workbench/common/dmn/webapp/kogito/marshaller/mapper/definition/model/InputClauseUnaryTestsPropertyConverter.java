@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.definition.model;
 
+import java.util.Objects;
+
 import javax.xml.namespace.QName;
 
 import org.kie.workbench.common.dmn.api.definition.model.ConstraintType;
@@ -28,7 +30,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 public class InputClauseUnaryTestsPropertyConverter {
 
     public static InputClauseUnaryTests wbFromDMN(final JSITUnaryTests dmn) {
-        if (dmn == null) {
+        if (Objects.isNull(dmn)) {
             return null;
         }
         final Id id = IdPropertyConverter.wbFromDMN(dmn.getId());
