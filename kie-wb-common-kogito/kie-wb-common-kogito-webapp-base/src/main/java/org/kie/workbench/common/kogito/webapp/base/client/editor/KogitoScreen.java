@@ -23,5 +23,4 @@ import org.uberfire.mvp.PlaceRequest;
 public interface KogitoScreen {
 
     PlaceRequest getPlaceRequest();
-
 }

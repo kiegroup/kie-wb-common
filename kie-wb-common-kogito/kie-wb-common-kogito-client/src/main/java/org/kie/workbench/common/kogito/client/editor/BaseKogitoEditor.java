@@ -139,12 +139,12 @@ public abstract class BaseKogitoEditor<CONTENT> {
     }
 
     /**
-     * Used by Kogito to set the content of the editor.
+     * Used by Kogito to set the XML content of the editor.
      */
     public abstract void setContent(final String value);
 
     /**
-     * Used by Kogito to get the content of the editor. This should return a {@link String}
+     * Used by Kogito to get the XML content of the editor. This should return a {@link String}
      * representation of the editors content to persist to an underlying persistent store.
      */
     public abstract Promise getContent();

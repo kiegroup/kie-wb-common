@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.webapp.kogito.common.backend.workarounds;
+package org.kie.workbench.common.kogito.webapp.base.backend.workarounds;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,72 +48,87 @@ public class MockWorkspaceProjectService implements WorkspaceProjectService {
     }
 
     @Override
-    public Collection<WorkspaceProject> getAllWorkspaceProjects(OrganizationalUnit organizationalUnit) {
+    public Collection<WorkspaceProject> getAllWorkspaceProjects(final OrganizationalUnit organizationalUnit) {
         return PROJECTS;
     }
 
     @Override
-    public Collection<WorkspaceProject> getAllWorkspaceProjectsByName(OrganizationalUnit organizationalUnit, String name) {
+    public Collection<WorkspaceProject> getAllWorkspaceProjectsByName(final OrganizationalUnit organizationalUnit,
+                                                                      final String name) {
         return PROJECTS;
     }
 
     @Override
-    public boolean spaceHasNoProjectsWithName(OrganizationalUnit organizationalUnit, String name, WorkspaceProject projectToIgnore) {
+    public boolean spaceHasNoProjectsWithName(final OrganizationalUnit organizationalUnit,
+                                              final String name,
+                                              final WorkspaceProject projectToIgnore) {
         return false;
     }
 
     @Override
-    public WorkspaceProject newProject(OrganizationalUnit organizationalUnit, POM pom) {
+    public WorkspaceProject newProject(final OrganizationalUnit organizationalUnit,
+                                       final POM pom) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject newProject(OrganizationalUnit organizationalUnit, POM pom, DeploymentMode mode) {
+    public WorkspaceProject newProject(final OrganizationalUnit organizationalUnit,
+                                       final POM pom,
+                                       final DeploymentMode mode) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject newProject(OrganizationalUnit organizationalUnit, POM pom, DeploymentMode mode, List<Contributor> contributor) {
+    public WorkspaceProject newProject(final OrganizationalUnit organizationalUnit,
+                                       final POM pom,
+                                       final DeploymentMode mode,
+                                       final List<Contributor> contributor) {
         return PROJECT;
     }
 
     @Override
-    public String createFreshProjectName(OrganizationalUnit organizationalUnit, String name) {
+    public String createFreshProjectName(final OrganizationalUnit organizationalUnit,
+                                         final String name) {
         return "";
     }
 
     @Override
-    public WorkspaceProject resolveProject(Repository repository) {
+    public WorkspaceProject resolveProject(final Repository repository) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject resolveProject(Space space, Branch branch) {
+    public WorkspaceProject resolveProject(final Space space,
+                                           final Branch branch) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject resolveProject(Space space, Module module) {
+    public WorkspaceProject resolveProject(final Space space,
+                                           final Module module) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject resolveProject(Path module) {
+    public WorkspaceProject resolveProject(final Path module) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject resolveProject(Space space, Path module) {
+    public WorkspaceProject resolveProject(final Space space,
+                                           final Path module) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject resolveProject(Space space, String name) {
+    public WorkspaceProject resolveProject(final Space space,
+                                           final String name) {
         return PROJECT;
     }
 
     @Override
-    public WorkspaceProject resolveProjectByRepositoryAlias(Space space, String repositoryAlias) {
+    public WorkspaceProject resolveProjectByRepositoryAlias(final Space space,
+                                                            final String repositoryAlias) {
         return PROJECT;
     }
 }

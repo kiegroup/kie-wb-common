@@ -23,5 +23,4 @@ import org.uberfire.io.impl.IOServiceNio2WrapperImpl;
 public interface IOServiceNio2WrapperProvider {
 
     IOServiceNio2WrapperImpl getIOServiceNio2();
-
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.webapp.kogito.common.backend;
+package org.kie.workbench.common.kogito.webapp.base.backend;
 
 import java.io.IOException;
 

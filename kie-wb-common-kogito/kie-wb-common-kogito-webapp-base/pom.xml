@@ -100,7 +100,12 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client</artifactId>
     </dependency>
-  </dependencies>
 
+    <dependency>
+      <groupId>org.kie.workbench</groupId>
+      <artifactId>kie-wb-common-kogito-client</artifactId>
+    </dependency>
+
+  </dependencies>
 
 </project>
