@@ -15,7 +15,7 @@
   -->
 
 <!--
-  ~ Dummy module. UberfirePreferencesClientBackend is not needed but inherited due to all sorts of dependency chain nightmares.
+  ~ Dummy module. UberfirePreferencesClientBackend is not needed but inherited through the dependency chain.
   -->
 <module>
 

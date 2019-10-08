@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,8 @@ import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
+
+import static org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE;
 
 @ApplicationScoped
 @DiagramEditor
@@ -173,7 +175,7 @@ public class DMNDiagramEditor extends BaseDMNDiagramEditor {
                                  @Override
                                  public void onSuccess(final String xml) {
                                      resetContentHash();
-                                     notificationEvent.fire(new NotificationEvent(org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()));
+                                     notificationEvent.fire(new NotificationEvent(INSTANCE.ItemSavedSuccessfully()));
                                      hideLoadingViews();
                                  }
 

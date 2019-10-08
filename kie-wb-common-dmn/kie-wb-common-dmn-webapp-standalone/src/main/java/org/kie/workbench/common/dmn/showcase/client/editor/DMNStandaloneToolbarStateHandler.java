@@ -24,7 +24,6 @@ public class DMNStandaloneToolbarStateHandler implements ToolbarStateHandler {
 
     private DMNEditorToolbar toolbar;
 
-    //Package-protected for Unit Tests
     private boolean visitGraphToolbarCommandEnabled = false;
     private boolean clearToolbarCommandEnabled = false;
     private boolean deleteSelectionToolbarCommandEnabled = false;
