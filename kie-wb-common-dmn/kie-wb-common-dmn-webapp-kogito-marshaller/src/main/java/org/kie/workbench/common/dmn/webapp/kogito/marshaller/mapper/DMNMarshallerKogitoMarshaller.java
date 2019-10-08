@@ -92,6 +92,28 @@ import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils
 @ApplicationScoped
 public class DMNMarshallerKogitoMarshaller {
 
+    public static final String PREFIX = "dmn";
+
+    public enum JSINodeLocalPartName {
+
+        UNKNOWN("UNKNOWN"),
+        BUSINESS_KNOWLEDGE_MODEL("businessKnowledgeModel"),
+        DECISION("decision"),
+        DECISION_SERVICE("decisionService"),
+        INPUT_DATA("inputData"),
+        KNOWLEDGE_SOURCE("knowledgeSource");
+
+        private String localPart;
+
+        JSINodeLocalPartName(final String localPart) {
+            this.localPart = localPart;
+        }
+
+        public String getLocalPart() {
+            return localPart;
+        }
+    }
+
     private InputDataConverter inputDataConverter;
     private DecisionConverter decisionConverter;
     private BusinessKnowledgeModelConverter bkmConverter;
@@ -259,19 +281,19 @@ public class DMNMarshallerKogitoMarshaller {
             }
         }
         nodes.values().forEach(n -> {
-            String localPart = "UNKNOWN";
+            JSINodeLocalPartName localPart = JSINodeLocalPartName.UNKNOWN;
             if (JSITBusinessKnowledgeModel.instanceOf(n)) {
-                localPart = "businessKnowledgeModel";
+                localPart = JSINodeLocalPartName.BUSINESS_KNOWLEDGE_MODEL;
             } else if (JSITDecision.instanceOf(n)) {
-                localPart = "decision";
+                localPart = JSINodeLocalPartName.DECISION;
             } else if (JSITDecisionService.instanceOf(n)) {
-                localPart = "decisionService";
+                localPart = JSINodeLocalPartName.DECISION_SERVICE;
             } else if (JSITInputData.instanceOf(n)) {
-                localPart = "inputData";
+                localPart = JSINodeLocalPartName.INPUT_DATA;
             } else if (JSITKnowledgeSource.instanceOf(n)) {
-                localPart = "knowledgeSource";
+                localPart = JSINodeLocalPartName.KNOWLEDGE_SOURCE;
             }
-            final JSITDRGElement toAdd = getWrappedJSITDRGElement(n, "dmn", localPart);
+            final JSITDRGElement toAdd = getWrappedJSITDRGElement(n, PREFIX, localPart.getLocalPart());
             definitions.addDrgElement(toAdd);
         });
         textAnnotations.values().forEach(text -> {

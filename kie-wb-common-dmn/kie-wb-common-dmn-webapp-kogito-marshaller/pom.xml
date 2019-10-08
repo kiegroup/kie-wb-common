@@ -225,6 +225,7 @@
         <configuration>
           <excludes>
             org/kie/workbench/common/dmn/webapp/kogito/marshaller/js/**/*,
+            org/kie/workbench/common/dmn/webapp/kogito/marshaller/jre/package-info.java,
             org/kie/workbench/common/dmn/webapp/kogito/marshaller/mapper/JsUtils.java,
             org/kie/workbench/common/dmn/webapp/kogito/marshaller/mapper/JSIName.java
           </excludes>

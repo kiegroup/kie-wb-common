@@ -252,112 +252,84 @@ public class DMNMarshallerKogitoUnmarshaller {
                 final List<JSITInformationRequirement> jsiInformationRequirements = decision.getInformationRequirement();
                 for (int i = 0; i < jsiInformationRequirements.size(); i++) {
                     final JSITInformationRequirement ir = Js.uncheckedCast(jsiInformationRequirements.get(i));
-                    if (ir.getRequiredInput() != null) {
-                        final String reqInputID = getId(ir.getRequiredInput());
-                        final Node requiredNode = getRequiredNode(elems, reqInputID);
-                        final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
-                                                                      INFO_REQ_ID).asEdge();
-                        connectEdge(myEdge,
-                                    requiredNode,
-                                    currentNode);
-                        setConnectionMagnets(myEdge, ir.getId(), jsiDefinitions);
-                    }
-                    if (ir.getRequiredDecision() != null) {
-                        final String reqInputID = getId(ir.getRequiredDecision());
-                        final Node requiredNode = getRequiredNode(elems, reqInputID);
-                        final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ir),
-                                                                      INFO_REQ_ID).asEdge();
-                        connectEdge(myEdge,
-                                    requiredNode,
-                                    currentNode);
-                        setConnectionMagnets(myEdge, ir.getId(), jsiDefinitions);
-                    }
+                    connectEdgeToNodes(INFO_REQ_ID,
+                                       ir,
+                                       ir.getRequiredInput(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
+                    connectEdgeToNodes(INFO_REQ_ID,
+                                       ir,
+                                       ir.getRequiredDecision(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
                 }
                 final List<JSITKnowledgeRequirement> jsiKnowledgeRequirements = decision.getKnowledgeRequirement();
                 for (int i = 0; i < jsiKnowledgeRequirements.size(); i++) {
                     final JSITKnowledgeRequirement kr = Js.uncheckedCast(jsiKnowledgeRequirements.get(i));
-                    final String reqInputID = getId(kr.getRequiredKnowledge());
-                    final Node requiredNode = getRequiredNode(elems, reqInputID);
-                    final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(kr),
-                                                                  KNOWLEDGE_REQ_ID).asEdge();
-                    connectEdge(myEdge,
-                                requiredNode,
-                                currentNode);
-                    setConnectionMagnets(myEdge, kr.getId(), jsiDefinitions);
+                    connectEdgeToNodes(KNOWLEDGE_REQ_ID,
+                                       kr,
+                                       kr.getRequiredKnowledge(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
                 }
                 final List<JSITAuthorityRequirement> jsiAuthorityRequirements = decision.getAuthorityRequirement();
                 for (int i = 0; i < jsiAuthorityRequirements.size(); i++) {
                     final JSITAuthorityRequirement ar = Js.uncheckedCast(jsiAuthorityRequirements.get(i));
-                    final String reqInputID = getId(ar.getRequiredAuthority());
-                    final Node requiredNode = getRequiredNode(elems, reqInputID);
-                    final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ar),
-                                                                  AUTH_REQ_ID).asEdge();
-                    connectEdge(myEdge,
-                                requiredNode,
-                                currentNode);
-                    setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
+                    connectEdgeToNodes(AUTH_REQ_ID,
+                                       ar,
+                                       ar.getRequiredAuthority(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
                 }
             } else if (JSITBusinessKnowledgeModel.instanceOf(element)) {
                 final JSITBusinessKnowledgeModel bkm = Js.uncheckedCast(element);
                 final List<JSITKnowledgeRequirement> jsiKnowledgeRequirements = bkm.getKnowledgeRequirement();
                 for (int i = 0; i < jsiKnowledgeRequirements.size(); i++) {
                     final JSITKnowledgeRequirement kr = Js.uncheckedCast(jsiKnowledgeRequirements.get(i));
-                    final String reqInputID = getId(kr.getRequiredKnowledge());
-                    final Node requiredNode = getRequiredNode(elems, reqInputID);
-                    final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(kr),
-                                                                  KNOWLEDGE_REQ_ID).asEdge();
-                    connectEdge(myEdge,
-                                requiredNode,
-                                currentNode);
-                    setConnectionMagnets(myEdge, kr.getId(), jsiDefinitions);
+                    connectEdgeToNodes(KNOWLEDGE_REQ_ID,
+                                       kr,
+                                       kr.getRequiredKnowledge(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
                 }
                 final List<JSITAuthorityRequirement> jsiAuthorityRequirements = bkm.getAuthorityRequirement();
                 for (int i = 0; i < jsiAuthorityRequirements.size(); i++) {
                     final JSITAuthorityRequirement ar = Js.uncheckedCast(jsiAuthorityRequirements.get(i));
-                    final String reqInputID = getId(ar.getRequiredAuthority());
-                    final Node requiredNode = getRequiredNode(elems, reqInputID);
-                    final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ar),
-                                                                  AUTH_REQ_ID).asEdge();
-                    connectEdge(myEdge,
-                                requiredNode,
-                                currentNode);
-                    setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
+                    connectEdgeToNodes(AUTH_REQ_ID,
+                                       ar,
+                                       ar.getRequiredAuthority(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
                 }
             } else if (JSITKnowledgeSource.instanceOf(element)) {
                 final JSITKnowledgeSource ks = Js.uncheckedCast(element);
                 final List<JSITAuthorityRequirement> jsiAuthorityRequirements = ks.getAuthorityRequirement();
                 for (int i = 0; i < jsiAuthorityRequirements.size(); i++) {
                     final JSITAuthorityRequirement ar = Js.uncheckedCast(jsiAuthorityRequirements.get(i));
-                    if (ar.getRequiredInput() != null) {
-                        final String reqInputID = getId(ar.getRequiredInput());
-                        final Node requiredNode = getRequiredNode(elems, reqInputID);
-                        final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ar),
-                                                                      AUTH_REQ_ID).asEdge();
-                        connectEdge(myEdge,
-                                    requiredNode,
-                                    currentNode);
-                        setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
-                    }
-                    if (ar.getRequiredDecision() != null) {
-                        final String reqInputID = getId(ar.getRequiredDecision());
-                        final Node requiredNode = getRequiredNode(elems, reqInputID);
-                        final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ar),
-                                                                      AUTH_REQ_ID).asEdge();
-                        connectEdge(myEdge,
-                                    requiredNode,
-                                    currentNode);
-                        setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
-                    }
-                    if (ar.getRequiredAuthority() != null) {
-                        final String reqInputID = getId(ar.getRequiredAuthority());
-                        final Node requiredNode = getRequiredNode(elems, reqInputID);
-                        final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(ar),
-                                                                      AUTH_REQ_ID).asEdge();
-                        connectEdge(myEdge,
-                                    requiredNode,
-                                    currentNode);
-                        setConnectionMagnets(myEdge, ar.getId(), jsiDefinitions);
-                    }
+                    connectEdgeToNodes(AUTH_REQ_ID,
+                                       ar,
+                                       ar.getRequiredInput(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
+                    connectEdgeToNodes(AUTH_REQ_ID,
+                                       ar,
+                                       ar.getRequiredDecision(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
+                    connectEdgeToNodes(AUTH_REQ_ID,
+                                       ar,
+                                       ar.getRequiredAuthority(),
+                                       elems,
+                                       jsiDefinitions,
+                                       currentNode);
                 }
             } else if (JSITDecisionService.instanceOf(element)) {
                 final JSITDecisionService ds = Js.uncheckedCast(element);
@@ -367,14 +339,18 @@ public class DMNMarshallerKogitoUnmarshaller {
                     final JSITDMNElementReference er = Js.uncheckedCast(jsiEncapsulatedDecisions.get(i));
                     final String reqInputID = getId(er);
                     final Node requiredNode = getRequiredNode(elems, reqInputID);
-                    connectDSChildEdge(currentNode, requiredNode);
+                    if (Objects.nonNull(requiredNode)) {
+                        connectDSChildEdge(currentNode, requiredNode);
+                    }
                 }
                 final List<JSITDMNElementReference> jsiOutputDecisions = ds.getOutputDecision();
                 for (int i = 0; i < jsiOutputDecisions.size(); i++) {
                     final JSITDMNElementReference er = Js.uncheckedCast(jsiOutputDecisions.get(i));
                     final String reqInputID = getId(er);
                     final Node requiredNode = getRequiredNode(elems, reqInputID);
-                    connectDSChildEdge(currentNode, requiredNode);
+                    if (Objects.nonNull(requiredNode)) {
+                        connectDSChildEdge(currentNode, requiredNode);
+                    }
                 }
             }
         }
@@ -633,7 +609,8 @@ public class DMNMarshallerKogitoUnmarshaller {
      * Relationships are not created with the factory.
      * This method specializes to connect with an Edge containing a Child relationship the target Node.
      */
-    private void connectDSChildEdge(Node dsNode, Node requiredNode) {
+    private void connectDSChildEdge(final Node dsNode,
+                                    final Node requiredNode) {
         final String uuid = dsNode.getUUID() + "er" + requiredNode.getUUID();
         final Edge<Child, Node> myEdge = new EdgeImpl<>(uuid);
         myEdge.setContent(new Child());
@@ -642,13 +619,31 @@ public class DMNMarshallerKogitoUnmarshaller {
                     requiredNode);
     }
 
-    private String idOfDMNorWBUUID(JSITDMNElement dmn) {
+    private String idOfDMNorWBUUID(final JSITDMNElement dmn) {
         return dmn.getId() != null ? dmn.getId() : UUID.uuid();
     }
 
     private String getId(final JSITDMNElementReference er) {
         String href = er.getHref();
         return href.contains("#") ? href.substring(href.indexOf('#') + 1) : href;
+    }
+
+    private void connectEdgeToNodes(final String connectorTypeId,
+                                    final JSITDMNElement jsiDMNElement,
+                                    final JSITDMNElementReference jsiDMNElementReference,
+                                    final Map<String, Entry<JSITDRGElement, Node>> elems,
+                                    final JSITDefinitions jsiDefinitions,
+                                    final Node currentNode) {
+        if (Objects.nonNull(jsiDMNElementReference)) {
+            final String reqInputID = getId(jsiDMNElementReference);
+            final Node requiredNode = getRequiredNode(elems, reqInputID);
+            final Edge myEdge = factoryManager.newElement(idOfDMNorWBUUID(jsiDMNElement),
+                                                          connectorTypeId).asEdge();
+            connectEdge(myEdge,
+                        requiredNode,
+                        currentNode);
+            setConnectionMagnets(myEdge, jsiDMNElement.getId(), jsiDefinitions);
+        }
     }
 
     private Node dmnToStunner(final JSITDRGElement dmn,
@@ -1037,7 +1032,8 @@ public class DMNMarshallerKogitoUnmarshaller {
         }
     }
 
-    private void mergeFontSet(FontSet fontSet, FontSet additional) {
+    private void mergeFontSet(final FontSet fontSet,
+                              final FontSet additional) {
         if (additional.getFontFamily() != null) {
             fontSet.setFontFamily(additional.getFontFamily());
         }
