@@ -126,21 +126,6 @@
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jboss-as-support</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-codegen-gwt</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-validation</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.owasp.encoder</groupId>
-      <artifactId>encoder</artifactId>
-    </dependency>
 
     <!-- Stunner -->
     <dependency>
@@ -150,14 +135,6 @@
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-client-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-backend-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-core-common</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
@@ -185,30 +162,6 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-lienzo</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-shapes-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-shapes-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-lienzo-extensions</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-svg-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-svg-gen</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -216,10 +169,6 @@
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-widgets</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-forms-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
@@ -256,6 +205,12 @@
     <dependency>
       <groupId>org.kie.workbench</groupId>
       <artifactId>kie-wb-common-dmn-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.workbench.services</groupId>
+          <artifactId>kie-wb-common-datamodel-backend</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench</groupId>
@@ -288,34 +243,9 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Lienzo -->
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>lienzo-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.ahome-it</groupId>
-      <artifactId>ahome-tooling-nativetools</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.ahome-it</groupId>
-      <artifactId>ahome-tooling-common</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Form modeler -->
     <!-- Needed by stunner -->
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-forms-crud-component</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-forms-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-fields</artifactId>
@@ -324,10 +254,6 @@
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-processing-engine</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-forms-adf-base</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
@@ -344,152 +270,29 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-dynamic-forms-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-dynamic-forms-backend</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.kie.workbench.services</groupId>
-          <artifactId>kie-wb-common-datamodel-backend</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-dynamic-forms-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-backend-services</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-forms-common-rendering-shared</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.forms</groupId>
-      <artifactId>kie-wb-common-forms-common-rendering-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Needed by forms for JSR303 validation -->
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <classifier>sources</classifier>
     </dependency>
 
-    <!-- Layout Editor API -->
-    <!-- Needed by kie-wb-common-dynamic-forms that is needed by stunner -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-layout-editor-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-layout-editor-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-experimental-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-workbench-client-backend</artifactId>
-        </exclusion>
-      </exclusions>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- UberFire Plugins Extension -->
-    <!-- Needed by uberfire-layout-api that is needed by kie-wb-common-dynamic-forms that is needed by stunner -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-runtime-plugins-api</artifactId>
-    </dependency>
-
-    <!-- UberFire Properties Editor -->
-    <!-- Needed by uberfire-layout-client -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-properties-editor-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-properties-editor-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- UberFire JS exporter -->
-    <!-- Needed by uberfire-runtime-plugins-client -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-js</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- UberFire Commons Editor -->
-    <!-- Basics for uberfire's generic editor support -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-commons-editor-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-commons-editor-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Core UberFire dependencies -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-all</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-backend-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-backend-server</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-services-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-services-backend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-client</artifactId>
-      <scope>provided</scope>
+      <artifactId>uberfire-backend-cdi</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -498,20 +301,6 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-workbench-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-workbench-client-backend</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-client</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -546,11 +335,15 @@
     <!-- UberFire IO -->
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-io</artifactId>
+      <artifactId>uberfire-nio2-model</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-nio2-model</artifactId>
+      <artifactId>uberfire-nio2-fs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-nio2-jgit</artifactId>
     </dependency>
 
     <!-- Uberfire SSH -->
@@ -576,39 +369,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Core utility classes -->
-    <dependency>
-      <groupId>org.kie.soup</groupId>
-      <artifactId>kie-soup-commons</artifactId>
-    </dependency>
-
-    <!-- Required for workbench startup -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-commons</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>artemis-jms-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.spec.javax.jms</groupId>
-          <artifactId>jboss-jms-api_2.0_spec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- Generic ui components -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-commons</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-table</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.kie.workbench.widgets</groupId>
       <artifactId>kie-wb-common-ui</artifactId>
@@ -618,33 +379,6 @@
           <artifactId>uberfire-servlet-security</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <!-- UberFire Project -->
-    <!-- Required by kie-wb-common-ui -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-project-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-project-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-services-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-refactoring-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-refactoring-backend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-datamodel-api</artifactId>
     </dependency>
 
     <!-- Required by uberfire-project -->
@@ -663,13 +397,6 @@
       </exclusions>
     </dependency>
 
-    <!-- Required by uberfire-project-client -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-preferences-ui-client</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- GWT and extensions -->
     <dependency>
       <groupId>com.google.gwt</groupId>
@@ -682,20 +409,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.gwtbootstrap3</groupId>
-      <artifactId>gwtbootstrap3</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.gwtbootstrap3</groupId>
-      <artifactId>gwtbootstrap3-extras</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.elemental2</groupId>
-      <artifactId>elemental2-dom</artifactId>
-    </dependency>
 
     <!-- kogito -->
     <dependency>
@@ -705,50 +418,13 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-kogito-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-kogito-client</artifactId>
       <scope>provided</scope>
     </dependency>
 
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>com.google.gwt.gwtmockito</groupId>
-      <artifactId>gwtmockito</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-testing-utils</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Transient dependencies -->
     <dependency>
       <groupId>org.kie.soup</groupId>
       <artifactId>kie-soup-project-datamodel-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-message-console-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-workingset-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-service-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>drools-workbench-models-datamodel-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.profile</groupId>
-      <artifactId>kie-wb-common-profile-api</artifactId>
     </dependency>
 
   </dependencies>

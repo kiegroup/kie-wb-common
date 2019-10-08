@@ -21,13 +21,10 @@ import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.dmn.showcase.client.editor.DMNDiagramEditor;
-import org.kie.workbench.common.kogito.client.editor.BaseKogitoEditor;
-import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.promise.Promises;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
@@ -38,8 +35,6 @@ public class DMNDiagramKogitoWrapper {
 
     private PlaceManager placeManager;
     private Caller<VFSService> vfsServiceCaller;
-    private BaseKogitoEditor baseKogitoEditor;
-    private Promises promises;
 
     public DMNDiagramKogitoWrapper() {
         //CDI proxy
@@ -47,46 +42,27 @@ public class DMNDiagramKogitoWrapper {
 
     @Inject
     public DMNDiagramKogitoWrapper(final PlaceManager placeManager,
-                                   final Caller<VFSService> vfsServiceCaller,
-                                   final @DiagramEditor BaseKogitoEditor baseKogitoEditor,
-                                   final Promises promises) {
+                                   final Caller<VFSService> vfsServiceCaller) {
         this.placeManager = placeManager;
         this.vfsServiceCaller = vfsServiceCaller;
-        this.baseKogitoEditor = baseKogitoEditor;
-        this.promises = promises;
     }
 
     public void newFile() {
-        placeManager.registerOnOpenCallback(DIAGRAM_EDITOR,
-                                            () -> {
-                                                baseKogitoEditor.setContent("");
-                                                placeManager.unregisterOnOpenCallbacks(DIAGRAM_EDITOR);
-                                            });
-
+        DIAGRAM_EDITOR.getParameters().clear();
         placeManager.goTo(DIAGRAM_EDITOR);
     }
 
     public void openFile(final Path path) {
-        placeManager.registerOnOpenCallback(DIAGRAM_EDITOR,
-                                            () -> {
-                                                vfsServiceCaller.call((String xml) -> {
-                                                    baseKogitoEditor.setContent(xml);
-                                                    placeManager.unregisterOnOpenCallbacks(DIAGRAM_EDITOR);
-                                                }, (m, t) -> {
-                                                    placeManager.unregisterOnOpenCallbacks(DIAGRAM_EDITOR);
-                                                    return false;
-                                                }).readAllString(path);
-                                            });
-
-        placeManager.goTo(DIAGRAM_EDITOR);
+        vfsServiceCaller.call((String xml) -> {
+            DIAGRAM_EDITOR.addParameter(DMNDiagramEditor.CONTENT_PARAMETER_NAME, xml);
+            placeManager.goTo(DIAGRAM_EDITOR);
+        }).readAllString(path);
     }
 
     @SuppressWarnings("unchecked")
     public void saveFile(final Path path,
+                         final String xml,
                          final ServiceCallback<String> callback) {
-        baseKogitoEditor.getContent().then(xml -> {
-            vfsServiceCaller.call((Path p) -> callback.onSuccess((String) xml)).write(path, (String) xml);
-            return promises.resolve();
-        });
+        vfsServiceCaller.call((Path p) -> callback.onSuccess(xml)).write(path, xml);
     }
 }
