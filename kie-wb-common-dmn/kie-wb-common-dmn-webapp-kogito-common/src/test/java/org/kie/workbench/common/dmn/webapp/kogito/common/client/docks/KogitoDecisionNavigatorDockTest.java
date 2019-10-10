@@ -29,7 +29,7 @@ public class KogitoDecisionNavigatorDockTest extends BaseKogitoDockTest {
     }
 
     protected UberfireDockPosition position() {
-        return UberfireDockPosition.WEST;
+        return UberfireDockPosition.EAST;
     }
 
     protected String screen() {
