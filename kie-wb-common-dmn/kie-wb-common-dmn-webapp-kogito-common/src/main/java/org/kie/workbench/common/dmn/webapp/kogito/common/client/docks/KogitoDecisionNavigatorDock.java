@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
+import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDocks;
 
 @Specializes
@@ -69,5 +70,10 @@ public class KogitoDecisionNavigatorDock extends DecisionNavigatorDock {
 
         isOpened = false;
         uberfireDocks.close(getUberfireDock());
+    }
+
+    @Override
+    protected UberfireDockPosition position() {
+        return UberfireDockPosition.EAST;
     }
 }
