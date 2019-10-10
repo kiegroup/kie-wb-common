@@ -23,6 +23,7 @@ import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 /**
@@ -95,6 +96,35 @@ public class QName {
         } else {
             return "{" + getNamespaceURI() + "}" + getLocalPart();
         }
+    }
+
+    /**
+     * See {@link javax.xml.namespace.QName#equals(Object)}
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final QName qName = (QName) o;
+
+        if (!getNamespaceURI().equals(qName.getNamespaceURI())) {
+            return false;
+        }
+        return getLocalPart().equals(qName.getLocalPart());
+    }
+
+    /**
+     * See {@link javax.xml.namespace.QName#hashCode()}
+     */
+    @Override
+    public int hashCode() {
+        return HashUtil.combineHashCodes(getNamespaceURI().hashCode(),
+                                         getLocalPart().hashCode());
     }
 
     public static QName valueOf(final String qNameAsString) {
