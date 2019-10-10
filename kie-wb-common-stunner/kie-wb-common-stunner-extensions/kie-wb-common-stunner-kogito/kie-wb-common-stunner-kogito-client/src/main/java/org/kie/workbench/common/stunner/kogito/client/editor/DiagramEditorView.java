@@ -19,8 +19,8 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
@@ -35,6 +35,8 @@ public class DiagramEditorView
     @DataField
     private ResizeFlowPanel editorPanel;
 
+    private DiagramEditorCore presenter;
+
     protected DiagramEditorView() {
         //CDI proxy
     }
@@ -45,13 +47,22 @@ public class DiagramEditorView
     }
 
     @Override
-    public void onResize() {
-        final Widget parent = getParent();
-        if (parent != null) {
-            final double w = parent.getOffsetWidth();
-            final double h = parent.getOffsetHeight();
-            setPixelSize((int) w, (int) h);
+    public void init(final DiagramEditorCore presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        if (getElement().getParentElement() != null) {
+            getElement().getParentElement().getStyle().setHeight(100, Style.Unit.PCT);
+            getElement().getParentElement().getStyle().setWidth(100, Style.Unit.PCT);
+            getElement().getParentElement().getStyle().setDisplay(Style.Display.TABLE);
         }
+    }
+
+    @Override
+    public void onResize() {
         editorPanel.onResize();
     }
 

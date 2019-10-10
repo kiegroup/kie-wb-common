@@ -31,11 +31,13 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.editor.commons.client.BaseEditorView;
 
 public interface DiagramEditorCore<M extends Metadata, D extends Diagram> {
 
-    interface View extends BaseEditorView,
+    interface View extends UberView<DiagramEditorCore>,
+                           BaseEditorView,
                            RequiresResize,
                            ProvidesResize,
                            IsWidget {
