@@ -23,13 +23,13 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 public abstract class BaseDiagramEditorDock {
 
-    static final double DOCK_SIZE = 400d;
+    protected static final double DOCK_SIZE = 400d;
 
-    private final UberfireDocks uberfireDocks;
-    private UberfireDock uberfireDock;
-    private boolean isOpened = false;
-    private String owningPerspectiveId;
-    private final TranslationService translationService;
+    protected final UberfireDocks uberfireDocks;
+    protected UberfireDock uberfireDock;
+    protected boolean isOpened = false;
+    protected String owningPerspectiveId;
+    protected final TranslationService translationService;
 
     public BaseDiagramEditorDock(UberfireDocks uberfireDocks, TranslationService translationService) {
         this.uberfireDocks = uberfireDocks;
@@ -65,34 +65,34 @@ public abstract class BaseDiagramEditorDock {
         return isOpened;
     }
 
-    private UberfireDockPosition position() {
+    protected UberfireDockPosition position() {
         return UberfireDockPosition.EAST;
     }
 
-    private String owningPerspectiveId() {
+    protected String owningPerspectiveId() {
         return owningPerspectiveId;
     }
 
-    private UberfireDock getUberfireDock() {
+    protected UberfireDock getUberfireDock() {
         return uberfireDock;
     }
 
-    private UberfireDock makeUberfireDock() {
+    protected UberfireDock makeUberfireDock() {
         final UberfireDock uberfireDock = new UberfireDock(position(), icon(), placeRequest(), owningPerspectiveId());
         return uberfireDock.withSize(DOCK_SIZE).withLabel(dockLabel());
     }
 
-    private DefaultPlaceRequest placeRequest() {
+    protected DefaultPlaceRequest placeRequest() {
         return new DefaultPlaceRequest(getScreenId());
     }
 
-    abstract String getScreenId();
+    protected abstract String getScreenId();
 
-    private String dockLabel() {
+    protected String dockLabel() {
         return translationService.getTranslation(getLabelKey());
     }
 
-    abstract String getLabelKey();
+    protected abstract String getLabelKey();
 
-    abstract String icon();
+    protected abstract String icon();
 }

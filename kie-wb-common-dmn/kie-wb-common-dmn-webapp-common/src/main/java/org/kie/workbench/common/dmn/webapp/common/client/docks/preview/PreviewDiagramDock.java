@@ -30,17 +30,17 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 @ApplicationScoped
 public class PreviewDiagramDock {
 
-    static final double DOCK_SIZE = 400d;
+    protected static final double DOCK_SIZE = 400d;
 
-    private UberfireDocks uberfireDocks;
+    protected UberfireDocks uberfireDocks;
 
-    private TranslationService translationService;
+    protected TranslationService translationService;
 
-    private UberfireDock uberfireDock;
+    protected UberfireDock uberfireDock;
 
-    private boolean isOpened = false;
+    protected boolean isOpened = false;
 
-    private String owningPerspectiveId;
+    protected String owningPerspectiveId;
 
     public PreviewDiagramDock() {
         // CDI proxy
@@ -79,36 +79,36 @@ public class PreviewDiagramDock {
         uberfireDocks.remove(getUberfireDock());
     }
 
-    boolean isOpened() {
+    protected boolean isOpened() {
         return isOpened;
     }
 
-    UberfireDock makeUberfireDock() {
+    protected UberfireDock makeUberfireDock() {
         final UberfireDock uberfireDock = new UberfireDock(position(), icon(), placeRequest(), owningPerspectiveId());
         return uberfireDock.withSize(DOCK_SIZE).withLabel(dockLabel());
     }
 
-    UberfireDockPosition position() {
+    protected UberfireDockPosition position() {
         return UberfireDockPosition.EAST;
     }
 
-    private String icon() {
+    protected String icon() {
         return IconType.EYE.toString();
     }
 
-    private DefaultPlaceRequest placeRequest() {
+    protected DefaultPlaceRequest placeRequest() {
         return new DefaultPlaceRequest(PreviewDiagramScreen.SCREEN_ID);
     }
 
-    String owningPerspectiveId() {
+    protected String owningPerspectiveId() {
         return owningPerspectiveId;
     }
 
-    UberfireDock getUberfireDock() {
+    protected UberfireDock getUberfireDock() {
         return uberfireDock;
     }
 
-    private String dockLabel() {
+    protected String dockLabel() {
         return translationService.getTranslation(DMNEditorConstants.DMNPreviewDiagramDock_Title);
     }
 }
