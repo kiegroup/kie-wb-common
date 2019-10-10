@@ -16,9 +16,9 @@
 package org.kie.workbench.common.stunner.kogito.client.editor;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,17 +28,20 @@ import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DiagramEditorViewTest {
 
-    private static final int WIDTH = 10;
+    private Element element;
 
-    private static final int HEIGHT = 20;
+    private Element parentElement;
 
-    private SimplePanel parent;
+    private Style parentElementStyle;
 
     private ResizeFlowPanel editorPanel;
 
@@ -46,13 +49,14 @@ public class DiagramEditorViewTest {
 
     @Before
     public void setup() {
-        this.parent = GWT.create(SimplePanel.class);
+        this.element = GWT.create(Element.class);
+        this.parentElement = GWT.create(Element.class);
+        this.parentElementStyle = GWT.create(Style.class);
         this.editorPanel = GWT.create(ResizeFlowPanel.class);
         this.tested = Mockito.spy(new DiagramEditorView(editorPanel));
-        when(tested.getParent()).thenReturn(parent);
-        when(parent.getOffsetWidth()).thenReturn(WIDTH);
-        when(parent.getOffsetHeight()).thenReturn(HEIGHT);
-        parent.setWidget(tested);
+        when(tested.getElement()).thenReturn(element);
+        when(element.getParentElement()).thenReturn(parentElement);
+        when(parentElement.getStyle()).thenReturn(parentElementStyle);
     }
 
     @Test
@@ -65,22 +69,32 @@ public class DiagramEditorViewTest {
     }
 
     @Test
-    public void testOnResizeWithEditor() {
-        //Any Widget implementing RequiresResize will suffice
-        final ScrollPanel editor = GWT.create(ScrollPanel.class);
-        when(editorPanel.getWidgetCount()).thenReturn(1);
-        when(editorPanel.getWidget(eq(0))).thenReturn(editor);
-
+    public void testOnResize() {
         tested.onResize();
-
-        verify(tested).setPixelSize(eq(WIDTH), eq(HEIGHT));
         verify(editorPanel).onResize();
     }
 
     @Test
-    public void testOnResizeWithNoEditor() {
-        tested.onResize();
+    public void testOnAttach() {
+        testOnAttach(true);
+        testOnAttach(false);
+    }
 
-        verify(tested).setPixelSize(eq(WIDTH), eq(HEIGHT));
+    public void testOnAttach(boolean parentExists) {
+        tested = spy(new DiagramEditorView(editorPanel));
+        final Element element = mock(Element.class);
+        final Element parentElement = mock(Element.class);
+        final Style style = mock(Style.class);
+
+        when(tested.getElement()).thenReturn(element);
+        when(parentElement.getStyle()).thenReturn(style);
+        when(element.getStyle()).thenReturn(style);
+        when(element.getParentElement()).thenReturn(parentExists ? parentElement : null);
+
+        tested.onAttach();
+        verify(tested).onAttach();
+        verify(style, parentExists ? times(1) : never()).setHeight(100, Style.Unit.PCT);
+        verify(style, parentExists ? times(1) : never()).setWidth(100, Style.Unit.PCT);
+        verify(style, parentExists ? times(1) : never()).setDisplay(Style.Display.TABLE);
     }
 }
