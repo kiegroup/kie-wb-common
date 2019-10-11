@@ -205,7 +205,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                     return ri;
                 })
-                .forEach(candidate_inputData::add);
+                .forEach(ri -> candidate_inputData.add(Js.uncheckedCast(ri)));
         reqDecisions.stream()
                 .sorted(Comparator.comparing(x -> x.getName().getValue()))
                 .map(x -> {
@@ -213,11 +213,13 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                     ri.setHref(new StringBuilder("#").append(x.getId().getValue()).toString());
                     return ri;
                 })
-                .forEach(candidate_inputDecision::add);
-        for (JSITDMNElementReference er : candidate_outputDecision) {
+                .forEach(rs -> candidate_inputDecision.add(Js.uncheckedCast(rs)));
+        for (int i = 0; i < candidate_outputDecision.size(); i++) {
+            final JSITDMNElementReference er = Js.uncheckedCast(candidate_outputDecision.get(i));
             candidate_inputDecision.removeIf(x -> x.getHref().equals(er.getHref()));
         }
-        for (JSITDMNElementReference er : candidate_encapsulatedDecision) {
+        for (int i = 0; i < candidate_encapsulatedDecision.size(); i++) {
+            final JSITDMNElementReference er = Js.uncheckedCast(candidate_encapsulatedDecision.get(i));
             candidate_inputDecision.removeIf(x -> x.getHref().equals(er.getHref()));
         }
 
@@ -236,13 +238,15 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                                                final List<JSITDMNElementReference> candidateList) {
         final List<JSITDMNElementReference> existing = new ArrayList<>(existingList);
         final List<JSITDMNElementReference> candidate = new ArrayList<>(candidateList);
-        for (JSITDMNElementReference e : existing) {
-            boolean existingIsAlsoCandidate = candidate.removeIf(er -> er.getHref().equals(e.getHref()));
+        for (int i = 0; i < existing.size(); i++) {
+            final JSITDMNElementReference e = Js.uncheckedCast(existing.get(i));
+            final boolean existingIsAlsoCandidate = candidate.removeIf(er -> er.getHref().equals(e.getHref()));
             if (existingIsAlsoCandidate) {
-                targetList.add(e);
+                targetList.add(Js.uncheckedCast(e));
             }
         }
-        for (JSITDMNElementReference c : candidate) {
+        for (int i = 0; i < candidate.size(); i++) {
+            final JSITDMNElementReference c = Js.uncheckedCast(candidate.get(i));
             targetList.add(c);
         }
     }
