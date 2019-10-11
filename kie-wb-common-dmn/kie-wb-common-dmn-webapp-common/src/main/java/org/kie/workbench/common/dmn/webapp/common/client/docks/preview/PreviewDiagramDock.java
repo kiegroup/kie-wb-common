@@ -22,13 +22,14 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramScreen;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
+import org.kie.workbench.common.stunner.kogito.api.docks.DiagramEditorDock;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDocks;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 @ApplicationScoped
-public class PreviewDiagramDock {
+public class PreviewDiagramDock implements DiagramEditorDock {
 
     protected static final double DOCK_SIZE = 400d;
 
@@ -53,11 +54,13 @@ public class PreviewDiagramDock {
         this.translationService = translationService;
     }
 
+    @Override
     public void init(final String owningPerspectiveId) {
         this.owningPerspectiveId = owningPerspectiveId;
         this.uberfireDock = makeUberfireDock();
     }
 
+    @Override
     public void open() {
         if (isOpened()) {
             return;
@@ -69,6 +72,7 @@ public class PreviewDiagramDock {
         uberfireDocks.open(getUberfireDock());
     }
 
+    @Override
     public void close() {
         if (!isOpened()) {
             return;

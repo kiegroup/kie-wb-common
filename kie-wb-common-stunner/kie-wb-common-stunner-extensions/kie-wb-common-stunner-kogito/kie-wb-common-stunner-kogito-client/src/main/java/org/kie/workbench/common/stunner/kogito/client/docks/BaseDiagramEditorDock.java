@@ -16,12 +16,13 @@
 package org.kie.workbench.common.stunner.kogito.client.docks;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.stunner.kogito.api.docks.DiagramEditorDock;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDocks;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
-public abstract class BaseDiagramEditorDock {
+public abstract class BaseDiagramEditorDock implements DiagramEditorDock {
 
     protected static final double DOCK_SIZE = 400d;
 
@@ -36,11 +37,13 @@ public abstract class BaseDiagramEditorDock {
         this.translationService = translationService;
     }
 
+    @Override
     public void init(final String owningPerspectiveId) {
         this.owningPerspectiveId = owningPerspectiveId;
         this.uberfireDock = makeUberfireDock();
     }
 
+    @Override
     public void open() {
         if (isOpened()) {
             return;
@@ -51,6 +54,7 @@ public abstract class BaseDiagramEditorDock {
         uberfireDocks.show(position(), owningPerspectiveId());
     }
 
+    @Override
     public void close() {
         if (!isOpened()) {
             return;

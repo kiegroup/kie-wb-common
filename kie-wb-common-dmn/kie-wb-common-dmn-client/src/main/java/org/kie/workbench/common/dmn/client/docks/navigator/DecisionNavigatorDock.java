@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.kogito.api.docks.DiagramEditorDock;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDocks;
@@ -30,7 +31,7 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionNavigatorPresenter_DecisionNavigator;
 
 @ApplicationScoped
-public class DecisionNavigatorDock {
+public class DecisionNavigatorDock implements DiagramEditorDock {
 
     protected static final double DOCK_SIZE = 400d;
 
@@ -59,6 +60,7 @@ public class DecisionNavigatorDock {
         this.translationService = translationService;
     }
 
+    @Override
     public void init(final String perspective) {
         this.perspective = perspective;
         this.uberfireDock = makeUberfireDock();
@@ -72,6 +74,7 @@ public class DecisionNavigatorDock {
         decisionNavigatorPresenter.removeAllElements();
     }
 
+    @Override
     public void open() {
 
         if (isOpened()) {
@@ -84,6 +87,7 @@ public class DecisionNavigatorDock {
         uberfireDocks.open(getUberfireDock());
     }
 
+    @Override
     public void close() {
 
         if (!isOpened()) {
