@@ -210,6 +210,10 @@
           <groupId>org.kie.workbench.services</groupId>
           <artifactId>kie-wb-common-datamodel-backend</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.kie.workbench.services</groupId>
+          <artifactId>kie-wb-common-refactoring-backend</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -242,7 +246,6 @@
       <artifactId>uberfire-wires-core-grids</artifactId>
       <scope>provided</scope>
     </dependency>
-
 
     <!-- Form modeler -->
     <!-- Needed by stunner -->
@@ -283,7 +286,6 @@
       <artifactId>hibernate-validator</artifactId>
       <classifier>sources</classifier>
     </dependency>
-
 
     <!-- Core UberFire dependencies -->
     <dependency>
@@ -425,6 +427,10 @@
     <dependency>
       <groupId>org.kie.soup</groupId>
       <artifactId>kie-soup-project-datamodel-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.soup</groupId>
+      <artifactId>kie-soup-project-datamodel-commons</artifactId>
     </dependency>
 
   </dependencies>
@@ -602,7 +608,7 @@
               <directory>${basedir}</directory>
               <includes>
                 <include>www-test/**</include>
-                <include>src/main/webapp/org.kie.workbench.common.dmn.showcase.DMNShowcase/</include>
+                <include>src/main/webapp/org.kie.workbench.common.dmn.showcase.DMNKogitoTestingWebapp/</include>
                 <include>src/main/webapp/WEB-INF/classes/</include>
                 <include>src/main/webapp/WEB-INF/deploy/</include>
                 <include>src/main/webapp/WEB-INF/lib/</include>

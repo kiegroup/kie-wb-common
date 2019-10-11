@@ -888,7 +888,8 @@ public class DMNMarshallerKogitoUnmarshaller {
         final Bound lrBound = lowerRightBound(content);
         if (content.getDefinition() instanceof Decision) {
             final Decision d = (Decision) content.getDefinition();
-            internalAugment(drgShapes, d.getId(),
+            internalAugment(drgShapes,
+                            d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
@@ -944,14 +945,14 @@ public class DMNMarshallerKogitoUnmarshaller {
     }
 
     @SuppressWarnings("unchecked")
-    private void internalAugment(final List<JSIDMNShape> drgShapeStream,
+    private void internalAugment(final List<JSIDMNShape> drgShapes,
                                  final Id id,
                                  final Bound ulBound,
                                  final RectangleDimensionsSet dimensionsSet,
                                  final Bound lrBound,
                                  final BackgroundSet bgset,
                                  final Consumer<FontSet> fontSetSetter) {
-        internalAugment(drgShapeStream,
+        internalAugment(drgShapes,
                         id,
                         ulBound,
                         dimensionsSet,

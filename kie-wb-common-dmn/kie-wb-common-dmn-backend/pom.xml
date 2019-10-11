@@ -183,11 +183,6 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- TODO {manstis} This is temporary until DMNMarshaller is fully implemented -->
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-marshalling</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-api</artifactId>

@@ -966,7 +966,8 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         final Bound lrBound = lowerRightBound(content);
         if (content.getDefinition() instanceof Decision) {
             final Decision d = (Decision) content.getDefinition();
-            internalAugment(drgShapeStream, d.getId(),
+            internalAugment(drgShapeStream,
+                            d.getId(),
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,

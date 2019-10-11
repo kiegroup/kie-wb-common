@@ -113,10 +113,6 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench</groupId>
-      <artifactId>kie-wb-common-dmn-backend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench</groupId>
       <artifactId>kie-wb-common-dmn-client</artifactId>
       <scope>provided</scope>
       <exclusions>
@@ -155,6 +151,10 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-client-backend</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-m2repo-editor-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -219,10 +219,6 @@
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-refactoring-backend</artifactId>
-    </dependency>
 
     <!-- Required by uberfire-project -->
     <dependency>
@@ -235,12 +231,6 @@
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
