@@ -24,6 +24,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Timer;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -173,11 +174,27 @@ public class FormsCanvasSessionHandler {
     void onCanvasSelectionEvent(@Observes CanvasSelectionEvent event) {
         checkNotNull("event",
                      event);
+
+        if (event.isDragging()) {
+            return;
+        }
+
         if (!Objects.isNull(getCanvasHandler())) {
             if (event.getIdentifiers().size() == 1) {
                 final String uuid = event.getIdentifiers().iterator().next();
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
-                render(element);
+                if (event.isScheduleFormRendering()) {
+                    final Timer timer = new Timer() {
+                        @Override
+                        public void run() {
+                            render(element);
+                        }
+                    };
+
+                    timer.schedule(100);
+                } else {
+                    render(element);
+                }
             }
         }
     }

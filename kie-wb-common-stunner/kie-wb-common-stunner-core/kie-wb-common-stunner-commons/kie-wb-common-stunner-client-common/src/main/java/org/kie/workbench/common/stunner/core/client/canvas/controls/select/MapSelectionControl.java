@@ -263,6 +263,11 @@ public final class MapSelectionControl<H extends AbstractCanvasHandler>
         if (null == canvasHandler) {
             return;
         }
+
+        if (event.isDragging()) {
+            return;
+        }
+
         final boolean isSameCtxt = canvasHandler.equals(event.getCanvasHandler());
         final boolean isSingleSelection = event.getIdentifiers().size() == 1;
         final boolean isCanvasRoot = isSingleSelection &&

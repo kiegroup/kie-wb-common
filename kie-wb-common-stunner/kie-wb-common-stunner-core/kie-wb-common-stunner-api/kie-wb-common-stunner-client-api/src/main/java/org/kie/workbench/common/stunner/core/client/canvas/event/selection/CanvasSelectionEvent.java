@@ -28,19 +28,51 @@ public final class CanvasSelectionEvent
 
     private final Collection<String> identifiers;
 
+    private final boolean isDragging;
+
+    private final boolean scheduleFormRendering;
+
     public CanvasSelectionEvent(final CanvasHandler canvasHandler,
                                 final Collection<String> identifiers) {
         super(canvasHandler);
         this.identifiers = new LinkedList<>(identifiers);
+        this.isDragging = false;
+        scheduleFormRendering = true;
     }
 
     public CanvasSelectionEvent(final CanvasHandler canvasHandler,
                                 final String uuid) {
         super(canvasHandler);
         this.identifiers = new LinkedList<>(Arrays.asList(uuid));
+        this.isDragging = false;
+        scheduleFormRendering = true;
+    }
+
+    public CanvasSelectionEvent(final CanvasHandler canvasHandler,
+                                final String uuid, final boolean isDragging, final boolean scheduleFormRendering) {
+        super(canvasHandler);
+        this.identifiers = new LinkedList<>(Arrays.asList(uuid));
+        this.isDragging = isDragging;
+        this.scheduleFormRendering = scheduleFormRendering;
+    }
+
+    public CanvasSelectionEvent(final CanvasHandler canvasHandler,
+                                final String uuid, final boolean isDragging) {
+        super(canvasHandler);
+        this.identifiers = new LinkedList<>(Arrays.asList(uuid));
+        this.isDragging = isDragging;
+        scheduleFormRendering = true;
     }
 
     public Collection<String> getIdentifiers() {
         return identifiers;
+    }
+
+    public boolean isDragging() {
+        return isDragging;
+    }
+
+    public boolean isScheduleFormRendering() {
+        return scheduleFormRendering;
     }
 }

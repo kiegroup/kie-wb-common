@@ -233,7 +233,7 @@ public class LocationControlImpl
                         public void start(DragEvent event) {
                             if (Objects.nonNull(selectionEvent)) {
                                 //select the moving shape, if not
-                                selectionEvent.fire(new CanvasSelectionEvent(canvasHandler, shape.getUUID()));
+                                selectionEvent.fire(new CanvasSelectionEvent(canvasHandler, shape.getUUID(), true));
                             }
                         }
 

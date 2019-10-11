@@ -56,6 +56,7 @@ public class FormPropertiesWidget implements IsElement,
     private final FormsCanvasSessionHandler formSessionHandler;
     private final FormsContainer formsContainer;
     private final TranslationService translationService;
+    private String lastId = "";
 
     protected FormPropertiesWidget() {
         this(null, null, null, null, null, null);
@@ -155,6 +156,11 @@ public class FormPropertiesWidget implements IsElement,
                       final Element<? extends Definition<?>> element,
                       final Command callback) {
         if (element != null) {
+
+            if (lastId.equals(element.getUUID())) {
+                return;
+            }
+
             final String uuid = element.getUUID();
             final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
             if (Objects.isNull(diagram)) {
@@ -191,6 +197,7 @@ public class FormPropertiesWidget implements IsElement,
                                   }, renderMode);
             final String name = definitionUtils.getName(definition);
             propertiesOpenedEvent.fire(new FormPropertiesOpened(formSessionHandler.getSession(), uuid, name));
+            lastId = element.getUUID();
         }
     }
 

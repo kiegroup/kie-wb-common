@@ -210,7 +210,7 @@ public class FormsCanvasSessionHandlerTest {
     public void testOnCanvasSelectionEventSameSession() {
         handler.bind(session);
 
-        canvasSelectionEvent = new CanvasSelectionEvent(abstractCanvasHandler, UUID);
+        canvasSelectionEvent = new CanvasSelectionEvent(abstractCanvasHandler, UUID, false, false);
 
         handler.onCanvasSelectionEvent(canvasSelectionEvent);
 
