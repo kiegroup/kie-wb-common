@@ -59,7 +59,7 @@ import static org.uberfire.client.views.pfly.selectpicker.JQuerySelectPicker.$;
 public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl implements NameAndDataTypePopoverView {
 
     static final String TYPE_SELECTOR_BUTTON_SELECTOR = "button.dropdown-toggle.btn-default";
-    static final String MANAGER_BUTTON_SELECTOR = "#typeButton";
+    static final String MANAGE_BUTTON_SELECTOR = "#typeButton";
     static final String TAB_KEY = "Tab";
     static final String ESCAPE_KEY = "Escape";
     static final String ESC_KEY = "Esc";
@@ -94,11 +94,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
     @Override
     public void setOnClosedByKeyboardCallback(final Consumer callback) {
-        if (Objects.isNull(callback)) {
-            closedByKeyboardCallback = Optional.empty();
-        } else {
-            closedByKeyboardCallback = Optional.of(callback);
-        }
+        closedByKeyboardCallback = Optional.ofNullable(callback);
     }
 
     public void onClosedByKeyboard() {
@@ -237,10 +233,10 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
                                         getKeyDownEventListener(),
                                         false);
 
-        final Element managerButton = getManagerButton();
-        managerButton.addEventListener(BrowserEvents.KEYDOWN,
-                                       getManagerButtonKeyDownEventListener(),
-                                       false);
+        final Element manageButton = getManageButton();
+        manageButton.addEventListener(BrowserEvents.KEYDOWN,
+                                      getManageButtonKeyDownEventListener(),
+                                      false);
 
         final Element typeSelectorButton = getTypeSelectorButton();
         typeSelectorButton.addEventListener(BrowserEvents.KEYDOWN,
@@ -252,8 +248,8 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         return (e) -> typeSelectorKeyDownEventListener(e);
     }
 
-    EventListener getManagerButtonKeyDownEventListener() {
-        return (e) -> managerButtonKeyDownEventListener(e);
+    EventListener getManageButtonKeyDownEventListener() {
+        return (e) -> manageButtonKeyDownEventListener(e);
     }
 
     EventListener getKeyDownEventListener() {
@@ -264,8 +260,8 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         return (Button) getElement().querySelector(TYPE_SELECTOR_BUTTON_SELECTOR);
     }
 
-    Button getManagerButton() {
-        return (Button) getElement().querySelector(MANAGER_BUTTON_SELECTOR);
+    Button getManageButton() {
+        return (Button) getElement().querySelector(MANAGE_BUTTON_SELECTOR);
     }
 
     void typeSelectorKeyDownEventListener(final Object event) {
@@ -281,8 +277,8 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
                 onClosedByKeyboard();
             } else if (isTabKeyPressed(keyEvent)) {
                 if (keyEvent.shiftKey) {
-                    final Button managerButton = getManagerButton();
-                    managerButton.focus();
+                    final Button manageButton = getManageButton();
+                    manageButton.focus();
                 } else {
                     nameEditor.focus();
                 }
@@ -291,7 +287,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
         }
     }
 
-    void managerButtonKeyDownEventListener(final Object event) {
+    void manageButtonKeyDownEventListener(final Object event) {
         if (event instanceof KeyboardEvent) {
             final KeyboardEvent keyEvent = (KeyboardEvent) event;
             if (isEscapeKeyPressed(keyEvent)) {

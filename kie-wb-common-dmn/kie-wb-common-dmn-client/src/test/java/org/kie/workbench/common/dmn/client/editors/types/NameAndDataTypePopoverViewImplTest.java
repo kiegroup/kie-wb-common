@@ -51,7 +51,7 @@ import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.ENTER_KEY;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.ESCAPE_KEY;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.ESC_KEY;
-import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.MANAGER_BUTTON_SELECTOR;
+import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.MANAGE_BUTTON_SELECTOR;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.TAB_KEY;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.TYPE_SELECTOR_BUTTON_SELECTOR;
 import static org.mockito.Matchers.anyString;
@@ -116,7 +116,7 @@ public class NameAndDataTypePopoverViewImplTest {
     private TranslationService translationService;
 
     @Mock
-    private Button managerButton;
+    private Button manageButton;
 
     @Mock
     private Button typeSelectorButton;
@@ -142,7 +142,7 @@ public class NameAndDataTypePopoverViewImplTest {
             }
         });
 
-        when(element.querySelector(MANAGER_BUTTON_SELECTOR)).thenReturn(managerButton);
+        when(element.querySelector(MANAGE_BUTTON_SELECTOR)).thenReturn(manageButton);
         when(element.querySelector(TYPE_SELECTOR_BUTTON_SELECTOR)).thenReturn(typeSelectorButton);
 
         view.init(presenter);
@@ -172,7 +172,7 @@ public class NameAndDataTypePopoverViewImplTest {
         final EventListener eventListenerCallback = mock(EventListener.class);
 
         doReturn(keyDownCallback).when(view).getKeyDownEventListener();
-        doReturn(managerCallback).when(view).getManagerButtonKeyDownEventListener();
+        doReturn(managerCallback).when(view).getManageButtonKeyDownEventListener();
         doReturn(eventListenerCallback).when(view).getTypeSelectorKeyDownEventListener();
 
         view.setKeyDownListeners();
@@ -181,9 +181,9 @@ public class NameAndDataTypePopoverViewImplTest {
                                                 keyDownCallback,
                                                 false);
 
-        verify(managerButton).addEventListener(BrowserEvents.KEYDOWN,
-                                               managerCallback,
-                                               false);
+        verify(manageButton).addEventListener(BrowserEvents.KEYDOWN,
+                                              managerCallback,
+                                              false);
 
         verify(typeSelectorButton).addEventListener(BrowserEvents.KEYDOWN,
                                                     eventListenerCallback,
@@ -248,7 +248,7 @@ public class NameAndDataTypePopoverViewImplTest {
 
         view.typeSelectorKeyDownEventListener(keyboardEvent);
 
-        verify(managerButton).focus();
+        verify(manageButton).focus();
         verify(keyboardEvent).preventDefault();
     }
 
@@ -263,7 +263,7 @@ public class NameAndDataTypePopoverViewImplTest {
         final elemental2.dom.Element menuElement = mock(elemental2.dom.Element.class);
         doReturn(menuElement).when(monitor).getMenuElement();
 
-        view.managerButtonKeyDownEventListener(keyboardEvent);
+        view.manageButtonKeyDownEventListener(keyboardEvent);
 
         verify(view).hide(false);
         verify(view).reset();
@@ -278,7 +278,7 @@ public class NameAndDataTypePopoverViewImplTest {
         doReturn(true).when(view).isEscapeKeyPressed(keyboardEvent);
         doNothing().when(view).hide(false);
 
-        view.managerButtonKeyDownEventListener(keyboardEvent);
+        view.manageButtonKeyDownEventListener(keyboardEvent);
 
         verify(view).hide(false);
         verify(view).reset();
