@@ -35,27 +35,27 @@ public class MockRefactoringQueryServiceImpl extends RefactoringQueryServiceImpl
 
     @Override
     public int queryHitCount(final RefactoringPageRequest request) {
-        throw new UnsupportedOperationException("Not available in Kogito");
+        throw new UnsupportedOperationException("Not available in kogito");
     }
 
     @Override
     public PageResponse<RefactoringPageRow> query(final RefactoringPageRequest request) {
-        throw new UnsupportedOperationException("Not available in Kogito");
+        throw new UnsupportedOperationException("Not available in kogito");
     }
 
     @Override
     public List<RefactoringPageRow> query(final String queryName,
                                           final Set<ValueIndexTerm> queryTerms) {
-        throw new UnsupportedOperationException("Not available in Kogito");
+        throw new UnsupportedOperationException("Not available in kogito");
     }
 
     @Override
     public PageResponse<RefactoringPageRow> queryToPageResponse(final QueryOperationRequest request) {
-        throw new UnsupportedOperationException("Not available in Kogito");
+        throw new UnsupportedOperationException("Not available in kogito");
     }
 
     @Override
     public List<RefactoringPageRow> queryToList(final QueryOperationRequest request) {
-        throw new UnsupportedOperationException("Not available in Kogito");
+        throw new UnsupportedOperationException("Not available in kogito");
     }
 }

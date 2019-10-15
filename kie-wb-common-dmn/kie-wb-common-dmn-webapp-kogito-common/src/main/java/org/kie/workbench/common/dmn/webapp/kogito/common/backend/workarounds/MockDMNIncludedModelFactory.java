@@ -33,7 +33,7 @@ public class MockDMNIncludedModelFactory extends IncludedModelFactory {
     @Override
     public DMNIncludedModel create(final Path dmnModelPath,
                                    final Path includedModelPath) throws DMNIncludeModelCouldNotBeCreatedException {
-        throw new DMNIncludeModelCouldNotBeCreatedException("Not available in Kogito");
+        throw new DMNIncludeModelCouldNotBeCreatedException("Not available in kogito");
     }
 }
 
