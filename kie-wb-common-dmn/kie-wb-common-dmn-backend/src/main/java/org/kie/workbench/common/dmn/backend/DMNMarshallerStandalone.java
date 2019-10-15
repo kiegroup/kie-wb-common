@@ -54,6 +54,7 @@ import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.Association;
+import org.kie.workbench.common.dmn.api.definition.model.AuthorityRequirement;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.model.DMNElement;
@@ -62,8 +63,10 @@ import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
+import org.kie.workbench.common.dmn.api.definition.model.InformationRequirement;
 import org.kie.workbench.common.dmn.api.definition.model.InputData;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
+import org.kie.workbench.common.dmn.api.definition.model.KnowledgeRequirement;
 import org.kie.workbench.common.dmn.api.definition.model.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
@@ -131,11 +134,11 @@ import static org.kie.workbench.common.stunner.core.definition.adapter.binding.B
 @ApplicationScoped
 public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> {
 
-    public static final String INFO_REQ_ID = getDefinitionId(org.kie.workbench.common.dmn.api.definition.model.InformationRequirement.class);
+    public static final String INFO_REQ_ID = getDefinitionId(InformationRequirement.class);
 
-    public static final String KNOWLEDGE_REQ_ID = getDefinitionId(org.kie.workbench.common.dmn.api.definition.model.KnowledgeRequirement.class);
+    public static final String KNOWLEDGE_REQ_ID = getDefinitionId(KnowledgeRequirement.class);
 
-    public static final String AUTH_REQ_ID = getDefinitionId(org.kie.workbench.common.dmn.api.definition.model.AuthorityRequirement.class);
+    public static final String AUTH_REQ_ID = getDefinitionId(AuthorityRequirement.class);
 
     public static final String ASSOCIATION_ID = getDefinitionId(Association.class);
 
