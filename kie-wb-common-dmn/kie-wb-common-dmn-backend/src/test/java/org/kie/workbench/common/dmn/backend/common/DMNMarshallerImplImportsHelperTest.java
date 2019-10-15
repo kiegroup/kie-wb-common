@@ -557,8 +557,8 @@ public class DMNMarshallerImplImportsHelperTest {
         final String modelName = "model name";
 
         assertThatThrownBy(() -> helper.getDMNModelPath(metadata, modelNamespace, modelName))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessageContaining("No DMN model could be found for the following namespace: 0000-1111-2222-3333");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("A path for the DMN model with namespace [0000-1111-2222-3333] could not be found.");
     }
 
     private Path makePath(final String uri) {

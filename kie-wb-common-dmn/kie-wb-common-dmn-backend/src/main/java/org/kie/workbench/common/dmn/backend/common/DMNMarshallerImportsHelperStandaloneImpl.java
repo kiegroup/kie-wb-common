@@ -162,7 +162,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
             }
         }
 
-        throw new UnsupportedOperationException("No DMN model could be found for the following namespace: " + modelNamespace);
+        throw new IllegalStateException("A path for the DMN model with namespace [" + modelNamespace + "] could not be found.");
     }
 
     @Override
