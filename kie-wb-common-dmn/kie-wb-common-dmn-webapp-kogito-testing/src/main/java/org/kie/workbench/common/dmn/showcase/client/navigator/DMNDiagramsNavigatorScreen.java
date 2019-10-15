@@ -42,7 +42,7 @@ import org.uberfire.workbench.model.menu.Menus;
 @WorkbenchScreen(identifier = BaseDMNDiagramsNavigatorScreen.SCREEN_ID)
 public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
 
-    private DMNDiagramKogitoWrapper stateHolder;
+    private DMNVFSService vfsService;
 
     public DMNDiagramsNavigatorScreen() {
         //CDI proxy
@@ -51,10 +51,10 @@ public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
     @Inject
     public DMNDiagramsNavigatorScreen(final DiagramsNavigator diagramsNavigator,
                                       final ShapeSetsMenuItemsBuilder newDiagramMenuItemsBuilder,
-                                      final DMNDiagramKogitoWrapper stateHolder) {
+                                      final DMNVFSService vfsService) {
         super(diagramsNavigator,
               newDiagramMenuItemsBuilder);
-        this.stateHolder = stateHolder;
+        this.vfsService = vfsService;
     }
 
     @Override
@@ -73,13 +73,13 @@ public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen {
     @Override
     public void edit() {
         if (Objects.nonNull(selectedDiagramEvent)) {
-            stateHolder.openFile(selectedDiagramEvent.getPath());
+            vfsService.openFile(selectedDiagramEvent.getPath());
         }
     }
 
     @Override
     public void create(final ShapeSet shapeSet) {
-        stateHolder.newFile();
+        vfsService.newFile();
     }
 
     @Override

@@ -29,20 +29,20 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 @ApplicationScoped
-public class DMNDiagramKogitoWrapper {
+public class DMNVFSService {
 
     private static final PlaceRequest DIAGRAM_EDITOR = new DefaultPlaceRequest(DMNDiagramEditor.EDITOR_ID);
 
     private PlaceManager placeManager;
     private Caller<VFSService> vfsServiceCaller;
 
-    public DMNDiagramKogitoWrapper() {
+    public DMNVFSService() {
         //CDI proxy
     }
 
     @Inject
-    public DMNDiagramKogitoWrapper(final PlaceManager placeManager,
-                                   final Caller<VFSService> vfsServiceCaller) {
+    public DMNVFSService(final PlaceManager placeManager,
+                         final Caller<VFSService> vfsServiceCaller) {
         this.placeManager = placeManager;
         this.vfsServiceCaller = vfsServiceCaller;
     }

@@ -33,7 +33,7 @@ import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEv
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
-import org.kie.workbench.common.dmn.showcase.client.navigator.DMNDiagramKogitoWrapper;
+import org.kie.workbench.common.dmn.showcase.client.navigator.DMNVFSService;
 import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.BaseDMNDiagramEditor;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.DMNEditorMenuSessionItems;
@@ -85,7 +85,7 @@ public class DMNDiagramEditor extends BaseDMNDiagramEditor {
     public static final String CONTENT_PARAMETER_NAME = "content";
 
     private final Event<NotificationEvent> notificationEvent;
-    private final DMNDiagramKogitoWrapper stateHolder;
+    private final DMNVFSService vfsService;
     private final Promises promises;
 
     @Inject
@@ -118,7 +118,7 @@ public class DMNDiagramEditor extends BaseDMNDiagramEditor {
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final KogitoClientDiagramService diagramServices,
-                            final DMNDiagramKogitoWrapper stateHolder,
+                            final DMNVFSService vfsService,
                             final Promises promises) {
         super(view,
               fileMenuBuilder,
@@ -150,7 +150,7 @@ public class DMNDiagramEditor extends BaseDMNDiagramEditor {
               importsPageProvider,
               diagramServices);
         this.notificationEvent = notificationEvent;
-        this.stateHolder = stateHolder;
+        this.vfsService = vfsService;
         this.promises = promises;
     }
 
@@ -190,21 +190,21 @@ public class DMNDiagramEditor extends BaseDMNDiagramEditor {
         final Path path = getCanvasHandler().getDiagram().getMetadata().getPath();
 
         getContent().then(xml -> {
-            stateHolder.saveFile(path,
-                                 (String) xml,
-                                 new ServiceCallback<String>() {
-                                     @Override
-                                     public void onSuccess(final String xml) {
-                                         resetContentHash();
-                                         notificationEvent.fire(new NotificationEvent(INSTANCE.ItemSavedSuccessfully()));
-                                         hideLoadingViews();
-                                     }
+            vfsService.saveFile(path,
+                                (String) xml,
+                                new ServiceCallback<String>() {
+                                    @Override
+                                    public void onSuccess(final String xml) {
+                                        resetContentHash();
+                                        notificationEvent.fire(new NotificationEvent(INSTANCE.ItemSavedSuccessfully()));
+                                        hideLoadingViews();
+                                    }
 
-                                     @Override
-                                     public void onError(final ClientRuntimeError error) {
-                                         onSaveError(error);
-                                     }
-                                 });
+                                    @Override
+                                    public void onError(final ClientRuntimeError error) {
+                                        onSaveError(error);
+                                    }
+                                });
             return promises.resolve();
         });
     }
