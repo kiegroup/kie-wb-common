@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Timer;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -61,7 +63,6 @@ public class FormsCanvasSessionHandler {
     private final FormsCanvasListener canvasListener;
     private final FormsDomainObjectCanvasListener domainObjectCanvasListener;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-
     private ClientSession session;
     private FormFeaturesSessionProvider featuresSessionProvider;
     private FormRenderer renderer;
@@ -119,8 +120,7 @@ public class FormsCanvasSessionHandler {
      * Shows properties of elements in current session.
      * See {@link SelectionControl#getSelectedItemDefinition()}
      */
-    public void show() {
-        this.show(null);
+    public void show() { this.show(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -164,7 +164,7 @@ public class FormsCanvasSessionHandler {
     void onRefreshFormPropertiesEvent(@Observes RefreshFormPropertiesEvent event) {
         checkNotNull("event", event);
 
-        if (checkSession(event.getSession())) {
+        if (checkSession(event.getSession())) { // Possible Improvement
             if (event.hasUuid()) {
                 final String uuid = event.getUuid();
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
@@ -178,11 +178,24 @@ public class FormsCanvasSessionHandler {
     void onCanvasSelectionEvent(@Observes CanvasSelectionEvent event) {
         checkNotNull("event",
                      event);
+
         if (checkCanvasHandler(event.getCanvasHandler())) {
             if (event.getIdentifiers().size() == 1) {
                 final String uuid = event.getIdentifiers().iterator().next();
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
+                final Timer timer = new Timer() {
+                    @Override
+                    public void run() {
+                        render(element);
+                    }
+                };
+
+                timer.schedule(100);
+            } else {
+                // Select root canvas
+                final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), this.getDiagram().getMetadata().getCanvasRootUUID());
                 render(element);
+
             }
         }
     }
@@ -304,14 +317,41 @@ public class FormsCanvasSessionHandler {
             this.areFormsProcessing = false;
         }
 
+
+
         @Override
         public void update(final Element item) {
+
+            if (renderer.areLastPositionsSameForElement(item)) {
+                renderer.resetCache();
+            }
+
             if (!areFormsProcessing) {
                 render(item);
             }
         }
 
+
         @Override
+        public void  updateBatch(final List<List<Element>> queue, final long numberOfItems) {
+
+            if (queue.size() == 1 && numberOfItems != 0) {
+                for (final List<Element> subQueue : queue) {
+                    if (subQueue.size() > 1) {
+                        // No point in updating lots of elements, just last one
+                        update(subQueue.get(subQueue.size() - 1));
+                    } else {
+                        // update one
+                            update(subQueue.get(0));
+                    }
+                }
+            }
+
+        }
+
+
+
+            @Override
         public void deregister(final Element element) {
             if (null != renderer) {
                 renderer.clear(getDiagram().getGraph().getUUID(), element);
@@ -428,6 +468,18 @@ public class FormsCanvasSessionHandler {
          * @param graphUuid the current {@link Graph} UUID
          */
         void clearAll(String graphUuid);
+
+        /**
+         * Resets Cache
+         */
+        void resetCache();
+
+        /**
+         * Checks if Positions are the same for the last element rendered and if Elements are the same
+         * @param element Element to be checked
+         * @return True if Elements are the same and their positions or False if they are not
+         */
+        boolean areLastPositionsSameForElement(final Element element);
     }
 
     /**

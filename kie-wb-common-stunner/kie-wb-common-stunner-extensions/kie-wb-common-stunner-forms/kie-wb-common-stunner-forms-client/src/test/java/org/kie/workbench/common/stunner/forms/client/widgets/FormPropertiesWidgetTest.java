@@ -57,6 +57,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -267,5 +268,25 @@ public class FormPropertiesWidgetTest {
 
         verify(formsContainer, never()).render(any(), any(), any(), any(), any(), any());
         verify(command, never()).execute();
+    }
+
+    @Test
+    public void testShowElement() {
+        tested.init();
+
+        verify(formsCanvasSessionHandler).setRenderer(formRendererArgumentCaptor.capture());
+        final FormsCanvasSessionHandler.FormRenderer formRenderer = formRendererArgumentCaptor.getValue();
+
+
+        final Command command = mock(Command.class);
+        when(formsCanvasSessionHandler.getDiagram()).thenReturn(diagram);
+
+        formRenderer.render(GRAPH_UUID, node, command);
+        formRenderer.render(GRAPH_UUID, node, command);
+
+
+        verify(formsCanvasSessionHandler, never()).executeUpdateProperty(any(), any(), any());
+        // Verify it is only rendered once, since the same item was already rendered
+        verify(formsContainer, atMost(1)).render(any(), any(), any(), any(), any(), any());
     }
 }
