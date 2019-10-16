@@ -31,6 +31,8 @@
 
   <properties>
     <java.module.name>org.kie.wb.common.dmn.webapp.common</java.module.name>
+    <code.coverage.disabled>true</code.coverage.disabled>
+    <sonar.skip>true</sonar.skip>
   </properties>
 
   <dependencies>
@@ -61,5 +63,25 @@
     </dependency>
 
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <skip>${code.coverage.disabled}</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <jacoco-agent.destfile>${jacoco.exec.file}</jacoco-agent.destfile>
+          </systemPropertyVariables>
+          <skip>${code.coverage.disabled}</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
