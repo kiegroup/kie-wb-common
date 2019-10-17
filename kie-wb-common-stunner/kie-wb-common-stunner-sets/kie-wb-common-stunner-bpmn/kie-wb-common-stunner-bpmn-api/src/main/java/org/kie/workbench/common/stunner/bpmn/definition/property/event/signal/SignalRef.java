@@ -35,28 +35,33 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Valu
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class SignalRef implements BPMNProperty {
 
-    protected final static String STATIC_EXP = "[a-zA-Z0-9_]+";
-    protected final static String OR_EXP = "|";
-    protected final static String EXP_SEPARATOR = "[\\-]";
-    protected final static String MVEL_EXP = "[#]{1}[{]{1}[a-zA-Z0-9_]+[.]*[a-zA-Z0-9_]+[}]{1}";
-    protected final static String MVEL_PARAM_EXP = "[#]{1}[{]{1}[a-zA-Z0-9_]+[.]*[a-zA-Z0-9_]+[(]{1}[a-zA-Z0-9._\",\\s]+[)]{1}[}]{1}";
+    protected static final String STATIC_EXP = "[a-zA-Z0-9_]+";
+    protected static final String OR_EXP = "|";
+    protected static final String EXP_SEPARATOR = "[\\-]";
+    protected static final String MVEL_EXP = "[#]{1}[{]{1}[a-zA-Z0-9_]+[}]{1}";
+    protected static final String MVEL_COMPLEX_EXP = "[#]{1}[{]{1}[a-zA-Z0-9_]+[.]+[a-zA-Z0-9_]+[}]{1}";
+    protected static final String MVEL_COMPLEX_PARAM_EXP = "[#]{1}[{]{1}[a-zA-Z0-9_]+[.]*[a-zA-Z0-9_]+[(]{1}[a-zA-Z0-9._\",\\s]+[)]{1}[}]{1}";
 
     @Value
     @FieldValue
-    @Pattern(regexp = STATIC_EXP + EXP_SEPARATOR + MVEL_PARAM_EXP +
-                      OR_EXP +
-                      STATIC_EXP + EXP_SEPARATOR + MVEL_EXP +
-                      OR_EXP +
-                      STATIC_EXP + EXP_SEPARATOR + STATIC_EXP +
-                      OR_EXP +
-                      MVEL_PARAM_EXP +
-                      OR_EXP +
-                      MVEL_EXP +
-                      OR_EXP +
-                      STATIC_EXP +
-                      OR_EXP +
-                      "^$",
-             message = "Invalid characters. Click ? icon for more information")
+    @Pattern(regexp = STATIC_EXP + EXP_SEPARATOR + MVEL_COMPLEX_PARAM_EXP +
+            OR_EXP +
+            STATIC_EXP + EXP_SEPARATOR + MVEL_COMPLEX_EXP +
+            OR_EXP +
+            STATIC_EXP + EXP_SEPARATOR + MVEL_EXP +
+            OR_EXP +
+            STATIC_EXP + EXP_SEPARATOR + STATIC_EXP +
+            OR_EXP +
+            MVEL_COMPLEX_PARAM_EXP +
+            OR_EXP +
+            MVEL_COMPLEX_EXP +
+            OR_EXP +
+            MVEL_EXP +
+            OR_EXP +
+            STATIC_EXP +
+            OR_EXP +
+            "^$",
+            message = "Invalid characters. Hover over the \"i\" icon for more information")
     private String value;
 
     public SignalRef() {
