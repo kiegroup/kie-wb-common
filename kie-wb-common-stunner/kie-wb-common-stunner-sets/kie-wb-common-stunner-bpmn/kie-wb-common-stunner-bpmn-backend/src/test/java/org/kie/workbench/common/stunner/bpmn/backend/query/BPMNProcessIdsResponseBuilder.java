@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.slf4j.Logger;
 import org.uberfire.ext.metadata.model.KObject;
 import org.uberfire.ext.metadata.model.KProperty;
 import org.uberfire.io.IOService;
@@ -40,6 +41,8 @@ import org.uberfire.java.nio.file.Path;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -65,6 +68,12 @@ public class BPMNProcessIdsResponseBuilder {
 
     @Mock
     private FileSystem fileSystem;
+
+    @Mock
+    private Logger logger;
+
+    @Mock
+    private FileSystemNotFoundException exception;
 
     @Test
     public void testJBPM8828() {
@@ -101,6 +110,9 @@ public class BPMNProcessIdsResponseBuilder {
         when(validPath.toUri()).thenReturn(validURI);
         when(validPath.getFileSystem()).thenReturn(fileSystem);
 
+        String exceptionString = "FILE_SYSTEM_NOT_FOUND_EXCEPTION";
+        when(exception.toString()).thenReturn(exceptionString);
+
         Set<String> attribViews = new HashSet<>();
         when(fileSystem.supportedFileAttributeViews()).thenReturn(attribViews);
 
@@ -111,7 +123,7 @@ public class BPMNProcessIdsResponseBuilder {
                         URI uri = (URI) args[0];
 
                         if (uri.getPath().compareTo(invalidFile) == 0) {
-                            throw new FileSystemNotFoundException();
+                            throw exception;
                         }
 
                         return validPath;
@@ -122,11 +134,13 @@ public class BPMNProcessIdsResponseBuilder {
         AbstractFindIdsQuery.BpmnProcessIdsResponseBuilder responseBuilder =
                 new AbstractFindIdsQuery.BpmnProcessIdsResponseBuilder(ioService,
                                                                        findBpmnProcessIdsQuery.getProcessIdResourceType());
+        responseBuilder.LOGGER = logger;
 
         List<RefactoringPageRow> response = responseBuilder.buildResponse(kObjects);
         RefactoringPageRow pageRow = response.get(0);
         Map<String, Path> pageRowValue = (Map<String, Path>) pageRow.getValue();
 
+        verify(logger, times(1)).error(exceptionString);
         assertEquals(1, response.size(), 0);
         assertEquals(1, pageRowValue.size(), 0);
         assertTrue(validPath.compareTo(pageRowValue.get(validFile)) == 0);

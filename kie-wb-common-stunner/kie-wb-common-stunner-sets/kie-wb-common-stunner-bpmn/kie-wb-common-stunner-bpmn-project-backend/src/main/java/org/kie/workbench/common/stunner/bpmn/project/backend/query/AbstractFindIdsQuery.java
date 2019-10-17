@@ -84,7 +84,7 @@ public abstract class AbstractFindIdsQuery extends FindResourcesQuery implements
 
     public static class BpmnProcessIdsResponseBuilder implements ResponseBuilder {
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(BpmnProcessIdsResponseBuilder.class);
+        protected static Logger LOGGER = LoggerFactory.getLogger(BpmnProcessIdsResponseBuilder.class);
 
         private IOService ioService;
 
