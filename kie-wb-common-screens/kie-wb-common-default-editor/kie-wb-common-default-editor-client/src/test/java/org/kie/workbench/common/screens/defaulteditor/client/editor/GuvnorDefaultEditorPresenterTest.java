@@ -35,6 +35,7 @@ import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPre
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
@@ -91,6 +92,9 @@ public class GuvnorDefaultEditorPresenterTest {
     @Mock
     protected OverviewWidgetPresenter overviewWidgetMock;
 
+    @Mock
+    private Metadata metadataMock;
+
     protected Promises promises;
 
     protected GuvnorDefaultEditorPresenter presenter;
@@ -109,7 +113,7 @@ public class GuvnorDefaultEditorPresenterTest {
                 promises = GuvnorDefaultEditorPresenterTest.this.promises;
                 defaultEditorService = new CallerMock<>(defaultEditorServiceMock);
                 metadataService = new CallerMock<>(metadataServiceMock);
-                metadata = new Metadata();
+                metadata = metadataMock;
                 notification = notificationEvent;
                 overviewWidget = overviewWidgetMock;
             }
@@ -138,12 +142,16 @@ public class GuvnorDefaultEditorPresenterTest {
 
     @Test
     public void testSave() {
+        final ObservablePath currentPathMock = mock(ObservablePath.class);
+        doReturn(currentPathMock).when(versionRecordManager).getCurrentPath();
 
         presenter.save("save");
 
-        verify(metadataServiceMock).saveMetadata(any(),
-                                                 any(),
+        verify(metadataServiceMock).saveMetadata(eq(currentPathMock),
+                                                 eq(metadataMock),
                                                  eq("save"));
+
+        verify(presenter).getSaveSuccessCallback(eq(metadataMock.hashCode()));
     }
 
     @Test
