@@ -36,22 +36,17 @@
     <jacoco.haltOnFailure>true</jacoco.haltOnFailure>
   </properties>
 
+  <modules>
+    <module>kie-wb-common-dmn-api</module>
+    <module>kie-wb-common-dmn-client</module>
+    <module>kie-wb-common-dmn-backend</module>
+    <module>kie-wb-common-dmn-project-api</module>
+    <module>kie-wb-common-dmn-project-client</module>
+    <module>kie-wb-common-dmn-webapp-common</module>
+    <module>kie-wb-common-dmn-webapp-standalone</module>
+  </modules>
+
   <profiles>
-    <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>kie-wb-common-dmn-api</module>
-        <module>kie-wb-common-dmn-client</module>
-        <module>kie-wb-common-dmn-backend</module>
-        <module>kie-wb-common-dmn-project-api</module>
-        <module>kie-wb-common-dmn-project-client</module>
-        <module>kie-wb-common-dmn-webapp-common</module>
-        <module>kie-wb-common-dmn-webapp-standalone</module>
-      </modules>
-    </profile>
     <profile>
       <id>kogito</id>
       <modules>
