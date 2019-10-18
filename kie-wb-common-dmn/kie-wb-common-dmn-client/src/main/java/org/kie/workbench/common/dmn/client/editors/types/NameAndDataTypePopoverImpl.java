@@ -85,7 +85,7 @@ public class NameAndDataTypePopoverImpl implements NameAndDataTypePopoverView.Pr
     }
 
     @Override
-    public void setOnClosedByKeyboardCallback(final Consumer callback) {
+    public void setOnClosedByKeyboardCallback(final Consumer<CanBeClosedByKeyboard> callback) {
         view.setOnClosedByKeyboardCallback(callback);
     }
 }

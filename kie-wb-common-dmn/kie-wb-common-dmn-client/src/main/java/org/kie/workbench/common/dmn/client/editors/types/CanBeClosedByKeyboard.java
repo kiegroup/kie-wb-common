@@ -20,5 +20,5 @@ import java.util.function.Consumer;
 
 public interface CanBeClosedByKeyboard {
 
-    void setOnClosedByKeyboardCallback(final Consumer callback);
+    void setOnClosedByKeyboardCallback(final Consumer<CanBeClosedByKeyboard> callback);
 }
