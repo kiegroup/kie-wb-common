@@ -116,11 +116,9 @@ public class ItemDefinitionRecordEngine implements DataTypeRecordEngine {
                                  final CreationType creationType) {
 
         if (creationType == NESTED) {
-            final ItemDefinition nestedItemDefinition = itemDefinitionCreateHandler.insertNestedItemDefinition(reference);
-            return dataTypeCreateHandler.insertNested(record, reference, nestedItemDefinition);
+            return insertNested(record, reference);
         } else {
-            final ItemDefinition itemDefinition = itemDefinitionCreateHandler.insertItemDefinition(reference, creationType);
-            return dataTypeCreateHandler.insert(record, reference, creationType, itemDefinition);
+            return insertSibling(record, reference, creationType);
         }
     }
 
@@ -149,5 +147,22 @@ public class ItemDefinitionRecordEngine implements DataTypeRecordEngine {
 
     private List<DataType> refreshDependentDataTypesFromDestroyOperation(final DataType dataType) {
         return dataTypeDestroyHandler.refreshDependentDataTypes(dataType);
+    }
+
+    private List<DataType> insertNested(final DataType record,
+                                        final DataType reference) {
+
+        final ItemDefinition nestedItemDefinition = itemDefinitionCreateHandler.insertNested(record, reference);
+
+        return dataTypeCreateHandler.insertNested(record, reference, nestedItemDefinition);
+    }
+
+    private List<DataType> insertSibling(final DataType record,
+                                         final DataType reference,
+                                         final CreationType creationType) {
+
+        final ItemDefinition siblingItemDefinition = itemDefinitionCreateHandler.insertSibling(record, reference, creationType);
+
+        return dataTypeCreateHandler.insertSibling(record, reference, creationType, siblingItemDefinition);
     }
 }
