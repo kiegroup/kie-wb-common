@@ -75,6 +75,10 @@ public class DNDListComponent {
         view.consolidateYPosition();
     }
 
+    public Optional<HTMLElement> getPreviousElement(final Element reference) {
+        return view.getPreviousElement(reference);
+    }
+
     public void clear() {
         view.clear();
     }
@@ -116,8 +120,7 @@ public class DNDListComponent {
             return Optional.empty();
         }
 
-        return view
-                .getPreviousElement(reference)
+        return getPreviousElement(reference)
                 .map(previousElement -> {
                     if (predicate.test(previousElement)) {
                         return previousElement;

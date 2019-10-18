@@ -103,6 +103,10 @@ public class DataTypeManagerTest {
     @Mock
     private DataTypeNameIsDefaultTypeMessage nameIsDefaultTypeMessage;
 
+    private static final String NONE = "Insert a name";
+
+    private static final String STRUCTURE = "Structure";
+
     private DataTypeNameValidator dataTypeNameValidator;
 
     private DataTypeManager manager;
@@ -110,8 +114,8 @@ public class DataTypeManagerTest {
     @Before
     public void setup() {
 
-        when(translationService.format(DataTypeManager_None)).thenReturn("--");
-        when(translationService.format(DataTypeManager_Structure)).thenReturn("Structure");
+        when(translationService.format(DataTypeManager_None)).thenReturn(NONE);
+        when(translationService.format(DataTypeManager_Structure)).thenReturn(STRUCTURE);
         when(itemDefinitionStore.get("uuid")).thenReturn(mock(ItemDefinition.class));
 
         dataTypeNameValidator = spy(new DataTypeNameValidator(flashMessageEvent, blankErrorMessage, notUniqueErrorMessage, nameIsDefaultTypeMessage, dataTypeStore));
@@ -146,6 +150,34 @@ public class DataTypeManagerTest {
         final String actualName = dataType.getName();
 
         assertEquals(expectedName, actualName);
+    }
+
+    @Test
+    public void testWithNoName() {
+
+        final String expectedName = NONE;
+        final DataType dataType = manager.from(makeDataType("uuid")).withNoName().get();
+        final String actualName = dataType.getName();
+
+        assertEquals(expectedName, actualName);
+    }
+
+    @Test
+    public void testGetTypeNameWhenTypeIsNotStructure() {
+
+        final String expectedTypeName = "tPerson";
+        final String actualTypeName = manager.from(makeDataType("uuid", "person", "tPerson")).getTypeName();
+
+        assertEquals(expectedTypeName, actualTypeName);
+    }
+
+    @Test
+    public void testGetTypeNameWhenTypeIsStructure() {
+
+        final String expectedTypeName = "tPerson";
+        final String actualTypeName = manager.from(makeDataType("uuid", "tPerson", STRUCTURE)).getTypeName();
+
+        assertEquals(expectedTypeName, actualTypeName);
     }
 
     @Test
@@ -222,7 +254,7 @@ public class DataTypeManagerTest {
 
         assertFalse(tPerson.getUUID().isEmpty());
         assertEquals("tPerson", tPerson.getName());
-        assertEquals("Structure", tPerson.getType());
+        assertEquals(STRUCTURE, tPerson.getType());
         assertEquals(3, tPerson.getSubDataTypes().size());
         assertTrue(tPerson.hasSubDataTypes());
 
@@ -276,7 +308,7 @@ public class DataTypeManagerTest {
 
         assertFalse(employee.getUUID().isEmpty());
         assertEquals("employee", employee.getName());
-        assertEquals("Structure", employee.getType());
+        assertEquals(STRUCTURE, employee.getType());
         assertEquals("", employee.getConstraint());
         assertSame(tPerson.getUUID(), address.getParentUUID());
         assertEquals(1, employee.getSubDataTypes().size());
@@ -323,7 +355,7 @@ public class DataTypeManagerTest {
         final DataType dataType = manager.from(builtInType).get();
 
         assertFalse(dataType.getUUID().isEmpty());
-        assertEquals("--", dataType.getName());
+        assertEquals(NONE, dataType.getName());
         assertEquals("number", dataType.getType());
         assertEquals(emptyList(), dataType.getSubDataTypes());
         assertFalse(dataType.hasSubDataTypes());
@@ -335,7 +367,7 @@ public class DataTypeManagerTest {
         final DataType dataType = manager.fromNew().get();
 
         assertFalse(dataType.getUUID().isEmpty());
-        assertEquals("--", dataType.getName());
+        assertEquals(NONE, dataType.getName());
         assertEquals("Any", dataType.getType());
         assertEquals("", dataType.getConstraint());
         assertEquals(emptyList(), dataType.getSubDataTypes());
@@ -473,7 +505,7 @@ public class DataTypeManagerTest {
     public void testGetStackTypeWhenDataTypeIsNotTopLevelAndStructureType() {
 
         final DataType parent = mock(DataType.class);
-        final String type = "Structure";
+        final String type = STRUCTURE;
 
         when(parent.isTopLevel()).thenReturn(false);
         when(parent.getType()).thenReturn(type);
@@ -596,7 +628,7 @@ public class DataTypeManagerTest {
 
         manager.withDataType(dataType).asStructure();
 
-        verify(manager).withType("Structure");
+        verify(manager).withType(STRUCTURE);
     }
 
     @Test
@@ -656,6 +688,14 @@ public class DataTypeManagerTest {
         when(itemDefinition.getAllowedValues()).thenReturn(unaryTests);
 
         return itemDefinition;
+    }
+
+    private DataType makeDataType(final String uuid,
+                                  final String name,
+                                  final String type) {
+        final DataType dataType = makeDataType(uuid, name);
+        doReturn(type).when(dataType).getType();
+        return dataType;
     }
 
     private DataType makeDataType(final String uuid,

@@ -88,13 +88,24 @@ public class DNDDataTypesHandler {
 
         final String referenceHash = getDataTypeList().calculateHash(reference);
         final DataType clone = cloneDataType(current);
+        final Optional<DataTypeListItem> currentItem = getDataTypeList().findItem(current);
+        final Boolean isCurrentItemCollapsed = currentItem.map(DataTypeListItem::isCollapsed).orElse(false);
 
         // destroy current data type
-        getDataTypeList().findItem(current).ifPresent(item -> item.destroy().execute());
+        currentItem.ifPresent(item -> item.destroy().execute());
 
-        // create new by using shift strategy
+        // create new data type by using shift strategy
         getDataTypeList().findItemByDataTypeHash(referenceHash).ifPresent(ref -> {
             shiftStrategy.consumer.accept(ref, clone);
+        });
+
+        // keep the state of the new data type item consistent
+        getDataTypeList().findItem(clone).ifPresent(item -> {
+            if (isCurrentItemCollapsed) {
+                item.collapse();
+            } else {
+                item.expand();
+            }
         });
     }
 

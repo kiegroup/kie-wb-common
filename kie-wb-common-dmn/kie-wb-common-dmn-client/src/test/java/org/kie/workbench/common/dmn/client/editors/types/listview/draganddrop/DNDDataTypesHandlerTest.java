@@ -156,7 +156,7 @@ public class DNDDataTypesHandlerTest {
     }
 
     @Test
-    public void testShiftCurrentByReference() {
+    public void testShiftCurrentByReferenceWhenCurrentIsCollapsed() {
 
         final DataType current = mock(DataType.class);
         final DataType clone = mock(DataType.class);
@@ -165,16 +165,48 @@ public class DNDDataTypesHandlerTest {
         final String referenceHash = "referenceHash";
         final DataTypeListItem oldItem = mock(DataTypeListItem.class);
         final DataTypeListItem referenceItem = mock(DataTypeListItem.class);
+        final DataTypeListItem newItem = mock(DataTypeListItem.class);
         final Command oldItemDestroyCommand = mock(Command.class);
 
         doReturn(clone).when(handler).cloneDataType(current);
         when(dataTypeList.calculateHash(reference)).thenReturn(referenceHash);
         when(dataTypeList.findItem(current)).thenReturn(Optional.of(oldItem));
+        when(dataTypeList.findItem(clone)).thenReturn(Optional.of(newItem));
         when(dataTypeList.findItemByDataTypeHash(referenceHash)).thenReturn(Optional.of(referenceItem));
         when(oldItem.destroy()).thenReturn(oldItemDestroyCommand);
+        when(oldItem.isCollapsed()).thenReturn(true);
 
         handler.shiftCurrentByReference(current, reference, strategy);
 
+        verify(newItem).collapse();
+        verify(oldItemDestroyCommand).execute();
+        verify(referenceItem).insertNestedField(clone);
+    }
+
+    @Test
+    public void testShiftCurrentByReferenceWhenCurrentIsNotCollapsed() {
+
+        final DataType current = mock(DataType.class);
+        final DataType clone = mock(DataType.class);
+        final DataType reference = mock(DataType.class);
+        final ShiftStrategy strategy = INSERT_INTO_HOVERED_DATA_TYPE;
+        final String referenceHash = "referenceHash";
+        final DataTypeListItem oldItem = mock(DataTypeListItem.class);
+        final DataTypeListItem referenceItem = mock(DataTypeListItem.class);
+        final DataTypeListItem newItem = mock(DataTypeListItem.class);
+        final Command oldItemDestroyCommand = mock(Command.class);
+
+        doReturn(clone).when(handler).cloneDataType(current);
+        when(dataTypeList.calculateHash(reference)).thenReturn(referenceHash);
+        when(dataTypeList.findItem(current)).thenReturn(Optional.of(oldItem));
+        when(dataTypeList.findItem(clone)).thenReturn(Optional.of(newItem));
+        when(dataTypeList.findItemByDataTypeHash(referenceHash)).thenReturn(Optional.of(referenceItem));
+        when(oldItem.destroy()).thenReturn(oldItemDestroyCommand);
+        when(oldItem.isCollapsed()).thenReturn(false);
+
+        handler.shiftCurrentByReference(current, reference, strategy);
+
+        verify(newItem).expand();
         verify(oldItemDestroyCommand).execute();
         verify(referenceItem).insertNestedField(clone);
     }

@@ -221,10 +221,14 @@ public class DataTypeManager {
     }
 
     public DataTypeManager withNoName() {
-        return withUniqueName(none());
+        return withName(none());
     }
 
-    DataTypeManager withUniqueName(final String name) {
+    public DataTypeManager withUniqueName() {
+        return withUniqueName(dataType.getName());
+    }
+
+    public DataTypeManager withUniqueName(final String name) {
         return withUniqueName(name, 1);
     }
 
@@ -338,6 +342,19 @@ public class DataTypeManager {
 
     public String structure() {
         return translationService.format(DataTypeManager_Structure);
+    }
+
+    public String getTypeName() {
+
+        final String type = dataType.getType();
+        final String name = dataType.getName();
+        final String structure = structure();
+
+        if (Objects.equals(type, structure)) {
+            return name;
+        } else {
+            return type;
+        }
     }
 
     private List<DataType> createSubDataTypes(final List<ItemDefinition> itemComponent) {
