@@ -114,8 +114,13 @@ public class KieEditorWrapperViewImpl
 
     @Override
     public void addImportsTab(IsWidget importsWidget) {
-        addWidget(importsWidget,
-                  CommonConstants.INSTANCE.DataObjectsTabTitle());
+        addPage(new PageImpl(importsWidget,
+                             CommonConstants.INSTANCE.DataObjectsTabTitle()) {
+            @Override
+            public void onFocus() {
+                presenter.onImportsTabSelected();
+            }
+        });
     }
 
     @Override

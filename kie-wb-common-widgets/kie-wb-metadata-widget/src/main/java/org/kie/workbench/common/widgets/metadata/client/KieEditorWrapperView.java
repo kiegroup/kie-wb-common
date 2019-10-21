@@ -35,6 +35,8 @@ public interface KieEditorWrapperView
         void onEditTabUnselected();
 
         void onOverviewSelected();
+
+        void onImportsTabSelected();
     }
 
     void setPresenter(KieEditorWrapperPresenter presenter);
