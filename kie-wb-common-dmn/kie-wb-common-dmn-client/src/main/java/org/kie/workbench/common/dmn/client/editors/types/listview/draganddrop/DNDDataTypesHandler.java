@@ -176,11 +176,7 @@ public class DNDDataTypesHandler {
                 return getPreviousDataType();
             }
 
-            if (getCurrentDataType().isPresent()) {
-                return getFirstDataType(getCurrentDataType().get());
-            }
-
-            return Optional.empty();
+            return getCurrentDataType().flatMap(this::getFirstDataType);
         }
 
         ShiftStrategy getStrategy() {

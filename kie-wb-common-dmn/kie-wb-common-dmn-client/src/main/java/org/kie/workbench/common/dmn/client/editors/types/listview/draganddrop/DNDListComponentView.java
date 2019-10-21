@@ -78,7 +78,7 @@ public class DNDListComponentView implements DNDListComponent.View {
 
         final HTMLElement item = createItem(htmlElement);
 
-        Position.setY(item, getMaxPositionY() + 1);
+        Position.setY(item, getMaxPositionY() + 1d);
         Position.setX(item, 0);
 
         getDragArea().appendChild(item);
@@ -145,7 +145,7 @@ public class DNDListComponentView implements DNDListComponent.View {
             }
 
             Position.setY(current, i);
-            Position.setY(next, i + 1);
+            Position.setY(next, i + 1d);
         }
     }
 
@@ -232,7 +232,7 @@ public class DNDListComponentView implements DNDListComponent.View {
         final Optional<HTMLElement> previousElement = getPreviousElement(draggingElement);
         final boolean hasChildren = previousElement.map(this::hasChildren).orElse(false);
         final int currentXPosition = getCurrentXPosition(draggingElement);
-        final int numberOfExtraLevels = hasChildren ? 1 : 0;
+        final double numberOfExtraLevels = hasChildren ? 1 : 0;
 
         Position.setX(draggingElement, currentXPosition + numberOfExtraLevels);
         getDependentElements().forEach(el -> Position.setX(el, numberOfExtraLevels + getCurrentXPosition(el)));
@@ -261,12 +261,10 @@ public class DNDListComponentView implements DNDListComponent.View {
             final int currentXPosition = Position.getX(hover);
             final int minimalLevel = currentXPosition + 1;
             final int numberOfExtraLevels = Position.getX(getDragging()) - minimalLevel;
+            final List<HTMLElement> children = new ArrayList<>(getDependentElements());
 
-            final List<HTMLElement> children = new ArrayList<HTMLElement>(getDependentElements()) {{
-                add(getDragging());
-            }};
-
-            Position.setX(getDragging(), currentXPosition + 1);
+            children.add(getDragging());
+            Position.setX(getDragging(), currentXPosition + 1d);
             fixChildrenPosition(minimalLevel, numberOfExtraLevels, children);
         });
 
@@ -274,7 +272,7 @@ public class DNDListComponentView implements DNDListComponent.View {
     }
 
     private int getDraggingYCoordinate() {
-        return (int) (getDragging().offsetTop + (getItemHeight() / 2));
+        return (int) (getDragging().offsetTop + (getItemHeight() / 2d));
     }
 
     void hover(final int hoverPosition) {
@@ -426,7 +424,7 @@ public class DNDListComponentView implements DNDListComponent.View {
             clearHover();
 
             for (int i = 0; i < getDependentElements().size(); i++) {
-                Position.setY(getDependentElements().get(i), mouseYPosition + i + 1);
+                Position.setY(getDependentElements().get(i), mouseYPosition + i + 1d);
             }
 
             refreshItemsPosition();

@@ -635,7 +635,7 @@ public class DataTypeListItem {
     }
 
     void setupIndentationLevel() {
-        setPositionX(getDragAndDropElement(), getLevel() - 1);
+        setPositionX(getDragAndDropElement(), getLevel() - 1d);
     }
 
     public interface View extends UberElemental<DataTypeListItem> {
