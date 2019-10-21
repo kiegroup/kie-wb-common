@@ -500,7 +500,7 @@ public class DataTypeListItem {
         closeEditMode();
 
         final DataType newDataType = newDataType();
-        final String referenceDataTypeHash = insertFieldBelow(getDataType());
+        final String referenceDataTypeHash = insertFieldBelow(newDataType);
 
         enableEditModeAndUpdateCallbacks(getNewDataTypeHash(newDataType, referenceDataTypeHash));
     }

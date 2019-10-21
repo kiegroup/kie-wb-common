@@ -870,6 +870,7 @@ public class DataTypeListItemTest {
 
         verify(listItem).closeEditMode();
         verify(listItem).enableEditModeAndUpdateCallbacks(newDataTypeHash);
+        verify(dataTypeList).insertBelow(newDataType, reference);
     }
 
     @Test
@@ -895,6 +896,7 @@ public class DataTypeListItemTest {
 
         verify(listItem).closeEditMode();
         verify(listItem).enableEditModeAndUpdateCallbacks(newDataTypeHash);
+        verify(dataTypeList).refreshItemsByUpdatedDataTypes(updatedDataTypes);
     }
 
     @Test
