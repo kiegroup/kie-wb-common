@@ -29,11 +29,13 @@ import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.included.DMNIncludedModelActiveRecord;
+import org.kie.workbench.common.dmn.client.editors.included.DefaultIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.PMMLIncludedModelActiveRecord;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,6 +51,29 @@ public class ImportFactoryTest {
     @Before
     public void setup() {
         factory = new ImportFactory(modelsIndex);
+    }
+
+    @Test
+    public void testMakeImport() {
+
+        final DefaultIncludedModelActiveRecord record = new DefaultIncludedModelActiveRecord(null);
+        final String nameValue = "name";
+        final String path = "/src/main/kie/import";
+        final Name expectedName = new Name(nameValue);
+        final LocationURI expectedLocationURI = new LocationURI(path);
+        final String expectedNamespace = "://namespace";
+
+        record.setName(nameValue);
+        record.setPath(path);
+        record.setNamespace(expectedNamespace);
+        record.setImportType(null);
+
+        final Import actualImport = factory.makeImport(record);
+
+        assertEquals(expectedName, actualImport.getName());
+        assertEquals(expectedLocationURI, actualImport.getLocationURI());
+        assertEquals(expectedNamespace, actualImport.getNamespace());
+        assertNull(actualImport.getImportType());
     }
 
     @Test
@@ -75,7 +100,6 @@ public class ImportFactoryTest {
         assertTrue(actualImport instanceof ImportDMN);
 
         final ImportDMN dmnImport = (ImportDMN) actualImport;
-        assertEquals(expectedImportType, actualImport.getImportType());
         assertEquals(expectedName, actualImport.getName());
         assertEquals(expectedLocationURI, actualImport.getLocationURI());
         assertEquals(expectedNamespace, actualImport.getNamespace());
@@ -105,7 +129,6 @@ public class ImportFactoryTest {
         assertTrue(actualImport instanceof ImportPMML);
 
         final ImportPMML pmmlImport = (ImportPMML) actualImport;
-        assertEquals(expectedImportType, actualImport.getImportType());
         assertEquals(expectedName, actualImport.getName());
         assertEquals(expectedLocationURI, actualImport.getLocationURI());
         assertEquals(expectedNameValue, actualImport.getNamespace());
