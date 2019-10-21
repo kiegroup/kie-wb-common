@@ -78,11 +78,6 @@ public class KieEditorWrapperViewImpl
                 onFocus.execute();
                 presenter.onOverviewSelected();
             }
-
-            @Override
-            public void onLostFocus() {
-
-            }
         });
     }
 
@@ -93,11 +88,6 @@ public class KieEditorWrapperViewImpl
             @Override
             public void onFocus() {
                 presenter.onSourceTabSelected();
-            }
-
-            @Override
-            public void onLostFocus() {
-
             }
         });
     }

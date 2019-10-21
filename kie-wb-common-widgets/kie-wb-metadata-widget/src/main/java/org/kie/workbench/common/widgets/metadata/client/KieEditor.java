@@ -520,14 +520,6 @@ public abstract class KieEditor<T>
     public void onEditTabUnselected() {
     }
 
-    /**
-     * Overwrite this if you want to do something special when the import tab is selected.
-     */
-    @Override
-    public void onImportsTabSelected() {
-
-    }
-
     public void addTabBarWidget(final IsWidget customWidget) {
         kieView.addTabBarWidget(customWidget);
     }

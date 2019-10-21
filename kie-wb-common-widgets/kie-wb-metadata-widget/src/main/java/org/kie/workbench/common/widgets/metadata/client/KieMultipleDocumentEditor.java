@@ -459,11 +459,6 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     }
 
     @Override
-    public void onImportsTabSelected() {
-        //Nothing to do
-    }
-
-    @Override
     public boolean mayClose(final Integer originalHashCode,
                             final Integer currentHashCode) {
         return mayCloseHandler.mayClose(originalHashCode,

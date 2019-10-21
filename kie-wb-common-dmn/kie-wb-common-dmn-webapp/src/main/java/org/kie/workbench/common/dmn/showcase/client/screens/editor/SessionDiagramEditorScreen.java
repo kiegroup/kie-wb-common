@@ -513,11 +513,6 @@ public class SessionDiagramEditorScreen implements KieEditorWrapperView.KieEdito
 
     }
 
-    @Override
-    public void onImportsTabSelected() {
-
-    }
-
     void updateTitle(final String title) {
         // Change screen title.
         SessionDiagramEditorScreen.this.title = title;
