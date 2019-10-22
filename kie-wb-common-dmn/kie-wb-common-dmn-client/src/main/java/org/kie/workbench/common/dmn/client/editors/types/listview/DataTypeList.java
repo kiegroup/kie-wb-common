@@ -238,7 +238,6 @@ public class DataTypeList {
         showListItems();
         listItem.refresh();
         listItem.enableEditMode();
-        fireOnDataTypeListItemUpdateCallback(listItem);
         refreshItemsCSSAndHTMLPosition();
     }
 

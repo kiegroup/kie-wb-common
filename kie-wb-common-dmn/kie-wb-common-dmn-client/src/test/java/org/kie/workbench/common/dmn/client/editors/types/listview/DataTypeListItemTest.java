@@ -339,6 +339,7 @@ public class DataTypeListItemTest {
         verify(dataTypeSelectComponent).enableEditMode();
         verify(dataTypeConstraintComponent).enableEditMode();
         verify(editModeToggleEvent).fire(eventArgumentCaptor.capture());
+        verify(dataTypeList).fireOnDataTypeListItemUpdateCallback(listItem);
 
         assertTrue(eventArgumentCaptor.getValue().isEditModeEnabled());
     }
@@ -359,6 +360,7 @@ public class DataTypeListItemTest {
         verify(dataTypeSelectComponent, never()).enableEditMode();
         verify(dataTypeConstraintComponent, never()).enableEditMode();
         verify(editModeToggleEvent, never()).fire(any());
+        verify(dataTypeList, never()).fireOnDataTypeListItemUpdateCallback(any(DataTypeListItem.class));
     }
 
     @Test

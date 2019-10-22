@@ -503,7 +503,6 @@ public class DataTypeListTest {
         verify(view).showOrHideNoCustomItemsMessage();
         verify(listItem).refresh();
         verify(listItem).enableEditMode();
-        verify(dataTypeList).fireOnDataTypeListItemUpdateCallback(listItem);
         verify(dndListComponent).refreshItemsCSSAndHTMLPosition();
         verify(listItem).enableEditMode();
     }

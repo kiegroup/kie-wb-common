@@ -252,6 +252,7 @@ public class DataTypeListItem {
         dataTypeConstraintComponent.enableEditMode();
 
         editModeToggleEvent.fire(new DataTypeEditModeToggleEvent(true, this));
+        dataTypeList.fireOnDataTypeListItemUpdateCallback(this);
     }
 
     public void disableEditMode() {
