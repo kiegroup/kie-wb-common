@@ -26,14 +26,6 @@
     padding-left: 25px;
   }
 
-  &.read-only {
-    cursor: not-allowed;
-
-    .list-view-pf-actions {
-      pointer-events: none;
-    }
-  }
-
   [data-type-field="arrow-button"] {
     cursor: pointer;
   }
@@ -153,6 +145,19 @@
 [data-i18n-prefix="DNDListComponentView."] {
 
   div[data-row-uuid] {
+
+    &.read-only {
+      cursor: not-allowed;
+      pointer-events: none;
+      filter: brightness(.98);
+      opacity: .75;
+
+      &.kie-dnd-hover {
+        .list-group-item {
+          background-color: #FFF;
+        }
+      }
+    }
 
     &.focused-data-type {
       .list-group-item {

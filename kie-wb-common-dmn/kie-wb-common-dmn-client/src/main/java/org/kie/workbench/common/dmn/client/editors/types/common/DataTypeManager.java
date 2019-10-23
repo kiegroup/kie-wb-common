@@ -207,12 +207,22 @@ public class DataTypeManager {
     }
 
     public DataTypeManager withSubDataTypes(final List<DataType> dataTypes) {
-        dataType.getSubDataTypes().forEach(dataType -> {
-            dataTypeStore.unIndex(dataType.getUUID());
-            itemDefinitionStore.unIndex(dataType.getUUID());
-        });
-        dataType.setSubDataTypes(dataTypes);
+        if (!isReadOnly(dataType)) {
+            dataType.getSubDataTypes().forEach(dataType -> {
+                dataTypeStore.unIndex(dataType.getUUID());
+                itemDefinitionStore.unIndex(dataType.getUUID());
+            });
+            dataType.setSubDataTypes(dataTypes);
+        }
         return this;
+    }
+
+    private boolean isReadOnly(final DataType dataType) {
+        return dataType.isReadOnly() || isReadyOnlyType(dataType.getType());
+    }
+
+    private boolean isReadyOnlyType(final String type) {
+        return itemDefinitionUtils.findByName(type).map(ItemDefinition::isAllowOnlyVisualChange).orElse(false);
     }
 
     DataTypeManager withUUID() {

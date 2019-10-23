@@ -59,10 +59,12 @@ import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConsta
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeManager_Structure;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -117,6 +119,7 @@ public class DataTypeManagerTest {
         when(translationService.format(DataTypeManager_None)).thenReturn(NONE);
         when(translationService.format(DataTypeManager_Structure)).thenReturn(STRUCTURE);
         when(itemDefinitionStore.get("uuid")).thenReturn(mock(ItemDefinition.class));
+        when(itemDefinitionUtils.findByName(anyString())).thenReturn(Optional.empty());
 
         dataTypeNameValidator = spy(new DataTypeNameValidator(flashMessageEvent, blankErrorMessage, notUniqueErrorMessage, nameIsDefaultTypeMessage, dataTypeStore));
         manager = spy(new DataTypeManagerFake());
@@ -214,6 +217,7 @@ public class DataTypeManagerTest {
         final List<DataType> newSubDataTypes = singletonList(mock(DataType.class));
 
         when(topLevelDataType.getSubDataTypes()).thenReturn(singletonList(subLevelDataType));
+        when(itemDefinitionUtils.findByName(anyString())).thenReturn(Optional.empty());
 
         manager.withDataType(topLevelDataType);
         manager.withSubDataTypes(newSubDataTypes);
@@ -221,6 +225,52 @@ public class DataTypeManagerTest {
         verify(dataTypeStore).unIndex(subLevelDataTypeUuid);
         verify(itemDefinitionStore).unIndex(subLevelDataTypeUuid);
         verify(topLevelDataType).setSubDataTypes(newSubDataTypes);
+    }
+
+    @Test
+    public void testWithSubDataTypesWhenDataTypeIsReadOnly() {
+
+        final DataType topLevelDataType = mock(DataType.class);
+        final DataType subLevelDataType = mock(DataType.class);
+        final String subLevelDataTypeUuid = "subUuid";
+        when(subLevelDataType.getUUID()).thenReturn(subLevelDataTypeUuid);
+
+        final List<DataType> newSubDataTypes = singletonList(mock(DataType.class));
+
+        when(topLevelDataType.isReadOnly()).thenReturn(true);
+        when(topLevelDataType.getSubDataTypes()).thenReturn(singletonList(subLevelDataType));
+
+        manager.withDataType(topLevelDataType);
+        manager.withSubDataTypes(newSubDataTypes);
+
+        verify(dataTypeStore, never()).unIndex(anyString());
+        verify(itemDefinitionStore, never()).unIndex(anyString());
+        verify(topLevelDataType, never()).setSubDataTypes(anyListOf(DataType.class));
+    }
+
+    @Test
+    public void testWithSubDataTypesWhenDataTypeTypeIsReadOnly() {
+
+        final DataType topLevelDataType = mock(DataType.class);
+        final DataType subLevelDataType = mock(DataType.class);
+        final ItemDefinition itemDefinition = mock(ItemDefinition.class);
+        final String subLevelDataTypeUuid = "subUuid";
+        final String type = "model1.ExternalDataType";
+        when(subLevelDataType.getUUID()).thenReturn(subLevelDataTypeUuid);
+
+        final List<DataType> newSubDataTypes = singletonList(mock(DataType.class));
+
+        when(topLevelDataType.getType()).thenReturn(type);
+        when(topLevelDataType.getSubDataTypes()).thenReturn(singletonList(subLevelDataType));
+        when(itemDefinitionUtils.findByName(type)).thenReturn(Optional.of(itemDefinition));
+        when(itemDefinition.isAllowOnlyVisualChange()).thenReturn(true);
+
+        manager.withDataType(topLevelDataType);
+        manager.withSubDataTypes(newSubDataTypes);
+
+        verify(dataTypeStore, never()).unIndex(anyString());
+        verify(itemDefinitionStore, never()).unIndex(anyString());
+        verify(topLevelDataType, never()).setSubDataTypes(anyListOf(DataType.class));
     }
 
     @Test
@@ -708,6 +758,7 @@ public class DataTypeManagerTest {
     private DataType makeDataType(final String uuid) {
         final DataType dataType = spy(new DataType(null));
         doReturn(uuid).when(dataType).getUUID();
+        doReturn(false).when(dataType).isReadOnly();
         return dataType;
     }
 

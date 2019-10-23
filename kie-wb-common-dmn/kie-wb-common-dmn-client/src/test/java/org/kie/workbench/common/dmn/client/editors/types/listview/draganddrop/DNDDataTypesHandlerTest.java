@@ -226,6 +226,29 @@ public class DNDDataTypesHandlerTest {
     }
 
     @Test
+    public void testDNDContextGetReferenceWhenHoveredDataTypeIsPresentButHoveredDataTypeIsReadOnly() {
+
+        final Element currentElement = mock(Element.class);
+        final Element hoverElement = mock(Element.class);
+        final Element previousElement = mock(Element.class);
+        final Optional<DataType> hoverDataType = Optional.of(mock(DataType.class));
+        final Optional<DataType> previousDataType = Optional.of(mock(DataType.class));
+        final String hoverUUID = "0000-0000-0000-0000";
+        final String previousUUID = "1111-1111-1111-1111";
+
+        when(dndListComponent.getPreviousElement(any(), any())).thenReturn(Optional.of(previousElement));
+        when(dataTypeStore.get(previousUUID)).thenReturn(previousDataType.get());
+        when(dataTypeStore.get(hoverUUID)).thenReturn(hoverDataType.get());
+        when(previousElement.getAttribute(UUID_ATTR)).thenReturn(previousUUID);
+        when(hoverElement.getAttribute(UUID_ATTR)).thenReturn(hoverUUID);
+        when(hoverDataType.get().isReadOnly()).thenReturn(true);
+
+        final Optional<DataType> reference = handler.makeDndContext(currentElement, hoverElement).getReference();
+
+        assertEquals(previousDataType, reference);
+    }
+
+    @Test
     public void testDNDContextGetReferenceWhenPreviousDataTypeIsPresent() {
 
         final Element currentElement = mock(Element.class);
@@ -356,6 +379,27 @@ public class DNDDataTypesHandlerTest {
     }
 
     @Test
+    public void testGetStrategyInsertIntoHoveredDataTypeWhenHoveredDataTypeIsReadOnly() {
+
+        final Element currentElement = mock(Element.class);
+        final Element hoverElement = mock(Element.class);
+        final DNDContext context = handler.makeDndContext(currentElement, hoverElement);
+        final Optional<DataType> hoverDataType = Optional.of(mock(DataType.class));
+        final String uuid = "0000-1111-2222-3333";
+
+        when(hoverDataType.get().isReadOnly()).thenReturn(true);
+        when(hoverElement.getAttribute(UUID_ATTR)).thenReturn(uuid);
+        when(dataTypeStore.get(uuid)).thenReturn(hoverDataType.get());
+        when(dndListComponent.getPreviousElement(any(), any())).thenReturn(Optional.empty());
+        loadReferenceContext(context);
+
+        final ShiftStrategy actualShiftStrategy = context.getStrategy();
+        final ShiftStrategy expectedShiftStrategy = INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP;
+
+        assertEquals(expectedShiftStrategy, actualShiftStrategy);
+    }
+
+    @Test
     public void testGetStrategyInsertTopLevelDataTypeAtTheTop() {
 
         final Element currentElement = mock(Element.class);
@@ -413,6 +457,30 @@ public class DNDDataTypesHandlerTest {
 
         final ShiftStrategy actualShiftStrategy = context.getStrategy();
         final ShiftStrategy expectedShiftStrategy = INSERT_NESTED_DATA_TYPE;
+
+        assertEquals(expectedShiftStrategy, actualShiftStrategy);
+    }
+
+    @Test
+    public void testGetStrategyInsertNestedDataTypeWhenPreviousDataTypeIsReadOnly() {
+
+        final Element currentElement = mock(Element.class);
+        final Element hoverElement = mock(Element.class);
+        final Element previousElement = mock(Element.class);
+        final DNDContext context = handler.makeDndContext(currentElement, hoverElement);
+        final String uuid = "0000-1111-2222-3333";
+        final Optional<DataType> previousDataType = Optional.of(mock(DataType.class));
+
+        when(previousDataType.get().isReadOnly()).thenReturn(true);
+        when(dataTypeStore.get(uuid)).thenReturn(previousDataType.get());
+        when(dndListComponent.getPreviousElement(any(), any())).thenReturn(Optional.of(previousElement));
+        when(currentElement.getAttribute(DATA_X_POSITION)).thenReturn("1");
+        when(previousElement.getAttribute(DATA_X_POSITION)).thenReturn("0");
+        when(previousElement.getAttribute(UUID_ATTR)).thenReturn(uuid);
+        loadReferenceContext(context);
+
+        final ShiftStrategy actualShiftStrategy = context.getStrategy();
+        final ShiftStrategy expectedShiftStrategy = INSERT_SIBLING_DATA_TYPE;
 
         assertEquals(expectedShiftStrategy, actualShiftStrategy);
     }

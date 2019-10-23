@@ -181,7 +181,7 @@ public class DNDDataTypesHandler {
 
         Optional<DataType> getReference() {
 
-            if (reloadHoveredDataType().isPresent()) {
+            if (reloadHoveredDataType().isPresent() && hoveredDataTypeIsNotReadOnly()) {
                 return getHoveredDataType();
             }
 
@@ -194,7 +194,7 @@ public class DNDDataTypesHandler {
 
         ShiftStrategy getStrategy() {
 
-            if (getHoveredDataType().isPresent()) {
+            if (getHoveredDataType().isPresent() && hoveredDataTypeIsNotReadOnly()) {
                 return INSERT_INTO_HOVERED_DATA_TYPE;
             }
 
@@ -207,7 +207,7 @@ public class DNDDataTypesHandler {
 
             if (currentElementLevel == 0) {
                 return INSERT_TOP_LEVEL_DATA_TYPE;
-            } else if (previousElementLevel < currentElementLevel) {
+            } else if (previousElementLevel < currentElementLevel && previousDataTypeIsNotReadOnly()) {
                 return INSERT_NESTED_DATA_TYPE;
             } else {
                 return INSERT_SIBLING_DATA_TYPE;
@@ -223,6 +223,14 @@ public class DNDDataTypesHandler {
             previousElement = getPreviousElement(currentElement);
             previous = getDataType(previousElement);
             return getPreviousDataType();
+        }
+
+        private boolean previousDataTypeIsNotReadOnly() {
+            return !getPreviousDataType().map(DataType::isReadOnly).orElse(false);
+        }
+
+        private boolean hoveredDataTypeIsNotReadOnly() {
+            return !getHoveredDataType().map(DataType::isReadOnly).orElse(false);
         }
 
         Optional<DataType> getCurrentDataType() {
