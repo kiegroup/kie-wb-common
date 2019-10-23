@@ -112,10 +112,8 @@ public class QName {
 
         final QName qName = (QName) o;
 
-        if (!getNamespaceURI().equals(qName.getNamespaceURI())) {
-            return false;
-        }
-        return getLocalPart().equals(qName.getLocalPart());
+        return Objects.equals(getNamespaceURI(), qName.getNamespaceURI()) &&
+                Objects.equals(getLocalPart(), qName.getLocalPart());
     }
 
     /**
