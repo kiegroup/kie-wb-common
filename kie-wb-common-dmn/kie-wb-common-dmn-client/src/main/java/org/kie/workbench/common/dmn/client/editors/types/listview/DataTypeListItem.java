@@ -379,18 +379,27 @@ public class DataTypeListItem {
     }
 
     public Command destroy() {
-        return () -> {
+        return this::destroyWithDependentTypes;
+    }
 
-            final List<DataType> destroyedDataTypes = getDataType().destroy();
-            final List<DataType> removedDataTypes = removeTopLevelDataTypes(destroyedDataTypes);
+    public void destroyWithDependentTypes() {
+        final List<DataType> destroyedDataTypes = getDataType().destroy();
+        destroy(destroyedDataTypes);
+    }
 
-            destroyedDataTypes.removeAll(removedDataTypes);
+    public void destroyWithoutDependentTypes() {
+        final List<DataType> destroyedDataTypes = getDataType().destroyWithoutDependentTypes();
+        destroy(destroyedDataTypes);
+    }
 
-            dataTypeList.refreshItemsByUpdatedDataTypes(destroyedDataTypes);
+    void destroy(final List<DataType> destroyedDataTypes) {
 
-            fireDataChangedEvent();
-            hideTooltips();
-        };
+        final List<DataType> removedDataTypes = removeTopLevelDataTypes(destroyedDataTypes);
+        destroyedDataTypes.removeAll(removedDataTypes);
+        dataTypeList.refreshItemsByUpdatedDataTypes(destroyedDataTypes);
+
+        fireDataChangedEvent();
+        hideTooltips();
     }
 
     List<DataType> removeTopLevelDataTypes(final List<DataType> destroyedDataTypes) {

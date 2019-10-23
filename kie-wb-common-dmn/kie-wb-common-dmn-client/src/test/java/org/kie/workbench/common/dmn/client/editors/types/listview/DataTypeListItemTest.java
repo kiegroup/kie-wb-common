@@ -724,6 +724,39 @@ public class DataTypeListItemTest {
     }
 
     @Test
+    public void testDestroyWithDependentTypes() {
+
+        final DataType dataType = mock(DataType.class);
+        final DataType dataType0 = mock(DataType.class);
+        final DataType dataType1 = mock(DataType.class);
+        final List<DataType> removedDataTypes = asList(dataType0, dataType1);
+
+        when(dataType.destroy()).thenReturn(removedDataTypes);
+        doReturn(dataType).when(listItem).getDataType();
+        doNothing().when(listItem).destroy(any());
+
+        listItem.destroyWithDependentTypes();
+
+        verify(listItem).destroy(removedDataTypes);
+    }
+
+    @Test
+    public void testDestroyWithoutDependentTypes() {
+
+        final DataType dataType = mock(DataType.class);
+        final DataType dataType0 = mock(DataType.class);
+        final List<DataType> removedDataTypes = asList(dataType0);
+
+        when(dataType.destroyWithoutDependentTypes()).thenReturn(removedDataTypes);
+        doReturn(dataType).when(listItem).getDataType();
+        doNothing().when(listItem).destroy(any());
+
+        listItem.destroyWithoutDependentTypes();
+
+        verify(listItem).destroy(removedDataTypes);
+    }
+
+    @Test
     public void testRemoveTopLevelDataTypesWhenItemDataTypeIsDestroyedDataType() {
 
         final DataType dataType = mock(DataType.class);

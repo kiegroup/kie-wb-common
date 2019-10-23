@@ -89,10 +89,16 @@ public class DNDDataTypesHandler {
         final String referenceHash = getDataTypeList().calculateHash(reference);
         final DataType clone = cloneDataType(current);
         final Optional<DataTypeListItem> currentItem = getDataTypeList().findItem(current);
-        final Boolean isCurrentItemCollapsed = currentItem.map(DataTypeListItem::isCollapsed).orElse(false);
+        final boolean isCurrentItemCollapsed = currentItem.map(DataTypeListItem::isCollapsed).orElse(false);
 
         // destroy current data type
-        currentItem.ifPresent(item -> item.destroy().execute());
+        currentItem.ifPresent(item -> {
+            if (isTopLevelShiftOperation(current, shiftStrategy)) {
+                item.destroyWithoutDependentTypes();
+            } else {
+                item.destroyWithDependentTypes();
+            }
+        });
 
         // create new data type by using shift strategy
         getDataTypeList().findItemByDataTypeHash(referenceHash).ifPresent(ref -> {
@@ -107,6 +113,13 @@ public class DNDDataTypesHandler {
                 item.expand();
             }
         });
+    }
+
+    boolean isTopLevelShiftOperation(final DataType dataType,
+                                     final ShiftStrategy shiftStrategy) {
+        final boolean isCurrentTopLevel = dataType.isTopLevel();
+        final boolean isTopLevelShiftStrategy = shiftStrategy == INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP || shiftStrategy == INSERT_TOP_LEVEL_DATA_TYPE;
+        return isCurrentTopLevel && isTopLevelShiftStrategy;
     }
 
     DataType cloneDataType(final DataType current) {

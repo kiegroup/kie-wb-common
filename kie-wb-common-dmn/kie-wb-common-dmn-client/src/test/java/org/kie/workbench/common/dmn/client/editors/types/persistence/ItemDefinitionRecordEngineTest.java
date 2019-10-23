@@ -35,6 +35,7 @@ import org.kie.workbench.common.dmn.client.editors.types.persistence.validation.
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -145,6 +146,21 @@ public class ItemDefinitionRecordEngineTest {
         when(dataTypeDestroyHandler.refreshDependentDataTypes(dataType)).thenReturn(expectedDependentDataTypes);
 
         final List<DataType> actualDependentDataTypes = recordEngine.destroy(dataType);
+
+        verify(recordEngine).doDestroy(dataType);
+        assertEquals(expectedDependentDataTypes, actualDependentDataTypes);
+    }
+
+    @Test
+    public void testDestroyWithoutDependentTypes() {
+
+        final DataType dataType = mock(DataType.class);
+        final List<DataType> dependentDataTypes = asList(mock(DataType.class), mock(DataType.class));
+
+        when(dataTypeDestroyHandler.refreshDependentDataTypes(dataType)).thenReturn(dependentDataTypes);
+
+        final List<DataType> actualDependentDataTypes = recordEngine.destroyWithoutDependentTypes(dataType);
+        final List<DataType> expectedDependentDataTypes = singletonList(dataType);
 
         verify(recordEngine).doDestroy(dataType);
         assertEquals(expectedDependentDataTypes, actualDependentDataTypes);

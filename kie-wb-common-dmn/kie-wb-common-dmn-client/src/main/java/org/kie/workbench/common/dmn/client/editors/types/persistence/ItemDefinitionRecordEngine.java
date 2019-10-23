@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.persistence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -103,6 +104,17 @@ public class ItemDefinitionRecordEngine implements DataTypeRecordEngine {
         doDestroy(dataType);
 
         return refreshDependentDataTypesFromDestroyOperation(dataType);
+    }
+
+    @Override
+    public List<DataType> destroyWithoutDependentTypes(final DataType dataType) {
+
+        final List<DataType> affectedDataTypes = new ArrayList<>();
+        affectedDataTypes.add(dataType);
+
+        doDestroy(dataType);
+
+        return affectedDataTypes;
     }
 
     @Override

@@ -34,11 +34,11 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DN
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
 import org.mockito.Mock;
-import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.UUID_ATTR;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_INTO_HOVERED_DATA_TYPE;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_NESTED_DATA_TYPE;
@@ -156,7 +156,7 @@ public class DNDDataTypesHandlerTest {
     }
 
     @Test
-    public void testShiftCurrentByReferenceWhenCurrentIsCollapsed() {
+    public void testShiftCurrentByReferenceWhenCurrentIsCollapsedAndItIsTopLevelShiftOperation() {
 
         final DataType current = mock(DataType.class);
         final DataType clone = mock(DataType.class);
@@ -166,25 +166,24 @@ public class DNDDataTypesHandlerTest {
         final DataTypeListItem oldItem = mock(DataTypeListItem.class);
         final DataTypeListItem referenceItem = mock(DataTypeListItem.class);
         final DataTypeListItem newItem = mock(DataTypeListItem.class);
-        final Command oldItemDestroyCommand = mock(Command.class);
 
         doReturn(clone).when(handler).cloneDataType(current);
+        doReturn(true).when(handler).isTopLevelShiftOperation(current, strategy);
         when(dataTypeList.calculateHash(reference)).thenReturn(referenceHash);
         when(dataTypeList.findItem(current)).thenReturn(Optional.of(oldItem));
         when(dataTypeList.findItem(clone)).thenReturn(Optional.of(newItem));
         when(dataTypeList.findItemByDataTypeHash(referenceHash)).thenReturn(Optional.of(referenceItem));
-        when(oldItem.destroy()).thenReturn(oldItemDestroyCommand);
         when(oldItem.isCollapsed()).thenReturn(true);
 
         handler.shiftCurrentByReference(current, reference, strategy);
 
         verify(newItem).collapse();
-        verify(oldItemDestroyCommand).execute();
+        verify(oldItem).destroyWithoutDependentTypes();
         verify(referenceItem).insertNestedField(clone);
     }
 
     @Test
-    public void testShiftCurrentByReferenceWhenCurrentIsNotCollapsed() {
+    public void testShiftCurrentByReferenceWhenCurrentIsNotCollapsedAndItIsNotTopLevelShiftOperation() {
 
         final DataType current = mock(DataType.class);
         final DataType clone = mock(DataType.class);
@@ -194,20 +193,19 @@ public class DNDDataTypesHandlerTest {
         final DataTypeListItem oldItem = mock(DataTypeListItem.class);
         final DataTypeListItem referenceItem = mock(DataTypeListItem.class);
         final DataTypeListItem newItem = mock(DataTypeListItem.class);
-        final Command oldItemDestroyCommand = mock(Command.class);
 
         doReturn(clone).when(handler).cloneDataType(current);
+        doReturn(false).when(handler).isTopLevelShiftOperation(current, strategy);
         when(dataTypeList.calculateHash(reference)).thenReturn(referenceHash);
         when(dataTypeList.findItem(current)).thenReturn(Optional.of(oldItem));
         when(dataTypeList.findItem(clone)).thenReturn(Optional.of(newItem));
         when(dataTypeList.findItemByDataTypeHash(referenceHash)).thenReturn(Optional.of(referenceItem));
-        when(oldItem.destroy()).thenReturn(oldItemDestroyCommand);
         when(oldItem.isCollapsed()).thenReturn(false);
 
         handler.shiftCurrentByReference(current, reference, strategy);
 
         verify(newItem).expand();
-        verify(oldItemDestroyCommand).execute();
+        verify(oldItem).destroyWithDependentTypes();
         verify(referenceItem).insertNestedField(clone);
     }
 
@@ -440,6 +438,40 @@ public class DNDDataTypesHandlerTest {
         final ShiftStrategy expectedShiftStrategy = INSERT_SIBLING_DATA_TYPE;
 
         assertEquals(expectedShiftStrategy, actualShiftStrategy);
+    }
+
+    @Test
+    public void testIsTopLevelShiftOperationWhenDataTypeIsNotTopLevel() {
+
+        final DataType dataType = mock(DataType.class);
+        final ShiftStrategy shiftStrategy = INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP;
+
+        when(dataType.isTopLevel()).thenReturn(false);
+
+        assertFalse(handler.isTopLevelShiftOperation(dataType, shiftStrategy));
+    }
+
+    @Test
+    public void testIsTopLevelShiftOperationWhenDataTypeIsTopLevelAndShiftStrategyIsNotTopLevel() {
+
+        final DataType dataType = mock(DataType.class);
+
+        when(dataType.isTopLevel()).thenReturn(true);
+
+        assertFalse(handler.isTopLevelShiftOperation(dataType, INSERT_NESTED_DATA_TYPE));
+        assertFalse(handler.isTopLevelShiftOperation(dataType, INSERT_SIBLING_DATA_TYPE));
+        assertFalse(handler.isTopLevelShiftOperation(dataType, INSERT_INTO_HOVERED_DATA_TYPE));
+    }
+
+    @Test
+    public void testIsTopLevelShiftOperationWhenDataTypeIsTopLevelAndShiftStrategyIsTopLevel() {
+
+        final DataType dataType = mock(DataType.class);
+
+        when(dataType.isTopLevel()).thenReturn(true);
+
+        assertTrue(handler.isTopLevelShiftOperation(dataType, INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP));
+        assertTrue(handler.isTopLevelShiftOperation(dataType, INSERT_TOP_LEVEL_DATA_TYPE));
     }
 
     private void loadReferenceContext(final DNDContext context) {
