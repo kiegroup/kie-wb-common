@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.api.marshalling;
 
-import org.uberfire.backend.vfs.Path;
+package org.kie.workbench.common.dmn.api.editors.types;
 
-public interface DMNImportTypesHelper {
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    /**
-     * Returns true if the path represents a DMN file.
-     * @param path
-     * @return
-     */
-    boolean isDMN(final Path path);
+@Portable
+public class DataObject {
 
-    /**
-     * Returns true if the path represents a PMML file.
-     * @param path
-     * @return
-     */
-    boolean isPMML(final Path path);
+    private String classType;
 
-    /**
-     * Returns true if the path represents a Java file.
-     * @param path
-     * @return
-     */
-    boolean isJava(final Path path);
+    public DataObject() {
+        this("");
+    }
+
+    public DataObject(final String classType) {
+        this.classType = classType;
+    }
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(final String classType) {
+        this.classType = classType;
+    }
 }
