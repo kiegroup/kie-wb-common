@@ -176,4 +176,8 @@ public interface DefaultWorkbenchConstants
     String AccessDataTransfer();
 
     String AccessDataTransferHelp();
+
+    String DisconnectedFromServer();
+
+    String CouldNotConnectToServer();
 }
