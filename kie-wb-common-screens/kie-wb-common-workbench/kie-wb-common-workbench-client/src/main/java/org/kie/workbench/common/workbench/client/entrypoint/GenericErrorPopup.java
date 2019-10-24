@@ -24,8 +24,10 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTextAreaElement;
-import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -57,23 +59,41 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
     private HTMLDivElement footer;
 
     @Inject
-    @DataField("ignore-button")
-    private HTMLButtonElement ignoreButton;
+    @DataField("continue-button")
+    private HTMLButtonElement continueButton;
 
     @Inject
-    @DataField("copy-details-button")
-    private HTMLButtonElement copyDetailsButton;
+    @DataField("error-details-section")
+    private Div errorDetailsSection;
 
     @Inject
     @DataField("error-details")
     private HTMLTextAreaElement errorDetails;
 
     @Inject
+    @DataField("chevron-right")
+    private Anchor chevronRight;
+
+    @Inject
+    @DataField("chevron-down")
+    private Anchor chevronDown;
+
+    @Inject
+    @DataField("copy-details")
+    private Anchor copyDetails;
+
+    @Inject
+    private HTMLTextAreaElement clipboardText;
+
+    @Inject
     private Event<NotificationEvent> notificationEvent;
 
     private final Clipboard clipboard;
-    private Command onClose = () -> {};
 
+    private Command onClose = () -> {
+    };
+
+    private String errorText;
     @Inject
     public GenericErrorPopup(final GenericErrorPopup view,
                              final Clipboard clipboard) {
@@ -84,7 +104,12 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
     @PostConstruct
     public void init() {
         super.setup();
-        this.getModal().addHiddenHandler(e -> errorDetails.textContent = "");
+        this.getModal().addHiddenHandler(e -> {
+            errorDetails.textContent = "";
+            errorText = "";
+        });
+        setShowDetailshandler();
+        setCopyhandler();
     }
 
     @Override
@@ -104,33 +129,50 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
         } else {
             errorDetails.textContent = details;
         }
-
+        errorText = errorDetails.textContent;
         this.onClose = onClose;
     }
-    
+
     public void close() {
         hide();
         this.onClose.execute();
     }
 
-    @EventHandler("ignore-button")
-    private void onIgnoreButtonClicked(final @ForEvent("click") elemental2.dom.Event e) {
-        console.error(errorDetails.textContent);
-        close();
+    private void setShowDetailshandler() {
+
+        chevronRight.setOnclick(event -> {
+            chevronDown.setHidden(false);
+            chevronRight.setHidden(true);
+            errorDetailsSection.setHidden(false);
+        });
+
+        chevronDown.setOnclick(event -> {
+            chevronRight.setHidden(false);
+            chevronDown.setHidden(true);
+            errorDetailsSection.setHidden(true);
+        });
     }
 
-    @EventHandler("copy-details-button")
-    private void onCopyDetailsButtonClicked(final @ForEvent("click") elemental2.dom.Event e) {
-        final boolean copySucceeded = clipboard.copy(errorDetails);
+    private void setCopyhandler() {
+        copyDetails.setOnclick(event -> {
+            clipboardText.textContent = errorText;
+            final boolean copySucceeded = clipboard.copy(clipboardText);
 
-        if (copySucceeded) {
-            notificationEvent.fire(new NotificationEvent(DefaultWorkbenchConstants.INSTANCE.ErrorDetailsSuccessfullyCopiedToClipboard(), SUCCESS));
-        } else {
-            notificationEvent.fire(new NotificationEvent(DefaultWorkbenchConstants.INSTANCE.ErrorDetailsFailedToBeCopiedToClipboard(), WARNING));
-        }
+            if (copySucceeded) {
+                notificationEvent.fire(new NotificationEvent(DefaultWorkbenchConstants.INSTANCE.ErrorDetailsSuccessfullyCopiedToClipboard(), SUCCESS));
+            } else {
+                notificationEvent.fire(new NotificationEvent(DefaultWorkbenchConstants.INSTANCE.ErrorDetailsFailedToBeCopiedToClipboard(), WARNING));
+            }
 
-        console.error(errorDetails.textContent);
-        hide();
+            console.error(errorText);
+            hide();
+        });
+    }
+
+    @EventHandler("continue-button")
+    private void onContinueButtonClicked(final @ForEvent("click") elemental2.dom.Event e) {
+        console.error(errorText);
+        close();
     }
 
     @Override

@@ -16,18 +16,36 @@
 
 <div>
     <div>
-        <div data-field="header">Unexpected error</div>
+        <div data-field="header">System error</div>
 
         <div data-field="body">
-            <p>An unexpected error happened. Please try again in a few moments.</p>
-            <form>
-                <textarea data-field="error-details" class="form-control" style="height: 0; opacity: 0; resize: none; white-space: pre; cursor: text; border: none;"></textarea>
-            </form>
+            <div class="alert alert-warning">
+                <strong>Warning!</strong> An unexpected system error occurred!
+            </div>
+            <p>Unexpected events occured that the system didn't know how to handle. Details have been sent to the system log file. Unresolved errors might persist.</p>
+            <div>
+                <a data-field="chevron-down" hidden><i class="glyphicon glyphicon-chevron-down" ></i></a>
+                <a data-field="chevron-right"><i class="glyphicon glyphicon-chevron-right"></i></a>Error details
+                <a data-field="copy-details"><i class="glyphicon glyphicon-copy"></i></a>
+            </div>
+            <div data-field="error-details-section" style="margin-top: 8px;" hidden>
+                <textarea data-field="error-details" class="form-control" style="resize: none; white-space: pre; cursor: text; border: none;" readonly></textarea>
+            </div>
+            <hr>
+<!--            <div class="checkbox">-->
+<!--                <label><input type="checkbox" value="">Don't show this message again for </label>-->
+<!--                <select class="form-control" style="width:90px;display:inline-block;">-->
+<!--                    <option>One hour</option>-->
+<!--                    <option>Two hour</option>-->
+<!--                    <option>30 min</option>-->
+<!--                    <option>10 min</option>-->
+<!--                </select>-->
+<!--                <span class="glyphicon glyphicon-info-sign"></span>-->
+<!--            </div>-->
         </div>
 
         <div data-field="footer" style="margin-top: -20px;">
-            <button data-field="copy-details-button" class="btn btn-link">Copy error details</button>
-            <button data-field="ignore-button" class="btn btn-default btn-primary">Ignore</button>
+            <button data-field="continue-button" class="btn btn-default btn-primary">Continue</button>
         </div>
     </div>
 </div>
