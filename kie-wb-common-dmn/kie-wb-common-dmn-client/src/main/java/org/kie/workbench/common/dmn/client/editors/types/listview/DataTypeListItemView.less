@@ -16,13 +16,10 @@
 
 [data-i18n-prefix="DataTypeListItemView."] {
 
-  &.list-group-item:hover {
-    background: #eff8ff;
-  }
-
   &.list-group-item {
-    border: 1px solid #e2e4e3;
-    height: 71px;
+    height: 70px;
+    background: none;
+    border: none;
     padding-left: 25px;
   }
 
@@ -146,6 +143,13 @@
 
   div[data-row-uuid] {
 
+    border: 1px solid #e2e4e3;
+    height: 71px;
+
+    &:hover {
+      background: #eff8ff;
+    }
+
     &.read-only {
       cursor: not-allowed;
       pointer-events: none;
@@ -153,17 +157,15 @@
       opacity: .75;
 
       &.kie-dnd-hover {
-        .list-group-item {
-          background-color: #FFF;
-        }
+        background-color: #FFF;
       }
     }
 
     &.focused-data-type {
-      .list-group-item {
-        background: #eff8ff;
-        height: 72px;
+      background: #eff8ff;
+      height: 72px;
 
+      .list-group-item {
         .constraint-component {
           padding-top: 5px;
         }
@@ -175,9 +177,7 @@
     }
 
     &.key-highlight {
-      .list-group-item {
-        background: #E5EEF5;
-      }
+      background: #E5EEF5;
     }
   }
 }

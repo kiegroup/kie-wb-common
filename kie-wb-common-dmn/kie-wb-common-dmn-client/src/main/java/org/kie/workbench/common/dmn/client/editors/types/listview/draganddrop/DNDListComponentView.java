@@ -41,12 +41,13 @@ import static org.kie.workbench.common.dmn.client.editors.types.listview.dragand
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.asDragging;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.asHover;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.asNonDragging;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.getCSSMargin;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.getCSSTop;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.getCSSWidth;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.isGrip;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.querySelector;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSMargin;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSPaddingLeft;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSTop;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSWidth;
 
 @Templated
 public class DNDListComponentView implements DNDListComponent.View {
@@ -99,7 +100,7 @@ public class DNDListComponentView implements DNDListComponent.View {
             final int margin = positionX * getLevelSize();
 
             setCSSTop(draggable, top);
-            setCSSMargin(draggable, margin);
+            setCSSPaddingLeft(draggable, margin);
 
             if (positionY > HIDDEN_Y_POSITION) {
                 numberOfVisibleElements++;
@@ -248,7 +249,7 @@ public class DNDListComponentView implements DNDListComponent.View {
     }
 
     private int getCurrentXPosition(final HTMLElement element) {
-        final int margin = getCSSMargin(element) / getLevelSize();
+        final int margin = getCSSWidth(element) / getLevelSize();
         return margin > 0 ? margin : 0;
     }
 
@@ -304,10 +305,9 @@ public class DNDListComponentView implements DNDListComponent.View {
 
             final HTMLElement dependent = elements.get(i);
             final int dependentTop = getCSSTop(getDragging()) + (getItemHeight() * (i + 1));
-            final int dependentMargin = getCSSMargin(getDragging()) + ((Position.getX(dependent) - Position.getX(getDragging())) * getLevelSize());
 
             setCSSTop(dependent, dependentTop);
-            setCSSMargin(dependent, dependentMargin);
+            setCSSWidth(dependent, getCSSWidth(getDragging()));
         }
     }
 
@@ -408,7 +408,7 @@ public class DNDListComponentView implements DNDListComponent.View {
     }
 
     void updateDraggingElementX(final Event event) {
-        setCSSMargin(getDragging(), getNewDraggingXPosition(event));
+        setCSSWidth(getDragging(), getNewDraggingXPosition(event));
     }
 
     private void updateDraggingElementY(final int mouseYPosition,

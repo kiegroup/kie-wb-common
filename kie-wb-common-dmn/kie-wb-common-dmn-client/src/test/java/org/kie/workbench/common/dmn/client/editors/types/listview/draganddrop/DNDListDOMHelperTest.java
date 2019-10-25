@@ -49,15 +49,16 @@ import static org.kie.workbench.common.dmn.client.editors.types.listview.dragand
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.asHover;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.asNonDragging;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.asNonHover;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.getCSSMargin;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.getCSSTop;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.getCSSWidth;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.isDraggingElement;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.isGrip;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.parseDouble;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.parseInt;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.querySelector;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSMargin;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSPaddingLeft;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSTop;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.setCSSWidth;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -258,13 +259,23 @@ public class DNDListDOMHelperTest {
     }
 
     @Test
-    public void testSetCSSMargin() {
+    public void testSetCSSWidth() {
 
         element.style = mock(CSSStyleDeclaration.class);
 
-        setCSSMargin(element, 321);
+        setCSSWidth(element, 321);
 
         verify(element.style).setProperty("width", "calc(100% - 321px)");
+    }
+
+    @Test
+    public void testSetCSSPaddingLeft() {
+
+        element.style = mock(CSSStyleDeclaration.class);
+
+        setCSSPaddingLeft(element, 321);
+
+        verify(element.style).setProperty("padding-left", "321px");
     }
 
     @Test
@@ -280,12 +291,12 @@ public class DNDListDOMHelperTest {
     }
 
     @Test
-    public void testGetCSSMargin() {
+    public void testGetCSSWidth() {
 
         element.style = mock(CSSStyleDeclaration.class);
         when(element.style.getPropertyValue("width")).thenReturn("calc(100% - 321px)");
 
-        final int actualWidth = getCSSMargin(element);
+        final int actualWidth = getCSSWidth(element);
         final int expectedWidth = 321;
 
         assertEquals(expectedWidth, actualWidth);

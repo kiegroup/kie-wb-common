@@ -154,9 +154,9 @@ public class DNDListComponentViewTest {
         verify(element1.style).setProperty("top", "50px");
         verify(element2.style).setProperty("top", "100px");
 
-        verify(element0.style).setProperty("width", "calc(100% - 0px)");
-        verify(element1.style).setProperty("width", "calc(100% - 75px)");
-        verify(element2.style).setProperty("width", "calc(100% - 75px)");
+        verify(element0.style).setProperty("padding-left", "0px");
+        verify(element1.style).setProperty("padding-left", "75px");
+        verify(element2.style).setProperty("padding-left", "75px");
 
         verify(dragArea.style).setProperty("height", "151px");
     }
@@ -720,11 +720,11 @@ public class DNDListComponentViewTest {
         view.updateDependentsPosition();
 
         verify(dependentElement0.style).setProperty("top", "100px");
-        verify(dependentElement0.style).setProperty("width", "calc(100% - 150px)");
         verify(dependentElement1.style).setProperty("top", "150px");
-        verify(dependentElement1.style).setProperty("width", "calc(100% - 150px)");
         verify(dependentElement2.style).setProperty("top", "200px");
-        verify(dependentElement2.style).setProperty("width", "calc(100% - 200px)");
+        verify(dependentElement0.style).setProperty("width", "calc(100% - 100px)");
+        verify(dependentElement1.style).setProperty("width", "calc(100% - 100px)");
+        verify(dependentElement2.style).setProperty("width", "calc(100% - 100px)");
     }
 
     @Test

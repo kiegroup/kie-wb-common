@@ -139,8 +139,13 @@ class DNDListDOMHelper {
         element.style.setProperty("top", value + "px");
     }
 
-    static void setCSSMargin(final HTMLElement element,
-                             final int value) {
+    static void setCSSPaddingLeft(final HTMLElement element,
+                                  final int value) {
+        element.style.setProperty("padding-left", value + "px");
+    }
+
+    static void setCSSWidth(final HTMLElement element,
+                            final int value) {
         element.style.setProperty("width", "calc(100% - " + value + "px)");
     }
 
@@ -148,7 +153,7 @@ class DNDListDOMHelper {
         return parseInt(element.style.getPropertyValue("top"));
     }
 
-    static int getCSSMargin(final HTMLElement element) {
+    static int getCSSWidth(final HTMLElement element) {
         final String width = element.style.getPropertyValue("width");
         return parseInt(width.replace("calc(100% - ", "").replace("px)", ""));
     }

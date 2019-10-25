@@ -39,8 +39,7 @@
       user-select: none;
       margin: 0;
       padding: 0;
-      background: #e8e8e8;
-      box-shadow: 0 0 2px inset #000;
+      background: #FFF;
 
       &.kie-dnd-current-dragging {
         z-index: 9;
@@ -49,10 +48,7 @@
 
       &.kie-dnd-hover {
         opacity: .75;
-
-        .list-group-item {
-          background-color: #dce7ef;
-        }
+        background-color: #dce7ef;
       }
 
       &:hover .kie-dnd-grip,
@@ -69,6 +65,7 @@
         cursor: grab;
         z-index: 1;
         color: #AAA;
+        left: 0;
 
         .fa.fa-ellipsis-v {
           top: ~"calc(50% - 8px)";
