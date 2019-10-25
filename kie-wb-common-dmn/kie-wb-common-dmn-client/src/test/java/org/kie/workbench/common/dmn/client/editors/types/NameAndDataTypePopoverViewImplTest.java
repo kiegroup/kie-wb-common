@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.Event;
 import elemental2.dom.KeyboardEvent;
 import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.Div;
@@ -54,6 +55,8 @@ import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeP
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.MANAGE_BUTTON_SELECTOR;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.TAB_KEY;
 import static org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypePopoverViewImpl.TYPE_SELECTOR_BUTTON_SELECTOR;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -223,6 +226,39 @@ public class NameAndDataTypePopoverViewImplTest {
     }
 
     @Test
+    public void testTypeSelectorKeyDownEventListenerWhenIsNotAHandledKey() {
+
+        final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
+        doReturn(false).when(view).isEnterKeyPressed(keyboardEvent);
+        doReturn(false).when(view).isEscapeKeyPressed(keyboardEvent);
+        doReturn(false).when(view).isTabKeyPressed(keyboardEvent);
+
+        view.typeSelectorKeyDownEventListener(keyboardEvent);
+
+        verify(view, never()).hide(anyBoolean());
+        verify(keyboardEvent, never()).preventDefault();
+        verify(view, never()).onClosedByKeyboard();
+        verify(view, never()).reset();
+        verify(manageButton, never()).focus();
+        verify(nameEditor, never()).focus();
+    }
+
+    @Test
+    public void testTypeSelectorKeyDownEventListenerWhenIsNotAKeyboardEvent() {
+
+        final Event event = mock(Event.class);
+
+        view.typeSelectorKeyDownEventListener(event);
+
+        verify(view, never()).hide(anyBoolean());
+        verify(event, never()).preventDefault();
+        verify(view, never()).onClosedByKeyboard();
+        verify(view, never()).reset();
+        verify(manageButton, never()).focus();
+        verify(nameEditor, never()).focus();
+    }
+
+    @Test
     public void testTypeSelectorKeyDownEventListenerTabKey() {
 
         final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
@@ -268,6 +304,31 @@ public class NameAndDataTypePopoverViewImplTest {
         verify(view).hide(false);
         verify(view).reset();
         verify(view).onClosedByKeyboard();
+    }
+
+    @Test
+    public void testManagerButtonKeyDownEventWhenIsNotEscapeKey() {
+
+        final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
+        doReturn(false).when(view).isEscapeKeyPressed(keyboardEvent);
+
+        view.manageButtonKeyDownEventListener(keyboardEvent);
+
+        verify(view, never()).hide(false);
+        verify(view, never()).reset();
+        verify(view, never()).onClosedByKeyboard();
+    }
+
+    @Test
+    public void testManagerButtonKeyDownEventWhenIsNotKeyboardEvent() {
+
+        final Event event = mock(Event.class);
+
+        view.manageButtonKeyDownEventListener(event);
+
+        verify(view, never()).hide(false);
+        verify(view, never()).reset();
+        verify(view, never()).onClosedByKeyboard();
     }
 
     @Test
@@ -586,5 +647,34 @@ public class NameAndDataTypePopoverViewImplTest {
         verify(view).hide(false);
         verify(view).reset();
         verify(view).onClosedByKeyboard();
+    }
+
+    @Test
+    public void testKeyDownEventListenerWhenIsNotAHandledKey() {
+
+        final KeyboardEvent event = mock(KeyboardEvent.class);
+
+        doReturn(false).when(view).isEnterKeyPressed(event);
+        doReturn(false).when(view).isEscapeKeyPressed(event);
+
+        view.keyDownEventListener(event);
+
+        verify(view, never()).hide(anyBoolean());
+        verify(event, never()).stopPropagation();
+        verify(view, never()).onClosedByKeyboard();
+        verify(view, never()).reset();
+    }
+
+    @Test
+    public void testKeyDownEventListenerWhenIsNotKeyboardEvent() {
+
+        final Event event = mock(Event.class);
+        view.keyDownEventListener(event);
+
+        verify(view, never()).hide(anyBoolean());
+        verify(event, never()).stopPropagation();
+        verify(view, never()).onClosedByKeyboard();
+        verify(view, never()).isEscapeKeyPressed(any());
+        verify(view, never()).reset();
     }
 }
