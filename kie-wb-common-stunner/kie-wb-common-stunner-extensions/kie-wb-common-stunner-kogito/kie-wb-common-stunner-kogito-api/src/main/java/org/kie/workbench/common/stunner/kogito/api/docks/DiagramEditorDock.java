@@ -18,10 +18,15 @@ package org.kie.workbench.common.stunner.kogito.api.docks;
 public interface DiagramEditorDock {
 
     /**
-     * Initialise dock.
+     * Initialise dock registering it with AppFormer's docks configuration.
      * @param owningPerspectiveId PerspectiveId for the perspective on which the dock should appear.
      */
     void init(final String owningPerspectiveId);
+
+    /**
+     * Destroy the dock removing it from AppFormer's docks configuration.
+     */
+    void destroy();
 
     /**
      * Open the dock showing its content.

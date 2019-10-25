@@ -66,6 +66,14 @@ public class DecisionNavigatorDock implements DiagramEditorDock {
         this.uberfireDock = makeUberfireDock();
     }
 
+    /**
+     * No operation. Destruction is handled by the close() method.
+     */
+    @Override
+    public void destroy() {
+        //NOP
+    }
+
     public void setupCanvasHandler(final CanvasHandler handler) {
         decisionNavigatorPresenter.setHandler(handler);
     }

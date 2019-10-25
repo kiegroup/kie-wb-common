@@ -30,7 +30,6 @@ import org.uberfire.client.workbench.docks.UberfireDocks;
 public class KogitoDecisionNavigatorDock extends DecisionNavigatorDock {
 
     public KogitoDecisionNavigatorDock() {
-        super();
         // CDI proxy
     }
 
@@ -50,6 +49,11 @@ public class KogitoDecisionNavigatorDock extends DecisionNavigatorDock {
 
         uberfireDocks.add(getUberfireDock());
         uberfireDocks.show(position(), perspective());
+    }
+
+    @Override
+    public void destroy() {
+        uberfireDocks.remove(getUberfireDock());
     }
 
     @Override

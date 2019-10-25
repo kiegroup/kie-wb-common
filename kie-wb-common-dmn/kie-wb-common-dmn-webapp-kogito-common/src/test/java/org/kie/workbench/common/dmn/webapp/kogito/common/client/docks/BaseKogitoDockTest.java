@@ -77,6 +77,15 @@ public abstract class BaseKogitoDockTest {
     }
 
     @Test
+    public void testDestroy() {
+        dock.destroy();
+
+        verify(uberfireDocks).remove(dockArgumentCaptor.capture());
+
+        assertEquals(screen(), dockArgumentCaptor.getValue().getIdentifier());
+    }
+
+    @Test
     public void testOpenWhenClosed() {
         dock.open();
 

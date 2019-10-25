@@ -264,11 +264,11 @@ public abstract class BaseDMNDiagramEditor extends AbstractDiagramEditor {
     public void onClose() {
         superOnClose();
 
-        decisionNavigatorDock.close();
+        decisionNavigatorDock.destroy();
         decisionNavigatorDock.resetContent();
 
-        diagramPropertiesDock.close();
-        diagramPreviewAndExplorerDock.close();
+        diagramPropertiesDock.destroy();
+        diagramPreviewAndExplorerDock.destroy();
 
         dataTypesPage.disableShortcuts();
     }

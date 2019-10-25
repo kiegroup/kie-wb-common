@@ -29,7 +29,6 @@ public class KogitoPropertiesDock extends DiagramEditorPropertiesDock {
 
     public KogitoPropertiesDock() {
         // CDI proxy
-        this(null, null);
     }
 
     @Inject
@@ -45,6 +44,11 @@ public class KogitoPropertiesDock extends DiagramEditorPropertiesDock {
 
         uberfireDocks.add(getUberfireDock());
         uberfireDocks.show(position(), owningPerspectiveId());
+    }
+
+    @Override
+    public void destroy() {
+        uberfireDocks.remove(getUberfireDock());
     }
 
     @Override
