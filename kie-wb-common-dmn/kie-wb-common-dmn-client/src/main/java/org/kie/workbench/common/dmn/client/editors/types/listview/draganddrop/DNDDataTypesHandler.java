@@ -16,32 +16,22 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop;
 
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
-import elemental2.dom.Node;
-import elemental2.dom.NodeList;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeList;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItem;
-import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.Position;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.ItemDefinitionStore;
 
-import static org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItemView.UUID_ATTR;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_INTO_HOVERED_DATA_TYPE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_NESTED_DATA_TYPE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_SIBLING_DATA_TYPE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_TOP_LEVEL_DATA_TYPE;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler.ShiftStrategy.INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP;
-import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.HIDDEN_Y_POSITION;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandlerShiftStrategy.INSERT_TOP_LEVEL_DATA_TYPE;
+import static org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandlerShiftStrategy.INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP;
 
 public class DNDDataTypesHandler {
 
@@ -70,7 +60,7 @@ public class DNDDataTypesHandler {
                                final Element hoverElement) {
         try {
 
-            final DNDContext dndContext = makeDndContext(currentElement, hoverElement);
+            final DNDDataTypesHandlerContext dndContext = makeDndContext(currentElement, hoverElement);
             final Optional<DataType> current = dndContext.getCurrentDataType();
             final Optional<DataType> reference = dndContext.getReference();
 
@@ -78,13 +68,13 @@ public class DNDDataTypesHandler {
                 shiftCurrentByReference(current.get(), reference.get(), dndContext.getStrategy());
             }
         } catch (final Exception e) {
-            logError("Drag-n-Drop error. Check '" + DNDDataTypesHandler.class.getSimpleName() + "'.");
+            logError("Drag-n-Drop error (" + e.getMessage() + "). Check '" + DNDDataTypesHandler.class.getSimpleName() + "'.");
         }
     }
 
     void shiftCurrentByReference(final DataType current,
                                  final DataType reference,
-                                 final ShiftStrategy shiftStrategy) {
+                                 final DNDDataTypesHandlerShiftStrategy shiftStrategy) {
 
         final String referenceHash = getDataTypeList().calculateHash(reference);
         final DataType clone = cloneDataType(current);
@@ -102,7 +92,7 @@ public class DNDDataTypesHandler {
 
         // create new data type by using shift strategy
         getDataTypeList().findItemByDataTypeHash(referenceHash).ifPresent(ref -> {
-            shiftStrategy.consumer.accept(ref, clone);
+            shiftStrategy.getConsumer().accept(ref, clone);
         });
 
         // keep the state of the new data type item consistent
@@ -116,7 +106,7 @@ public class DNDDataTypesHandler {
     }
 
     boolean isTopLevelShiftOperation(final DataType dataType,
-                                     final ShiftStrategy shiftStrategy) {
+                                     final DNDDataTypesHandlerShiftStrategy shiftStrategy) {
         final boolean isCurrentTopLevel = dataType.isTopLevel();
         final boolean isTopLevelShiftStrategy = shiftStrategy == INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP || shiftStrategy == INSERT_TOP_LEVEL_DATA_TYPE;
         return isCurrentTopLevel && isTopLevelShiftStrategy;
@@ -130,9 +120,9 @@ public class DNDDataTypesHandler {
         return dataTypeManager.from(itemDefinition).get();
     }
 
-    DNDContext makeDndContext(final Element currentElement,
-                              final Element hoverElement) {
-        return new DNDContext(currentElement, hoverElement);
+    DNDDataTypesHandlerContext makeDndContext(final Element currentElement,
+                                              final Element hoverElement) {
+        return new DNDDataTypesHandlerContext(this, currentElement, hoverElement);
     }
 
     private DataTypeList getDataTypeList() {
@@ -144,7 +134,11 @@ public class DNDDataTypesHandler {
                 });
     }
 
-    private DNDListComponent getDndListComponent() {
+    DataTypeStore getDataTypeStore() {
+        return dataTypeStore;
+    }
+
+    DNDListComponent getDndListComponent() {
         return Optional
                 .ofNullable(getDataTypeList().getDNDListComponent())
                 .orElseThrow(() -> {
@@ -155,136 +149,5 @@ public class DNDDataTypesHandler {
 
     void logError(final String message) {
         DomGlobal.console.error(message);
-    }
-
-    class DNDContext {
-
-        private final Element currentElement;
-
-        private final Element hoverElement;
-
-        private Element previousElement;
-
-        private DataType current;
-
-        private DataType hovered;
-
-        private DataType previous;
-
-        DNDContext(final Element currentElement,
-                   final Element hoverElement) {
-
-            this.currentElement = currentElement;
-            this.hoverElement = hoverElement;
-            this.current = getDataType(currentElement);
-        }
-
-        Optional<DataType> getReference() {
-
-            if (reloadHoveredDataType().isPresent() && hoveredDataTypeIsNotReadOnly()) {
-                return getHoveredDataType();
-            }
-
-            if (reloadPreviousDataType().isPresent()) {
-                return getPreviousDataType();
-            }
-
-            return getCurrentDataType().flatMap(this::getFirstDataType);
-        }
-
-        ShiftStrategy getStrategy() {
-
-            if (getHoveredDataType().isPresent() && hoveredDataTypeIsNotReadOnly()) {
-                return INSERT_INTO_HOVERED_DATA_TYPE;
-            }
-
-            if (!getPreviousDataType().isPresent()) {
-                return INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP;
-            }
-
-            final int currentElementLevel = Position.getX(currentElement);
-            final int previousElementLevel = Position.getX(previousElement);
-
-            if (currentElementLevel == 0) {
-                return INSERT_TOP_LEVEL_DATA_TYPE;
-            } else if (previousElementLevel < currentElementLevel && previousDataTypeIsNotReadOnly()) {
-                return INSERT_NESTED_DATA_TYPE;
-            } else {
-                return INSERT_SIBLING_DATA_TYPE;
-            }
-        }
-
-        private Optional<DataType> reloadHoveredDataType() {
-            hovered = getDataType(hoverElement);
-            return getHoveredDataType();
-        }
-
-        private Optional<DataType> reloadPreviousDataType() {
-            previousElement = getPreviousElement(currentElement);
-            previous = getDataType(previousElement);
-            return getPreviousDataType();
-        }
-
-        private boolean previousDataTypeIsNotReadOnly() {
-            return !getPreviousDataType().map(DataType::isReadOnly).orElse(false);
-        }
-
-        private boolean hoveredDataTypeIsNotReadOnly() {
-            return !getHoveredDataType().map(DataType::isReadOnly).orElse(false);
-        }
-
-        Optional<DataType> getCurrentDataType() {
-            return Optional.ofNullable(current);
-        }
-
-        private Optional<DataType> getHoveredDataType() {
-            return Optional.ofNullable(hovered);
-        }
-
-        private Optional<DataType> getPreviousDataType() {
-            return Optional.ofNullable(previous);
-        }
-
-        private DataType getDataType(final Element element) {
-            return element == null ? null : dataTypeStore.get(element.getAttribute(UUID_ATTR));
-        }
-
-        private Optional<DataType> getFirstDataType(final DataType current) {
-
-            final NodeList<Node> nodes = getDndListComponent().getDragArea().childNodes;
-
-            for (int i = 0; i < nodes.length; i++) {
-                final Element element = (Element) nodes.getAt(i);
-                if (Position.getY(element) > HIDDEN_Y_POSITION && Position.getX(element) == 0) {
-                    final DataType dataType = getDataType(element);
-                    if (dataType != null && !Objects.equals(current.getName(), dataType.getName())) {
-                        return Optional.of(dataType);
-                    }
-                }
-            }
-
-            return Optional.empty();
-        }
-
-        private Element getPreviousElement(final Element reference) {
-            return getDndListComponent()
-                    .getPreviousElement(reference, element -> Position.getX(element) <= Position.getX(reference))
-                    .orElse(null);
-        }
-    }
-
-    enum ShiftStrategy {
-
-        INSERT_TOP_LEVEL_DATA_TYPE_AT_THE_TOP(DataTypeListItem::insertFieldAbove),
-        INSERT_INTO_HOVERED_DATA_TYPE(DataTypeListItem::insertNestedField),
-        INSERT_TOP_LEVEL_DATA_TYPE(DataTypeListItem::insertFieldBelow),
-        INSERT_SIBLING_DATA_TYPE(DataTypeListItem::insertFieldBelow),
-        INSERT_NESTED_DATA_TYPE(DataTypeListItem::insertNestedField);
-
-        private final BiConsumer<DataTypeListItem, DataType> consumer;
-
-        ShiftStrategy(final BiConsumer<DataTypeListItem, DataType> consumer) {
-            this.consumer = consumer;
-        }
     }
 }
