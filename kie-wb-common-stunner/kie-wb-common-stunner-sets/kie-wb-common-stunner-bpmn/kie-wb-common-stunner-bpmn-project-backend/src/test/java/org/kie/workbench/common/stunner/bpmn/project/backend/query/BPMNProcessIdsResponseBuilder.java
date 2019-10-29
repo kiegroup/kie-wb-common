@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.query;
+package org.kie.workbench.common.stunner.bpmn.project.backend.query;
 
 import java.net.URI;
 import java.util.ArrayList;
