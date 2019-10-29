@@ -16,12 +16,16 @@
 
 package org.kie.workbench.common.dmn.api.editors.types;
 
+import java.util.List;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class DataObject {
 
     private String classType;
+
+    private List<DataObjectProperty> properties;
 
     public DataObject() {
         this("");
@@ -38,4 +42,13 @@ public class DataObject {
     public void setClassType(final String classType) {
         this.classType = classType;
     }
+
+    public List<DataObjectProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(final List<DataObjectProperty> properties) {
+        this.properties = properties;
+    }
 }
+

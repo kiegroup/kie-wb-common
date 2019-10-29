@@ -13,42 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-[data-i18n-prefix="TreeListItemView."] {
 
-  .row {
-    margin: 0;
-  }
+package org.kie.workbench.common.dmn.api.editors.types;
 
-  .row:hover {
-    background-color: #eff8ff;
-  }
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-  .list-view-pf-expand {
-    padding: 0 0 0 10px;
-    margin: 0;
-    width: 30px;
-  }
+@Portable
+public class DataObjectProperty {
 
-  .col-md-2 {
-    padding: 0;
-    margin: 0;
-    width: 20px;
-  }
+    private String type;
+    private String property;
 
-  .col-md-6 {
-    padding: 0 10px;
-  }
+    public String getProperty() {
+        return property;
+    }
 
-  [data-field="item-details"] {
-    padding-bottom: 0;
-    font-weight: 600;
-    color: #0088ce;
-  }
+    public void setProperty(final String property) {
+        this.property = property;
+    }
 
+    public String getType() {
+        return type;
+    }
 
-
-  .container-fluid{
-    overflow: hidden;
-  }
-
+    public void setType(final String type) {
+        this.type = type;
+    }
 }
