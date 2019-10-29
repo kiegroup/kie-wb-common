@@ -155,7 +155,7 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-core-editors</artifactId>
+      <artifactId>uberfire-widgets-core-ace</artifactId>
     </dependency>
 
     <dependency>
