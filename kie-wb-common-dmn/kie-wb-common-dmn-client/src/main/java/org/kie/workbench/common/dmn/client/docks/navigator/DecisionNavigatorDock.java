@@ -66,12 +66,9 @@ public class DecisionNavigatorDock implements DiagramEditorDock {
         this.uberfireDock = makeUberfireDock();
     }
 
-    /**
-     * No operation. Destruction is handled by the close() method.
-     */
     @Override
     public void destroy() {
-        //NOP
+        uberfireDocks.remove(getUberfireDock());
     }
 
     public void setupCanvasHandler(final CanvasHandler handler) {
@@ -104,7 +101,7 @@ public class DecisionNavigatorDock implements DiagramEditorDock {
 
         isOpened = false;
         uberfireDocks.close(getUberfireDock());
-        uberfireDocks.remove(getUberfireDock());
+        destroy();
     }
 
     protected boolean isOpened() {

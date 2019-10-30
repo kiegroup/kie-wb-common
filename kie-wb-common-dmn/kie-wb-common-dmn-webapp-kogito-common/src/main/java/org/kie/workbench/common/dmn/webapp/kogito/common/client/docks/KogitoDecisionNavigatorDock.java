@@ -52,11 +52,6 @@ public class KogitoDecisionNavigatorDock extends DecisionNavigatorDock {
     }
 
     @Override
-    public void destroy() {
-        uberfireDocks.remove(getUberfireDock());
-    }
-
-    @Override
     public void open() {
         if (isOpened()) {
             return;

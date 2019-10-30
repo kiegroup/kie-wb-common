@@ -60,12 +60,9 @@ public class PreviewDiagramDock implements DiagramEditorDock {
         this.uberfireDock = makeUberfireDock();
     }
 
-    /**
-     * No operation. Destruction is handled by the close() method.
-     */
     @Override
     public void destroy() {
-        //NOP
+        uberfireDocks.remove(getUberfireDock());
     }
 
     @Override
@@ -88,7 +85,7 @@ public class PreviewDiagramDock implements DiagramEditorDock {
 
         isOpened = false;
         uberfireDocks.close(getUberfireDock());
-        uberfireDocks.remove(getUberfireDock());
+        destroy();
     }
 
     protected boolean isOpened() {

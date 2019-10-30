@@ -43,12 +43,9 @@ public abstract class BaseDiagramEditorDock implements DiagramEditorDock {
         this.uberfireDock = makeUberfireDock();
     }
 
-    /**
-     * No operation. Destruction is handled by the close() method.
-     */
     @Override
     public void destroy() {
-        //NOP
+        uberfireDocks.remove(getUberfireDock());
     }
 
     @Override
@@ -70,7 +67,7 @@ public abstract class BaseDiagramEditorDock implements DiagramEditorDock {
 
         isOpened = false;
         uberfireDocks.close(getUberfireDock());
-        uberfireDocks.remove(getUberfireDock());
+        destroy();
     }
 
     public boolean isOpened() {
