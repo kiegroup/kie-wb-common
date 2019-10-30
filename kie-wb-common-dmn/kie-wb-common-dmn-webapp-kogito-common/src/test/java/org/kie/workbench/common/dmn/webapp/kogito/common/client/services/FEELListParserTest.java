@@ -34,6 +34,7 @@ public class FEELListParserTest {
                 {"", new String[]{}},
                 {"one", new String[]{"one"}},
                 {"one,two", new String[]{"one", "two"}},
+                {"\"one,two\"", new String[]{"\"one,two\""}},
                 {"one ,two", new String[]{"one", "two"}},
                 {"one, two", new String[]{"one", "two"}},
                 {"\"one\",two", new String[]{"\"one\"", "two"}},
@@ -42,7 +43,11 @@ public class FEELListParserTest {
                 {"\"one,two\",\"three\"", new String[]{"\"one,two\"", "\"three\""}},
                 {"\"one,two\",three", new String[]{"\"one,two\"", "three"}},
                 {"\"one\", \"two\", \"three\"", new String[]{"\"one\"", "\"two\"", "\"three\""}},
-                {"\"one, two\", \"three\"", new String[]{"\"one, two\"", "\"three\""}}
+                {"one, \"two\", three", new String[]{"one", "\"two\"", "three"}},
+                {"\"one\", two, \"three\"", new String[]{"\"one\"", "two", "\"three\""}},
+                {"\"one, two\", \"three\"", new String[]{"\"one, two\"", "\"three\""}},
+                {" one , two , three ", new String[]{"one", "two", "three"}},
+                {"\"NY, Long Street, 123\"", new String[]{"\"NY, Long Street, 123\""}}
         });
     }
 
