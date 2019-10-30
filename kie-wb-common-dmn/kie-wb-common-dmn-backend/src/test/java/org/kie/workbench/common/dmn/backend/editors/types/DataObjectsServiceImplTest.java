@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.backend.editors.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,14 +51,10 @@ public class DataObjectsServiceImplTest {
     public void testLoadDataObjects() {
 
         final WorkspaceProject project = mock(WorkspaceProject.class);
-        final Path p1 = mock(Path.class);
         final String file1 = "file1.java";
-        when(p1.getFileName()).thenReturn(file1);
-        final Path p2 = mock(Path.class);
         final String file2 = "file2.java";
-        when(p2.getFileName()).thenReturn(file2);
 
-        final List<Path> files = Arrays.asList(p1, p2);
+        final List<Path> files = Arrays.asList(getPath(file1), getPath(file2));
         when(pathsHelper.getDataObjectsPaths(project)).thenReturn(files);
 
         final List<DataObject> dataObjects = service.loadDataObjects(project);
@@ -65,5 +62,24 @@ public class DataObjectsServiceImplTest {
         assertEquals(2, dataObjects.size());
         assertEquals(file1, dataObjects.get(0).getClassType());
         assertEquals(file2, dataObjects.get(1).getClassType());
+    }
+
+    private Path getPath(final String filename) {
+
+        final Path path = mock(Path.class);
+        when(path.getFileName()).thenReturn(filename);
+        return path;
+    }
+
+    public void testLoadDataObjectsWhenThereIsNoJavaFilesAvailable() {
+
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+
+        final List<Path> files = new ArrayList<>();
+        when(pathsHelper.getDataObjectsPaths(project)).thenReturn(files);
+
+        final List<DataObject> dataObjects = service.loadDataObjects(project);
+
+        assertEquals(0, dataObjects.size());
     }
 }

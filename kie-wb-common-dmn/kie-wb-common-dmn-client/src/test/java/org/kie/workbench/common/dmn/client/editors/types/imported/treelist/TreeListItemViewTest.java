@@ -61,16 +61,21 @@ public class TreeListItemViewTest {
     @Mock
     private HTMLInputElement checkbox;
 
+    @Mock
+    private HTMLDivElement root;
+
     private TreeListItemView itemView;
 
     @Before
     public void setup() {
+
         itemView = spy(new TreeListItemView(itemHeader,
                                             itemsContainer,
                                             itemDetails,
                                             expandContainer,
                                             expand,
-                                            checkbox));
+                                            checkbox,
+                                            root));
 
         doNothing().when(itemView).showElement(any());
         doNothing().when(itemView).hideElement(any());

@@ -255,8 +255,6 @@ public class DMNPathsHelperImplTest {
         assertEquals("file1", pathsHelper.getRelativeURI(null, includedModelPath));
     }
 
-
-
     @Test
     public void testGetRelativeURIWhenSameLevel() {
         doTestGetRelativeURI("dmnModel.dmn",

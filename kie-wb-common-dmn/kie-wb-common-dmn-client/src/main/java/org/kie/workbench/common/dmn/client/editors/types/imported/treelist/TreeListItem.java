@@ -23,7 +23,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.Node;
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
@@ -77,8 +76,7 @@ public class TreeListItem {
         return isSelected;
     }
 
-    public interface View extends UberElemental<TreeListItem>,
-                                  IsElement {
+    public interface View extends UberElemental<TreeListItem> {
 
         void populate(final TreeListItem treeListItem);
     }

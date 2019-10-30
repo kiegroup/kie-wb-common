@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.client.service.DMNClientServicesProxy;
-import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.mockito.Mock;
 
@@ -45,14 +44,11 @@ public class ImportDataObjectModalTest {
     @Mock
     private DMNClientServicesProxy client;
 
-    @Mock
-    private SessionManager sessionManager;
-
     private ImportDataObjectModal modal;
 
     @Before
     public void setup() {
-        modal = spy(new ImportDataObjectModal(view, client, sessionManager));
+        modal = spy(new ImportDataObjectModal(view, client));
     }
 
     @Test

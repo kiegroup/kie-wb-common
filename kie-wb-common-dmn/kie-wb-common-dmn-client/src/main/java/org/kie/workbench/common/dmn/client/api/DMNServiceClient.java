@@ -20,17 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.inject.Inject;
-
 import org.kie.workbench.common.dmn.client.service.DMNClientServicesProxy;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 
-public class DMNServiceClient {
+public abstract class DMNServiceClient {
 
     protected final DMNClientServicesProxy clientServicesProxy;
 
-    @Inject
     public DMNServiceClient(final DMNClientServicesProxy clientServicesProxy) {
         this.clientServicesProxy = clientServicesProxy;
     }
@@ -44,9 +41,13 @@ public class DMNServiceClient {
 
             @Override
             public void onError(final ClientRuntimeError error) {
-                clientServicesProxy.logWarning(error);
+                getClientServicesProxy().logWarning(error);
                 consumer.accept(new ArrayList<>());
             }
         };
+    }
+
+    DMNClientServicesProxy getClientServicesProxy() {
+        return clientServicesProxy;
     }
 }

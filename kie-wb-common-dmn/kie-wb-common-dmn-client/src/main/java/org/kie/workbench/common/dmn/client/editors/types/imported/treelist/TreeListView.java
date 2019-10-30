@@ -20,6 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
@@ -51,5 +52,10 @@ public class TreeListView implements TreeList.View {
     @Override
     public void clear() {
         RemoveHelper.removeChildren(treeItemsContainer);
+    }
+
+    @Override
+    public HTMLElement getElement() {
+        return treeItemsContainer;
     }
 }

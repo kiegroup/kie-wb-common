@@ -48,6 +48,9 @@ public class TreeListItemView implements TreeListItem.View {
     @DataField("item-details")
     private final HTMLDivElement itemDetails;
 
+    @DataField("item-root")
+    private final HTMLDivElement itemRoot;
+
     @DataField("expand-container")
     private final HTMLDivElement expandContainer;
 
@@ -63,13 +66,15 @@ public class TreeListItemView implements TreeListItem.View {
                             final HTMLDivElement itemDetails,
                             final HTMLDivElement expandContainer,
                             @Named("span") final HTMLElement expand,
-                            final HTMLInputElement checkbox) {
+                            final HTMLInputElement checkbox,
+                            final HTMLDivElement itemRoot) {
         this.itemHeader = itemHeader;
         this.itemsContainer = itemsContainer;
         this.itemDetails = itemDetails;
         this.expandContainer = expandContainer;
         this.expand = expand;
         this.checkbox = checkbox;
+        this.itemRoot = itemRoot;
     }
 
     public TreeListItem getPresenter() {
@@ -89,8 +94,8 @@ public class TreeListItemView implements TreeListItem.View {
     @EventHandler("item-header")
     public void onClick(final ClickEvent e) {
 
-        final Object ele = getTarget(e);
-        if (Objects.equals(ele, checkbox)) {
+        final Object target = getTarget(e);
+        if (Objects.equals(target, checkbox)) {
             return;
         }
 
@@ -133,5 +138,10 @@ public class TreeListItemView implements TreeListItem.View {
         for (final TreeListSubItem sub : item.getSubItems()) {
             itemsContainer.appendChild(sub.getElement());
         }
+    }
+
+    @Override
+    public HTMLElement getElement() {
+        return itemRoot;
     }
 }

@@ -148,7 +148,6 @@ public class ImportDataObjectModalView implements ImportDataObjectModal.View {
         itemsContainer.appendChild(treeList.getElement());
     }
 
-
     TreeListItem createTreeListItem(final DataObject data){
         final TreeListItem item = items.get();
         item.setDescription(data.getClassType());

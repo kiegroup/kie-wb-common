@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.client.service.DMNClientServicesProxy;
-import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
@@ -33,17 +32,15 @@ import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2M
 public class ImportDataObjectModal extends Elemental2Modal<ImportDataObjectModal.View> {
 
     private final DMNClientServicesProxy client;
-    private final SessionManager sessionManager;
 
     @Inject
     public ImportDataObjectModal(final View view,
-                                 final DMNClientServicesProxy client,
-                                 final SessionManager sessionManager) {
+                                 final DMNClientServicesProxy client) {
         super(view);
         this.client = client;
-        this.sessionManager = sessionManager;
     }
 
+    @Override
     public void show() {
         client.loadDataObjects(wrap(getConsumer()));
     }
@@ -66,9 +63,7 @@ public class ImportDataObjectModal extends Elemental2Modal<ImportDataObjectModal
     Consumer<List<DataObject>> getConsumer() {
         return objects -> {
             getView().clear();
-            if (!objects.isEmpty()) {
-                getView().addItems(objects);
-            }
+            getView().addItems(objects);
             superShow();
         };
     }

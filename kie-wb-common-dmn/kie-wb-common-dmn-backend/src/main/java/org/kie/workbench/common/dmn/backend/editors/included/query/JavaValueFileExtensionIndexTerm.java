@@ -16,14 +16,21 @@
 
 package org.kie.workbench.common.dmn.backend.editors.included.query;
 
-import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueFileExtensionIndexTerm;
+import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
 
-public class JavaValueFileExtensionIndexTerm extends DMNValueFileExtensionIndexTerm {
+public class JavaValueFileExtensionIndexTerm implements ValueIndexTerm {
+
+    static final String TERM = "libraryFileName";
 
     static final String TERM_VALUE = ".*(java)";
 
     @Override
     public String getValue() {
         return TERM_VALUE;
+    }
+
+    @Override
+    public String getTerm() {
+        return TERM;
     }
 }
