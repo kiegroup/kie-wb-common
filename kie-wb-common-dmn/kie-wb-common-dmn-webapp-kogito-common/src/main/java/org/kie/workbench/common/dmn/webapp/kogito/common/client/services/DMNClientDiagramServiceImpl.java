@@ -196,8 +196,8 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
             return;
         }
 
-        final DMN12MarshallCallback jsCallback = r -> {
-            String xml = r;
+        final DMN12MarshallCallback jsCallback = result -> {
+            String xml = result;
             if (!xml.startsWith("<?xml version=\"1.0\" ?>")) {
                 xml = "<?xml version=\"1.0\" ?>" + xml;
             }

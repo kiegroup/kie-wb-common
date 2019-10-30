@@ -101,7 +101,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         if (Objects.nonNull(jsiEncapsulatedDecisions)) {
             for (int i = 0; i < jsiEncapsulatedDecisions.size(); i++) {
                 final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.get(i));
-                outputDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiEncapsulatedDecision));
+                encapsulatedDecision.add(DMNElementReferenceConverter.wbFromDMN(jsiEncapsulatedDecision));
             }
         }
 
@@ -223,19 +223,19 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
             candidate_inputDecision.removeIf(x -> x.getHref().equals(er.getHref()));
         }
 
-        reconcileExistingAndCandidate(ds.getInputData(), existing_inputData, candidate_inputData);
-        reconcileExistingAndCandidate(ds.getInputDecision(), existing_inputDecision, candidate_inputDecision);
-        reconcileExistingAndCandidate(ds.getEncapsulatedDecision(), existing_encapsulatedDecision, candidate_encapsulatedDecision);
-        reconcileExistingAndCandidate(ds.getOutputDecision(), existing_outputDecision, candidate_outputDecision);
+        ds.setInputData(reconcileExistingAndCandidate(existing_inputData, candidate_inputData));
+        ds.setInputDecision(reconcileExistingAndCandidate(existing_inputDecision, candidate_inputDecision));
+        ds.setEncapsulatedDecision(reconcileExistingAndCandidate(existing_encapsulatedDecision, candidate_encapsulatedDecision));
+        ds.setOutputDecision(reconcileExistingAndCandidate(existing_outputDecision, candidate_outputDecision));
 
         DMNExternalLinksToExtensionElements.loadExternalLinksIntoExtensionElements(source, ds);
 
         return ds;
     }
 
-    private void reconcileExistingAndCandidate(final List<JSITDMNElementReference> targetList,
-                                               final List<JSITDMNElementReference> existingList,
-                                               final List<JSITDMNElementReference> candidateList) {
+    private List<JSITDMNElementReference> reconcileExistingAndCandidate(final List<JSITDMNElementReference> existingList,
+                                                                        final List<JSITDMNElementReference> candidateList) {
+        final List<JSITDMNElementReference> targetList = new ArrayList<>();
         final List<JSITDMNElementReference> existing = new ArrayList<>(existingList);
         final List<JSITDMNElementReference> candidate = new ArrayList<>(candidateList);
         for (int i = 0; i < existing.size(); i++) {
@@ -249,6 +249,7 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
             final JSITDMNElementReference c = Js.uncheckedCast(candidate.get(i));
             targetList.add(c);
         }
+        return targetList;
     }
 
     @SuppressWarnings("unchecked")
