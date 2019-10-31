@@ -93,6 +93,7 @@ public class ProjectMainActionsViewImpl implements ProjectMainActionsView,
     private Presenter presenter;
 
     private boolean redeployEnabled = true;
+    private boolean viewDeploymentDetailsEnabled = true;
 
     @PostConstruct
     public void init() {
@@ -129,6 +130,16 @@ public class ProjectMainActionsViewImpl implements ProjectMainActionsView,
             this.redeployLI.classList.add(DISABLED_CLASS);
         }
         redeployEnabled = enabled;
+    }
+
+    @Override
+    public void setViewDeploymentDetailsEnabled(boolean enabled) {
+        viewDeploymentDetailsEnabled = enabled;
+        if (enabled) {
+            this.viewDeploymentDetailsLI.classList.remove(DISABLED_CLASS);
+        } else {
+            this.viewDeploymentDetailsLI.classList.add(DISABLED_CLASS);
+        }
     }
 
     @Override

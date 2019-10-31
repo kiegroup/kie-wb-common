@@ -258,6 +258,11 @@ public class ProjectScreen {
         });
 
         projectMainActions.setRedeployEnabled(workspaceProject.getMainModule().getPom().getGav().isSnapshot());
+
+        projectController.canViewDeploymentDetails().then(status -> {
+            projectMainActions.setViewDeploymentDetailsEnabled(status);
+            return promises.resolve();
+        });
     }
 
     @OnMayClose
