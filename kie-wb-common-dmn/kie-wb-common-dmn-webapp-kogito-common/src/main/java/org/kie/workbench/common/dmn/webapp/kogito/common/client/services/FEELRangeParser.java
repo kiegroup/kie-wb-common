@@ -22,6 +22,8 @@ import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class FEELRangeParser {
 
+    private static final String SEPARATOR = "..";
+    private static final int SEPARATOR_LENGTH = SEPARATOR.length();
     private static final String INCLUDE_START = "[";
     private static final String EXCLUDE_START = "(";
     private static final String INCLUDE_END = "]";
@@ -32,28 +34,28 @@ public class FEELRangeParser {
         if (Objects.isNull(input)) {
             return rangeValue;
         }
-        final String _input = input.trim();
-        if (!(_input.startsWith(INCLUDE_START) || _input.startsWith(EXCLUDE_START))) {
+        final String trimmedInput = input.trim();
+        if (!(trimmedInput.startsWith(INCLUDE_START) || trimmedInput.startsWith(EXCLUDE_START))) {
             return rangeValue;
         }
-        if (!(_input.endsWith(INCLUDE_END) || _input.endsWith(EXCLUDE_END))) {
+        if (!(trimmedInput.endsWith(INCLUDE_END) || trimmedInput.endsWith(EXCLUDE_END))) {
             return rangeValue;
         }
 
         boolean inQuotes = false;
-        boolean includeStartValue = _input.startsWith(INCLUDE_START);
-        boolean includeEndValue = _input.endsWith(INCLUDE_END);
+        boolean includeStartValue = trimmedInput.startsWith(INCLUDE_START);
+        boolean includeEndValue = trimmedInput.endsWith(INCLUDE_END);
         String startValue = "";
         String endValue = "";
 
-        for (int current = 0; current < _input.length(); current++) {
-            if (_input.charAt(current) == '\"') {
+        for (int current = 0; current < trimmedInput.length(); current++) {
+            if (trimmedInput.charAt(current) == '\"') {
                 inQuotes = !inQuotes;
             }
 
-            if (!inQuotes && _input.substring(current, current + 2).equals("..")) {
-                startValue = _input.substring(1, current).trim();
-                endValue = _input.substring(current + 2, _input.length() - 1).trim();
+            if (isSeparator(current, inQuotes, trimmedInput)) {
+                startValue = trimmedInput.substring(1, current).trim();
+                endValue = trimmedInput.substring(current + SEPARATOR_LENGTH, trimmedInput.length() - 1).trim();
                 break;
             }
         }
@@ -68,5 +70,17 @@ public class FEELRangeParser {
         rangeValue.setEndValue(endValue);
 
         return rangeValue;
+    }
+
+    private static boolean isSeparator(final int current,
+                                       final boolean inQuotes,
+                                       final String trimmedInput) {
+        if (inQuotes) {
+            return false;
+        }
+        if (current > trimmedInput.length() - SEPARATOR_LENGTH) {
+            return false;
+        }
+        return trimmedInput.substring(current, current + SEPARATOR_LENGTH).equals(SEPARATOR);
     }
 }

@@ -48,7 +48,7 @@ public class FEELRangeParserTest {
                 {"( 1 . . 2 )", new RangeValue()},
                 {"[ 1 .. 2 ]", new RangeValueBuilder().includeStartValue().startValue("1").includeEndValue().endValue("2").build()},
                 {"[ 1.1 .. 2.2 ]", new RangeValueBuilder().includeStartValue().startValue("1.1").includeEndValue().endValue("2.2").build()},
-                {"[ \"a\" .. \"c\" ]", new RangeValueBuilder().includeStartValue().startValue("a").includeEndValue().endValue("c").build()},
+                {"[ \"a\" .. \"c\" ]", new RangeValueBuilder().includeStartValue().startValue("\"a\"").includeEndValue().endValue("\"c\"").build()},
                 {"(..2)", new RangeValue()},
                 {"(1..)", new RangeValue()},
                 {"(\"a\"..\"z\")", new RangeValueBuilder().startValue("\"a\"").endValue("\"z\"").build()},
@@ -70,10 +70,7 @@ public class FEELRangeParserTest {
     public void testParsing() {
         final RangeValue actual = FEELRangeParser.parse(input);
 
-        assertThat(actual.getIncludeStartValue()).isEqualTo(expected.getIncludeStartValue());
-        assertThat(actual.getIncludeEndValue()).isEqualTo(expected.getIncludeEndValue());
-        assertThat(actual.getStartValue()).isEqualTo(expected.getStartValue());
-        assertThat(actual.getEndValue()).isEqualTo(expected.getEndValue());
+        assertThat(actual).isEqualTo(expected);
     }
 
     private static class RangeValueBuilder {
