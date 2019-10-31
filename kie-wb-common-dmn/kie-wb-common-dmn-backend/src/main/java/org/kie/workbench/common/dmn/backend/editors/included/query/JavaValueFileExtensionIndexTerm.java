@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.dmn.backend.editors.included.query;
 
-import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
+import org.kie.workbench.common.dmn.backend.editors.types.query.DMNValueFileExtensionIndexTerm;
 
-public class JavaValueFileExtensionIndexTerm implements ValueIndexTerm {
+public class JavaValueFileExtensionIndexTerm extends DMNValueFileExtensionIndexTerm {
 
     static final String TERM = "libraryFileName";
 
