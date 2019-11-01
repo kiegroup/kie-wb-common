@@ -17,7 +17,6 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.editors.types.RangeValue;
@@ -61,7 +60,7 @@ public class DMNClientServicesProxyImplTest {
         final ServiceCallback<List<String>> callback = new ServiceCallback<List<String>>() {
             @Override
             public void onSuccess(final List<String> actual) {
-                Assertions.assertThat(actual).containsExactly("one", "two");
+                assertThat(actual).containsExactly("one", "two");
             }
 
             @Override
