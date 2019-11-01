@@ -190,6 +190,10 @@ public abstract class BaseDMNDiagramEditor extends AbstractDiagramEditor {
     @SuppressWarnings("unused")
     public void onStartup(final PlaceRequest place) {
         superDoStartUp(place);
+
+        decisionNavigatorDock.init(PERSPECTIVE_ID);
+        diagramPropertiesDock.init(PERSPECTIVE_ID);
+        diagramPreviewAndExplorerDock.init(PERSPECTIVE_ID);
     }
 
     void superDoStartUp(final PlaceRequest place) {
@@ -260,6 +264,12 @@ public abstract class BaseDMNDiagramEditor extends AbstractDiagramEditor {
     public void onClose() {
         superOnClose();
 
+        decisionNavigatorDock.destroy();
+        decisionNavigatorDock.resetContent();
+
+        diagramPropertiesDock.destroy();
+        diagramPreviewAndExplorerDock.destroy();
+
         dataTypesPage.disableShortcuts();
     }
 
@@ -296,10 +306,6 @@ public abstract class BaseDMNDiagramEditor extends AbstractDiagramEditor {
         onDiagramLoad();
         dataTypesPage.onFocus();
         dataTypesPage.enableShortcuts();
-
-        decisionNavigatorDock.init(PERSPECTIVE_ID);
-        diagramPropertiesDock.init(PERSPECTIVE_ID);
-        diagramPreviewAndExplorerDock.init(PERSPECTIVE_ID);
     }
 
     void superDoFocus() {
@@ -310,13 +316,7 @@ public abstract class BaseDMNDiagramEditor extends AbstractDiagramEditor {
     @SuppressWarnings("unused")
     public void onLostFocus() {
         super.doLostFocus();
-
         dataTypesPage.onLostFocus();
-
-        decisionNavigatorDock.destroy();
-        diagramPropertiesDock.destroy();
-        diagramPreviewAndExplorerDock.destroy();
-        decisionNavigatorDock.resetContent();
     }
 
     @Override
