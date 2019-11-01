@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.imported.treelist;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,6 +25,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -155,5 +157,25 @@ public class TreeListItemViewTest {
         itemView.setExpandVisibility(item);
 
         verify(itemView).showElement(expand);
+    }
+
+    @Test
+    public void testAddSubItems() {
+
+        final TreeListItem item = mock(TreeListItem.class);
+        final TreeListSubItem subItem1 = mock(TreeListSubItem.class);
+        final Node element1 = mock(Node.class);
+        when(subItem1.getElement()).thenReturn(element1);
+        final TreeListSubItem subItem2 = mock(TreeListSubItem.class);
+        final Node element2 = mock(Node.class);
+        when(subItem2.getElement()).thenReturn(element2);
+        final List<TreeListSubItem> subItems = Arrays.asList(subItem1, subItem2);
+
+        when(item.getSubItems()).thenReturn(subItems);
+
+        itemView.addSubItems(item);
+
+        verify(itemsContainer).appendChild(element2);
+        verify(itemsContainer).appendChild(element2);
     }
 }
