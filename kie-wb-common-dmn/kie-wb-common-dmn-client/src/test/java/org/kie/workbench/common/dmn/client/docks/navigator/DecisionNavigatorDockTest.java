@@ -168,7 +168,6 @@ public class DecisionNavigatorDockTest {
     public void testDestroy() {
         final UberfireDock uberfireDock = mock(UberfireDock.class);
 
-        dock.setOpened(false);
         doReturn(uberfireDock).when(dock).getUberfireDock();
 
         dock.destroy();

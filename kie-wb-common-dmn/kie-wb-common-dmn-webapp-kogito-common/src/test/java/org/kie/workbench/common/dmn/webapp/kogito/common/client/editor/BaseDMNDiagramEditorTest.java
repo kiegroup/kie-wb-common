@@ -265,14 +265,28 @@ public abstract class BaseDMNDiagramEditorTest {
     public void testOnStartup() {
         editor.onStartup(place);
 
-        verify(decisionNavigatorDock).init(PERSPECTIVE_ID);
-        verify(diagramPreviewDock).init(PERSPECTIVE_ID);
-        verify(diagramPropertiesDock).init(PERSPECTIVE_ID);
-
         verify(dmnEditorMenuSessionItems).populateMenu(fileMenuBuilder);
         verify(fileMenuBuilder).build();
 
         verify(multiPageEditorContainerView).init(eq(editor));
+    }
+
+    @Test
+    public void testOnFocus() {
+        editor.onFocus();
+
+        verify(decisionNavigatorDock).init(PERSPECTIVE_ID);
+        verify(diagramPreviewDock).init(PERSPECTIVE_ID);
+        verify(diagramPropertiesDock).init(PERSPECTIVE_ID);
+    }
+
+    @Test
+    public void testOnLostFocus() {
+        editor.onLostFocus();
+
+        verify(decisionNavigatorDock).destroy();
+        verify(diagramPreviewDock).destroy();
+        verify(diagramPropertiesDock).destroy();
     }
 
     @Test
