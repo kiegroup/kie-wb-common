@@ -43,6 +43,7 @@ import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.exe
 import org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.executors.utils.BuildUtils;
 import org.kie.workbench.common.screens.projecteditor.client.editor.DeploymentPopup;
 import org.kie.workbench.common.screens.server.management.service.SpecManagementService;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.kie.workbench.common.workbench.client.PerspectiveIds.SERVER_MANAGEMENT;
@@ -118,7 +119,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                                 NotificationEvent.NotificationType.WARNING)
                         .setAutoHide(false)
                         .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                                       SERVER_MANAGEMENT));
+                                       new DefaultPlaceRequest(SERVER_MANAGEMENT)));
             } else {
                 notificationEvent.fire(new NotificationEvent(CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR));
             }
@@ -175,7 +176,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                             ERROR)
                     .setAutoHide(false)
                     .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                                   SERVER_MANAGEMENT));
+                                   new DefaultPlaceRequest(SERVER_MANAGEMENT)));
             finish();
         }
     }
@@ -187,7 +188,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                         NotificationEvent.NotificationType.SUCCESS)
                 .setAutoHide(false)
                 .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                               SERVER_MANAGEMENT));
+                               new DefaultPlaceRequest(SERVER_MANAGEMENT)));
         finish();
     }
 
@@ -198,7 +199,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                         NotificationEvent.NotificationType.ERROR)
                 .setAutoHide(false)
                 .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                               SERVER_MANAGEMENT));
+                               new DefaultPlaceRequest(SERVER_MANAGEMENT)));
         finish();
     }
 
@@ -211,7 +212,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                                 NotificationEvent.NotificationType.SUCCESS)
                         .setAutoHide(false)
                         .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                                       SERVER_MANAGEMENT));
+                                       new DefaultPlaceRequest(SERVER_MANAGEMENT)));
                 finish();
                 return;
             }
@@ -223,7 +224,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                                 NotificationEvent.NotificationType.SUCCESS)
                         .setAutoHide(false)
                         .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                                       SERVER_MANAGEMENT));
+                                       new DefaultPlaceRequest(SERVER_MANAGEMENT)));
                 finish();
             }, (o, throwable) -> {
                 notificationEvent.fire(
@@ -232,7 +233,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                                 NotificationEvent.NotificationType.WARNING)
                         .setAutoHide(false)
                         .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                                       SERVER_MANAGEMENT));
+                                       new DefaultPlaceRequest(SERVER_MANAGEMENT)));
                 finish();
                 return false;
             }).startContainer(containerSpec);
@@ -243,7 +244,7 @@ public abstract class AbstractBuildAndDeployExecutor extends AbstractExecutor {
                             NotificationEvent.NotificationType.ERROR)
                     .setAutoHide(false)
                     .setNavigation(CONSTANTS.ViewDeploymentDetails(),
-                                   SERVER_MANAGEMENT));
+                                   new DefaultPlaceRequest(SERVER_MANAGEMENT)));
             finish();
             return false;
         }).saveContainerSpec(context.getServerTemplate().getId(), containerSpec);
