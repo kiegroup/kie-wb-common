@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class DMNDiagramsNavigatorScreenTest {
 
-    private static final String NAME = "name";
+    private static final String DIAGRAM_NAME = "diagram-name";
 
     @Mock
     private DiagramsNavigator diagramsNavigator;
@@ -64,7 +64,7 @@ public class DMNDiagramsNavigatorScreenTest {
 
     @Test
     public void testEditDocumentSelected() {
-        final LoadDiagramEvent event = new LoadDiagramEvent(path, NAME);
+        final LoadDiagramEvent event = new LoadDiagramEvent(path, DIAGRAM_NAME);
 
         navigator.onLoadDiagramEvent(event);
 
