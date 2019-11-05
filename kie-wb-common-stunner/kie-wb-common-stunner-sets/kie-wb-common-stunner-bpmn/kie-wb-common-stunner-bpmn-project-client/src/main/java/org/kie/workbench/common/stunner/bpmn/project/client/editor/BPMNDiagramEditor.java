@@ -147,7 +147,7 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         Collection<UberfireDock> stunnerDocks = stunnerDocksHandler.provideDocks(currentPerspectiveIdentifier);
         stunnerDocks.stream()
                 .filter(dock -> dock.getPlaceRequest().getIdentifier().compareTo(DiagramEditorPropertiesScreen.SCREEN_ID) == 0)
-                .forEach(dock -> uberfireDocks.open(dock));
+                .forEach(uberfireDocks::open);
         super.doOpen();
     }
 

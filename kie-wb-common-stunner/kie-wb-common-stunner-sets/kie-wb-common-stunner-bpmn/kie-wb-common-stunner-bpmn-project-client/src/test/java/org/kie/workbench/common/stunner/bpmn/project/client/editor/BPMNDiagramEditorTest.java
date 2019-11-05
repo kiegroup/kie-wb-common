@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.client.screens.DiagramEditorExplorerScreen;
 import org.kie.workbench.common.stunner.kogito.client.screens.DiagramEditorPropertiesScreen;
 import org.kie.workbench.common.stunner.project.client.docks.StunnerDocksHandler;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
@@ -71,6 +72,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -97,6 +99,15 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Mock
     private UberfireDock propertiesDock;
+
+    @Mock
+    private PlaceRequest propertiesPlace;
+
+    @Mock
+    private UberfireDock explorerDock;
+
+    @Mock
+    private PlaceRequest explorerPlace;
 
     @Mock
     private StunnerDocksHandler stunnerDocksHandler;
@@ -246,19 +257,24 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Test
     public void testOnOpen() {
         Collection<UberfireDock> stunnerDocks = new ArrayList<>();
+        stunnerDocks.add(propertiesDock);
+        stunnerDocks.add(explorerDock);
+
         String perspectiveIdentifier = "Test Perspective ID";
 
         when(perspectiveManagerMock.getCurrentPerspective()).thenReturn(currentPerspective);
         when(currentPerspective.getIdentifier()).thenReturn(perspectiveIdentifier);
 
-        stunnerDocks.add(propertiesDock);
         when(stunnerDocksHandler.provideDocks(perspectiveIdentifier)).thenReturn(stunnerDocks);
 
-        when(propertiesDock.getPlaceRequest()).thenReturn(currentPlace);
-        when(currentPlace.getIdentifier()).thenReturn(DiagramEditorPropertiesScreen.SCREEN_ID);
+        when(propertiesDock.getPlaceRequest()).thenReturn(propertiesPlace);
+        when(propertiesPlace.getIdentifier()).thenReturn(DiagramEditorPropertiesScreen.SCREEN_ID);
+
+        when(explorerDock.getPlaceRequest()).thenReturn(explorerPlace);
+        when(explorerPlace.getIdentifier()).thenReturn(DiagramEditorExplorerScreen.SCREEN_ID);
 
         diagramEditor.onOpen();
-        verify(uberfireDocks).open(propertiesDock);
+        verify(uberfireDocks, times(1)).open(propertiesDock);
     }
 
     private void testMigrate(boolean isDirty) {
