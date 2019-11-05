@@ -36,7 +36,6 @@ import static org.kie.workbench.common.stunner.project.client.docks.DefaultStunn
 import static org.kie.workbench.common.stunner.project.client.docks.DefaultStunnerDockSupplierImpl.PROPERTIES_DOCK_SCREEN_ID;
 import static org.kie.workbench.common.stunner.project.client.docks.DefaultStunnerDockSupplierImpl.PROPERTIES_ICON_TYPE;
 import static org.kie.workbench.common.stunner.project.client.docks.DefaultStunnerDockSupplierImpl.PROPERTIES_LABEL;
-import static org.kie.workbench.common.stunner.project.client.docks.DefaultStunnerDockSupplierImpl.PROPERTIES_TOOLTIP;
 import static org.kie.workbench.common.stunner.project.client.docks.DefaultStunnerDockSupplierImpl.SIZE;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -61,7 +60,7 @@ public class DefaultStunnerDockSupplierImplTest {
                    PERSPECTIVE_IDENTIFIER,
                    SIZE,
                    PROPERTIES_LABEL,
-                   PROPERTIES_TOOLTIP);
+                   null);
 
         Optional<UberfireDock> explorerDock = docks.stream()
                 .filter(dock -> dock.getPlaceRequest().getIdentifier().compareTo(DefaultStunnerDockSupplierImpl.EXPLORER_DOCK_SCREEN_ID) == 0)

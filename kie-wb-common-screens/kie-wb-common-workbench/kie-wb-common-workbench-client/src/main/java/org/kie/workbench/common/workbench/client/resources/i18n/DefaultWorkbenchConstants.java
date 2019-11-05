@@ -81,8 +81,6 @@ public interface DefaultWorkbenchConstants
 
     String DocksStunnerPropertiesTitle();
 
-    String DocksStunnerPropertiesTooltip();
-
     String DocksStunnerExplorerTitle();
 
     String WorkbenchRootNodeName();

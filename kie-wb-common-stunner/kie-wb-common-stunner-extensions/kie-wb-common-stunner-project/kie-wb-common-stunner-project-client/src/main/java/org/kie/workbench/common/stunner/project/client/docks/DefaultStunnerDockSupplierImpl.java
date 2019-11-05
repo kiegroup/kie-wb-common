@@ -33,19 +33,18 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 @Dependent
 public class DefaultStunnerDockSupplierImpl implements StunnerDockSupplier {
 
-    protected static final DefaultWorkbenchConstants CONSTANTS = DefaultWorkbenchConstants.INSTANCE;
+    private static final DefaultWorkbenchConstants CONSTANTS = DefaultWorkbenchConstants.INSTANCE;
 
-    protected static final UberfireDockPosition DOCK_POSITION = UberfireDockPosition.EAST;
-    protected static final Double SIZE = 450.0;
+    static final UberfireDockPosition DOCK_POSITION = UberfireDockPosition.EAST;
+    static final Double SIZE = 450.0;
 
-    protected static final String PROPERTIES_DOCK_SCREEN_ID = DiagramEditorPropertiesScreen.SCREEN_ID;
-    protected static final String PROPERTIES_ICON_TYPE = "PENCIL_SQUARE_O";
-    protected static final String PROPERTIES_LABEL = CONSTANTS.DocksStunnerPropertiesTitle();
-    protected static final String PROPERTIES_TOOLTIP = CONSTANTS.DocksStunnerPropertiesTooltip();
+    static final String PROPERTIES_DOCK_SCREEN_ID = DiagramEditorPropertiesScreen.SCREEN_ID;
+    static final String PROPERTIES_ICON_TYPE = "PENCIL_SQUARE_O";
+    static final String PROPERTIES_LABEL = CONSTANTS.DocksStunnerPropertiesTitle();
 
-    protected static final String EXPLORER_DOCK_SCREEN_ID = DiagramEditorExplorerScreen.SCREEN_ID;
-    protected static final String EXPLORER_ICON_TYPE = "EYE";
-    protected static final String EXPLORER_LABEL = CONSTANTS.DocksStunnerExplorerTitle();
+    static final String EXPLORER_DOCK_SCREEN_ID = DiagramEditorExplorerScreen.SCREEN_ID;
+    static final String EXPLORER_ICON_TYPE = "EYE";
+    static final String EXPLORER_LABEL = CONSTANTS.DocksStunnerExplorerTitle();
 
     @Override
     public Collection<UberfireDock> getDocks(String perspectiveIdentifier) {
@@ -56,8 +55,7 @@ public class DefaultStunnerDockSupplierImpl implements StunnerDockSupplier {
                                                              new DefaultPlaceRequest(PROPERTIES_DOCK_SCREEN_ID),
                                                              perspectiveIdentifier)
                 .withSize(SIZE)
-                .withLabel(PROPERTIES_LABEL)
-                .withTooltip(PROPERTIES_TOOLTIP);
+                .withLabel(PROPERTIES_LABEL);
 
         final UberfireDock explorerDock = new UberfireDock(DOCK_POSITION,
                                                            EXPLORER_ICON_TYPE,
