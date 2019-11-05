@@ -16,12 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.client.editor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Level;
 
 import javax.enterprise.event.Event;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +41,8 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.client.screens.DiagramEditorPropertiesScreen;
+import org.kie.workbench.common.stunner.project.client.docks.StunnerDocksHandler;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorCore;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
@@ -49,6 +54,9 @@ import org.kie.workbench.common.stunner.project.diagram.editor.ProjectDiagramRes
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.client.mvp.PerspectiveActivity;
+import org.uberfire.client.workbench.docks.UberfireDock;
+import org.uberfire.client.workbench.docks.UberfireDocks;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mvp.Command;
@@ -83,6 +91,24 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
     @Mock
     private IntegrationHandler integrationHandler;
+
+    @Mock
+    private UberfireDocks uberfireDocks;
+
+    @Mock
+    private UberfireDock propertiesDock;
+
+    @Mock
+    private StunnerDocksHandler stunnerDocksHandler;
+
+    @Mock
+    private PerspectiveActivity currentPerspective;
+
+    @Mock
+    private ProjectMetadata projectMetadata;
+
+    @Mock
+    private Overview projectOverview;
 
     private ArgumentCaptor<Command> commandCaptor;
 
@@ -129,7 +155,9 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                   translationService,
                                                   clientProjectDiagramService,
                                                   projectDiagramResourceServiceCaller,
-                                                  integrationHandlerProvider) {
+                                                  integrationHandlerProvider,
+                                                  uberfireDocks,
+                                                  stunnerDocksHandler) {
             {
                 docks = defaultEditorDock;
                 perspectiveManager = perspectiveManagerMock;
@@ -213,6 +241,24 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Test
     public void testMigrateWhenDirty() {
         testMigrate(true);
+    }
+
+    @Test
+    public void testOnOpen() {
+        Collection<UberfireDock> stunnerDocks = new ArrayList<>();
+        String perspectiveIdentifier = "Test Perspective ID";
+
+        when(perspectiveManagerMock.getCurrentPerspective()).thenReturn(currentPerspective);
+        when(currentPerspective.getIdentifier()).thenReturn(perspectiveIdentifier);
+
+        stunnerDocks.add(propertiesDock);
+        when(stunnerDocksHandler.provideDocks(perspectiveIdentifier)).thenReturn(stunnerDocks);
+
+        when(propertiesDock.getPlaceRequest()).thenReturn(currentPlace);
+        when(currentPlace.getIdentifier()).thenReturn(DiagramEditorPropertiesScreen.SCREEN_ID);
+
+        diagramEditor.onOpen();
+        verify(uberfireDocks).open(propertiesDock);
     }
 
     private void testMigrate(boolean isDirty) {
