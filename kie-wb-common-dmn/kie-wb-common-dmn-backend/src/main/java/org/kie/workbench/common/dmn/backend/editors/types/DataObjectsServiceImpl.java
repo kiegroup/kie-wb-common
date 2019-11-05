@@ -16,42 +16,65 @@
 
 package org.kie.workbench.common.dmn.backend.editors.types;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.kie.soup.project.datamodel.oracle.DataType;
+import org.kie.soup.project.datamodel.oracle.ModelField;
+import org.kie.soup.project.datamodel.oracle.ModuleDataModelOracle;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
+import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
 import org.kie.workbench.common.dmn.api.editors.types.DataObjectsService;
-import org.kie.workbench.common.dmn.api.marshalling.DMNPathsHelper;
-import org.uberfire.backend.vfs.Path;
+import org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
 
 @Service
 @Dependent
 public class DataObjectsServiceImpl implements DataObjectsService {
 
-    private final DMNPathsHelper pathsHelper;
+    private DataModelService dataModelService;
+
+    protected DataObjectsServiceImpl() {
+        this(null);
+    }
 
     @Inject
-    public DataObjectsServiceImpl(final DMNPathsHelper pathsHelper) {
-        this.pathsHelper = pathsHelper;
+    public DataObjectsServiceImpl(final DataModelService dataModelService) {
+        this.dataModelService = dataModelService;
     }
 
     @Override
     public List<DataObject> loadDataObjects(final WorkspaceProject workspaceProject) {
+        final ModuleDataModelOracle dmo = dataModelService.getModuleDataModel(workspaceProject.getRootPath());
+        final String[] types = DataModelOracleUtilities.getFactTypes(dmo);
+        final Map<String, ModelField[]> typesModelFields = dmo.getModuleModelFields();
 
-        final List<DataObject> dos = new ArrayList<>();
-        final List<Path> javaFiles = pathsHelper.getDataObjectsPaths(workspaceProject);
-        if (javaFiles.size() > 0) {
-            for (final Path file : javaFiles) {
-                final DataObject dataObject = new DataObject(file.getFileName());
-                dos.add(dataObject);
-            }
-        }
+        return Arrays.stream(types).map(type -> convert(type, typesModelFields)).collect(Collectors.toList());
+    }
 
-        return dos;
+    private DataObject convert(final String type,
+                               final Map<String, ModelField[]> typesModelFields) {
+        final DataObject dataObject = new DataObject(type);
+        final ModelField[] typeModelFields = typesModelFields.getOrDefault(type, new ModelField[]{});
+        dataObject.setProperties(Arrays.stream(typeModelFields)
+                                         .filter(typeModelField -> !Objects.equals(typeModelField.getName(), DataType.TYPE_THIS))
+                                         .map(this::convert)
+                                         .collect(Collectors.toList()));
+        return dataObject;
+    }
+
+    private DataObjectProperty convert(final ModelField field) {
+        final DataObjectProperty dataObjectProperty = new DataObjectProperty();
+        dataObjectProperty.setType(field.getClassName());
+        dataObjectProperty.setProperty(field.getName());
+        return dataObjectProperty;
     }
 }

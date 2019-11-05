@@ -16,70 +16,109 @@
 
 package org.kie.workbench.common.dmn.backend.editors.types;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.commons.util.Maps;
+import org.kie.soup.project.datamodel.commons.oracle.ModuleDataModelOracleImpl;
+import org.kie.soup.project.datamodel.oracle.DataType;
+import org.kie.soup.project.datamodel.oracle.FieldAccessorsAndMutators;
+import org.kie.soup.project.datamodel.oracle.ModelField;
+import org.kie.soup.project.datamodel.oracle.ModuleDataModelOracle;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
-import org.kie.workbench.common.dmn.api.marshalling.DMNPathsHelper;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataObjectsServiceImplTest {
 
     @Mock
-    private DMNPathsHelper pathsHelper;
+    private DataModelService dataModelService;
+
+    @Mock
+    private WorkspaceProject workspaceProject;
+
+    @Mock
+    private Path projectRootPath;
+
+    private ModuleDataModelOracle dataModelOracle;
 
     private DataObjectsServiceImpl service;
 
     @Before
     public void setup() {
-        service = new DataObjectsServiceImpl(pathsHelper);
+        service = new DataObjectsServiceImpl(dataModelService);
+        dataModelOracle = new ModuleDataModelOracleImpl();
+
+        when(workspaceProject.getRootPath()).thenReturn(projectRootPath);
+        when(dataModelService.getModuleDataModel(projectRootPath)).thenReturn(dataModelOracle);
     }
 
     @Test
     public void testLoadDataObjects() {
+        final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
+        modelFieldsBuilder.put("APerson",
+                               new ModelField[]{
+                                       new ModelField(DataType.TYPE_THIS,
+                                                      "APerson",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      "APerson"),
+                                       new ModelField("name",
+                                                      String.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_STRING),
+                                       new ModelField("age",
+                                                      Integer.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_INTEGER)
+                               });
+        modelFieldsBuilder.put("ZPet",
+                               new ModelField[]{
+                                       new ModelField(DataType.TYPE_THIS,
+                                                      "ZPet",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      "ZPet")
+                               });
+        final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
+        dataModelOracle.addModuleModelFields(modelFields);
 
-        final WorkspaceProject project = mock(WorkspaceProject.class);
-        final String file1 = "file1.java";
-        final String file2 = "file2.java";
+        final List<DataObject> dataObjects = service.loadDataObjects(workspaceProject);
 
-        final List<Path> files = Arrays.asList(getPath(file1), getPath(file2));
-        when(pathsHelper.getDataObjectsPaths(project)).thenReturn(files);
+        assertThat(dataObjects).isNotEmpty();
+        assertThat(dataObjects).hasSize(2);
 
-        final List<DataObject> dataObjects = service.loadDataObjects(project);
+        assertThat(dataObjects.get(0).getClassType()).isEqualTo("APerson");
+        assertThat(dataObjects.get(0).getProperties()).hasSize(2);
+        assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("name");
+        assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(String.class.getName());
+        assertThat(dataObjects.get(0).getProperties().get(1).getProperty()).isEqualTo("age");
+        assertThat(dataObjects.get(0).getProperties().get(1).getType()).isEqualTo(Integer.class.getName());
 
-        assertEquals(2, dataObjects.size());
-        assertEquals(file1, dataObjects.get(0).getClassType());
-        assertEquals(file2, dataObjects.get(1).getClassType());
+        assertThat(dataObjects.get(1).getClassType()).isEqualTo("ZPet");
+        assertThat(dataObjects.get(1).getProperties()).isEmpty();
     }
 
-    private Path getPath(final String filename) {
-
-        final Path path = mock(Path.class);
-        when(path.getFileName()).thenReturn(filename);
-        return path;
-    }
-
+    @Test
     public void testLoadDataObjectsWhenThereIsNoJavaFilesAvailable() {
+        final List<DataObject> dataObjects = service.loadDataObjects(workspaceProject);
 
-        final WorkspaceProject project = mock(WorkspaceProject.class);
-
-        final List<Path> files = new ArrayList<>();
-        when(pathsHelper.getDataObjectsPaths(project)).thenReturn(files);
-
-        final List<DataObject> dataObjects = service.loadDataObjects(project);
-
-        assertEquals(0, dataObjects.size());
+        assertThat(dataObjects).isEmpty();
     }
 }
