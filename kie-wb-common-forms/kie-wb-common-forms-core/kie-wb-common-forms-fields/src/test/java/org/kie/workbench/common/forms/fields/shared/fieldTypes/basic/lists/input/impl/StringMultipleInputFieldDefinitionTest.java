@@ -16,7 +16,12 @@
 
 package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.input.impl;
 
+import org.junit.Test;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.AbstractFieldDefinitionTest;
+import org.kie.workbench.common.forms.model.TypeKind;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class StringMultipleInputFieldDefinitionTest extends AbstractFieldDefinitionTest<StringMultipleInputFieldDefinition> {
 
@@ -32,5 +37,14 @@ public class StringMultipleInputFieldDefinitionTest extends AbstractFieldDefinit
         fieldDefinition.setPageSize(6);
 
         return fieldDefinition;
+    }
+
+    @Test
+    public void testGetFieldType() {
+        StringMultipleInputFieldDefinition fieldDefinition = new StringMultipleInputFieldDefinition();
+        fieldDefinition.setStandaloneClassName(String.class.getName());
+        assertEquals(fieldDefinition.getFieldTypeInfo().getType(), TypeKind.BASE);
+        fieldDefinition.setStandaloneClassName(Object.class.getName());
+        assertNotEquals(fieldDefinition.getFieldTypeInfo().getType(), TypeKind.BASE);
     }
 }
