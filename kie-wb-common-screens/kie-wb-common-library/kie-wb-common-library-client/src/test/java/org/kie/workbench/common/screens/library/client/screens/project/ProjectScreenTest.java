@@ -202,7 +202,7 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         doReturn(promises.resolve(false)).when(this.projectController).canDeployProject(any());
         doReturn(promises.resolve(false)).when(this.projectController).canUpdateProject(any());
         doReturn(promises.resolve(false)).when(this.projectController).canSubmitChangeRequest(any());
-        doReturn(promises.resolve(false)).when(this.projectController).canViewDeploymentDetails();
+        doReturn(promises.resolve(false)).when(this.projectController).canViewDeploymentDetails(any());
     }
 
     @Test
@@ -533,7 +533,7 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
 
     @Test
     public void testViewDeploymentDetailsEnabled() {
-        doReturn(promises.resolve(true)).when(this.projectController).canViewDeploymentDetails();
+        doReturn(promises.resolve(true)).when(this.projectController).canViewDeploymentDetails(any());
 
         presenter.initialize();
 
@@ -542,7 +542,7 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
 
     @Test
     public void testViewDeploymentDetailsNotEnabled() {
-        doReturn(promises.resolve(false)).when(this.projectController).canViewDeploymentDetails();
+        doReturn(promises.resolve(false)).when(this.projectController).canViewDeploymentDetails(any());
 
         presenter.initialize();
 
