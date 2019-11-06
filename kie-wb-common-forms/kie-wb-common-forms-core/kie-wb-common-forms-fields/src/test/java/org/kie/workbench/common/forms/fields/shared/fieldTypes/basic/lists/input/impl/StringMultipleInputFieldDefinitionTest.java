@@ -21,7 +21,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.AbstractFieldDefi
 import org.kie.workbench.common.forms.model.TypeKind;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class StringMultipleInputFieldDefinitionTest extends AbstractFieldDefinitionTest<StringMultipleInputFieldDefinition> {
 
@@ -43,8 +42,8 @@ public class StringMultipleInputFieldDefinitionTest extends AbstractFieldDefinit
     public void testGetFieldType() {
         StringMultipleInputFieldDefinition fieldDefinition = new StringMultipleInputFieldDefinition();
         fieldDefinition.setStandaloneClassName(String.class.getName());
-        assertEquals(fieldDefinition.getFieldTypeInfo().getType(), TypeKind.BASE);
+        assertEquals(TypeKind.BASE, fieldDefinition.getFieldTypeInfo().getType());
         fieldDefinition.setStandaloneClassName(Object.class.getName());
-        assertNotEquals(fieldDefinition.getFieldTypeInfo().getType(), TypeKind.BASE);
+        assertEquals(TypeKind.OBJECT, fieldDefinition.getFieldTypeInfo().getType());
     }
 }
