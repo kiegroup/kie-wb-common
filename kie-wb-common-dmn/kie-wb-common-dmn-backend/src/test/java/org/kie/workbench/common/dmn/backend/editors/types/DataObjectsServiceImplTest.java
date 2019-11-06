@@ -16,6 +16,13 @@
 
 package org.kie.workbench.common.dmn.backend.editors.types;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +118,7 @@ public class DataObjectsServiceImplTest {
     }
 
     @Test
-    public void testLoadDataObjects_ResolvedJavaProperties() {
+    public void testLoadDataObjects_ResolvedJavaPrimitiveProperties() {
         final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
         modelFieldsBuilder.put(APerson.class.getName(),
                                new ModelField[]{
@@ -121,18 +128,54 @@ public class DataObjectsServiceImplTest {
                                                       ModelField.FIELD_ORIGIN.SELF,
                                                       FieldAccessorsAndMutators.BOTH,
                                                       APerson.class.getSimpleName()),
-                                       new ModelField("name",
-                                                      String.class.getName(),
+                                       new ModelField("booleanField",
+                                                      "boolean",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_BOOLEAN),
+                                       new ModelField("byteField",
+                                                      "byte",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_BYTE),
+                                       new ModelField("charField",
+                                                      "char",
                                                       ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
                                                       ModelField.FIELD_ORIGIN.SELF,
                                                       FieldAccessorsAndMutators.BOTH,
                                                       DataType.TYPE_STRING),
-                                       new ModelField("age",
+                                       new ModelField("floatField",
+                                                      "float",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_FLOAT),
+                                       new ModelField("intField",
                                                       "int",
                                                       ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
                                                       ModelField.FIELD_ORIGIN.SELF,
                                                       FieldAccessorsAndMutators.BOTH,
-                                                      DataType.TYPE_NUMERIC_INTEGER)
+                                                      DataType.TYPE_NUMERIC_INTEGER),
+                                       new ModelField("longField",
+                                                      "long",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_LONG),
+                                       new ModelField("shortField",
+                                                      "short",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_SHORT),
+                                       new ModelField("doubleField",
+                                                      "double",
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_DOUBLE)
                                });
 
         final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
@@ -144,15 +187,266 @@ public class DataObjectsServiceImplTest {
         assertThat(dataObjects).hasSize(1);
 
         assertThat(dataObjects.get(0).getClassType()).isEqualTo(APerson.class.getName());
-        assertThat(dataObjects.get(0).getProperties()).hasSize(2);
-        assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("name");
-        assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(BuiltInType.STRING.getName());
-        assertThat(dataObjects.get(0).getProperties().get(1).getProperty()).isEqualTo("age");
+        assertThat(dataObjects.get(0).getProperties()).hasSize(8);
+        assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("booleanField");
+        assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(BuiltInType.BOOLEAN.getName());
+        assertThat(dataObjects.get(0).getProperties().get(1).getProperty()).isEqualTo("byteField");
         assertThat(dataObjects.get(0).getProperties().get(1).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(2).getProperty()).isEqualTo("charField");
+        assertThat(dataObjects.get(0).getProperties().get(2).getType()).isEqualTo(BuiltInType.STRING.getName());
+        assertThat(dataObjects.get(0).getProperties().get(3).getProperty()).isEqualTo("floatField");
+        assertThat(dataObjects.get(0).getProperties().get(3).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(4).getProperty()).isEqualTo("intField");
+        assertThat(dataObjects.get(0).getProperties().get(4).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(5).getProperty()).isEqualTo("longField");
+        assertThat(dataObjects.get(0).getProperties().get(5).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(6).getProperty()).isEqualTo("shortField");
+        assertThat(dataObjects.get(0).getProperties().get(6).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(7).getProperty()).isEqualTo("doubleField");
+        assertThat(dataObjects.get(0).getProperties().get(7).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+    }
+
+    @Test
+    public void testLoadDataObjects_ResolvedJavaBoxedProperties() {
+        final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
+        modelFieldsBuilder.put(APerson.class.getName(),
+                               new ModelField[]{
+                                       new ModelField(DataType.TYPE_THIS,
+                                                      APerson.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      APerson.class.getSimpleName()),
+                                       new ModelField("booleanField",
+                                                      Boolean.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_BOOLEAN),
+                                       new ModelField("byteField",
+                                                      Byte.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_BYTE),
+                                       new ModelField("charField",
+                                                      Character.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_STRING),
+                                       new ModelField("floatField",
+                                                      Float.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_FLOAT),
+                                       new ModelField("intField",
+                                                      Integer.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_INTEGER),
+                                       new ModelField("longField",
+                                                      Long.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_LONG),
+                                       new ModelField("shortField",
+                                                      Short.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_SHORT),
+                                       new ModelField("doubleField",
+                                                      Double.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_NUMERIC_DOUBLE)
+                               });
+
+        final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
+        dataModelOracle.addModuleModelFields(modelFields);
+
+        final List<DataObject> dataObjects = service.loadDataObjects(workspaceProject);
+
+        assertThat(dataObjects).isNotEmpty();
+        assertThat(dataObjects).hasSize(1);
+
+        assertThat(dataObjects.get(0).getClassType()).isEqualTo(APerson.class.getName());
+        assertThat(dataObjects.get(0).getProperties()).hasSize(8);
+        assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("booleanField");
+        assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(BuiltInType.BOOLEAN.getName());
+        assertThat(dataObjects.get(0).getProperties().get(1).getProperty()).isEqualTo("byteField");
+        assertThat(dataObjects.get(0).getProperties().get(1).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(2).getProperty()).isEqualTo("charField");
+        assertThat(dataObjects.get(0).getProperties().get(2).getType()).isEqualTo(BuiltInType.STRING.getName());
+        assertThat(dataObjects.get(0).getProperties().get(3).getProperty()).isEqualTo("floatField");
+        assertThat(dataObjects.get(0).getProperties().get(3).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(4).getProperty()).isEqualTo("intField");
+        assertThat(dataObjects.get(0).getProperties().get(4).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(5).getProperty()).isEqualTo("longField");
+        assertThat(dataObjects.get(0).getProperties().get(5).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(6).getProperty()).isEqualTo("shortField");
+        assertThat(dataObjects.get(0).getProperties().get(6).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+        assertThat(dataObjects.get(0).getProperties().get(7).getProperty()).isEqualTo("doubleField");
+        assertThat(dataObjects.get(0).getProperties().get(7).getType()).isEqualTo(BuiltInType.NUMBER.getName());
+    }
+
+    @Test
+    public void testLoadDataObjects_ResolvedBuiltInTypesProperties() {
+        final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
+        modelFieldsBuilder.put(APerson.class.getName(),
+                               new ModelField[]{
+                                       new ModelField(DataType.TYPE_THIS,
+                                                      APerson.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      APerson.class.getSimpleName()),
+                                       new ModelField("stringField",
+                                                      String.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_STRING),
+                                       new ModelField("characterField",
+                                                      Character.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_STRING),
+                                       new ModelField("localDateField",
+                                                      LocalDate.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_LOCAL_DATE),
+                                       new ModelField("localTimeField",
+                                                      LocalTime.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_LOCAL_DATE),
+                                       new ModelField("offsetTimeField",
+                                                      OffsetTime.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_DATE),
+                                       new ModelField("zonedDateTimeField",
+                                                      ZonedDateTime.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_DATE),
+                                       new ModelField("offsetDateTimeField",
+                                                      OffsetDateTime.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_DATE),
+                                       new ModelField("localDateTimeField",
+                                                      LocalDateTime.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_LOCAL_DATE),
+                                       new ModelField("mapField",
+                                                      Map.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_OBJECT),
+                                       new ModelField("temporalAccessorField",
+                                                      ChronoLocalDate.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      DataType.TYPE_OBJECT)
+                               });
+
+        final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
+        dataModelOracle.addModuleModelFields(modelFields);
+
+        final List<DataObject> dataObjects = service.loadDataObjects(workspaceProject);
+
+        assertThat(dataObjects).isNotEmpty();
+        assertThat(dataObjects).hasSize(1);
+
+        assertThat(dataObjects.get(0).getClassType()).isEqualTo(APerson.class.getName());
+        assertThat(dataObjects.get(0).getProperties()).hasSize(10);
+        assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("stringField");
+        assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(BuiltInType.STRING.getName());
+        assertThat(dataObjects.get(0).getProperties().get(1).getProperty()).isEqualTo("characterField");
+        assertThat(dataObjects.get(0).getProperties().get(1).getType()).isEqualTo(BuiltInType.STRING.getName());
+        assertThat(dataObjects.get(0).getProperties().get(2).getProperty()).isEqualTo("localDateField");
+        assertThat(dataObjects.get(0).getProperties().get(2).getType()).isEqualTo(BuiltInType.DATE.getName());
+        assertThat(dataObjects.get(0).getProperties().get(3).getProperty()).isEqualTo("localTimeField");
+        assertThat(dataObjects.get(0).getProperties().get(3).getType()).isEqualTo(BuiltInType.TIME.getName());
+        assertThat(dataObjects.get(0).getProperties().get(4).getProperty()).isEqualTo("offsetTimeField");
+        assertThat(dataObjects.get(0).getProperties().get(4).getType()).isEqualTo(BuiltInType.TIME.getName());
+        assertThat(dataObjects.get(0).getProperties().get(5).getProperty()).isEqualTo("zonedDateTimeField");
+        assertThat(dataObjects.get(0).getProperties().get(5).getType()).isEqualTo(BuiltInType.DATE_TIME.getName());
+        assertThat(dataObjects.get(0).getProperties().get(6).getProperty()).isEqualTo("offsetDateTimeField");
+        assertThat(dataObjects.get(0).getProperties().get(6).getType()).isEqualTo(BuiltInType.DATE_TIME.getName());
+        assertThat(dataObjects.get(0).getProperties().get(7).getProperty()).isEqualTo("localDateTimeField");
+        assertThat(dataObjects.get(0).getProperties().get(7).getType()).isEqualTo(BuiltInType.DATE_TIME.getName());
+        assertThat(dataObjects.get(0).getProperties().get(8).getProperty()).isEqualTo("mapField");
+        assertThat(dataObjects.get(0).getProperties().get(8).getType()).isEqualTo(BuiltInType.CONTEXT.getName());
+        assertThat(dataObjects.get(0).getProperties().get(9).getProperty()).isEqualTo("temporalAccessorField");
+        assertThat(dataObjects.get(0).getProperties().get(9).getType()).isEqualTo(BuiltInType.ANY.getName());
     }
 
     @Test
     public void testLoadDataObjects_ResolvedCustomProperty() {
+        final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
+        modelFieldsBuilder.put(APerson.class.getName(),
+                               new ModelField[]{
+                                       new ModelField(DataType.TYPE_THIS,
+                                                      APerson.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      APerson.class.getSimpleName())
+                               });
+        modelFieldsBuilder.put(CFamily.class.getName(),
+                               new ModelField[]{
+                                       new ModelField(DataType.TYPE_THIS,
+                                                      CFamily.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      CFamily.class.getSimpleName()),
+                                       new ModelField("mother",
+                                                      APerson.class.getName(),
+                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                                      ModelField.FIELD_ORIGIN.SELF,
+                                                      FieldAccessorsAndMutators.BOTH,
+                                                      APerson.class.getSimpleName())
+                               });
+
+        final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
+        dataModelOracle.addModuleModelFields(modelFields);
+
+        final List<DataObject> dataObjects = service.loadDataObjects(workspaceProject);
+
+        assertThat(dataObjects).isNotEmpty();
+        assertThat(dataObjects).hasSize(2);
+
+        assertThat(dataObjects.get(0).getClassType()).isEqualTo(APerson.class.getName());
+        assertThat(dataObjects.get(0).getProperties()).isEmpty();
+
+        assertThat(dataObjects.get(1).getClassType()).isEqualTo(CFamily.class.getName());
+        assertThat(dataObjects.get(1).getProperties()).hasSize(1);
+        assertThat(dataObjects.get(1).getProperties().get(0).getProperty()).isEqualTo("mother");
+        assertThat(dataObjects.get(1).getProperties().get(0).getType()).isEqualTo(APerson.class.getName());
+    }
+
+    @Test
+    public void testLoadDataObjects_UnknownCustomProperty() {
         final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
         modelFieldsBuilder.put(CFamily.class.getName(),
                                new ModelField[]{
@@ -169,6 +463,7 @@ public class DataObjectsServiceImplTest {
                                                       FieldAccessorsAndMutators.BOTH,
                                                       APerson.class.getSimpleName())
                                });
+
         final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
         dataModelOracle.addModuleModelFields(modelFields);
 
@@ -180,38 +475,6 @@ public class DataObjectsServiceImplTest {
         assertThat(dataObjects.get(0).getClassType()).isEqualTo(CFamily.class.getName());
         assertThat(dataObjects.get(0).getProperties()).hasSize(1);
         assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("mother");
-        assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(APerson.class.getName());
-    }
-
-    @Test
-    public void testLoadDataObjects_UnknownCustomProperty() {
-        final Maps.Builder<String, ModelField[]> modelFieldsBuilder = new Maps.Builder<>();
-        modelFieldsBuilder.put(CFamily.class.getName(),
-                               new ModelField[]{
-                                       new ModelField(DataType.TYPE_THIS,
-                                                      CFamily.class.getName(),
-                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
-                                                      ModelField.FIELD_ORIGIN.SELF,
-                                                      FieldAccessorsAndMutators.BOTH,
-                                                      CFamily.class.getSimpleName()),
-                                       new ModelField("unknown",
-                                                      "UnknownType",
-                                                      ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
-                                                      ModelField.FIELD_ORIGIN.SELF,
-                                                      FieldAccessorsAndMutators.BOTH,
-                                                      "UnknownType")
-                               });
-        final Map<String, ModelField[]> modelFields = modelFieldsBuilder.build();
-        dataModelOracle.addModuleModelFields(modelFields);
-
-        final List<DataObject> dataObjects = service.loadDataObjects(workspaceProject);
-
-        assertThat(dataObjects).isNotEmpty();
-        assertThat(dataObjects).hasSize(1);
-
-        assertThat(dataObjects.get(0).getClassType()).isEqualTo(CFamily.class.getName());
-        assertThat(dataObjects.get(0).getProperties()).hasSize(1);
-        assertThat(dataObjects.get(0).getProperties().get(0).getProperty()).isEqualTo("unknown");
         assertThat(dataObjects.get(0).getProperties().get(0).getType()).isEqualTo(BuiltInType.ANY.getName());
     }
 

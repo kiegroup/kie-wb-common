@@ -21,10 +21,6 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoField;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalQueries;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -79,69 +75,83 @@ public class DataObjectsServiceImpl implements DataObjectsService {
         final String[] types = DataModelOracleUtilities.getFactTypes(dmo);
         final Map<String, ModelField[]> typesModelFields = dmo.getModuleModelFields();
 
-        return Arrays.stream(types).map(type -> convert(type, typesModelFields, classLoader)).collect(Collectors.toList());
+        final List<DataObject> dataObjects = Arrays.stream(types).map(DataObject::new).collect(Collectors.toList());
+        dataObjects.forEach(dataObject -> convertProperties(dataObject, dataObjects, typesModelFields, classLoader));
+        return dataObjects;
     }
 
-    private DataObject convert(final String type,
-                               final Map<String, ModelField[]> typesModelFields,
-                               final ClassLoader classLoader) {
-        final DataObject dataObject = new DataObject(type);
-        final ModelField[] typeModelFields = typesModelFields.getOrDefault(type, new ModelField[]{});
+    private void convertProperties(final DataObject dataObject,
+                                   final List<DataObject> dataObjects,
+                                   final Map<String, ModelField[]> typesModelFields,
+                                   final ClassLoader classLoader) {
+        final ModelField[] typeModelFields = typesModelFields.getOrDefault(dataObject.getClassType(), new ModelField[]{});
         dataObject.setProperties(Arrays.stream(typeModelFields)
                                          .filter(typeModelField -> !Objects.equals(typeModelField.getName(), DataType.TYPE_THIS))
-                                         .map(typeModelField -> convert(typeModelField, classLoader))
+                                         .map(typeModelField -> convertProperty(typeModelField, dataObjects, classLoader))
                                          .collect(Collectors.toList()));
-        return dataObject;
     }
 
-    private DataObjectProperty convert(final ModelField field,
-                                       final ClassLoader classLoader) {
+    private DataObjectProperty convertProperty(final ModelField field,
+                                               final List<DataObject> dataObjects,
+                                               final ClassLoader classLoader) {
         final DataObjectProperty dataObjectProperty = new DataObjectProperty();
-        dataObjectProperty.setType(convert(field.getClassName(), classLoader));
+        dataObjectProperty.setType(convertDataType(field.getClassName(), dataObjects, classLoader));
         dataObjectProperty.setProperty(field.getName());
         return dataObjectProperty;
     }
 
-    private String convert(final String typeName,
-                           final ClassLoader classLoader) {
+    private String convertDataType(final String typeName,
+                                   final List<DataObject> dataObjects,
+                                   final ClassLoader classLoader) {
+        for (DataObject dataObject : dataObjects) {
+            if (Objects.equals(typeName, dataObject.getClassType())) {
+                return typeName;
+            }
+        }
+
         try {
             final Class<?> clazz = classLoader.loadClass(unbox(typeName));
             final BuiltInType builtInType = determineBuiltInTypeFromClass(clazz);
             if (Objects.nonNull(builtInType)) {
                 return builtInType.getName();
             }
-            return typeName;
         } catch (ClassNotFoundException cnfe) {
-            return BuiltInType.ANY.getName();
+            //Swallow as BuiltInType.ANY is the default response
         }
+        return BuiltInType.ANY.getName();
     }
 
     private String unbox(final String typeName) {
         switch (typeName) {
-            case "int":
-                return Integer.class.getName();
-            case "short":
-                return Short.class.getName();
-            case "long":
-                return Long.class.getName();
-            case "byte":
-                return Byte.class.getName();
-            case "double":
-                return Double.class.getName();
-            case "char":
-                return Character.class.getName();
             case "boolean":
                 return Boolean.class.getName();
+            case "byte":
+                return Byte.class.getName();
+            case "char":
+                return Character.class.getName();
+            case "float":
+                return Float.class.getName();
+            case "int":
+                return Integer.class.getName();
+            case "long":
+                return Long.class.getName();
+            case "short":
+                return Short.class.getName();
+            case "double":
+                return Double.class.getName();
         }
         return typeName;
     }
 
+    /**/
     private BuiltInType determineBuiltInTypeFromClass(final Class<?> clazz) {
         if (Objects.isNull(clazz)) {
             return BuiltInType.UNDEFINED;
         } else if (Number.class.isAssignableFrom(clazz)) {
             return BuiltInType.NUMBER;
         } else if (String.class.isAssignableFrom(clazz)) {
+            return BuiltInType.STRING;
+        } else if (Character.class.isAssignableFrom(clazz)) {
             return BuiltInType.STRING;
         } else if (LocalDate.class.isAssignableFrom(clazz)) {
             return BuiltInType.DATE;
@@ -153,14 +163,7 @@ public class DataObjectsServiceImpl implements DataObjectsService {
             return BuiltInType.BOOLEAN;
         } else if (Map.class.isAssignableFrom(clazz)) {
             return BuiltInType.CONTEXT;
-        } else if (TemporalAccessor.class.isAssignableFrom(clazz)) {
-            final TemporalAccessor ta = (TemporalAccessor) clazz.cast(TemporalAccessor.class);
-            if (!(ta instanceof Temporal) && ta.isSupported(ChronoField.HOUR_OF_DAY)
-                    && ta.isSupported(ChronoField.MINUTE_OF_HOUR) && ta.isSupported(ChronoField.SECOND_OF_MINUTE)
-                    && ta.query(TemporalQueries.zone()) != null) {
-                return BuiltInType.TIME;
-            }
         }
-        return null;
+        return BuiltInType.ANY;
     }
 }
