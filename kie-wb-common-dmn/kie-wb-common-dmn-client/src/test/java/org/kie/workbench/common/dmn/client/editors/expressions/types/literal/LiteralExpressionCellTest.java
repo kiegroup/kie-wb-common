@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
@@ -40,7 +41,8 @@ public class LiteralExpressionCellTest {
     @Before
     public void setup() {
         this.cell = new LiteralExpressionCell<>(value,
-                                                listSelector);
+                                                listSelector,
+                                                HasDynamicHeight.DEFAULT_HEIGHT);
     }
 
     @Test

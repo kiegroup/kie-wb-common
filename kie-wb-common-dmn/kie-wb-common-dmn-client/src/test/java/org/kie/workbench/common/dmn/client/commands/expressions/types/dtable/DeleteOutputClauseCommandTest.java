@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.Outp
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -103,7 +104,8 @@ public class DeleteOutputClauseCommandTest {
 
         this.uiModelMapper = new DecisionTableUIModelMapper(() -> uiModel,
                                                             () -> Optional.of(dtable),
-                                                            listSelector);
+                                                            listSelector,
+                                                            HasDynamicHeight.DEFAULT_HEIGHT);
 
         makeCommand(DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT + dtable.getInput().size());
 

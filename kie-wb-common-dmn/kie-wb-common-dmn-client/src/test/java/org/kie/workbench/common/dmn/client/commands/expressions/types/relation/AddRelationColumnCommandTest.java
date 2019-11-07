@@ -30,6 +30,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.Re
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationDefaultValueUtilities;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -99,7 +100,8 @@ public class AddRelationColumnCommandTest {
         this.uiModel.appendColumn(uiRowNumberColumn);
         this.uiModelMapper = new RelationUIModelMapper(() -> uiModel,
                                                        () -> Optional.of(relation),
-                                                       listSelector);
+                                                       listSelector,
+                                                       HasDynamicHeight.DEFAULT_HEIGHT);
 
         makeCommand(1);
 

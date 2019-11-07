@@ -34,6 +34,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.Deci
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.InputClauseColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -97,7 +98,8 @@ public class AddInputClauseCommandTest {
         this.inputClause = new InputClause();
         this.uiModelMapper = new DecisionTableUIModelMapper(() -> uiModel,
                                                             () -> Optional.of(dtable),
-                                                            listSelector);
+                                                            listSelector,
+                                                            HasDynamicHeight.DEFAULT_HEIGHT);
 
         doReturn(0).when(uiRowNumberColumn).getIndex();
         doReturn(1).when(uiInputClauseColumn).getIndex();

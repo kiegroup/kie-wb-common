@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionUIModelMapper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionUIModelMapperTest;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridCell;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 
 import static org.junit.Assert.assertTrue;
 
@@ -32,6 +33,7 @@ public class LiteralExpressionPMMLUIModelMapperTest extends LiteralExpressionUIM
         return new LiteralExpressionPMMLUIModelMapper(() -> uiModel,
                                                       () -> Optional.of(literalExpression),
                                                       listSelector,
+                                                      HasDynamicHeight.DEFAULT_HEIGHT,
                                                       "placeholder");
     }
 

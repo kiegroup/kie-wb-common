@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
@@ -64,7 +65,8 @@ public class LiteralExpressionUIModelMapperTest {
     protected LiteralExpressionUIModelMapper getMapper() {
         return new LiteralExpressionUIModelMapper(() -> uiModel,
                                                   () -> Optional.of(literalExpression),
-                                                  listSelector);
+                                                  listSelector,
+                                                  HasDynamicHeight.DEFAULT_HEIGHT);
     }
 
     @Test

@@ -16,11 +16,16 @@
 
 package org.kie.workbench.common.dmn.client.widgets.grid.model;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
 
 public class ExpressionEditorGridRow extends BaseGridRow {
+
+    private static final Logger LOGGER = Logger.getLogger(ExpressionEditorGridRow.class.getName());
 
     public static final double DEFAULT_HEIGHT = 48.0;
 
@@ -37,7 +42,10 @@ public class ExpressionEditorGridRow extends BaseGridRow {
 
     @Override
     public double getHeight() {
-        return this.getCells()
+        long currentTimeMillis = System.currentTimeMillis();
+        LOGGER.log(Level.FINEST, " - Pre- ExpressionEditorGridRow.getHeight()");
+
+        final double height = this.getCells()
                 .values()
                 .stream()
                 .filter(cell -> cell != null && cell.getValue() != null)
@@ -49,5 +57,8 @@ public class ExpressionEditorGridRow extends BaseGridRow {
                 .map(editor -> editor.getHeight() + editor.getPadding() * 2)
                 .reduce(Double::max)
                 .orElse(defaultHeight);
+
+        LOGGER.log(Level.FINEST, " - Post- ExpressionEditorGridRow.getHeight() - " + (System.currentTimeMillis() - currentTimeMillis) + "ms");
+        return height;
     }
 }

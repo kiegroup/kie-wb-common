@@ -28,6 +28,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -94,7 +95,8 @@ public class DeleteRelationRowCommandTest {
 
         this.uiModelMapper = new RelationUIModelMapper(() -> uiModel,
                                                        () -> Optional.of(relation),
-                                                       listSelector);
+                                                       listSelector,
+                                                       HasDynamicHeight.DEFAULT_HEIGHT);
 
         makeCommand(0);
         doReturn(ruleManager).when(handler).getRuleManager();

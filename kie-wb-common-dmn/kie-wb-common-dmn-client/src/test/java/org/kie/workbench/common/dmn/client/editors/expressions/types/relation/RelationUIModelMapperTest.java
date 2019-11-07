@@ -28,6 +28,7 @@ import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
@@ -99,7 +100,8 @@ public class RelationUIModelMapperTest {
 
         this.mapper = new RelationUIModelMapper(() -> uiModel,
                                                 () -> Optional.of(relation),
-                                                listSelector);
+                                                listSelector,
+                                                HasDynamicHeight.DEFAULT_HEIGHT);
         this.cellValueSupplier = Optional::empty;
     }
 

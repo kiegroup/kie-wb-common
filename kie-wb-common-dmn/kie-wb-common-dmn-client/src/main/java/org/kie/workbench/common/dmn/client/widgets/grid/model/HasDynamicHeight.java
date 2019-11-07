@@ -13,25 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.dmn.client.widgets.grid.model;
 
-import org.uberfire.ext.wires.core.grids.client.model.GridCell;
-import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
+public interface HasDynamicHeight {
 
-public class LiteralExpressionGridRow extends BaseGridRow {
+    double DEFAULT_HEIGHT = 48.0;
 
-    public LiteralExpressionGridRow() {
-        super(HasDynamicHeight.DEFAULT_HEIGHT);
-    }
-
-    @Override
-    public double getHeight() {
-        double height = HasDynamicHeight.DEFAULT_HEIGHT;
-        for (GridCell<?> cell : this.getCells().values()) {
-            if (cell instanceof HasDynamicHeight) {
-                height = Math.max(((HasDynamicHeight) cell).getHeight(), height);
-            }
-        }
-        return height;
-    }
+    double getHeight();
 }
