@@ -42,6 +42,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 
@@ -110,7 +111,7 @@ public class DataObjectsServiceImpl implements DataObjectsService {
         }
 
         try {
-            final String className = DataModelOracleUtilities.getClassForPrimitiveTypeId(typeName);
+            final String className = PrimitiveUtilities.getClassNameForPrimitiveType(typeName);
             final Class<?> clazz = classLoader.loadClass(Objects.nonNull(className) ? className : typeName);
             final BuiltInType builtInType = determineBuiltInTypeFromClass(clazz);
             if (Objects.nonNull(builtInType)) {

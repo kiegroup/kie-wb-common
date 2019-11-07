@@ -42,13 +42,13 @@ import org.kie.workbench.common.services.datamodeller.util.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.BOOLEAN;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.BYTE;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.CHAR;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.DOUBLE;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.FLOAT;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.LONG;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.SHORT;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.BOOLEAN;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.BYTE;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.CHAR;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.DOUBLE;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.FLOAT;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.LONG;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.SHORT;
 
 /**
  * Helper tools to generate names and other stuff easily from code adf engine.

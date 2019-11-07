@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.services.datamodeller.util;
 
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.BOOLEAN;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.BYTE;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.CHAR;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.DOUBLE;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.FLOAT;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.INT;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.LONG;
-import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.SHORT;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.BOOLEAN;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.BYTE;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.CHAR;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.DOUBLE;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.FLOAT;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.INT;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.LONG;
+import static org.kie.workbench.common.services.datamodel.util.PrimitiveUtilities.SHORT;
 
 public class NamingUtils {
 
