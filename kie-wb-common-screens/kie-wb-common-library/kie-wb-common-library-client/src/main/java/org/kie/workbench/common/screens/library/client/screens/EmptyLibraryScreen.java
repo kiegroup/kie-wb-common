@@ -23,17 +23,9 @@ import org.guvnor.common.services.project.client.security.ProjectController;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.widgets.library.AddProjectButtonPresenter;
-import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
-import org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback;
 import org.uberfire.client.mvp.UberElement;
 
 public class EmptyLibraryScreen {
-
-    @Inject
-    private GenericErrorPopup genericErrorPopup;
-
-    @Inject
-    private DefaultWorkbenchErrorCallback callback;
 
     public interface View extends UberElement<EmptyLibraryScreen> {
 

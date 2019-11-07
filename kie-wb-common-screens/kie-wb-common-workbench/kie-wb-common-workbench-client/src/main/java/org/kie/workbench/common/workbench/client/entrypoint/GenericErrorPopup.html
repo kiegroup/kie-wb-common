@@ -14,38 +14,48 @@
   ~ limitations under the License.
   -->
 
-<div>
-    <div>
-        <div data-field="header">System error</div>
+<div class="generic-error-popup">
+    <div data-field="header"><span data-i18n-key="SystemErrorTitle"></span></div>
 
-        <div data-field="body">
-            <div class="alert alert-warning">
-                <strong>Warning!</strong> An unexpected system error occurred!
-            </div>
-            <p>Unexpected events occured that the system didn't know how to handle. Details have been sent to the system log file. Unresolved errors might persist.</p>
-            <div>
-                <a data-field="chevron-down" hidden><i class="glyphicon glyphicon-chevron-down" ></i></a>
-                <a data-field="chevron-right"><i class="glyphicon glyphicon-chevron-right"></i></a>Error details
-                <a data-field="copy-details"><i class="glyphicon glyphicon-copy"></i></a>
-            </div>
-            <div data-field="error-details-section" style="margin-top: 8px;" hidden>
-                <textarea data-field="error-details" class="form-control" style="resize: none; white-space: pre; cursor: text; border: none;" readonly></textarea>
-            </div>
-            <hr>
-<!--            <div class="checkbox">-->
-<!--                <label><input type="checkbox" value="">Don't show this message again for </label>-->
-<!--                <select class="form-control" style="width:90px;display:inline-block;">-->
-<!--                    <option>One hour</option>-->
-<!--                    <option>Two hour</option>-->
-<!--                    <option>30 min</option>-->
-<!--                    <option>10 min</option>-->
-<!--                </select>-->
-<!--                <span class="glyphicon glyphicon-info-sign"></span>-->
-<!--            </div>-->
+    <div data-field="body">
+        <div class="alert alert-warning">
+            <span class="pficon pficon-warning-triangle-o"></span>
+            <strong><span data-i18n-key="SystemErrorAlert"></span></strong>
+        </div>
+        <div class="error-info">
+            <span data-i18n-key="SystemErrorDetails"></span>
+            <span data-i18n-key="SystemErrorDetailsInLog"></span>
+            <span data-field="error-id"></span>
         </div>
 
-        <div data-field="footer" style="margin-top: -20px;">
-            <button data-field="continue-button" class="btn btn-default btn-primary">Continue</button>
+        <div>
+            <a data-field="chevron-down" hidden><em class="glyphicon glyphicon-chevron-down"></em></a>
+            <a data-field="chevron-right"><em class="glyphicon glyphicon-chevron-right"></em></a>
+            <span data-i18n-key="ErrorDetails" class="chevron-title"></span>
+            <a data-field="copy-details"><em class="glyphicon glyphicon-copy"></em></a>
         </div>
+        <div data-field="error-details-section" hidden>
+            <textarea data-field="error-details" class="error-details form-control" readonly></textarea>
+        </div>
+        <hr>
+        <div>
+            <label for="do-not-show-again">
+                <input type="checkbox" data-field="do-not-show-again-checkbox" id="do-not-show-again"/>
+                <span data-i18n-key="DoNotShowAgainMsg"></span>
+            </label>
+            <select data-field="time-select" class="time-select">
+                <option value="TEN_MINUTES" data-i18n-key="TimeSelectionTenMinutes"></option>
+                <option value="THIRTY_MINUTES" data-i18n-key="TimeSelectionThirtyMinutes"></option>
+                <option value="ONE_HOUR" data-i18n-key="TimeSelectionOneHour"></option>
+                <option value="TWO_HOURS" data-i18n-key="TimeSelectionTwoHours"></option>
+            </select>
+            <a href="#" data-toggle="tooltip" data-delay="0">
+                <span data-field="unresolved-errors-tooltip" class="fa fa-info-circle"></span>
+            </a>
+        </div>
+    </div>
+
+    <div data-field="footer">
+        <button data-field="continue-button" class="btn btn-default btn-primary" data-i18n-key="Continue"></button>
     </div>
 </div>

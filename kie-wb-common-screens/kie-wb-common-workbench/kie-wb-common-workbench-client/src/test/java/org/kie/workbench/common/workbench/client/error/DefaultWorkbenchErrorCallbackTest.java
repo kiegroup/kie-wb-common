@@ -16,26 +16,36 @@
 
 package org.kie.workbench.common.workbench.client.error;
 
-import org.dashbuilder.dataset.exception.*;
+import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.jboss.errai.bus.client.api.InvalidBusContentException;
+import org.jboss.errai.security.shared.api.identity.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.server.api.exception.KieServicesHttpException;
+import org.kie.workbench.common.services.shared.logger.GenericErrorLoggerService;
 import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.mvp.PlaceHistoryHandler;
+import org.uberfire.mocks.CallerMock;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback.isInvalidBusContentException;
-import static org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback.isServerOfflineException;
 import static org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback.isKieServerForbiddenException;
 import static org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback.isKieServerUnauthorizedException;
+import static org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback.isServerOfflineException;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.times;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultWorkbenchErrorCallbackTest {
@@ -43,8 +53,25 @@ public class DefaultWorkbenchErrorCallbackTest {
     @Mock
     private GenericErrorPopup genericErrorPopup;
 
+    @Mock
+    private GenericErrorTimeController genericErrorTimeController;
+
+    @Mock
+    private GenericErrorLoggerService genericErrorLoggerService;
+
+    @Mock
+    private User user;
+
+    @Mock
+    private PlaceHistoryHandler placeHistoryHandler;
+
     @InjectMocks
     private DefaultWorkbenchErrorCallback callback;
+
+    @Before
+    public void setup() {
+        callback.setGenericErrorLoggerService(new CallerMock<>(genericErrorLoggerService));
+    }
 
     @Test
     public void testForbiddenException() {
@@ -102,11 +129,32 @@ public class DefaultWorkbenchErrorCallbackTest {
     @Test
     public void testGenericPopup() {
         callback.queue(new RuntimeException("ex"));
+
+        when(genericErrorTimeController.isExpired()).thenReturn(true);
+
         callback.processQueue();
 
         InOrder inOrder = inOrder(genericErrorPopup);
         inOrder.verify(genericErrorPopup).show();
-        inOrder.verify(genericErrorPopup).setup(any(), any());
+        inOrder.verify(genericErrorPopup).setup(any(), any(), anyString());
+        verify(genericErrorLoggerService).log(anyString(),
+                                              anyString(),
+                                              anyString());
+    }
+
+    @Test
+    public void testDoNotShowGenericPopupIfTimeNotExpired() {
+        callback.queue(new RuntimeException("ex"));
+
+        when(genericErrorTimeController.isExpired()).thenReturn(false);
+
+        callback.processQueue();
+
+        verify(genericErrorPopup, never()).show();
+        verify(genericErrorPopup, never()).setup(any(), any(), anyString());
+        verify(genericErrorLoggerService).log(anyString(),
+                                              anyString(),
+                                              anyString());
     }
 
     @Test
@@ -115,22 +163,24 @@ public class DefaultWorkbenchErrorCallbackTest {
         callback.queue(new Exception("b"));
         callback.queue(new Exception("c"));
 
+        when(genericErrorTimeController.isExpired()).thenReturn(true);
+
         callback.processQueue();
 
         InOrder inOrder = inOrder(genericErrorPopup);
         inOrder.verify(genericErrorPopup, times(1)).show();
-        inOrder.verify(genericErrorPopup).setup(eq("Uncaught exception: a"), any());
+        inOrder.verify(genericErrorPopup).setup(eq("Uncaught exception: a"), any(), anyString());
 
         callback.dequeue();
         callback.processQueue();
 
         inOrder.verify(genericErrorPopup, times(1)).show();
-        inOrder.verify(genericErrorPopup).setup(eq("Uncaught exception: b"), any());
+        inOrder.verify(genericErrorPopup).setup(eq("Uncaught exception: b"), any(), anyString());
 
         callback.dequeue();
         callback.processQueue();
 
         inOrder.verify(genericErrorPopup, times(1)).show();
-        inOrder.verify(genericErrorPopup).setup(eq("Uncaught exception: c"), any());
+        inOrder.verify(genericErrorPopup).setup(eq("Uncaught exception: c"), any(), anyString());
     }
 }
