@@ -27,11 +27,9 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Window;
 import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.jboss.errai.bus.client.api.InvalidBusContentException;
-import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.server.api.exception.KieServicesException;
 import org.kie.server.api.exception.KieServicesHttpException;
-import org.kie.workbench.common.services.shared.logger.GenericErrorLoggerService;
 import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.mvp.PlaceHistoryHandler;
@@ -55,12 +53,8 @@ public class DefaultWorkbenchErrorCallback {
     @Inject
     private PlaceHistoryHandler placeHistoryHandler;
 
-    private Caller<GenericErrorLoggerService> genericErrorLoggerService;
-
     @Inject
-    public void setGenericErrorLoggerService(final Caller<GenericErrorLoggerService> genericErrorLoggerService) {
-        this.genericErrorLoggerService = genericErrorLoggerService;
-    }
+    private GenericErrorLoggerProxy genericErrorLoggerProxy;
 
     private Queue<Throwable> queue = new ArrayDeque<>();
 
@@ -216,9 +210,9 @@ public class DefaultWorkbenchErrorCallback {
             queue.poll();
         }
 
-        genericErrorLoggerService.call().log(errorId,
-                                             clientLocation,
-                                             errorDetails);
+        genericErrorLoggerProxy.log(errorId,
+                                    clientLocation,
+                                    errorDetails);
     }
 
     private String extractMessageRecursively(final Throwable t) {

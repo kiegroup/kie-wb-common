@@ -19,18 +19,15 @@ package org.kie.workbench.common.workbench.client.error;
 import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.jboss.errai.bus.client.api.InvalidBusContentException;
 import org.jboss.errai.security.shared.api.identity.User;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.server.api.exception.KieServicesHttpException;
-import org.kie.workbench.common.services.shared.logger.GenericErrorLoggerService;
 import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.client.mvp.PlaceHistoryHandler;
-import org.uberfire.mocks.CallerMock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -57,7 +54,7 @@ public class DefaultWorkbenchErrorCallbackTest {
     private GenericErrorTimeController genericErrorTimeController;
 
     @Mock
-    private GenericErrorLoggerService genericErrorLoggerService;
+    private GenericErrorLoggerProxy genericErrorLoggerProxy;
 
     @Mock
     private User user;
@@ -67,11 +64,6 @@ public class DefaultWorkbenchErrorCallbackTest {
 
     @InjectMocks
     private DefaultWorkbenchErrorCallback callback;
-
-    @Before
-    public void setup() {
-        callback.setGenericErrorLoggerService(new CallerMock<>(genericErrorLoggerService));
-    }
 
     @Test
     public void testForbiddenException() {
@@ -137,9 +129,9 @@ public class DefaultWorkbenchErrorCallbackTest {
         InOrder inOrder = inOrder(genericErrorPopup);
         inOrder.verify(genericErrorPopup).show();
         inOrder.verify(genericErrorPopup).setup(any(), any(), anyString());
-        verify(genericErrorLoggerService).log(anyString(),
-                                              anyString(),
-                                              anyString());
+        verify(genericErrorLoggerProxy).log(anyString(),
+                                            anyString(),
+                                            anyString());
     }
 
     @Test
@@ -152,9 +144,9 @@ public class DefaultWorkbenchErrorCallbackTest {
 
         verify(genericErrorPopup, never()).show();
         verify(genericErrorPopup, never()).setup(any(), any(), anyString());
-        verify(genericErrorLoggerService).log(anyString(),
-                                              anyString(),
-                                              anyString());
+        verify(genericErrorLoggerProxy).log(anyString(),
+                                            anyString(),
+                                            anyString());
     }
 
     @Test
