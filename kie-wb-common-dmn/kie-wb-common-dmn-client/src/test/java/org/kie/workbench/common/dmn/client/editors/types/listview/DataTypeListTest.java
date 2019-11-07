@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -29,6 +30,8 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.editors.types.DataObject;
+import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -508,6 +511,42 @@ public class DataTypeListTest {
     }
 
     @Test
+    public void testAddDataTypeWithDefinedDataType() {
+
+        final DataTypeListItem listItem = mock(DataTypeListItem.class);
+        final DataType dataType = mock(DataType.class);
+
+        doReturn(listItem).when(dataTypeList).makeListItem(dataType);
+
+        dataTypeList.addDataType(dataType, false);
+
+        verify(searchBar).reset();
+        verify(dataType).create();
+        verify(view).showOrHideNoCustomItemsMessage();
+        verify(listItem).refresh();
+        verify(listItem, never()).enableEditMode();
+        verify(dndListComponent).refreshItemsCSSAndHTMLPosition();
+    }
+
+    @Test
+    public void testAddDataTypeWithDefinedDataTypeAndEditMode() {
+
+        final DataTypeListItem listItem = mock(DataTypeListItem.class);
+        final DataType dataType = mock(DataType.class);
+
+        doReturn(listItem).when(dataTypeList).makeListItem(dataType);
+
+        dataTypeList.addDataType(dataType, true);
+
+        verify(searchBar).reset();
+        verify(dataType).create();
+        verify(view).showOrHideNoCustomItemsMessage();
+        verify(listItem).refresh();
+        verify(listItem).enableEditMode();
+        verify(dndListComponent).refreshItemsCSSAndHTMLPosition();
+    }
+
+    @Test
     public void testInsertBelow() {
 
         final DataType dataType = mock(DataType.class);
@@ -696,6 +735,181 @@ public class DataTypeListTest {
         final HTMLElement actualElement = dataTypeList.getListItems();
 
         assertEquals(expectedElement, actualElement);
+    }
+
+    @Test
+    public void testImportDataObjects() {
+
+        final DataObject present = mock(DataObject.class);
+        final DataObject notPresent = mock(DataObject.class);
+        final List<DataObject> imported = asList(present, notPresent);
+
+        final DataType presentDataType = mock(DataType.class);
+        doReturn(presentDataType).when(dataTypeList).createNewDataType(present);
+
+        final DataType notPresentDataType = mock(DataType.class);
+        doReturn(notPresentDataType).when(dataTypeList).createNewDataType(notPresent);
+
+        doReturn(true).when(dataTypeList).isPresent(present);
+        doReturn(false).when(dataTypeList).isPresent(notPresent);
+
+        final String importedPresentClass = "org.something.MyClass";
+        when(present.getClassType()).thenReturn(importedPresentClass);
+
+        final DataType existingDataType = mock(DataType.class);
+        doReturn(existingDataType).when(dataTypeList).findDataTypeByName(importedPresentClass);
+
+        doNothing().when(dataTypeList).replace(existingDataType, presentDataType);
+        doNothing().when(dataTypeList).insertProperties(present);
+        doNothing().when(dataTypeList).insertProperties(notPresent);
+        doNothing().when(dataTypeList).insert(notPresentDataType);
+
+        dataTypeList.importDataObjects(imported);
+
+        verify(dataTypeList).isPresent(present);
+        verify(dataTypeList).isPresent(notPresent);
+
+        verify(dataTypeList).findDataTypeByName(importedPresentClass);
+        verify(dataTypeList).replace(existingDataType, presentDataType);
+        verify(dataTypeList).insertProperties(present);
+
+        verify(dataTypeList).insert(notPresentDataType);
+        verify(dataTypeList, never()).insert(presentDataType);
+        verify(dataTypeList).insertProperties(notPresent);
+    }
+
+    @Test
+    public void testInsertProperties() {
+
+        final DataObject dataObject = mock(DataObject.class);
+        final String myImportedClass = "org.MyClass";
+        when(dataObject.getClassType()).thenReturn(myImportedClass);
+        final DataType existingDt = mock(DataType.class);
+        doReturn(existingDt).when(dataTypeList).findDataTypeByName(myImportedClass);
+        final DataTypeListItem dtListItem = mock(DataTypeListItem.class);
+        final Optional<DataTypeListItem> dtListItemOptional = Optional.of(dtListItem);
+        doReturn(dtListItemOptional).when(dataTypeList).findItem(existingDt);
+
+        final DataObjectProperty property1 = mock(DataObjectProperty.class);
+        final DataObjectProperty property2 = mock(DataObjectProperty.class);
+        final List<DataObjectProperty> properties = Arrays.asList(property1, property2);
+        when(dataObject.getProperties()).thenReturn(properties);
+
+        final DataType property1DataType = mock(DataType.class);
+        final DataType property2DataType = mock(DataType.class);
+        doReturn(property1DataType).when(dataTypeList).createNewDataType(property1);
+        doReturn(property2DataType).when(dataTypeList).createNewDataType(property2);
+
+        dataTypeList.insertProperties(dataObject);
+
+        verify(dtListItem).insertNestedField(property1DataType);
+        verify(dtListItem).insertNestedField(property2DataType);
+    }
+
+    @Test
+    public void testInsert() {
+
+        final DataType newDataType = mock(DataType.class);
+
+        doNothing().when(dataTypeList).addDataType(newDataType, false);
+
+        dataTypeList.insert(newDataType);
+
+        verify(dataTypeList).addDataType(newDataType, false);
+    }
+
+    @Test
+    public void testReplace() {
+
+        final DataType newDataType = mock(DataType.class);
+        final DataType existing = mock(DataType.class);
+
+        doNothing().when(dataTypeList).insert(newDataType);
+
+        dataTypeList.replace(existing, newDataType);
+
+        verify(dndDataTypesHandler).deleteKeepingReferences(existing);
+
+        verify(dataTypeList).insert(newDataType);
+    }
+
+    @Test
+    public void testCreateNewDataTypeFromProperty() {
+
+        final DataObjectProperty dataProperty = mock(DataObjectProperty.class);
+        final String propertyName = "name";
+        final String propertyType = "type";
+        final DataType newType = mock(DataType.class);
+        when(dataProperty.getProperty()).thenReturn(propertyName);
+        when(dataProperty.getType()).thenReturn(propertyType);
+
+        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
+        when(dataTypeManager.withType(propertyType)).thenReturn(dataTypeManager);
+        when(dataTypeManager.get()).thenReturn(newType);
+
+        final DataType actual = dataTypeList.createNewDataType(dataProperty);
+
+        assertEquals(newType, actual);
+
+        verify(newType).setName(propertyName);
+    }
+
+    @Test
+    public void testCreateNewDataTypeFromDataObject() {
+
+        final DataObject dataObject = mock(DataObject.class);
+        final DataType dataType = mock(DataType.class);
+        final String structure = "structure";
+        final String classType = "classType";
+        when(dataObject.getClassType()).thenReturn(classType);
+
+        when(dataTypeManager.structure()).thenReturn(structure);
+        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
+        when(dataTypeManager.withType(structure)).thenReturn(dataTypeManager);
+        when(dataTypeManager.get()).thenReturn(dataType);
+
+        final DataType actual = dataTypeList.createNewDataType(dataObject);
+        assertEquals(dataType, actual);
+
+        verify(dataType).setName(classType);
+    }
+
+    @Test
+    public void testFindDataTypeByName() {
+
+        final String name = "tName";
+
+        final DataType type = mock(DataType.class);
+        when(dataTypeManager.getTopLevelDataTypeWithName(name)).thenReturn(type);
+
+        final DataType actual = dataTypeList.findDataTypeByName(name);
+
+        verify(dataTypeManager).getTopLevelDataTypeWithName(name);
+        assertEquals(type, actual);
+    }
+
+    @Test
+    public void testIsPresent() {
+
+        final DataObject notPresentDataObject = mock(DataObject.class);
+        final String notPresent = "classTypeNotPresent";
+        when(notPresentDataObject.getClassType()).thenReturn(notPresent);
+
+        final DataObject dataObject = mock(DataObject.class);
+        final String classType = "classType";
+        when(dataObject.getClassType()).thenReturn(classType);
+
+        when(dataTypeManager.hasTopLevelDataTypeWithName(classType)).thenReturn(true);
+        when(dataTypeManager.hasTopLevelDataTypeWithName(notPresent)).thenReturn(false);
+
+        boolean actual = dataTypeList.isPresent(dataObject);
+        verify(dataTypeManager).hasTopLevelDataTypeWithName(classType);
+        assertTrue(actual);
+
+        actual = dataTypeList.isPresent(notPresentDataObject);
+        verify(dataTypeManager).hasTopLevelDataTypeWithName(notPresent);
+        assertFalse(actual);
+
     }
 
     private DataTypeListItem listItem(final DataType dataType) {

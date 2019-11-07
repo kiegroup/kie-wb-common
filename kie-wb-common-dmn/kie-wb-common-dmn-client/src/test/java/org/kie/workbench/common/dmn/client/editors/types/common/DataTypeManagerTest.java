@@ -682,6 +682,52 @@ public class DataTypeManagerTest {
     }
 
     @Test
+    public void testHasTopLevelDataTypeWithName(){
+
+        final String topLevelType = "tType";
+        final Optional<DataType> type = Optional.of(mock(DataType.class));
+        doReturn(type).when(manager).findTopLevelDataTypeWithName(topLevelType);
+        boolean actual = manager.hasTopLevelDataTypeWithName(topLevelType);
+        assertTrue(actual);
+    }
+
+    @Test
+    public void testGetTopLevelDataTypeWithName(){
+
+        final String topLevelType = "tType";
+        final DataType dataType = mock(DataType.class);
+        final Optional<DataType> type = Optional.of(dataType);
+        doReturn(type).when(manager).findTopLevelDataTypeWithName(topLevelType);
+        final DataType actual = manager.getTopLevelDataTypeWithName(topLevelType);
+        assertEquals(dataType, actual);
+    }
+
+    @Test
+    public void testFindTopLevelDataTypeWithName(){
+
+        final DataType dt1 = mock(DataType.class);
+        final String dt1Name = "The Name";
+        when(dt1.getName()).thenReturn(dt1Name);
+        final DataType dt2 = mock(DataType.class);
+        final String dt2Name = "The Other Name";
+        when(dt2.getName()).thenReturn(dt2Name);
+
+        final List<DataType> store= Arrays.asList(dt1, dt2);
+        when(dataTypeStore.getTopLevelDataTypes()).thenReturn(store);
+
+        Optional<DataType> foundDt = manager.findTopLevelDataTypeWithName(dt1Name);
+        assertTrue(foundDt.isPresent());
+        assertEquals(dt1, foundDt.get());
+
+        foundDt = manager.findTopLevelDataTypeWithName(dt2Name);
+        assertTrue(foundDt.isPresent());
+        assertEquals(dt2, foundDt.get());
+
+        Optional<DataType> notFoundDt = manager.findTopLevelDataTypeWithName("not present");
+        assertFalse(notFoundDt.isPresent());
+    }
+
+    @Test
     public void testWithUniqueNameWhenNameIsNotUnique() {
 
         final DataType dataType = makeDataType("uuid1");

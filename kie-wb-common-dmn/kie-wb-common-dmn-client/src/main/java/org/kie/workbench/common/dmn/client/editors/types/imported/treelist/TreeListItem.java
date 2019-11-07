@@ -32,6 +32,7 @@ public class TreeListItem {
     private final List<TreeListSubItem> subItems;
     private String description;
     private boolean isSelected;
+    private Object dataSource;
 
     @Inject
     public TreeListItem(final View view) {
@@ -74,6 +75,14 @@ public class TreeListItem {
 
     public boolean getIsSelected() {
         return isSelected;
+    }
+
+    public void setDataSource(final Object dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public Object getDataSource() {
+        return this.dataSource;
     }
 
     public interface View extends UberElemental<TreeListItem> {

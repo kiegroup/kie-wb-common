@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types.imported;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -126,8 +127,12 @@ public class ImportDataObjectModalView implements ImportDataObjectModal.View {
 
     @EventHandler("button-import")
     void onButtonImportClicked(final ClickEvent e) {
-        // TODO: import the DOs.
-        presenter.hide();
+
+        final List<DataObject> selectedItems = treeList.getSelectedItems().stream()
+                .map(item -> (DataObject) item.getDataSource())
+                .collect(Collectors.toList());
+
+        presenter.hide(selectedItems);
     }
 
     @EventHandler("clear-selection")
@@ -148,8 +153,9 @@ public class ImportDataObjectModalView implements ImportDataObjectModal.View {
         itemsContainer.appendChild(treeList.getElement());
     }
 
-    TreeListItem createTreeListItem(final DataObject data){
+    TreeListItem createTreeListItem(final DataObject data) {
         final TreeListItem item = items.get();
+        item.setDataSource(data);
         item.setDescription(data.getClassType());
         return item;
     }

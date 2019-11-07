@@ -32,6 +32,8 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.dmn.api.editors.types.DataObject;
+import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -227,17 +229,22 @@ public class DataTypeList {
     }
 
     void addDataType() {
+        addDataType(dataTypeManager.fromNew().get(), true);
+    }
+
+    void addDataType(final DataType dataType, boolean enableEditMode) {
 
         resetSearchBar();
 
-        final DataType dataType = dataTypeManager.fromNew().get();
         final DataTypeListItem listItem = makeListItem(dataType);
 
         dataType.create();
 
         showListItems();
         listItem.refresh();
-        listItem.enableEditMode();
+        if (enableEditMode) {
+            listItem.enableEditMode();
+        }
         refreshItemsCSSAndHTMLPosition();
     }
 
@@ -358,6 +365,63 @@ public class DataTypeList {
 
     private void refreshSearchBar() {
         searchBar.refresh();
+    }
+
+    public void importDataObjects(final List<DataObject> imported) {
+
+        for (final DataObject dataObject : imported) {
+            final DataType newDataType = createNewDataType(dataObject);
+            if (isPresent(dataObject)) {
+                final DataType existing = findDataTypeByName(dataObject.getClassType());
+                replace(existing, newDataType);
+                insertProperties(dataObject);
+            } else {
+                insert(newDataType);
+                insertProperties(dataObject);
+            }
+        }
+    }
+
+    void insertProperties(final DataObject dataObject) {
+
+        final DataType existing = findDataTypeByName(dataObject.getClassType());
+        final DataTypeListItem item = findItem(existing).get();
+        for (final DataObjectProperty property : dataObject.getProperties()) {
+            final DataType newDataType = createNewDataType(property);
+            item.insertNestedField(newDataType);
+        }
+    }
+
+    void insert(final DataType newDataType) {
+        addDataType(newDataType, false);
+    }
+
+    void replace(final DataType existing, final DataType newDataType) {
+
+        dndDataTypesHandler.deleteKeepingReferences(existing);
+        insert(newDataType);
+    }
+
+    DataType createNewDataType(final DataObjectProperty dataProperty) {
+
+        final DataType newDataType = dataTypeManager.fromNew().withType(dataProperty.getType()).get();
+        newDataType.setName(dataProperty.getProperty());
+        return newDataType;
+    }
+
+    DataType createNewDataType(final DataObject dataObject) {
+
+        final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
+        newDataType.setName(dataObject.getClassType());
+        return newDataType;
+    }
+
+    DataType findDataTypeByName(final String name) {
+        return dataTypeManager.getTopLevelDataTypeWithName(name);
+    }
+
+    boolean isPresent(final DataObject dataObject) {
+        return dataTypeManager.hasTopLevelDataTypeWithName(dataObject.getClassType());
     }
 
     public interface View extends UberElemental<DataTypeList>,
