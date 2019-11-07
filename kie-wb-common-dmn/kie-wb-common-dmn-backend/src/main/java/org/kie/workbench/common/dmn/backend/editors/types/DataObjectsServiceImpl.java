@@ -110,7 +110,8 @@ public class DataObjectsServiceImpl implements DataObjectsService {
         }
 
         try {
-            final Class<?> clazz = classLoader.loadClass(unbox(typeName));
+            final String className = DataModelOracleUtilities.getClassForPrimitiveTypeId(typeName);
+            final Class<?> clazz = classLoader.loadClass(Objects.nonNull(className) ? className : typeName);
             final BuiltInType builtInType = determineBuiltInTypeFromClass(clazz);
             if (Objects.nonNull(builtInType)) {
                 return builtInType.getName();
@@ -121,29 +122,6 @@ public class DataObjectsServiceImpl implements DataObjectsService {
         return BuiltInType.ANY.getName();
     }
 
-    private String unbox(final String typeName) {
-        switch (typeName) {
-            case "boolean":
-                return Boolean.class.getName();
-            case "byte":
-                return Byte.class.getName();
-            case "char":
-                return Character.class.getName();
-            case "float":
-                return Float.class.getName();
-            case "int":
-                return Integer.class.getName();
-            case "long":
-                return Long.class.getName();
-            case "short":
-                return Short.class.getName();
-            case "double":
-                return Double.class.getName();
-        }
-        return typeName;
-    }
-
-    /**/
     private BuiltInType determineBuiltInTypeFromClass(final Class<?> clazz) {
         if (Objects.isNull(clazz)) {
             return BuiltInType.UNDEFINED;

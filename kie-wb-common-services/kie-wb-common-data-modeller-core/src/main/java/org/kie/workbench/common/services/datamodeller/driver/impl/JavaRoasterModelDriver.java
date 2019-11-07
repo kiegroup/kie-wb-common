@@ -88,6 +88,15 @@ import org.uberfire.commons.data.Pair;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Path;
 
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.BOOLEAN;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.BYTE;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.CHAR;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.DOUBLE;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.FLOAT;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.INT;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.LONG;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.SHORT;
+
 public class JavaRoasterModelDriver implements ModelDriver {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaRoasterModelDriver.class);
@@ -2061,28 +2070,28 @@ public class JavaRoasterModelDriver implements ModelDriver {
     public void setPrimitiveTypeDefaultInitializer(FieldSource<?> field,
                                                    String primitiveType) {
 
-        if (NamingUtils.BYTE.equals(primitiveType)) {
+        if (BYTE.equals(primitiveType)) {
             field.setLiteralInitializer("0");
         }
-        if (NamingUtils.SHORT.equals(primitiveType)) {
+        if (SHORT.equals(primitiveType)) {
             field.setLiteralInitializer("0");
         }
-        if (NamingUtils.INT.equals(primitiveType)) {
+        if (INT.equals(primitiveType)) {
             field.setLiteralInitializer("0");
         }
-        if (NamingUtils.LONG.equals(primitiveType)) {
+        if (LONG.equals(primitiveType)) {
             field.setLiteralInitializer("0L");
         }
-        if (NamingUtils.FLOAT.equals(primitiveType)) {
+        if (FLOAT.equals(primitiveType)) {
             field.setLiteralInitializer("0.0f");
         }
-        if (NamingUtils.DOUBLE.equals(primitiveType)) {
+        if (DOUBLE.equals(primitiveType)) {
             field.setLiteralInitializer("0.0d");
         }
-        if (NamingUtils.CHAR.equals(primitiveType)) {
+        if (CHAR.equals(primitiveType)) {
             field.setLiteralInitializer("\'\\u0000\'");
         }
-        if (NamingUtils.BOOLEAN.equals(primitiveType)) {
+        if (BOOLEAN.equals(primitiveType)) {
             field.setLiteralInitializer("false");
         }
     }

@@ -181,6 +181,12 @@
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-datamodel-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.soup</groupId>
+          <artifactId>kie-soup-maven-integration</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Testing scope. -->

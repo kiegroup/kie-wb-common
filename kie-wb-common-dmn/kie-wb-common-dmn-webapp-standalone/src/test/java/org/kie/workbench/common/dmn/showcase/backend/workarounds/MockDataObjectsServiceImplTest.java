@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockDataObjectsServiceImplTest {
@@ -39,11 +39,11 @@ public class MockDataObjectsServiceImplTest {
 
     @Test
     public void testLoadDataObjectsWithNullWorkspaceProject() {
-        assertTrue(dataObjectsService.loadDataObjects(null).isEmpty());
+        assertThat(dataObjectsService.loadDataObjects(null)).isEmpty();
     }
 
     @Test
     public void testLoadDataObjectsWithNonNullWorkspaceProject() {
-        assertTrue(dataObjectsService.loadDataObjects(workspaceProject).isEmpty());
+        assertThat(dataObjectsService.loadDataObjects(workspaceProject)).isEmpty();
     }
 }

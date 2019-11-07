@@ -41,6 +41,22 @@ import org.kie.workbench.common.services.datamodel.util.SortHelper;
  */
 public class DataModelOracleUtilities {
 
+    public static final String BYTE = "byte";
+
+    public static final String SHORT = "short";
+
+    public static final String INT = "int";
+
+    public static final String LONG = "long";
+
+    public static final String FLOAT = "float";
+
+    public static final String DOUBLE = "double";
+
+    public static final String CHAR = "char";
+
+    public static final String BOOLEAN = "boolean";
+
     /**
      * Convenience method to get an array of all fully qualified class names available in a module
      * @param oracle The DMO representing a module
@@ -462,5 +478,35 @@ public class DataModelOracleUtilities {
     private static boolean isTypeUsed(final String fullyQualifiedClassName,
                                       final Set<String> usedFullyQualifiedClassNames) {
         return usedFullyQualifiedClassNames.contains(fullyQualifiedClassName);
+    }
+
+    public static String getClassForPrimitiveTypeId(final String type) {
+
+        if (BYTE.equals(type)) {
+            return Byte.class.getName();
+        }
+        if (SHORT.equals(type)) {
+            return Short.class.getName();
+        }
+        if (INT.equals(type)) {
+            return Integer.class.getName();
+        }
+        if (LONG.equals(type)) {
+            return Long.class.getName();
+        }
+        if (FLOAT.equals(type)) {
+            return Float.class.getName();
+        }
+        if (DOUBLE.equals(type)) {
+            return Double.class.getName();
+        }
+        if (CHAR.equals(type)) {
+            return Character.class.getName();
+        }
+        if (BOOLEAN.equals(type)) {
+            return Boolean.class.getName();
+        }
+
+        return null;
     }
 }
