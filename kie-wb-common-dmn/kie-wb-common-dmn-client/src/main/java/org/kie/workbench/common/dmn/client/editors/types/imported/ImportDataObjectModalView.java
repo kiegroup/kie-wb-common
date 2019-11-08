@@ -128,11 +128,15 @@ public class ImportDataObjectModalView implements ImportDataObjectModal.View {
     @EventHandler("button-import")
     void onButtonImportClicked(final ClickEvent e) {
 
-        final List<DataObject> selectedItems = treeList.getSelectedItems().stream()
-                .map(item -> (DataObject) item.getDataSource())
-                .collect(Collectors.toList());
+        final List<DataObject> selectedItems = getSelectedItems();
 
         presenter.hide(selectedItems);
+    }
+
+    List<DataObject> getSelectedItems() {
+        return treeList.getSelectedItems().stream()
+                .map(item -> (DataObject) item.getDataSource())
+                .collect(Collectors.toList());
     }
 
     @EventHandler("clear-selection")

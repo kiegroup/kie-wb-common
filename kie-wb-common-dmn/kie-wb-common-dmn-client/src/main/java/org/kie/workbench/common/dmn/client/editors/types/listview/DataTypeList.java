@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,6 +49,8 @@ import static java.util.Collections.singletonList;
 @ApplicationScoped
 public class DataTypeList {
 
+    static final String NAME_SEPARATOR = "-";
+
     private final View view;
 
     private final ManagedInstance<DataTypeListItem> listItems;
@@ -68,6 +71,10 @@ public class DataTypeList {
 
     private DataTypeListItem currentEditingItem;
 
+    private HashMap<String, Integer> importedNamesOccurrencesCount;
+
+    private HashMap<String, String> renamedImportedDataTypes;
+
     @Inject
     public DataTypeList(final View view,
                         final ManagedInstance<DataTypeListItem> listItems,
@@ -83,6 +90,8 @@ public class DataTypeList {
         this.dndListComponent = dndListComponent;
         this.dataTypeStackHash = dataTypeStackHash;
         this.dndDataTypesHandler = dndDataTypesHandler;
+        this.importedNamesOccurrencesCount = new HashMap<>();
+        this.renamedImportedDataTypes = new HashMap<>();
     }
 
     @PostConstruct
@@ -369,6 +378,7 @@ public class DataTypeList {
 
     public void importDataObjects(final List<DataObject> imported) {
 
+        removeFullQualifiedNames(imported);
         for (final DataObject dataObject : imported) {
             final DataType newDataType = createNewDataType(dataObject);
             if (isPresent(dataObject)) {
@@ -380,6 +390,65 @@ public class DataTypeList {
                 insertProperties(dataObject);
             }
         }
+    }
+
+    void removeFullQualifiedNames(final List<DataObject> imported) {
+
+        final HashMap<String, Integer> namesCount = getImportedNamesOccurrencesCount();
+        final HashMap<String, String> renamed = getRenamedImportedDataTypes();
+        namesCount.clear();
+        renamed.clear();
+
+        for (final DataObject dataObject : imported) {
+            final String nameCandidate = extractName(dataObject.getClassType());
+            final String newName = buildName(nameCandidate, namesCount);
+            renamed.put(dataObject.getClassType(), newName);
+            dataObject.setClassType(newName);
+        }
+
+        updatePropertiesReferences(imported, renamed);
+    }
+
+    HashMap<String, Integer> getImportedNamesOccurrencesCount(){
+        return importedNamesOccurrencesCount;
+    }
+
+    HashMap<String, String> getRenamedImportedDataTypes(){
+        return renamedImportedDataTypes;
+    }
+
+    void updatePropertiesReferences(final List<DataObject> imported,
+                                    final HashMap<String, String> renamed) {
+
+        for (final DataObject dataObject : imported) {
+            for (final DataObjectProperty property : dataObject.getProperties()) {
+                final String propertyType = renamed.getOrDefault(property.getType(), property.getType());
+                property.setType(propertyType);
+            }
+        }
+    }
+
+    String buildName(final String nameCandidate, final HashMap<String, Integer> namesCount) {
+
+        if (namesCount.containsKey(nameCandidate)) {
+            final Integer occurrences = namesCount.get(nameCandidate);
+            namesCount.replace(nameCandidate, occurrences + 1);
+            return nameCandidate + NAME_SEPARATOR + occurrences;
+        }
+
+        namesCount.put(nameCandidate, 1);
+
+        return nameCandidate;
+    }
+
+    String extractName(final String fullQualifiedName) {
+
+        int lastIndex = 0;
+        if (fullQualifiedName.contains(".")) {
+            lastIndex = fullQualifiedName.lastIndexOf('.') + 1;
+        }
+
+        return fullQualifiedName.substring(lastIndex);
     }
 
     void insertProperties(final DataObject dataObject) {

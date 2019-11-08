@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -743,26 +744,22 @@ public class DataTypeListTest {
         final DataObject present = mock(DataObject.class);
         final DataObject notPresent = mock(DataObject.class);
         final List<DataObject> imported = asList(present, notPresent);
-
         final DataType presentDataType = mock(DataType.class);
-        doReturn(presentDataType).when(dataTypeList).createNewDataType(present);
-
         final DataType notPresentDataType = mock(DataType.class);
-        doReturn(notPresentDataType).when(dataTypeList).createNewDataType(notPresent);
+        final String importedPresentClass = "org.something.MyClass";
+        final DataType existingDataType = mock(DataType.class);
 
+        doReturn(presentDataType).when(dataTypeList).createNewDataType(present);
+        doReturn(notPresentDataType).when(dataTypeList).createNewDataType(notPresent);
         doReturn(true).when(dataTypeList).isPresent(present);
         doReturn(false).when(dataTypeList).isPresent(notPresent);
-
-        final String importedPresentClass = "org.something.MyClass";
         when(present.getClassType()).thenReturn(importedPresentClass);
-
-        final DataType existingDataType = mock(DataType.class);
         doReturn(existingDataType).when(dataTypeList).findDataTypeByName(importedPresentClass);
-
         doNothing().when(dataTypeList).replace(existingDataType, presentDataType);
         doNothing().when(dataTypeList).insertProperties(present);
         doNothing().when(dataTypeList).insertProperties(notPresent);
         doNothing().when(dataTypeList).insert(notPresentDataType);
+        doNothing().when(dataTypeList).removeFullQualifiedNames(imported);
 
         dataTypeList.importDataObjects(imported);
 
@@ -776,6 +773,8 @@ public class DataTypeListTest {
         verify(dataTypeList).insert(notPresentDataType);
         verify(dataTypeList, never()).insert(presentDataType);
         verify(dataTypeList).insertProperties(notPresent);
+
+        verify(dataTypeList).removeFullQualifiedNames(imported);
     }
 
     @Test
@@ -804,6 +803,136 @@ public class DataTypeListTest {
 
         verify(dtListItem).insertNestedField(property1DataType);
         verify(dtListItem).insertNestedField(property2DataType);
+    }
+
+    @Test
+    public void testRemoveFullQualifiedNames() {
+
+        final String do1Class = "something.class1";
+        final String do2Class = "something.class2";
+        final String do3Class = "something.class3";
+        final String extractedName1 = "class1";
+        final String extractedName2 = "class2";
+        final String extractedName3 = "class3";
+        final String builtName1 = "name1";
+        final String builtName2 = "name2";
+        final String builtName3 = "name3";
+        final DataObject do1 = createDataObject(do1Class);
+        final DataObject do2 = createDataObject(do2Class);
+        final DataObject do3 = createDataObject(do3Class);
+        final HashMap<String, Integer> namesCount = new HashMap<>();
+        final HashMap<String, String> renamed = new HashMap<>();
+        namesCount.put("trash", 0);
+        renamed.put("trash.from.previous", "previous");
+
+        doReturn(namesCount).when(dataTypeList).getImportedNamesOccurrencesCount();
+        doReturn(renamed).when(dataTypeList).getRenamedImportedDataTypes();
+
+        final List<DataObject> imported = Arrays.asList(do1, do2, do3);
+        doReturn(extractedName1).when(dataTypeList).extractName(do1Class);
+        doReturn(extractedName2).when(dataTypeList).extractName(do2Class);
+        doReturn(extractedName3).when(dataTypeList).extractName(do3Class);
+        doReturn(builtName1).when(dataTypeList).buildName(extractedName1, namesCount);
+        doReturn(builtName2).when(dataTypeList).buildName(extractedName2, namesCount);
+        doReturn(builtName3).when(dataTypeList).buildName(extractedName3, namesCount);
+
+        doNothing().when(dataTypeList).updatePropertiesReferences(imported, renamed);
+
+        dataTypeList.removeFullQualifiedNames(imported);
+
+        verify(dataTypeList).extractName(do1Class);
+        verify(dataTypeList).buildName(extractedName1, namesCount);
+        assertTrue(renamed.containsKey(do1Class));
+        assertEquals(builtName1, renamed.get(do1Class));
+        verify(do1).setClassType(builtName1);
+
+        verify(dataTypeList).extractName(do2Class);
+        verify(dataTypeList).buildName(extractedName2, namesCount);
+        assertTrue(renamed.containsKey(do2Class));
+        assertEquals(builtName2, renamed.get(do2Class));
+        verify(do2).setClassType(builtName2);
+
+        verify(dataTypeList).extractName(do3Class);
+        verify(dataTypeList).buildName(extractedName3, namesCount);
+        assertTrue(renamed.containsKey(do3Class));
+        assertEquals(builtName3, renamed.get(do3Class));
+        verify(do3).setClassType(builtName3);
+
+        assertEquals(3, renamed.size());
+
+        verify(dataTypeList).updatePropertiesReferences(imported, renamed);
+    }
+
+    private DataObject createDataObject(final String className) {
+        final DataObject dataObject = mock(DataObject.class);
+        when(dataObject.getClassType()).thenReturn(className);
+        return dataObject;
+    }
+
+    @Test
+    public void testExtractName() {
+
+        final String name1 = "org.java.SomeClass";
+        final String expected1 = "SomeClass";
+
+        final String actual1 = dataTypeList.extractName(name1);
+        assertEquals(expected1, actual1);
+
+        final String name2 = "SomeOtherClass";
+        final String expected2 = "SomeOtherClass";
+
+        final String actual2 = dataTypeList.extractName(name2);
+        assertEquals(expected2, actual2);
+    }
+
+    @Test
+    public void testBuildName() {
+
+        final String name = "MyClass";
+        final String differentName = "SomeOtherClass";
+        final HashMap<String, Integer> namesCount = new HashMap<>();
+
+        final String occurrence0 = dataTypeList.buildName(name, namesCount);
+        assertEquals(name, occurrence0);
+
+        final String occurrence1 = dataTypeList.buildName(name, namesCount);
+        assertEquals(name + DataTypeList.NAME_SEPARATOR + "1", occurrence1);
+
+        final String occurrence2 = dataTypeList.buildName(name, namesCount);
+        assertEquals(name + DataTypeList.NAME_SEPARATOR + "2", occurrence2);
+
+        final String differentOccurrence0 = dataTypeList.buildName(differentName, namesCount);
+        assertEquals(differentName, differentOccurrence0);
+
+        final String differentOccurrence1 = dataTypeList.buildName(differentName, namesCount);
+        assertEquals(differentName + DataTypeList.NAME_SEPARATOR + "1", differentOccurrence1);
+    }
+
+    @Test
+    public void updatePropertiesReferences() {
+
+        final List<DataObject> imported = new ArrayList<>();
+        final HashMap<String, String> renamed = new HashMap<>();
+
+        final String propertyType1 = "type";
+        final String propertyNewType1 = "type-1";
+        final String uniqueType = "uniqueType";
+
+        renamed.put(propertyType1, propertyNewType1);
+
+        final DataObjectProperty prop1 = mock(DataObjectProperty.class);
+        when(prop1.getType()).thenReturn(propertyType1);
+        final DataObjectProperty prop2 = mock(DataObjectProperty.class);
+        when(prop2.getType()).thenReturn(uniqueType);
+
+        final DataObject do1 = new DataObject();
+        do1.setProperties(Arrays.asList(prop1, prop2));
+        imported.add(do1);
+
+        dataTypeList.updatePropertiesReferences(imported, renamed);
+
+        verify(prop1).setType(propertyNewType1);
+        verify(prop2).setType(uniqueType);
     }
 
     @Test
@@ -909,7 +1038,6 @@ public class DataTypeListTest {
         actual = dataTypeList.isPresent(notPresentDataObject);
         verify(dataTypeManager).hasTopLevelDataTypeWithName(notPresent);
         assertFalse(actual);
-
     }
 
     private DataTypeListItem listItem(final DataType dataType) {
