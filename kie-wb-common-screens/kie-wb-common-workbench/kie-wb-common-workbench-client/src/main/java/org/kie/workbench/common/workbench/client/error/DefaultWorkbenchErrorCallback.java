@@ -198,7 +198,7 @@ public class DefaultWorkbenchErrorCallback {
 
     private void handleGenericError(final Throwable throwable) {
         final String errorDetails = "Uncaught exception: " + extractMessageRecursively(throwable);
-        final String errorId = String.valueOf(Math.abs((user.getIdentifier() + System.currentTimeMillis()).hashCode()));
+        final String errorId = String.valueOf((user.getIdentifier() + System.currentTimeMillis()).hashCode());
         final String clientLocation = placeHistoryHandler.getCurrentBookmarkableURLStatus();
 
         if (genericErrorTimeController.isExpired()) {

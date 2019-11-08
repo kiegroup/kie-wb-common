@@ -27,7 +27,7 @@
 }
 
 .time-select {
-    width: 90px;
+    max-width: 100%;
     display: inline-block;
 }
 
