@@ -24,7 +24,7 @@ public class DataObjectProperty {
     private String type;
     private String property;
 
-    public DataObjectProperty(){
+    public DataObjectProperty() {
         this.type = "";
         this.property = "";
     }
