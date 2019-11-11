@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.widgets.grid.model;
 import java.util.Objects;
 
 import org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 
 public abstract class BaseHasDynamicHeightCell<T> extends DMNGridCell<T> implements HasDynamicHeight {
@@ -49,12 +50,12 @@ public abstract class BaseHasDynamicHeightCell<T> extends DMNGridCell<T> impleme
         if (Objects.isNull(value) || Objects.isNull(value.getValue())) {
             return DEFAULT_HEIGHT;
         }
-        final int expressionLineCount = getExpressionLineCount();
-        return expressionLineCount * lineHeight + (RendererUtils.EXPRESSION_TEXT_PADDING * 3);
-    }
-
-    protected int getExpressionLineCount() {
         final String asText = getValue().getValue().toString();
-        return asText.split("\\r?\\n", -1).length;
+        if (StringUtils.isEmpty(asText)) {
+            return DEFAULT_HEIGHT;
+        }
+
+        final int expressionLineCount = asText.split("\\r?\\n", -1).length;
+        return expressionLineCount * lineHeight + (RendererUtils.EXPRESSION_TEXT_PADDING * 3);
     }
 }

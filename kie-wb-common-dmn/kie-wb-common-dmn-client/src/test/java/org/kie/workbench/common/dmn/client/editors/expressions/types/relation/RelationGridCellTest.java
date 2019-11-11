@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.relation;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseHasDynamicHeightCellTest;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -28,7 +28,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RelationGridCellTest {
+public class RelationGridCellTest extends BaseHasDynamicHeightCellTest<RelationGridCell> {
 
     @Mock
     private GridCellValue<String> value;
@@ -36,13 +36,16 @@ public class RelationGridCellTest {
     @Mock
     private ListSelectorView.Presenter listSelector;
 
-    private RelationGridCell cell;
+    @Override
+    public RelationGridCell makeCell() {
+        return new RelationGridCell<>(value,
+                                      listSelector,
+                                      LINE_HEIGHT);
+    }
 
-    @Before
-    public void setup() {
-        this.cell = new RelationGridCell<>(value,
-                                           listSelector,
-                                           HasDynamicHeight.DEFAULT_HEIGHT);
+    @Test
+    public void testIsAHasDynamicHeightSubclass() {
+        assertThat(cell).isInstanceOf(HasDynamicHeight.class);
     }
 
     @Test

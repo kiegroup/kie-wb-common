@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelect
 import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
@@ -64,8 +62,6 @@ public class DecisionTableUIModelMapperTest {
     private BaseGridData uiModel;
 
     private DecisionTable dtable;
-
-    private Supplier<Optional<GridCellValue<?>>> cellValueSupplier;
 
     private DecisionTableUIModelMapper mapper;
 
@@ -114,7 +110,6 @@ public class DecisionTableUIModelMapperTest {
                                                      () -> Optional.of(dtable),
                                                      listSelector,
                                                      HasDynamicHeight.DEFAULT_HEIGHT);
-        this.cellValueSupplier = Optional::empty;
     }
 
     @Test
