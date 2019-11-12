@@ -18,15 +18,17 @@ package org.kie.workbench.common.dmn.client.widgets.grid.model;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
 
+import static org.kie.workbench.common.dmn.client.widgets.grid.model.BaseHasDynamicHeightCell.DEFAULT_HEIGHT;
+
 public class LiteralExpressionGridRow extends BaseGridRow {
 
     public LiteralExpressionGridRow() {
-        super(HasDynamicHeight.DEFAULT_HEIGHT);
+        super(DEFAULT_HEIGHT);
     }
 
     @Override
     public double getHeight() {
-        double height = HasDynamicHeight.DEFAULT_HEIGHT;
+        double height = DEFAULT_HEIGHT;
         for (GridCell<?> cell : this.getCells().values()) {
             if (cell instanceof HasDynamicHeight) {
                 height = Math.max(((HasDynamicHeight) cell).getHeight(), height);

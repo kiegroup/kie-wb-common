@@ -18,7 +18,5 @@ package org.kie.workbench.common.dmn.client.widgets.grid.model;
 
 public interface HasDynamicHeight {
 
-    double DEFAULT_HEIGHT = 48.0;
-
     double getHeight();
 }

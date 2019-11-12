@@ -46,7 +46,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMe
 
 public class DMNGridLayer extends DefaultGridLayer {
 
-    private final GridLayerRedrawManager.PrioritizedCommand BATCH = new GridLayerRedrawManager.PrioritizedCommand(Integer.MIN_VALUE) {
+    private final GridLayerRedrawManager.PrioritizedCommand batch = new GridLayerRedrawManager.PrioritizedCommand(Integer.MIN_VALUE) {
         @Override
         public void execute() {
             doBatch();
@@ -71,7 +71,7 @@ public class DMNGridLayer extends DefaultGridLayer {
 
     @Override
     public Layer batch() {
-        return batch(BATCH);
+        return batch(batch);
     }
 
     Layer doBatch() {

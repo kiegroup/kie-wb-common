@@ -42,8 +42,11 @@ public class ExpressionEditorGridRow extends BaseGridRow {
 
     @Override
     public double getHeight() {
-        long currentTimeMillis = System.currentTimeMillis();
-        LOGGER.log(Level.FINEST, " - Pre- ExpressionEditorGridRow.getHeight()");
+        long currentTimeMillis = 0;
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            currentTimeMillis = System.currentTimeMillis();
+            LOGGER.log(Level.FINEST, " - Pre- ExpressionEditorGridRow.getHeight()");
+        }
 
         final double height = this.getCells()
                 .values()
@@ -58,7 +61,9 @@ public class ExpressionEditorGridRow extends BaseGridRow {
                 .reduce(Double::max)
                 .orElse(defaultHeight);
 
-        LOGGER.log(Level.FINEST, " - Post- ExpressionEditorGridRow.getHeight() - " + (System.currentTimeMillis() - currentTimeMillis) + "ms");
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, " - Post- ExpressionEditorGridRow.getHeight() - " + (System.currentTimeMillis() - currentTimeMillis) + "ms");
+        }
         return height;
     }
 }

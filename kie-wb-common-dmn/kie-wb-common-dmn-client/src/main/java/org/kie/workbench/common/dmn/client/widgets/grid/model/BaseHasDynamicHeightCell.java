@@ -24,6 +24,8 @@ import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 
 public abstract class BaseHasDynamicHeightCell<T> extends DMNGridCell<T> implements HasDynamicHeight {
 
+    public static final double DEFAULT_HEIGHT = 48.0;
+
     protected final double lineHeight;
 
     private double height;
@@ -57,5 +59,26 @@ public abstract class BaseHasDynamicHeightCell<T> extends DMNGridCell<T> impleme
 
         final int expressionLineCount = asText.split("\\r?\\n", -1).length;
         return expressionLineCount * lineHeight + (RendererUtils.EXPRESSION_TEXT_PADDING * 3);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BaseHasDynamicHeightCell)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final BaseHasDynamicHeightCell<?> that = (BaseHasDynamicHeightCell<?>) o;
+        return Double.compare(that.lineHeight, lineHeight) == 0 &&
+                Double.compare(that.height, height) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), lineHeight, height);
     }
 }

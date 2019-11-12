@@ -29,7 +29,6 @@ import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.HasDynamicHeight;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
@@ -39,6 +38,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.selections.impl.RowS
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.widgets.grid.model.BaseHasDynamicHeightCell.DEFAULT_HEIGHT;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -109,7 +109,7 @@ public class DecisionTableUIModelMapperTest {
         this.mapper = new DecisionTableUIModelMapper(() -> uiModel,
                                                      () -> Optional.of(dtable),
                                                      listSelector,
-                                                     HasDynamicHeight.DEFAULT_HEIGHT);
+                                                     DEFAULT_HEIGHT);
     }
 
     @Test
