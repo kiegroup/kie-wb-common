@@ -15,7 +15,9 @@
  */
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import com.google.gwt.user.client.Timer;
@@ -52,6 +54,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -231,6 +234,46 @@ public class FormsCanvasSessionHandlerTest {
         handler.onCanvasSelectionEvent(canvasSelectionEvent);
 
         verify(formRenderer, never()).render(anyString(), any(Element.class), any(Command.class));
+    }
+
+    @Test
+    public void testOnCanvasBatchUpdateMultiple() {
+        handler.bind(session);
+        when(formRenderer.areLastPositionsSameForElement(any())).thenReturn(true);
+
+        final List<List<Element>> queue = new ArrayList<>();
+        final List<Element> subQueue = new ArrayList<>();
+
+        subQueue.add(mock(Element.class));
+        subQueue.add(mock(Element.class));
+        subQueue.add(mock(Element.class));
+
+        queue.add(subQueue);
+        handler.getFormsCanvasListener().updateBatch(queue, 3);
+
+        // Will action on the very last item
+        verify(formRenderer, times(1)).resetCache();
+        // Render will be called
+    }
+
+    @Test
+    public void testOnCanvasBatchUpdateOne() {
+        handler.bind(session);
+        when(formRenderer.areLastPositionsSameForElement(any())).thenReturn(true);
+
+        final List<List<Element>> queue = new ArrayList<>();
+        final List<Element> subQueue = new ArrayList<>();
+
+        subQueue.add(mock(Element.class));
+        subQueue.add(mock(Element.class));
+        subQueue.add(mock(Element.class));
+
+        queue.add(subQueue);
+        handler.getFormsCanvasListener().updateBatch(queue, 3);
+
+        // Will action on the very last item
+        verify(formRenderer, times(1)).resetCache();
+        // Render will be calleds
     }
 
     @Test

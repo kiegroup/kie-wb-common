@@ -120,7 +120,8 @@ public class FormsCanvasSessionHandler {
      * Shows properties of elements in current session.
      * See {@link SelectionControl#getSelectedItemDefinition()}
      */
-    public void show() { this.show(null);
+    public void show() {
+        this.show(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -195,7 +196,6 @@ public class FormsCanvasSessionHandler {
                 // Select root canvas
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), this.getDiagram().getMetadata().getCanvasRootUUID());
                 render(element);
-
             }
         }
     }
@@ -317,8 +317,6 @@ public class FormsCanvasSessionHandler {
             this.areFormsProcessing = false;
         }
 
-
-
         @Override
         public void update(final Element item) {
 
@@ -331,9 +329,8 @@ public class FormsCanvasSessionHandler {
             }
         }
 
-
         @Override
-        public void  updateBatch(final List<List<Element>> queue, final long numberOfItems) {
+        public void updateBatch(final List<List<Element>> queue, final long numberOfItems) {
 
             if (queue.size() == 1 && numberOfItems != 0) {
                 for (final List<Element> subQueue : queue) {
@@ -342,16 +339,13 @@ public class FormsCanvasSessionHandler {
                         update(subQueue.get(subQueue.size() - 1));
                     } else {
                         // update one
-                            update(subQueue.get(0));
+                        update(subQueue.get(0));
                     }
                 }
             }
-
         }
 
-
-
-            @Override
+        @Override
         public void deregister(final Element element) {
             if (null != renderer) {
                 renderer.clear(getDiagram().getGraph().getUUID(), element);

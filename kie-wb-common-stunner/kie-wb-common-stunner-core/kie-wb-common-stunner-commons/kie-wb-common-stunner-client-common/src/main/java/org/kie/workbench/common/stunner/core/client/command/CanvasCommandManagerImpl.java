@@ -36,7 +36,6 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.HasCommandListener;
 import org.kie.workbench.common.stunner.core.command.impl.CommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.command.ContextualGraphCommandExecutionContext;
 
 /**
  * The default canvas command manager implementation.
@@ -134,20 +133,12 @@ public class CanvasCommandManagerImpl<H extends AbstractCanvasHandler>
         return result;
     }
 
-    private QueueGraphExecutionContext newQueueGraphExecutionContext(final AbstractCanvasHandler context) {
+    public QueueGraphExecutionContext newQueueGraphExecutionContext(final AbstractCanvasHandler context) {
         return new QueueGraphExecutionContext(context.getDefinitionManager(),
                                               clientFactoryManager,
                                               context.getRuleManager(),
                                               context.getGraphIndex(),
                                               context.getRuleSet());
-    }
-
-    private ContextualGraphCommandExecutionContext newGraphExecutionContext(final AbstractCanvasHandler context) {
-        return new ContextualGraphCommandExecutionContext(context.getDefinitionManager(),
-                                                          clientFactoryManager,
-                                                          context.getRuleManager(),
-                                                          context.getGraphIndex(),
-                                                          context.getRuleSet());
     }
 
     @SuppressWarnings("unchecked")

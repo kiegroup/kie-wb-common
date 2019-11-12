@@ -399,6 +399,10 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
 
     private GraphCommandExecutionContext graphContext = null;
 
+    /**
+     * Sets the Graphic Context to be used for multiple operations
+     * @param graphContext Graph context to be set
+     */
     public void setStaticContext(GraphCommandExecutionContext graphContext) {
         this.graphContext = graphContext;
     }

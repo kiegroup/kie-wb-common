@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.registration.Ca
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementUpdatedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.command.QueueGraphExecutionContext;
 import org.kie.workbench.common.stunner.core.client.shape.ElementShape;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -43,6 +44,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,6 +86,9 @@ public class BaseCanvasHandlerTest {
     @Mock
     private Event<CanvasElementsClearEvent> canvasElementsClearEvent;
 
+    @Mock
+    private QueueGraphExecutionContext queueGraphExecutionContext;
+
     @Before
     public void setup() {
         canvasHandler = new CanvasHandlerImpl(clientDefinitionManager,
@@ -114,4 +120,44 @@ public class BaseCanvasHandlerTest {
         verify(shape, atLeastOnce()).applyPosition(any(), any());
         verify(canvasElementUpdatedEvent, atLeastOnce()).fire(any());
     }
+
+    @Test
+    public void checkApplyElementMutationNotifyQueued() {
+        canvasHandler.setStaticContext(queueGraphExecutionContext);
+        final ElementShape shape = mock(ElementShape.class);
+        final Element candidate = mock(Element.class);
+        final boolean applyPosition = true;
+        final boolean applyProperties = false;
+        final MutationContext mutationContext = mock(MutationContext.class);
+        canvasHandler.applyElementMutation(shape,
+                                           candidate,
+                                           applyPosition,
+                                           applyProperties,
+                                           mutationContext);
+
+        verify(shape, atLeastOnce()).applyPosition(any(), any());
+        verify(canvasElementUpdatedEvent, atLeastOnce()).fire(any());
+        verify(queueGraphExecutionContext, times(1)).addElement(candidate);
+    }
+
+    @Test
+    public void checkApplyElementMutationNullQueue() {
+        canvasHandler.setStaticContext(null);
+        final ElementShape shape = mock(ElementShape.class);
+        final Element candidate = mock(Element.class);
+        final boolean applyPosition = true;
+        final boolean applyProperties = false;
+        final MutationContext mutationContext = mock(MutationContext.class);
+        canvasHandler.applyElementMutation(shape,
+                                           candidate,
+                                           applyPosition,
+                                           applyProperties,
+                                           mutationContext);
+
+        verify(shape, atLeastOnce()).applyPosition(any(), any());
+        verify(canvasElementUpdatedEvent, atLeastOnce()).fire(any());
+        verify(queueGraphExecutionContext, never()).addElement(candidate);
+    }
+
+
 }

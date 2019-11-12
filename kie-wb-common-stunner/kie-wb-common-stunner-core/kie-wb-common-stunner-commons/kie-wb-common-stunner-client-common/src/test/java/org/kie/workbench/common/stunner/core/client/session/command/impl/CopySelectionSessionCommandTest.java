@@ -195,7 +195,13 @@ public class CopySelectionSessionCommandTest extends BaseSessionCommandKeyboardS
     }
 
     @Test
-    public void testExecuteNullSession() {
+    public void testExecuteNullSessionAndNullSelectionControl() {
+        copySelectionSessionCommand.execute(callback);
+        // if session null, then it should never copy items
+        verify(clipboardControl, never()).set(any(), any(), any());
+
+        copySelectionSessionCommand.bind(session);
+        when(session.getSelectionControl()).thenReturn(null);
         copySelectionSessionCommand.execute(callback);
         // if session null, then it should never copy items
         verify(clipboardControl, never()).set(any(), any(), any());
