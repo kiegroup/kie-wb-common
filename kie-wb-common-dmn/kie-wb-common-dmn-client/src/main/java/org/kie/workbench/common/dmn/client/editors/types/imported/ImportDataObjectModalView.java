@@ -135,7 +135,7 @@ public class ImportDataObjectModalView implements ImportDataObjectModal.View {
 
     List<DataObject> getSelectedItems() {
         return treeList.getSelectedItems().stream()
-                .map(item -> (DataObject) item.getDataSource())
+                .map(item -> item.getDataSource())
                 .collect(Collectors.toList());
     }
 
