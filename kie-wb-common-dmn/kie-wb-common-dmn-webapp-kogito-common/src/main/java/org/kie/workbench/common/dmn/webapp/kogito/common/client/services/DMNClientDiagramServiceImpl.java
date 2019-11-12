@@ -107,7 +107,6 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
     private void doNewDiagram(final ServiceCallback<Diagram> callback) {
         final String title = UUID.uuid();
         final Metadata metadata = buildMetadataInstance();
-        metadata.setTitle(title);
 
         try {
             final String defSetId = BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class);
@@ -152,8 +151,6 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
                 final Graph graph = dmnMarshallerKogitoUnmarshaller.unmarshall(metadata, definitions);
                 final Node<Definition<DMNDiagram>, ?> diagramNode = GraphUtils.getFirstNode((Graph<?, Node>) graph, DMNDiagram.class);
                 final String title = diagramNode.getContent().getDefinition().getDefinitions().getName().getValue();
-                metadata.setTitle(title);
-
                 final Diagram diagram = dmnDiagramFactory.build(title, metadata, graph);
                 updateClientShapeSetId(diagram);
 
