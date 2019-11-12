@@ -39,6 +39,7 @@ import org.uberfire.ext.editor.commons.client.menu.RestoreVersionCommandProvider
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.util.URIUtil;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
@@ -53,7 +54,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(GwtMockitoTestRunner.class)
 public class DMNDiagramEditorTest extends BaseDMNDiagramEditorTest {
 
-    private final String FILE_NAME = "fileName.dmn";
+    private final String FILE_NAME = "file name.dmn";
 
     private final String CONTENT = "xml-content-of-dmn-file";
 
@@ -232,6 +233,6 @@ public class DMNDiagramEditorTest extends BaseDMNDiagramEditorTest {
         final Path path = metadata.getPath();
         assertThat(path).isNotNull();
         assertThat(path.getFileName()).isEqualTo(FILE_NAME);
-        assertThat(path.toURI()).isEqualTo(ROOT + "/" + FILE_NAME);
+        assertThat(path.toURI()).isEqualTo(ROOT + "/" + URIUtil.encode(FILE_NAME));
     }
 }

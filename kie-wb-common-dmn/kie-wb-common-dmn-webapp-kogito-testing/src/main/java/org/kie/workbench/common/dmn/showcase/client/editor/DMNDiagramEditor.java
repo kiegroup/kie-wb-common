@@ -79,6 +79,7 @@ import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.util.URIUtil;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -216,7 +217,7 @@ public class DMNDiagramEditor extends BaseDMNDiagramEditor {
         final Path root = metadata.getRoot();
         final String fileName = metadata.getTitle();
         final String uri = root.toURI();
-        return PathFactory.newPath(fileName, uri + "/" + fileName);
+        return PathFactory.newPath(fileName, uri + "/" + URIUtil.encode(fileName));
     }
 
     @SuppressWarnings("unchecked")
