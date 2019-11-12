@@ -47,4 +47,14 @@ public class MockM2RepoServiceImpl implements M2RepoService {
     public String getRepositoryURL() {
         throw new UnsupportedOperationException("Not available in Kogito");
     }
+
+    @Override
+    public String getKModuleText(final String path) {
+        throw new UnsupportedOperationException("Not available in Kogito");
+    }
+
+    @Override
+    public String getKieDeploymentDescriptorText(final String path) {
+        throw new UnsupportedOperationException("Not available in Kogito");
+    }
 }
