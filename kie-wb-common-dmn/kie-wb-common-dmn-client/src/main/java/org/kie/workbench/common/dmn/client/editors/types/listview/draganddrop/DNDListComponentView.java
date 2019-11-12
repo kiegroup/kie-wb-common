@@ -101,6 +101,7 @@ public class DNDListComponentView implements DNDListComponent.View {
 
             setCSSTop(draggable, top);
             setCSSPaddingLeft(draggable, margin);
+            setCSSWidth(draggable, 0);
 
             if (positionY > HIDDEN_Y_POSITION) {
                 numberOfVisibleElements++;
@@ -342,7 +343,8 @@ public class DNDListComponentView implements DNDListComponent.View {
         return getNextElement(next, function);
     }
 
-    private void refreshDragAreaSize(final int numberOfElements) {
+    @Override
+    public void refreshDragAreaSize(final int numberOfElements) {
 
         final int border = 1;
         final int elementHeight = getItemHeight();

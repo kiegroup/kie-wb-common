@@ -191,6 +191,10 @@ public class DataTypeSearchBarViewTest {
         verify(dndListComponent).setPositionY(element2, 2);
         verify(dndListComponent).setPositionY(element3, -1);
         verify(dndListComponent).refreshItemsPosition();
+        verify(dndListComponent).refreshDragAreaSize(3);
+        verify(listItem0).expand();
+        verify(listItem1).expand();
+        verify(listItem2).expand();
         verify(view).enableSearch();
     }
 

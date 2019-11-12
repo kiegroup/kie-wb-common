@@ -187,4 +187,11 @@ public class DNDListComponentTest {
     public void testGetPreviousElementWhenReferenceIsNull() {
         assertFalse(dndListComponent.getPreviousElement(null, null).isPresent());
     }
+
+    @Test
+    public void testRefreshDragAreaSize() {
+        final int numberOfElements = 42;
+        dndListComponent.refreshDragAreaSize(numberOfElements);
+        verify(view).refreshDragAreaSize(numberOfElements);
+    }
 }

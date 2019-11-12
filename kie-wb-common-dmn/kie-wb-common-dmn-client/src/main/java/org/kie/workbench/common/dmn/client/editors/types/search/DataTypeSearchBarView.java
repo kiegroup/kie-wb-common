@@ -124,18 +124,27 @@ public class DataTypeSearchBarView implements DataTypeSearchBar.View {
     public void showSearchResults(final List<DataType> results) {
 
         final AtomicInteger position = new AtomicInteger(0);
+        final List<DataTypeListItem> listItems = presenter.getDataTypeListItemsSortedByPositionY();
 
-        for (final DataTypeListItem listItem : presenter.getDataTypeListItemsSortedByPositionY()) {
+        for (final DataTypeListItem listItem : listItems) {
+
             final HTMLElement element = listItem.getDragAndDropElement();
+
             if (results.contains(listItem.getDataType())) {
                 showElementAt(element, position);
             } else {
                 hideElement(element);
             }
+            listItem.expand();
         }
 
         refreshItemsPosition();
         enableSearch();
+        refreshDragAreaSize(position.intValue());
+    }
+
+    private void refreshDragAreaSize(final int numberOfElements) {
+        presenter.getDNDListComponent().refreshDragAreaSize(numberOfElements);
     }
 
     public void refreshItemsPosition() {

@@ -74,7 +74,7 @@ public class DataTypeSearchBar {
 
     public void reset() {
         setCurrentSearch("");
-        dataTypeList.showListItems();
+        getDataTypeList().showListItems();
         view.resetSearchBar();
         restoreDataTypeListPositions();
     }
@@ -95,7 +95,7 @@ public class DataTypeSearchBar {
     }
 
     HTMLElement getResultsContainer() {
-        return dataTypeList.getElement();
+        return getDataTypeList().getElement();
     }
 
     String getCurrentSearch() {
@@ -107,7 +107,7 @@ public class DataTypeSearchBar {
     }
 
     DNDListComponent getDNDListComponent() {
-        return dataTypeList.getDNDListComponent();
+        return getDataTypeList().getDNDListComponent();
     }
 
     void restoreDataTypeListPositions() {
@@ -123,7 +123,6 @@ public class DataTypeSearchBar {
             final Integer positionY = getDataTypeListPositionsStore().get(uuid);
 
             getDNDListComponent().setPositionY(element, positionY);
-
             if (positionY > -1) {
                 HiddenHelper.show(element);
             } else {
@@ -131,6 +130,7 @@ public class DataTypeSearchBar {
             }
         });
 
+        getDataTypeList().collapseAll();
         getDNDListComponent().refreshItemsPosition();
         getDataTypeListPositionsStore().clear();
     }
@@ -159,14 +159,14 @@ public class DataTypeSearchBar {
     }
 
     private List<DataTypeListItem> getDataTypeListItems() {
-        return dataTypeList.getItems();
+        return getDataTypeList().getItems();
     }
 
     private void showEmptyView(final boolean show) {
         if (show) {
-            dataTypeList.showNoDataTypesFound();
+            getDataTypeList().showNoDataTypesFound();
         } else {
-            dataTypeList.showListItems();
+            getDataTypeList().showListItems();
         }
     }
 
@@ -179,6 +179,10 @@ public class DataTypeSearchBar {
 
     public boolean isEnabled() {
         return !isEmpty(getCurrentSearch());
+    }
+
+    private DataTypeList getDataTypeList() {
+        return dataTypeList;
     }
 
     public interface View extends UberElemental<DataTypeSearchBar>,

@@ -244,6 +244,7 @@ public class DataTypeSearchBarTest {
         verify(element1.classList).add(HIDDEN_CSS_CLASS);
         verify(dndListComponent).refreshItemsPosition();
         verify(store).clear();
+        verify(dataTypeList).collapseAll();
     }
 
     @Test

@@ -134,6 +134,10 @@ public class DNDListComponent {
         view.consolidateHierarchicalLevel();
     }
 
+    public void refreshDragAreaSize(final int numberOfElements) {
+        view.refreshDragAreaSize(numberOfElements);
+    }
+
     public interface View extends UberElemental<DNDListComponent>,
                                   IsElement {
 
@@ -150,6 +154,8 @@ public class DNDListComponent {
         void clear();
 
         void consolidateYPosition();
+
+        void refreshDragAreaSize(final int numberOfElements);
 
         HTMLDivElement getDragArea();
     }

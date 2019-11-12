@@ -158,6 +158,10 @@ public class DNDListComponentViewTest {
         verify(element1.style).setProperty("padding-left", "75px");
         verify(element2.style).setProperty("padding-left", "75px");
 
+        verify(element0.style).setProperty("width", "calc(100% - 0px)");
+        verify(element1.style).setProperty("width", "calc(100% - 0px)");
+        verify(element2.style).setProperty("width", "calc(100% - 0px)");
+
         verify(dragArea.style).setProperty("height", "151px");
     }
 
