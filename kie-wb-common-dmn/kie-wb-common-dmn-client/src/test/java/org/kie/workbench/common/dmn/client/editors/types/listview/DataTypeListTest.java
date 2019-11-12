@@ -753,13 +753,14 @@ public class DataTypeListTest {
         doReturn(notPresentDataType).when(dataTypeList).createNewDataType(notPresent);
         doReturn(true).when(dataTypeList).isPresent(present);
         doReturn(false).when(dataTypeList).isPresent(notPresent);
-        when(present.getClassType()).thenReturn(importedPresentClass);
         doReturn(existingDataType).when(dataTypeList).findDataTypeByName(importedPresentClass);
         doNothing().when(dataTypeList).replace(existingDataType, presentDataType);
         doNothing().when(dataTypeList).insertProperties(present);
         doNothing().when(dataTypeList).insertProperties(notPresent);
         doNothing().when(dataTypeList).insert(notPresentDataType);
         doNothing().when(dataTypeList).removeFullQualifiedNames(imported);
+
+        when(present.getClassType()).thenReturn(importedPresentClass);
 
         dataTypeList.importDataObjects(imported);
 
@@ -782,20 +783,20 @@ public class DataTypeListTest {
 
         final DataObject dataObject = mock(DataObject.class);
         final String myImportedClass = "org.MyClass";
-        when(dataObject.getClassType()).thenReturn(myImportedClass);
         final DataType existingDt = mock(DataType.class);
-        doReturn(existingDt).when(dataTypeList).findDataTypeByName(myImportedClass);
         final DataTypeListItem dtListItem = mock(DataTypeListItem.class);
         final Optional<DataTypeListItem> dtListItemOptional = Optional.of(dtListItem);
-        doReturn(dtListItemOptional).when(dataTypeList).findItem(existingDt);
-
         final DataObjectProperty property1 = mock(DataObjectProperty.class);
         final DataObjectProperty property2 = mock(DataObjectProperty.class);
         final List<DataObjectProperty> properties = Arrays.asList(property1, property2);
-        when(dataObject.getProperties()).thenReturn(properties);
-
         final DataType property1DataType = mock(DataType.class);
         final DataType property2DataType = mock(DataType.class);
+
+        when(dataObject.getClassType()).thenReturn(myImportedClass);
+        when(dataObject.getProperties()).thenReturn(properties);
+
+        doReturn(existingDt).when(dataTypeList).findDataTypeByName(myImportedClass);
+        doReturn(dtListItemOptional).when(dataTypeList).findItem(existingDt);
         doReturn(property1DataType).when(dataTypeList).createNewDataType(property1);
         doReturn(property2DataType).when(dataTypeList).createNewDataType(property2);
 

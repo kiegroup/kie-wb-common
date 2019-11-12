@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.editors.types.listview;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -71,9 +72,9 @@ public class DataTypeList {
 
     private DataTypeListItem currentEditingItem;
 
-    private HashMap<String, Integer> importedNamesOccurrencesCount;
+    private Map<String, Integer> importedNamesOccurrencesCount;
 
-    private HashMap<String, String> renamedImportedDataTypes;
+    private Map<String, String> renamedImportedDataTypes;
 
     @Inject
     public DataTypeList(final View view,
@@ -376,26 +377,25 @@ public class DataTypeList {
         searchBar.refresh();
     }
 
-    public void importDataObjects(final List<DataObject> imported) {
+    public void importDataObjects(final List<DataObject> selectedDataObjects) {
 
-        removeFullQualifiedNames(imported);
-        for (final DataObject dataObject : imported) {
+        removeFullQualifiedNames(selectedDataObjects);
+        for (final DataObject dataObject : selectedDataObjects) {
             final DataType newDataType = createNewDataType(dataObject);
             if (isPresent(dataObject)) {
                 final DataType existing = findDataTypeByName(dataObject.getClassType());
                 replace(existing, newDataType);
-                insertProperties(dataObject);
             } else {
                 insert(newDataType);
-                insertProperties(dataObject);
             }
+            insertProperties(dataObject);
         }
     }
 
     void removeFullQualifiedNames(final List<DataObject> imported) {
 
-        final HashMap<String, Integer> namesCount = getImportedNamesOccurrencesCount();
-        final HashMap<String, String> renamed = getRenamedImportedDataTypes();
+        final Map<String, Integer> namesCount = getImportedNamesOccurrencesCount();
+        final Map<String, String> renamed = getRenamedImportedDataTypes();
         namesCount.clear();
         renamed.clear();
 
@@ -409,16 +409,16 @@ public class DataTypeList {
         updatePropertiesReferences(imported, renamed);
     }
 
-    HashMap<String, Integer> getImportedNamesOccurrencesCount(){
+    Map<String, Integer> getImportedNamesOccurrencesCount(){
         return importedNamesOccurrencesCount;
     }
 
-    HashMap<String, String> getRenamedImportedDataTypes(){
+    Map<String, String> getRenamedImportedDataTypes(){
         return renamedImportedDataTypes;
     }
 
     void updatePropertiesReferences(final List<DataObject> imported,
-                                    final HashMap<String, String> renamed) {
+                                    final Map<String, String> renamed) {
 
         for (final DataObject dataObject : imported) {
             for (final DataObjectProperty property : dataObject.getProperties()) {
@@ -428,7 +428,7 @@ public class DataTypeList {
         }
     }
 
-    String buildName(final String nameCandidate, final HashMap<String, Integer> namesCount) {
+    String buildName(final String nameCandidate, final Map<String, Integer> namesCount) {
 
         if (namesCount.containsKey(nameCandidate)) {
             final Integer occurrences = namesCount.get(nameCandidate);

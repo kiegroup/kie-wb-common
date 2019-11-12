@@ -682,17 +682,17 @@ public class DataTypeManagerTest {
     }
 
     @Test
-    public void testHasTopLevelDataTypeWithName(){
+    public void testHasTopLevelDataTypeWithName() {
 
         final String topLevelType = "tType";
         final Optional<DataType> type = Optional.of(mock(DataType.class));
         doReturn(type).when(manager).findTopLevelDataTypeWithName(topLevelType);
-        boolean actual = manager.hasTopLevelDataTypeWithName(topLevelType);
-        assertTrue(actual);
+        final boolean actual = manager.hasTopLevelDataTypeWithName(topLevelType);
+        assertTrue("Top level data type should be found", actual);
     }
 
     @Test
-    public void testGetTopLevelDataTypeWithName(){
+    public void testGetTopLevelDataTypeWithName() {
 
         final String topLevelType = "tType";
         final DataType dataType = mock(DataType.class);
@@ -703,7 +703,7 @@ public class DataTypeManagerTest {
     }
 
     @Test
-    public void testFindTopLevelDataTypeWithName(){
+    public void testFindTopLevelDataTypeWithName() {
 
         final DataType dt1 = mock(DataType.class);
         final String dt1Name = "The Name";
@@ -712,7 +712,7 @@ public class DataTypeManagerTest {
         final String dt2Name = "The Other Name";
         when(dt2.getName()).thenReturn(dt2Name);
 
-        final List<DataType> store= Arrays.asList(dt1, dt2);
+        final List<DataType> store = Arrays.asList(dt1, dt2);
         when(dataTypeStore.getTopLevelDataTypes()).thenReturn(store);
 
         Optional<DataType> foundDt = manager.findTopLevelDataTypeWithName(dt1Name);
