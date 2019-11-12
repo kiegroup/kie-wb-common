@@ -692,6 +692,15 @@ public class DataTypeManagerTest {
     }
 
     @Test
+    public void testHasTopLevelDataTypeWithNameWhenIsNotPresent() {
+
+        final String topLevelType = "tType";
+        doReturn(Optional.empty()).when(manager).findTopLevelDataTypeWithName(topLevelType);
+        final boolean actual = manager.hasTopLevelDataTypeWithName(topLevelType);
+        assertFalse("Top level data type should not be found", actual);
+    }
+
+    @Test
     public void testGetTopLevelDataTypeWithName() {
 
         final String topLevelType = "tType";
