@@ -451,12 +451,8 @@ public class DataTypeManager {
         return itemDefinitionUtils.findByName(typeName);
     }
 
-    public boolean hasTopLevelDataTypeWithName(final String typeName) {
-        return findTopLevelDataTypeWithName(typeName).isPresent();
-    }
-
-    public DataType getTopLevelDataTypeWithName(final String typeName) {
-        return findTopLevelDataTypeWithName(typeName).get();
+    public Optional<DataType> getTopLevelDataTypeWithName(final String typeName) {
+        return findTopLevelDataTypeWithName(typeName);
     }
 
     Optional<DataType> findTopLevelDataTypeWithName(final String typeName) {

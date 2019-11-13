@@ -747,26 +747,24 @@ public class DataTypeListTest {
         final List<DataObject> selectedDataObjects = asList(present, notPresent);
         final DataType presentDataType = mock(DataType.class);
         final DataType notPresentDataType = mock(DataType.class);
+        final String notPresentClass = "not.present";
         final String importedPresentClass = "org.something.MyClass";
         final DataType existingDataType = mock(DataType.class);
 
         doReturn(presentDataType).when(dataTypeList).createNewDataType(present);
         doReturn(notPresentDataType).when(dataTypeList).createNewDataType(notPresent);
-        doReturn(true).when(dataTypeList).isPresent(present);
-        doReturn(false).when(dataTypeList).isPresent(notPresent);
-        doReturn(existingDataType).when(dataTypeList).findDataTypeByName(importedPresentClass);
+        doReturn(Optional.of(existingDataType)).when(dataTypeList).findDataTypeByName(importedPresentClass);
+        doReturn(Optional.empty()).when(dataTypeList).findDataTypeByName(notPresentClass);
         doNothing().when(dataTypeList).replace(existingDataType, presentDataType);
         doNothing().when(dataTypeList).insertProperties(present);
         doNothing().when(dataTypeList).insertProperties(notPresent);
         doNothing().when(dataTypeList).insert(notPresentDataType);
         doNothing().when(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
 
+        when(notPresent.getClassType()).thenReturn(notPresentClass);
         when(present.getClassType()).thenReturn(importedPresentClass);
 
         dataTypeList.importDataObjects(selectedDataObjects);
-
-        verify(dataTypeList).isPresent(present);
-        verify(dataTypeList).isPresent(notPresent);
 
         verify(dataTypeList).findDataTypeByName(importedPresentClass);
         verify(dataTypeList).replace(existingDataType, presentDataType);
@@ -796,7 +794,7 @@ public class DataTypeListTest {
         when(dataObject.getClassType()).thenReturn(myImportedClass);
         when(dataObject.getProperties()).thenReturn(properties);
 
-        doReturn(existingDt).when(dataTypeList).findDataTypeByName(myImportedClass);
+        doReturn(Optional.of(existingDt)).when(dataTypeList).findDataTypeByName(myImportedClass);
         doReturn(dtListItemOptional).when(dataTypeList).findItem(existingDt);
         doReturn(property1DataType).when(dataTypeList).createNewDataType(property1);
         doReturn(property2DataType).when(dataTypeList).createNewDataType(property2);
@@ -1036,36 +1034,13 @@ public class DataTypeListTest {
 
         final String name = "tName";
 
-        final DataType type = mock(DataType.class);
+        final Optional<DataType> type = Optional.of(mock(DataType.class));
         when(dataTypeManager.getTopLevelDataTypeWithName(name)).thenReturn(type);
 
-        final DataType actual = dataTypeList.findDataTypeByName(name);
+        final Optional<DataType> actual = dataTypeList.findDataTypeByName(name);
 
         verify(dataTypeManager).getTopLevelDataTypeWithName(name);
         assertEquals(type, actual);
-    }
-
-    @Test
-    public void testIsPresent() {
-
-        final DataObject notPresentDataObject = mock(DataObject.class);
-        final String notPresent = "classTypeNotPresent";
-        when(notPresentDataObject.getClassType()).thenReturn(notPresent);
-
-        final DataObject dataObject = mock(DataObject.class);
-        final String classType = "classType";
-        when(dataObject.getClassType()).thenReturn(classType);
-
-        when(dataTypeManager.hasTopLevelDataTypeWithName(classType)).thenReturn(true);
-        when(dataTypeManager.hasTopLevelDataTypeWithName(notPresent)).thenReturn(false);
-
-        boolean actual = dataTypeList.isPresent(dataObject);
-        verify(dataTypeManager).hasTopLevelDataTypeWithName(classType);
-        assertTrue(actual);
-
-        actual = dataTypeList.isPresent(notPresentDataObject);
-        verify(dataTypeManager).hasTopLevelDataTypeWithName(notPresent);
-        assertFalse(actual);
     }
 
     private DataTypeListItem listItem(final DataType dataType) {

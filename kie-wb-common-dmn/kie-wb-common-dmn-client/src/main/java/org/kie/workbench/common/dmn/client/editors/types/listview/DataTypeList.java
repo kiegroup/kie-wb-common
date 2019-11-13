@@ -384,9 +384,9 @@ public class DataTypeList {
         removeFullQualifiedNames(selectedDataObjects);
         for (final DataObject dataObject : selectedDataObjects) {
             final DataType newDataType = createNewDataType(dataObject);
-            if (isPresent(dataObject)) {
-                final DataType existing = findDataTypeByName(dataObject.getClassType());
-                replace(existing, newDataType);
+            final Optional<DataType> existing = findDataTypeByName(dataObject.getClassType());
+            if (existing.isPresent()) {
+                replace(existing.get(), newDataType);
             } else {
                 insert(newDataType);
             }
@@ -463,12 +463,14 @@ public class DataTypeList {
 
     void insertProperties(final DataObject dataObject) {
 
-        final DataType existing = findDataTypeByName(dataObject.getClassType());
-        findItem(existing).ifPresent(item -> {
-            for (final DataObjectProperty property : dataObject.getProperties()) {
-                final DataType newDataType = createNewDataType(property);
-                item.insertNestedField(newDataType);
-            }
+        final Optional<DataType> existing = findDataTypeByName(dataObject.getClassType());
+        existing.ifPresent(dataType -> {
+            findItem(dataType).ifPresent(item -> {
+                for (final DataObjectProperty property : dataObject.getProperties()) {
+                    final DataType newDataType = createNewDataType(property);
+                    item.insertNestedField(newDataType);
+                }
+            });
         });
     }
 
@@ -496,12 +498,8 @@ public class DataTypeList {
         return newDataType;
     }
 
-    DataType findDataTypeByName(final String name) {
+    Optional<DataType> findDataTypeByName(final String name) {
         return dataTypeManager.getTopLevelDataTypeWithName(name);
-    }
-
-    boolean isPresent(final DataObject dataObject) {
-        return dataTypeManager.hasTopLevelDataTypeWithName(dataObject.getClassType());
     }
 
     public interface View extends UberElemental<DataTypeList>,
