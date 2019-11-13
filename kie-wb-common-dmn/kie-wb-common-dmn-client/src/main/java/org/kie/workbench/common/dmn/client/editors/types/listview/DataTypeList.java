@@ -464,11 +464,12 @@ public class DataTypeList {
     void insertProperties(final DataObject dataObject) {
 
         final DataType existing = findDataTypeByName(dataObject.getClassType());
-        final DataTypeListItem item = findItem(existing).get();
-        for (final DataObjectProperty property : dataObject.getProperties()) {
-            final DataType newDataType = createNewDataType(property);
-            item.insertNestedField(newDataType);
-        }
+        findItem(existing).ifPresent(item -> {
+            for (final DataObjectProperty property : dataObject.getProperties()) {
+                final DataType newDataType = createNewDataType(property);
+                item.insertNestedField(newDataType);
+            }
+        });
     }
 
     void insert(final DataType newDataType) {

@@ -744,7 +744,7 @@ public class DataTypeListTest {
 
         final DataObject present = mock(DataObject.class);
         final DataObject notPresent = mock(DataObject.class);
-        final List<DataObject> imported = asList(present, notPresent);
+        final List<DataObject> selectedDataObjects = asList(present, notPresent);
         final DataType presentDataType = mock(DataType.class);
         final DataType notPresentDataType = mock(DataType.class);
         final String importedPresentClass = "org.something.MyClass";
@@ -759,11 +759,11 @@ public class DataTypeListTest {
         doNothing().when(dataTypeList).insertProperties(present);
         doNothing().when(dataTypeList).insertProperties(notPresent);
         doNothing().when(dataTypeList).insert(notPresentDataType);
-        doNothing().when(dataTypeList).removeFullQualifiedNames(imported);
+        doNothing().when(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
 
         when(present.getClassType()).thenReturn(importedPresentClass);
 
-        dataTypeList.importDataObjects(imported);
+        dataTypeList.importDataObjects(selectedDataObjects);
 
         verify(dataTypeList).isPresent(present);
         verify(dataTypeList).isPresent(notPresent);
@@ -771,12 +771,12 @@ public class DataTypeListTest {
         verify(dataTypeList).findDataTypeByName(importedPresentClass);
         verify(dataTypeList).replace(existingDataType, presentDataType);
         verify(dataTypeList).insertProperties(present);
+        verify(dataTypeList, never()).insert(presentDataType);
 
         verify(dataTypeList).insert(notPresentDataType);
-        verify(dataTypeList, never()).insert(presentDataType);
         verify(dataTypeList).insertProperties(notPresent);
 
-        verify(dataTypeList).removeFullQualifiedNames(imported);
+        verify(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
     }
 
     @Test

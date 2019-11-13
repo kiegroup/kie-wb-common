@@ -614,7 +614,7 @@ public class DataTypeListViewTest {
     }
 
     @Test
-    public void testImportDataObjects(){
+    public void testImportDataObjects() {
 
         final List<DataObject> imported = mock(List.class);
 
