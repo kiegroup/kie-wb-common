@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -910,7 +911,7 @@ public class DataTypeListTest {
     }
 
     @Test
-    public void updatePropertiesReferences() {
+    public void testUpdatePropertiesReferences() {
 
         final List<DataObject> imported = new ArrayList<>();
         final HashMap<String, String> renamed = new HashMap<>();
@@ -922,9 +923,12 @@ public class DataTypeListTest {
         renamed.put(propertyType1, propertyNewType1);
 
         final DataObjectProperty prop1 = mock(DataObjectProperty.class);
-        when(prop1.getType()).thenReturn(propertyType1);
         final DataObjectProperty prop2 = mock(DataObjectProperty.class);
+        when(prop1.getType()).thenReturn(propertyType1);
         when(prop2.getType()).thenReturn(uniqueType);
+
+        doReturn(true).when(dataTypeList).isPropertyTypePresent(uniqueType, imported);
+        doReturn(true).when(dataTypeList).isPropertyTypePresent(propertyNewType1, imported);
 
         final DataObject do1 = new DataObject();
         do1.setProperties(Arrays.asList(prop1, prop2));
@@ -934,6 +938,29 @@ public class DataTypeListTest {
 
         verify(prop1).setType(propertyNewType1);
         verify(prop2).setType(uniqueType);
+        verify(dataTypeList).isPropertyTypePresent(propertyNewType1, imported);
+        verify(dataTypeList).isPropertyTypePresent(uniqueType, imported);
+    }
+
+    @Test
+    public void testIsPropertyTypePresent() {
+
+        final String someBuiltInType = BuiltInType.STRING.getName();
+        final String anImportedType = "SomeImportedType";
+        final String unknownType = "UnknownType";
+        final DataObject dataObject = mock(DataObject.class);
+        when(dataObject.getClassType()).thenReturn(anImportedType);
+
+        final List<DataObject> imported = Arrays.asList(dataObject);
+
+        boolean isPresent = dataTypeList.isPropertyTypePresent(someBuiltInType, imported);
+        assertTrue("Built-in type is present", isPresent);
+
+        isPresent = dataTypeList.isPropertyTypePresent(anImportedType, imported);
+        assertTrue("Imported type is present", isPresent);
+
+        isPresent = dataTypeList.isPropertyTypePresent(unknownType, imported);
+        assertFalse("Type not imported or not built-in is not present", isPresent);
     }
 
     @Test

@@ -34,8 +34,10 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -409,11 +411,11 @@ public class DataTypeList {
         updatePropertiesReferences(imported, renamed);
     }
 
-    Map<String, Integer> getImportedNamesOccurrencesCount(){
+    Map<String, Integer> getImportedNamesOccurrencesCount() {
         return importedNamesOccurrencesCount;
     }
 
-    Map<String, String> getRenamedImportedDataTypes(){
+    Map<String, String> getRenamedImportedDataTypes() {
         return renamedImportedDataTypes;
     }
 
@@ -422,10 +424,18 @@ public class DataTypeList {
 
         for (final DataObject dataObject : imported) {
             for (final DataObjectProperty property : dataObject.getProperties()) {
-                final String propertyType = renamed.getOrDefault(property.getType(), property.getType());
+                String propertyType = renamed.getOrDefault(property.getType(), property.getType());
+                if (!isPropertyTypePresent(propertyType, imported)) {
+                    propertyType = BuiltInType.ANY.getName();
+                }
                 property.setType(propertyType);
             }
         }
+    }
+
+    boolean isPropertyTypePresent(final String type, final List<DataObject> imported) {
+        return BuiltInTypeUtils.isBuiltInType(type)
+                || imported.stream().anyMatch(dataObject -> Objects.equals(dataObject.getClassType(), type));
     }
 
     String buildName(final String nameCandidate, final Map<String, Integer> namesCount) {
