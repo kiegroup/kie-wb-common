@@ -38,9 +38,14 @@ public class RelationGridCellTest extends BaseHasDynamicHeightCellTest<RelationG
 
     @Override
     public RelationGridCell makeCell() {
+        return makeCell(LINE_HEIGHT);
+    }
+
+    @Override
+    protected RelationGridCell makeCell(final double lineHeight) {
         return new RelationGridCell<>(value,
                                       listSelector,
-                                      LINE_HEIGHT);
+                                      lineHeight);
     }
 
     @Test
@@ -49,6 +54,7 @@ public class RelationGridCellTest extends BaseHasDynamicHeightCellTest<RelationG
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetEditor() {
         assertThat(cell.getEditor()).isNotEmpty();
         assertThat(cell.getEditor().get()).isSameAs(listSelector);

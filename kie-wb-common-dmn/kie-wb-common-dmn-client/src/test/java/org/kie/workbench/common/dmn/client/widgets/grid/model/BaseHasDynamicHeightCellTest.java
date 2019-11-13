@@ -38,6 +38,8 @@ public abstract class BaseHasDynamicHeightCellTest<CELL extends BaseGridCell & H
 
     protected abstract CELL makeCell();
 
+    protected abstract CELL makeCell(final double lineHeight);
+
     @Before
     public void setup() {
         this.cell = makeCell();
@@ -96,9 +98,46 @@ public abstract class BaseHasDynamicHeightCellTest<CELL extends BaseGridCell & H
         assertThat(cell.getHeight()).isEqualTo(4 * LINE_HEIGHT + (RendererUtils.EXPRESSION_TEXT_PADDING * 3));
     }
 
+    @Test
+    public void testEquals() {
+        final CELL sameCell = makeCell();
+
+        assertThat(cell).isEqualTo(sameCell);
+        assertThat(cell.hashCode()).isEqualTo(sameCell.hashCode());
+    }
+
+    @Test
+    public void testEqualsIdentity() {
+        assertThat(cell).isEqualTo(cell);
+        assertThat(cell.hashCode()).isEqualTo(cell.hashCode());
+    }
+
+    @Test
+    public void testEqualsDifferentHeight() {
+        final CELL differentCell = makeCell();
+        final GridCellValue<String> differentValue = new BaseGridCellValue<>("Hello\nWorld!");
+        setValue(differentCell, differentValue);
+
+        assertThat(cell).isNotEqualTo(differentCell);
+        assertThat(cell.hashCode()).isNotEqualTo(differentCell.hashCode());
+    }
+
+    @Test
+    public void testEqualsDifferentLineHeight() {
+        final CELL differentCell = makeCell(LINE_HEIGHT + 1);
+
+        assertThat(cell).isNotEqualTo(differentCell);
+        assertThat(cell.hashCode()).isNotEqualTo(differentCell.hashCode());
+    }
+
+    protected void setValue(final GridCellValue value) {
+        setValue(cell, value);
+    }
+
     @SuppressWarnings("unchecked")
     //It's not nice invoking the _setValue_ through reflection however I really don't want it public.
-    protected void setValue(final GridCellValue value) {
+    protected void setValue(final CELL cell,
+                            final GridCellValue value) {
         try {
             final Method m = BaseGridCell.class.getDeclaredMethod("setValue", GridCellValue.class);
             m.setAccessible(true);

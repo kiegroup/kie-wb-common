@@ -38,9 +38,14 @@ public class LiteralExpressionCellTest extends BaseHasDynamicHeightCellTest<Lite
 
     @Override
     public LiteralExpressionCell makeCell() {
+        return makeCell(LINE_HEIGHT);
+    }
+
+    @Override
+    protected LiteralExpressionCell makeCell(final double lineHeight) {
         return new LiteralExpressionCell<>(value,
                                            listSelector,
-                                           LINE_HEIGHT);
+                                           lineHeight);
     }
 
     @Test
@@ -49,6 +54,7 @@ public class LiteralExpressionCellTest extends BaseHasDynamicHeightCellTest<Lite
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetEditor() {
         assertThat(cell.getEditor()).isNotEmpty();
         assertThat(cell.getEditor().get()).isSameAs(listSelector);

@@ -38,9 +38,14 @@ public class DecisionTableGridCellTest extends BaseHasDynamicHeightCellTest<Deci
 
     @Override
     public DecisionTableGridCell makeCell() {
+        return makeCell(LINE_HEIGHT);
+    }
+
+    @Override
+    protected DecisionTableGridCell makeCell(final double lineHeight) {
         return new DecisionTableGridCell<>(value,
                                            listSelector,
-                                           LINE_HEIGHT);
+                                           lineHeight);
     }
 
     @Test
@@ -49,6 +54,7 @@ public class DecisionTableGridCellTest extends BaseHasDynamicHeightCellTest<Deci
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetEditor() {
         assertThat(cell.getEditor()).isNotEmpty();
         assertThat(cell.getEditor().get()).isSameAs(listSelector);
