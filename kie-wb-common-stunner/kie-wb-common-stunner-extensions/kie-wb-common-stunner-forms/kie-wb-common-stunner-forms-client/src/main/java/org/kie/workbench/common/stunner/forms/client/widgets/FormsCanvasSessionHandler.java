@@ -25,7 +25,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.core.client.Scheduler;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -58,6 +58,10 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull
 @Dependent
 public class FormsCanvasSessionHandler {
 
+    /**
+     * An ORDERED array of feature providers supported.
+     */
+    private static final FormFeaturesSessionProvider[] FEATURE_SESSION_PROVIDERS = new FormFeaturesSessionProvider[]{new FormFeaturesFullSessionProvider(), new FormFeaturesReadOnlySessionProvider()};
     private final DefinitionManager definitionManager;
     private final CanvasCommandFactory<AbstractCanvasHandler> commandFactory;
     private final FormsCanvasListener canvasListener;
@@ -184,14 +188,9 @@ public class FormsCanvasSessionHandler {
             if (event.getIdentifiers().size() == 1) {
                 final String uuid = event.getIdentifiers().iterator().next();
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
-                final Timer timer = new Timer() {
-                    @Override
-                    public void run() {
-                        render(element);
-                    }
-                };
 
-                timer.schedule(100);
+                Scheduler.get().scheduleDeferred(() -> render(element));
+
             } else {
                 // Select root canvas
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), this.getDiagram().getMetadata().getCanvasRootUUID());
@@ -278,6 +277,121 @@ public class FormsCanvasSessionHandler {
 
     private boolean checkSession(final ClientSession s) {
         return checkCanvasHandler(s.getCanvasHandler());
+    }
+
+    private FormFeaturesSessionProvider getFeaturesSessionProvider(final ClientSession session) {
+        for (final FormFeaturesSessionProvider featureSessionProvider : FEATURE_SESSION_PROVIDERS) {
+            if (featureSessionProvider.supports(session)) {
+                return featureSessionProvider;
+            }
+        }
+        return null;
+    }
+
+    private interface FormsListener {
+
+        void startProcessing();
+
+        void endProcessing();
+    }
+
+    /**
+     * Provides form features to the {@link FormsCanvasSessionHandler}
+     */
+    public interface FormRenderer {
+
+        /**
+         * Renders the form properties panel for the given {@link Element}
+         * @param graphUuid the current {@link Graph} UUID
+         * @param element the {@link Element} to render properties form
+         * @param callback a {@link Command} to execute after a property value change
+         */
+        void render(String graphUuid, Element element, Command callback);
+
+        /**
+         * Renders the form properties panel for the given {@link Object}
+         * @param graphUuid the current {@link Graph} UUID
+         * @param domainObject the {@link DomainObject} to render properties form
+         * @param callback a {@link Command} to execute after a property value change
+         */
+        void render(String graphUuid, DomainObject domainObject, Command callback);
+
+        /**
+         * Clears the properties form for the given {@link Element}
+         * @param graphUuid the current {@link Graph} UUID
+         * @param element the {@link Element} to clear its properties form
+         */
+        void clear(String graphUuid, Element element);
+
+        /**
+         * Clears all properties forms for the current {@link Graph}
+         * @param graphUuid the current {@link Graph} UUID
+         */
+        void clearAll(String graphUuid);
+
+        /**
+         * Resets Cache
+         */
+        void resetCache();
+
+        /**
+         * Checks if Positions are the same for the last element rendered and if Elements are the same
+         * @param element Element to be checked
+         * @return True if Elements are the same and their positions or False if they are not
+         */
+        boolean areLastPositionsSameForElement(final Element element);
+    }
+
+    /**
+     * This type provides required features that are specific for concrete client
+     * session types.
+     */
+    private interface FormFeaturesSessionProvider<S extends ClientSession> {
+
+        /**
+         * Returns <code>true</code> is the session type is supported.
+         */
+        boolean supports(ClientSession type);
+
+        /**
+         * Returns the session's selection control instance, if not available, it
+         * returns <code>null</code>.
+         */
+        SelectionControl getSelectionControl(S session);
+    }
+
+    private static class FormFeaturesReadOnlySessionProvider implements FormFeaturesSessionProvider<ViewerSession> {
+
+        @Override
+        public boolean supports(final ClientSession type) {
+            return type instanceof ViewerSession;
+        }
+
+        @Override
+        public SelectionControl getSelectionControl(final ViewerSession session) {
+            return cast(session).getSelectionControl();
+        }
+
+        private ViewerSession cast(final ClientSession session) {
+            return (ViewerSession) session;
+        }
+    }
+
+    private static class FormFeaturesFullSessionProvider implements FormFeaturesSessionProvider<EditorSession> {
+
+        @Override
+        public boolean supports(final ClientSession type) {
+            return type instanceof EditorSession;
+        }
+
+        @Override
+        public SelectionControl getSelectionControl(final EditorSession session) {
+            return cast(session).getSelectionControl();
+        }
+
+        private EditorSession cast(final ClientSession session) {
+            return (EditorSession) session;
+        }
     }
 
     /**
@@ -410,126 +524,6 @@ public class FormsCanvasSessionHandler {
             if (!areFormsProcessing) {
                 render(domainObject);
             }
-        }
-    }
-
-    private interface FormsListener {
-
-        void startProcessing();
-
-        void endProcessing();
-    }
-
-    private FormFeaturesSessionProvider getFeaturesSessionProvider(final ClientSession session) {
-        for (final FormFeaturesSessionProvider featureSessionProvider : FEATURE_SESSION_PROVIDERS) {
-            if (featureSessionProvider.supports(session)) {
-                return featureSessionProvider;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Provides form features to the {@link FormsCanvasSessionHandler}
-     */
-    public interface FormRenderer {
-
-        /**
-         * Renders the form properties panel for the given {@link Element}
-         * @param graphUuid the current {@link Graph} UUID
-         * @param element the {@link Element} to render properties form
-         * @param callback a {@link Command} to execute after a property value change
-         */
-        void render(String graphUuid, Element element, Command callback);
-
-        /**
-         * Renders the form properties panel for the given {@link Object}
-         * @param graphUuid the current {@link Graph} UUID
-         * @param domainObject the {@link DomainObject} to render properties form
-         * @param callback a {@link Command} to execute after a property value change
-         */
-        void render(String graphUuid, DomainObject domainObject, Command callback);
-
-        /**
-         * Clears the properties form for the given {@link Element}
-         * @param graphUuid the current {@link Graph} UUID
-         * @param element the {@link Element} to clear its properties form
-         */
-        void clear(String graphUuid, Element element);
-
-        /**
-         * Clears all properties forms for the current {@link Graph}
-         * @param graphUuid the current {@link Graph} UUID
-         */
-        void clearAll(String graphUuid);
-
-        /**
-         * Resets Cache
-         */
-        void resetCache();
-
-        /**
-         * Checks if Positions are the same for the last element rendered and if Elements are the same
-         * @param element Element to be checked
-         * @return True if Elements are the same and their positions or False if they are not
-         */
-        boolean areLastPositionsSameForElement(final Element element);
-    }
-
-    /**
-     * An ORDERED array of feature providers supported.
-     */
-    private static final FormFeaturesSessionProvider[] FEATURE_SESSION_PROVIDERS = new FormFeaturesSessionProvider[]{new FormFeaturesFullSessionProvider(), new FormFeaturesReadOnlySessionProvider()};
-
-    /**
-     * This type provides required features that are specific for concrete client
-     * session types.
-     */
-    private interface FormFeaturesSessionProvider<S extends ClientSession> {
-
-        /**
-         * Returns <code>true</code> is the session type is supported.
-         */
-        boolean supports(ClientSession type);
-
-        /**
-         * Returns the session's selection control instance, if not available, it
-         * returns <code>null</code>.
-         */
-        SelectionControl getSelectionControl(S session);
-    }
-
-    private static class FormFeaturesReadOnlySessionProvider implements FormFeaturesSessionProvider<ViewerSession> {
-
-        @Override
-        public boolean supports(final ClientSession type) {
-            return type instanceof ViewerSession;
-        }
-
-        @Override
-        public SelectionControl getSelectionControl(final ViewerSession session) {
-            return cast(session).getSelectionControl();
-        }
-
-        private ViewerSession cast(final ClientSession session) {
-            return (ViewerSession) session;
-        }
-    }
-
-    private static class FormFeaturesFullSessionProvider implements FormFeaturesSessionProvider<EditorSession> {
-
-        @Override
-        public boolean supports(final ClientSession type) {
-            return type instanceof EditorSession;
-        }
-
-        @Override
-        public SelectionControl getSelectionControl(final EditorSession session) {
-            return cast(session).getSelectionControl();
-        }
-
-        private EditorSession cast(final ClientSession session) {
-            return (EditorSession) session;
         }
     }
 }

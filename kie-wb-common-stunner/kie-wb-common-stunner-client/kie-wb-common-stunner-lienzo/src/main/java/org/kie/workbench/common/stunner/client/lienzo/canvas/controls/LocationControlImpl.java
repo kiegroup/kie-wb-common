@@ -91,7 +91,7 @@ public class LocationControlImpl
     private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
     private final Event<ShapeLocationsChangedEvent> shapeLocationsChangedEvent;
     private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
-    public final Collection<String> selectedIDs = new LinkedList<>();
+    private final Collection<String> selectedIDs = new LinkedList<>();
     private final Event<CanvasSelectionEvent> selectionEvent;
 
     protected LocationControlImpl() {
@@ -107,6 +107,10 @@ public class LocationControlImpl
         this.canvasCommandFactory = canvasCommandFactory;
         this.shapeLocationsChangedEvent = shapeLocationsChangedEvent;
         this.selectionEvent = selectionEvent;
+    }
+
+    public Collection<String> getSelectedIDs() {
+        return selectedIDs;
     }
 
     @Override

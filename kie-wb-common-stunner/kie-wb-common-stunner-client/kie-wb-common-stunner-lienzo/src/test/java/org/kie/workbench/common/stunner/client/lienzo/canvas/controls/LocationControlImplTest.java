@@ -343,7 +343,7 @@ public class LocationControlImplTest {
 
         when (canvasHandler.getGraphIndex().getNode(any())).thenReturn(element);
 
-        tested.selectedIDs.add(element.getUUID());
+        tested.getSelectedIDs().add(element.getUUID());
         tested.handleArrowKeys(KeyboardEvent.Key.ARROW_DOWN);
 
         verify(commandManager, atLeastOnce()).execute(any(), any());
