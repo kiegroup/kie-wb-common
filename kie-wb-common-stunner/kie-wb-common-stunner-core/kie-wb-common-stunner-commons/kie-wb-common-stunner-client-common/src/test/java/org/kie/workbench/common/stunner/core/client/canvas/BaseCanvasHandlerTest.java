@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.stunner.core.client.canvas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.event.Event;
 
 import org.junit.Before;
@@ -27,6 +30,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.registration.Ca
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementRemovedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementUpdatedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasElementListener;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.QueueGraphExecutionContext;
 import org.kie.workbench.common.stunner.core.client.shape.ElementShape;
@@ -34,6 +38,7 @@ import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.command.ContextualGraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.graph.processing.index.MutableIndex;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
@@ -88,6 +93,12 @@ public class BaseCanvasHandlerTest {
 
     @Mock
     private QueueGraphExecutionContext queueGraphExecutionContext;
+
+    @Mock
+    private ContextualGraphCommandExecutionContext contextualGraphExecutionContext;
+
+    @Mock
+    private CanvasElementListener updateListener;
 
     @Before
     public void setup() {
@@ -159,5 +170,34 @@ public class BaseCanvasHandlerTest {
         verify(queueGraphExecutionContext, never()).addElement(candidate);
     }
 
+    @Test
+    public void checkNotifyElementUpdatedOnNonQueuedContext() {
+        canvasHandler.addRegistrationListener(updateListener);
+        canvasHandler.setStaticContext(contextualGraphExecutionContext);
+        final ElementShape shape = mock(ElementShape.class);
+        final Element candidate = mock(Element.class);
+        final boolean applyPosition = true;
+        final boolean applyProperties = false;
+        final MutationContext mutationContext = mock(MutationContext.class);
+        canvasHandler.applyElementMutation(shape,
+                                           candidate,
+                                           applyPosition,
+                                           applyProperties,
+                                           mutationContext);
 
+        verify(shape, atLeastOnce()).applyPosition(any(), any());
+        verify(canvasElementUpdatedEvent, atLeastOnce()).fire(any());
+        verify(queueGraphExecutionContext, never()).addElement(candidate);
+    }
+
+    @Test
+    public void checkNotifyElementUpdatedAndListenerUpdated() {
+        canvasHandler.addRegistrationListener(updateListener);
+
+        final List<Element> updatedElements = new ArrayList<>();
+        updatedElements.add(mock(Element.class));
+
+        canvasHandler.doBatchUpdate(updatedElements);
+        verify(updateListener, times(1)).updateBatch(any());
+    }
 }

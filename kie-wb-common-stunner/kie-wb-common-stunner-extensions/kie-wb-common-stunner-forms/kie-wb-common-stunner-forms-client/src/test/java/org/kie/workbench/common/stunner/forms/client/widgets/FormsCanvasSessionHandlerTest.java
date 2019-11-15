@@ -255,6 +255,18 @@ public class FormsCanvasSessionHandlerTest {
     }
 
     @Test
+    public void testOnCanvasBatchUpdateEmpty() {
+        handler.bind(session);
+        when(formRenderer.areLastPositionsSameForElement(any())).thenReturn(true);
+
+        final List<Element> queue = new ArrayList<>();
+
+        handler.getFormsCanvasListener().updateBatch(queue);
+
+        verify(formRenderer, never()).resetCache();
+    }
+
+    @Test
     public void testOnCanvasBatchUpdateOne() {
         handler.bind(session);
         when(formRenderer.areLastPositionsSameForElement(any())).thenReturn(true);
