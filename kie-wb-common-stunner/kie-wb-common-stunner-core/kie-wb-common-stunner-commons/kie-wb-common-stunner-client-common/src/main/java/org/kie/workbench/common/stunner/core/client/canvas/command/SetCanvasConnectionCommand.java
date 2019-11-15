@@ -41,7 +41,6 @@ public class SetCanvasConnectionCommand extends AbstractCanvasCommand {
         ShapeUtils.applyConnections(edge,
                                     context,
                                     MutationContext.STATIC);
-
         if (null != source) {
             context.notifyCanvasElementUpdated(source);
         }
