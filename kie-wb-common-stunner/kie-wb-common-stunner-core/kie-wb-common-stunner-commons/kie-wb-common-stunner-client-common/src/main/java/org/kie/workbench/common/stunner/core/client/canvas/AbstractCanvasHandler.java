@@ -426,11 +426,10 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
     /**
      * Does Batch update
      * @param queue Queue to be sent to be updated
-     * @param numberOfItems Number of actual elements to be updated
      */
-    public void doBatchUpdate(final List<List<Element>> queue, final long numberOfItems) {
+    public void doBatchUpdate(final List<Element> queue) {
         for (final CanvasElementListener instance : listeners) {
-            instance.updateBatch(queue, numberOfItems);
+            instance.updateBatch(queue);
         }
     }
 

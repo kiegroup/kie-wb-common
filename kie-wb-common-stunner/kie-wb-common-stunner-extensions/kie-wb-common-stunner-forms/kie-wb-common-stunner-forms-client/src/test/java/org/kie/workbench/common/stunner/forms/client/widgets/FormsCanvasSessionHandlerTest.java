@@ -241,15 +241,13 @@ public class FormsCanvasSessionHandlerTest {
         handler.bind(session);
         when(formRenderer.areLastPositionsSameForElement(any())).thenReturn(true);
 
-        final List<List<Element>> queue = new ArrayList<>();
-        final List<Element> subQueue = new ArrayList<>();
+        final List<Element> queue = new ArrayList<>();
 
-        subQueue.add(mock(Element.class));
-        subQueue.add(mock(Element.class));
-        subQueue.add(mock(Element.class));
+        queue.add(mock(Element.class));
+        queue.add(mock(Element.class));
+        queue.add(mock(Element.class));
 
-        queue.add(subQueue);
-        handler.getFormsCanvasListener().updateBatch(queue, 3);
+        handler.getFormsCanvasListener().updateBatch(queue);
 
         // Will action on the very last item
         verify(formRenderer, times(1)).resetCache();
@@ -261,15 +259,11 @@ public class FormsCanvasSessionHandlerTest {
         handler.bind(session);
         when(formRenderer.areLastPositionsSameForElement(any())).thenReturn(true);
 
-        final List<List<Element>> queue = new ArrayList<>();
-        final List<Element> subQueue = new ArrayList<>();
+        final List<Element> queue = new ArrayList<>();
 
-        subQueue.add(mock(Element.class));
-        subQueue.add(mock(Element.class));
-        subQueue.add(mock(Element.class));
+        queue.add(mock(Element.class));
 
-        queue.add(subQueue);
-        handler.getFormsCanvasListener().updateBatch(queue, 3);
+        handler.getFormsCanvasListener().updateBatch(queue);
 
         // Will action on the very last item
         verify(formRenderer, times(1)).resetCache();

@@ -104,7 +104,7 @@ public class CanvasCommandManagerImpl<H extends AbstractCanvasHandler>
     private CommandResult<CanvasViolation> runInContext(final AbstractCanvasHandler context,
                                                         final Supplier<CommandResult<CanvasViolation>> function) {
 
-        final List<List<Element>> queue = new ArrayList<>();
+        final List<Element> queue = new ArrayList<>();
         final List<QueueGraphExecutionContext> contextsCreated = new ArrayList<>();
 
         context.setGraphExecutionContext(() -> {
@@ -115,14 +115,18 @@ public class CanvasCommandManagerImpl<H extends AbstractCanvasHandler>
 
         final CommandResult<CanvasViolation> result = function.get();
 
-        long numberOfItems = 0;
+        boolean multipleSubqueues = false;
         for (QueueGraphExecutionContext contexts : contextsCreated) {
-            final List<Element> updatedElements = contexts.getUpdatedElements();
-            numberOfItems += updatedElements.size();
-            queue.add(updatedElements); // Add to the list
+            if (!queue.isEmpty()) {
+                multipleSubqueues = true;
+                break;
+            }
+            queue.addAll(contexts.getUpdatedElements());
         }
 
-        context.doBatchUpdate(queue, numberOfItems);
+        if (!queue.isEmpty() && !multipleSubqueues) { // Only send updates to first queue
+            context.doBatchUpdate(queue);
+        }
 
         for (QueueGraphExecutionContext contexts : contextsCreated) {
             contexts.resetUpdatedElements();

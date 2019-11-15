@@ -190,7 +190,6 @@ public class FormsCanvasSessionHandler {
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), uuid);
 
                 Scheduler.get().scheduleDeferred(() -> render(element));
-
             } else {
                 // Select root canvas
                 final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(getCanvasHandler(), this.getDiagram().getMetadata().getCanvasRootUUID());
@@ -444,18 +443,10 @@ public class FormsCanvasSessionHandler {
         }
 
         @Override
-        public void updateBatch(final List<List<Element>> queue, final long numberOfItems) {
-
-            if (queue.size() == 1 && numberOfItems != 0) {
-                for (final List<Element> subQueue : queue) {
-                    if (subQueue.size() > 1) {
-                        // No point in updating lots of elements, just last one
-                        update(subQueue.get(subQueue.size() - 1));
-                    } else {
-                        // update one
-                        update(subQueue.get(0));
-                    }
-                }
+        public void updateBatch(final List<Element> queue) {
+            if (!queue.isEmpty()) {
+                // No point in updating lots of elements, just last one or if single the only one
+                update(queue.get(queue.size() - 1));
             }
         }
 

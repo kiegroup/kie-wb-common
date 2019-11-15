@@ -33,6 +33,6 @@ public interface CanvasElementListener extends CanvasListener<CanvasHandler, Ele
      * Batch Updates Elements
      * @param queue Queue of Items to be updated
      */
-    default void  updateBatch(final List<List<Element>> queue, final long numberOfItems) {
+    default void  updateBatch(final List<Element> queue) {
     }
 }
