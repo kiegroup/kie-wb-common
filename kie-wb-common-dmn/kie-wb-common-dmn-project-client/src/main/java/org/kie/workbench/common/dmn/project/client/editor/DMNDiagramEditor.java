@@ -72,6 +72,8 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.stunner.kogito.client.screens.DiagramEditorPropertiesScreen;
+import org.kie.workbench.common.stunner.project.client.docks.StunnerDocksHandler;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorCore;
 import org.kie.workbench.common.stunner.project.client.editor.ProjectDiagramEditorProxy;
@@ -90,6 +92,8 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
+import org.uberfire.client.workbench.docks.UberfireDock;
+import org.uberfire.client.workbench.docks.UberfireDocks;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
 import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
@@ -129,6 +133,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final IncludedModelsPageStateProviderImpl importsPageProvider;
     private final DMNEditorSearchIndex editorSearchIndex;
     private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
+    private final UberfireDocks uberfireDocks;
+    private final StunnerDocksHandler stunnerDocksHandler;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -157,7 +163,9 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final IncludedModelsPage includedModelsPage,
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final DMNEditorSearchIndex editorSearchIndex,
-                            final SearchBarComponent<DMNSearchableElement> searchBarComponent) {
+                            final SearchBarComponent<DMNSearchableElement> searchBarComponent,
+                            final UberfireDocks uberfireDocks,
+                            final StunnerDocksHandler stunnerDocksHandler) {
         super(view,
               xmlEditorView,
               editorSessionPresenterInstances,
@@ -185,6 +193,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.importsPageProvider = importsPageProvider;
         this.editorSearchIndex = editorSearchIndex;
         this.searchBarComponent = searchBarComponent;
+        this.uberfireDocks = uberfireDocks;
+        this.stunnerDocksHandler = stunnerDocksHandler;
     }
 
     @Override
@@ -246,6 +256,16 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                           final PlaceRequest place) {
         superDoStartUp(path, place);
         decisionNavigatorDock.init(PerspectiveIds.LIBRARY);
+    }
+
+    @OnOpen
+    public void onOpen() {
+        final String currentPerspectiveIdentifier = perspectiveManager.getCurrentPerspective().getIdentifier();
+        final Collection<UberfireDock> stunnerDocks = stunnerDocksHandler.provideDocks(currentPerspectiveIdentifier);
+        stunnerDocks.stream()
+                .filter(dock -> dock.getPlaceRequest().getIdentifier().compareTo(DiagramEditorPropertiesScreen.SCREEN_ID) == 0)
+                .forEach(uberfireDocks::open);
+        super.doOpen();
     }
 
     @Override
@@ -346,11 +366,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     public void open(final ProjectDiagram diagram) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         super.open(diagram);
-    }
-
-    @OnOpen
-    public void onOpen() {
-        super.doOpen();
     }
 
     @OnClose
