@@ -51,7 +51,6 @@ import org.mockito.Mock;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.layout.editor.client.infra.LayoutDragComponentHelper;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
@@ -90,9 +89,6 @@ public class EditorFieldLayoutComponentTest {
 
     @Mock
     private FormEditorContext formEditorContext;
-
-    @Mock
-    private LayoutDragComponentHelper layoutDragComponentHelper;
 
     @Mock
     private EventSourceMock<FormEditorSyncPaletteEvent> syncPaletteEvent;
@@ -173,21 +169,13 @@ public class EditorFieldLayoutComponentTest {
 
         when(propertiesRenderer.getView()).thenReturn(fieldPropertiesRendererView);
 
-        editorFieldLayoutComponent = spy(new EditorFieldLayoutComponent(propertiesRenderer,
-                                                                        layoutDragComponentHelper,
-                                                                        fieldManager,
-                                                                        formEditorContext,
-                                                                        syncPaletteEvent) {
-            {
-                fieldRendererManager = EditorFieldLayoutComponentTest.this.fieldRendererManager;
-                translationService = EditorFieldLayoutComponentTest.this.translationService;
-            }
+        FormEditorContext.setActiveEditorHelper(formEditorHelper);
 
-            @Override
-            protected FormEditorHelper getHelperInstance() {
-                return formEditorHelper;
-            }
-        });
+        editorFieldLayoutComponent = spy(new EditorFieldLayoutComponent(fieldRendererManager,
+                                                                        translationService,
+                                                                        propertiesRenderer,
+                                                                        fieldManager,
+                                                                        syncPaletteEvent));
 
         editorFieldLayoutComponent.initPropertiesConfig();
         propertiesRendererHelper = spy(editorFieldLayoutComponent.getPropertiesRendererHelper());
@@ -376,8 +364,6 @@ public class EditorFieldLayoutComponentTest {
                                  boolean withConfigContext) {
         FieldDefinition fieldCopy = setupFormEditorHelper();
         ModalConfigurationContext ctx = mock(ModalConfigurationContext.class);
-        
-       
 
         if (bound) {
             when(fieldCopy.getBinding()).thenReturn(BINDING_FIRSTNAME);
@@ -449,20 +435,19 @@ public class EditorFieldLayoutComponentTest {
         assertFalse(editorFieldLayoutComponent.showProperties);
         verify(ctx).configurationCancelled();
     }
-    
+
     @Test
     public void testFieldPartsAdded() {
-        Set<String> parts = Stream.of("p1","p2").collect(Collectors.toSet());
+        Set<String> parts = Stream.of("p1", "p2").collect(Collectors.toSet());
         when(fieldRenderer.getFieldParts()).thenReturn(parts);
         editorFieldLayoutComponent.generateContent(ctx);
         editorFieldLayoutComponent.addComponentParts(ctx.getComponent());
         Set<String> expectedParts = layoutComponent.getParts().stream().map(p -> p.getPartId()).collect(Collectors.toSet());
-        parts = Stream.of("p1","p3").collect(Collectors.toSet());
+        parts = Stream.of("p1", "p3").collect(Collectors.toSet());
         when(fieldRenderer.getFieldParts()).thenReturn(parts);
         editorFieldLayoutComponent.generateContent(ctx);
         editorFieldLayoutComponent.addComponentParts(ctx.getComponent());
         expectedParts = layoutComponent.getParts().stream().map(p -> p.getPartId()).collect(Collectors.toSet());
         assertEquals(parts, expectedParts);
     }
-    
 }

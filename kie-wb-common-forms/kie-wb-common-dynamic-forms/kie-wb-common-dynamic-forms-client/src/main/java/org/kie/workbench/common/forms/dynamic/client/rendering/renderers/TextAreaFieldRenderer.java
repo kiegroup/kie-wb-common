@@ -21,14 +21,17 @@ import javax.enterprise.context.Dependent;
 import com.google.gwt.user.client.ui.HTML;
 import org.gwtbootstrap3.client.ui.TextArea;
 import org.jboss.errai.databinding.client.api.Converter;
+import org.kie.workbench.common.forms.adf.rendering.Renderer;
 import org.kie.workbench.common.forms.common.rendering.client.util.valueConverters.ObjectToStringConverter;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.def.DefaultFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.definition.TextAreaFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 
 @Dependent
+@Renderer(type = TextAreaFieldType.class)
 public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition, DefaultFormGroup> implements RequiresValueConverter {
 
     @Override
@@ -44,9 +47,7 @@ public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition
         DefaultFormGroup formGroup = formGroupsInstance.get();
 
         if (renderMode.equals(RenderMode.PRETTY_MODE)) {
-            HTML html = new HTML();
-            formGroup.render(html,
-                             field);
+            formGroup.render(new HTML(), field);
         } else {
             String inputId = generateUniqueId();
 
@@ -64,11 +65,6 @@ public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition
         }
 
         return formGroup;
-    }
-
-    @Override
-    public String getSupportedCode() {
-        return TextAreaFieldDefinition.FIELD_TYPE.getTypeName();
     }
 
     @Override

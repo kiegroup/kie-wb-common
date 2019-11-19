@@ -31,10 +31,10 @@ import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.Window;
-import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.kie.workbench.common.forms.dynamic.client.rendering.util.FormsElementWrapperWidgetUtil;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.uberfire.ext.layout.editor.api.editor.LayoutColumn;
@@ -51,6 +51,7 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
     private SyncBeanManager beanManager;
     private ManagedInstance<LayoutDragComponent> instance;
     private List<FieldLayoutComponent> layoutComponents = new ArrayList<>();
+    private List<HTMLElement> layoutElements = new ArrayList<>();
     private Map<String, Class<? extends LayoutDragComponent>> componentsCache = new HashMap<>();
     private FormRenderingContext renderingContext;
 
@@ -94,7 +95,7 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
     public IsWidget createComponent(HTMLElement column, LayoutComponent layoutComponent) {
         final LayoutDragComponent dragComponent = lookupComponent(layoutComponent);
         if (dragComponent != null) {
-            Widget columnWidget = ElementWrapperWidget.getWidget(column);
+            Widget columnWidget = getWidget(column);
             RenderingContext componentContext = new RenderingContext(layoutComponent, columnWidget);
             return dragComponent.getShowWidget(componentContext);
         }
@@ -106,7 +107,7 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
         FieldDefinition field = getFieldForLayoutComponent(layoutComponent);
         FieldLayoutComponent dragComponent = getFieldLayoutComponentForField(field);
         if (dragComponent != null) {
-            Widget columnWidget = ElementWrapperWidget.getWidget(column);
+            Widget columnWidget = getWidget(column);
             RenderingContext componentContext = new RenderingContext(layoutComponent, columnWidget);
             return dragComponent.getContentPart(partId, componentContext);
         }
@@ -118,8 +119,7 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
         if (clazz == null) {
             SyncBeanDef dragTypeDef = beanManager.lookupBeans(layoutComponent.getDragTypeName()).iterator().next();
 
-            componentsCache.put(layoutComponent.getDragTypeName(),
-                                dragTypeDef.getBeanClass());
+            componentsCache.put(layoutComponent.getDragTypeName(), dragTypeDef.getBeanClass());
 
             clazz = dragTypeDef.getBeanClass();
         }
@@ -152,9 +152,18 @@ public class FormGeneratorDriver implements LayoutGeneratorDriver {
         return null;
     }
 
+    private Widget getWidget(HTMLElement element) {
+        layoutElements.add(element);
+        return FormsElementWrapperWidgetUtil.getWidget(this, element);
+    }
+
     public void clear() {
         layoutComponents.clear();
         instance.destroyAll();
+        FormsElementWrapperWidgetUtil.clear(this);
+        layoutElements.clear();
+        componentsCache.clear();
+        renderingContext = null;
     }
     
     private FieldDefinition getFieldForLayoutComponent(LayoutComponent layoutComponent) {

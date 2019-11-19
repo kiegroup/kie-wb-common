@@ -301,7 +301,6 @@ public class FormEditorPresenterAbstractTest {
                 deletePopUpPresenter = FormEditorPresenterAbstractTest.this.deletePopUpPresenter;
                 renamePopUpPresenter = FormEditorPresenterAbstractTest.this.renamePopUpPresenter;
                 alertsButtonMenuItemBuilder = FormEditorPresenterAbstractTest.this.alertsButtonMenuItemBuilder;
-                formEditorContext = mock(FormEditorContext.class);
                 copyPopUpPresenter = FormEditorPresenterAbstractTest.this.copyPopUpPresenter;
                 promises = FormEditorPresenterAbstractTest.this.promises;
             }

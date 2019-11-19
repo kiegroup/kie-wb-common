@@ -19,6 +19,7 @@ package org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,12 +30,12 @@ import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.Span;
-import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.labels.help.FieldHelp;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.labels.required.FieldRequired;
+import org.kie.workbench.common.forms.dynamic.client.rendering.util.FormsElementWrapperWidgetUtil;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
 @Templated
@@ -92,11 +93,16 @@ public class FieldSetFormGroupViewImpl implements IsElement,
 
         fieldContainer.add(widget);
         
-        partsWidgets.put(PART_LEGEND_TEXT, ElementWrapperWidget.getWidget(legendText));
+        partsWidgets.put(PART_LEGEND_TEXT, FormsElementWrapperWidgetUtil.getWidget(this, legendText));
     }
     
     @Override
     public Map<String, Widget> getViewPartsWidgets() {
         return partsWidgets;
+    }
+
+    @PreDestroy
+    public void clear() {
+        FormsElementWrapperWidgetUtil.clear(this);
     }
 }

@@ -21,14 +21,17 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.forms.adf.rendering.Renderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.fieldSet.FieldSetFormGroup;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.multipleSubform.definition.MultipleSubFormFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.multipleSubform.type.MultipleSubFormFieldType;
 
 @Dependent
+@Renderer(type = MultipleSubFormFieldType.class)
 public class MultipleSubFormFieldRenderer extends FieldRenderer<MultipleSubFormFieldDefinition, FieldSetFormGroup> {
 
     @Inject
@@ -69,11 +72,6 @@ public class MultipleSubFormFieldRenderer extends FieldRenderer<MultipleSubFormF
             configErrors.add(FormRenderingConstants.MultipleSubformWongEditionForm);
         }
         return configErrors;
-    }
-
-    @Override
-    public String getSupportedCode() {
-        return MultipleSubFormFieldDefinition.FIELD_TYPE.getTypeName();
     }
 
     @Override

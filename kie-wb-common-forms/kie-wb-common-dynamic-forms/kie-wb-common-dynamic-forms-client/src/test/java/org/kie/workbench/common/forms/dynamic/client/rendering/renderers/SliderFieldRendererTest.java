@@ -69,13 +69,6 @@ public class SliderFieldRendererTest {
     }
 
     @Test
-    public void testGetSupportedCode() {
-        String name = fieldRenderer.getSupportedCode();
-        assertEquals(SliderBaseDefinition.FIELD_TYPE.getTypeName(),
-                     name);
-    }
-
-    @Test
     public void testGetConverterInteger() {
         when(fieldMock.getStandaloneClassName()).thenReturn(Integer.class.getName());
         Converter converter = fieldRenderer.getConverter();

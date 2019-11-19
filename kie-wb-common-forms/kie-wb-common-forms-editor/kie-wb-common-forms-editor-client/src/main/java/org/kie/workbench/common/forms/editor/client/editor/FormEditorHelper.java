@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorRenderingContext;
@@ -64,12 +65,14 @@ public class FormEditorHelper {
 
     @PostConstruct
     public void init() {
-        Collection<SyncBeanDef<EditorFieldTypesProvider>> providers = IOC.getBeanManager().lookupBeans(EditorFieldTypesProvider.class);
+        final SyncBeanManager beanManager = IOC.getBeanManager();
+        Collection<SyncBeanDef<EditorFieldTypesProvider>> providers = beanManager.lookupBeans(EditorFieldTypesProvider.class);
         providers.stream().map(SyncBeanDef::getInstance)
                 .sorted(Comparator.comparingInt(EditorFieldTypesProvider::getPriority))
                 .forEach((EditorFieldTypesProvider editorProvider) -> {
                     enabledPaletteFieldTypes.addAll(editorProvider.getPaletteFieldTypes());
                     enabledFieldPropertiesFieldTypes.addAll(editorProvider.getFieldPropertiesFieldTypes());
+                    beanManager.destroyBean(editorProvider);
                 });
     }
 

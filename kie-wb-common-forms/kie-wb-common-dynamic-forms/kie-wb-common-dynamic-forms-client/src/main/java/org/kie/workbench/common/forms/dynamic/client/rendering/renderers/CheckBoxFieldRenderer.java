@@ -19,13 +19,16 @@ package org.kie.workbench.common.forms.dynamic.client.rendering.renderers;
 import javax.enterprise.context.Dependent;
 
 import org.gwtbootstrap3.client.ui.SimpleCheckBox;
+import org.kie.workbench.common.forms.adf.rendering.Renderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.checkbox.CheckBoxFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.definition.CheckBoxFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.type.CheckBoxFieldType;
 
 @Dependent
+@Renderer(type = CheckBoxFieldType.class)
 public class CheckBoxFieldRenderer extends FieldRenderer<CheckBoxFieldDefinition, CheckBoxFormGroup> {
 
     private SimpleCheckBox checkbox;
@@ -43,17 +46,11 @@ public class CheckBoxFieldRenderer extends FieldRenderer<CheckBoxFieldDefinition
 
         CheckBoxFormGroup formGroup = formGroupsInstance.get();
 
-        formGroup.render(checkbox,
-                         field);
+        formGroup.render(checkbox, field);
         
         registerFieldRendererPart(checkbox);
 
         return formGroup;
-    }
-
-    @Override
-    public String getSupportedCode() {
-        return CheckBoxFieldDefinition.FIELD_TYPE.getTypeName();
     }
 
     @Override
