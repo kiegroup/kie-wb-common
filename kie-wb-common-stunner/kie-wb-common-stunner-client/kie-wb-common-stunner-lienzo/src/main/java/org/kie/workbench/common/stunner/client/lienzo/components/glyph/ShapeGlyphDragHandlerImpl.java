@@ -147,7 +147,7 @@ public class ShapeGlyphDragHandlerImpl implements ShapeGlyphDragHandler<Abstract
                     root.addDomHandler(event -> onMouseUp(event, callback),
                                        MouseUpEvent.getType())
             );
-        }, 1000);
+        }, 200);
 
         // Keyboard event registration & handling..
         register(root.addDomHandler(this::onKeyDown,
