@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,9 +35,11 @@ import elemental2.dom.NodeList;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
+import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
+import org.kie.workbench.common.dmn.client.editors.types.imported.ImportDataObjectModal;
+import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
@@ -91,7 +94,12 @@ public class DataTypeListView implements DataTypeList.View {
     @DataField("read-only-message-close-button")
     private final HTMLButtonElement readOnlyMessageCloseButton;
 
+    @DataField("import-data-object-button")
+    private final HTMLButtonElement importDataObjectButton;
+
     private final ScrollHelper scrollHelper;
+
+    private final ImportDataObjectModal importDataObjectModal;
 
     private DataTypeList presenter;
 
@@ -109,7 +117,9 @@ public class DataTypeListView implements DataTypeList.View {
                             final HTMLDivElement noDataTypesFound,
                             final HTMLDivElement readOnlyMessage,
                             final HTMLButtonElement readOnlyMessageCloseButton,
-                            final ScrollHelper scrollHelper) {
+                            final ScrollHelper scrollHelper,
+                            final HTMLButtonElement importDataObjectButton,
+                            final ImportDataObjectModal importDataObjectModal) {
         this.listItems = listItems;
         this.collapsedDescription = collapsedDescription;
         this.expandedDescription = expandedDescription;
@@ -124,6 +134,8 @@ public class DataTypeListView implements DataTypeList.View {
         this.readOnlyMessage = readOnlyMessage;
         this.readOnlyMessageCloseButton = readOnlyMessageCloseButton;
         this.scrollHelper = scrollHelper;
+        this.importDataObjectButton = importDataObjectButton;
+        this.importDataObjectModal = importDataObjectModal;
     }
 
     @Override
@@ -131,6 +143,12 @@ public class DataTypeListView implements DataTypeList.View {
         this.presenter = presenter;
 
         setupSearchBar();
+        importDataObjectModal.setup(this::importDataObjects);
+        setupListElement();
+    }
+
+    void importDataObjects(final List<DataObject> imported) {
+        presenter.importDataObjects(imported);
     }
 
     private void setupSearchBar() {
@@ -142,11 +160,12 @@ public class DataTypeListView implements DataTypeList.View {
         collapseDescription();
     }
 
-    @Override
-    public void setupListItems(final List<DataTypeListItem> listItems) {
-        RemoveHelper.removeChildren(this.listItems);
-        listItems.forEach(this::appendItem);
-        showOrHideNoCustomItemsMessage();
+    private void setupListElement() {
+        listItems.appendChild(getDndListComponent().getElement());
+    }
+
+    private DNDListComponent getDndListComponent() {
+        return presenter.getDNDListComponent();
     }
 
     @Override
@@ -159,7 +178,8 @@ public class DataTypeListView implements DataTypeList.View {
     }
 
     boolean hasCustomDataType() {
-        return !Objects.isNull(this.listItems.childNodes) && this.listItems.childNodes.length > 0;
+        final NodeList<Element> childNodes = listItems.querySelectorAll("[" + UUID_ATTR + "]");
+        return !Objects.isNull(childNodes) && childNodes.length > 0;
     }
 
     @Override
@@ -170,7 +190,7 @@ public class DataTypeListView implements DataTypeList.View {
 
         for (final DataTypeListItem item : listItems) {
 
-            final HTMLElement itemElement = item.getElement();
+            final HTMLElement itemElement = item.getDragAndDropElement();
 
             hideItemElementIfParentIsCollapsed(itemElement, parent);
 
@@ -179,12 +199,6 @@ public class DataTypeListView implements DataTypeList.View {
         }
 
         showArrowIconIfDataTypeHasChildren(dataType);
-        showOrHideNoCustomItemsMessage();
-    }
-
-    @Override
-    public void addSubItem(final DataTypeListItem listItem) {
-        appendItem(listItem);
         showOrHideNoCustomItemsMessage();
     }
 
@@ -202,6 +216,11 @@ public class DataTypeListView implements DataTypeList.View {
     public void onAddClick(final ClickEvent e) {
         scrollHelper.animatedScrollToBottom(listItems);
         presenter.addDataType();
+    }
+
+    @EventHandler("import-data-object-button")
+    public void onImportDataObjectClick(final ClickEvent e) {
+        importDataObjectModal.show();
     }
 
     @EventHandler("read-only-message-close-button")
@@ -275,7 +294,7 @@ public class DataTypeListView implements DataTypeList.View {
                             final DataType reference) {
 
         final Element elementReference = getLastSubDataTypeElement(reference);
-        ElementHelper.insertAfter(listItem.getElement(), elementReference);
+        ElementHelper.insertAfter(listItem.getDragAndDropElement(), elementReference);
     }
 
     @Override
@@ -283,7 +302,7 @@ public class DataTypeListView implements DataTypeList.View {
                             final DataType reference) {
 
         final Element elementReference = getDataTypeRow(reference);
-        ElementHelper.insertBefore(listItem.getElement(), elementReference);
+        ElementHelper.insertBefore(listItem.getDragAndDropElement(), elementReference);
     }
 
     private boolean isCollapsed(final Element arrow) {
@@ -298,10 +317,6 @@ public class DataTypeListView implements DataTypeList.View {
     @EventHandler("view-less")
     public void onClickViewLess(final ClickEvent event) {
         collapseDescription();
-    }
-
-    private void appendItem(final DataTypeListItem listItem) {
-        listItems.appendChild(listItem.getElement());
     }
 
     void expandDescription() {
@@ -329,14 +344,30 @@ public class DataTypeListView implements DataTypeList.View {
     Element getLastSubDataTypeElement(final Element element) {
 
         final String parentUUID = element.getAttribute(UUID_ATTR);
-        final String selector = "[" + PARENT_UUID_ATTR + "=\"" + parentUUID + "\"]";
-        final NodeList<Element> nestedElements = listItems.querySelectorAll(selector);
+        final List<Element> nestedElements = getNestedElements(parentUUID);
 
-        if (nestedElements.length == 0) {
+        if (nestedElements.isEmpty()) {
             return element;
         } else {
-            return getLastSubDataTypeElement(nestedElements.getAt((int) nestedElements.length - 1));
+            return getLastSubDataTypeElement(nestedElements.get(nestedElements.size() - 1));
         }
+    }
+
+    private List<Element> getNestedElements(final String parentUUID) {
+
+        final String selector = "[" + PARENT_UUID_ATTR + "=\"" + parentUUID + "\"]";
+        final NodeList<Element> nestedElements = listItems.querySelectorAll(selector);
+        final List<Element> list = new ArrayList<>();
+
+        for (int i = 0; i < nestedElements.length; i++) {
+            final Element element = nestedElements.getAt(i);
+            final boolean isVisible = getDndListComponent().getPositionY(element) > -1;
+            if (isVisible) {
+                list.add(element);
+            }
+        }
+
+        return list;
     }
 
     @Override
@@ -359,16 +390,16 @@ public class DataTypeListView implements DataTypeList.View {
     }
 
     @Override
-    public HTMLDivElement getListItems() {
-        return listItems;
-    }
-
-    @Override
     public void showReadOnlyMessage(final boolean show) {
         if (show) {
             show(readOnlyMessage);
         } else {
             hide(readOnlyMessage);
         }
+    }
+
+    @Override
+    public HTMLDivElement getListItems() {
+        return listItems;
     }
 }

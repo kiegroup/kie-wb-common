@@ -32,4 +32,11 @@ public interface DMNImportTypesHelper {
      * @return
      */
     boolean isPMML(final Path path);
+
+    /**
+     * Returns true if the path represents a Java file.
+     * @param path
+     * @return
+     */
+    boolean isJava(final Path path);
 }

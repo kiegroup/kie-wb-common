@@ -20,7 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.BaseDMNDiagramEditor;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
-import org.uberfire.client.workbench.panels.impl.SimpleNoExpandWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
@@ -30,10 +30,12 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 @WorkbenchPerspective(identifier = BaseDMNDiagramEditor.PERSPECTIVE_ID, isDefault = true)
 public class AuthoringPerspective {
 
+    static final String PERSPECTIVE_NAME = "Authoring";
+
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(SimpleNoExpandWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Authoring");
+        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
+        perspective.setName(PERSPECTIVE_NAME);
         perspective.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest(BaseDMNDiagramEditor.EDITOR_ID)));
         return perspective;
     }

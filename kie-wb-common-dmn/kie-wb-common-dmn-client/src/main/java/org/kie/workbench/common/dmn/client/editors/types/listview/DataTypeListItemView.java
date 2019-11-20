@@ -16,21 +16,19 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.Element.OnclickCallbackFn;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.NodeList;
-import elemental2.dom.Text;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -38,7 +36,6 @@ import org.kie.workbench.common.dmn.client.editors.common.RemoveHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper;
-import org.kie.workbench.common.dmn.client.editors.types.listview.common.MenuInitializer;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.SmallSwitchComponent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraint;
 
@@ -52,7 +49,6 @@ import static org.kie.workbench.common.dmn.client.editors.types.listview.common.
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.isFocusedDataType;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.common.ListItemViewCssHelper.isRightArrow;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeListItemView_ArrowKeysTooltip;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DataTypeListItemView_List;
 
 @Dependent
 @Templated
@@ -65,8 +61,6 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     static final String PARENT_UUID_ATTR = "data-parent-row-uuid";
 
     static final String ARROW_BUTTON_SELECTOR = "[data-type-field=\"arrow-button\"]";
-
-    private static final int PIXELS_PER_LEVEL = 35;
 
     @DataField("view")
     private final HTMLDivElement view;
@@ -82,11 +76,6 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         this.translationService = translationService;
     }
 
-    @PostConstruct
-    public void setupKebabElement() {
-        new MenuInitializer(getKebabMenu(), ".dropdown").init();
-    }
-
     @Override
     public void init(final DataTypeListItem presenter) {
         this.presenter = presenter;
@@ -99,8 +88,8 @@ public class DataTypeListItemView implements DataTypeListItem.View {
 
     void setupRowMetadata(final DataType dataType) {
 
-        getElement().setAttribute(UUID_ATTR, dataType.getUUID());
-        getElement().setAttribute(PARENT_UUID_ATTR, dataType.getParentUUID());
+        getDragAndDropElement().setAttribute(UUID_ATTR, dataType.getUUID());
+        getDragAndDropElement().setAttribute(PARENT_UUID_ATTR, dataType.getParentUUID());
 
         setupRowCSSClass(dataType);
     }
@@ -114,9 +103,9 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         final String hasSubDataTypesCSSClass = "has-sub-data-types";
 
         if (dataType.hasSubDataTypes()) {
-            getElement().classList.add(hasSubDataTypesCSSClass);
+            getDragAndDropElement().classList.add(hasSubDataTypesCSSClass);
         } else {
-            getElement().classList.remove(hasSubDataTypesCSSClass);
+            getDragAndDropElement().classList.remove(hasSubDataTypesCSSClass);
         }
     }
 
@@ -125,31 +114,14 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         final String readOnlyCSSClass = "read-only";
 
         if (dataType.isReadOnly()) {
-            getElement().classList.add(readOnlyCSSClass);
+            getDragAndDropElement().classList.add(readOnlyCSSClass);
         } else {
-            getElement().classList.remove(readOnlyCSSClass);
+            getDragAndDropElement().classList.remove(readOnlyCSSClass);
         }
     }
 
     void setupArrow(final DataType dataType) {
         toggleArrow(dataType.hasSubDataTypes());
-    }
-
-    void setupIndentationLevel() {
-
-        final int indentationLevel = presenter.getLevel();
-        final int marginPixels = PIXELS_PER_LEVEL * indentationLevel;
-        final String nestingLevelSelector = ".nesting-level";
-        final NodeList<Element> levelElements = getElement().querySelectorAll(nestingLevelSelector);
-
-        for (int i = 0; i < levelElements.length; i++) {
-
-            final Element element = levelElements.getAt(i);
-            final String propertyName = "style";
-            final String propertyValue = "margin-left: " + marginPixels + "px";
-
-            element.setAttribute(propertyName, propertyValue);
-        }
     }
 
     void setupReadOnly(final DataType dataType) {
@@ -174,12 +146,21 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     public void expand() {
 
         final Element parent = getRowElement(getDataType());
+        final int parentPositionY = presenter.getPositionY(parent);
+
+        final AtomicInteger i = new AtomicInteger(1);
 
         asDownArrow(getArrow());
         forEachChildElement(parent, child -> {
+
             show(child);
+            double positionY = parentPositionY + (i.getAndIncrement() / 10.0);
+            presenter.setPositionY(child, positionY);
+
             return !isCollapsed(child.querySelector(ARROW_BUTTON_SELECTOR));
         });
+
+        presenter.refreshItemsCSSAndHTMLPosition();
     }
 
     @Override
@@ -188,12 +169,21 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         final Element parent = getRowElement(getDataType());
 
         asRightArrow(getArrow());
-        forEachChildElement(parent, HiddenHelper::hide);
+        forEachChildElement(parent, element -> {
+
+            presenter.setPositionY(element, -2);
+
+            HiddenHelper.hide(element);
+        });
+
+        presenter.refreshItemsCSSAndHTMLPosition();
     }
 
     @Override
     public void showEditButton() {
         show(getEditButton());
+        show(getInsertNestedFieldButton());
+        show(getRemoveButton());
         hide(getSaveButton());
         hide(getCloseButton());
     }
@@ -201,6 +191,8 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     @Override
     public void showSaveButton() {
         hide(getEditButton());
+        hide(getInsertNestedFieldButton());
+        hide(getRemoveButton());
         show(getSaveButton());
         show(getCloseButton());
     }
@@ -289,28 +281,13 @@ public class DataTypeListItemView implements DataTypeListItem.View {
 
     @Override
     public void setupListComponent(final SmallSwitchComponent dataTypeListComponent) {
-        RemoveHelper.removeChildren(getListContainer());
-        getListContainer().appendChild(listTextNode());
-        getListContainer().appendChild(dataTypeListComponent.getElement());
-    }
-
-    Text listTextNode() {
-        return DomGlobal.document.createTextNode(list());
+        RemoveHelper.removeChildren(getListCheckBoxContainer());
+        getListCheckBoxContainer().appendChild(dataTypeListComponent.getElement());
     }
 
     @Override
     public void showListContainer() {
         show(getListContainer());
-    }
-
-    @Override
-    public void hideKebabMenu() {
-        hide(getKebabMenu());
-    }
-
-    @Override
-    public void showKebabMenu() {
-        show(getKebabMenu());
     }
 
     @Override
@@ -363,16 +340,12 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     }
 
     private Element getRowElement(final String uuid) {
-        return dataTypeListElement().querySelector("[" + UUID_ATTR + "=\"" + uuid + "\"]");
+        return getDragAndDropListElement().querySelector("[" + UUID_ATTR + "=\"" + uuid + "\"]");
     }
 
     private NodeList<Element> getChildren(final Element parent) {
         final String childrenSelector = "[" + PARENT_UUID_ATTR + "=\"" + parent.getAttribute(UUID_ATTR) + "\"]";
-        return dataTypeListElement().querySelectorAll(childrenSelector);
-    }
-
-    HTMLElement dataTypeListElement() {
-        return presenter.getDataTypeList().getElement();
+        return getDragAndDropListElement().querySelectorAll(childrenSelector);
     }
 
     DataType getDataType() {
@@ -383,7 +356,6 @@ public class DataTypeListItemView implements DataTypeListItem.View {
     public void setDataType(final DataType dataType) {
         setupRowMetadata(dataType);
         setupArrow(dataType);
-        setupIndentationLevel();
         setupReadOnly(dataType);
         setupActionButtons();
         setupEventHandlers();
@@ -396,9 +368,7 @@ public class DataTypeListItemView implements DataTypeListItem.View {
 
         setTitleAttribute(getEditButton(), "Ctrl + E");
         setTitleAttribute(getSaveButton(), "Ctrl + S");
-        setTitleAttribute(getInsertNestedField(), "Ctrl + B");
-        setTitleAttribute(getInsertFieldAbove(), "Ctrl + U");
-        setTitleAttribute(getInsertFieldBelow(), "Ctrl + D");
+        setTitleAttribute(getInsertNestedFieldButton(), "Ctrl + B");
         setTitleAttribute(getRemoveButton(), "Ctrl + Backspace");
         setTitleAttribute(getCloseButton(), "Esc");
         setTitleAttribute(getArrow(), arrowKeysTooltip);
@@ -420,10 +390,16 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         getSaveButton().onclick = getOnSaveAction();
         getCloseButton().onclick = getOnCloseAction();
         getArrow().onclick = getOnArrowClickAction();
-        getInsertFieldAbove().onclick = getOnInsertFieldAboveAction();
-        getInsertFieldBelow().onclick = getOnInsertFieldBelowAction();
-        getInsertNestedField().onclick = getOnInsertNestedFieldAction();
+        getInsertNestedFieldButton().onclick = getOnInsertNestedFieldAction();
         getRemoveButton().onclick = getOnRemoveButtonAction();
+    }
+
+    private HTMLElement getDragAndDropListElement() {
+        return presenter.getDragAndDropListElement();
+    }
+
+    private HTMLElement getDragAndDropElement() {
+        return presenter.getDragAndDropElement();
     }
 
     OnclickCallbackFn getOnEditAction() {
@@ -454,20 +430,6 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         };
     }
 
-    OnclickCallbackFn getOnInsertFieldAboveAction() {
-        return (e) -> {
-            presenter.insertFieldAbove();
-            return true;
-        };
-    }
-
-    OnclickCallbackFn getOnInsertFieldBelowAction() {
-        return (e) -> {
-            presenter.insertFieldBelow();
-            return true;
-        };
-    }
-
     OnclickCallbackFn getOnInsertNestedFieldAction() {
         return (e) -> {
             presenter.insertNestedField();
@@ -480,10 +442,6 @@ public class DataTypeListItemView implements DataTypeListItem.View {
             presenter.remove();
             return true;
         };
-    }
-
-    private String list() {
-        return translationService.format(DataTypeListItemView_List);
     }
 
     Element getArrow() {
@@ -510,6 +468,10 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         return querySelector("list-container");
     }
 
+    Element getListCheckBoxContainer() {
+        return querySelector("list-checkbox-container");
+    }
+
     Element getListYes() {
         return querySelector("list-yes");
     }
@@ -530,20 +492,8 @@ public class DataTypeListItemView implements DataTypeListItem.View {
         return querySelector("remove-button");
     }
 
-    Element getInsertFieldAbove() {
-        return querySelector("insert-field-above");
-    }
-
-    Element getInsertFieldBelow() {
-        return querySelector("insert-field-below");
-    }
-
-    Element getInsertNestedField() {
+    Element getInsertNestedFieldButton() {
         return querySelector("insert-nested-field");
-    }
-
-    Element getKebabMenu() {
-        return querySelector("kebab-menu");
     }
 
     NodeList<Element> getLabels() {

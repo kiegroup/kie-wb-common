@@ -26,7 +26,6 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.NodeList;
-import elemental2.dom.Text;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,10 +92,19 @@ public class DataTypeListItemViewTest {
     private HTMLButtonElement closeButton;
 
     @Mock
+    private HTMLButtonElement insertNestedFieldButton;
+
+    @Mock
+    private HTMLButtonElement removeButton;
+
+    @Mock
     private DataTypeListItem presenter;
 
     @Mock
     private HTMLElement dataTypeListElement;
+
+    @Mock
+    private HTMLElement dragAndDropElement;
 
     @Mock
     private TranslationService translationService;
@@ -108,7 +116,8 @@ public class DataTypeListItemViewTest {
         view = spy(new DataTypeListItemView(row, translationService));
         view.init(presenter);
 
-        doReturn(dataTypeListElement).when(view).dataTypeListElement();
+        when(presenter.getDragAndDropElement()).thenReturn(dragAndDropElement);
+        doReturn(dataTypeListElement).when(presenter).getDragAndDropListElement();
     }
 
     @Test
@@ -118,7 +127,6 @@ public class DataTypeListItemViewTest {
 
         doNothing().when(view).setupRowMetadata(dataType);
         doNothing().when(view).setupArrow(dataType);
-        doNothing().when(view).setupIndentationLevel();
         doNothing().when(view).setupReadOnly(dataType);
         doNothing().when(view).setupActionButtons();
         doNothing().when(view).setupEventHandlers();
@@ -128,7 +136,6 @@ public class DataTypeListItemViewTest {
 
         verify(view).setupRowMetadata(dataType);
         verify(view).setupArrow(dataType);
-        verify(view).setupIndentationLevel();
         verify(view).setupReadOnly(dataType);
         verify(view).setupActionButtons();
         verify(view).setupEventHandlers();
@@ -142,12 +149,12 @@ public class DataTypeListItemViewTest {
 
         when(dataType.getUUID()).thenReturn("1234");
         when(dataType.getParentUUID()).thenReturn("4567");
-        row.classList = classList;
+        dragAndDropElement.classList = classList;
 
         view.setupRowMetadata(dataType);
 
-        verify(row).setAttribute(UUID_ATTR, "1234");
-        verify(row).setAttribute(PARENT_UUID_ATTR, "4567");
+        verify(dragAndDropElement).setAttribute(UUID_ATTR, "1234");
+        verify(dragAndDropElement).setAttribute(PARENT_UUID_ATTR, "4567");
         verify(view).setupRowCSSClass(dataType);
     }
 
@@ -156,12 +163,12 @@ public class DataTypeListItemViewTest {
 
         final DataType dataType = mock(DataType.class);
 
-        row.classList = mock(DOMTokenList.class);
+        dragAndDropElement.classList = mock(DOMTokenList.class);
         when(dataType.hasSubDataTypes()).thenReturn(true);
 
         view.setupSubDataTypesCSSClass(dataType);
 
-        verify(row.classList).add("has-sub-data-types");
+        verify(dragAndDropElement.classList).add("has-sub-data-types");
     }
 
     @Test
@@ -169,12 +176,12 @@ public class DataTypeListItemViewTest {
 
         final DataType dataType = mock(DataType.class);
 
-        row.classList = mock(DOMTokenList.class);
+        dragAndDropElement.classList = mock(DOMTokenList.class);
         when(dataType.hasSubDataTypes()).thenReturn(false);
 
         view.setupSubDataTypesCSSClass(dataType);
 
-        verify(row.classList).remove("has-sub-data-types");
+        verify(dragAndDropElement.classList).remove("has-sub-data-types");
     }
 
     @Test
@@ -182,12 +189,12 @@ public class DataTypeListItemViewTest {
 
         final DataType dataType = mock(DataType.class);
 
-        row.classList = mock(DOMTokenList.class);
+        dragAndDropElement.classList = mock(DOMTokenList.class);
         when(dataType.isReadOnly()).thenReturn(true);
 
         view.setupReadOnlyCSSClass(dataType);
 
-        verify(row.classList).add("read-only");
+        verify(dragAndDropElement.classList).add("read-only");
     }
 
     @Test
@@ -195,12 +202,12 @@ public class DataTypeListItemViewTest {
 
         final DataType dataType = mock(DataType.class);
 
-        row.classList = mock(DOMTokenList.class);
+        dragAndDropElement.classList = mock(DOMTokenList.class);
         when(dataType.isReadOnly()).thenReturn(false);
 
         view.setupReadOnlyCSSClass(dataType);
 
-        verify(row.classList).remove("read-only");
+        verify(dragAndDropElement.classList).remove("read-only");
     }
 
     @Test
@@ -260,27 +267,6 @@ public class DataTypeListItemViewTest {
     }
 
     @Test
-    public void testSetupIndentationLevel() {
-
-        final int indentationLevel = 3;
-        final NodeList<Element> levelElements = spy(new NodeList<>());
-        final Element element0 = mock(Element.class);
-        final Element element1 = mock(Element.class);
-
-        levelElements.length = 2;
-        doReturn(element0).when(levelElements).getAt(0);
-        doReturn(element1).when(levelElements).getAt(1);
-
-        when(presenter.getLevel()).thenReturn(indentationLevel);
-        when(row.querySelectorAll(".nesting-level")).thenReturn(levelElements);
-
-        view.setupIndentationLevel();
-
-        verify(element0).setAttribute("style", "margin-left: 105px");
-        verify(element1).setAttribute("style", "margin-left: 105px");
-    }
-
-    @Test
     public void testSetupReadOnly() {
 
         final DataType dataType = mock(DataType.class);
@@ -321,18 +307,14 @@ public class DataTypeListItemViewTest {
         final Element saveButton = mock(Element.class);
         final Element insertNestedField = mock(Element.class);
         final Element closeButton = mock(Element.class);
-        final Element insertFieldAbove = mock(Element.class);
-        final Element insertFieldBelow = mock(Element.class);
         final Element removeButton = mock(Element.class);
         final Element arrow = mock(Element.class);
         final String arrowKeysTooltip = "arrowKeysTooltip";
 
         doReturn(editButton).when(view).getEditButton();
         doReturn(saveButton).when(view).getSaveButton();
-        doReturn(insertNestedField).when(view).getInsertNestedField();
+        doReturn(insertNestedField).when(view).getInsertNestedFieldButton();
         doReturn(closeButton).when(view).getCloseButton();
-        doReturn(insertFieldAbove).when(view).getInsertFieldAbove();
-        doReturn(insertFieldBelow).when(view).getInsertFieldBelow();
         doReturn(removeButton).when(view).getRemoveButton();
         doReturn(arrow).when(view).getArrow();
         when(translationService.format(DataTypeListItemView_ArrowKeysTooltip)).thenReturn(arrowKeysTooltip);
@@ -343,8 +325,6 @@ public class DataTypeListItemViewTest {
         verify(saveButton).setAttribute("data-title", "Ctrl + S");
         verify(insertNestedField).setAttribute("data-title", "Ctrl + B");
         verify(closeButton).setAttribute("data-title", "Esc");
-        verify(insertFieldAbove).setAttribute("data-title", "Ctrl + U");
-        verify(insertFieldBelow).setAttribute("data-title", "Ctrl + D");
         verify(removeButton).setAttribute("data-title", "Ctrl + Backspace");
         verify(arrow).setAttribute("data-title", arrowKeysTooltip);
         verify(view).setupTooltips();
@@ -363,16 +343,12 @@ public class DataTypeListItemViewTest {
         final Element saveButton = mock(Element.class);
         final Element closeButton = mock(Element.class);
         final Element arrow = mock(Element.class);
-        final Element insertFieldAbove = mock(Element.class);
-        final Element insertFieldBelow = mock(Element.class);
         final Element insertNestedField = mock(Element.class);
         final Element removeButton = mock(Element.class);
         final OnclickCallbackFn onEditAction = mock(OnclickCallbackFn.class);
         final OnclickCallbackFn onSaveAction = mock(OnclickCallbackFn.class);
         final OnclickCallbackFn onCloseAction = mock(OnclickCallbackFn.class);
         final OnclickCallbackFn onArrowClickAction = mock(OnclickCallbackFn.class);
-        final OnclickCallbackFn onInsertFieldAboveAction = mock(OnclickCallbackFn.class);
-        final OnclickCallbackFn onInsertFieldBelowAction = mock(OnclickCallbackFn.class);
         final OnclickCallbackFn onInsertNestedFieldAction = mock(OnclickCallbackFn.class);
         final OnclickCallbackFn onRemoveButtonAction = mock(OnclickCallbackFn.class);
 
@@ -380,16 +356,12 @@ public class DataTypeListItemViewTest {
         doReturn(saveButton).when(view).getSaveButton();
         doReturn(closeButton).when(view).getCloseButton();
         doReturn(arrow).when(view).getArrow();
-        doReturn(insertFieldAbove).when(view).getInsertFieldAbove();
-        doReturn(insertFieldBelow).when(view).getInsertFieldBelow();
-        doReturn(insertNestedField).when(view).getInsertNestedField();
+        doReturn(insertNestedField).when(view).getInsertNestedFieldButton();
         doReturn(removeButton).when(view).getRemoveButton();
         doReturn(onEditAction).when(view).getOnEditAction();
         doReturn(onSaveAction).when(view).getOnSaveAction();
         doReturn(onCloseAction).when(view).getOnCloseAction();
         doReturn(onArrowClickAction).when(view).getOnArrowClickAction();
-        doReturn(onInsertFieldAboveAction).when(view).getOnInsertFieldAboveAction();
-        doReturn(onInsertFieldBelowAction).when(view).getOnInsertFieldBelowAction();
         doReturn(onInsertNestedFieldAction).when(view).getOnInsertNestedFieldAction();
         doReturn(onRemoveButtonAction).when(view).getOnRemoveButtonAction();
 
@@ -397,8 +369,6 @@ public class DataTypeListItemViewTest {
         saveButton.onclick = null;
         closeButton.onclick = null;
         arrow.onclick = null;
-        insertFieldAbove.onclick = null;
-        insertFieldBelow.onclick = null;
         insertNestedField.onclick = null;
         removeButton.onclick = null;
 
@@ -408,8 +378,6 @@ public class DataTypeListItemViewTest {
         assertEquals(onSaveAction, saveButton.onclick);
         assertEquals(onCloseAction, closeButton.onclick);
         assertEquals(onArrowClickAction, arrow.onclick);
-        assertEquals(onInsertFieldAboveAction, insertFieldAbove.onclick);
-        assertEquals(onInsertFieldBelowAction, insertFieldBelow.onclick);
         assertEquals(onInsertNestedFieldAction, insertNestedField.onclick);
         assertEquals(onRemoveButtonAction, removeButton.onclick);
     }
@@ -422,24 +390,6 @@ public class DataTypeListItemViewTest {
         assertTrue((Boolean) action.onInvoke(mock(Event.class)));
 
         verify(presenter).expandOrCollapseSubTypes();
-    }
-
-    @Test
-    public void testOnInsertFieldAbove() {
-        final OnclickCallbackFn action = view.getOnInsertFieldAboveAction();
-
-        assertTrue((Boolean) action.onInvoke(mock(Event.class)));
-
-        verify(presenter).insertFieldAbove();
-    }
-
-    @Test
-    public void testOnInsertFieldBelow() {
-        final OnclickCallbackFn action = view.getOnInsertFieldBelowAction();
-
-        assertTrue((Boolean) action.onInvoke(mock(Event.class)));
-
-        verify(presenter).insertFieldBelow();
     }
 
     @Test
@@ -530,17 +480,15 @@ public class DataTypeListItemViewTest {
     }
 
     @Test
-    public void testSetupCollectionComponent() {
+    public void testSetupListComponent() {
 
         final SmallSwitchComponent switchComponent = mock(SmallSwitchComponent.class);
         final HTMLElement htmlElement = mock(HTMLElement.class);
-        final Text listTextNode = mock(Text.class);
         final Element element = mock(Element.class);
 
         listContainer.firstChild = element;
         when(switchComponent.getElement()).thenReturn(htmlElement);
-        doReturn(listTextNode).when(view).listTextNode();
-        doReturn(listContainer).when(view).getListContainer();
+        doReturn(listContainer).when(view).getListCheckBoxContainer();
         when(listContainer.removeChild(element)).then(a -> {
             listContainer.firstChild = null;
             return element;
@@ -549,7 +497,6 @@ public class DataTypeListItemViewTest {
         view.setupListComponent(switchComponent);
 
         verify(listContainer).removeChild(element);
-        verify(listContainer).appendChild(listTextNode);
         verify(listContainer).appendChild(htmlElement);
     }
 
@@ -610,45 +557,49 @@ public class DataTypeListItemViewTest {
     @Test
     public void testShowEditButton() {
 
-        final DOMTokenList editClassList = mock(DOMTokenList.class);
-        final DOMTokenList saveClassList = mock(DOMTokenList.class);
-        final DOMTokenList closeClassList = mock(DOMTokenList.class);
-
-        editButton.classList = editClassList;
-        saveButton.classList = saveClassList;
-        closeButton.classList = closeClassList;
+        editButton.classList = mock(DOMTokenList.class);
+        insertNestedFieldButton.classList = mock(DOMTokenList.class);
+        removeButton.classList = mock(DOMTokenList.class);
+        saveButton.classList = mock(DOMTokenList.class);
+        closeButton.classList = mock(DOMTokenList.class);
 
         doReturn(editButton).when(view).getEditButton();
+        doReturn(insertNestedFieldButton).when(view).getInsertNestedFieldButton();
+        doReturn(removeButton).when(view).getRemoveButton();
         doReturn(saveButton).when(view).getSaveButton();
         doReturn(closeButton).when(view).getCloseButton();
 
         view.showEditButton();
 
-        verify(editClassList).remove(HIDDEN_CSS_CLASS);
-        verify(saveClassList).add(HIDDEN_CSS_CLASS);
-        verify(closeClassList).add(HIDDEN_CSS_CLASS);
+        verify(editButton.classList).remove(HIDDEN_CSS_CLASS);
+        verify(insertNestedFieldButton.classList).remove(HIDDEN_CSS_CLASS);
+        verify(removeButton.classList).remove(HIDDEN_CSS_CLASS);
+        verify(saveButton.classList).add(HIDDEN_CSS_CLASS);
+        verify(closeButton.classList).add(HIDDEN_CSS_CLASS);
     }
 
     @Test
     public void testShowSaveButton() {
 
-        final DOMTokenList editClassList = mock(DOMTokenList.class);
-        final DOMTokenList saveClassList = mock(DOMTokenList.class);
-        final DOMTokenList closeClassList = mock(DOMTokenList.class);
-
-        editButton.classList = editClassList;
-        saveButton.classList = saveClassList;
-        closeButton.classList = closeClassList;
+        editButton.classList = mock(DOMTokenList.class);
+        insertNestedFieldButton.classList = mock(DOMTokenList.class);
+        removeButton.classList = mock(DOMTokenList.class);
+        saveButton.classList = mock(DOMTokenList.class);
+        closeButton.classList = mock(DOMTokenList.class);
 
         doReturn(editButton).when(view).getEditButton();
+        doReturn(insertNestedFieldButton).when(view).getInsertNestedFieldButton();
+        doReturn(removeButton).when(view).getRemoveButton();
         doReturn(saveButton).when(view).getSaveButton();
         doReturn(closeButton).when(view).getCloseButton();
 
         view.showSaveButton();
 
-        verify(editClassList).add(HIDDEN_CSS_CLASS);
-        verify(saveClassList).remove(HIDDEN_CSS_CLASS);
-        verify(closeClassList).remove(HIDDEN_CSS_CLASS);
+        verify(editButton.classList).add(HIDDEN_CSS_CLASS);
+        verify(insertNestedFieldButton.classList).add(HIDDEN_CSS_CLASS);
+        verify(removeButton.classList).add(HIDDEN_CSS_CLASS);
+        verify(saveButton.classList).remove(HIDDEN_CSS_CLASS);
+        verify(closeButton.classList).remove(HIDDEN_CSS_CLASS);
     }
 
     @Test
@@ -1021,31 +972,10 @@ public class DataTypeListItemViewTest {
     }
 
     @Test
-    public void testGetInsertFieldAbove() {
-        final Element element = mock(Element.class);
-        doReturn(element).when(view).querySelector("insert-field-above");
-        assertEquals(element, view.getInsertFieldAbove());
-    }
-
-    @Test
-    public void testGetInsertFieldBelow() {
-        final Element element = mock(Element.class);
-        doReturn(element).when(view).querySelector("insert-field-below");
-        assertEquals(element, view.getInsertFieldBelow());
-    }
-
-    @Test
     public void testGetInsertNestedField() {
         final Element element = mock(Element.class);
         doReturn(element).when(view).querySelector("insert-nested-field");
-        assertEquals(element, view.getInsertNestedField());
-    }
-
-    @Test
-    public void testGetKebabMenu() {
-        final Element element = mock(Element.class);
-        doReturn(element).when(view).querySelector("kebab-menu");
-        assertEquals(element, view.getKebabMenu());
+        assertEquals(element, view.getInsertNestedFieldButton());
     }
 
     @Test

@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
     <artifactId>kie-wb-common-library</artifactId>
-    <version>7.29.0-SNAPSHOT</version>
+    <version>7.31.0-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
@@ -73,6 +73,37 @@
             <configuration>
               <nodeVersion>${node.version}</nodeVersion>
               <yarnVersion>${yarn.version}</yarnVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install node and npm</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>${node.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install lock-treatment-tool and run-node</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install lock-treatment-tool --global-style --no-package-lock --no-save</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>lock-treatment-tool execution</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run env -- locktt</arguments>
             </configuration>
           </execution>
           <execution>

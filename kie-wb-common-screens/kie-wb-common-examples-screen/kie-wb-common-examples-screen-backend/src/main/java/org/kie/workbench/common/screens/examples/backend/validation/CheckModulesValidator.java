@@ -18,14 +18,16 @@
 package org.kie.workbench.common.screens.examples.backend.validation;
 
 import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.service.POMService;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.kie.workbench.common.screens.examples.model.ExampleProjectError;
+import org.kie.workbench.common.screens.examples.model.ImportProject;
 import org.kie.workbench.common.screens.examples.validation.ImportProjectValidator;
-import org.uberfire.backend.vfs.Path;
 
 /**
  * Validates if Project POM contains any module. No modules should be found to be a valid project.
@@ -44,10 +46,10 @@ public class CheckModulesValidator extends ImportProjectValidator {
     }
 
     @Override
-    protected Optional<ExampleProjectError> getError(Path projectPath) {
+    protected Optional<ExampleProjectError> getError(OrganizationalUnit ou, ImportProject importProject) {
 
         POM pom = this.getPom(pomService,
-                              projectPath);
+                              importProject.getRoot());
 
         if (pom.getModules() == null || pom.getModules().isEmpty()) {
             return Optional.empty();

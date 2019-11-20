@@ -21,8 +21,6 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
-import org.jboss.errai.common.client.api.ErrorCallback;
-import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
@@ -30,9 +28,9 @@ import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.types.DMNSimpleTimeZone;
+import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.api.editors.types.RangeValue;
 import org.kie.workbench.common.dmn.client.service.DMNClientServicesProxy;
-import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.uberfire.backend.vfs.Path;
 
@@ -67,13 +65,13 @@ public class DMNClientServicesProxyImpl implements DMNClientServicesProxy {
     @Override
     public void parseFEELList(final String source,
                               final ServiceCallback<List<String>> callback) {
-        callback.onSuccess(Collections.emptyList());
+        callback.onSuccess(FEELListParser.parse(source));
     }
 
     @Override
     public void parseRangeValue(final String source,
                                 final ServiceCallback<RangeValue> callback) {
-        callback.onSuccess(new RangeValue());
+        callback.onSuccess(FEELRangeParser.parse(source));
     }
 
     @Override
@@ -87,14 +85,8 @@ public class DMNClientServicesProxyImpl implements DMNClientServicesProxy {
         callback.onSuccess(Collections.emptyList());
     }
 
-    <T> RemoteCallback<T> onSuccess(final ServiceCallback<T> callback) {
-        return callback::onSuccess;
-    }
-
-    <T> ErrorCallback<Boolean> onError(final ServiceCallback<T> callback) {
-        return (message, throwable) -> {
-            callback.onError(new ClientRuntimeError(throwable));
-            return false;
-        };
+    @Override
+    public void loadDataObjects(final ServiceCallback<List<DataObject>> callback) {
+        callback.onSuccess(Collections.emptyList());
     }
 }

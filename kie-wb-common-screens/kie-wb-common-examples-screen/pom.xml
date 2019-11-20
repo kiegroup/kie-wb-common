@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-screens</artifactId>
     <groupId>org.kie.workbench.screens</groupId>
-    <version>7.29.0-SNAPSHOT</version>
+    <version>7.31.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -34,7 +34,6 @@
   <modules>
     <module>kie-wb-common-examples-screen-api</module>
     <module>kie-wb-common-examples-screen-backend</module>
-    <module>kie-wb-common-examples-screen-client</module>
   </modules>
 
 

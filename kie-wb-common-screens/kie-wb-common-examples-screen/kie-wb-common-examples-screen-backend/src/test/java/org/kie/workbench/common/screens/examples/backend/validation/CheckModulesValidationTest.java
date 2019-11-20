@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.service.POMService;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,9 @@ public class CheckModulesValidationTest {
     private POMService pomService;
 
     @Mock
+    private OrganizationalUnit ou;
+
+    @Mock
     private ImportProject importProject;
 
     @Mock
@@ -63,7 +67,7 @@ public class CheckModulesValidationTest {
     @Test
     public void testProjectHasNoModules() {
         when(this.pom.getModules()).thenReturn(Collections.EMPTY_LIST);
-        Optional<ExampleProjectError> error = this.validator.validate(importProject);
+        Optional<ExampleProjectError> error = this.validator.validate(ou, importProject);
         assertFalse(error.isPresent());
     }
 
@@ -71,7 +75,7 @@ public class CheckModulesValidationTest {
     public void testProjectHasModules() {
         when(this.pom.getModules()).thenReturn(Arrays.asList("aModule"));
 
-        Optional<ExampleProjectError> error = this.validator.validate(importProject);
+        Optional<ExampleProjectError> error = this.validator.validate(ou, importProject);
         assertTrue(error.isPresent());
         assertEquals(CheckModulesValidator.class.getCanonicalName(),
                      error.get().getId());
