@@ -16,12 +16,13 @@
 
 package org.kie.workbench.common.dmn.client.widgets.grid.model;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
+
+import static org.uberfire.ext.wires.core.grids.client.util.Logging.log;
 
 public class ExpressionEditorGridRow extends BaseGridRow {
 
@@ -42,11 +43,7 @@ public class ExpressionEditorGridRow extends BaseGridRow {
 
     @Override
     public double getHeight() {
-        long currentTimeMillis = 0;
-        if (LOGGER.isLoggable(Level.FINEST)) {
-            currentTimeMillis = System.currentTimeMillis();
-            LOGGER.log(Level.FINEST, " - Pre- ExpressionEditorGridRow.getHeight()");
-        }
+        long currentTimeMillis = log(LOGGER, " - Pre- ExpressionEditorGridRow.getHeight()");
 
         final double height = this.getCells()
                 .values()
@@ -61,9 +58,8 @@ public class ExpressionEditorGridRow extends BaseGridRow {
                 .reduce(Double::max)
                 .orElse(defaultHeight);
 
-        if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.log(Level.FINEST, " - Post- ExpressionEditorGridRow.getHeight() - " + (System.currentTimeMillis() - currentTimeMillis) + "ms");
-        }
+        log(LOGGER, " - Post- ExpressionEditorGridRow.getHeight()", currentTimeMillis);
+
         return height;
     }
 }
