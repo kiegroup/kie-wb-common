@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.project.client.editor;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -263,7 +264,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         final String currentPerspectiveIdentifier = perspectiveManager.getCurrentPerspective().getIdentifier();
         final Collection<UberfireDock> stunnerDocks = stunnerDocksHandler.provideDocks(currentPerspectiveIdentifier);
         stunnerDocks.stream()
-                .filter(dock -> dock.getPlaceRequest().getIdentifier().compareTo(DiagramEditorPropertiesScreen.SCREEN_ID) == 0)
+                .filter(dock -> Objects.equals(dock.getPlaceRequest().getIdentifier(), DiagramEditorPropertiesScreen.SCREEN_ID))
                 .forEach(uberfireDocks::open);
         super.doOpen();
     }
