@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.stunner.core.client.canvas;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.event.Event;
@@ -194,8 +194,7 @@ public class BaseCanvasHandlerTest {
     public void checkNotifyElementUpdatedAndListenerUpdated() {
         canvasHandler.addRegistrationListener(updateListener);
 
-        final List<Element> updatedElements = new ArrayList<>();
-        updatedElements.add(mock(Element.class));
+        final List<Element> updatedElements = Collections.singletonList(mock(Element.class));
 
         canvasHandler.doBatchUpdate(updatedElements);
         verify(updateListener, times(1)).updateBatch(any());

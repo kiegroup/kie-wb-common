@@ -439,7 +439,7 @@ public class FormsCanvasSessionHandler {
         @Override
         public void update(final Element item) {
 
-            if (renderer.areLastPositionsSameForElement(item)) {
+            if (!Objects.isNull(renderer) && renderer.areLastPositionsSameForElement(item)) {
                 renderer.resetCache();
             }
 
