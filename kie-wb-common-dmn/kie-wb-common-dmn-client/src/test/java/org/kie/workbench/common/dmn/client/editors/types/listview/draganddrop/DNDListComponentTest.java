@@ -67,7 +67,7 @@ public class DNDListComponentTest {
     @Test
     public void testRefreshItemsCSSAndHTMLPosition() {
         dndListComponent.refreshItemsCSSAndHTMLPosition();
-        verify(view).consolidateHierarchicalLevel();
+        verify(view).consolidateHierarchicalLevel(false);
         verify(view).refreshItemsPosition();
     }
 

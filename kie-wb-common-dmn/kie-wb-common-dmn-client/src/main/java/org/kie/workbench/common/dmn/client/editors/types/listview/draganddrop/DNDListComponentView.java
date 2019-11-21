@@ -121,12 +121,14 @@ public class DNDListComponentView implements DNDListComponent.View {
     }
 
     @Override
-    public void consolidateHierarchicalLevel() {
+    public void consolidateHierarchicalLevel(final boolean isElementsDraggedByUser) {
 
         final List<HTMLElement> draggableElements = querySelector(getDragArea()).getVisibleAndSortedDraggableElements();
 
-        if (!draggableElements.isEmpty()) {
-            Position.setX(draggableElements.get(0), 0);
+        if (isElementsDraggedByUser) {
+            if (!draggableElements.isEmpty()) {
+                Position.setX(draggableElements.get(0), 0);
+            }
         }
 
         if (draggableElements.size() < 2) {
@@ -222,7 +224,7 @@ public class DNDListComponentView implements DNDListComponent.View {
         updateDraggingElementsPosition();
         executeOnDropItemCallback();
         releaseDraggingElement();
-        consolidateHierarchicalLevel();
+        consolidateHierarchicalLevel(true);
         refreshItemsPosition();
         refreshItemsHTML();
         clearHover();

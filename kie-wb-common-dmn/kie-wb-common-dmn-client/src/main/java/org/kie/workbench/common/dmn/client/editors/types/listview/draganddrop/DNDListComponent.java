@@ -131,7 +131,7 @@ public class DNDListComponent {
     }
 
     private void consolidateHierarchicalLevel() {
-        view.consolidateHierarchicalLevel();
+        view.consolidateHierarchicalLevel(false);
     }
 
     public void refreshDragAreaSize(final int numberOfElements) {
@@ -149,7 +149,7 @@ public class DNDListComponent {
 
         void refreshItemsHTML();
 
-        void consolidateHierarchicalLevel();
+        void consolidateHierarchicalLevel(final boolean adjustFirstElementPositionX);
 
         void clear();
 
