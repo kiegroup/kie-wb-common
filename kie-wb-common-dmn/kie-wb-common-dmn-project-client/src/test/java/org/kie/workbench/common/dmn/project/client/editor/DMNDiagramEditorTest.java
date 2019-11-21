@@ -17,6 +17,8 @@
 package org.kie.workbench.common.dmn.project.client.editor;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -34,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.preview.PreviewDiagramScreen;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -60,6 +63,8 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.kogito.client.editor.AbstractDiagramEditorMenuSessionItems;
+import org.kie.workbench.common.stunner.kogito.client.screens.DiagramEditorPropertiesScreen;
+import org.kie.workbench.common.stunner.project.client.docks.StunnerDocksHandler;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorCore;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditorTest;
@@ -74,7 +79,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
+import org.uberfire.client.workbench.docks.UberfireDock;
+import org.uberfire.client.workbench.docks.UberfireDocks;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.client.workbench.widgets.multipage.MultiPageEditor;
 import org.uberfire.ext.editor.commons.client.menu.MenuItems;
@@ -177,6 +185,27 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Mock
     private ElementWrapperWidget searchBarComponentWidget;
 
+    @Mock
+    private UberfireDocks uberfireDocks;
+
+    @Mock
+    private StunnerDocksHandler stunnerDocksHandler;
+
+    @Mock
+    private UberfireDock propertiesDock;
+
+    @Mock
+    private PlaceRequest propertiesPlace;
+
+    @Mock
+    private UberfireDock previewDock;
+
+    @Mock
+    private PlaceRequest previewPlace;
+
+    @Mock
+    private PerspectiveActivity currentPerspective;
+
     @Captor
     private ArgumentCaptor<Consumer<String>> errorConsumerCaptor;
 
@@ -234,9 +263,12 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  includedModelsPage,
                                                  importsPageProvider,
                                                  editorSearchIndex,
-                                                 searchBarComponent) {
+                                                 searchBarComponent,
+                                                 uberfireDocks,
+                                                 stunnerDocksHandler) {
             {
                 docks = DMNDiagramEditorTest.this.docks;
+                perspectiveManager = DMNDiagramEditorTest.this.perspectiveManagerMock;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = DMNDiagramEditorTest.this.workbenchContext;
                 projectController = DMNDiagramEditorTest.this.projectController;
@@ -334,6 +366,28 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
         verify(diagramEditor).superDoStartUp(filePath, currentPlace);
         verify(decisionNavigatorDock).init(PerspectiveIds.LIBRARY);
+    }
+
+    @Test
+    public void testOnOpen() {
+        final Collection<UberfireDock> stunnerDocks = new ArrayList<>();
+        stunnerDocks.add(propertiesDock);
+        stunnerDocks.add(previewDock);
+
+        final String perspectiveIdentifier = "Test Perspective ID";
+
+        when(perspectiveManagerMock.getCurrentPerspective()).thenReturn(currentPerspective);
+        when(currentPerspective.getIdentifier()).thenReturn(perspectiveIdentifier);
+        when(stunnerDocksHandler.provideDocks(perspectiveIdentifier)).thenReturn(stunnerDocks);
+
+        when(propertiesDock.getPlaceRequest()).thenReturn(propertiesPlace);
+        when(propertiesPlace.getIdentifier()).thenReturn(DiagramEditorPropertiesScreen.SCREEN_ID);
+        when(previewDock.getPlaceRequest()).thenReturn(previewPlace);
+        when(previewPlace.getIdentifier()).thenReturn(PreviewDiagramScreen.SCREEN_ID);
+
+        diagramEditor.onOpen();
+
+        verify(uberfireDocks).open(propertiesDock);
     }
 
     @Test
