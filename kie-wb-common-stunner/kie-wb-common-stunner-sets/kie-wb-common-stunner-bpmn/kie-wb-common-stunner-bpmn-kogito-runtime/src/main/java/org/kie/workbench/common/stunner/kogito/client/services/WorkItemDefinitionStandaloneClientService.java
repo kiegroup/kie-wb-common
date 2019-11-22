@@ -40,7 +40,7 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     private final Promises promises;
     private final WorkItemDefinitionCacheRegistry registry;
     private final WorkItemDefinitionParser parser;
-    private ResourceContentService resourceContentService;
+    private final ResourceContentService resourceContentService;
 
     @Inject
     public WorkItemDefinitionStandaloneClientService(final Promises promises,
