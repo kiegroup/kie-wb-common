@@ -44,10 +44,10 @@ public class TimeZonesProvider {
 
         for (String name : names) {
             final double offset = getOffset(name);
-            final String format = getOffsetString(name);
+            final String offsetString = getOffsetString(name);
             timeZones.add(new DMNSimpleTimeZone(name,
                                                 offset,
-                                                format));
+                                                offsetString));
         }
         return timeZones;
     }
