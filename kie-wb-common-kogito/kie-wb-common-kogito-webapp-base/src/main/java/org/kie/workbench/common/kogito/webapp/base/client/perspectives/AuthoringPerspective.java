@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.kogito.webapp.base.client.editor.KogitoScreen;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
@@ -35,9 +36,15 @@ public class AuthoringPerspective {
     @Inject
     protected KogitoScreen kogitoScreen;
 
+    @Inject
+    protected IsTesting isTesting;
+
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinition perspective = new PerspectiveDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
+
+        final PerspectiveDefinition perspective =
+                isTesting.get() ? new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName()) :
+                new PerspectiveDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
         perspective.setName("Authoring");
         perspective.getRoot().addPart(new PartDefinitionImpl(kogitoScreen.getPlaceRequest()));
         return perspective;
