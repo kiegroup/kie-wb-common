@@ -33,6 +33,8 @@ public class AuthoringPerspective {
 
     public static final String PERSPECTIVE_ID = "AuthoringPerspective";
 
+    public static final String PERSPECTIVE_NAME = "Authoring";
+
     @Inject
     protected KogitoScreen kogitoScreen;
 
@@ -41,11 +43,10 @@ public class AuthoringPerspective {
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-
         final PerspectiveDefinition perspective =
                 isTesting.get() ? new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName()) :
                 new PerspectiveDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
-        perspective.setName("Authoring");
+        perspective.setName(PERSPECTIVE_NAME);
         perspective.getRoot().addPart(new PartDefinitionImpl(kogitoScreen.getPlaceRequest()));
         return perspective;
     }
