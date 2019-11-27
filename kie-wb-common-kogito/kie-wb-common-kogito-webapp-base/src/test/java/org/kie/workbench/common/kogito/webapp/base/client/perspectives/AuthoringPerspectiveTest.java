@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.kogito.webapp.base.client.perspectives;
 
-
 import java.util.Set;
 
 import org.junit.Test;
 import org.kie.workbench.common.kogito.webapp.base.client.editor.KogitoScreen;
+import org.uberfire.client.workbench.panels.impl.AbstractWorkbenchPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
 import org.uberfire.mvp.PlaceRequest;
@@ -44,15 +44,16 @@ public class AuthoringPerspectiveTest {
     @Test
     public void buildTestingPerspective() {
         final AuthoringPerspective perspective = new AuthoringPerspective();
-        perspective.isTesting = new IsTestingTrue();
+        perspective.perspectiveConfiguration = new TestingPerspectiveConfiguration();
         perspective.kogitoScreen = getKogitoScreen(TESTING_REQUEST);
         final PerspectiveDefinition perspectiveDefinition = perspective.buildPerspective();
         assertNotNull(perspectiveDefinition);
-        assertEquals(perspectiveDefinition.getRoot().getPanelType(), MultiListWorkbenchPanelPresenter.class.getName());
-        assertEquals(perspectiveDefinition.getName(), AuthoringPerspective.PERSPECTIVE_NAME);
+        assertEquals(MultiListWorkbenchPanelPresenter.class.getName(), perspectiveDefinition.getRoot().getPanelType());
+        assertEquals(AuthoringPerspective.PERSPECTIVE_NAME, perspectiveDefinition.getName());
         final Set<PartDefinition> parts = perspectiveDefinition.getRoot().getParts();
         assertEquals(1, parts.size());
         final PartDefinition part = parts.iterator().next();
+        assertNotNull(part.getPlace());
         assertTrue(part.getPlace() instanceof DefaultPlaceRequest);
         assertEquals(TESTING_IDENTIFIER, part.getPlace().getIdentifier());
     }
@@ -60,15 +61,16 @@ public class AuthoringPerspectiveTest {
     @Test
     public void buildRuntimePerspective() {
         final AuthoringPerspective perspective = new AuthoringPerspective();
-        perspective.isTesting = new IsTesting();
+        perspective.perspectiveConfiguration = new PerspectiveConfiguration();
         perspective.kogitoScreen = getKogitoScreen(RUNNING_REQUEST);
         final PerspectiveDefinition perspectiveDefinition = perspective.buildPerspective();
         assertNotNull(perspectiveDefinition);
-        assertEquals(perspectiveDefinition.getRoot().getPanelType(), StaticWorkbenchPanelPresenter.class.getName());
-        assertEquals(perspectiveDefinition.getName(), AuthoringPerspective.PERSPECTIVE_NAME);
+        assertEquals(StaticWorkbenchPanelPresenter.class.getName(), perspectiveDefinition.getRoot().getPanelType());
+        assertEquals(AuthoringPerspective.PERSPECTIVE_NAME, perspectiveDefinition.getName());
         final Set<PartDefinition> parts = perspectiveDefinition.getRoot().getParts();
         assertEquals(1, parts.size());
         final PartDefinition part = parts.iterator().next();
+        assertNotNull(part.getPlace());
         assertTrue(part.getPlace() instanceof DefaultPlaceRequest);
         assertEquals(RUNNING_IDENTIFIER, part.getPlace().getIdentifier());
     }
@@ -79,11 +81,11 @@ public class AuthoringPerspectiveTest {
         return () -> placeRequest;
     }
 
-    private class IsTestingTrue extends IsTesting {
+    private static class TestingPerspectiveConfiguration extends PerspectiveConfiguration {
 
         @Override
-        public boolean get() {
-            return true;
+        public Class<? extends AbstractWorkbenchPanelPresenter> getPerspectivePanelType() {
+            return MultiListWorkbenchPanelPresenter.class;
         }
     }
 }

@@ -18,12 +18,22 @@ package org.kie.workbench.common.kogito.webapp.base.client.perspectives;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.uberfire.client.workbench.panels.impl.AbstractWorkbenchPanelPresenter;
+import org.uberfire.client.workbench.panels.impl.StaticWorkbenchPanelPresenter;
+
+/**
+ * This class is meant to be *extended* by using modules (Kogito' showcases) to provide custom values
+ */
 @ApplicationScoped
-public class IsTesting {
+public class PerspectiveConfiguration {
 
-    private boolean isTesting = false;
+    private Class<? extends AbstractWorkbenchPanelPresenter> perspectivePanelType = StaticWorkbenchPanelPresenter.class;
 
-    public boolean get() {
-        return isTesting;
+    /**
+     * This is the <code>AbstractWorkbenchPanelPresenter</code> that will be used inside the <code>PerspectiveDefinition</code>
+     * @return
+     */
+    public Class<? extends AbstractWorkbenchPanelPresenter> getPerspectivePanelType() {
+        return perspectivePanelType;
     }
 }
