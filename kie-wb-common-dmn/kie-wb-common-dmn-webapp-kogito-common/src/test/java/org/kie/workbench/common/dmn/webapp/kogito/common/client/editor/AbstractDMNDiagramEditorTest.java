@@ -233,9 +233,6 @@ public abstract class AbstractDMNDiagramEditorTest {
     protected Path root;
 
     @Mock
-    protected Path path;
-
-    @Mock
     protected ClientRuntimeError clientRuntimeError;
 
     @Captor

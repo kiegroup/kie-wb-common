@@ -29,7 +29,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.session.DMNEditorSessionCommands;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ClearSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.CutSelectionSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.DeleteSelectionSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToRawFormatSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PerformAutomaticLayoutCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchGridSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ValidateSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.mockito.ArgumentCaptor;
@@ -62,6 +77,7 @@ public class DMNEditorMenuSessionItemsTest {
     private ClientTranslationService translationService;
 
     @GwtMock
+    @SuppressWarnings("unused")
     private Button button;
 
     private DMNEditorMenuSessionItems sessionItems;
@@ -117,10 +133,23 @@ public class DMNEditorMenuSessionItemsTest {
     }
 
     private void testMenu(final boolean enabled) {
-        doNothing().when(sessionItems).superSetEnabled(enabled);
-
         sessionItems.setEnabled(enabled);
 
+        verify(sessionItems).setItemEnabled(ClearSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(VisitGraphSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(SwitchGridSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(ValidateSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(ExportToJpgSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(ExportToPngSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(ExportToSvgSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(ExportToPdfSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(ExportToRawFormatSessionCommand.class, enabled);
+        verify(sessionItems).setItemEnabled(DeleteSelectionSessionCommand.class, false);
+        verify(sessionItems).setItemEnabled(UndoSessionCommand.class, false);
+        verify(sessionItems).setItemEnabled(RedoSessionCommand.class, false);
+        verify(sessionItems).setItemEnabled(CopySelectionSessionCommand.class, false);
+        verify(sessionItems).setItemEnabled(CutSelectionSessionCommand.class, false);
+        verify(sessionItems).setItemEnabled(PasteSelectionSessionCommand.class, false);
         verify(sessionItems).setItemEnabled(PerformAutomaticLayoutCommand.class, enabled);
     }
 }
