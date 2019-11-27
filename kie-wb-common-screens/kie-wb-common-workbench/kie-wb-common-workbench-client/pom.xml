@@ -236,6 +236,20 @@
     <dependency>
       <groupId>org.kie.server</groupId>
       <artifactId>kie-server-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.optaplanner</groupId>
+          <artifactId>optaplanner-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.optaplanner</groupId>
+          <artifactId>optaplanner-persistence-xstream</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.optaplanner</groupId>
+          <artifactId>optaplanner-persistence-jaxb</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- GWT and GWT Extensions -->
