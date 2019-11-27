@@ -15,3 +15,8 @@ User modules (showcases) have to create a `javax.enterprise.inject.Alternative` 
 As examples, *runtime* showcases should use `StaticWorkbenchPanelPresenter` as *panel type* (this is the default) while *testing* showcases could use `MultiListWorkbenchPanelPresenter`.
 
 
+TestingVFSService
+-----------------
+
+Wrapper around `VFSService` to provide filesystem functionalities (new/load/save)
+
