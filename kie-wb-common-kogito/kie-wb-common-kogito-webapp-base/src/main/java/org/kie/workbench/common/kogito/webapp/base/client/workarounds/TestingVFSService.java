@@ -15,12 +15,18 @@
  */
 package org.kie.workbench.common.kogito.webapp.base.client.workarounds;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.uberfire.backend.vfs.DirectoryStream;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
@@ -33,11 +39,10 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 @ApplicationScoped
 public class TestingVFSService {
 
-    private PlaceManager placeManager;
-    private Caller<VFSService> vfsServiceCaller;
-
     public static final String CONTENT_PARAMETER_NAME = "content";
     public static final String FILE_NAME_PARAMETER_NAME = "fileName";
+    private PlaceManager placeManager;
+    private Caller<VFSService> vfsServiceCaller;
 
     private TestingVFSService() {
         //CDI proxy
@@ -45,7 +50,7 @@ public class TestingVFSService {
 
     @Inject
     public TestingVFSService(final PlaceManager placeManager,
-                         final Caller<VFSService> vfsServiceCaller) {
+                             final Caller<VFSService> vfsServiceCaller) {
         this.placeManager = placeManager;
         this.vfsServiceCaller = vfsServiceCaller;
     }
@@ -71,7 +76,7 @@ public class TestingVFSService {
     }
 
     /**
-     * Load a file
+     * Open a file at given <code>Path</code> inside an <b>editor</b>
      * @param path the <code>Path</code> to the file
      * @param editorId The <b>id</b> of the editor to open by the <code>PlaceRequest</code>
      */
@@ -84,11 +89,47 @@ public class TestingVFSService {
         }).readAllString(path);
     }
 
+    /**
+     * Load the file at given <code>Path</code>
+     * @param path
+     * @param callback
+     * @param <T>
+     */
+    public <T> void loadFile(final Path path, final RemoteCallback<String> callback, final ErrorCallback<T> errorCallback) {
+        vfsServiceCaller.call(callback, errorCallback).readAllString(path);
+    }
+
     @SuppressWarnings("unchecked")
-    public <E> void saveFile(final Path path,
+    public <T> void saveFile(final Path path,
                              final String xml,
-                             final RemoteCallback<String> callback, final ErrorCallback<E> errorCallback) {
+                             final RemoteCallback<String> callback, final ErrorCallback<T> errorCallback) {
         vfsServiceCaller.call((Path p) -> callback.callback(xml), errorCallback).write(path, xml);
+    }
+
+    /**
+     * Get the <code>List&lt;Path&gt;</code> contained in the given <b>root</b>
+     * @param root
+     * @return
+     */
+    public List<Path> getItemsByPath(final Path root) {
+        final DirectoryStream<Path> files = vfsServiceCaller.call().newDirectoryStream(root);
+        return  files != null ? StreamSupport.stream(files.spliterator(),
+                                                     false)
+                .collect(Collectors.toList()) : Collections.emptyList();
+    }
+
+    /**
+     * Get <b>filtered</b> <code>List&lt;Path&gt;</code>  contained in the given <b>root</b>
+     * @param root
+     * @param filter
+     * @return
+     */
+    public List<Path> getItemsByPath(final Path root, final DirectoryStream.Filter<Path> filter) {
+        final DirectoryStream<Path> files =
+                vfsServiceCaller.call().newDirectoryStream(root, filter);
+        return  files != null ? StreamSupport.stream(files.spliterator(),
+                                                     false)
+                .collect(Collectors.toList()) : Collections.emptyList();
     }
 
 }
