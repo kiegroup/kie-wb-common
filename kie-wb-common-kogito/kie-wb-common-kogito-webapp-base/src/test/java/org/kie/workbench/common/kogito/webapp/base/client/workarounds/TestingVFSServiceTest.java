@@ -16,10 +16,11 @@
 
 package org.kie.workbench.common.kogito.webapp.base.client.workarounds;
 
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.kogito.webapp.base.client.callbacks.VFSServiceCallback;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -33,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.TestingVFSService.CONTENT_PARAMETER_NAME;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.TestingVFSService.FILE_NAME_PARAMETER_NAME;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,7 +57,7 @@ public class TestingVFSServiceTest {
     private VFSService vfsServiceMock;
 
     @Mock
-    private VFSServiceCallback<String, String> callbackMock;
+    private RemoteCallback<String> callbackMock;
 
     private CallerMock<VFSService> vfsServiceCallerMock;
 
@@ -91,8 +93,8 @@ public class TestingVFSServiceTest {
 
     @Test
     public void saveFile() {
-        testingVFSService.saveFile(pathMock, XML, callbackMock);
+        testingVFSService.saveFile(pathMock, XML, callbackMock, mock(ErrorCallback.class));
         verify(vfsServiceMock, times(1)).write(eq(pathMock), eq(XML));
-        verify(callbackMock, times(1)).onSuccess(eq(XML));
+        verify(callbackMock, times(1)).callback(eq(XML));
     }
 }

@@ -19,7 +19,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.kogito.webapp.base.client.callbacks.VFSServiceCallback;
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
@@ -50,6 +51,15 @@ public class TestingVFSService {
     }
 
     /**
+     * Create a directory at the given <code>Path</code>
+     * @param dir
+     * @return
+     */
+    public Path createDirectory(final Path dir) {
+        return vfsServiceCaller.call().createDirectory(dir);
+    }
+
+    /**
      * Create a new file
      * @param editorId The <b>id</b> of the editor to open by the <code>PlaceRequest</code>
      * @param fileName
@@ -76,9 +86,9 @@ public class TestingVFSService {
 
     @SuppressWarnings("unchecked")
     public <E> void saveFile(final Path path,
-                         final String xml,
-                         final VFSServiceCallback<String, E> callback) {
-        vfsServiceCaller.call((Path p) -> callback.onSuccess(xml)).write(path, xml);
+                             final String xml,
+                             final RemoteCallback<String> callback, final ErrorCallback<E> errorCallback) {
+        vfsServiceCaller.call((Path p) -> callback.callback(xml), errorCallback).write(path, xml);
     }
 
 }
