@@ -32,7 +32,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.kie.JSITComponentWidths;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
 
-import static org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.utils.WrapperUtils.getWrappedJSITLiteralExpression;
+import static org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.utils.WrapperUtils.getWrappedJSITLiteralExpression;
 
 public class ContextEntryPropertyConverter {
 
