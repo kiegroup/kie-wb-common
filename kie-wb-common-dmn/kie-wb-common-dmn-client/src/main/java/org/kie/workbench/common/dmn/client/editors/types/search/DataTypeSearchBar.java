@@ -130,7 +130,6 @@ public class DataTypeSearchBar {
             }
         });
 
-        getDataTypeList().collapseAll();
         getDNDListComponent().refreshItemsPosition();
         getDataTypeListPositionsStore().clear();
     }
