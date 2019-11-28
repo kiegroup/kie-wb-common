@@ -54,13 +54,20 @@ public class FEELRangeParser {
             }
 
             if (isSeparator(current, inQuotes, trimmedInput)) {
-                startValue = trimmedInput.substring(1, current).trim();
-                endValue = trimmedInput.substring(current + SEPARATOR_LENGTH, trimmedInput.length() - 1).trim();
+                String beforeSeparator = trimmedInput.substring(1, current).trim();
+                String afterSeparator = trimmedInput.substring(current + SEPARATOR_LENGTH, trimmedInput.length() - 1).trim();
+                if (isFirstOrLastCharacterDot(beforeSeparator) || isFirstOrLastCharacterDot(afterSeparator)) {
+                    break;
+                }
+                startValue = beforeSeparator;
+                endValue = afterSeparator;
                 break;
             }
         }
 
         if (StringUtils.isEmpty(startValue) || StringUtils.isEmpty(endValue)) {
+            rangeValue.setIncludeStartValue(true);
+            rangeValue.setIncludeEndValue(true);
             return rangeValue;
         }
 
@@ -82,5 +89,13 @@ public class FEELRangeParser {
             return false;
         }
         return trimmedInput.substring(current, current + SEPARATOR_LENGTH).equals(SEPARATOR);
+    }
+
+    private static boolean isFirstOrLastCharacterDot(final String input) {
+        if (input.length() > 0) {
+            return input.charAt(0) == '.' || input.charAt(input.length() - 1) == '.';
+        } else {
+            return false;
+        }
     }
 }
