@@ -83,7 +83,7 @@ public class QName {
         //jsonix JSON properties
         setKey(toString());
         String retrievedPrefix = getPrefix();
-        final String usedPrefix = (retrievedPrefix == null || retrievedPrefix.isEmpty()) ?  "" : retrievedPrefix + ":";
+        final String usedPrefix = (retrievedPrefix == null || retrievedPrefix.trim().isEmpty()) ?  "" : retrievedPrefix + ":";
         final String string = "{" + getNamespaceURI() + "}" + usedPrefix + getLocalPart();
         setString(string);
     }
