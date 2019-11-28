@@ -111,11 +111,14 @@ public class TestingVFSService {
      * @param root
      * @return
      */
-    public List<Path> getItemsByPath(final Path root) {
-        final DirectoryStream<Path> files = vfsServiceCaller.call().newDirectoryStream(root);
-        return  files != null ? StreamSupport.stream(files.spliterator(),
-                                                     false)
-                .collect(Collectors.toList()) : Collections.emptyList();
+    public <T> void getItemsByPath(final Path root,
+                                   final RemoteCallback<List<Path>> callback, final ErrorCallback<T> errorCallback) {
+        vfsServiceCaller.call((DirectoryStream<Path> paths) -> {
+            List<Path> files = paths != null ? StreamSupport.stream(paths.spliterator(),
+                                                                    false)
+                    .collect(Collectors.toList()) : Collections.emptyList();
+            callback.callback(files);
+        }, errorCallback).newDirectoryStream(root);
     }
 
     /**
@@ -124,12 +127,13 @@ public class TestingVFSService {
      * @param filter
      * @return
      */
-    public List<Path> getItemsByPath(final Path root, final DirectoryStream.Filter<Path> filter) {
-        final DirectoryStream<Path> files =
-                vfsServiceCaller.call().newDirectoryStream(root, filter);
-        return  files != null ? StreamSupport.stream(files.spliterator(),
-                                                     false)
-                .collect(Collectors.toList()) : Collections.emptyList();
+    public <T> void getItemsByPath(final Path root, final DirectoryStream.Filter<Path> filter,
+                                   final RemoteCallback<List<Path>> callback, final ErrorCallback<T> errorCallback) {
+        vfsServiceCaller.call((DirectoryStream<Path> paths) -> {
+            List<Path> files = paths != null ? StreamSupport.stream(paths.spliterator(),
+                                                                    false)
+                    .collect(Collectors.toList()) : Collections.emptyList();
+            callback.callback(files);
+        }, errorCallback).newDirectoryStream(root, filter);
     }
-
 }
