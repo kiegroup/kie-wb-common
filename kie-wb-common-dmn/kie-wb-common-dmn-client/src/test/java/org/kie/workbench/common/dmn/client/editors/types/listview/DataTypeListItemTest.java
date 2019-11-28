@@ -709,6 +709,8 @@ public class DataTypeListItemTest {
         listItem.remove();
 
         verify(confirmation).ifIsNotReferencedDataType(dataType, command);
+        verify(editModeToggleEvent).fire(eventArgumentCaptor.capture());
+        assertFalse(eventArgumentCaptor.getValue().isEditModeEnabled());
     }
 
     @Test
