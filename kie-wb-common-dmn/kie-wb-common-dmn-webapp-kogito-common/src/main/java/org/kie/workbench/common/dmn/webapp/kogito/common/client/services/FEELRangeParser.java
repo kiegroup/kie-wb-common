@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 import java.util.Objects;
 
 import org.kie.workbench.common.dmn.api.editors.types.RangeValue;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class FEELRangeParser {
 
@@ -30,53 +29,44 @@ public class FEELRangeParser {
     private static final String EXCLUDE_END = ")";
 
     public static RangeValue parse(final String input) {
-        final RangeValue rangeValue = new RangeValue();
         if (Objects.isNull(input)) {
-            return rangeValue;
+            return new RangeValue();
         }
+
         final String trimmedInput = input.trim();
-        if (!(trimmedInput.startsWith(INCLUDE_START) || trimmedInput.startsWith(EXCLUDE_START))) {
-            return rangeValue;
+
+        if (!hasLeadingAndEndingParenthesis(trimmedInput)) {
+            return new RangeValue();
         }
-        if (!(trimmedInput.endsWith(INCLUDE_END) || trimmedInput.endsWith(EXCLUDE_END))) {
-            return rangeValue;
-        }
+
+        final boolean includeStartValue = trimmedInput.startsWith(INCLUDE_START);
+        final boolean includeEndValue = trimmedInput.endsWith(INCLUDE_END);
 
         boolean inQuotes = false;
-        boolean includeStartValue = trimmedInput.startsWith(INCLUDE_START);
-        boolean includeEndValue = trimmedInput.endsWith(INCLUDE_END);
         String startValue = "";
         String endValue = "";
-
         for (int current = 0; current < trimmedInput.length(); current++) {
             if (trimmedInput.charAt(current) == '\"') {
                 inQuotes = !inQuotes;
             }
 
             if (isSeparator(current, inQuotes, trimmedInput)) {
-                String beforeSeparator = trimmedInput.substring(1, current).trim();
-                String afterSeparator = trimmedInput.substring(current + SEPARATOR_LENGTH, trimmedInput.length() - 1).trim();
-                if (isFirstOrLastCharacterDot(beforeSeparator) || isFirstOrLastCharacterDot(afterSeparator)) {
-                    break;
+                startValue = trimmedInput.substring(1, current).trim();
+                endValue = trimmedInput.substring(current + SEPARATOR_LENGTH, trimmedInput.length() - 1).trim();
+                if (isRangeValueValid(startValue) && isRangeValueValid(endValue)) {
+                    final RangeValue rangeValue = new RangeValue();
+
+                    rangeValue.setIncludeStartValue(includeStartValue);
+                    rangeValue.setStartValue(startValue);
+                    rangeValue.setIncludeEndValue(includeEndValue);
+                    rangeValue.setEndValue(endValue);
+
+                    return rangeValue;
                 }
-                startValue = beforeSeparator;
-                endValue = afterSeparator;
-                break;
             }
         }
 
-        if (StringUtils.isEmpty(startValue) || StringUtils.isEmpty(endValue)) {
-            rangeValue.setIncludeStartValue(true);
-            rangeValue.setIncludeEndValue(true);
-            return rangeValue;
-        }
-
-        rangeValue.setIncludeStartValue(includeStartValue);
-        rangeValue.setStartValue(startValue);
-        rangeValue.setIncludeEndValue(includeEndValue);
-        rangeValue.setEndValue(endValue);
-
-        return rangeValue;
+        return new RangeValue();
     }
 
     private static boolean isSeparator(final int current,
@@ -91,9 +81,19 @@ public class FEELRangeParser {
         return trimmedInput.substring(current, current + SEPARATOR_LENGTH).equals(SEPARATOR);
     }
 
-    private static boolean isFirstOrLastCharacterDot(final String input) {
+    private static boolean hasLeadingAndEndingParenthesis(final String input) {
+        if (!(input.startsWith(INCLUDE_START) || input.startsWith(EXCLUDE_START))) {
+            return false;
+        }
+        if (!(input.endsWith(INCLUDE_END) || input.endsWith(EXCLUDE_END))) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isRangeValueValid(final String input) {
         if (input.length() > 0) {
-            return input.charAt(0) == '.' || input.charAt(input.length() - 1) == '.';
+            return input.charAt(0) != '.' && input.charAt(input.length() - 1) != '.';
         } else {
             return false;
         }
