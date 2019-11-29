@@ -113,8 +113,11 @@ public class TestingVFSService {
 
     /**
      * Get the <code>List&lt;Path&gt;</code> contained in the given <b>root</b>
+     *
      * @param root
-     * @return
+     * @param callback
+     * @param errorCallback
+     * @param <T>
      */
     public <T> void getItemsByPath(final Path root,
                                    final RemoteCallback<List<Path>> callback,
@@ -129,19 +132,24 @@ public class TestingVFSService {
 
     /**
      * Get <b>filtered</b> <code>List&lt;Path&gt;</code>  contained in the given <b>root</b>
+     *
      * @param root
-     * @param filter
-     * @return
+     * @param fileSuffix
+     * @param callback
+     * @param errorCallback
+     * @param <T>
      */
     public <T> void getItemsByPath(final Path root,
-                                   final DirectoryStream.Filter<Path> filter,
+                                   final String fileSuffix,
                                    final RemoteCallback<List<Path>> callback,
                                    final ErrorCallback<T> errorCallback) {
+        String filteredSuffix = fileSuffix.startsWith(".") ? fileSuffix : "." + fileSuffix;
         vfsServiceCaller.call((DirectoryStream<Path> paths) -> {
             List<Path> files = paths != null ? StreamSupport.stream(paths.spliterator(),
                                                                     false)
+                    .filter(path -> path.getFileName().endsWith(filteredSuffix))
                     .collect(Collectors.toList()) : Collections.emptyList();
             callback.callback(files);
-        }, errorCallback).newDirectoryStream(root, filter);
+        }, errorCallback).newDirectoryStream(root);
     }
 }
