@@ -218,7 +218,8 @@ public class DataTypeListItem {
         view.collapse();
     }
 
-    void refreshSubItems(final List<DataType> dataTypes, boolean enableFocusMode) {
+    void refreshSubItems(final List<DataType> dataTypes,
+                         final boolean enableFocusMode) {
 
         dataTypeList.refreshSubItemsFromListItem(this, dataTypes);
 
