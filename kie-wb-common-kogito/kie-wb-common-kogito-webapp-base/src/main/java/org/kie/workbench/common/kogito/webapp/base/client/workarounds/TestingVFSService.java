@@ -69,7 +69,8 @@ public class TestingVFSService {
      * @param editorId The <b>id</b> of the editor to open by the <code>PlaceRequest</code>
      * @param fileName
      */
-    public void newFile(final String editorId, final String fileName) {
+    public void newFile(final String editorId,
+                        final String fileName) {
         final PlaceRequest placeRequest = new DefaultPlaceRequest(editorId);
         placeRequest.addParameter(FILE_NAME_PARAMETER_NAME, fileName);
         placeManager.goTo(placeRequest);
@@ -80,7 +81,8 @@ public class TestingVFSService {
      * @param path the <code>Path</code> to the file
      * @param editorId The <b>id</b> of the editor to open by the <code>PlaceRequest</code>
      */
-    public void openFile(final Path path, final String editorId) {
+    public void openFile(final Path path,
+                         final String editorId) {
         vfsServiceCaller.call((String xml) -> {
             final PlaceRequest placeRequest = new DefaultPlaceRequest(editorId);
             placeRequest.addParameter(FILE_NAME_PARAMETER_NAME, path.getFileName());
@@ -95,14 +97,17 @@ public class TestingVFSService {
      * @param callback
      * @param <T>
      */
-    public <T> void loadFile(final Path path, final RemoteCallback<String> callback, final ErrorCallback<T> errorCallback) {
+    public <T> void loadFile(final Path path,
+                             final RemoteCallback<String> callback,
+                             final ErrorCallback<T> errorCallback) {
         vfsServiceCaller.call(callback, errorCallback).readAllString(path);
     }
 
     @SuppressWarnings("unchecked")
     public <T> void saveFile(final Path path,
                              final String xml,
-                             final RemoteCallback<String> callback, final ErrorCallback<T> errorCallback) {
+                             final RemoteCallback<String> callback,
+                             final ErrorCallback<T> errorCallback) {
         vfsServiceCaller.call((Path p) -> callback.callback(xml), errorCallback).write(path, xml);
     }
 
@@ -112,7 +117,8 @@ public class TestingVFSService {
      * @return
      */
     public <T> void getItemsByPath(final Path root,
-                                   final RemoteCallback<List<Path>> callback, final ErrorCallback<T> errorCallback) {
+                                   final RemoteCallback<List<Path>> callback,
+                                   final ErrorCallback<T> errorCallback) {
         vfsServiceCaller.call((DirectoryStream<Path> paths) -> {
             List<Path> files = paths != null ? StreamSupport.stream(paths.spliterator(),
                                                                     false)
@@ -127,8 +133,10 @@ public class TestingVFSService {
      * @param filter
      * @return
      */
-    public <T> void getItemsByPath(final Path root, final DirectoryStream.Filter<Path> filter,
-                                   final RemoteCallback<List<Path>> callback, final ErrorCallback<T> errorCallback) {
+    public <T> void getItemsByPath(final Path root,
+                                   final DirectoryStream.Filter<Path> filter,
+                                   final RemoteCallback<List<Path>> callback,
+                                   final ErrorCallback<T> errorCallback) {
         vfsServiceCaller.call((DirectoryStream<Path> paths) -> {
             List<Path> files = paths != null ? StreamSupport.stream(paths.spliterator(),
                                                                     false)

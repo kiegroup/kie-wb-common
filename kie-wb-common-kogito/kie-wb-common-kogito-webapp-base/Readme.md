@@ -18,5 +18,5 @@ As examples, *runtime* showcases should use `StaticWorkbenchPanelPresenter` as *
 TestingVFSService
 -----------------
 
-Wrapper around `VFSService` to provide filesystem functionalities (new/load/save)
+Wrapper around `VFSService` to provide filesystem functionalities (file/directory creation/load etc.)
 
