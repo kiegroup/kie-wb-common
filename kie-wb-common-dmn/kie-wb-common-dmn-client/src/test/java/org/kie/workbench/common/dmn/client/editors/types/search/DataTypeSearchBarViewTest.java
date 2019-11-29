@@ -287,13 +287,40 @@ public class DataTypeSearchBarViewTest {
         when(itemDragAndDropElement.getAttribute(PARENT_UUID_ATTR)).thenReturn(parentUuid);
         when(parentDragAndDropElement.getAttribute(UUID_ATTR)).thenReturn(parentUuid);
         doReturn(true).when(view).isParentElementOnList(groupedElements, parentUuid);
-        doReturn(1).when(view).getIndexOfParentOrLastElementInGroup(groupedElements, parent);
+        doReturn(0).when(view).getIndexOfParentOrLastElementInGroup(groupedElements, parent);
         view.groupElementWithItsParent(groupedElements, allElements, item);
 
         assertEquals(3, groupedElements.size());
         assertEquals(parent, groupedElements.get(0));
         assertEquals(item, groupedElements.get(1));
         assertEquals(dummy, groupedElements.get(2));
+        verify(view, never()).groupElementWithItsParent(groupedElements, allElements, parent);
+        verify(view).getIndexOfParentOrLastElementInGroup(groupedElements, parent);
+    }
+
+    @Test
+    public void testGroupElementWithItsParentWhenParentIsAtTheEndOfList() {
+
+        final DataTypeListItem item = mock(DataTypeListItem.class);
+        final DataTypeListItem parent = mock(DataTypeListItem.class);
+        final List<DataTypeListItem> groupedElements = new ArrayList<>();
+        groupedElements.add(parent);
+        final List<DataTypeListItem> allElements = Arrays.asList(parent);
+        final String parentUuid = "parent_uuid";
+
+        final HTMLElement itemDragAndDropElement = mock(HTMLElement.class);
+        final HTMLElement parentDragAndDropElement = mock(HTMLElement.class);
+        when(parent.getDragAndDropElement()).thenReturn(parentDragAndDropElement);
+        when(item.getDragAndDropElement()).thenReturn(itemDragAndDropElement);
+        when(itemDragAndDropElement.getAttribute(PARENT_UUID_ATTR)).thenReturn(parentUuid);
+        when(parentDragAndDropElement.getAttribute(UUID_ATTR)).thenReturn(parentUuid);
+        doReturn(true).when(view).isParentElementOnList(groupedElements, parentUuid);
+        doReturn(0).when(view).getIndexOfParentOrLastElementInGroup(groupedElements, parent);
+        view.groupElementWithItsParent(groupedElements, allElements, item);
+
+        assertEquals(2, groupedElements.size());
+        assertEquals(parent, groupedElements.get(0));
+        assertEquals(item, groupedElements.get(1));
         verify(view, never()).groupElementWithItsParent(groupedElements, allElements, parent);
         verify(view).getIndexOfParentOrLastElementInGroup(groupedElements, parent);
     }

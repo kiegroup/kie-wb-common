@@ -50,6 +50,8 @@ public class DataTypeSearchBar {
 
     private final Map<String, Integer> dataTypeListPositionsStore = new HashMap<>();
 
+    private final Map<String, Boolean> dataTypeListCollapsedStatusStore = new HashMap<>();
+
     @Inject
     public DataTypeSearchBar(final View view,
                              final DataTypeSearchEngine searchEngine,
@@ -128,10 +130,16 @@ public class DataTypeSearchBar {
             } else {
                 HiddenHelper.hide(element);
             }
+
+            final boolean collapsed = getDataTypeListCollapsedStatusStore().get(uuid);
+            if (collapsed) {
+                item.collapse();
+            }
         });
 
         getDNDListComponent().refreshItemsPosition();
         getDataTypeListPositionsStore().clear();
+        getDataTypeListCollapsedStatusStore().clear();
     }
 
     void storeDataTypeListPositions() {
@@ -144,13 +152,17 @@ public class DataTypeSearchBar {
 
             final String dataTypeUUID = listItem.getDataType().getUUID();
             final Integer dataTypeYPosition = getDNDListComponent().getPositionY(listItem.getDragAndDropElement());
-
+            getDataTypeListCollapsedStatusStore().put(dataTypeUUID, listItem.isCollapsed());
             getDataTypeListPositionsStore().put(dataTypeUUID, dataTypeYPosition);
         });
     }
 
     Map<String, Integer> getDataTypeListPositionsStore() {
         return dataTypeListPositionsStore;
+    }
+
+    Map<String, Boolean> getDataTypeListCollapsedStatusStore() {
+        return dataTypeListCollapsedStatusStore;
     }
 
     private boolean hasDataTypeListPositionsStored() {

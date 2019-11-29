@@ -185,14 +185,20 @@ public class DataTypeSearchBarView implements DataTypeSearchBar.View {
             final Optional<DataTypeListItem> parentElement = allElements.stream()
                     .filter(element -> Objects.equals(element.getDragAndDropElement().getAttribute(UUID_ATTR), parentElementId))
                     .findFirst();
+            parentElement.ifPresent(parent -> {
+                if (!isParentElementOnList(groupedElements, parentElementId)) {
+                    groupElementWithItsParent(groupedElements, allElements, parent);
+                    groupedElements.add(item);
+                } else {
 
-            if (!isParentElementOnList(groupedElements, parentElementId)) {
-                parentElement.ifPresent(p -> groupElementWithItsParent(groupedElements, allElements, p));
-                groupedElements.add(item);
-            } else {
-                int index = getIndexOfParentOrLastElementInGroup(groupedElements, parentElement.get());
-                groupedElements.add(index, item);
-            }
+                    final int index = getIndexOfParentOrLastElementInGroup(groupedElements, parent) + 1;
+                    if (index == groupedElements.size()) {
+                        groupedElements.add(item);
+                    } else {
+                        groupedElements.add(index, item);
+                    }
+                }
+            });
         } else {
             groupedElements.add(item);
         }
