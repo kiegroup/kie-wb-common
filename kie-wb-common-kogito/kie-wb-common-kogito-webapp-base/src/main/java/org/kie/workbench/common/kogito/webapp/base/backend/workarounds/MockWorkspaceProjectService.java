@@ -138,4 +138,14 @@ public class MockWorkspaceProjectService implements WorkspaceProjectService {
                                            final String branchName) {
         return PROJECT;
     }
+
+    public void addBranch(final String newBranchName,
+                          final String baseBranchName,
+                          final WorkspaceProject project) {
+    }
+
+    @Override
+    public void removeBranch(final String branchName,
+                             final WorkspaceProject project) {
+    }
 }

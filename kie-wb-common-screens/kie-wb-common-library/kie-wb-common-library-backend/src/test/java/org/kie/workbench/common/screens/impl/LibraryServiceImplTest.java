@@ -231,13 +231,10 @@ public class LibraryServiceImplTest {
                                                     userManagerService,
                                                     indexOracle,
                                                     repositoryService,
-                                                    pathUtil,
                                                     newBranchEvent,
-                                                    configuredRepositories,
                                                     repositoryUpdatedEvent,
                                                     spaceConfigStorageRegistry,
-                                                    clusterService,
-                                                    changeRequestService
+                                                    clusterService
         ));
     }
 
@@ -741,35 +738,16 @@ public class LibraryServiceImplTest {
     public void addBranchTest() throws URISyntaxException {
         final WorkspaceProject project = mock(WorkspaceProject.class);
         doReturn(repo1).when(project).getRepository();
-        doReturn(new Space("my-space")).when(project).getSpace();
-
+        final Space space = new Space("my-space");
+        doReturn(space).when(project).getSpace();
+        doReturn(repo1).when(repositoryService).getRepositoryFromSpace(space, "repo_created_by_user");
         doReturn(mock(SpaceConfigStorage.class)).when(spaceConfigStorageRegistry).get("my-space");
-
-        final org.uberfire.java.nio.file.Path baseBranchPath = mock(org.uberfire.java.nio.file.Path.class);
-        final Path path = repo1.getBranches().stream().filter(b -> b.getName().equals("repo1-branch1")).findFirst().get().getPath();
-        final FileSystem fileSystem = mock(FileSystem.class);
-        final FileSystemProvider fileSystemProvider = mock(FileSystemProvider.class);
-        doReturn(fileSystemProvider).when(fileSystem).provider();
-        doReturn(fileSystem).when(baseBranchPath).getFileSystem();
-        doReturn(baseBranchPath).when(pathUtil).convert(path);
-
-        doReturn(repo1).when(repositoryService).getRepository(any());
-
-        Branch newBranch = makeBranch("new-branch", "repo1");
-        Branch branch1Branch = makeBranch("repo1-branch1", "repo1");
-
-        when(repo1.getBranch(any(Path.class))).thenReturn(Optional.of(newBranch)).thenReturn(Optional.of(branch1Branch));
-
-        final org.uberfire.java.nio.file.Path newBranchPath = mock(org.uberfire.java.nio.file.Path.class);
-        doReturn(newBranchPath).when(ioService).get(new URI("default://new-branch@repo1/"));
-
-        doReturn("default://new-branch@repo1/").when(pathUtil).replaceBranch(anyString(), anyString());
 
         final ArgumentCaptor<NewBranchEvent> newBranchEventArgumentCaptor = ArgumentCaptor.forClass(NewBranchEvent.class);
 
         libraryService.addBranch("new-branch", "repo1-branch1", project);
 
-        verify(fileSystemProvider).copy(baseBranchPath, newBranchPath);
+        verify(projectService).addBranch("new-branch", "repo1-branch1", project);;
         verify(repositoryUpdatedEvent).fire(any());
         verify(newBranchEvent).fire(newBranchEventArgumentCaptor.capture());
 
@@ -782,13 +760,6 @@ public class LibraryServiceImplTest {
     @Test
     public void removeBranchTest() {
         final Branch otherBranch = makeBranch("repo1-branch1", "repo1");
-        final org.uberfire.java.nio.file.Path baseBranchPath = mock(org.uberfire.java.nio.file.Path.class);
-        final FileSystem fileSystem = mock(FileSystem.class);
-        final FileSystemProvider fileSystemProvider = mock(FileSystemProvider.class);
-        doReturn(fileSystemProvider).when(fileSystem).provider();
-        doReturn(fileSystem).when(baseBranchPath).getFileSystem();
-        doReturn(baseBranchPath).when(pathUtil).convert(otherBranch.getPath());
-
         final WorkspaceProject project = mock(WorkspaceProject.class);
         doReturn(repo1).when(project).getRepository();
         final Space space = new Space("my-space");
@@ -798,9 +769,7 @@ public class LibraryServiceImplTest {
 
         libraryService.removeBranch(project, otherBranch);
 
-        verify(ioService).startBatch(fileSystem);
-        verify(ioService).delete(baseBranchPath);
-        verify(ioService).endBatch();
+        verify(projectService).removeBranch(otherBranch.getName(), project);
     }
 
     @Test
