@@ -151,6 +151,12 @@ public class ProcessPropertyWriterTest {
     }
 
     @Test
+    public void processType() {
+        p.setType("Private");
+        assertEquals("Private", p.getProcess().getProcessType().getName());
+    }
+
+    @Test
     public void slaDueDate() {
         SLADueDate slaDueDate = new SLADueDate("12/25/1983");
         p.setSlaDueDate(slaDueDate);
