@@ -70,6 +70,7 @@ public class ContextEntryPropertyConverter {
                                                                           componentWidthsConsumer);
         if (Objects.isNull(expression)) {
             final JSITLiteralExpression mockLiteralExpression = new JSITLiteralExpression();
+            mockLiteralExpression.setText(ContextEntry.DEFAULT_EXPRESSION_VALUE);
             expression = getWrappedJSITLiteralExpression(mockLiteralExpression, "dmn", "literalExpression");
         }
 

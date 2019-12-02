@@ -57,7 +57,9 @@ public class ContextEntryPropertyConverter {
         org.kie.dmn.model.api.Expression expression = ExpressionPropertyConverter.dmnFromWB(wb.getExpression(),
                                                                                             componentWidthsConsumer);
         if (Objects.isNull(expression)) {
-            expression = new org.kie.dmn.model.v1_2.TLiteralExpression();
+            final org.kie.dmn.model.v1_2.TLiteralExpression literalExpression = new org.kie.dmn.model.v1_2.TLiteralExpression();
+            literalExpression.setText(ContextEntry.DEFAULT_EXPRESSION_VALUE);
+            expression = literalExpression;
         }
         expression.setParent(result);
 

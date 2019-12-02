@@ -123,6 +123,6 @@ public class ContextEntryPropertyConverterTest {
         assertThat(dmn.getExpression()).isInstanceOf(org.kie.dmn.model.api.LiteralExpression.class);
 
         final org.kie.dmn.model.api.LiteralExpression literalExpression = (org.kie.dmn.model.api.LiteralExpression) dmn.getExpression();
-        assertThat(literalExpression.getText()).isNull();
+        assertThat(literalExpression.getText()).isEqualTo(ContextEntry.DEFAULT_EXPRESSION_VALUE);
     }
 }
