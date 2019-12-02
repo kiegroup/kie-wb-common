@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.client.service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,10 +30,12 @@ import org.jboss.errai.security.shared.api.identity.UserImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.AssigneeLocalSearchService;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assigneeEditor.widget.AssigneeLiveSearchEntryCreationEditor;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeType;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.internal.util.reflection.FieldReader;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.security.management.api.AbstractEntityManager;
 import org.uberfire.ext.security.management.api.GroupManager;
@@ -45,6 +48,7 @@ import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchEntry;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchResults;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -406,6 +410,19 @@ public class AssigneeLiveSearchProjectServiceTest {
         testSearchWithError(AssigneeType.GROUP, "value", 1234,
                             Arrays.asList("value1", "value2", "other1", "other2"),
                             Arrays.asList("value1", "value2"));
+    }
+
+    @Test
+    public void testDestroy() throws NoSuchFieldException {
+        assigneeLiveSearchService.postConstruct();
+        assigneeLiveSearchService.destroy();
+
+        Field executorField = assigneeLiveSearchService.getClass().getDeclaredField("localSearchService");
+        FieldReader fieldReader = new FieldReader(assigneeLiveSearchService, executorField);
+        AssigneeLocalSearchService service = (AssigneeLocalSearchService) fieldReader.read();
+        assertNotNull(service);
+        assertNotNull(service.getCustomEntries());
+        assertTrue(service.getCustomEntries().isEmpty());
     }
 
     @SuppressWarnings("unchecked")

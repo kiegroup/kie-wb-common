@@ -128,7 +128,6 @@ public class AssigneeLiveSearchProjectService implements AssigneeLiveSearchServi
     @PreDestroy
     public void destroy() {
         localSearchService.destroy();
-        localSearchService = null;
     }
 
     private boolean processSearchEntryError(String key, LiveSearchCallback<String> callback, Throwable throwable) {
