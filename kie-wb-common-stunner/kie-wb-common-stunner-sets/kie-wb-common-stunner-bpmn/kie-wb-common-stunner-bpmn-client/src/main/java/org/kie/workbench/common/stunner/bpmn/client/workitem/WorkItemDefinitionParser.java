@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.kogito.client.services;
+package org.kie.workbench.common.stunner.bpmn.client.workitem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +48,7 @@ public class WorkItemDefinitionParser {
         String[] lines = widStr.split("\n");
         Queue<String> linesQueue = new LinkedList<>(Arrays.asList(lines));
         while (!linesQueue.isEmpty()) {
-            String line = linesQueue.peek();
+            String line = linesQueue.peek().trim();
             if (!(empty(line) || isStartingObject(line) || isEndingObject(line))) {
                 WorkItemDefinition wid = parseWorkItemDefinitionObject(linesQueue);
                 widList.add(wid);
@@ -59,10 +59,10 @@ public class WorkItemDefinitionParser {
     }
 
     private boolean empty(String line) {
-        return line == null || line.trim().equals("");
+        return line == null || line.equals("");
     }
 
-    private WorkItemDefinition parseWorkItemDefinitionObject(Queue<String> objectQueue) {
+    private static WorkItemDefinition parseWorkItemDefinitionObject(Queue<String> objectQueue) {
         WorkItemDefinition wid = new WorkItemDefinition();
         wid.setIconDefinition(new IconDefinition());
         wid.getIconDefinition().setIconData("");
@@ -112,18 +112,18 @@ public class WorkItemDefinitionParser {
         return wid;
     }
 
-    private String retrieveParameters(Queue<String> objectQueue) {
+    private static String retrieveParameters(Queue<String> objectQueue) {
         String param = objectQueue.poll();
-        StringBuffer sbParams = new StringBuffer(param);
+        String params = "";
         while (!(isEndingObject(param) || objectQueue.isEmpty())) {
-            sbParams.append(param);
+            params += param.trim();
             param = objectQueue.poll();
         }
-        return sbParams.toString();
+        return params;
     }
 
-    protected Pair<String, String> getAttribute(String value) {
-        Pair<String, String> attrs = new Pair<String, String>("", "");
+    private static Pair<String, String> getAttribute(String value) {
+        Pair<String, String> attrs = new Pair<>("", "");
         if (value.indexOf(':') != -1) {
             String[] values = value.split(":");
             attrs = new Pair<>(cleanProp(values[0]), cleanProp(values[1]));
@@ -131,16 +131,16 @@ public class WorkItemDefinitionParser {
         return attrs;
     }
 
-    protected String cleanProp(String prop) {
+    private static String cleanProp(String prop) {
         return prop.trim().replaceAll("\"", "").replaceAll(",", "");
     }
 
-    protected boolean isStartingObject(String line) {
-        return line.trim().startsWith("[");
+    private static boolean isStartingObject(String line) {
+        return line.startsWith("[");
     }
 
-    protected boolean isEndingObject(String line) {
-        return line == null || line.trim().endsWith("]") || line.trim().endsWith("],");
+    private static boolean isEndingObject(String line) {
+        return line == null || line.endsWith("]") || line.endsWith("],");
     }
 
 }
