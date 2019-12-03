@@ -46,10 +46,7 @@ import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.organizationalunit.config.BranchPermissions;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.repositories.Branch;
-import org.guvnor.structure.repositories.NewBranchEvent;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.RepositoryService;
-import org.guvnor.structure.repositories.RepositoryUpdatedEvent;
 import org.guvnor.structure.security.OrganizationalUnitAction;
 import org.guvnor.structure.security.RepositoryAction;
 import org.jboss.errai.bus.server.annotations.Service;
@@ -111,9 +108,6 @@ public class LibraryServiceImpl implements LibraryService {
     private IOService ioService;
     private UserManagerService userManagerService;
     private IndexStatusOracle indexOracle;
-    private RepositoryService repoService;
-    private Event<NewBranchEvent> newBranchEvent;
-    private Event<RepositoryUpdatedEvent> repositoryUpdatedEvent;
     private SpaceConfigStorageRegistry spaceConfigStorageRegistry;
     private ClusterService clusterService;
 
@@ -133,9 +127,6 @@ public class LibraryServiceImpl implements LibraryService {
                               @Named("ioStrategy") final IOService ioService,
                               final UserManagerService userManagerService,
                               final IndexStatusOracle indexOracle,
-                              final RepositoryService repoService,
-                              final Event<NewBranchEvent> newBranchEvent,
-                              final Event<RepositoryUpdatedEvent> repositoryUpdatedEvent,
                               final SpaceConfigStorageRegistry spaceConfigStorageRegistry,
                               final ClusterService clusterService) {
         this.ouService = ouService;
@@ -150,9 +141,6 @@ public class LibraryServiceImpl implements LibraryService {
         this.ioService = ioService;
         this.userManagerService = userManagerService;
         this.indexOracle = indexOracle;
-        this.repoService = repoService;
-        this.newBranchEvent = newBranchEvent;
-        this.repositoryUpdatedEvent = repositoryUpdatedEvent;
         this.spaceConfigStorageRegistry = spaceConfigStorageRegistry;
         this.clusterService = clusterService;
     }
@@ -402,16 +390,6 @@ public class LibraryServiceImpl implements LibraryService {
         projectService.addBranch(newBranchName,
                                  baseBranchName,
                                  project);
-
-        Repository repository = repoService.getRepositoryFromSpace(
-                project.getSpace(),
-                project.getRepository().getAlias());
-        RepositoryUpdatedEvent event = new RepositoryUpdatedEvent(repository);
-        repositoryUpdatedEvent.fire(event);
-        newBranchEvent.fire(new NewBranchEvent(repository,
-                                               newBranchName,
-                                               baseBranchName,
-                                               sessionInfo.getIdentity()));
     }
 
     @Override
@@ -420,12 +398,6 @@ public class LibraryServiceImpl implements LibraryService {
 
         projectService.removeBranch(branch.getName(),
                                     project);
-
-        Repository repository = repoService.getRepositoryFromSpace(
-                project.getSpace(),
-                project.getRepository().getAlias());
-        RepositoryUpdatedEvent event = new RepositoryUpdatedEvent(repository);
-        this.repositoryUpdatedEvent.fire(event);
     }
 
     @Override

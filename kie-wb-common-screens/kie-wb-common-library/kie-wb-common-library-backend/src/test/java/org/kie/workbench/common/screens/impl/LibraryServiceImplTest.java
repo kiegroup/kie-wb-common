@@ -15,14 +15,12 @@
  */
 package org.kie.workbench.common.screens.impl;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.event.Event;
@@ -40,7 +38,6 @@ import org.guvnor.structure.contributors.Contributor;
 import org.guvnor.structure.contributors.ContributorType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
-import org.guvnor.structure.organizationalunit.config.SpaceConfigStorage;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.NewBranchEvent;
@@ -81,15 +78,12 @@ import org.uberfire.commons.cluster.ClusterService;
 import org.uberfire.ext.security.management.api.AbstractEntityManager;
 import org.uberfire.ext.security.management.api.service.UserManagerService;
 import org.uberfire.io.IOService;
-import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.java.nio.file.NoSuchFileException;
-import org.uberfire.java.nio.file.spi.FileSystemProvider;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mocks.SessionInfoMock;
 import org.uberfire.paging.PageResponse;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.security.authz.AuthorizationManager;
-import org.uberfire.spaces.Space;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -142,8 +136,6 @@ public class LibraryServiceImplTest {
 
     @Mock
     private PathUtil pathUtil;
-
-    private final PathUtil realPathUtil = new PathUtil();
 
     @Mock
     private ConfiguredRepositories configuredRepositories;
@@ -230,9 +222,6 @@ public class LibraryServiceImplTest {
                                                     ioService,
                                                     userManagerService,
                                                     indexOracle,
-                                                    repositoryService,
-                                                    newBranchEvent,
-                                                    repositoryUpdatedEvent,
                                                     spaceConfigStorageRegistry,
                                                     clusterService
         ));
@@ -737,35 +726,16 @@ public class LibraryServiceImplTest {
     @Test
     public void addBranchTest() throws URISyntaxException {
         final WorkspaceProject project = mock(WorkspaceProject.class);
-        doReturn(repo1).when(project).getRepository();
-        final Space space = new Space("my-space");
-        doReturn(space).when(project).getSpace();
-        doReturn(repo1).when(repositoryService).getRepositoryFromSpace(space, "repo_created_by_user");
-        doReturn(mock(SpaceConfigStorage.class)).when(spaceConfigStorageRegistry).get("my-space");
-
-        final ArgumentCaptor<NewBranchEvent> newBranchEventArgumentCaptor = ArgumentCaptor.forClass(NewBranchEvent.class);
 
         libraryService.addBranch("new-branch", "repo1-branch1", project);
 
         verify(projectService).addBranch("new-branch", "repo1-branch1", project);;
-        verify(repositoryUpdatedEvent).fire(any());
-        verify(newBranchEvent).fire(newBranchEventArgumentCaptor.capture());
-
-        final NewBranchEvent newBranchEvent = newBranchEventArgumentCaptor.getValue();
-        assertEquals("new-branch", newBranchEvent.getNewBranchName());
-        assertEquals("repo1-branch1", newBranchEvent.getFromBranchName());
-        assertEquals(repo1, newBranchEvent.getRepository());
     }
 
     @Test
     public void removeBranchTest() {
         final Branch otherBranch = makeBranch("repo1-branch1", "repo1");
         final WorkspaceProject project = mock(WorkspaceProject.class);
-        doReturn(repo1).when(project).getRepository();
-        final Space space = new Space("my-space");
-        doReturn(space).when(project).getSpace();
-        doReturn(mock(SpaceConfigStorage.class)).when(spaceConfigStorageRegistry).get("my-space");
-        doReturn(repo1).when(repositoryService).getRepositoryFromSpace(space, "repo_created_by_user");
 
         libraryService.removeBranch(project, otherBranch);
 
