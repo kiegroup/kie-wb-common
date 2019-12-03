@@ -147,7 +147,7 @@ public class DataTypeSearchBarView implements DataTypeSearchBar.View {
 
         refreshItemsPosition();
         enableSearch();
-        refreshDragAreaSize(position.intValue());
+        refreshDragAreaSize();
     }
 
     void expandListItems(final List<DataTypeListItem> listItems) {
@@ -222,8 +222,8 @@ public class DataTypeSearchBarView implements DataTypeSearchBar.View {
                 .anyMatch(element -> Objects.equals(element.getDragAndDropElement().getAttribute(UUID_ATTR), parentId));
     }
 
-    private void refreshDragAreaSize(final int numberOfElements) {
-        presenter.getDNDListComponent().refreshDragAreaSize(numberOfElements);
+    private void refreshDragAreaSize() {
+        presenter.getDNDListComponent().refreshDragAreaSize();
     }
 
     public void refreshItemsPosition() {

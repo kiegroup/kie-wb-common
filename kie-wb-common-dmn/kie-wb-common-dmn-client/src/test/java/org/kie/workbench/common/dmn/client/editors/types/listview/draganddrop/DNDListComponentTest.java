@@ -190,8 +190,7 @@ public class DNDListComponentTest {
 
     @Test
     public void testRefreshDragAreaSize() {
-        final int numberOfElements = 42;
-        dndListComponent.refreshDragAreaSize(numberOfElements);
-        verify(view).refreshDragAreaSize(numberOfElements);
+        dndListComponent.refreshDragAreaSize();
+        verify(view).refreshDragAreaSize();
     }
 }
