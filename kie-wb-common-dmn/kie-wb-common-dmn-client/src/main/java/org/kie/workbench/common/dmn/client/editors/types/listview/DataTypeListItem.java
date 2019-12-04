@@ -375,8 +375,14 @@ public class DataTypeListItem {
     }
 
     public void remove() {
-        confirmation.ifIsNotReferencedDataType(getDataType(), destroy());
-        editModeToggleEvent.fire(new DataTypeEditModeToggleEvent(false, this));
+        confirmation.ifIsNotReferencedDataType(getDataType(), removeItem());
+    }
+
+    public Command removeItem() {
+        return () -> {
+            dataTypeList.disableEditModeForChildren(this);
+            destroyWithDependentTypes();
+        };
     }
 
     public Command destroy() {
