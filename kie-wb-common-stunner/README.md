@@ -25,6 +25,21 @@ Execution and demonstration of the various Stunner-based components can be achie
 
   - **Stunner Project Showcase** is built atop the KIE Workbench, Commons, Guvnor and Library components. This more complex showcase demonstrates integration with different KIE Workbench assets and editors. However, for day-to-day development, it is strongly suggested that the Standalone Showcase be utilized over this more complex showcase when working with Stunner components.
 
+PR process
+-----------
+- During commit add appropriate jira issue ID (JBPM, RHPAM or RHDM only) at the beginning of the commit message
+- Before pushing to Github execute `mvn clean package -Dfull` to execute checkstyle and spotbug plugins locally.
+- When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
+- When PR created if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
+  - Wait for results of project Jenkins and full downstream build Jenkins results.
+  - If Jenkins results are not green, check the result if issues related to your changes fix them and re-trigger builds
+    - Repository build will be triggered automatically when you will push your changes, but Full downstream build should be re-triggered manually.
+  - If Jenkins builds are not green but you are sure it is not related to your changes, find the author of the failing test and ping him/her in the PR comments.
+  - Ensure that your PR passed Sonar Cloud gates as well. If you do not agree with issues reported by Sonar or your tests are running but not measured correctly put a comment to your PR.
+  - If Jenkins builds are green or you are sure that failed tests are not related to your changes and Sonar Cloud gates are passed, download Business Central from Full downstream build and test it locally against Acceptance Criteria / Steps to reproduce. Sometimes the issue is fixed in the showcase but still reproducible in the product.
+  - When everything is done, ask another developer AND QE to do the review.
+- When PR is mered move Jira issue to state `Status: Closed`, `Resolution: Done`, set next closest release as `Fix version`.
+
 IDE Environment setup
 ---------------------
 
