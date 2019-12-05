@@ -70,5 +70,37 @@ public class EventPropertyWriterTest {
 
         writer.addMessage(messageRef);
         assertEquals(messageRef.getStructure(), sampleStructureRef);
+
+        when(itemDefinition.getStructureRef()).thenReturn(sampleStructureRef);
+
+        messageRef.setStructure("nonEmpty");
+        writer.addMessage(messageRef);
+        assertEquals(messageRef.getStructure(), "nonEmpty");
+
+        writer = new EventPropertyWriter(startEvent, new FlatVariableScope()) {
+
+            @Override
+            public void setAssignmentsInfo(AssignmentsInfo assignmentsInfo) {
+
+            }
+
+            @Override
+            protected void addEventDefinition(EventDefinition eventDefinition) {
+
+            }
+
+            public List<ItemDefinition> getItemDefinitions() {
+                itemDefinitions.clear();
+                return itemDefinitions;
+            }
+        };
+
+        messageRef.setStructure("");
+        writer.addMessage(messageRef);
+        assertEquals(messageRef.getStructure(), "");
+
+        messageRef.setStructure("nonEmpty");
+        writer.addMessage(messageRef);
+        assertEquals(messageRef.getStructure(), "nonEmpty");
     }
 }
