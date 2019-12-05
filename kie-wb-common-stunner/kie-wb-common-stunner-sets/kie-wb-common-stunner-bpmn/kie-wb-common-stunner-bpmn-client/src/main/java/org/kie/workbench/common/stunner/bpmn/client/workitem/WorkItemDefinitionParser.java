@@ -58,7 +58,7 @@ public class WorkItemDefinitionParser {
         return widList;
     }
 
-    private boolean empty(String line) {
+    private static boolean empty(String line) {
         return line == null || line.equals("");
     }
 
