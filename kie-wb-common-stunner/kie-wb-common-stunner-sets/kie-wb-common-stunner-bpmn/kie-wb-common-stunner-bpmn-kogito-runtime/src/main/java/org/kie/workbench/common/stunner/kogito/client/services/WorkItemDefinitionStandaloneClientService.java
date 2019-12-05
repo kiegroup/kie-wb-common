@@ -56,6 +56,7 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
 
     @Override
     public Promise<Collection<WorkItemDefinition>> call(final Metadata input) {
+        registry.clear();
         return promises.create((success, failure) -> {
             resourceContentService.list("**/*.wid").then(paths -> {
                 if (paths.length > 0) {
