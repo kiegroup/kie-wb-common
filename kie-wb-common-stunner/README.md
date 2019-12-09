@@ -31,7 +31,7 @@ PR process
 - Before pushing to Github execute `mvn clean package -Dfull` to execute checkstyle and spotbug plugins locally.
 - When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
 - When PR created if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
-  - Wait for results of project Jenkins and full downstream build Jenkins results.
+  - Wait for the results of project Jenkins and full downstream build Jenkins results.
   - If Jenkins results are not green, check the results and if the issues are related to your changes, fix them and re-trigger builds.
     - Repository build will be triggered automatically when you push your changes, but Full downstream build should be re-triggered manually.
   - If Jenkins builds are not green but you are sure it is not related to your changes, find the author of the failing test and ping him/her in the PR comments.
