@@ -27,7 +27,7 @@ Execution and demonstration of the various Stunner-based components can be achie
 
 PR process
 -----------
-- During commit add appropriate jira issue ID (JBPM, RHPAM or RHDM only) at the beginning of the commit message
+- During commit add appropriate jira issue ID (JBPM, RHPAM or RHDM only) at the beginning of the commit message.
 - Before pushing to Github execute `mvn clean package -Dfull` to execute checkstyle and spotbug plugins locally.
 - When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
 - When PR created if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
