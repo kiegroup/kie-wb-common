@@ -293,7 +293,7 @@ public class DataTypeList {
         }
     }
 
-    void collapseAll() {
+    public void collapseAll() {
         if (!getSearchBar().isEnabled()) {
             getItems().forEach(DataTypeListItem::collapse);
         }
@@ -500,6 +500,14 @@ public class DataTypeList {
 
     Optional<DataType> findDataTypeByName(final String name) {
         return dataTypeManager.getTopLevelDataTypeWithName(name);
+    }
+
+    public void disableEditModeForChildren(final DataTypeListItem dataTypeListItem) {
+
+        final String uuid = dataTypeListItem.getDataType().getUUID();
+        getItems().stream()
+                .filter(item -> Objects.equals(item.getDataType().getParentUUID(), uuid))
+                .forEach(child -> child.disableEditMode());
     }
 
     public interface View extends UberElemental<DataTypeList>,
