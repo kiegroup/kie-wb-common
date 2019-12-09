@@ -32,7 +32,7 @@ PR process
 - When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
 - When PR created if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
   - Wait for results of project Jenkins and full downstream build Jenkins results.
-  - If Jenkins results are not green, check the result if issues related to your changes fix them and re-trigger builds
+  - If Jenkins results are not green, check the results and if the issues are related to your changes, fix them and re-trigger builds.
     - Repository build will be triggered automatically when you push your changes, but Full downstream build should be re-triggered manually.
   - If Jenkins builds are not green but you are sure it is not related to your changes, find the author of the failing test and ping him/her in the PR comments.
   - Ensure that your PR passed Sonar Cloud gates as well. If you do not agree with issues reported by Sonar or your tests are running but not measured correctly put a comment to your PR.
@@ -237,4 +237,3 @@ Once your Stunner project is setup correctly, you can also import external modul
   - Modules tab -> Add a new GWT module for the new external asset imported (eg: lienzo-core) -> just select it, click on the `+` button and add a new GWT module type
   - [TIP] -> Close project preferences and reopen it, there a bug on IDEA15...
   - Artifacts tab ->  click on the "exploded WAR" artifact that exists for showcase you want to use. Then on the right panel, expand the module (eg: lienzo-core) and double click on both "compiled" and "GWT" artifacts that appear as child elements for it, they'll automatically be included in the "exploded WAR" artifact structure to generate
-
