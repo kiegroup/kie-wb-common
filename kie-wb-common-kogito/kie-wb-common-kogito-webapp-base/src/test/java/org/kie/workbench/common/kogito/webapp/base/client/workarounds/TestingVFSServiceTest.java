@@ -92,11 +92,18 @@ public class TestingVFSServiceTest {
     }
 
     @Test
-    public void loadFile() {
-        ArgumentCaptor<PlaceRequest> placeRequestCaptor = ArgumentCaptor.forClass(PlaceRequest.class);
+    public void loadFileWithCallback() {
         testingVFSService.loadFile(pathMock, callbackMock, mock(ErrorCallback.class));
         verify(vfsServiceMock, times(1)).readAllString(eq(pathMock));
-        verify(callbackMock, times(1)).callback(eq(XML)); }
+        verify(callbackMock, times(1)).callback(eq(XML));
+    }
+
+    @Test
+    public void loadFileWithoutCallback() {
+        final String retrieved = testingVFSService.loadFile(pathMock);
+        verify(vfsServiceMock, times(1)).readAllString(eq(pathMock));
+        assertEquals(XML, retrieved);
+    }
 
     @Test
     public void saveFile() {

@@ -92,7 +92,7 @@ public class TestingVFSService {
     }
 
     /**
-     * Load the file at given <code>Path</code>
+     * Load the file at given <code>Path</code> and returns content inside a callback
      * @param path
      * @param callback
      * @param <T>
@@ -101,6 +101,15 @@ public class TestingVFSService {
                              final RemoteCallback<String> callback,
                              final ErrorCallback<T> errorCallback) {
         vfsServiceCaller.call(callback, errorCallback).readAllString(path);
+    }
+
+    /**
+     * Load the file at given <code>Path</code> and directly returns the content
+     * @param path
+     * @return
+     */
+    public String loadFile(final Path path) {
+        return vfsServiceCaller.call().readAllString(path);
     }
 
     @SuppressWarnings("unchecked")
@@ -113,7 +122,6 @@ public class TestingVFSService {
 
     /**
      * Get the <code>List&lt;Path&gt;</code> contained in the given <b>root</b>
-     *
      * @param root
      * @param callback
      * @param errorCallback
@@ -132,7 +140,6 @@ public class TestingVFSService {
 
     /**
      * Get <b>filtered</b> <code>List&lt;Path&gt;</code>  contained in the given <b>root</b>
-     *
      * @param root
      * @param fileSuffix
      * @param callback
