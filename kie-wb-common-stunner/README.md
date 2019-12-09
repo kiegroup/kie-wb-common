@@ -35,7 +35,7 @@ PR process
   - If Jenkins results are not green, check the results and if the issues are related to your changes, fix them and re-trigger builds.
     - Repository build will be triggered automatically when you push your changes, but Full downstream build should be re-triggered manually.
   - If Jenkins builds are not green but you are sure it is not related to your changes, find the author of the failing tests and ping him/her in the PR comments.
-  - Ensure that your PR passed Sonar Cloud gates as well. If you do not agree with issues reported by Sonar or your tests are running but not measured correctly put a comment to your PR.
+  - Ensure that your PR passed Sonar Cloud gates as well. If you do not agree with the issues reported by Sonar or your tests are running but not measured correctly, put a comment to your PR.
   - If Jenkins builds are green or you are sure that failed tests are not related to your changes and Sonar Cloud gates are passed, download Business Central from Full downstream build and test it locally against Acceptance Criteria / Steps to reproduce. Sometimes the issue is fixed in the showcase but still reproducible in the product.
   - When everything is done, ask another developer AND QE to do the review.
 - When PR is mered move Jira issue to state `Status: Closed`, `Resolution: Done`, set next closest release as `Fix version`.
