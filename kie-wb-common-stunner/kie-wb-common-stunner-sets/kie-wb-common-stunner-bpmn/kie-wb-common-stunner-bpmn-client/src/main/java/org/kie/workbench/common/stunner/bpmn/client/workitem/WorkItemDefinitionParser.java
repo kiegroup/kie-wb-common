@@ -40,7 +40,7 @@ public class WorkItemDefinitionParser {
 
     public List<WorkItemDefinition> parse(String widStr) {
 
-        if (widStr == null || "".equals(widStr.trim())) {
+        if (empty(widStr)) {
             return Collections.emptyList();
         }
 
@@ -59,7 +59,7 @@ public class WorkItemDefinitionParser {
     }
 
     private static boolean empty(String line) {
-        return line == null || line.equals("");
+        return line == null || "".equals(line.trim());
     }
 
     private static WorkItemDefinition parseWorkItemDefinitionObject(Queue<String> objectQueue) {
@@ -104,6 +104,8 @@ public class WorkItemDefinitionParser {
                     }
                     wid.setResults(results);
                     break;
+                case "category":
+                    wid.setCategory(attributes.getK2());
                 default:
                     break;
             }

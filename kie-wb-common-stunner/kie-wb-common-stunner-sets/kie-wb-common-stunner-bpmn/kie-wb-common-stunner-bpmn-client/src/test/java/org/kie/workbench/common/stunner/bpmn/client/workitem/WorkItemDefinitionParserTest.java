@@ -38,34 +38,6 @@ public class WorkItemDefinitionParserTest {
                               "      \"displayName\" : \"Email\",\n" +
                               "      \"icon\" : \"defaultemailicon.gif\"\n" +
                               "    ],\n" +
-                              "  \n" +
-                              "    [\n" +
-                              "      \"name\" : \"Log\",\n" +
-                              "      \"parameters\" : [\n" +
-                              "        \"Message\" : new StringDataType()\n" +
-                              "      ],\n" +
-                              "      \"displayName\" : \"Log\",\n" +
-                              "      \"icon\" : \"defaultlogicon.gif\"\n" +
-                              "    ],\n" +
-                              "  \n" +
-                              "    [\n" +
-                              "      \"name\" : \"WebService\",\n" +
-                              "      \"parameters\" : [\n" +
-                              "          \"Url\" : new StringDataType(),\n" +
-                              "           \"Namespace\" : new StringDataType(),\n" +
-                              "           \"Interface\" : new StringDataType(),\n" +
-                              "           \"Operation\" : new StringDataType(),\n" +
-                              "           \"Parameter\" : new StringDataType(),\n" +
-                              "           \"Endpoint\" : new StringDataType(),\n" +
-                              "           \"Mode\" : new StringDataType()\n" +
-                              "      ],\n" +
-                              "      \"results\" : [\n" +
-                              "          \"Result\" : new ObjectDataType(),\n" +
-                              "      ],\n" +
-                              "      \"displayName\" : \"WS\",\n" +
-                              "      \"icon\" : \"defaultservicenodeicon.png\"\n" +
-                              "    ],\n" +
-                              "  \n" +
                               "    [\n" +
                               "      \"name\" : \"Rest\",\n" +
                               "      \"parameters\" : [\n" +
@@ -83,32 +55,6 @@ public class WorkItemDefinitionParserTest {
                               "      \"displayName\" : \"REST\",\n" +
                               "      \"icon\" : \"defaultservicenodeicon.png\"\n" +
                               "    ],\n" +
-                              "  \n" +
-                              "    [\n" +
-                              "       \"name\" : \"BusinessRuleTask\",\n" +
-                              "       \"parameters\" : [\n" +
-                              "         \"Language\" : new StringDataType(),\n" +
-                              "         \"KieSessionName\" : new StringDataType(),\n" +
-                              "         \"KieSessionType\" : new StringDataType()\n" +
-                              "       ],\n" +
-                              "       \"displayName\" : \"Business Rule Task\",\n" +
-                              "       \"icon\" : \"defaultbusinessrulesicon.png\",\n" +
-                              "       \"category\" : \"Decision tasks\"\n" +
-                              "     ],\n" +
-                              "  \n" +
-                              "     [\n" +
-                              "       \"name\" : \"DecisionTask\",\n" +
-                              "       \"parameters\" : [\n" +
-                              "         \"Language\" : new StringDataType(),\n" +
-                              "         \"Namespace\" : new StringDataType(),\n" +
-                              "         \"Model\" : new StringDataType(),\n" +
-                              "         \"Decision\" : new StringDataType()\n" +
-                              "       ],\n" +
-                              "       \"displayName\" : \"Decision Task\",\n" +
-                              "       \"icon\" : \"defaultdecisionicon.png\",\n" +
-                              "       \"category\" : \"Decision tasks\"\n" +
-                              "     ],\n" +
-                              "  \n" +
                               "     [\n" +
                               "      \"name\" : \"Milestone\",\n" +
                               "      \"parameters\" : [\n" +
@@ -145,7 +91,7 @@ public class WorkItemDefinitionParserTest {
     @Test
     public void widParseTest() {
         List<WorkItemDefinition> defs = parser.parse(WID);
-        assertEquals(7, defs.size());
+        assertEquals(3, defs.size());
         WorkItemDefinition wid1 = defs.get(0);
         assertEquals("Email", wid1.getName());
         assertEquals("Email", wid1.getDisplayName());
@@ -153,7 +99,7 @@ public class WorkItemDefinitionParserTest {
         assertTrue(wid1.getResults().isEmpty());
         assertEquals(EMAIL_WID_EXTRACTED_PARAMETERS, wid1.getParameters());
 
-        WorkItemDefinition wid2 = defs.get(3);
+        WorkItemDefinition wid2 = defs.get(1);
 
         assertEquals("Rest", wid2.getName());
         assertEquals("REST", wid2.getDisplayName());
@@ -163,5 +109,12 @@ public class WorkItemDefinitionParserTest {
         assertEquals(REST_WID_EXTRACTED_PARAMETERS, wid2.getParameters());
         assertEquals("\"Result\" : new ObjectDataType(),", wid2.getResults());
 
+        WorkItemDefinition wid3 = defs.get(2);
+
+        assertEquals("Milestone", wid3.getName());
+        assertEquals("Milestone", wid3.getDisplayName());
+        assertEquals("defaultmilestoneicon.png", wid3.getIconDefinition().getUri());
+        assertEquals("\"Condition\" : new StringDataType()", wid3.getParameters());
+        assertEquals("Milestone", wid3.getCategory());
     }
 }
