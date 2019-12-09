@@ -38,7 +38,7 @@ PR process
   - Ensure that your PR passed Sonar Cloud gates as well. If you do not agree with the issues reported by Sonar or your tests are running but not measured correctly, put a comment to your PR.
   - If Jenkins builds are green or you are sure that failed tests are not related to your changes and Sonar Cloud gates are passed, download Business Central from Full downstream build and test it locally against Acceptance Criteria / Steps to reproduce. Sometimes the issue is fixed in the showcase but still reproducible in the product.
   - When everything is done, ask another developer AND QE to do the review.
-- When PR is mered move Jira issue to state `Status: Closed`, `Resolution: Done`, set next closest release as `Fix version`.
+- When PR is mered move Jira issue to state `Status: Resolved`, `Resolution: Done`, set next closest release as `Fix version`.
 
 IDE Environment setup
 ---------------------
