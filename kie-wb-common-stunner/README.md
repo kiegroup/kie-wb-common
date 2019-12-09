@@ -30,7 +30,7 @@ PR process
 - During commit add appropriate jira issue ID (JBPM, RHPAM or RHDM only) at the beginning of the commit message.
 - Before pushing to Github execute `mvn clean package -Dfull` to execute checkstyle and spotbug plugins locally.
 - When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
-- When PR created if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
+- When PR is created and if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
   - Wait for the results of project Jenkins and full downstream build Jenkins results.
   - If Jenkins results are not green, check the results and if the issues are related to your changes, fix them and re-trigger builds.
     - Repository build will be triggered automatically when you push your changes, but Full downstream build should be re-triggered manually.
