@@ -103,15 +103,6 @@ public class TestingVFSService {
         vfsServiceCaller.call(callback, errorCallback).readAllString(path);
     }
 
-    /**
-     * Load the file at given <code>Path</code> and directly returns the content
-     * @param path
-     * @return
-     */
-    public String loadFile(final Path path) {
-        return vfsServiceCaller.call().readAllString(path);
-    }
-
     @SuppressWarnings("unchecked")
     public <T> void saveFile(final Path path,
                              final String xml,

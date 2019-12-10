@@ -92,17 +92,10 @@ public class TestingVFSServiceTest {
     }
 
     @Test
-    public void loadFileWithCallback() {
+    public void loadFile() {
         testingVFSService.loadFile(pathMock, callbackMock, mock(ErrorCallback.class));
         verify(vfsServiceMock, times(1)).readAllString(eq(pathMock));
         verify(callbackMock, times(1)).callback(eq(XML));
-    }
-
-    @Test
-    public void loadFileWithoutCallback() {
-        final String retrieved = testingVFSService.loadFile(pathMock);
-        verify(vfsServiceMock, times(1)).readAllString(eq(pathMock));
-        assertEquals(XML, retrieved);
     }
 
     @Test
