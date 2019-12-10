@@ -389,7 +389,8 @@ public class LibraryServiceImpl implements LibraryService {
 
         projectService.addBranch(newBranchName,
                                  baseBranchName,
-                                 project);
+                                 project,
+                                 sessionInfo.getIdentity().getIdentifier());
     }
 
     @Override
@@ -397,7 +398,8 @@ public class LibraryServiceImpl implements LibraryService {
                              final Branch branch) {
 
         projectService.removeBranch(branch.getName(),
-                                    project);
+                                    project,
+                                    sessionInfo.getIdentity().getIdentifier());
     }
 
     @Override

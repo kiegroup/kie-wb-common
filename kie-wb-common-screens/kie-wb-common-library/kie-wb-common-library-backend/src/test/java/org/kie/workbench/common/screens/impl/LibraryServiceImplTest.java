@@ -727,9 +727,14 @@ public class LibraryServiceImplTest {
     public void addBranchTest() throws URISyntaxException {
         final WorkspaceProject project = mock(WorkspaceProject.class);
 
-        libraryService.addBranch("new-branch", "repo1-branch1", project);
+        libraryService.addBranch("new-branch",
+                                 "repo1-branch1",
+                                 project);
 
-        verify(projectService).addBranch("new-branch", "repo1-branch1", project);;
+        verify(projectService).addBranch("new-branch",
+                                         "repo1-branch1",
+                                         project,
+                                         "admin");
     }
 
     @Test
@@ -739,7 +744,9 @@ public class LibraryServiceImplTest {
 
         libraryService.removeBranch(project, otherBranch);
 
-        verify(projectService).removeBranch(otherBranch.getName(), project);
+        verify(projectService).removeBranch(otherBranch.getName(),
+                                            project,
+                                            "admin");
     }
 
     @Test

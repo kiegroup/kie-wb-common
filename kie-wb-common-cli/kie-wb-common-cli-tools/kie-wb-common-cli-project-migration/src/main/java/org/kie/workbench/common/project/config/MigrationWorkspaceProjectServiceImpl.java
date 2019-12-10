@@ -33,7 +33,6 @@ import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.RepositoryUpdatedEvent;
 import org.guvnor.structure.repositories.NewBranchEvent;
 import org.guvnor.structure.repositories.changerequest.ChangeRequestService;
-import org.uberfire.rpc.SessionInfo;
 import org.uberfire.spaces.SpacesAPI;
 import org.uberfire.io.IOService;
 
@@ -56,8 +55,7 @@ public class MigrationWorkspaceProjectServiceImpl extends WorkspaceProjectServic
                                                 @Named("ioStrategy") final IOService ioService,
                                                 final PathUtil pathUtil,
                                                 final ChangeRequestService changeRequestService,
-                                                final SpaceConfigStorageRegistry spaceConfigStorageRegistry,
-                                                final SessionInfo sessionInfo) {
+                                                final SpaceConfigStorageRegistry spaceConfigStorageRegistry) {
         super(organizationalUnitService,
               repositoryService,
               spaces,
@@ -69,7 +67,6 @@ public class MigrationWorkspaceProjectServiceImpl extends WorkspaceProjectServic
               ioService,
               pathUtil,
               changeRequestService,
-              spaceConfigStorageRegistry,
-              sessionInfo);
+              spaceConfigStorageRegistry);
     }
 }
