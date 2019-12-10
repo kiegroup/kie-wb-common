@@ -27,6 +27,7 @@ Execution and demonstration of the various Stunner-based components can be achie
 
 PR process
 -----------
+- It is a good practice to use the git branch with actual Jira issue ID, for example, `JBPM-1`. This technique also will help you to eliminate issues with multi-repository PRs (see below).
 - During commit add appropriate jira issue ID (JBPM, RHPAM or RHDM only) at the beginning of the commit message.
 - Before pushing to Github execute `mvn clean package -Dfull` to execute checkstyle and spotbug plugins locally.
 - When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
@@ -38,7 +39,7 @@ PR process
   - Ensure that your PR passed Sonar Cloud gates as well. If you do not agree with the issues reported by Sonar or your tests are running but not measured correctly, put a comment to your PR.
   - If Jenkins builds are green or you are sure that failed tests are not related to your changes and Sonar Cloud gates are passed, download Business Central from Full downstream build and test it locally against Acceptance Criteria / Steps to reproduce. Sometimes the issue is fixed in the showcase but still reproducible in the product.
   - When everything is done, ask another developer AND QE to do the review.
-- When PR is mered move Jira issue to state `Status: Resolved`, `Resolution: Done`, set next closest release as `Fix version`.
+- When PR is merged move Jira issue to state `Status: Resolved`, `Resolution: Done`, set next closest release as `Fix version`.
 
 IDE Environment setup
 ---------------------
