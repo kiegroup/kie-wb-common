@@ -69,9 +69,7 @@ public class IntegerBoxFieldRenderer extends FieldRenderer<IntegerBoxFieldDefini
 
         DefaultFormGroup formGroup = formGroupsInstance.get();
 
-        formGroup.render(inputId,
-                         widget,
-                         field);
+        formGroup.render(inputId, widget, field);
         registerFieldRendererPart(widget);
 
         return formGroup;

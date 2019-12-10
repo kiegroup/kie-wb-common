@@ -17,6 +17,7 @@
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.SimpleCheckBox;
 import org.kie.workbench.common.forms.adf.rendering.Renderer;
@@ -31,6 +32,7 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.ty
 @Renderer(type = CheckBoxFieldType.class)
 public class CheckBoxFieldRenderer extends FieldRenderer<CheckBoxFieldDefinition, CheckBoxFormGroup> {
 
+    @Inject
     private SimpleCheckBox checkbox;
 
     @Override
@@ -40,7 +42,7 @@ public class CheckBoxFieldRenderer extends FieldRenderer<CheckBoxFieldDefinition
 
     @Override
     protected FormGroup getFormGroup(RenderMode renderMode) {
-        checkbox = new SimpleCheckBox();
+        checkbox.setId(generateUniqueId());
         checkbox.setName(fieldNS);
         checkbox.setEnabled(!field.getReadOnly() && renderingContext.getRenderMode().equals(RenderMode.EDIT_MODE));
 

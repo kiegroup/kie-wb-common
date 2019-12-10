@@ -17,6 +17,7 @@
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.HTML;
 import org.gwtbootstrap3.client.ui.TextBox;
@@ -34,7 +35,8 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.typ
 @Renderer(type = TextBoxFieldType.class)
 public class TextBoxFieldRenderer extends FieldRenderer<TextBoxBaseDefinition, DefaultFormGroup> implements RequiresValueConverter {
 
-    private TextBox textBox;
+    @Inject
+    protected TextBox textBox;
 
     @Override
     public String getName() {
@@ -52,7 +54,6 @@ public class TextBoxFieldRenderer extends FieldRenderer<TextBoxBaseDefinition, D
                              field);
         } else {
             String inputId = generateUniqueId();
-            textBox = new TextBox();
             textBox.setName(fieldNS);
             textBox.setId(inputId);
             textBox.setPlaceholder(field.getPlaceHolder());

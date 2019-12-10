@@ -74,6 +74,9 @@ public class CollapsibleFormGroupViewImpl implements IsElement,
     @DataField
     private Div helpBlock;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private Presenter presenter;
 
     private Map<String, Widget> partsWidget = new HashMap<>();
@@ -107,7 +110,7 @@ public class CollapsibleFormGroupViewImpl implements IsElement,
 
         container.add(widget);
 
-        partsWidget.put(PART_ANCHOR_TEXT, FormsElementWrapperWidgetUtil.getWidget(this, anchorText));
+        partsWidget.put(PART_ANCHOR_TEXT, wrapperWidgetUtil.getWidget(this, anchorText));
     }
 
     @Override
@@ -144,6 +147,6 @@ public class CollapsibleFormGroupViewImpl implements IsElement,
     @PreDestroy
     public void destroy() {
         container.clear();
-        FormsElementWrapperWidgetUtil.clear(this);
+        wrapperWidgetUtil.clear(this);
     }
 }

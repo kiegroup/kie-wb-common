@@ -49,6 +49,9 @@ public class SliderFormGroupViewImpl implements SliderFormGroupView {
     @DataField
     protected Div helpBlock;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private Map<String, Widget> viewPartsWidgets = new HashMap<>();
 
     @Override
@@ -58,7 +61,7 @@ public class SliderFormGroupViewImpl implements SliderFormGroupView {
         render("", widget, fieldDefinition);
         
         viewPartsWidgets.put(PART_SLIDER_LABEL,
-                             FormsElementWrapperWidgetUtil.getWidget(this, fieldLabel.getElement()));
+                             wrapperWidgetUtil.getWidget(this, fieldLabel.getElement()));
     }
 
     public void render(String inputId, Widget widget, FieldDefinition fieldDefinition) {
@@ -81,6 +84,6 @@ public class SliderFormGroupViewImpl implements SliderFormGroupView {
 
     @PreDestroy
     public void clear() {
-        FormsElementWrapperWidgetUtil.clear(this);
+        wrapperWidgetUtil.clear(this);
     }
 }

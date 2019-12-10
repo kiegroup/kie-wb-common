@@ -40,7 +40,7 @@ import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeListener;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 
-public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extends FormGroup> {
+public abstract class FieldRenderer<F extends FieldDefinition, G extends FormGroup> {
 
     protected FormRenderingContext renderingContext;
     protected String fieldNS;
@@ -51,10 +51,13 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
     private Map<String, IsWidget> partsWidgets = new HashMap<>();
 
     @Inject
-    protected ManagedInstance<FORM_GROUP> formGroupsInstance;
+    protected ManagedInstance<G> formGroupsInstance;
 
     @Inject
-    private ConfigErrorDisplayer errorDisplayer;
+    protected ConfigErrorDisplayer errorDisplayer;
+
+    @Inject
+    protected FormsElementWrapperWidgetUtil wrapperWidgetUtil;
 
     public void init(FormRenderingContext renderingContext, F field) {
         this.renderingContext = renderingContext;
@@ -114,7 +117,7 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
 
             registerCustomFieldValidators(formField);
 
-            return FormsElementWrapperWidgetUtil.getWidget(this, formGroup.getElement());
+            return wrapperWidgetUtil.getWidget(this, formGroup.getElement());
         }
     }
 
@@ -180,10 +183,7 @@ public abstract class FieldRenderer<F extends FieldDefinition, FORM_GROUP extend
 
     @PreDestroy
     public void preDestroy() {
-        // checking if formGroup is not null, it might be null inside of the form editor
-        if(formGroup != null) {
-            FormsElementWrapperWidgetUtil.clear(this);
-        }
+        wrapperWidgetUtil.clear(this);
         partsWidgets.values().forEach(part -> part.asWidget().removeFromParent());
         partsWidgets.clear();
         formGroupsInstance.destroyAll();

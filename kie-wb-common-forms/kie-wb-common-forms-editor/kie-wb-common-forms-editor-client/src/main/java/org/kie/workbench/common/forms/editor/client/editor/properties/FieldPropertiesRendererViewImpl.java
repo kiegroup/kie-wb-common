@@ -60,6 +60,8 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
 
     private TranslationService translationService;
 
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private FieldPropertiesRenderer presenter;
 
     private FieldPropertiesRendererHelper helper;
@@ -70,9 +72,11 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
 
     @Inject
     public FieldPropertiesRendererViewImpl(DynamicFormRenderer formRenderer,
-                                           TranslationService translationService) {
+                                           TranslationService translationService,
+                                           FormsElementWrapperWidgetUtil wrapperWidgetUtil) {
         this.formRenderer = formRenderer;
         this.translationService = translationService;
+        this.wrapperWidgetUtil = wrapperWidgetUtil;
     }
 
     @PostConstruct
@@ -102,7 +106,7 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
         formRenderer.render(renderingContext);
         initFieldTypeList();
         fieldBinding.clear();
-        fieldBinding.add(FormsElementWrapperWidgetUtil.getWidget(this, dataBindingEditor.getElement()));
+        fieldBinding.add(wrapperWidgetUtil.getWidget(this, dataBindingEditor.getElement()));
         modal.setTitle(translationService.getTranslation(FormEditorConstants.FieldPropertiesRendererViewImplTitle));
     }
 
@@ -147,8 +151,8 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
     @PreDestroy
     public void clear() {
         fieldBinding.clear();
-        if(dataBindingEditor != null) {
-            FormsElementWrapperWidgetUtil.clear(this);
+        if (dataBindingEditor != null) {
+            wrapperWidgetUtil.clear(this);
         }
         formRenderer.unBind();
         modal.clear();

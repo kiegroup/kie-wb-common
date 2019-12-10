@@ -72,6 +72,9 @@ public class ErrorMessageDisplayerViewImpl implements ErrorMessageDisplayerView,
     @Inject
     private TranslationService translationService;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private Presenter presenter;
 
     private BaseModal modal;
@@ -81,7 +84,7 @@ public class ErrorMessageDisplayerViewImpl implements ErrorMessageDisplayerView,
         modal = new BaseModal();
         modal.setTitle(translationService.getTranslation(FormEditorConstants.ErrorMessageDisplayerViewImplTitle));
         modal.setClosable(false);
-        modal.setBody(FormsElementWrapperWidgetUtil.getWidget(this, this.getElement()));
+        modal.setBody(wrapperWidgetUtil.getWidget(this, this.getElement()));
         modal.add(new ModalFooterOKButton(modal::hide));
         modal.addHideHandler(evt -> presenter.notifyClose());
     }
@@ -145,6 +148,6 @@ public class ErrorMessageDisplayerViewImpl implements ErrorMessageDisplayerView,
     @PreDestroy
     public void clear() {
         modal.clear();
-        FormsElementWrapperWidgetUtil.clear(this);
+        wrapperWidgetUtil.clear(this);
     }
 }

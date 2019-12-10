@@ -53,6 +53,9 @@ public class DefaultFormGroupViewImpl implements IsElement,
     @DataField
     protected Div helpBlock;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     @Override
     public void render(Widget widget,
                        FieldDefinition fieldDefinition) {
@@ -73,7 +76,7 @@ public class DefaultFormGroupViewImpl implements IsElement,
         fieldContainer.clear();
         fieldContainer.add(widget);
         
-        Widget labelWidget = FormsElementWrapperWidgetUtil.getWidget(this, fieldLabel.getElement());
+        Widget labelWidget = wrapperWidgetUtil.getWidget(this, fieldLabel.getElement());
         partsWidgets.put(PART_LABEL, labelWidget);
     }
 
@@ -89,6 +92,6 @@ public class DefaultFormGroupViewImpl implements IsElement,
 
     @PreDestroy
     public void clear() {
-        FormsElementWrapperWidgetUtil.clear(this);
+        wrapperWidgetUtil.clear(this);
     }
 }

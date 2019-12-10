@@ -33,10 +33,10 @@ public class FieldRendererTypeRegistry {
     }
 
     public static void load(FieldRendererTypesProvider provider) {
-        if(!provider.getFieldTypeRenderers().isEmpty()) {
+        if (!provider.getFieldTypeRenderers().isEmpty()) {
             fieldTypeRenderers.putAll(provider.getFieldTypeRenderers());
         }
-        if(!provider.getFieldDefinitionRenderers().isEmpty()) {
+        if (!provider.getFieldDefinitionRenderers().isEmpty()) {
             fieldDefinitionRemderers.putAll(provider.getFieldDefinitionRenderers());
         }
     }
@@ -44,7 +44,7 @@ public class FieldRendererTypeRegistry {
     public static Class<? extends FieldRenderer> getFieldRenderer(FieldDefinition fieldDefinition) {
         Class<? extends FieldRenderer> rendererClass = fieldDefinitionRemderers.get(fieldDefinition.getClass());
 
-        if(rendererClass == null) {
+        if (rendererClass == null) {
             rendererClass = fieldTypeRenderers.get(fieldDefinition.getFieldType().getClass());
         }
 

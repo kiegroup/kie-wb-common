@@ -70,6 +70,9 @@ public class FieldSetFormGroupViewImpl implements IsElement,
     @DataField
     protected Div helpBlock;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private Map<String, Widget> partsWidgets = new HashMap<>();
 
     @Override
@@ -93,7 +96,7 @@ public class FieldSetFormGroupViewImpl implements IsElement,
 
         fieldContainer.add(widget);
         
-        partsWidgets.put(PART_LEGEND_TEXT, FormsElementWrapperWidgetUtil.getWidget(this, legendText));
+        partsWidgets.put(PART_LEGEND_TEXT, wrapperWidgetUtil.getWidget(this, legendText));
     }
     
     @Override
@@ -103,6 +106,6 @@ public class FieldSetFormGroupViewImpl implements IsElement,
 
     @PreDestroy
     public void clear() {
-        FormsElementWrapperWidgetUtil.clear(this);
+        wrapperWidgetUtil.clear(this);
     }
 }

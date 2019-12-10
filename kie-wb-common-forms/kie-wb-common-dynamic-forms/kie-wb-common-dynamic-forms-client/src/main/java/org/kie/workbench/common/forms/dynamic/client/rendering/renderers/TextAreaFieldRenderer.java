@@ -17,6 +17,7 @@
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.HTML;
 import org.gwtbootstrap3.client.ui.TextArea;
@@ -34,12 +35,13 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.ty
 @Renderer(type = TextAreaFieldType.class)
 public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition, DefaultFormGroup> implements RequiresValueConverter {
 
+    @Inject
+    private TextArea textArea;
+
     @Override
     public String getName() {
         return "TextArea";
     }
-
-    private TextArea textArea;
 
     @Override
     protected FormGroup getFormGroup(RenderMode renderMode) {
@@ -51,16 +53,14 @@ public class TextAreaFieldRenderer extends FieldRenderer<TextAreaFieldDefinition
         } else {
             String inputId = generateUniqueId();
 
-            textArea = new TextArea();
             textArea.setId(inputId);
             textArea.setName(fieldNS);
             textArea.setPlaceholder(field.getPlaceHolder());
             textArea.setVisibleLines(field.getRows());
             textArea.setEnabled(!field.getReadOnly());
-            textArea.setVisibleLines(field.getRows());
 
             formGroup.render(inputId, textArea, field);
-            
+
             registerFieldRendererPart(textArea);
         }
 

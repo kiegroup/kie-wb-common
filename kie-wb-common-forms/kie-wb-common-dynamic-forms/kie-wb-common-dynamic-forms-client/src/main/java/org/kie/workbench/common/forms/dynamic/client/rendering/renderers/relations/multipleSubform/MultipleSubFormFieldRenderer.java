@@ -34,12 +34,14 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.multipl
 @Renderer(type = MultipleSubFormFieldType.class)
 public class MultipleSubFormFieldRenderer extends FieldRenderer<MultipleSubFormFieldDefinition, FieldSetFormGroup> {
 
+    static String RENDERER_NAME = "Multiple SubForm";
+
     @Inject
     private MultipleSubFormWidget multipleSubFormWidget;
 
     @Override
     public String getName() {
-        return "Multiple SubForm";
+        return RENDERER_NAME;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class MultipleSubFormFieldRenderer extends FieldRenderer<MultipleSubFormF
     protected List<String> getConfigErrors() {
         List<String> configErrors = new ArrayList<>();
 
-        if (field.getColumnMetas() == null || field.getColumnMetas().size() == 0) {
+        if (field.getColumnMetas() == null || field.getColumnMetas().isEmpty()) {
             configErrors.add(FormRenderingConstants.MultipleSubformNoColumns);
         }
         if (field.getCreationForm() == null || field.getCreationForm().isEmpty()) {

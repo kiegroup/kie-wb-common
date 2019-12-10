@@ -53,6 +53,7 @@ public class SubFormFieldRenderer extends FieldRenderer<SubFormFieldDefinition, 
         if (field.getReadOnly()) {
             nestedContext.setRenderMode(RenderMode.READ_ONLY_MODE);
         }
+
         subFormWidget.render(nestedContext);
 
         AbstractNestedFormFormGroup formGroup;

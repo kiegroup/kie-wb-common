@@ -43,6 +43,9 @@ public class DynamicFormRendererViewImpl extends Composite implements DynamicFor
     @DataField
     private FlowPanel formContent;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private HTMLElement layoutContent;
 
     private DynamicFormRenderer presenter;
@@ -58,7 +61,7 @@ public class DynamicFormRendererViewImpl extends Composite implements DynamicFor
 
         if (context != null) {
             layoutContent = layoutGenerator.buildLayout(context);
-            formContent.add(FormsElementWrapperWidgetUtil.getWidget(this, layoutContent));
+            formContent.add(wrapperWidgetUtil.getWidget(this, layoutContent));
         }
     }
 
@@ -76,8 +79,8 @@ public class DynamicFormRendererViewImpl extends Composite implements DynamicFor
 
     @Override
     public void clear() {
-        if(layoutContent != null) {
-            FormsElementWrapperWidgetUtil.clear(this);
+        if (layoutContent != null) {
+            wrapperWidgetUtil.clear(this);
             layoutContent = null;
         }
         formContent.clear();

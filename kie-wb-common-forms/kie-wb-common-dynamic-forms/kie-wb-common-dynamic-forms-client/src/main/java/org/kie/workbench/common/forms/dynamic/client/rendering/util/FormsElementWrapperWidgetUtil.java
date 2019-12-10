@@ -16,46 +16,36 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 
-public class FormsElementWrapperWidgetUtil {
+/**
+ * Utility class that helps to handle the lifecycle of the generated {@link ElementWrapperWidget} on forms views.
+ */
+public interface FormsElementWrapperWidgetUtil {
 
-    private static Map<Object, List<ElementWrapperWidget<?>>> mappedWidgets = new HashMap<>();
+    /**
+     * Generates a {@link Widget} ({@link ElementWrapperWidget}) for a specific {@link HTMLElement} and keeps a reference
+     * to the view (source) that is using it.
+     * @param source The view object that requires the {@link Widget} to be generated
+     * @param element The {@link HTMLElement} that needs to be converted into a {@link Widget}
+     * @return a {@link Widget} wrapping the given {@link HTMLElement}
+     */
+    Widget getWidget(Object source, HTMLElement element);
 
-    private FormsElementWrapperWidgetUtil() {
-    }
+    /**
+     * Generates a {@link Widget} ({@link ElementWrapperWidget}) for a specific {@link elemental2.dom.HTMLElement} and keeps a reference
+     * to the view (source) that is using it.
+     * @param source The view object that requires the {@link Widget} to be generated
+     * @param element The {@link elemental2.dom.HTMLElement} that needs to be converted into a {@link Widget}
+     * @return a {@link Widget} wrapping the given {@link elemental2.dom.HTMLElement}
+     */
+    Widget getWidget(Object source, elemental2.dom.HTMLElement element);
 
-    public static Widget getWidget(Object source, HTMLElement element) {
-        return getWidget(source, element, ElementWrapperWidget::getWidget);
-    }
-
-    public static Widget getWidget(Object source, elemental2.dom.HTMLElement element) {
-        return getWidget(source, element, ElementWrapperWidget::getWidget);
-    }
-
-    private static <T> Widget getWidget(Object source, T element, Function<T, ElementWrapperWidget> function) {
-        ElementWrapperWidget<?> widget = function.apply(element);
-
-        mappedWidgets.computeIfAbsent(source, key -> new ArrayList<>())
-                .add(widget);
-        return widget;
-    }
-
-    public static void clear(Object source) {
-        mappedWidgets.computeIfPresent(source, (o, wrapperWidgets) -> {
-            wrapperWidgets.forEach(widget -> {
-                ElementWrapperWidget.removeWidget(widget);
-                widget.removeFromParent();
-            });
-            return null;
-        });
-    }
+    /**
+     * Clears and detaches all the {@link ElementWrapperWidget} generated for a given view (source).
+     * @param source The view that has been generating the {@link ElementWrapperWidget}
+     */
+    void clear(Object source);
 }

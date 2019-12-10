@@ -46,6 +46,9 @@ public class ChangesNotificationDisplayerViewImpl implements ChangesNotification
     private Document document;
 
     @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
+    @Inject
     public ChangesNotificationDisplayerViewImpl(TranslationService translationService) {
         this.translationService = translationService;
     }
@@ -54,7 +57,7 @@ public class ChangesNotificationDisplayerViewImpl implements ChangesNotification
     public void init() {
         modal = new BaseModal();
         modal.setTitle(translationService.getTranslation(FormEditorConstants.ChangesNotificationDisplayerTitle));
-        modal.setBody(FormsElementWrapperWidgetUtil.getWidget(this, this.getElement()));
+        modal.setBody(wrapperWidgetUtil.getWidget(this, this.getElement()));
         modal.add(footer);
     }
 
@@ -78,6 +81,6 @@ public class ChangesNotificationDisplayerViewImpl implements ChangesNotification
     @PreDestroy
     public void destroy() {
         modal.clear();
-        FormsElementWrapperWidgetUtil.clear(this.getElement());
+        wrapperWidgetUtil.clear(this.getElement());
     }
 }

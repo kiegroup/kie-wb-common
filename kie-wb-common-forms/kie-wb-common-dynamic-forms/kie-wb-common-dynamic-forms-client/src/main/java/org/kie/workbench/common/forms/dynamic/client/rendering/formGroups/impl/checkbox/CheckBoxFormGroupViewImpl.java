@@ -44,6 +44,9 @@ public class CheckBoxFormGroupViewImpl implements IsElement,
     @DataField
     protected Div helpBlock;
 
+    @Inject
+    private FormsElementWrapperWidgetUtil wrapperWidgetUtil;
+
     private Map<String, Widget> viewPartsWidget = new HashMap<>();
 
     public void render(Widget widget,
@@ -51,7 +54,7 @@ public class CheckBoxFormGroupViewImpl implements IsElement,
 
         fieldLabel.renderForInput(widget,
                                   field);
-        viewPartsWidget.put("Check Box Label", FormsElementWrapperWidgetUtil.getWidget(this, fieldLabel.getElement()));
+        viewPartsWidget.put("Check Box Label", wrapperWidgetUtil.getWidget(this, fieldLabel.getElement()));
     }
 
     @Override
@@ -66,6 +69,6 @@ public class CheckBoxFormGroupViewImpl implements IsElement,
 
     @PreDestroy
     public void clear() {
-        FormsElementWrapperWidgetUtil.clear(this);
+        wrapperWidgetUtil.clear(this);
     }
 }

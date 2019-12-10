@@ -602,7 +602,7 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
 
     @PreDestroy
     public void destroy() {
-        if(null != FormEditorContext.getActiveEditorHelper() && FormEditorContext.getActiveEditorHelper().equals(editorHelper)) {
+        if (null != FormEditorContext.getActiveEditorHelper() && FormEditorContext.getActiveEditorHelper().equals(editorHelper)) {
             FormEditorContext.setActiveEditorHelper(null);
         }
         editorFieldLayoutComponents.destroyAll();
