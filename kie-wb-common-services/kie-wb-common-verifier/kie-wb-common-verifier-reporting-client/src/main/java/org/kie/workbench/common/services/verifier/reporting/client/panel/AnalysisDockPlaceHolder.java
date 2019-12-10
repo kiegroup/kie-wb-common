@@ -17,13 +17,16 @@ package org.kie.workbench.common.services.verifier.reporting.client.panel;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.widgets.client.docks.PlaceHolderBase;
+import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderBase;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
+/**
+ * Wrapper for the analysis panel when it is placed into an editor dock.
+ */
 @ApplicationScoped
 @WorkbenchScreen(identifier = AnalysisDockPlaceHolder.IDENTIFIER)
 public class AnalysisDockPlaceHolder
-        extends PlaceHolderBase {
+        extends DockPlaceHolderBase {
 
     public static final String IDENTIFIER = "org.docks.AnalysisDockPlaceHolder";
 }

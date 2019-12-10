@@ -17,19 +17,19 @@ package org.kie.workbench.common.widgets.client.docks;
 
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class PlaceHolderBaseViewImpl
+public class DockPlaceHolderBaseViewImpl
         extends SimplePanel
-        implements PlaceHolderBaseView {
+        implements DockPlaceHolderBaseView {
 
-    private PlaceHolderBase presenter;
+    private DockPlaceHolderBase presenter;
 
     @Override
-    public PlaceHolderBase getPresenter() {
+    public DockPlaceHolderBase getPresenter() {
         return presenter;
     }
 
     @Override
-    public void setPresenter(PlaceHolderBase presenter) {
+    public void setPresenter(DockPlaceHolderBase presenter) {
         this.presenter = presenter;
     }
 }

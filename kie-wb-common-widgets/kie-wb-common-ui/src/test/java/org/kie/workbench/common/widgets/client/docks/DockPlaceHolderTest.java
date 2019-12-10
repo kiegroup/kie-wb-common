@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 public class DockPlaceHolderTest {
 
     @Mock
-    private PlaceHolderBaseView view;
+    private DockPlaceHolderBaseView view;
 
     @InjectMocks
     private DockPlaceHolder dockPlaceHolder = new DockPlaceHolder();

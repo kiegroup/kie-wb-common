@@ -19,9 +19,10 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.uberfire.client.annotations.WorkbenchScreen;
 
+
 @ApplicationScoped
 @WorkbenchScreen(identifier = "org.docks.PlaceHolder")
 public class DockPlaceHolder
-        extends PlaceHolderBase {
+        extends DockPlaceHolderBase {
 
 }

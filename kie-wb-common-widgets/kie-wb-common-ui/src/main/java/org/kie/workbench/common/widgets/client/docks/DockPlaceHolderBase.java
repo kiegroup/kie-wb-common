@@ -18,20 +18,24 @@ package org.kie.workbench.common.widgets.client.docks;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 
-public class PlaceHolderBase {
+/**
+ * Base for any panel that is opened into the an editor dock.
+ * To use this dock it is necessary to register the dock for the editor that uses it.
+ * @see org.kie.workbench.common.widgets.metadata.client.KieEditor.registerDock(String, IsWidget)
+ */
+public class DockPlaceHolderBase {
 
-    private PlaceHolderBaseView view;
+    private DockPlaceHolderBaseView view;
 
-    public PlaceHolderBase() {
+    public DockPlaceHolderBase() {
         // CDI
     }
 
     @Inject
-    public void init(final PlaceHolderBaseView view) {
+    public void init(final DockPlaceHolderBaseView view) {
         this.view = view;
         this.view.setPresenter(this);
     }

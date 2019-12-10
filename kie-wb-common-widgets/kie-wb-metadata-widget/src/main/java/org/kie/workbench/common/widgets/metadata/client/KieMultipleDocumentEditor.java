@@ -45,8 +45,8 @@ import org.kie.workbench.common.widgets.client.callbacks.CommandBuilder;
 import org.kie.workbench.common.widgets.client.callbacks.CommandDrivenErrorCallback;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
 import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderPlace;
-import org.kie.workbench.common.widgets.client.docks.PlaceHolderBase;
-import org.kie.workbench.common.widgets.client.docks.PlaceHolderBaseView;
+import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderBase;
+import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderBaseView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.configresource.client.widget.bound.ImportsWidgetPresenter;
@@ -300,16 +300,16 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
 
     protected void setDockWidget(final PlaceRequest placeRequest,
                                  final IsWidget widget) {
-        final Optional<PlaceHolderBase> dockPresenter = getDockPresenter(placeRequest);
-        if (dockPresenter.isPresent()) {
-            dockPresenter.get().setView(widget);
+        final Optional<DockPlaceHolderBase> dockPlaceHolder = getDockPlaceHolder(placeRequest);
+        if (dockPlaceHolder.isPresent()) {
+            dockPlaceHolder.get().setView(widget);
         }
     }
 
-    private Optional<PlaceHolderBase> getDockPresenter(final PlaceRequest placeRequest) {
+    private Optional<DockPlaceHolderBase> getDockPlaceHolder(final PlaceRequest placeRequest) {
         if (Objects.equals(PlaceStatus.OPEN, placeManager.getStatus(placeRequest))) {
             final AbstractWorkbenchActivity panelActivity = (AbstractWorkbenchActivity) placeManager.getActivity(placeRequest);
-            return Optional.of(((PlaceHolderBaseView) panelActivity.getWidget()).getPresenter());
+            return Optional.of(((DockPlaceHolderBaseView) panelActivity.getWidget()).getPresenter());
         } else {
             return Optional.empty();
         }

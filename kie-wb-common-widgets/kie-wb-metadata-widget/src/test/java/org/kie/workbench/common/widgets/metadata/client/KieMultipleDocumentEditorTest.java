@@ -38,8 +38,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
-import org.kie.workbench.common.widgets.client.docks.PlaceHolderBase;
-import org.kie.workbench.common.widgets.client.docks.PlaceHolderBaseView;
+import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderBase;
+import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderBaseView;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -866,8 +866,8 @@ public class KieMultipleDocumentEditorTest
         doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(any(PlaceRequest.class));
         final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
         doReturn(workbenchActivity).when(placeManager).getActivity(any());
-        final PlaceHolderBaseView placeHolderView = mock(PlaceHolderBaseView.class);
-        final PlaceHolderBase placeHolderBase = mock(PlaceHolderBase.class);
+        final DockPlaceHolderBaseView placeHolderView = mock(DockPlaceHolderBaseView.class);
+        final DockPlaceHolderBase placeHolderBase = mock(DockPlaceHolderBase.class);
         doReturn(placeHolderBase).when(placeHolderView).getPresenter();
         doReturn(placeHolderView).when(workbenchActivity).getWidget();
         verify(placeManager).registerOnOpenCallback(any(),
@@ -886,8 +886,8 @@ public class KieMultipleDocumentEditorTest
         doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(any(PlaceRequest.class));
         final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
         doReturn(workbenchActivity).when(placeManager).getActivity(any());
-        final PlaceHolderBaseView placeHolderView = mock(PlaceHolderBaseView.class);
-        final PlaceHolderBase placeHolderBase = mock(PlaceHolderBase.class);
+        final DockPlaceHolderBaseView placeHolderView = mock(DockPlaceHolderBaseView.class);
+        final DockPlaceHolderBase placeHolderBase = mock(DockPlaceHolderBase.class);
         doReturn(placeHolderBase).when(placeHolderView).getPresenter();
         doReturn(placeHolderView).when(workbenchActivity).getWidget();
         verify(placeManager).registerOnOpenCallback(any(),

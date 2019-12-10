@@ -17,14 +17,14 @@ package org.kie.workbench.common.widgets.client.docks;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
-public interface PlaceHolderBaseView
+public interface DockPlaceHolderBaseView
         extends IsWidget {
 
     void clear();
 
     void setWidget(final IsWidget widget);
 
-    PlaceHolderBase getPresenter();
+    DockPlaceHolderBase getPresenter();
 
-    void setPresenter(final PlaceHolderBase presenter);
+    void setPresenter(final DockPlaceHolderBase presenter);
 }
