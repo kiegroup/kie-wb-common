@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.kogito.webapp.base.client.workarounds;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
@@ -24,13 +28,16 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.backend.vfs.DirectoryStream;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.commons.uuid.UUID;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.PlaceRequest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.TestingVFSService.CONTENT_PARAMETER_NAME;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.TestingVFSService.FILE_NAME_PARAMETER_NAME;
 import static org.mockito.Matchers.eq;
@@ -46,7 +53,6 @@ public class TestingVFSServiceTest {
     private static final String FILE_NAME = "FILE_NAME";
     private static final String XML = "XML";
 
-
     @Mock
     private PlaceManager placeManagerMock;
 
@@ -59,6 +65,14 @@ public class TestingVFSServiceTest {
     @Mock
     private RemoteCallback<String> callbackMock;
 
+    @Mock
+    private RemoteCallback<List<Path>> itemsCallbackMock;
+
+    @Mock
+    private DirectoryStream<Path> directoryStreamMock;
+
+    private List<Path> files;
+
     private CallerMock<VFSService> vfsServiceCallerMock;
 
     private TestingVFSService testingVFSService;
@@ -66,9 +80,21 @@ public class TestingVFSServiceTest {
     @Before
     public void setup() {
         vfsServiceCallerMock = new CallerMock(vfsServiceMock);
+        files = IntStream.range(0, 6).mapToObj(value -> {
+            String suffix = value < 3 ? "scesim" : "dmn";
+            return getPathMock(suffix);
+        }).collect(Collectors.toList());
         when(pathMock.getFileName()).thenReturn(FILE_NAME);
         when(vfsServiceMock.readAllString(eq(pathMock))).thenReturn(XML);
+        when(directoryStreamMock.spliterator()).thenReturn(files.spliterator());
+        when(vfsServiceMock.newDirectoryStream(eq(pathMock))).thenReturn(directoryStreamMock);
         testingVFSService = new TestingVFSService(placeManagerMock, vfsServiceCallerMock);
+    }
+
+    @Test
+    public void createDirectory() {
+        testingVFSService.createDirectory(pathMock);
+        verify(vfsServiceMock, times(1)).createDirectory(eq(pathMock));
     }
 
     @Test
@@ -103,5 +129,28 @@ public class TestingVFSServiceTest {
         testingVFSService.saveFile(pathMock, XML, callbackMock, mock(ErrorCallback.class));
         verify(vfsServiceMock, times(1)).write(eq(pathMock), eq(XML));
         verify(callbackMock, times(1)).callback(eq(XML));
+    }
+
+    @Test
+    public void getItemsByPathWithoutSuffix() {
+        RemoteCallback<List<Path>> testingCallback = response -> assertEquals(files.size(), response.size());
+        testingVFSService.getItemsByPath(pathMock, testingCallback, mock(ErrorCallback.class));
+        verify(vfsServiceMock, times(1)).newDirectoryStream(eq(pathMock));
+    }
+
+    @Test
+    public void getItemsByPathWithSuffix() {
+        RemoteCallback<List<Path>> testingCallback = response -> {
+            assertTrue(files.size() > response.size());
+            response.forEach(path -> assertEquals("dmn", path.getFileName().substring(path.getFileName().lastIndexOf('.') + 1)));
+        };
+        testingVFSService.getItemsByPath(pathMock, "dmn", testingCallback, mock(ErrorCallback.class));
+        verify(vfsServiceMock, times(1)).newDirectoryStream(eq(pathMock));
+    }
+
+    private Path getPathMock(String suffix) {
+        Path toReturn = mock(Path.class);
+        when(toReturn.getFileName()).thenReturn(UUID.uuid() + "." + suffix);
+        return toReturn;
     }
 }
