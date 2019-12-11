@@ -15,21 +15,23 @@
  */
 package org.kie.workbench.common.widgets.client.docks;
 
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class DockPlaceHolderBaseViewImpl
-        extends SimplePanel
-        implements DockPlaceHolderBaseView {
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
-    private DockPlaceHolderBase presenter;
+@RunWith(GwtMockitoTestRunner.class)
+public class DockPlaceHolderBaseViewImplTest {
 
-    @Override
-    public DockPlaceHolderBase getPresenter() {
-        return presenter;
-    }
+    @Test
+    public void testRoundTripWorks() {
+        final DockPlaceHolderBase presenter = mock(DockPlaceHolderBase.class);
+        final DockPlaceHolderBaseViewImpl view = new DockPlaceHolderBaseViewImpl();
 
-    @Override
-    public void setPresenter(final DockPlaceHolderBase presenter) {
-        this.presenter = presenter;
+        view.setPresenter(presenter);
+
+        assertEquals(presenter, view.getPresenter());
     }
 }

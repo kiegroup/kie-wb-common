@@ -857,6 +857,28 @@ public class KieMultipleDocumentEditorTest
     }
 
     @Test
+    public void failWhenAttemptingToRegisterToNonExistingPlace() {
+        final IsWidget widget = mock(IsWidget.class);
+        editor.registerDock("test", widget);
+
+        editor.showDocks = true;
+
+        doReturn(PlaceStatus.CLOSE).when(placeManager).getStatus(any(PlaceRequest.class));
+        final AbstractWorkbenchActivity workbenchActivity = mock(AbstractWorkbenchActivity.class);
+        doReturn(workbenchActivity).when(placeManager).getActivity(any());
+        final DockPlaceHolderBaseView placeHolderView = mock(DockPlaceHolderBaseView.class);
+        final DockPlaceHolderBase placeHolderBase = mock(DockPlaceHolderBase.class);
+        doReturn(placeHolderBase).when(placeHolderView).getPresenter();
+        doReturn(placeHolderView).when(workbenchActivity).getWidget();
+        verify(placeManager).registerOnOpenCallback(any(),
+                                                    commandArgumentCaptor.capture());
+
+        commandArgumentCaptor.getValue().execute();
+
+        verify(placeHolderBase, never()).setView(widget);
+    }
+
+    @Test
     public void registerDockWhenDockVisible() {
         final IsWidget widget = mock(IsWidget.class);
         editor.registerDock("test", widget);

@@ -15,21 +15,23 @@
  */
 package org.kie.workbench.common.widgets.client.docks;
 
-import com.google.gwt.user.client.ui.SimplePanel;
+import org.junit.Test;
 
-public class DockPlaceHolderBaseViewImpl
-        extends SimplePanel
-        implements DockPlaceHolderBaseView {
+import static org.junit.Assert.assertEquals;
 
-    private DockPlaceHolderBase presenter;
+public class DockPlaceHolderPlaceTest {
 
-    @Override
-    public DockPlaceHolderBase getPresenter() {
-        return presenter;
+    @Test
+    public void defaultSettings() {
+        final DockPlaceHolderPlace test = new DockPlaceHolderPlace("test");
+        assertEquals("org.docks.PlaceHolder", test.getIdentifier());
+        assertEquals("test", test.getParameter("name", "default"));
     }
 
-    @Override
-    public void setPresenter(final DockPlaceHolderBase presenter) {
-        this.presenter = presenter;
+    @Test
+    public void customSettings() {
+        final DockPlaceHolderPlace test = new DockPlaceHolderPlace("my.place", "custom");
+        assertEquals("my.place", test.getIdentifier());
+        assertEquals("custom", test.getParameter("name", "default"));
     }
 }
