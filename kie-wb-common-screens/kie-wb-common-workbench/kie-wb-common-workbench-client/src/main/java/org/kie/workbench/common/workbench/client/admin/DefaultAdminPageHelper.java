@@ -120,6 +120,7 @@ public class DefaultAdminPageHelper {
         addSSHKeys();
         addProfilePreferences();
         addDataTransferPerspective();
+        addArchetypesPerspective();
     }
 
     private void addDataTransferPerspective() {
@@ -339,6 +340,22 @@ public class DefaultAdminPageHelper {
                                   addAdminBreadcrumbs(PerspectiveIds.DATASET_AUTHORING,
                                                       constants.DataSets(),
                                                       accessDataSets);
+                              });
+        }
+    }
+
+    private void addArchetypesPerspective() {
+        if (hasAccessToPerspective(PerspectiveIds.ARCHETYPE_MANAGEMENT)) {
+            adminPage.addTool("root",
+                              constants.Archetypes(),
+                              new Sets.Builder().add("fa").add("fa-file-code-o").build(),
+                              "advanced",
+                              () -> {
+                                  final Command accessArchetypeMgmt = () -> placeManager.goTo(PerspectiveIds.ARCHETYPE_MANAGEMENT);
+                                  accessArchetypeMgmt.execute();
+                                  addAdminBreadcrumbs(PerspectiveIds.ARCHETYPE_MANAGEMENT,
+                                                      constants.Archetypes(),
+                                                      accessArchetypeMgmt);
                               });
         }
     }

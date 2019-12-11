@@ -89,6 +89,15 @@ public class MockWorkspaceProjectService implements WorkspaceProjectService {
     }
 
     @Override
+    public WorkspaceProject newProject(final OrganizationalUnit organizationalUnit,
+                                       final POM pom,
+                                       final DeploymentMode mode,
+                                       final List<Contributor> contributor,
+                                       final Repository templateRepository) {
+        return PROJECT;
+    }
+
+    @Override
     public String createFreshProjectName(final OrganizationalUnit organizationalUnit,
                                          final String name) {
         throw new UnsupportedOperationException(NOT_AVAILABLE_IN_KOGITO);
