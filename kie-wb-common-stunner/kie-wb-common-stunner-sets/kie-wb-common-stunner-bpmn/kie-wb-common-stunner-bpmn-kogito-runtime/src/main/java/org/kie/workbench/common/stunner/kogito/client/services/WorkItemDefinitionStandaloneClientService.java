@@ -27,8 +27,8 @@ import javax.inject.Inject;
 import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
+import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientParser;
 import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
-import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionParser;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
@@ -40,13 +40,13 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
 
     private final Promises promises;
     private final WorkItemDefinitionCacheRegistry registry;
-    private final WorkItemDefinitionParser parser;
+    private final WorkItemDefinitionClientParser parser;
     private final ResourceContentService resourceContentService;
 
     @Inject
     public WorkItemDefinitionStandaloneClientService(final Promises promises,
                                                      final WorkItemDefinitionCacheRegistry registry,
-                                                     final WorkItemDefinitionParser parser,
+                                                     final WorkItemDefinitionClientParser parser,
                                                      final ResourceContentService resourceContentService) {
         this.promises = promises;
         this.registry = registry;

@@ -18,14 +18,17 @@ package org.kie.workbench.common.stunner.bpmn.client.workitem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import org.guvnor.common.services.project.model.Dependencies;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
 import org.kie.workbench.common.stunner.bpmn.workitem.IconDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.uberfire.commons.data.Pair;
@@ -36,7 +39,7 @@ import org.uberfire.commons.data.Pair;
  *
  */
 @ApplicationScoped
-public class WorkItemDefinitionParser {
+public class WorkItemDefinitionClientParser {
 
     public List<WorkItemDefinition> parse(String widStr) {
 
@@ -63,19 +66,7 @@ public class WorkItemDefinitionParser {
     }
 
     private static WorkItemDefinition parseWorkItemDefinitionObject(Queue<String> objectQueue) {
-        WorkItemDefinition wid = new WorkItemDefinition();
-        wid.setIconDefinition(new IconDefinition());
-        wid.getIconDefinition().setIconData("");
-        wid.getIconDefinition().setUri("");
-        wid.setUri("");
-        wid.setName("");
-        wid.setCategory("");
-        wid.setDescription("");
-        wid.setDocumentation("");
-        wid.setDisplayName("");
-        wid.setResults("");
-        wid.setDefaultHandler("");
-        wid.setParameters("");
+        WorkItemDefinition wid = emptyWid();
         wid.setDependencies(new Dependencies());
         String line = objectQueue.poll();
         while (!isEndingObject(line) && !objectQueue.isEmpty()) {
@@ -91,18 +82,16 @@ public class WorkItemDefinitionParser {
                     wid.getIconDefinition().setUri(attributes.getK2());
                     break;
                 case "parameters":
-                    String parameters = "";
                     if (!isEndingObject(attributes.getK2())) {
-                        parameters = retrieveParameters(objectQueue);
+                        Collection<Pair<String, String>> parameters = retrieveParameters(objectQueue);
+                        wid.setParameters(parseParameters(parameters));
                     }
-                    wid.setParameters(parameters);
                     break;
                 case "results":
-                    String results = "";
                     if (!isEndingObject(attributes.getK2())) {
-                        results = retrieveParameters(objectQueue);
+                        Collection<Pair<String, String>> results = retrieveParameters(objectQueue);
+                        wid.setResults(parseParameters(results));
                     }
-                    wid.setResults(results);
                     break;
                 case "category":
                     wid.setCategory(attributes.getK2());
@@ -111,14 +100,41 @@ public class WorkItemDefinitionParser {
             }
             line = objectQueue.poll();
         }
+
+        if (empty(wid.getCategory())) {
+            wid.setCategory(BPMNCategories.SERVICE_TASKS);
+        }
         return wid;
     }
 
-    private static String retrieveParameters(Queue<String> objectQueue) {
+    private static WorkItemDefinition emptyWid() {
+        WorkItemDefinition wid = new WorkItemDefinition();
+        wid.setIconDefinition(new IconDefinition());
+        wid.getIconDefinition().setIconData("");
+        wid.getIconDefinition().setUri("");
+        wid.setUri("");
+        wid.setName("");
+        wid.setCategory("");
+        wid.setDescription("");
+        wid.setDocumentation("");
+        wid.setDisplayName("");
+        wid.setResults("");
+        wid.setDefaultHandler("");
+        wid.setDependencies(new Dependencies(Collections.emptyList()));
+        wid.setParameters("");
+        return wid;
+    }
+
+    private static Collection<Pair<String, String>> retrieveParameters(Queue<String> objectQueue) {
         String param = objectQueue.poll();
-        String params = "";
+        List<Pair<String, String>> params = new ArrayList<>();
         while (!(isEndingObject(param) || objectQueue.isEmpty())) {
-            params += param.trim();
+            String[] paramsParts = param.trim().split(":");
+            String paramName = cleanProp(paramsParts[0]);
+            String paramType = paramsParts[1].replaceAll("new", "")
+                                             .replaceAll(",", "")
+                                             .replaceAll("\\(\\)", "").trim();
+            params.add(new Pair<>(paramName, toJavaType(paramType)));
             param = objectQueue.poll();
         }
         return params;
@@ -143,6 +159,32 @@ public class WorkItemDefinitionParser {
 
     private static boolean isEndingObject(String line) {
         return line == null || line.endsWith("]") || line.endsWith("],");
+    }
+
+    private static String parseParameters(final Collection<Pair<String, String>> parameters) {
+        return "|" + parameters.stream()
+                               .map(param -> param.getK1() + ":" + param.getK2())
+                               .sorted(String::compareTo)
+                               .collect(Collectors.joining(",")) + "|";
+    }
+
+    /**
+     * 
+     * Converts a MVEL datatype to Java type. Could be extended for all MVEL possible types.
+     * @param mvelType
+     *  The MVEL type, e.g. StringDataType
+     * @return
+     * The Java corresponding type e.g. String
+     */
+    private static String toJavaType(String mvelType) {
+        switch (mvelType) {
+            case "StringDataType":
+                return "String";
+            case "ObjectDataType":
+                return "java.lang.Object";
+            default:
+                return mvelType;
+        }
     }
 
 }

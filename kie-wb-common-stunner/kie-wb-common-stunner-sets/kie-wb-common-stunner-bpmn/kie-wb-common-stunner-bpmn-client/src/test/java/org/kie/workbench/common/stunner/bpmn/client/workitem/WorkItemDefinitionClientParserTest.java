@@ -19,12 +19,13 @@ package org.kie.workbench.common.stunner.bpmn.client.workitem;
 import java.util.List;
 
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class WorkItemDefinitionParserTest {
+public class WorkItemDefinitionClientParserTest {
 
     final static String WID = "  [\n" +
                               "    [\n" +
@@ -66,15 +67,12 @@ public class WorkItemDefinitionParserTest {
                               "      ]\n" +
                               "  ]";
 
-    final static String EMAIL_WID_EXTRACTED_PARAMETERS = "\"From\" : new StringDataType(),\"To\" : new StringDataType()," +
-                                                         "\"Subject\" : new StringDataType(),\"Body\" : new StringDataType()";
+    final static String EMAIL_WID_EXTRACTED_PARAMETERS = "|Body:String,From:String,Subject:String,To:String|";
 
-    final static String REST_WID_EXTRACTED_PARAMETERS = "\"ContentData\" : new StringDataType(),\"Url\" : new StringDataType()," +
-                                                        "\"Method\" : new StringDataType(),\"ConnectTimeout\" : new StringDataType()," +
-                                                        "\"ReadTimeout\" : new StringDataType(),\"Username\" : new StringDataType()," +
-                                                        "\"Password\" : new StringDataType()";
+    final static String REST_WID_EXTRACTED_PARAMETERS = "|ConnectTimeout:String,ContentData:String,Method:String," +
+                                                        "Password:String,ReadTimeout:String,Url:String,Username:String|";
 
-    WorkItemDefinitionParser parser = new WorkItemDefinitionParser();
+    WorkItemDefinitionClientParser parser = new WorkItemDefinitionClientParser();
 
     @Test
     public void emptyWidsTest() {
@@ -96,25 +94,25 @@ public class WorkItemDefinitionParserTest {
         assertEquals("Email", wid1.getName());
         assertEquals("Email", wid1.getDisplayName());
         assertEquals("defaultemailicon.gif", wid1.getIconDefinition().getUri());
+        assertEquals(BPMNCategories.SERVICE_TASKS, wid1.getCategory());
         assertTrue(wid1.getResults().isEmpty());
         assertEquals(EMAIL_WID_EXTRACTED_PARAMETERS, wid1.getParameters());
 
         WorkItemDefinition wid2 = defs.get(1);
-
         assertEquals("Rest", wid2.getName());
         assertEquals("REST", wid2.getDisplayName());
         assertEquals("defaultservicenodeicon.png", wid2.getIconDefinition().getUri());
         assertTrue(wid1.getResults().isEmpty());
 
         assertEquals(REST_WID_EXTRACTED_PARAMETERS, wid2.getParameters());
-        assertEquals("\"Result\" : new ObjectDataType(),", wid2.getResults());
+        assertEquals("|Result:java.lang.Object|", wid2.getResults());
 
         WorkItemDefinition wid3 = defs.get(2);
 
         assertEquals("Milestone", wid3.getName());
         assertEquals("Milestone", wid3.getDisplayName());
         assertEquals("defaultmilestoneicon.png", wid3.getIconDefinition().getUri());
-        assertEquals("\"Condition\" : new StringDataType()", wid3.getParameters());
+        assertEquals("|Condition:String|", wid3.getParameters());
         assertEquals("Milestone", wid3.getCategory());
     }
 }
