@@ -18,6 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gwt.http.client.URL;
 import org.eclipse.bpmn2.Assignment;
@@ -25,6 +27,7 @@ import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.ItemAwareElement;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessage;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.AssociationDeclaration;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.FormalExpressionBodyHandler;
 
@@ -33,6 +36,8 @@ import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.t
 public class InputAssignmentReader {
 
     private final AssociationDeclaration associationDeclaration;
+
+    private static Logger logger = Logger.getLogger(InputAssignmentReader.class.getName());
 
     public static InputAssignmentReader fromAssociation(DataInputAssociation in) {
         List<ItemAwareElement> sourceList = in.getSourceRef();
@@ -47,7 +52,8 @@ public class InputAssignmentReader {
         } else if (!assignmentList.isEmpty()) {
             return new InputAssignmentReader(assignmentList.get(0), targetName);
         } else {
-            throw new IllegalArgumentException("Cannot find SourceRef or Assignment for Target " + targetName);
+            logger.log(Level.SEVERE, MarshallingMessage.builder().message("Cannot find SourceRef or Assignment for Target ").toString() + targetName);
+            return null;
         }
     }
 
