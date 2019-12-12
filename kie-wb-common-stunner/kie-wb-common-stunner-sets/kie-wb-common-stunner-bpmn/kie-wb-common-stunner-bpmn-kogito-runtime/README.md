@@ -2,8 +2,10 @@ Stunner Kogito Showcase
 =======================
 
 For detailed instructions on how to configure your development environment and run the Kogito Showcase, please refer to 
-the [Stunner directory README documentation](../../).
+the [Stunner directory README documentation](../../../).
 
-To open the editor it should be called on the browser console: 
-
-<b>gwtEditorsBeans.get("BPMNDiagramEditor").get().setContent(""");</b>
+* Build Stunner entire project: `mvn clean install -DskipTests -Dgwt.compiler.skip=true`
+* Go to this directory and package it: `mvn clean package`
+* Open `target/kie-wb-common-bpmn-kogito-runtime/index.html` in browser
+* To create new diagram copy/paste this command into the browser console: `gwtEditorBeans.get("BPMNDiagramEditor").get().setContent("");` 
+* To get content of the diagram copy/paste this command into the browser console: `gwtEditorBeans.get("BPMNDiagramEditor").get().getContent()`
