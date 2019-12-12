@@ -21,12 +21,14 @@ import org.kie.workbench.common.dmn.api.definition.model.IsInformationItem;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.resources.xml.UnmarshallerXMLTests;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 
 public class InputDataTest extends BaseDMNTest {
 
@@ -52,11 +54,11 @@ public class InputDataTest extends BaseDMNTest {
     public void doAssertions(final Diagram diagram) throws AssertionError {
         assertNotNull(diagram);
 
-        final Node<View<DMNDiagram>, ?> dmnDiagramNode = GraphUtils.getFirstNode(diagram.getGraph(), DMNDiagram.class);
+        final Node<Definition<DMNDiagram>, ?> dmnDiagramNode = GraphUtils.getFirstNode(diagram.getGraph(), DMNDiagram.class);
         assertNotNull("DMNDiagram node is not null", dmnDiagramNode);
         assertEquals("DMNDiagram has one outgoing edge", 1, dmnDiagramNode.getOutEdges().size());
 
-        final Node<View<InputData>, ?> dmnInputDataNode = GraphUtils.getFirstNode(diagram.getGraph(), InputData.class);
+        final Node<Definition<InputData>, ?> dmnInputDataNode = GraphUtils.getFirstNode(diagram.getGraph(), InputData.class);
         assertNotNull("InputData node is not null", dmnInputDataNode);
         assertEquals("InputData has one incoming edge", 1, dmnInputDataNode.getInEdges().size());
 
@@ -80,9 +82,13 @@ public class InputDataTest extends BaseDMNTest {
         assertEquals("InputData border colour (BackgroundSet)", "#000000", inputData.getBackgroundSet().getBorderColour().getValue());
         assertEquals("InputData font colour (FontSet)", "#000000", inputData.getFontSet().getFontColour().getValue());
 
-        assertEquals("InputData width (View)", 100.0, dmnInputDataNode.getContent().getBounds().getWidth());
-        assertEquals("InputData height (View)", 50.0, dmnInputDataNode.getContent().getBounds().getHeight());
-        assertEquals("InputData x (View)", 252.0, dmnInputDataNode.getContent().getBounds().getX());
-        assertEquals("InputData y (View)", 150.0, dmnInputDataNode.getContent().getBounds().getY());
+        final Definition<InputData> inputDataDefinition = dmnInputDataNode.getContent();
+        assertTrue("InputData definition is instance of View", inputDataDefinition instanceof View);
+        
+        final View inputDataView = (View) inputDataDefinition;
+        assertEquals("InputData width (View)", 100.0, inputDataView.getBounds().getWidth());
+        assertEquals("InputData height (View)", 50.0, inputDataView.getBounds().getHeight());
+        assertEquals("InputData x (View)", 252.0, inputDataView.getBounds().getX());
+        assertEquals("InputData y (View)", 150.0, inputDataView.getBounds().getY());
     }
 }
