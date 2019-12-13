@@ -9,6 +9,8 @@ MainJs = {
 
     mappings: [DC, DI, DMNDI12, DMN12, KIE],
 
+    cachedXsltProcessor: null,
+
     initializeJsInteropConstructors: function (constructorsMap) {
 
         var extraTypes = [{typeName: 'Name', namespace: null}];
@@ -104,8 +106,34 @@ MainJs = {
         var marshaller = context.createMarshaller();
 
         var xmlDocument = marshaller.marshalDocument(value);
-        var s = new XMLSerializer();
-        var toReturn = s.serializeToString(xmlDocument);
-        callback(toReturn);
+        callback(this.format(xmlDocument));
+    },
+
+    newXsltProcessor: function newXsltProcessor() {
+        var xsltDoc = new DOMParser().parseFromString(
+                [
+                    '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">',
+                    '  <xsl:strip-space elements="*"/>',
+                    '  <xsl:template match="para[content-style][not(text())]">',
+                    '    <xsl:value-of select="normalize-space(.)"/>',
+                    "  </xsl:template>",
+                    '  <xsl:template match="node()|@*">',
+                    '    <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>',
+                    "  </xsl:template>",
+                    '  <xsl:output indent="yes"/>',
+                    "</xsl:stylesheet>"
+                ].join("\n"),
+                "application/xml"
+        );
+
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsltDoc);
+        return xsltProcessor;
+    },
+
+    format: function (xmlDocument) {
+        this.cachedXsltProcessor = this.cachedXsltProcessor === null ? this.newXsltProcessor() : this.cachedXsltProcessor;
+        var resultDocument = this.cachedXsltProcessor.transformToDocument(xmlDocument);
+        return new XMLSerializer().serializeToString(resultDocument);
     }
 }
