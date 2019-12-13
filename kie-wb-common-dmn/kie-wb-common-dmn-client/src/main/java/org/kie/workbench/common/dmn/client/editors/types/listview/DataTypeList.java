@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -413,7 +414,7 @@ public class DataTypeList {
         renamed.clear();
 
         for (final DataObject dataObject : imported) {
-            final String nameCandidate = extractName(dataObject.getClassType());
+            final String nameCandidate = dataObject.getClassNameWithoutPackage();
             final String newName = buildName(nameCandidate, namesCount);
             renamed.put(dataObject.getClassType(), newName);
             dataObject.setClassType(newName);
@@ -460,16 +461,6 @@ public class DataTypeList {
         namesCount.put(nameCandidate, 1);
 
         return nameCandidate;
-    }
-
-    String extractName(final String fullQualifiedName) {
-
-        int lastIndex = 0;
-        if (fullQualifiedName.contains(".")) {
-            lastIndex = fullQualifiedName.lastIndexOf('.') + 1;
-        }
-
-        return fullQualifiedName.substring(lastIndex);
     }
 
     void insertProperties(final DataObject dataObject) {
@@ -519,6 +510,12 @@ public class DataTypeList {
         getItems().stream()
                 .filter(item -> Objects.equals(item.getDataType().getParentUUID(), uuid))
                 .forEach(child -> child.disableEditMode());
+    }
+
+    public List<String> getExistingDataTypesNames() {
+        return getItems().stream()
+                .map(item -> item.getDataType().getName())
+                .collect(Collectors.toList());
     }
 
     public interface View extends UberElemental<DataTypeList>,

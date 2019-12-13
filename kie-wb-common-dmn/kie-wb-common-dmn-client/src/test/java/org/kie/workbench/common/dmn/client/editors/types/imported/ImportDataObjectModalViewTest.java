@@ -18,8 +18,10 @@ package org.kie.workbench.common.dmn.client.editors.types.imported;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.DOMTokenList;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
@@ -39,6 +41,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.dmn.client.editors.types.imported.ImportDataObjectModalView.OPENED_CONTAINER_CSS_CLASS;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -91,8 +94,14 @@ public class ImportDataObjectModalViewTest {
     @Mock
     private Node treeListElement;
 
+    @Mock
+    private HTMLDivElement warningContainer;
+
     @Captor
     private ArgumentCaptor<List<TreeListItem>> itemsCaptor;
+
+    @Captor
+    private ArgumentCaptor<List<DataObject>> dataObjectsCaptor;
 
     @Before
     public void setup() {
@@ -106,7 +115,8 @@ public class ImportDataObjectModalViewTest {
                                                  clearSelection,
                                                  items,
                                                  buttonImport,
-                                                 buttonCancel));
+                                                 buttonCancel,
+                                                 warningContainer));
 
         view.init(presenter);
 
@@ -264,5 +274,63 @@ public class ImportDataObjectModalViewTest {
         view.removeTreeList();
 
         verify(itemsContainer, never()).removeChild(treeListElement);
+    }
+
+    @Test
+    public void testSetup() {
+
+        final Consumer consumer = mock(Consumer.class);
+
+        doReturn(consumer).when(view).getOnSelectionChanged();
+
+        view.setup();
+
+        verify(treeList).setOnSelectionChanged(consumer);
+    }
+
+    @Test
+    public void testOnSelectionChanged() {
+
+        final DataObject do1 = mock(DataObject.class);
+        final DataObject do2 = mock(DataObject.class);
+        final DataObject do3 = mock(DataObject.class);
+        final TreeListItem treeListItem1 = mock(TreeListItem.class);
+        final TreeListItem treeListItem2 = mock(TreeListItem.class);
+        final TreeListItem treeListItem3 = mock(TreeListItem.class);
+
+        when(treeListItem1.getDataSource()).thenReturn(do1);
+        when(treeListItem2.getDataSource()).thenReturn(do2);
+        when(treeListItem3.getDataSource()).thenReturn(do3);
+
+        view.onSelectionChanged(Arrays.asList(treeListItem1, treeListItem2, treeListItem3));
+
+        verify(presenter).onDataObjectSelectionChanged(dataObjectsCaptor.capture());
+
+        final List<DataObject> values = dataObjectsCaptor.getValue();
+
+        assertEquals(3, values.size());
+        assertTrue(values.contains(do1));
+        assertTrue(values.contains(do2));
+        assertTrue(values.contains(do3));
+    }
+
+    @Test
+    public void testShowDataTypeWithSameNameWarning() {
+
+        warningContainer.classList = mock(DOMTokenList.class);
+
+        view.showDataTypeWithSameNameWarning();
+
+        verify(warningContainer.classList).add(OPENED_CONTAINER_CSS_CLASS);
+    }
+
+    @Test
+    public void testHideDataTypeWithSameNameWarning() {
+
+        warningContainer.classList = mock(DOMTokenList.class);
+
+        view.hideDataTypeWithSameNameWarning();
+
+        verify(warningContainer.classList).remove(OPENED_CONTAINER_CSS_CLASS);
     }
 }
