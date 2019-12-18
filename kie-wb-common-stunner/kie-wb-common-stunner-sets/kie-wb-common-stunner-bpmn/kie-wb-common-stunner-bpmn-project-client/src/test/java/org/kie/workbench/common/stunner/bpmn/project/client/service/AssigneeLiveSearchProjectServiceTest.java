@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.GroupImpl;
@@ -81,6 +82,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchUsers() {
         assigneeLiveSearchService.init(AssigneeType.USER);
 
@@ -113,6 +115,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchUsersIncludeCustomEntries() {
         assigneeLiveSearchService.init(AssigneeType.USER);
 
@@ -147,6 +150,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchUsersIncludeCustomEntriesNotMatchSearchPattern() {
         assigneeLiveSearchService.init(AssigneeType.USER);
 
@@ -181,6 +185,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchGroups() {
         assigneeLiveSearchService.init(AssigneeType.GROUP);
 
@@ -213,6 +218,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchGroupsIncludeCustomEntries() {
         assigneeLiveSearchService.init(AssigneeType.GROUP);
 
@@ -247,6 +253,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchGroupsIncludeCustomEntriesNotMatchSearchPattern() {
         assigneeLiveSearchService.init(AssigneeType.GROUP);
 
@@ -281,6 +288,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchSingleUser() {
         assigneeLiveSearchService.init(AssigneeType.USER);
 
@@ -314,6 +322,7 @@ public class AssigneeLiveSearchProjectServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchSingleGroup() {
         assigneeLiveSearchService.init(AssigneeType.GROUP);
 
@@ -344,6 +353,36 @@ public class AssigneeLiveSearchProjectServiceTest {
 
         assertEquals(1, result.size());
         assertEquals("it", result.get(0).getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSearchResponseCapturedButInstanceAlreadyDestroyed() {
+        assigneeLiveSearchService.init(AssigneeType.USER);
+        assigneeLiveSearchService.searchEntry("user", callback);
+        ArgumentCaptor<RemoteCallback> callbackArgumentCaptor = ArgumentCaptor.forClass(RemoteCallback.class);
+        verify(userSystemManager).users(callbackArgumentCaptor.capture(), any());
+        RemoteCallback<AbstractEntityManager.SearchResponse<?>> successCallback = callbackArgumentCaptor.getValue();
+        // Destroy the instance before response callback executed...
+        assigneeLiveSearchService.destroy();
+        successCallback.callback(prepareSingleUserResponse());
+        // So the callback will never be called.
+        verify(callback, never()).afterSearch(any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSearchResponseErrorCapturedButInstanceAlreadyDestroyed() {
+        assigneeLiveSearchService.init(AssigneeType.USER);
+        assigneeLiveSearchService.searchEntry("user", callback);
+        ArgumentCaptor<ErrorCallback> callbackArgumentCaptor = ArgumentCaptor.forClass(ErrorCallback.class);
+        verify(userSystemManager).users(any(), callbackArgumentCaptor.capture());
+        ErrorCallback<Message> errorCallback = callbackArgumentCaptor.getValue();
+        // Destroy the instance before response error callback executed...
+        assigneeLiveSearchService.destroy();
+        errorCallback.error(mock(Message.class), new RuntimeException());
+        // So the callback will never be called.
+        verify(callback, never()).afterSearch(any());
     }
 
     @Test
@@ -436,7 +475,8 @@ public class AssigneeLiveSearchProjectServiceTest {
         expectedResults.forEach(expectedValue -> assertTrue(result.stream().anyMatch(entry -> entry.getValue().equals(expectedValue))));
     }
 
-    private AbstractEntityManager.SearchResponse<?> prepareUsersResponse() {
+    @SuppressWarnings("unchecked")
+    private static AbstractEntityManager.SearchResponse<?> prepareUsersResponse() {
 
         List result = new ArrayList();
 
@@ -447,7 +487,8 @@ public class AssigneeLiveSearchProjectServiceTest {
         return new SearchResponseImpl(result, 1, 1, 1, true);
     }
 
-    private AbstractEntityManager.SearchResponse<?> prepareSingleUserResponse() {
+    @SuppressWarnings("unchecked")
+    private static AbstractEntityManager.SearchResponse<?> prepareSingleUserResponse() {
 
         List result = new ArrayList();
 
@@ -456,7 +497,8 @@ public class AssigneeLiveSearchProjectServiceTest {
         return new SearchResponseImpl(result, 1, 1, 1, true);
     }
 
-    private AbstractEntityManager.SearchResponse<?> prepareGroupsResponse() {
+    @SuppressWarnings("unchecked")
+    private static AbstractEntityManager.SearchResponse<?> prepareGroupsResponse() {
 
         List result = new ArrayList();
 
@@ -467,7 +509,8 @@ public class AssigneeLiveSearchProjectServiceTest {
         return new SearchResponseImpl(result, 1, 1, 1, true);
     }
 
-    private AbstractEntityManager.SearchResponse<?> prepareSingleGroupResponse() {
+    @SuppressWarnings("unchecked")
+    private static AbstractEntityManager.SearchResponse<?> prepareSingleGroupResponse() {
 
         List result = new ArrayList();
 
