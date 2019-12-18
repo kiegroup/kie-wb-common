@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.data.modeller.model.DataObjectFormModel;
@@ -51,9 +50,7 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutColumn;
 import org.uberfire.ext.layout.editor.api.editor.LayoutRow;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
@@ -112,19 +109,15 @@ public class FormDefinitionGeneratorForBPMNWithComplexVariableTest extends Abstr
     public void testMigration() {
         generator.execute(context);
 
-        Assertions.assertThat(context.getSummaries())
-                .isNotEmpty()
-                .hasSize(4);
+        assertThat(context.getSummaries()).hasSize(4);
 
-        Assertions.assertThat(context.getExtraSummaries())
-                .isNotEmpty()
-                .hasSize(2);
+        assertThat(context.getExtraSummaries()).hasSize(2);
 
         // 4 legacyforms + 4 migrated forms + 2 new forms for nested models
         verify(migrationServicesCDIWrapper, times(10)).write(any(Path.class), anyString(), anyString());
 
         context.getSummaries().forEach(summary -> {
-            assertTrue(summary.getResult().isSuccess());
+            assertThat(summary.getResult().isSuccess()).isTrue();
             switch (summary.getBaseFormName() + ".form") {
                 case PROCESS_FORM:
                     verifyProcessForm(summary);
@@ -153,8 +146,7 @@ public class FormDefinitionGeneratorForBPMNWithComplexVariableTest extends Abstr
     private void verifyBPMNForm(FormMigrationSummary summary, Class<? extends JBPMFormModel> modelType) {
         Form originalForm = summary.getOriginalForm().get();
 
-        Assertions.assertThat(originalForm.getFormFields())
-                .hasSize(5);
+        assertThat(originalForm.getFormFields()).hasSize(5);
 
         Field originalInvoiceUser = originalForm.getField(INVOICE_USER);
         Field originalLines = originalForm.getField(INVOICE_LINES);
@@ -170,63 +162,52 @@ public class FormDefinitionGeneratorForBPMNWithComplexVariableTest extends Abstr
 
         Field invoiceField = originalForm.getField("invoice");
 
-        Assertions.assertThat(invoiceField)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("bag", INVOICE_MODEL)
-                .hasFieldOrPropertyWithValue("sourceLink", summary.getBaseFormName() + "-" + invoiceField.getFieldName())
-                .hasFieldOrPropertyWithValue("inputBinding", originalDataHolder.getInputId())
-                .hasFieldOrPropertyWithValue("outputBinding", originalDataHolder.getOuputId())
-                .extracting("defaultSubform").isNotNull();
+        assertThat(invoiceField.getBag()).isEqualTo(INVOICE_MODEL);
+        assertThat(invoiceField.getSourceLink())
+                .isEqualTo(summary.getBaseFormName() + "-" + invoiceField.getFieldName());
+        assertThat(invoiceField.getInputBinding()).isEqualTo(originalDataHolder.getInputId());
+        assertThat(invoiceField.getOutputBinding()).isEqualTo(originalDataHolder.getOuputId());
+        assertThat(invoiceField.getDefaultSubform()).isNotNull();
 
-        assertNotNull(invoiceField);
-        assertEquals(FieldTypeBuilder.SUBFORM, invoiceField.getFieldType().getCode());
+        assertThat(invoiceField.getFieldType().getCode()).isEqualTo(FieldTypeBuilder.SUBFORM);
 
         FormDefinition newFormDefinition = summary.getNewForm().get();
 
-        Assertions.assertThat(newFormDefinition.getModel())
+        assertThat(newFormDefinition.getModel())
                 .isNotNull()
                 .isInstanceOf(modelType);
 
-        Assertions.assertThat(newFormDefinition.getModel().getProperties())
-                .hasSize(1)
-                .extracting("typeInfo.className")
-                .contains(INVOICE_MODEL);
+        assertThat(newFormDefinition.getModel().getProperties()).hasSize(1);
+        assertThat(newFormDefinition.getModel().getProperties().get(0).getTypeInfo().getClassName())
+                .isEqualTo(INVOICE_MODEL);
 
-        Assertions.assertThat(newFormDefinition.getFields())
-                .isNotNull()
-                .hasSize(1);
+        assertThat(newFormDefinition.getFields()).hasSize(1);
 
         FieldDefinition newInvoiceField = newFormDefinition.getFieldByName("invoice");
 
-        Assertions.assertThat(newInvoiceField)
+        assertThat(newInvoiceField)
                 .isNotNull()
-                .isInstanceOf(SubFormFieldDefinition.class)
-                .hasFieldOrPropertyWithValue("standaloneClassName", INVOICE_MODEL);
+                .isInstanceOf(SubFormFieldDefinition.class);
+        assertThat(newInvoiceField.getStandaloneClassName()).isEqualTo(INVOICE_MODEL);
 
         LayoutTemplate newFormLayout = newFormDefinition.getLayoutTemplate();
 
-        assertNotNull(newFormLayout);
+        assertThat(newFormLayout).isNotNull();
 
-        Assertions.assertThat(newFormLayout.getRows())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(newFormLayout.getRows()).hasSize(1);
 
         LayoutRow newLayoutRow = newFormLayout.getRows().get(0);
 
-        assertNotNull(newLayoutRow);
+        assertThat(newLayoutRow).isNotNull();
 
-        Assertions.assertThat(newLayoutRow.getLayoutColumns())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(newLayoutRow.getLayoutColumns()).hasSize(1);
 
         LayoutColumn newLayoutColumn = newLayoutRow.getLayoutColumns().get(0);
 
-        assertNotNull(newLayoutColumn);
-        assertEquals("12", newLayoutColumn.getSpan());
+        assertThat(newLayoutColumn).isNotNull();
+        assertThat(newLayoutColumn.getSpan()).isEqualTo("12");
 
-        Assertions.assertThat(newLayoutColumn.getLayoutComponents())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(newLayoutColumn.getLayoutComponents()).hasSize(1);
 
         checkLayoutFormField(newLayoutColumn.getLayoutComponents().get(0), newInvoiceField, newFormDefinition);
 
@@ -242,26 +223,22 @@ public class FormDefinitionGeneratorForBPMNWithComplexVariableTest extends Abstr
     }
 
     protected void checkInvoiceFormDefinition(FormDefinition invoiceForm, Form originalForm) {
-        assertNotNull(invoiceForm);
+        assertThat(invoiceForm).isNotNull();
 
-        Assertions.assertThat(invoiceForm.getModel())
+        assertThat(invoiceForm.getModel())
                 .isNotNull()
-                .isInstanceOf(DataObjectFormModel.class)
-                .hasFieldOrPropertyWithValue("className", INVOICE_MODEL);
+                .isInstanceOf(DataObjectFormModel.class);
+        assertThat(((DataObjectFormModel) invoiceForm.getModel()).getClassName()).isEqualTo(INVOICE_MODEL);
 
-        Assertions.assertThat(invoiceForm.getFields())
-                .isNotEmpty()
-                .hasSize(4);
+        assertThat(invoiceForm.getFields()).hasSize(4);
 
         IntStream indexStream = IntStream.range(0, invoiceForm.getFields().size());
 
         LayoutTemplate formLayout = invoiceForm.getLayoutTemplate();
 
-        assertNotNull(formLayout);
+        assertThat(formLayout).isNotNull();
 
-        Assertions.assertThat(formLayout.getRows())
-                .isNotEmpty()
-                .hasSize(4);
+        assertThat(formLayout.getRows()).hasSize(4);
 
         indexStream.forEach(index -> {
             FieldDefinition fieldDefinition = invoiceForm.getFields().get(index);
@@ -283,20 +260,16 @@ public class FormDefinitionGeneratorForBPMNWithComplexVariableTest extends Abstr
 
             LayoutRow fieldRow = formLayout.getRows().get(index);
 
-            assertNotNull(fieldRow);
+            assertThat(fieldRow).isNotNull();
 
-            Assertions.assertThat(fieldRow.getLayoutColumns())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldRow.getLayoutColumns()).hasSize(1);
 
             LayoutColumn fieldColumn = fieldRow.getLayoutColumns().get(0);
 
-            assertNotNull(fieldColumn);
-            assertEquals("12", fieldColumn.getSpan());
+            assertThat(fieldColumn).isNotNull();
+            assertThat(fieldColumn.getSpan()).isEqualTo("12");
 
-            Assertions.assertThat(fieldColumn.getLayoutComponents())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldColumn.getLayoutComponents()).hasSize(1);
 
             checkLayoutFormField(fieldColumn.getLayoutComponents().get(0), fieldDefinition, invoiceForm);
         });

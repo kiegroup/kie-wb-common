@@ -19,15 +19,14 @@ package org.kie.workbench.common.system.space.configuration;
 import java.io.File;
 import java.nio.file.Paths;
 
-import org.assertj.core.api.Assertions;
 import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
 import org.guvnor.structure.backend.config.ConfigurationServiceImpl;
+import org.guvnor.structure.contributors.Contributor;
 import org.guvnor.structure.contributors.ContributorType;
 import org.guvnor.structure.organizationalunit.config.RepositoryInfo;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.organizationalunit.config.SpaceInfo;
 import org.guvnor.structure.server.config.ConfigType;
-import org.guvnor.structure.server.config.ConfigurationService;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.Before;
@@ -41,7 +40,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.spaces.SpacesAPI;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
@@ -107,22 +106,18 @@ public class ConfigGroupsMigrationServiceTest {
 
         SpaceInfo info = infoCaptor.getValue();
 
-        Assertions.assertThat(info)
-                .hasFieldOrPropertyWithValue("name", SPACE_NAME)
-                .hasFieldOrPropertyWithValue("defaultGroupId", SPACE_GROUP);
+        assertThat(info.getName()).isEqualTo(SPACE_NAME);
+        assertThat(info.getDefaultGroupId()).isEqualTo(SPACE_GROUP);
 
-        Assertions.assertThat(info.getContributors())
-                .hasSize(CONTRIBUTORS);
+        assertThat(info.getContributors()).hasSize(CONTRIBUTORS);
 
-        Assertions.assertThat(info.getContributors().iterator().next())
-                .hasFieldOrPropertyWithValue("username", CONTRIBUTOR)
-                .hasFieldOrPropertyWithValue("type", ContributorType.OWNER);
+        Contributor contributor = info.getContributors().iterator().next();
+        assertThat(contributor.getUsername()).isEqualTo(CONTRIBUTOR);
+        assertThat(contributor.getType()).isEqualTo(ContributorType.OWNER);
 
-        Assertions.assertThat(info.getSecurityGroups())
-                .isEmpty();
+        assertThat(info.getSecurityGroups()).isEmpty();
 
-        Assertions.assertThat(info.getRepositories())
-                .hasSize(SPACE_REPOS);
+        assertThat(info.getRepositories()).hasSize(SPACE_REPOS);
 
         checkSpaceRepo(TEST_LEGACY_REPO, info);
         checkSpaceRepo(TEST_MULTIPLE_INSTANCE_REPO, info);
@@ -131,26 +126,21 @@ public class ConfigGroupsMigrationServiceTest {
     private void checkSpaceRepo(String repoName, SpaceInfo info) {
         RepositoryInfo spaceRepo = info.getRepositories().stream().filter(repo -> repo.getName().equals(repoName)).findAny().orElse(null);
 
-        Assertions.assertThat(spaceRepo)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("name", repoName)
-                .hasFieldOrPropertyWithValue("deleted", DELETED);
+        assertThat(spaceRepo).isNotNull();
+        assertThat(spaceRepo.getName()).isEqualTo(repoName);
+        assertThat(spaceRepo.isDeleted()).isEqualTo(DELETED);
 
-        assertEquals(SPACE_NAME, spaceRepo.getSpace());
-        assertEquals(SpacesAPI.Scheme.GIT.toString(), spaceRepo.getScheme());
-        assertEquals(REPO_AVOID_INDEX, spaceRepo.isAvoidIndex());
+        assertThat(spaceRepo.getSpace()).isEqualTo(SPACE_NAME);
+        assertThat(spaceRepo.getScheme()).isEqualTo(SpacesAPI.Scheme.GIT.toString());
+        assertThat(spaceRepo.isAvoidIndex()).isEqualTo(REPO_AVOID_INDEX);
 
-        Assertions.assertThat(spaceRepo.getContributors())
-                .hasSize(CONTRIBUTORS);
+        assertThat(spaceRepo.getContributors()).hasSize(CONTRIBUTORS);
 
-        Assertions.assertThat(spaceRepo.getContributors().iterator().next())
-                .hasFieldOrPropertyWithValue("username", CONTRIBUTOR)
-                .hasFieldOrPropertyWithValue("type", ContributorType.OWNER);
+        Contributor contributor = spaceRepo.getContributors().iterator().next();
+        assertThat(contributor.getUsername()).isEqualTo(CONTRIBUTOR);
+        assertThat(contributor.getType()).isEqualTo(ContributorType.OWNER);
 
-        Assertions.assertThat(info.getSecurityGroups())
-                .isEmpty();
-
-
+        assertThat(info.getSecurityGroups()).isEmpty();
     }
 }
 

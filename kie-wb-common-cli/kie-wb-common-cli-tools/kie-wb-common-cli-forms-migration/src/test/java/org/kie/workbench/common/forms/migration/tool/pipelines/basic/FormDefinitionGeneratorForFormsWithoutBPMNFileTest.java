@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMFormModel;
@@ -34,8 +33,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -82,18 +80,15 @@ public class FormDefinitionGeneratorForFormsWithoutBPMNFileTest extends Abstract
     public void testMigration() {
         generator.execute(context);
 
-        Assertions.assertThat(context.getSummaries())
-                .isNotEmpty()
-                .hasSize(2);
+        assertThat(context.getSummaries()).hasSize(2);
 
-        Assertions.assertThat(context.getExtraSummaries())
-                .isEmpty();
+        assertThat(context.getExtraSummaries()).isEmpty();
 
         verify(migrationServicesCDIWrapper, never()).write(any(Path.class), anyString(), anyString());
 
         context.getSummaries().forEach(summary -> {
-            assertFalse(summary.getResult().isSuccess());
-            assertNull(summary.getNewForm());
+            assertThat(summary.getResult().isSuccess()).isFalse();
+            assertThat(summary.getNewForm()).isNull();
         });
     }
 }

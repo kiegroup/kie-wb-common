@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.definition.CheckBoxFieldDefinition;
@@ -55,9 +54,7 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.api.editor.LayoutRow;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
@@ -72,7 +69,6 @@ public class AllFieldTypesFormGenerationTest extends AbstractFormDefinitionGener
 
     @Mock
     private Path userFormPath;
-
 
     private Form userForm;
 
@@ -113,12 +109,9 @@ public class AllFieldTypesFormGenerationTest extends AbstractFormDefinitionGener
     public void testMigration() {
         generator.execute(context);
 
-        Assertions.assertThat(context.getSummaries())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(context.getSummaries()).hasSize(1);
 
-        Assertions.assertThat(context.getExtraSummaries())
-                .isEmpty();
+        assertThat(context.getExtraSummaries()).isEmpty();
 
         // 1 legacyforms + 1 migrated forms
         verify(migrationServicesCDIWrapper, times(2)).write(any(Path.class), anyString(), anyString());
@@ -129,19 +122,15 @@ public class AllFieldTypesFormGenerationTest extends AbstractFormDefinitionGener
 
         FormDefinition newForm = summary.getNewForm().get();
 
-        assertNotNull(newForm);
+        assertThat(newForm).isNotNull();
 
-        Assertions.assertThat(newForm.getFields())
-                .isNotEmpty()
-                .hasSize(fieldMappings.size());
+        assertThat(newForm.getFields()).hasSize(fieldMappings.size());
 
         LayoutTemplate newLayout = newForm.getLayoutTemplate();
 
-        assertNotNull(newLayout);
+        assertThat(newLayout).isNotNull();
 
-        Assertions.assertThat(newLayout.getRows())
-                .isNotEmpty()
-                .hasSize(fieldMappings.size() + 2); // fields + 2 decorators in original form
+        assertThat(newLayout.getRows()).hasSize(fieldMappings.size() + 2); // fields + 2 decorators in original form
 
         List<LayoutRow> rows = newLayout.getRows();
 
@@ -153,11 +142,11 @@ public class AllFieldTypesFormGenerationTest extends AbstractFormDefinitionGener
         indexStream.forEach(index -> {
             FieldDefinition newField = newForm.getFields().get(index);
 
-            assertNotNull(newField);
+            assertThat(newField).isNotNull();
 
             Field originalField = originalForm.getField(newField.getName());
 
-            assertNotNull(originalField);
+            assertThat(originalField).isNotNull();
 
             checkFieldDefinition(newField, newField.getName(), newField.getLabel(), newField.getBinding(), fieldMappings.get(newField.getName()), newForm, originalField);
 
@@ -166,29 +155,22 @@ public class AllFieldTypesFormGenerationTest extends AbstractFormDefinitionGener
             LayoutComponent component = checkRow(row);
 
             checkLayoutFormField(component, newField, newForm);
-
         });
     }
 
     protected void checkDecoratorRow(LayoutRow row) {
         LayoutComponent component = checkRow(row);
 
-        Assertions.assertThat(component)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("dragTypeName", FormsMigrationConstants.HTML_COMPONENT);
+        assertThat(component.getDragTypeName()).isEqualTo(FormsMigrationConstants.HTML_COMPONENT);
     }
 
     private LayoutComponent checkRow(LayoutRow row) {
-        Assertions.assertThat(row.getLayoutColumns())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(row.getLayoutColumns()).hasSize(1);
 
         LayoutColumn column = row.getLayoutColumns().get(0);
-        assertEquals("12", column.getSpan());
+        assertThat(column.getSpan()).isEqualTo("12");
 
-        Assertions.assertThat(column.getLayoutComponents())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(column.getLayoutComponents()).hasSize(1);
 
         return column.getLayoutComponents().get(0);
     }

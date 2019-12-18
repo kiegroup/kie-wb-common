@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
@@ -42,10 +40,7 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.api.editor.LayoutRow;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
@@ -58,7 +53,6 @@ public class FormDefinitionGeneratorWithUnsupportedFieldsTest extends AbstractFo
 
     @Mock
     private Path userFormPath;
-
 
     private Form userForm;
 
@@ -76,12 +70,9 @@ public class FormDefinitionGeneratorWithUnsupportedFieldsTest extends AbstractFo
     public void testMigration() {
         generator.execute(context);
 
-        Assertions.assertThat(context.getSummaries())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(context.getSummaries()).hasSize(1);
 
-        Assertions.assertThat(context.getExtraSummaries())
-                .isEmpty();
+        assertThat(context.getExtraSummaries()).isEmpty();
 
         // 1 legacyforms + 1 migrated forms
         verify(migrationServicesCDIWrapper, times(2)).write(any(Path.class), anyString(), anyString());
@@ -92,74 +83,60 @@ public class FormDefinitionGeneratorWithUnsupportedFieldsTest extends AbstractFo
 
         FormDefinition newForm = summary.getNewForm().get();
 
-        assertNotNull(newForm);
+        assertThat(newForm).isNotNull();
 
-        Assertions.assertThat(newForm.getFields())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(newForm.getFields()).hasSize(1);
 
         LayoutTemplate newLayout = newForm.getLayoutTemplate();
 
-        assertNotNull(newLayout);
+        assertThat(newLayout).isNotNull();
 
-        Assertions.assertThat(newLayout.getRows())
-                .isNotEmpty()
-                .hasSize(2);
+        assertThat(newLayout.getRows()).hasSize(2);
 
         // Checking first field (login), althought the original field type isn't supported it can be migrated to a textbox
         Field originalLogin = originalForm.getField(USER_LOGIN);
         FieldDefinition newLogin = newForm.getFieldByName(USER_LOGIN);
 
-        assertNotNull(newLogin);
+        assertThat(newLogin).isNotNull();
 
         checkFieldDefinition(newLogin, USER_LOGIN, "login", "login", TextBoxFieldDefinition.class, newForm, originalLogin);
 
         LayoutRow loginRow = newLayout.getRows().get(0);
 
-        assertNotNull(loginRow);
+        assertThat(loginRow).isNotNull();
 
-        Assertions.assertThat(loginRow.getLayoutColumns())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(loginRow.getLayoutColumns()).hasSize(1);
 
         LayoutColumn loginColumn = loginRow.getLayoutColumns().get(0);
 
-        assertNotNull(loginColumn);
-        assertEquals("12", loginColumn.getSpan());
+        assertThat(loginColumn).isNotNull();
+        assertThat(loginColumn.getSpan()).isEqualTo("12");
 
-        Assertions.assertThat(loginColumn.getLayoutComponents())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(loginColumn.getLayoutComponents()).hasSize(1);
 
         checkLayoutFormField(loginColumn.getLayoutComponents().get(0), newLogin, newForm);
 
         // Checking second field (password), the original field type isn't supported and it cannot be migrated to any
         // other form control. There shouldn't be any FieldDefinition for it but it should be an HTML component on
         // the layout warning about the error
-        assertNull(newForm.getFieldByName(USER_PASSWORD));
+        assertThat(newForm.getFieldByName(USER_PASSWORD)).isNull();
 
         LayoutRow passwordRow = newLayout.getRows().get(1);
 
-        assertNotNull(passwordRow);
+        assertThat(passwordRow).isNotNull();
 
-        Assertions.assertThat(passwordRow.getLayoutColumns())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(passwordRow.getLayoutColumns()).hasSize(1);
 
         LayoutColumn passwordColumn = passwordRow.getLayoutColumns().get(0);
 
-        assertNotNull(passwordColumn);
-        assertEquals("12", passwordColumn.getSpan());
+        assertThat(passwordColumn).isNotNull();
+        assertThat(passwordColumn.getSpan()).isEqualTo("12");
 
-        Assertions.assertThat(passwordColumn.getLayoutComponents())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(passwordColumn.getLayoutComponents()).hasSize(1);
 
         LayoutComponent passwordComponent = passwordColumn.getLayoutComponents().get(0);
 
-        Assertions.assertThat(passwordComponent)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("dragTypeName", FormsMigrationConstants.HTML_COMPONENT);
+        assertThat(passwordComponent.getDragTypeName()).isEqualTo(FormsMigrationConstants.HTML_COMPONENT);
 
         Field originalPassword = originalForm.getField(USER_PASSWORD);
 
@@ -168,8 +145,8 @@ public class FormDefinitionGeneratorWithUnsupportedFieldsTest extends AbstractFo
 
         final String expectedHtmlMessage = formatter.toString();
 
-        Assertions.assertThat(passwordComponent.getProperties())
-                .hasEntrySatisfying(FormsMigrationConstants.HTML_CODE_PARAMETER, new Condition<>(htmlMessage -> htmlMessage.equals(expectedHtmlMessage), "Invalid error HTML message"));
+        assertThat(passwordComponent.getProperties())
+                .containsEntry(FormsMigrationConstants.HTML_CODE_PARAMETER, expectedHtmlMessage);
 
         formatter.close();
     }

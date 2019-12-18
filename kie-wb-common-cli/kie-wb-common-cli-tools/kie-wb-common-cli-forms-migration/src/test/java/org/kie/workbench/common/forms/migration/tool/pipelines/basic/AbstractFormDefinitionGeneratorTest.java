@@ -23,8 +23,6 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.IOUtils;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.Before;
@@ -64,8 +62,7 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractFormDefinitionGeneratorTest {
@@ -108,7 +105,6 @@ public abstract class AbstractFormDefinitionGeneratorTest {
 
     @Mock
     protected MigrationServicesCDIWrapper migrationServicesCDIWrapper;
-
 
     @Mock
     protected IOService ioService;
@@ -168,63 +164,63 @@ public abstract class AbstractFormDefinitionGeneratorTest {
     }
 
     protected void checkMovedField(Field field, String targetForm) {
-        Assertions.assertThat(field)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("movedToForm", targetForm);
+        assertThat(field).isNotNull();
+        assertThat(field.getMovedToForm()).isEqualTo(targetForm);
     }
 
     protected void checkLayoutFormField(final LayoutComponent layoutComponent, final FieldDefinition fieldDefinition, final FormDefinition formDefinition) {
-        Assertions.assertThat(layoutComponent)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("dragTypeName", AbstractFieldAdapter.DRAGGABLE_TYPE);
+        assertThat(layoutComponent).isNotNull();
+        assertThat(layoutComponent.getDragTypeName()).isEqualTo(AbstractFieldAdapter.DRAGGABLE_TYPE);
 
-        Assertions.assertThat(layoutComponent.getProperties())
-                .hasEntrySatisfying(FormLayoutComponent.FORM_ID, new Condition<>(formId -> formDefinition.getId().equals(formId), "Invalid formId"))
-                .hasEntrySatisfying(FormLayoutComponent.FIELD_ID, new Condition<>(fieldId -> fieldDefinition.getId().equals(fieldId), "Invalid formId"));
+        assertThat(layoutComponent.getProperties())
+                .containsEntry(FormLayoutComponent.FORM_ID, formDefinition.getId())
+                .containsEntry(FormLayoutComponent.FIELD_ID, fieldDefinition.getId());
     }
 
-    protected void checkFieldDefinition(FieldDefinition fieldDefinition, String name, String label, String binding, Class<? extends FieldDefinition> expectedClass, FormDefinition formDefinition, Field field) {
-        Assertions.assertThat(fieldDefinition)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("name", name)
-                .hasFieldOrPropertyWithValue("label", label)
-                .hasFieldOrPropertyWithValue("binding", binding)
-                .hasFieldOrPropertyWithValue("id", String.valueOf(field.getId()))
-                .hasFieldOrPropertyWithValue("required", field.getFieldRequired())
-                .hasFieldOrPropertyWithValue("readOnly", field.getReadonly())
-                .isInstanceOf(expectedClass);
+    protected void checkFieldDefinition(
+            FieldDefinition fieldDefinition,
+            String name,
+            String label,
+            String binding,
+            Class<? extends FieldDefinition> expectedClass,
+            FormDefinition formDefinition,
+            Field field
+    ) {
+        assertThat(fieldDefinition).isNotNull();
+        assertThat(fieldDefinition.getName()).isEqualTo(name);
+        assertThat(fieldDefinition.getLabel()).isEqualTo(label);
+        assertThat(fieldDefinition.getBinding()).isEqualTo(binding);
+        assertThat(fieldDefinition.getId()).isEqualTo(String.valueOf(field.getId()));
+        assertThat(fieldDefinition.getRequired()).isEqualTo(field.getFieldRequired());
+        assertThat(fieldDefinition.getReadOnly()).isEqualTo(field.getReadonly());
+        assertThat(fieldDefinition).isInstanceOf(expectedClass);
 
         ModelProperty property = formDefinition.getModel().getProperty(fieldDefinition.getBinding());
-        Assertions.assertThat(property)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("typeInfo", fieldDefinition.getFieldTypeInfo());
+        assertThat(property).isNotNull();
+        assertThat(property.getTypeInfo()).isEqualTo(fieldDefinition.getFieldTypeInfo());
     }
 
     protected void verifyInvoiceForm(FormMigrationSummary summary) {
         Form originalForm = summary.getOriginalForm().get();
 
-        Assertions.assertThat(originalForm.getFormFields())
-                .isNotEmpty()
-                .hasSize(3);
+        assertThat(originalForm.getFormFields()).hasSize(3);
 
         FormDefinition newForm = summary.getNewForm().get();
 
-        Assertions.assertThat(newForm.getFields())
-                .isNotEmpty()
-                .hasSize(3);
+        assertThat(newForm.getFields()).hasSize(3);
 
-        Assertions.assertThat(newForm.getModel())
+        assertThat(newForm.getModel())
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("className", INVOICE_MODEL)
                 .isInstanceOf(DataObjectFormModel.class);
+        assertThat(((DataObjectFormModel) newForm.getModel()).getClassName()).isEqualTo(INVOICE_MODEL);
 
         IntStream indexStream = IntStream.range(0, newForm.getFields().size());
 
         LayoutTemplate formLayout = newForm.getLayoutTemplate();
 
-        assertNotNull(formLayout);
+        assertThat(formLayout).isNotNull();
 
-        Assertions.assertThat(formLayout.getRows())
+        assertThat(formLayout.getRows())
                 .isNotEmpty()
                 .hasSize(newForm.getFields().size());
 
@@ -245,20 +241,16 @@ public abstract class AbstractFormDefinitionGeneratorTest {
 
             LayoutRow fieldRow = formLayout.getRows().get(index);
 
-            assertNotNull(fieldRow);
+            assertThat(fieldRow).isNotNull();
 
-            Assertions.assertThat(fieldRow.getLayoutColumns())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldRow.getLayoutColumns()).hasSize(1);
 
             LayoutColumn fieldColumn = fieldRow.getLayoutColumns().get(0);
 
-            assertNotNull(fieldColumn);
-            assertEquals("12", fieldColumn.getSpan());
+            assertThat(fieldColumn).isNotNull();
+            assertThat(fieldColumn.getSpan()).isEqualTo("12");
 
-            Assertions.assertThat(fieldColumn.getLayoutComponents())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldColumn.getLayoutComponents()).hasSize(1);
 
             checkLayoutFormField(fieldColumn.getLayoutComponents().get(0), fieldDefinition, newForm);
         });
@@ -267,30 +259,24 @@ public abstract class AbstractFormDefinitionGeneratorTest {
     protected void verifyUserForm(FormMigrationSummary summary) {
         Form originalForm = summary.getOriginalForm().get();
 
-        Assertions.assertThat(originalForm.getFormFields())
-                .isNotEmpty()
-                .hasSize(2);
+        assertThat(originalForm.getFormFields()).hasSize(2);
 
         FormDefinition newForm = summary.getNewForm().get();
 
-        Assertions.assertThat(newForm.getFields())
-                .isNotEmpty()
-                .hasSize(2);
+        assertThat(newForm.getFields()).hasSize(2);
 
-        Assertions.assertThat(newForm.getModel())
+        assertThat(newForm.getModel())
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("className", USER_MODEL)
                 .isInstanceOf(DataObjectFormModel.class);
+        assertThat(((DataObjectFormModel) newForm.getModel()).getClassName()).isEqualTo(USER_MODEL);
 
         IntStream indexStream = IntStream.range(0, newForm.getFields().size());
 
         LayoutTemplate formLayout = newForm.getLayoutTemplate();
 
-        assertNotNull(formLayout);
+        assertThat(formLayout).isNotNull();
 
-        Assertions.assertThat(formLayout.getRows())
-                .isNotEmpty()
-                .hasSize(2);
+        assertThat(formLayout.getRows()).hasSize(2);
 
         indexStream.forEach(index -> {
             FieldDefinition fieldDefinition = newForm.getFields().get(index);
@@ -306,20 +292,16 @@ public abstract class AbstractFormDefinitionGeneratorTest {
 
             LayoutRow fieldRow = formLayout.getRows().get(index);
 
-            assertNotNull(fieldRow);
+            assertThat(fieldRow).isNotNull();
 
-            Assertions.assertThat(fieldRow.getLayoutColumns())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldRow.getLayoutColumns()).hasSize(1);
 
             LayoutColumn fieldColumn = fieldRow.getLayoutColumns().get(0);
 
-            assertNotNull(fieldColumn);
-            assertEquals("12", fieldColumn.getSpan());
+            assertThat(fieldColumn).isNotNull();
+            assertThat(fieldColumn.getSpan()).isEqualTo("12");
 
-            Assertions.assertThat(fieldColumn.getLayoutComponents())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldColumn.getLayoutComponents()).hasSize(1);
 
             checkLayoutFormField(fieldColumn.getLayoutComponents().get(0), fieldDefinition, newForm);
         });
@@ -328,30 +310,24 @@ public abstract class AbstractFormDefinitionGeneratorTest {
     protected void verifyLineForm(FormMigrationSummary summary) {
         Form originalForm = summary.getOriginalForm().get();
 
-        Assertions.assertThat(originalForm.getFormFields())
-                .isNotEmpty()
-                .hasSize(4);
+        assertThat(originalForm.getFormFields()).hasSize(4);
 
         FormDefinition newForm = summary.getNewForm().get();
 
-        Assertions.assertThat(newForm.getFields())
-                .isNotEmpty()
-                .hasSize(4);
+        assertThat(newForm.getFields()).hasSize(4);
 
-        Assertions.assertThat(newForm.getModel())
+        assertThat(newForm.getModel())
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("className", LINE_MODEL)
                 .isInstanceOf(DataObjectFormModel.class);
+        assertThat(((DataObjectFormModel) newForm.getModel()).getClassName()).isEqualTo(LINE_MODEL);
 
         IntStream indexStream = IntStream.range(0, newForm.getFields().size());
 
         LayoutTemplate formLayout = newForm.getLayoutTemplate();
 
-        assertNotNull(formLayout);
+        assertThat(formLayout).isNotNull();
 
-        Assertions.assertThat(formLayout.getRows())
-                .isNotEmpty()
-                .hasSize(1);
+        assertThat(formLayout.getRows()).hasSize(1);
 
         LayoutRow fieldRow = formLayout.getRows().get(0);
 
@@ -373,20 +349,16 @@ public abstract class AbstractFormDefinitionGeneratorTest {
                     break;
             }
 
-            assertNotNull(fieldRow);
+            assertThat(fieldRow).isNotNull();
 
-            Assertions.assertThat(fieldRow.getLayoutColumns())
-                    .isNotEmpty()
-                    .hasSize(4);
+            assertThat(fieldRow.getLayoutColumns()).hasSize(4);
 
             LayoutColumn fieldColumn = fieldRow.getLayoutColumns().get(index);
 
-            assertNotNull(fieldColumn);
-            assertEquals("3", fieldColumn.getSpan());
+            assertThat(fieldColumn).isNotNull();
+            assertThat(fieldColumn.getSpan()).isEqualTo("3");
 
-            Assertions.assertThat(fieldColumn.getLayoutComponents())
-                    .isNotEmpty()
-                    .hasSize(1);
+            assertThat(fieldColumn.getLayoutComponents()).hasSize(1);
 
             checkLayoutFormField(fieldColumn.getLayoutComponents().get(0), fieldDefinition, newForm);
         });
