@@ -25,6 +25,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -105,6 +106,7 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
 
     @Override
     public <V> void execute(final Callback<V> callback) {
+        GWT.log("Hello World! and something esle");
         if (getSession() != null && null != getSession().getSelectionControl()) {
             try {
                 //for now just copy Nodes not Edges
