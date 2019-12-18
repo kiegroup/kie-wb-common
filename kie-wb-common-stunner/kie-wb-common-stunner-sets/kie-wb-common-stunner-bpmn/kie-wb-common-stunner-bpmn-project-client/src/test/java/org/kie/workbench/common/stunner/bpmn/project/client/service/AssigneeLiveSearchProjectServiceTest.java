@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.GroupImpl;
@@ -365,6 +366,21 @@ public class AssigneeLiveSearchProjectServiceTest {
         // Destroy the instance before response callback executed...
         assigneeLiveSearchService.destroy();
         successCallback.callback(prepareSingleUserResponse());
+        // So the callback will never be called.
+        verify(callback, never()).afterSearch(any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSearchResponseErrorCapturedButInstanceAlreadyDestroyed() {
+        assigneeLiveSearchService.init(AssigneeType.USER);
+        assigneeLiveSearchService.searchEntry("user", callback);
+        ArgumentCaptor<ErrorCallback> callbackArgumentCaptor = ArgumentCaptor.forClass(ErrorCallback.class);
+        verify(userSystemManager).users(any(), callbackArgumentCaptor.capture());
+        ErrorCallback<Message> errorCallback = callbackArgumentCaptor.getValue();
+        // Destroy the instance before response error callback executed...
+        assigneeLiveSearchService.destroy();
+        errorCallback.error(mock(Message.class), new RuntimeException());
         // So the callback will never be called.
         verify(callback, never()).afterSearch(any());
     }
