@@ -108,19 +108,8 @@
 
     <!-- Test scope dependencies -->
     <dependency>
-      <groupId>com.google.gwt.gwtmockito</groupId>
-      <artifactId>gwtmockito</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-testing-utils</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>lienzo-tests</artifactId>
       <scope>test</scope>
     </dependency>
 
