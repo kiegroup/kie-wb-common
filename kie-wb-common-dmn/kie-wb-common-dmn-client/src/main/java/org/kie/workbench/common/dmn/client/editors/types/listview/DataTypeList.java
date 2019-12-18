@@ -514,6 +514,7 @@ public class DataTypeList {
 
     public List<String> getExistingDataTypesNames() {
         return getItems().stream()
+                .filter(item -> item.getDataType().isTopLevel())
                 .map(item -> item.getDataType().getName())
                 .collect(Collectors.toList());
     }

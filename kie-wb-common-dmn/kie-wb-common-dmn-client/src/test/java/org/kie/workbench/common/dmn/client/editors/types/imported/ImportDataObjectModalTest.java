@@ -68,6 +68,7 @@ public class ImportDataObjectModalTest {
 
         verify(modal).superShow();
         verify(client).loadDataObjects(serviceCallback);
+        verify(view).hideDataTypeWithSameNameWarning();
     }
 
     @Test

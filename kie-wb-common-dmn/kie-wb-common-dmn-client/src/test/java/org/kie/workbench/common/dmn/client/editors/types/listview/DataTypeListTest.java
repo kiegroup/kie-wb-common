@@ -1106,6 +1106,10 @@ public class DataTypeListTest {
         final DataTypeListItem listItem3 = mock(DataTypeListItem.class);
         final List<DataTypeListItem> items = Arrays.asList(listItem1, listItem2, listItem3);
 
+        when(dataType1.isTopLevel()).thenReturn(true);
+        when(dataType2.isTopLevel()).thenReturn(false);
+        when(dataType3.isTopLevel()).thenReturn(true);
+
         when(listItem1.getDataType()).thenReturn(dataType1);
         when(listItem2.getDataType()).thenReturn(dataType2);
         when(listItem3.getDataType()).thenReturn(dataType3);
@@ -1114,9 +1118,9 @@ public class DataTypeListTest {
 
         final List<String> names = dataTypeList.getExistingDataTypesNames();
 
-        assertEquals(3, names.size());
+        assertEquals(2, names.size());
         assertTrue(names.contains(name1));
-        assertTrue(names.contains(name2));
+        assertFalse(names.contains(name2));
         assertTrue(names.contains(name3));
     }
 

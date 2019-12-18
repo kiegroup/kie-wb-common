@@ -84,6 +84,7 @@ public class ImportDataObjectModal extends Elemental2Modal<ImportDataObjectModal
     }
 
     public void show(final List<String> existingDataTypes) {
+        getView().hideDataTypeWithSameNameWarning();
         this.existingDataTypes = existingDataTypes;
         client.loadDataObjects(wrap(getConsumer()));
         superShow();
