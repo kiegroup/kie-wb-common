@@ -128,7 +128,7 @@ public class AssigneeLiveSearchProjectService implements AssigneeLiveSearchServi
         searchErrorHandler = null;
     }
 
-    private void processSearchPatternResponse(AbstractEntityManager.SearchResponse<?> response,
+    private static void processSearchPatternResponse(AbstractEntityManager.SearchResponse<?> response,
                                               List<String> filteredCustomEntries,
                                               int maxResults,
                                               LiveSearchCallback<String> liveSearchCallback) {
