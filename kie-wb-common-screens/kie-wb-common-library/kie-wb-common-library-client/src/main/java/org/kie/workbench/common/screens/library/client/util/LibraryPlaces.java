@@ -30,6 +30,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
+
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -78,6 +79,7 @@ import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.PlaceStatus;
 import org.uberfire.client.promise.Promises;
+import org.uberfire.client.util.Cookie;
 import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
 import org.uberfire.ext.editor.commons.client.event.ConcurrentDeleteAcceptedEvent;
 import org.uberfire.ext.editor.commons.client.event.ConcurrentRenameAcceptedEvent;
@@ -116,6 +118,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public static final String ADD_ASSET_SCREEN = "AddAssetsScreen";
     public static final String SUBMIT_CHANGE_REQUEST = "SubmitChangeRequestScreen";
     public static final String CHANGE_REQUEST_REVIEW = "ChangeRequestReviewScreen";
+    public static final String COOKIE_LAST_SPACE = "lastSpace";
 
     public static final List<String> LIBRARY_PLACES = Arrays.asList(
             LIBRARY_SCREEN,
@@ -261,12 +264,20 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     private static LibraryPlaces self;
 
     public static Object nativeGoToSpace(final String spaceName) {
-        return self.promises.promisify(self.organizationalUnitService, s -> {
-            return s.getOrganizationalUnit(spaceName);
-        }).then(space -> {
-            self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(space));
-            return self.goToLibrary();
-        });
+        return self.promises
+            .promisify(self.organizationalUnitService,
+                       s -> {
+                           return s.getOrganizationalUnit(spaceName);
+                       })
+            .then(space -> {
+                if (space == null) {
+                    Cookie.clear(COOKIE_LAST_SPACE);
+                } else {
+                    Cookie.set(COOKIE_LAST_SPACE, spaceName);
+                }
+                self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(space));
+                return self.goToLibrary();
+            });
     }
 
     public native void expose() /*-{
@@ -432,8 +443,12 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public Promise<Void> goToLibrary() {
         if (!projectContext.getActiveOrganizationalUnit().isPresent()) {
             return promises.create((res, rej) -> {
-                libraryService.call(
-                        (RemoteCallback<OrganizationalUnit>) organizationalUnit -> {
+                    String lastSpace = Cookie.get(COOKIE_LAST_SPACE);
+                    if (!lastSpace.equals("")) {
+                        nativeGoToSpace(lastSpace);
+                        return;
+                    }
+                    libraryService.call((RemoteCallback<OrganizationalUnit>) organizationalUnit -> {
                             this.goToOrganizationalUnits();
                             res.onInvoke((IThenable<Void>) null);
                         },
@@ -449,7 +464,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                                 return true; // Let default error handling happen.
                             }
                         }).getDefaultOrganizationalUnit();
-            });
+                });
         } else {
             setupLibraryPerspective();
             return promises.resolve();
