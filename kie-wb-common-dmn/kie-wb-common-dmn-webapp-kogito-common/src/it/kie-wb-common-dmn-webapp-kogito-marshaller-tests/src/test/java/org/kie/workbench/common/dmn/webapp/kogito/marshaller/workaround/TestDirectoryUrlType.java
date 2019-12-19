@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.marshaller.workaround;
 
 import java.net.URL;
+import java.util.Objects;
 
 import org.jboss.errai.reflections.vfs.SystemDir;
 import org.jboss.errai.reflections.vfs.Vfs;
@@ -29,7 +30,7 @@ public class TestDirectoryUrlType implements Vfs.UrlType {
 
     @Override
     public boolean matches(final URL url) {
-        return url.getProtocol().equals("file");
+        return Objects.equals(url.getProtocol(), "file");
     }
 
     @Override

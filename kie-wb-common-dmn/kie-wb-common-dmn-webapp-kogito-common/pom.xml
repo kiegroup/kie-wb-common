@@ -121,10 +121,10 @@
       <artifactId>kie-wb-common-dmn-webapp-kogito-marshaller</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-wires-core-grids</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.uberfire</groupId>-->
+    <!--<artifactId>uberfire-wires-core-grids</artifactId>-->
+    <!--</dependency>-->
 
     <!-- Core UberFire dependencies -->
     <dependency>
