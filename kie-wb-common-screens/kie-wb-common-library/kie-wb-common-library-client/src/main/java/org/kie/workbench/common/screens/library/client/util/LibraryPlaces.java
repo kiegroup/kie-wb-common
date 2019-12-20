@@ -188,6 +188,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     private PlaceRequest changeRequestReviewScreen = null;
 
+    private Cookie cookie;
+
     public LibraryPlaces() {
     }
 
@@ -214,7 +216,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                          final Promises promises,
                          final OrganizationalUnitController organizationalUnitController,
                          final Caller<OrganizationalUnitService> organizationalUnitService,
-                         final Logger logger) {
+                         final Logger logger,
+                         final Cookie cookie) {
 
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
@@ -239,6 +242,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.organizationalUnitController = organizationalUnitController;
         this.organizationalUnitService = organizationalUnitService;
         this.logger = logger;
+        this.cookie = cookie;
     }
 
     @PostConstruct
@@ -271,9 +275,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                        })
             .then(space -> {
                 if (space == null) {
-                    Cookie.clear(COOKIE_LAST_SPACE);
+                    self.cookie.clear(COOKIE_LAST_SPACE);
                 } else {
-                    Cookie.set(COOKIE_LAST_SPACE, spaceName);
+                    self.cookie.set(COOKIE_LAST_SPACE, spaceName);
                 }
                 self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(space));
                 return self.goToLibrary();
@@ -443,7 +447,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public Promise<Void> goToLibrary() {
         if (!projectContext.getActiveOrganizationalUnit().isPresent()) {
             return promises.create((res, rej) -> {
-                    String lastSpace = Cookie.get(COOKIE_LAST_SPACE);
+                    String lastSpace = cookie.get(COOKIE_LAST_SPACE);
                     if (!lastSpace.equals("")) {
                         nativeGoToSpace(lastSpace);
                         return;
