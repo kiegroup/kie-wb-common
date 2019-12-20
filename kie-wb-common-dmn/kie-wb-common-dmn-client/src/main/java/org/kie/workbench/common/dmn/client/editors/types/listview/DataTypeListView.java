@@ -43,6 +43,8 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
 import org.kie.workbench.common.dmn.client.editors.types.imported.ImportDataObjectModal;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
+import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper;
+import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListDOMHelper.Position;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
 
 import static org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage.Type.SUCCESS;
@@ -259,6 +261,7 @@ public class DataTypeListView implements DataTypeList.View {
 
         if (isCollapsedParent || isHiddenParent) {
             hide(itemElement);
+            Position.setY(itemElement, DNDListDOMHelper.HIDDEN_Y_POSITION);
         } else {
             show(itemElement);
         }
