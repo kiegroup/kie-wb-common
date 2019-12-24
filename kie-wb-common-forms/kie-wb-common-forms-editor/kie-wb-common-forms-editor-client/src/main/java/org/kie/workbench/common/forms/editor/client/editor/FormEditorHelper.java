@@ -24,13 +24,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
@@ -63,9 +61,17 @@ public class FormEditorHelper {
     protected Collection<FieldType> enabledPaletteFieldTypes = new ArrayList<>();
     protected Collection<FieldType> enabledFieldPropertiesFieldTypes = new ArrayList<>();
 
-    @PostConstruct
-    public void init() {
-        final SyncBeanManager beanManager = IOC.getBeanManager();
+    @Inject
+    public FormEditorHelper(FieldManager fieldManager,
+                            ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents,
+                            SyncBeanManager beanManager) {
+        this.fieldManager = fieldManager;
+        this.editorFieldLayoutComponents = editorFieldLayoutComponents;
+
+        init(beanManager);
+    }
+
+    private void init(final SyncBeanManager beanManager) {
         Collection<SyncBeanDef<EditorFieldTypesProvider>> providers = beanManager.lookupBeans(EditorFieldTypesProvider.class);
         providers.stream().map(SyncBeanDef::getInstance)
                 .sorted(Comparator.comparingInt(EditorFieldTypesProvider::getPriority))
@@ -74,13 +80,6 @@ public class FormEditorHelper {
                     enabledFieldPropertiesFieldTypes.addAll(editorProvider.getFieldPropertiesFieldTypes());
                     beanManager.destroyBean(editorProvider);
                 });
-    }
-
-    @Inject
-    public FormEditorHelper(FieldManager fieldManager,
-                            ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents) {
-        this.fieldManager = fieldManager;
-        this.editorFieldLayoutComponents = editorFieldLayoutComponents;
     }
 
     public FormModelerContent getContent() {

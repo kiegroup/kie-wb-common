@@ -26,6 +26,7 @@ import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,7 +137,8 @@ public class EditorFieldLayoutComponentTest {
         });
 
         formEditorHelper = spy(new FormEditorHelper(new TestFieldManager(),
-                                                    editorFieldLayoutComponents));
+                                                    editorFieldLayoutComponents,
+                                                    mock(SyncBeanManager.class)));
 
         fieldDefinition = new TextBoxFieldDefinition();
         fieldDefinition.setId(EditorFieldLayoutComponent.FIELD_ID);

@@ -67,8 +67,7 @@ public class FieldLayoutComponent implements FormLayoutComponent,
     protected void initComponent() {
         fieldRenderer = fieldRendererManager.getRendererForField(field);
         if (fieldRenderer != null) {
-            fieldRenderer.init(renderingContext,
-                               field);
+            fieldRenderer.init(renderingContext, field);
         }
     }
 
