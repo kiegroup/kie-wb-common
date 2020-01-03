@@ -19,13 +19,12 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.uberfire.client.mvp.UberElement;
-import org.uberfire.mvp.Command;
+import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.ParameterizedCommand;
 
 public class SquashChangeRequestPopUpPresenter {
 
-    public interface View extends UberElement<SquashChangeRequestPopUpPresenter> {
+    public interface View extends UberElemental<SquashChangeRequestPopUpPresenter> {
         void show(String messages);
         void hide();
     }

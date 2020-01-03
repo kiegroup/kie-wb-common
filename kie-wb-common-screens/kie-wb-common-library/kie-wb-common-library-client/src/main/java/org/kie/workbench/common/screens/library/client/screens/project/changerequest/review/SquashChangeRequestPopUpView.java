@@ -21,18 +21,17 @@ import javax.inject.Inject;
 import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.Button;
-import org.jboss.errai.common.client.dom.Div;
-import org.jboss.errai.common.client.dom.TextArea;
-import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.jboss.errai.ui.client.local.api.IsElement;
-import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.uberfire.ext.editor.commons.client.file.popups.CommonModalBuilder;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.GenericModalFooter;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLTextAreaElement;
 
 @Templated
 public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPresenter.View,
@@ -46,11 +45,11 @@ public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPre
 
     @Inject
     @DataField("body")
-    Div body;
+    HTMLDivElement body;
 
     @Inject
     @DataField("commitMessage")
-    TextArea commitMessage;
+    HTMLTextAreaElement commitMessage;
 
     public SquashChangeRequestPopUpView() {
     }
@@ -75,7 +74,7 @@ public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPre
 
     private Button okButton() {
         Button button = new Button(ts.format(LibraryConstants.Ok),
-                                   event -> presenter.squash(commitMessage.getValue()));
+                                   event -> presenter.squash(commitMessage.value));
         button.setType(ButtonType.PRIMARY);
         return button;
     }
@@ -90,7 +89,7 @@ public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPre
     @Override
     public void show(String messages) {
         modal.show();
-        commitMessage.setValue(messages);
+        commitMessage.value = messages;
     }
 
     @Override
