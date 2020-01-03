@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -156,6 +157,9 @@ public class DataTypeList {
         for (final DataType subDataType : subDataTypes) {
             listItems.addAll(makeTreeListItems(subDataType, level + 1));
         }
+
+        final List<HTMLElement> children = listItems.stream().map(e -> e.getDragAndDropElement()).collect(Collectors.toList());
+        dndListComponent.setInitialPositionY(listItem.getDragAndDropElement(), children);
 
         cleanAndUnIndex(dataType);
         addNewSubItems(dataType, listItems);

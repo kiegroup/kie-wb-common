@@ -29,7 +29,7 @@ import elemental2.dom.NodeList;
 
 import static java.util.stream.Collectors.toList;
 
-public class DNDListDOMHelper {
+class DNDListDOMHelper {
 
     static final String DRAGGABLE = "kie-dnd-draggable";
 
@@ -41,13 +41,13 @@ public class DNDListDOMHelper {
 
     static final String DATA_Y_POSITION = "data-y-position";
 
-    public static final int HIDDEN_Y_POSITION = -1;
+    static final int HIDDEN_Y_POSITION = -1;
 
     static final String DATA_X_POSITION = "data-x-position";
 
     // -- Position
 
-    public static class Position {
+    static class Position {
 
         static void setX(final Element element,
                          final double positionX) {
@@ -58,8 +58,8 @@ public class DNDListDOMHelper {
             return parseInt(element.getAttribute(DATA_X_POSITION));
         }
 
-        public static void setY(final Element element,
-                                final double positionY) {
+        static void setY(final Element element,
+                         final double positionY) {
             element.setAttribute(DATA_Y_POSITION, positionY);
         }
 
