@@ -39,6 +39,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.imported.ImportDataObjectModalView.OPENED_CONTAINER_CSS_CLASS;
@@ -309,9 +310,7 @@ public class ImportDataObjectModalViewTest {
         final List<DataObject> values = dataObjectsCaptor.getValue();
 
         assertEquals(3, values.size());
-        assertTrue(values.contains(do1));
-        assertTrue(values.contains(do2));
-        assertTrue(values.contains(do3));
+        assertThat(values).containsExactly(do1, do2, do3);
     }
 
     @Test
