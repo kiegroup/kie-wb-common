@@ -22,7 +22,6 @@ import org.appformer.maven.integration.embedder.MavenRequest;
 import org.guvnor.common.services.project.model.GAV;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.archetype.mgmt.backend.maven.ArchetypeGenerateCommand;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;

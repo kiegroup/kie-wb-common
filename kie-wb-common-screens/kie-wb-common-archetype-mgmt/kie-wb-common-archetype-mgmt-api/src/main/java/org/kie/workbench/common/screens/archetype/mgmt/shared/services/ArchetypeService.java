@@ -73,28 +73,28 @@ public interface ArchetypeService {
                                 ArchetypeStatus status);
 
     /**
-     * Delete the archetype associated with the given alias.
+     * Delete the {@link Archetype archetype} associated with the given alias.
      *
      * @param alias archetype alias
      */
     void delete(String alias);
 
     /**
-     * Validate all registered archetypes.
+     * Validate all registered {@link Archetype archetypes}.
      * It includes unpacking and executing <i>mvn clean install</i>.
      * In case of a failure, the associated archetype is removed.
      */
     void validateAll();
 
     /**
-     * Validate the archetype associated with the given alias.
+     * Validate the {@link Archetype archetype} associated with the given alias.
      *
      * @param alias archetype alias
      */
     void validate(String alias);
 
     /**
-     * Return the repository where the archetype is stored.
+     * Return the repository where the {@link Archetype archetype} is stored.
      *
      * @param alias archetype alias
      * @return repository of the archetype

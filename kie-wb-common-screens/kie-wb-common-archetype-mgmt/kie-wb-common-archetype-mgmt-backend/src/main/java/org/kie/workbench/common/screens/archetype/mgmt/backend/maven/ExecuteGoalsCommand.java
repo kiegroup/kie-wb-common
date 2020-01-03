@@ -28,11 +28,9 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotEmpt
 
 public class ExecuteGoalsCommand extends AbstractMavenCommand {
 
+    public static final String POM_XML = "pom.xml";
     protected static final List<String> DEFAULT_GOALS = Arrays.asList("clean",
                                                                       "install");
-
-    public static final String POM_XML = "pom.xml";
-
     private final List<String> goals;
 
     public ExecuteGoalsCommand(final String baseDirectory) {

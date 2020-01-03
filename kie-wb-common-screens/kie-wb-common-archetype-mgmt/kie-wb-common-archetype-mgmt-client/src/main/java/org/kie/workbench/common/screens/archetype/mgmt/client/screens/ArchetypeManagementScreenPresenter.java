@@ -109,7 +109,8 @@ public class ArchetypeManagementScreenPresenter {
 
     private void loadScreen() {
         archetypeTablePresenter.setup(false,
-                                      () -> {}).then(v -> {
+                                      () -> {
+                                      }).then(v -> {
             view.setContent(archetypeTablePresenter.getView().getElement());
             return promises.resolve();
         });

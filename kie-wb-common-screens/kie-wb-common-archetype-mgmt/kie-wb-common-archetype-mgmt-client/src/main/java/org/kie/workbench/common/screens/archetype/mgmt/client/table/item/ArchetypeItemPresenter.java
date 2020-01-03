@@ -40,14 +40,12 @@ import org.uberfire.mvp.Command;
 public class ArchetypeItemPresenter extends ListItemPresenter<ArchetypeItem, AbstractArchetypeTablePresenter, ArchetypeItemPresenter.View>
         implements HasBusyIndicator {
 
+    static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("MMMM dd, yyyy");
     private final TranslationService ts;
     private final Caller<ArchetypeService> archetypeService;
     private final BusyIndicatorView busyIndicatorView;
-
     private ArchetypeItem archetypeItem;
     private AbstractArchetypeTablePresenter parentPresenter;
-
-    static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("MMMM dd, yyyy");
 
     @Inject
     public ArchetypeItemPresenter(final View view,

@@ -22,10 +22,9 @@ import org.kie.workbench.common.screens.archetype.mgmt.shared.model.Archetype;
 
 public class ArchetypeItem {
 
+    private final Archetype archetype;
     private boolean selected;
     private boolean defaultValue;
-
-    private final Archetype archetype;
 
     public ArchetypeItem(final Archetype archetype,
                          final boolean selected,

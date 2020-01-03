@@ -65,15 +65,12 @@ public abstract class AbstractArchetypeTablePresenter implements ArchetypeTableP
     protected final Caller<ArchetypeService> archetypeService;
     protected final PreferenceScopeFactory preferenceScopeFactory;
     protected final Promises promises;
-
-    private boolean setup;
-    private Runnable onChangedCallback;
-
     protected String searchFilter = EMPTY;
     protected int currentPage;
     protected int totalPages;
-
     protected ArchetypeTableConfiguration configuration;
+    private boolean setup;
+    private Runnable onChangedCallback;
 
     public AbstractArchetypeTablePresenter(final View view,
                                            final ArchetypeListPresenter archetypeListPresenter,
@@ -446,15 +443,6 @@ public abstract class AbstractArchetypeTablePresenter implements ArchetypeTableP
         return configuration;
     }
 
-    @Dependent
-    public static class ArchetypeListPresenter extends ListPresenter<ArchetypeItem, ArchetypeItemPresenter> {
-
-        @Inject
-        public ArchetypeListPresenter(final ManagedInstance<ArchetypeItemPresenter> itemPresenters) {
-            super(itemPresenters);
-        }
-    }
-
     public interface View extends UberElemental<AbstractArchetypeTablePresenter> {
 
         void showAddAction(boolean isVisible);
@@ -492,5 +480,14 @@ public abstract class AbstractArchetypeTablePresenter implements ArchetypeTableP
         void showToolbar(boolean isVisible);
 
         void show(boolean isVisible);
+    }
+
+    @Dependent
+    public static class ArchetypeListPresenter extends ListPresenter<ArchetypeItem, ArchetypeItemPresenter> {
+
+        @Inject
+        public ArchetypeListPresenter(final ManagedInstance<ArchetypeItemPresenter> itemPresenters) {
+            super(itemPresenters);
+        }
     }
 }

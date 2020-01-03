@@ -21,8 +21,6 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.archetype.mgmt.backend.config.ArchetypeConfigStorage;
-import org.kie.workbench.common.screens.archetype.mgmt.backend.config.ArchetypeConfigStorageImpl;
 import org.kie.workbench.common.screens.archetype.mgmt.shared.model.Archetype;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;

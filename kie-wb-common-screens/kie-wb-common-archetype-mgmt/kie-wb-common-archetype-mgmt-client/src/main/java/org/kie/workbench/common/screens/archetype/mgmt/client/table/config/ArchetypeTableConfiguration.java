@@ -55,6 +55,31 @@ public class ArchetypeTableConfiguration {
         return showValidateAction;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ArchetypeTableConfiguration that = (ArchetypeTableConfiguration) o;
+        return showIncludeColumn == that.showIncludeColumn &&
+                showStatusColumn == that.showStatusColumn &&
+                showAddAction == that.showAddAction &&
+                showDeleteAction == that.showDeleteAction &&
+                showValidateAction == that.showValidateAction;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(showIncludeColumn,
+                            showStatusColumn,
+                            showAddAction,
+                            showDeleteAction,
+                            showValidateAction);
+    }
+
     public static class Builder {
 
         private boolean showIncludeColumn;
@@ -91,30 +116,5 @@ public class ArchetypeTableConfiguration {
         public ArchetypeTableConfiguration build() {
             return new ArchetypeTableConfiguration(this);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ArchetypeTableConfiguration that = (ArchetypeTableConfiguration) o;
-        return showIncludeColumn == that.showIncludeColumn &&
-                showStatusColumn == that.showStatusColumn &&
-                showAddAction == that.showAddAction &&
-                showDeleteAction == that.showDeleteAction &&
-                showValidateAction == that.showValidateAction;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(showIncludeColumn,
-                            showStatusColumn,
-                            showAddAction,
-                            showDeleteAction,
-                            showValidateAction);
     }
 }

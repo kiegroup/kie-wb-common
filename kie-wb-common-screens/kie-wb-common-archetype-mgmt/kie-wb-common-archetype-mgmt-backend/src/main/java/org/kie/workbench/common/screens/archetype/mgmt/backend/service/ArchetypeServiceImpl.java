@@ -141,6 +141,10 @@ public class ArchetypeServiceImpl implements ArchetypeService {
         this.moduleService = moduleService;
     }
 
+    private static String composeSearchableElement(final Archetype element) {
+        return element.getAlias().toLowerCase();
+    }
+
     @PostConstruct
     void postConstruct() {
         if (isArchetypesOUAvailable()) {
@@ -527,10 +531,6 @@ public class ArchetypeServiceImpl implements ArchetypeService {
 
         return !ouService.getAllOrganizationalUnits(false,
                                                     archetypesFilter).isEmpty();
-    }
-
-    private static String composeSearchableElement(final Archetype element) {
-        return element.getAlias().toLowerCase();
     }
 
     Path unpackArchetype(final String alias) {

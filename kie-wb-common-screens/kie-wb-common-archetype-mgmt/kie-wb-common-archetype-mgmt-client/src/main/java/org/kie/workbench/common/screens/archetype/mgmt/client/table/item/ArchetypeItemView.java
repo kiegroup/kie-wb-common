@@ -39,12 +39,9 @@ import org.uberfire.mvp.Command;
 @Templated("#archetype-item-root")
 public class ArchetypeItemView implements ArchetypeItemPresenter.View {
 
-    private ArchetypeItemPresenter presenter;
-
-    private YesNoCancelPopup deleteConfirmationPopup;
-
     private static final String LI_DISABLED_CLASS = "li-disabled";
-
+    private ArchetypeItemPresenter presenter;
+    private YesNoCancelPopup deleteConfirmationPopup;
     @Inject
     @Named("td")
     @DataField("cell-include")

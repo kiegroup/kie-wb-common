@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.archetype.mgmt.shared.exceptions;
 
+import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
@@ -27,7 +28,7 @@ public class MavenExecutionException extends RuntimeException {
         this(UNKNOWN_ERROR);
     }
 
-    public MavenExecutionException(final String message) {
+    public MavenExecutionException(@MapsTo("message") final String message) {
         super(message);
     }
 }

@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.archetype.mgmt.backend.util.ArchetypeListingPredicates;
 import org.kie.workbench.common.screens.archetype.mgmt.shared.model.Archetype;
 import org.kie.workbench.common.screens.archetype.mgmt.shared.model.ArchetypeStatus;
 import org.mockito.runners.MockitoJUnitRunner;

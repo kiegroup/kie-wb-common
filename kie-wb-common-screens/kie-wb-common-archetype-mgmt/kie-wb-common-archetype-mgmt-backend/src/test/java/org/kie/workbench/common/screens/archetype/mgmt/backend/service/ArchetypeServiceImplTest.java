@@ -85,33 +85,24 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class ArchetypeServiceImplTest {
 
+    private final String COMMON_ARCHETYPE_ALIAS = "myArchetype";
     private ArchetypeServiceImpl service;
-
     @Mock
     private IOService ioService;
-
     @Mock
     private RepositoryService repositoryService;
-
     @Mock
     private OrganizationalUnitService ouService;
-
     @Mock
     private Event<ArchetypeListUpdatedEvent> archetypeListUpdatedEvent;
-
     @Mock
     private ArchetypeConfigStorage archetypeConfigStorage;
-
     @Mock
     private PathUtil pathUtil;
-
     @Mock
     private ArchetypePreferencesManager archetypePreferencesManager;
-
     @Mock
     private KieModuleService moduleService;
-
-    private final String COMMON_ARCHETYPE_ALIAS = "myArchetype";
 
     @Before
     public void setup() throws GitAPIException {
