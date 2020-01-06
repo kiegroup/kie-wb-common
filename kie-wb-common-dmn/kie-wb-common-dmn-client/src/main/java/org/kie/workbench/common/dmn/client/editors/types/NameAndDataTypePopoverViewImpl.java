@@ -339,8 +339,9 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
 
     @Override
     public void initSelectedTypeRef(final QName typeRef) {
-        typeRefEditor.setValue(typeRef,
-                               false);
+        typeRefEditor.setValue(typeRef, false);
+        previousTypeRef = typeRef;
+        currentTypeRef = typeRef;
     }
 
     @Override
@@ -385,8 +386,7 @@ public class NameAndDataTypePopoverViewImpl extends AbstractPopoverViewImpl impl
             typeRefEditor.setValue(previousTypeRef);
         }
         currentName = previousName;
-        previousTypeRef = null;
-        currentTypeRef = null;
+        currentTypeRef = previousTypeRef;
     }
 
     @EventHandler("nameEditor")
