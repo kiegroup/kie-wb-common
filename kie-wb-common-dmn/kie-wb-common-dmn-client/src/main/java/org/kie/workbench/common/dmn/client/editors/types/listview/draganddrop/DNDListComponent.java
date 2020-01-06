@@ -143,8 +143,7 @@ public class DNDListComponent {
                                     final List<HTMLElement> children) {
         Integer parentY = Position.getY(dragAndDropElement);
         for (final Element element : children) {
-            parentY++;
-            Position.setY(element, parentY);
+            Position.setY(element, ++parentY);
         }
     }
 

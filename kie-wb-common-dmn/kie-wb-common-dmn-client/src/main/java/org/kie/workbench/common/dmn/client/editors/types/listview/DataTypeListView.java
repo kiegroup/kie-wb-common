@@ -333,7 +333,7 @@ public class DataTypeListView implements DataTypeList.View {
 
     void setNewElementYPosition(final Element elementReference,
                                 final Element newElement) {
-        int referencePosition = getDndListComponent().getPositionY(elementReference);
+        final int referencePosition = getDndListComponent().getPositionY(elementReference);
         getDndListComponent().setPositionY(newElement, referencePosition);
     }
 
