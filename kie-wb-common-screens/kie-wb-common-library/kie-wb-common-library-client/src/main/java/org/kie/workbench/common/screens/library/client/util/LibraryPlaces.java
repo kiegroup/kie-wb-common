@@ -118,7 +118,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public static final String ADD_ASSET_SCREEN = "AddAssetsScreen";
     public static final String SUBMIT_CHANGE_REQUEST = "SubmitChangeRequestScreen";
     public static final String CHANGE_REQUEST_REVIEW = "ChangeRequestReviewScreen";
-    public static final String COOKIE_LAST_SPACE = "lastSpace";
 
     public static final List<String> LIBRARY_PLACES = Arrays.asList(
             LIBRARY_SCREEN,
@@ -275,9 +274,9 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                        })
             .then(space -> {
                 if (space == null) {
-                    self.cookie.clear(COOKIE_LAST_SPACE);
+                    self.cookie.clear(self.getLastSpaceCookie());
                 } else {
-                    self.cookie.set(COOKIE_LAST_SPACE, spaceName);
+                    self.cookie.set(self.getLastSpaceCookie(), spaceName);
                 }
                 self.projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(space));
                 return self.goToLibrary();
@@ -359,6 +358,10 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             notificationEvent.fire(new NotificationEvent(ts.getTranslation(LibraryConstants.ProjectDeleted),
                                                          NotificationEvent.NotificationType.DEFAULT));
         }
+    }
+
+    private String getLastSpaceCookie() {
+        return sessionInfo.getIdentity().getIdentifier() + "_lastSpace";
     }
 
     public void deleteProject(final WorkspaceProject project,
@@ -447,7 +450,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public Promise<Void> goToLibrary() {
         if (!projectContext.getActiveOrganizationalUnit().isPresent()) {
             return promises.create((res, rej) -> {
-                    String lastSpace = cookie.get(COOKIE_LAST_SPACE);
+                    String lastSpace = cookie.get(self.getLastSpaceCookie());
                     if (!lastSpace.equals("")) {
                         nativeGoToSpace(lastSpace);
                         return;
