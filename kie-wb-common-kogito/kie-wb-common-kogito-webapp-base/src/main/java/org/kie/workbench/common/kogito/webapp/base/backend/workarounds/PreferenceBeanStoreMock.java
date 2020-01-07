@@ -18,6 +18,7 @@ package org.kie.workbench.common.kogito.webapp.base.backend.workarounds;
 import java.util.Collection;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
@@ -27,6 +28,7 @@ import org.uberfire.preferences.shared.bean.BasePreferencePortable;
 import org.uberfire.preferences.shared.bean.PreferenceBeanStore;
 import org.uberfire.preferences.shared.impl.PreferenceScopeResolutionStrategyInfo;
 
+@Alternative
 @ApplicationScoped
 public class PreferenceBeanStoreMock implements PreferenceBeanStore {
 
