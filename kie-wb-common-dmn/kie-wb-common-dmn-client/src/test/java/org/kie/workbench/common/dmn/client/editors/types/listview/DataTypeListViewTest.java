@@ -371,6 +371,7 @@ public class DataTypeListViewTest {
         view.hideItemElementIfParentIsCollapsed(itemElement, parent);
 
         verify(itemElementClassList).add(HIDDEN_CSS_CLASS);
+        verify(dndListComponent).setInitialHiddenPositionY(itemElement);
     }
 
     @Test
@@ -545,6 +546,7 @@ public class DataTypeListViewTest {
         view.insertBelow(listItem, reference);
 
         verify(parentElement).insertBefore(listItemElement, siblingElement);
+        verify(view).setNewElementYPosition(lastElement, listItemElement);
     }
 
     @Test
@@ -564,6 +566,7 @@ public class DataTypeListViewTest {
         view.insertAbove(listItem, reference);
 
         verify(parentElement).insertBefore(listItemElement, element);
+        verify(view).setNewElementYPosition(element, listItemElement);
     }
 
     @Test
@@ -671,6 +674,19 @@ public class DataTypeListViewTest {
     }
 
     @Test
+    public void testSetNewElementYPosition() {
+
+        final HTMLElement elementReference = mock(HTMLElement.class);
+        final HTMLElement newElement = mock(HTMLElement.class);
+
+        when(dndListComponent.getPositionY(elementReference)).thenReturn(1);
+
+        view.setNewElementYPosition(elementReference, newElement);
+
+        verify(dndListComponent).setPositionY(newElement, 1);
+    }
+
+    @Test
     public void testShowImportDataObjectButton() {
         final DOMTokenList classList = mock(DOMTokenList.class);
 
@@ -690,6 +706,19 @@ public class DataTypeListViewTest {
         view.hideImportDataObjectButton();
 
         verify(classList).add(HIDDEN_CSS_CLASS);
+    }
+
+    @Test
+    public void testOnImportDataObjectClick() {
+
+        final ClickEvent event = mock(ClickEvent.class);
+        final List<String> list = mock(List.class);
+
+        when(presenter.getExistingDataTypesNames()).thenReturn(list);
+
+        view.onImportDataObjectClick(event);
+
+        verify(importDataObjectModal).show(list);
     }
 
     private HTMLElement makeHTMLElement() {
