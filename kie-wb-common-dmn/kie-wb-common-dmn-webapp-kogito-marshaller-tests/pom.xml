@@ -80,11 +80,11 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench</groupId>
-      <artifactId>kie-wb-common-dmn-webapp-kogito-marshaller</artifactId>
+      <artifactId>kie-wb-common-kogito-webapp-base</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench</groupId>
-      <artifactId>kie-wb-common-kogito-webapp-base</artifactId>
+      <artifactId>kie-wb-common-dmn-webapp-kogito-marshaller</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
