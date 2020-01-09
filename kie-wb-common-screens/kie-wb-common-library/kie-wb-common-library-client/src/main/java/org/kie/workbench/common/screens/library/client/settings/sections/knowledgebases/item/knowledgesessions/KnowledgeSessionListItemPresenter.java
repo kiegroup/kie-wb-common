@@ -83,7 +83,6 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
                 (workItemHandler, presenter) -> presenter.setup(workItemHandler, this));
 
         clockSelect.setup(
-                view.getClockSelectContainer(),
                 ClockTypeOption.values(),
                 kSessionModel.getClockType(),
                 clockTypeOption -> {

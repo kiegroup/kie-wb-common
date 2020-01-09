@@ -82,7 +82,6 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         knowledgeSessionsModal.setup(this);
 
         equalsBehaviorSelect.setup(
-                view.getEqualsBehaviorSelectContainer(),
                 AssertBehaviorOption.values(),
                 kBaseModel.getEqualsBehavior(),
                 equalsBehavior -> {
@@ -91,7 +90,6 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
                 });
 
         eventProcessingModeSelect.setup(
-                view.getEventProcessingModelSelectContainer(),
                 EventProcessingOption.values(),
                 kBaseModel.getEventProcessingMode(),
                 eventProcessingMode -> {
