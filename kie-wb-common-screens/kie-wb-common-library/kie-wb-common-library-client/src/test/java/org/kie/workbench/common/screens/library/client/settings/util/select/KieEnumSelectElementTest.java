@@ -66,8 +66,7 @@ public class KieEnumSelectElementTest {
         doReturn(options).when(kieEnumSelectElement).buildOptions(any());
 
         kieEnumSelectElement.setup(
-                container,
-                TestEnum.values(),
+                 TestEnum.values(),
                 TestEnum.FOO,
                 value -> {
                 });

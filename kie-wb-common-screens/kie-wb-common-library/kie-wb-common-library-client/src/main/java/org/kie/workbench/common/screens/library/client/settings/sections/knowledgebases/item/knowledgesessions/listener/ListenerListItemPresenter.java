@@ -53,7 +53,6 @@ public class ListenerListItemPresenter extends ListItemPresenter<ListenerModel, 
         view.setType(model.getType());
 
         kindSelect.setup(
-                view.getKindSelectContainer(),
                 ListenerModel.Kind.values(),
                 model.getKind(),
                 kind -> {
