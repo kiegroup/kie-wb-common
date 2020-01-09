@@ -31,11 +31,9 @@ import org.kie.workbench.common.widgets.client.widget.KieSelectOption;
 public class PackageListBoxViewImpl
         implements PackageListBoxView {
 
-    private KieSelectElement kieSelectElement;
-
     @Inject
-    @DataField("packageSelectContainer")
-    HTMLDivElement packageSelectContainer;
+    @DataField
+    private KieSelectElement kieSelectElement;
 
     private PackageListBox presenter;
 
@@ -53,8 +51,7 @@ public class PackageListBoxViewImpl
     public void setUp(final String activePackage,
                       final Map<String, String> packageNames) {
 
-        kieSelectElement.setup(packageSelectContainer,
-                               buildOptions(packageNames),
+        kieSelectElement.setup(buildOptions(packageNames),
                                activePackage,
                                s -> onSelectionChange());
     }
