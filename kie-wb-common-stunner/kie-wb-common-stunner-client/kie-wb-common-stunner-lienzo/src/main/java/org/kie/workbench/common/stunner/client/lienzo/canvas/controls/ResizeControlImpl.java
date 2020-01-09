@@ -121,7 +121,7 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
     }
 
     @SuppressWarnings("unchecked")
-    private void onCanvasSelectionEvent(@Observes CanvasSelectionEvent event) {
+    protected void onCanvasSelectionEvent(@Observes CanvasSelectionEvent event) {
         checkNotNull("event",
                      event);
         if (event.getIdentifiers().size() == 1) {
@@ -133,6 +133,8 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
                     showCPs(hasControlPoints);
                 }
             }
+        } else if (event.getIdentifiers().size() > 1){
+            hideALLCPs();
         }
     }
 
