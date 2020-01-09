@@ -65,7 +65,7 @@ public class KnowledgeSessionListItemPresenterTest {
         verify(view).initListViewCompoundExpandableItems();
         verify(listenersListPresenter).setup(any(), any(), any());
         verify(workItemHandlersListPresenter).setup(any(), any(), any());
-        verify(clockSelect).setup(any(), any(), any(), any());
+        verify(clockSelect).setup(any(), any(), any());
     }
 
     @Test

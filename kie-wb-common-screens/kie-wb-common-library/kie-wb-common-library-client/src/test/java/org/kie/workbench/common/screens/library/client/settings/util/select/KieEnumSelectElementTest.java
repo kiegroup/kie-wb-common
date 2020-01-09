@@ -66,14 +66,13 @@ public class KieEnumSelectElementTest {
         doReturn(options).when(kieEnumSelectElement).buildOptions(any());
 
         kieEnumSelectElement.setup(
-                container,
-                TestEnum.values(),
+                 TestEnum.values(),
                 TestEnum.FOO,
                 value -> {
                 });
 
         assertEquals(TestEnum.class, kieEnumSelectElement.componentType);
-        verify(kieSelectElement).setup(eq(container), eq(options), eq("FOO"), any());
+        verify(kieSelectElement).setup(eq(options), eq("FOO"), any());
     }
 
     @Test

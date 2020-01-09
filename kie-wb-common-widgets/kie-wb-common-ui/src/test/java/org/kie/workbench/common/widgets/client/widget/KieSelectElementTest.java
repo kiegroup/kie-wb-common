@@ -22,7 +22,6 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
 import elemental2.dom.Node;
-import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +49,7 @@ public class KieSelectElementTest {
 
     @Before
     public void before() {
-        kieSelectElement = spy(new KieSelectElement(view, optionsListPresenter, new Elemental2DomUtil()));
+        kieSelectElement = spy(new KieSelectElement(view, optionsListPresenter));
     }
 
     @Test
@@ -78,7 +77,6 @@ public class KieSelectElementTest {
                 singletonList(new KieSelectOption("Label", "Value"));
 
         kieSelectElement.setup(
-                container,
                 options,
                 "Value",
                 value -> {
