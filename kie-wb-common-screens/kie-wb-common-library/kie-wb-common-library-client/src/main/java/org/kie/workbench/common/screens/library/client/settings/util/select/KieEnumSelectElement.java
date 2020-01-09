@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.Element;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.widgets.client.widget.KieSelectElement;
 import org.kie.workbench.common.widgets.client.widget.KieSelectOption;
@@ -47,15 +46,13 @@ public class KieEnumSelectElement<T extends Enum<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    public void setup(final Element element,
-                      final T[] values,
+    public void setup(final T[] values,
                       final T initialValue,
                       final Consumer<T> onChange) {
 
         componentType = (Class<T>) values.getClass().getComponentType();
 
         kieSelectElement.setup(
-                element,
                 buildOptions(values),
                 initialValue.name(),
                 name -> onChange.accept(toEnum(name)));
