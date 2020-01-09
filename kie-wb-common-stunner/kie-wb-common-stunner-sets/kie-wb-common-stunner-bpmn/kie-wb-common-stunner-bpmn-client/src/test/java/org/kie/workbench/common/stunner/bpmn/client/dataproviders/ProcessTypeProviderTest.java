@@ -22,10 +22,12 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,5 +58,15 @@ public class ProcessTypeProviderTest {
         assertEquals("Public", selectorData.getSelectedValue());
         assertTrue(selectorData.getValues().containsValue("Public"));
         assertTrue(selectorData.getValues().containsValue("Private"));
+    }
+
+    @Test
+    public void testGetFilter() {
+        assertTrue(tested.getFilter().test(new NodeImpl("uuid_1")));
+    }
+
+    @Test
+    public void testGetMapper() {
+        assertNull(tested.getMapper());
     }
 }

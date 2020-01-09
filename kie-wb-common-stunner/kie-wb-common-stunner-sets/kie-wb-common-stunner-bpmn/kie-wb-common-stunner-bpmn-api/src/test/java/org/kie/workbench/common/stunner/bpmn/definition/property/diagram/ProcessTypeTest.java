@@ -29,6 +29,7 @@ public class ProcessTypeTest {
         ProcessType test = new ProcessType();
         test.setValue("value");
         assertFalse(test.equals(new ProcessType()));
+        assertFalse(test.equals(new Object()));
     }
 
     @Test
@@ -41,5 +42,11 @@ public class ProcessTypeTest {
         ProcessType test = new ProcessType();
         test.setValue("Private");
         assertTrue(test.getValue().equals("Private"));
+    }
+
+    @Test
+    public void testHashCode() {
+        ProcessType test = new ProcessType();
+        assertTrue(test.getValue().hashCode() == test.hashCode());
     }
 }
