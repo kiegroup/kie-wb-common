@@ -80,8 +80,8 @@ public class KnowledgeBaseItemPresenterTest {
         verify(packageListPresenter).setup(any(), any(), any());
         verify(includedKnowledgeBasesListPresenter).setup(any(), any(), any());
 
-        verify(eventProcessingModeSelect).setup(any(), any(), any());
-        verify(equalsBehaviorSelect).setup(any(), any(), any());
+        verify(eventProcessingModeSelect).setup(any(), any(), any(), any());
+        verify(equalsBehaviorSelect).setup(any(), any(), any(), any());
     }
 
     @Test
