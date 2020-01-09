@@ -51,7 +51,8 @@ public class ListenerListItemPresenterTest {
         Assert.assertEquals(result, listenerListItemPresenter);
         verify(view).init(eq(listenerListItemPresenter));
         verify(view).setType(eq("Type"));
-        verify(kindSelect).setup(eq(ListenerModel.Kind.values()),
+        verify(kindSelect).setup(eq(selectContainer),
+                                 eq(ListenerModel.Kind.values()),
                                  eq(ListenerModel.Kind.RULE_RUNTIME_EVENT_LISTENER),
                                  any());
     }
