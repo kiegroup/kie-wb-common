@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Optional;
 
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
@@ -105,7 +106,7 @@ public class InputAssignmentReaderTest {
 
         when(element.getName()).thenReturn("someName");
 
-        final InputAssignmentReader reader = InputAssignmentReader.fromAssociation(association);
-        assertEquals(null, reader);
+        final Optional<InputAssignmentReader> reader = InputAssignmentReader.fromAssociation(association);
+        assertEquals(false, reader.isPresent());
     }
 }

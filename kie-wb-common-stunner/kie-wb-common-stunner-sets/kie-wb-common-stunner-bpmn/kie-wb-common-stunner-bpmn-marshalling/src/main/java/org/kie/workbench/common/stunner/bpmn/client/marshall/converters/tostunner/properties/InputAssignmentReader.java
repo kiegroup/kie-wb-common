@@ -39,21 +39,21 @@ public class InputAssignmentReader {
 
     private static Logger logger = Logger.getLogger(InputAssignmentReader.class.getName());
 
-    public static InputAssignmentReader fromAssociation(DataInputAssociation in) {
+    public static Optional<InputAssignmentReader> fromAssociation(DataInputAssociation in) {
         List<ItemAwareElement> sourceList = in.getSourceRef();
         List<Assignment> assignmentList = in.getAssignment();
         String targetName = ((DataInput) in.getTargetRef()).getName();
         if (isReservedIdentifier(targetName)) {
-            return null;
+            return Optional.empty();
         }
 
         if (!sourceList.isEmpty()) {
-            return new InputAssignmentReader(sourceList.get(0), targetName);
+            return Optional.of(new InputAssignmentReader(sourceList.get(0), targetName));
         } else if (!assignmentList.isEmpty()) {
-            return new InputAssignmentReader(assignmentList.get(0), targetName);
+            return Optional.of(new InputAssignmentReader(assignmentList.get(0), targetName));
         } else {
             logger.log(Level.SEVERE, MarshallingMessage.builder().message("Cannot find SourceRef or Assignment for Target ").toString() + targetName);
-            return null;
+            return Optional.empty();
         }
     }
 
