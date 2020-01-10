@@ -35,7 +35,6 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.promise.SyncPromises;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService.CONTENT_PARAMETER_NAME;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService.FILE_NAME_PARAMETER_NAME;
 import static org.mockito.Matchers.eq;
@@ -49,7 +48,8 @@ public class KogitoResourceContentServiceTest {
 
     private static final String EDITOR_ID = "EDITOR_ID";
     private static final String FILE_NAME = "FILE_NAME";
-    private static final String DIRECTORY_NAME = "DIRECTORY_NAME";
+    private static final String ALL_PATTERN = "*";
+    private static final String DMN_PATTERN = "*.dmn";
     private static final String FILE_CONTENT = "FILE_CONTENT";
 
     @Mock
@@ -66,6 +66,7 @@ public class KogitoResourceContentServiceTest {
     private Promise<String[]> promiseList;
 
     private String[] files;
+    private String[] dmnFiles;
 
     private KogitoResourceContentService kogitoResourceContentService;
 
@@ -75,19 +76,15 @@ public class KogitoResourceContentServiceTest {
     public void setup() {
         promises = new SyncPromises();
         files = new String[6];
-        for(int i = 0; i < 6; i ++) {
+        for (int i = 0; i < 6; i++) {
             String suffix = i < 3 ? "scesim" : "dmn";
             files[i] = getFileUriMock(suffix);
         }
-
-        Promise.PromiseExecutorCallbackFn<String> promiseFileExecutor = new Promise.PromiseExecutorCallbackFn<String>() {
-            @Override
-            public void onInvoke(ResolveCallbackFn<String> resolve, RejectCallbackFn reject) {
-
-            }
-        };
+        dmnFiles = new String[3];
+        System.arraycopy(files, 3, dmnFiles, 0, 3);
         doReturn(promises.resolve(FILE_CONTENT)).when(resourceContentServiceMock).get(FILE_NAME);
-        doReturn(promises.resolve(files)).when(resourceContentServiceMock).list(DIRECTORY_NAME);
+        doReturn(promises.resolve(files)).when(resourceContentServiceMock).list(ALL_PATTERN);
+        doReturn(promises.resolve(dmnFiles)).when(resourceContentServiceMock).list(DMN_PATTERN);
         kogitoResourceContentService = new KogitoResourceContentService(placeManagerMock, resourceContentServiceMock);
     }
 
@@ -110,20 +107,20 @@ public class KogitoResourceContentServiceTest {
     }
 
     @Test
-    public void getItemsByPathWithoutSuffix() {
+    public void getAllItems() {
         RemoteCallback<List<String>> testingCallback = response -> assertEquals(files.length, response.size());
-        kogitoResourceContentService.getItemsByPath(DIRECTORY_NAME, testingCallback, mock(ErrorCallback.class));
-        verify(resourceContentServiceMock, times(1)).list(eq(DIRECTORY_NAME));
+        kogitoResourceContentService.getAllItems(testingCallback, mock(ErrorCallback.class));
+        verify(resourceContentServiceMock, times(1)).list(eq(ALL_PATTERN));
     }
 
     @Test
-    public void getItemsByPathWithSuffix() {
+    public void getFilteredItems() {
         RemoteCallback<List<String>> testingCallback = response -> {
-            assertTrue(files.length > response.size());
+            assertEquals(dmnFiles.length, response.size());
             response.forEach(fileName -> assertEquals("dmn", fileName.substring(fileName.lastIndexOf('.') + 1)));
         };
-        kogitoResourceContentService.getItemsByPath(DIRECTORY_NAME, "dmn", testingCallback, mock(ErrorCallback.class));
-        verify(resourceContentServiceMock, times(1)).list(eq(DIRECTORY_NAME));
+        kogitoResourceContentService.getFilteredItems(DMN_PATTERN, testingCallback, mock(ErrorCallback.class));
+        verify(resourceContentServiceMock, times(1)).list(eq(DMN_PATTERN));
     }
 
     private String getFileUriMock(String suffix) {
