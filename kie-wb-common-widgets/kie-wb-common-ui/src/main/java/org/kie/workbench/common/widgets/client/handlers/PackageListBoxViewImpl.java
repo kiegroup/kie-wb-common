@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.widgets.client.widget.KieSelectElement;
@@ -64,6 +63,10 @@ public class PackageListBoxViewImpl
             options.add(newOption(entry.getKey(), entry.getValue()));
         }
         return options;
+    }
+
+    public void clearSelectElement() {
+        kieSelectElement.clear();
     }
 
     KieSelectOption newOption(final String name, String value) {
