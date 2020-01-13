@@ -18,10 +18,8 @@ package org.kie.workbench.common.widgets.client.widget;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
-import elemental2.dom.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,18 +59,6 @@ public class KieSelectElementTest {
         final HTMLSelectElement selectElement = spy(new HTMLSelectElement());
         doReturn(selectElement).when(view).getSelect();
 
-        final Element container = spy(new Element() {
-            @Override
-            public Node appendChild(final Node node) {
-                if (node instanceof HTMLElement) {
-                    this.innerHTML += ((HTMLElement) node).innerHTML;
-                }
-                return node;
-            }
-        });
-
-        container.innerHTML = "";
-
         final List<KieSelectOption> options =
                 singletonList(new KieSelectOption("Label", "Value"));
 
@@ -83,9 +69,7 @@ public class KieSelectElementTest {
                 });
 
         verify(view).setValue(eq("Value"));
-        verify(view).initSelect();
         verify(optionsListPresenter).setup(eq(selectElement), eq(options), any());
-        assertEquals("bar", container.innerHTML);
     }
 
     @Test

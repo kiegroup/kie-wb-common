@@ -73,6 +73,10 @@ public class PackageListBox
                            packagesLoadedCommand);
     }
 
+    public void clearSelectElement() {
+        view.clearSelectElement();
+    }
+
     private void showListOfPackages(final boolean includeDefaultPackage,
                                     final Command packagesLoadedCommand) {
         final Module activeModule = projectContext.getActiveModule().orElse(null);
