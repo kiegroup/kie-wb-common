@@ -66,6 +66,10 @@ public class KieSelectElement implements KieSelectElementBase,
         this.onChange = onChange;
     }
 
+    public void clear() {
+        view.clear();
+    }
+
     public void onChange() {
         this.onChange.accept(getValue());
     }
@@ -87,6 +91,8 @@ public class KieSelectElement implements KieSelectElementBase,
         void setValue(final String value);
 
         String getValue();
+
+        void clear();
     }
 
     @Override
