@@ -26,6 +26,7 @@ import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
@@ -39,6 +40,7 @@ public class KogitoResourceContentService {
     public static final String FILE_NAME_PARAMETER_NAME = "fileName";
     private PlaceManager placeManager;
     private ResourceContentService resourceContentService;
+    private Promises promises;
 
     private KogitoResourceContentService() {
         //CDI proxy
@@ -46,9 +48,11 @@ public class KogitoResourceContentService {
 
     @Inject
     public KogitoResourceContentService(final PlaceManager placeManager,
-                                        final ResourceContentService resourceContentService) {
+                                        final ResourceContentService resourceContentService,
+                                        final Promises promises) {
         this.placeManager = placeManager;
         this.resourceContentService = resourceContentService;
+        this.promises = promises;
     }
 
     /**
@@ -63,7 +67,7 @@ public class KogitoResourceContentService {
             placeRequest.addParameter(FILE_NAME_PARAMETER_NAME, fileUri);
             placeRequest.addParameter(CONTENT_PARAMETER_NAME, fileContent);
             placeManager.goTo(placeRequest);
-            return null;
+            return promises.resolve();
         });
     }
 
@@ -77,12 +81,13 @@ public class KogitoResourceContentService {
                          final ErrorCallback<Object> errorCallback) {
         resourceContentService.get(fileUri).then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) fileContent -> {
                                                      callback.callback(fileContent);
-                                                     return null;
-                                                 }/*,
-                                                 (IThenable.ThenOnRejectedCallbackFn<Void>) errorObject -> {
-                                                     errorCallback.error(errorObject, new Throwable("Failed to load file " + fileUri));
-                                                     return null;
-                                                 }*/);
+                                                     return promises.resolve();
+                                                 })
+                .catch_(error -> {
+                    errorCallback.error("Error " + error, new Throwable("Failed to load file " + fileUri));
+                    return null;
+                })
+        ;
     }
 
     /**
@@ -111,12 +116,12 @@ public class KogitoResourceContentService {
                                final ErrorCallback<Object> errorCallback) {
         resourceContentService.list(pattern).then(fileList -> {
                                                       callback.callback(Arrays.asList(fileList));
-                                                      return null;
-                                                  }/*,
-                                                  (IThenable.ThenOnRejectedCallbackFn<Void>) errorObject -> {
-                                                      errorCallback.error(errorObject, new Throwable("Failed to load files at " + rootUri));
-                                                      return null;
-                                                  }*/);
+                                                      return promises.resolve();
+                                                  })
+                .catch_(error -> {
+                    errorCallback.error("Error " + error, new Throwable("Failed to retrieve files with pattern " + pattern));
+                    return null;
+                });
     }
 
 }

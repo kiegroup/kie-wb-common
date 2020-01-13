@@ -18,7 +18,6 @@ package org.kie.workbench.common.kogito.webapp.base.client.workarounds;
 
 import java.util.List;
 
-import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -38,8 +37,10 @@ import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService.CONTENT_PARAMETER_NAME;
 import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService.FILE_NAME_PARAMETER_NAME;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,20 +51,16 @@ public class KogitoResourceContentServiceTest {
     private static final String FILE_NAME = "FILE_NAME";
     private static final String ALL_PATTERN = "*";
     private static final String DMN_PATTERN = "*.dmn";
+    private static final String NULL_PATTERN = null;
+    private static final String UNKNOWN_FILE = "UNKNOWN_FILE";
     private static final String FILE_CONTENT = "FILE_CONTENT";
+    private static final Object REJECT_OBJECT = "REJECT_OBJECT";
 
     @Mock
     private PlaceManager placeManagerMock;
 
     @Mock
     private ResourceContentService resourceContentServiceMock;
-
-    @Mock
-    private RemoteCallback<String> callbackMock;
-
-    private Promise<String> promiseFile;
-
-    private Promise<String[]> promiseList;
 
     private String[] files;
     private String[] dmnFiles;
@@ -83,9 +80,11 @@ public class KogitoResourceContentServiceTest {
         dmnFiles = new String[3];
         System.arraycopy(files, 3, dmnFiles, 0, 3);
         doReturn(promises.resolve(FILE_CONTENT)).when(resourceContentServiceMock).get(FILE_NAME);
+        doReturn(promises.reject(REJECT_OBJECT)).when(resourceContentServiceMock).get(UNKNOWN_FILE);
         doReturn(promises.resolve(files)).when(resourceContentServiceMock).list(ALL_PATTERN);
         doReturn(promises.resolve(dmnFiles)).when(resourceContentServiceMock).list(DMN_PATTERN);
-        kogitoResourceContentService = new KogitoResourceContentService(placeManagerMock, resourceContentServiceMock);
+        doReturn(promises.reject(REJECT_OBJECT)).when(resourceContentServiceMock).list(NULL_PATTERN);
+        kogitoResourceContentService = new KogitoResourceContentService(placeManagerMock, resourceContentServiceMock, new SyncPromises());
     }
 
     @Test
@@ -100,27 +99,73 @@ public class KogitoResourceContentServiceTest {
     }
 
     @Test
-    public void loadFile() {
-        kogitoResourceContentService.loadFile(FILE_NAME, callbackMock, mock(ErrorCallback.class));
+    public void loadFileNoException() {
+        RemoteCallback<String> testingCallbackMock = mock(RemoteCallback.class);
+        kogitoResourceContentService.loadFile(FILE_NAME, testingCallbackMock, mock(ErrorCallback.class));
         verify(resourceContentServiceMock, times(1)).get(eq(FILE_NAME));
-        verify(callbackMock, times(1)).callback(eq(FILE_CONTENT));
+        verify(testingCallbackMock, times(1)).callback(eq(FILE_CONTENT));
+    }
+
+    @Test
+    public void loadFileException() {
+        ErrorCallback<Object> testingCallbackSpy = spy(new ErrorCallback<Object>() {
+            // Can't use anonymous class in to Mockito.spy
+
+            @Override
+            public boolean error(Object message, Throwable throwable) {
+                assertEquals("Error " + REJECT_OBJECT, message);
+                assertEquals("Failed to load file "+ UNKNOWN_FILE, throwable.getMessage());
+                return false;
+            }
+        });
+        kogitoResourceContentService.loadFile(UNKNOWN_FILE, mock(RemoteCallback.class), testingCallbackSpy);
+        verify(resourceContentServiceMock, times(1)).get(eq(UNKNOWN_FILE));
+        verify(testingCallbackSpy, times(1)).error(isA(String.class), isA(Throwable.class));
+
     }
 
     @Test
     public void getAllItems() {
-        RemoteCallback<List<String>> testingCallback = response -> assertEquals(files.length, response.size());
-        kogitoResourceContentService.getAllItems(testingCallback, mock(ErrorCallback.class));
+        RemoteCallback<List<String>> testingCallbackSpy = spy(new RemoteCallback<List<String>>() {
+            @Override
+            public void callback(List<String> response) {
+                assertEquals(files.length, response.size());
+            }
+        });
+        kogitoResourceContentService.getAllItems(testingCallbackSpy, mock(ErrorCallback.class));
         verify(resourceContentServiceMock, times(1)).list(eq(ALL_PATTERN));
+        verify(testingCallbackSpy, times(1)).callback(isA(List.class));
     }
 
     @Test
-    public void getFilteredItems() {
-        RemoteCallback<List<String>> testingCallback = response -> {
-            assertEquals(dmnFiles.length, response.size());
-            response.forEach(fileName -> assertEquals("dmn", fileName.substring(fileName.lastIndexOf('.') + 1)));
-        };
-        kogitoResourceContentService.getFilteredItems(DMN_PATTERN, testingCallback, mock(ErrorCallback.class));
+    public void getFilteredItemsNoException() {
+        RemoteCallback<List<String>> testingCallbackSpy = spy(new RemoteCallback<List<String>>() {
+            @Override
+            public void callback(List<String> response) {
+                assertEquals(dmnFiles.length, response.size());
+                response.forEach(fileName -> assertEquals("dmn", fileName.substring(fileName.lastIndexOf('.') + 1)));
+            }
+        });
+        kogitoResourceContentService.getFilteredItems(DMN_PATTERN, testingCallbackSpy, mock(ErrorCallback.class));
         verify(resourceContentServiceMock, times(1)).list(eq(DMN_PATTERN));
+        verify(testingCallbackSpy, times(1)).callback(isA(List.class));
+    }
+
+    @Test
+    public void getFilteredItemsException() {
+        ErrorCallback<Object> testingCallbackSpy = spy(new ErrorCallback<Object>() {
+            // Can't use anonymous class in to Mockito.spy
+
+            @Override
+            public boolean error(Object message, Throwable throwable) {
+                assertEquals("Error " + REJECT_OBJECT, message);
+                assertEquals("Failed to retrieve files with pattern "+ NULL_PATTERN, throwable.getMessage());
+                return false;
+            }
+        });
+        kogitoResourceContentService.getFilteredItems(NULL_PATTERN, mock(RemoteCallback.class), testingCallbackSpy);
+        verify(resourceContentServiceMock, times(1)).list(eq(NULL_PATTERN));
+        verify(testingCallbackSpy, times(1)).error(isA(String.class), isA(Throwable.class));
     }
 
     private String getFileUriMock(String suffix) {
