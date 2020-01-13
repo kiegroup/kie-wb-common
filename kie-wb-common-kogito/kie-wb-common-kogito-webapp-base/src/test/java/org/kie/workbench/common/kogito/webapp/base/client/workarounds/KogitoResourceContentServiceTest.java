@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,13 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.commons.uuid.UUID;
-import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.promise.SyncPromises;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService.CONTENT_PARAMETER_NAME;
-import static org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService.FILE_NAME_PARAMETER_NAME;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -47,7 +42,6 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class KogitoResourceContentServiceTest {
 
-    private static final String EDITOR_ID = "EDITOR_ID";
     private static final String FILE_NAME = "FILE_NAME";
     private static final String ALL_PATTERN = "*";
     private static final String DMN_PATTERN = "*.dmn";
@@ -55,9 +49,6 @@ public class KogitoResourceContentServiceTest {
     private static final String UNKNOWN_FILE = "UNKNOWN_FILE";
     private static final String FILE_CONTENT = "FILE_CONTENT";
     private static final Object REJECT_OBJECT = "REJECT_OBJECT";
-
-    @Mock
-    private PlaceManager placeManagerMock;
 
     @Mock
     private ResourceContentService resourceContentServiceMock;
@@ -84,18 +75,7 @@ public class KogitoResourceContentServiceTest {
         doReturn(promises.resolve(files)).when(resourceContentServiceMock).list(ALL_PATTERN);
         doReturn(promises.resolve(dmnFiles)).when(resourceContentServiceMock).list(DMN_PATTERN);
         doReturn(promises.reject(REJECT_OBJECT)).when(resourceContentServiceMock).list(NULL_PATTERN);
-        kogitoResourceContentService = new KogitoResourceContentService(placeManagerMock, resourceContentServiceMock, new SyncPromises());
-    }
-
-    @Test
-    public void openFile() {
-        ArgumentCaptor<PlaceRequest> placeRequestCaptor = ArgumentCaptor.forClass(PlaceRequest.class);
-        kogitoResourceContentService.openFile(FILE_NAME, EDITOR_ID);
-        verify(resourceContentServiceMock, times(1)).get(eq(FILE_NAME));
-        verify(placeManagerMock, times(1)).goTo(placeRequestCaptor.capture());
-        assertEquals(EDITOR_ID, placeRequestCaptor.getValue().getIdentifier());
-        assertEquals(FILE_NAME, placeRequestCaptor.getValue().getParameter(FILE_NAME_PARAMETER_NAME, "WRONG"));
-        assertEquals(FILE_CONTENT, placeRequestCaptor.getValue().getParameter(CONTENT_PARAMETER_NAME, "WRONG"));
+        kogitoResourceContentService = new KogitoResourceContentService(resourceContentServiceMock, new SyncPromises());
     }
 
     @Test
@@ -109,8 +89,6 @@ public class KogitoResourceContentServiceTest {
     @Test
     public void loadFileException() {
         ErrorCallback<Object> testingCallbackSpy = spy(new ErrorCallback<Object>() {
-            // Can't use anonymous class in to Mockito.spy
-
             @Override
             public boolean error(Object message, Throwable throwable) {
                 assertEquals("Error " + REJECT_OBJECT, message);
@@ -154,8 +132,6 @@ public class KogitoResourceContentServiceTest {
     @Test
     public void getFilteredItemsException() {
         ErrorCallback<Object> testingCallbackSpy = spy(new ErrorCallback<Object>() {
-            // Can't use anonymous class in to Mockito.spy
-
             @Override
             public boolean error(Object message, Throwable throwable) {
                 assertEquals("Error " + REJECT_OBJECT, message);

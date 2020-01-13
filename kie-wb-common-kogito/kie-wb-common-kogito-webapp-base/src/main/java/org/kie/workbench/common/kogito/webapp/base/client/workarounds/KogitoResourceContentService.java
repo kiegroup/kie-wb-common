@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,20 +25,15 @@ import elemental2.promise.IThenable;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.promise.Promises;
-import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 /**
- * Class used to provide <i>resources</i> access to <i>kogito editors</i>
+ * Class used to provide <i>resources</i> access to <i>kogito editors</i>.
+ * It is a simple wrapper around {@link ResourceContentService}
  */
 @ApplicationScoped
 public class KogitoResourceContentService {
 
-    public static final String CONTENT_PARAMETER_NAME = "content";
-    public static final String FILE_NAME_PARAMETER_NAME = "fileName";
-    private PlaceManager placeManager;
     private ResourceContentService resourceContentService;
     private Promises promises;
 
@@ -47,42 +42,27 @@ public class KogitoResourceContentService {
     }
 
     @Inject
-    public KogitoResourceContentService(final PlaceManager placeManager,
-                                        final ResourceContentService resourceContentService,
+    public KogitoResourceContentService(final ResourceContentService resourceContentService,
                                         final Promises promises) {
-        this.placeManager = placeManager;
         this.resourceContentService = resourceContentService;
         this.promises = promises;
     }
 
     /**
-     * Open a file at given <code>Path</code> inside an <b>editor</b>
-     * @param fileUri the <b>uri</code> to the file
-     * @param editorId The <b>id</b> of the editor to open by the <code>PlaceRequest</code>
-     */
-    public void openFile(final String fileUri,
-                         final String editorId) {
-        resourceContentService.get(fileUri).then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) fileContent -> {
-            final PlaceRequest placeRequest = new DefaultPlaceRequest(editorId);
-            placeRequest.addParameter(FILE_NAME_PARAMETER_NAME, fileUri);
-            placeRequest.addParameter(CONTENT_PARAMETER_NAME, fileContent);
-            placeManager.goTo(placeRequest);
-            return promises.resolve();
-        });
-    }
-
-    /**
-     * Load the file at given <code>Path</code> and returns content inside a callback
-     * @param fileUri
-     * @param callback
+     * Load the file at given <b>uri</code> and returns its content inside the given callback
+     * @param fileUri the resource <b>uri</code> relative to the workspace/project
+     * @param callback The <code>RemoteCallback</code> to be invoked on success
+     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
+     *
+     * @see ResourceContentService#get(String)
      */
     public void loadFile(final String fileUri,
                          final RemoteCallback<String> callback,
                          final ErrorCallback<Object> errorCallback) {
         resourceContentService.get(fileUri).then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) fileContent -> {
-                                                     callback.callback(fileContent);
-                                                     return promises.resolve();
-                                                 })
+            callback.callback(fileContent);
+            return promises.resolve();
+        })
                 .catch_(error -> {
                     errorCallback.error("Error " + error, new Throwable("Failed to load file " + fileUri));
                     return null;
@@ -91,37 +71,37 @@ public class KogitoResourceContentService {
     }
 
     /**
-     * Get the <code>List&lt;Path&gt;</code> from the project/workspace where the editor is running
-     *
-     * @param callback
-     * @param errorCallback
+     * Get the <code>List&lt;String&gt;</code> from the project/workspace where the editor is running
+     * and returns it inside the given callback
+     * @param callback The <code>RemoteCallback</code> to be invoked on success
+     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      *
      * @see ResourceContentService#list(String)
      */
     public void getAllItems(final RemoteCallback<List<String>> callback,
-                               final ErrorCallback<Object> errorCallback) {
+                            final ErrorCallback<Object> errorCallback) {
         getFilteredItems("*", callback, errorCallback);
     }
 
     /**
-     * Get <b>filtered</b> <code>List&lt;Path&gt;</code> from the project/workspace where the editor is running
+     * Get <b>filtered</b> <code>List&lt;String&gt;</code> from the project/workspace where the editor is running
+     * and returns it inside the given callback
      * @param pattern A GLOB pattern to filter files. To list all files use "*"
-     * @param callback
-     * @param errorCallback
+     * @param callback The <code>RemoteCallback</code> to be invoked on success
+     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      *
      * @see ResourceContentService#list(String)
      */
     public void getFilteredItems(final String pattern,
-                               final RemoteCallback<List<String>> callback,
-                               final ErrorCallback<Object> errorCallback) {
+                                 final RemoteCallback<List<String>> callback,
+                                 final ErrorCallback<Object> errorCallback) {
         resourceContentService.list(pattern).then(fileList -> {
-                                                      callback.callback(Arrays.asList(fileList));
-                                                      return promises.resolve();
-                                                  })
+            callback.callback(Arrays.asList(fileList));
+            return promises.resolve();
+        })
                 .catch_(error -> {
                     errorCallback.error("Error " + error, new Throwable("Failed to retrieve files with pattern " + pattern));
                     return null;
                 });
     }
-
 }
