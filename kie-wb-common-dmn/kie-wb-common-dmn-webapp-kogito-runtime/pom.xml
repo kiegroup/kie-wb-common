@@ -385,6 +385,11 @@
       <artifactId>kie-wb-common-stunner-kogito-client</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>appformer-kogito-bridge</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
 
     <dependency>
       <groupId>org.kie.soup</groupId>
