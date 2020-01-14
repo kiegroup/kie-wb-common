@@ -21,10 +21,12 @@ import java.util.Objects;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.screens.archetype.mgmt.shared.model.ArchetypeListOperation;
+import org.uberfire.commons.clusterapi.Clustered;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 @Portable
+@Clustered
 public class ArchetypeListUpdatedEvent {
 
     private final ArchetypeListOperation operation;
