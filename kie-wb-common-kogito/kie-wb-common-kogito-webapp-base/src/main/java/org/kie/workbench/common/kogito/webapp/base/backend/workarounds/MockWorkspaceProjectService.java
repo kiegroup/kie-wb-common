@@ -94,7 +94,7 @@ public class MockWorkspaceProjectService implements WorkspaceProjectService {
                                        final DeploymentMode mode,
                                        final List<Contributor> contributor,
                                        final Repository templateRepository) {
-        return PROJECT;
+        throw new UnsupportedOperationException(NOT_AVAILABLE_IN_KOGITO);
     }
 
     @Override
