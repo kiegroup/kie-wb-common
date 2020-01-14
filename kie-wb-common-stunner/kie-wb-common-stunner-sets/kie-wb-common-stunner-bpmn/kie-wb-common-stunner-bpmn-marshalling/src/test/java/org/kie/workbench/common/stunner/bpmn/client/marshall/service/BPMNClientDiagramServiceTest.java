@@ -145,14 +145,14 @@ public class BPMNClientDiagramServiceTest {
     public void setUp() {
         service = new BPMNClientDiagramService(definitionManager, marshalling, factoryManager, diagramFactory, shapeManager, promises);
         //DiagramSet
-        processName = new Name("someName");
+        processName = new Name("");
+        processId = new Id("");
         processDocumentation = new Documentation("someDocumentation");
         packageProperty = new Package("some.package");
         version = new Version("1.0");
         adHoc = new AdHoc(false);
         processInstanceDescription = new ProcessInstanceDescription("description");
         executable = new Executable(false);
-        processId = new Id("someUUID");
         globalVariables = new GlobalVariables("GL1:java.lang.String:false,GL2:java.lang.Boolean:false");
         slaDueDate = new SLADueDate("");
 
@@ -220,12 +220,12 @@ public class BPMNClientDiagramServiceTest {
                               }
                           });
 
-        assertEquals(diagramSet.getName().getValue(), "someFile");
-        assertEquals(diagramSet.getId().getValue(), "someFile");
+        assertEquals("someFile", diagramSet.getName().getValue());
+        assertEquals("someFile", diagramSet.getId().getValue());
     }
 
     @Test
-    public void testNameAndIdAsXML() {
+    public void testNameAndIdAsDefaultIfEmpty() {
 
         when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
         when(marshalling.unmarshall(any(), any())).thenReturn(graph);
@@ -245,7 +245,32 @@ public class BPMNClientDiagramServiceTest {
                               }
                           });
 
-        assertEquals(diagramSet.getName().getValue(), BPMNClientDiagramService.DEFAULT_PROCESS_ID);
-        assertEquals(diagramSet.getId().getValue(), BPMNClientDiagramService.DEFAULT_PROCESS_ID);
+        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getId().getValue());
+    }
+
+    @Test
+    public void testNameAndIdDefaultOnNewDiagram() {
+
+        when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
+        when(marshalling.unmarshall(any(), any())).thenReturn(graph);
+        when(graph.nodes()).thenReturn(nodes);
+        service.transform(BPMNClientDiagramService.DEFAULT_PROCESS_ID, xml,
+
+                          new ServiceCallback<Diagram>() {
+
+                              @Override
+                              public void onSuccess(Diagram item) {
+
+                              }
+
+                              @Override
+                              public void onError(ClientRuntimeError error) {
+
+                              }
+                          });
+
+        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getId().getValue());
     }
 }

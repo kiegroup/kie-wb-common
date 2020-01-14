@@ -134,8 +134,14 @@ public class BPMNClientDiagramService implements KogitoClientDiagramService {
         }
 
         final BaseDiagramSet diagramSet = diagramNode.getContent().getDefinition().getDiagramSet();
-        diagramSet.getName().setValue(fileName);
-        diagramSet.getId().setValue(fileName);
+
+        if (diagramSet.getName().getValue().isEmpty()) {
+            diagramSet.getName().setValue(fileName);
+        }
+
+        if (diagramSet.getId().getValue().isEmpty()) {
+            diagramSet.getId().setValue(fileName);
+        }
 
         final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();
         metadata.setTitle(title);
