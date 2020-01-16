@@ -20,6 +20,7 @@ package org.kie.workbench.common.services.shared.project;
 import java.util.Set;
 
 import org.guvnor.common.services.project.model.Package;
+import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
@@ -29,9 +30,7 @@ public class KieModulePackages {
 
     private Package defaultPackage;
 
-    public KieModulePackages() { }
-
-    public KieModulePackages(Set<Package> packages, Package defaultPackage) {
+    public KieModulePackages(@MapsTo("packages") Set<Package> packages, @MapsTo("defaultPackage") Package defaultPackage) {
         this.packages = packages;
         this.defaultPackage = defaultPackage;
     }

@@ -28,6 +28,7 @@ import org.guvnor.test.WeldJUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.shared.project.KieModule;
+import org.kie.workbench.common.services.shared.project.KieModulePackages;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 
 import static org.junit.Assert.*;
@@ -69,6 +70,13 @@ public class ModuleServiceImplResolvePackagesTest extends ModuleTestBase {
             Set<Package> packages = moduleService.resolvePackages((Package) null);
             assertEquals(0,
                          packages.size());
+        }
+
+        {
+            when(pom.getGav()).thenReturn(new GAV("org.mygroup","my-project","1.0.0"));
+            KieModulePackages kieModulePackages = moduleService.resolveModulePackages(module);
+            assertEquals(kieModulePackages.getPackages(), moduleService.resolvePackages(module));
+            assertEquals("<default>", moduleService.resolveDefaultPackage(module).getCaption());
         }
 
         Package defaultPkg = null;
