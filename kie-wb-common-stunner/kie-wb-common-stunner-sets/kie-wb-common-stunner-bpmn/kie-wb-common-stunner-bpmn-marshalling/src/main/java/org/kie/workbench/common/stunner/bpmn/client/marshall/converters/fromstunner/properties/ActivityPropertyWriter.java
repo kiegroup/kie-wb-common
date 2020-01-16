@@ -17,11 +17,13 @@
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties;
 
 import java.util.List;
+import java.util.Set;
 
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
+import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.InputOutputSpecification;
@@ -41,10 +43,12 @@ public class ActivityPropertyWriter extends PropertyWriter {
 
     protected final Activity activity;
     private ElementParameters simulationParameters;
+    private final Set<DataObject> dataObjects;
 
-    public ActivityPropertyWriter(Activity activity, VariableScope variableScope) {
+    public ActivityPropertyWriter(Activity activity, VariableScope variableScope, Set<DataObject> dataObjects) {
         super(activity, variableScope);
         this.activity = activity;
+        this.dataObjects = dataObjects;
     }
 
     @Override
@@ -66,7 +70,9 @@ public class ActivityPropertyWriter extends PropertyWriter {
         final InputOutputSpecification ioSpec = getIoSpecification();
 
         List<InitializedInputVariable> inputs =
-                assignmentsInfo.createInitializedInputVariables(getId(), variableScope);
+                assignmentsInfo.createInitializedInputVariables(getId(), variableScope, dataObjects);
+
+
 
         for (InitializedInputVariable input : inputs) {
             if (isReservedIdentifier(input.getIdentifier())) {
@@ -85,7 +91,7 @@ public class ActivityPropertyWriter extends PropertyWriter {
         }
 
         List<InitializedOutputVariable> outputs =
-                assignmentsInfo.createInitializedOutputVariables(getId(), variableScope);
+                assignmentsInfo.createInitializedOutputVariables(getId(), variableScope, dataObjects);
 
         for (InitializedOutputVariable output : outputs) {
             DataOutput dataOutput = output.getDataOutput();
@@ -131,5 +137,9 @@ public class ActivityPropertyWriter extends PropertyWriter {
             outputSet = outputSets.get(0);
         }
         return outputSet;
+    }
+
+    public Set<DataObject> getDataObjects() {
+        return dataObjects;
     }
 }

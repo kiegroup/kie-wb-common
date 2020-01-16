@@ -16,15 +16,19 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties;
 
+import java.util.Optional;
+import java.util.Set;
+
 import com.google.gwt.http.client.URL;
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
+import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.ItemDefinition;
-import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Ids;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.VariableScope;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.FormalExpressionBodyHandler;
@@ -50,12 +54,14 @@ public abstract class InitializedVariable {
             String parentId,
             VariableScope variableScope,
             VariableDeclaration varDecl,
-            AssociationDeclaration associationDeclaration) {
+            AssociationDeclaration associationDeclaration,
+            Set<DataObject> dataObjectSet) {
 
         if (associationDeclaration == null) {
             return new InputEmpty(parentId, varDecl);
         }
         AssociationDeclaration.Type type = associationDeclaration.getType();
+
         switch (type) {
             case FromTo:
                 if (associationDeclaration.getTarget() == null) {
@@ -64,7 +70,7 @@ public abstract class InitializedVariable {
                     return new InputConstant(parentId, varDecl, associationDeclaration.getSource());
                 }
             case SourceTarget:
-                return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource());
+                return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource(), dataObjectSet);
             default:
                 throw new IllegalArgumentException("Unknown type " + type);
         }
@@ -74,7 +80,8 @@ public abstract class InitializedVariable {
             String parentId,
             VariableScope variableScope,
             VariableDeclaration varDecl,
-            AssociationDeclaration associationDeclaration) {
+            AssociationDeclaration associationDeclaration,
+            Set<DataObject> dataObject) {
 
         if (associationDeclaration == null) {
             return new OutputEmpty(parentId, varDecl);
@@ -88,7 +95,7 @@ public abstract class InitializedVariable {
                     throw new IllegalArgumentException("Cannot assign constant to output variable");
                 }
             case SourceTarget:
-                return new OutputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getTarget());
+                return new OutputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getTarget(), dataObject);
             default:
                 throw new IllegalArgumentException("Unknown type " + type);
         }
@@ -152,17 +159,34 @@ public abstract class InitializedVariable {
 
         private final String sourceVariable;
         private final VariableScope scope;
+        private final Set<DataObject> dataObjectSet;
 
-        public InputVariableReference(String parentId, VariableScope variableScope, VariableDeclaration varDecl, String sourceVariable) {
+        public InputVariableReference(String parentId, VariableScope variableScope, VariableDeclaration varDecl,
+                                      String sourceVariable, Set<DataObject> dataObjectSet) {
             super(parentId, varDecl);
             this.scope = variableScope;
             this.sourceVariable = sourceVariable;
+            this.dataObjectSet = dataObjectSet;
         }
 
         public DataInputAssociation getDataInputAssociation() {
             DataInputAssociation dataInputAssociation = bpmn2.createDataInputAssociation();
-            return scope.lookup(sourceVariable)
-                    .map(variable -> dataInputAssociation.getSourceRef().add(variable.getTypedIdentifier()))
+            Optional<ItemAwareElement> typedIdentifier = Optional.empty();
+            Optional<VariableScope.Variable> maybeVariable = scope.lookup(sourceVariable);
+
+            if(maybeVariable.isPresent()) {
+                typedIdentifier = Optional.of(maybeVariable.get().getTypedIdentifier());
+            } else {
+                for(DataObject dataObject: dataObjectSet) {
+                    if(dataObject.getId().equals(sourceVariable)) {
+                        typedIdentifier = Optional.of(dataObject);
+                        break;
+                    }
+                }
+            }
+
+            return typedIdentifier
+                    .map(variable -> dataInputAssociation.getSourceRef().add(variable))
                     .map(added -> {
                         dataInputAssociation.setTargetRef(getDataInput());
                         return added;
@@ -177,11 +201,15 @@ public abstract class InitializedVariable {
         private final DataOutput dataOutput;
         private final String targetVariable;
         private final VariableScope scope;
+        private final Set<DataObject> dataObjects;
 
-        public OutputVariableReference(String parentId, VariableScope scope, VariableDeclaration varDecl, String targetVariable) {
+
+        public OutputVariableReference(String parentId, VariableScope scope, VariableDeclaration varDecl,
+                                       String targetVariable, Set<DataObject> dataObjects) {
             super(parentId, varDecl);
             this.scope = scope;
             this.targetVariable = targetVariable;
+            this.dataObjects = dataObjects;
             this.dataOutput = dataOutputOf(
                     parentId,
                     varDecl.getIdentifier(),
@@ -194,8 +222,21 @@ public abstract class InitializedVariable {
         }
 
         public DataOutputAssociation getDataOutputAssociation() {
-            return scope.lookup(targetVariable)
-                    .map(variable -> associationOf(variable.getTypedIdentifier(), dataOutput))
+            Optional<ItemAwareElement> typedIdentifier = Optional.empty();
+
+            Optional<VariableScope.Variable> maybeVariable = scope.lookup(targetVariable);
+            if(maybeVariable.isPresent()) {
+                typedIdentifier = Optional.of(maybeVariable.get().getTypedIdentifier());
+            } else {
+                for(DataObject dataObject: dataObjects) {
+                    if(dataObject.getId().equals(targetVariable)) {
+                        typedIdentifier = Optional.of(dataObject);
+                        break;
+                    }
+                }
+            }
+            return typedIdentifier
+                    .map(variable -> associationOf(variable, dataOutput))
                     .orElse(null);
         }
     }
@@ -222,6 +263,7 @@ public abstract class InitializedVariable {
         }
 
         public DataInputAssociation getDataInputAssociation() {
+
             DataInputAssociation dataInputAssociation =
                     bpmn2.createDataInputAssociation();
 
@@ -282,7 +324,7 @@ public abstract class InitializedVariable {
         return dataOutput;
     }
 
-    private static DataOutputAssociation associationOf(Property source, DataOutput dataOutput) {
+    private static DataOutputAssociation associationOf(ItemAwareElement source, DataOutput dataOutput) {
         DataOutputAssociation dataOutputAssociation =
                 bpmn2.createDataOutputAssociation();
 

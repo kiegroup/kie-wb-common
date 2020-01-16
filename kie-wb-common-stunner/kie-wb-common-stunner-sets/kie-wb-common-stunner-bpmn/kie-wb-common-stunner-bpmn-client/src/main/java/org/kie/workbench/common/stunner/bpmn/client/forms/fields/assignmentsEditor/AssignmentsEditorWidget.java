@@ -21,6 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -48,13 +51,16 @@ import org.kie.workbench.common.stunner.bpmn.client.util.VariableUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -142,6 +148,132 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         }
     }
 
+    protected void initTextBox() {
+
+        Map<String, String> assignmentsProperties = AssignmentParser.parseAssignmentsInfo(assignmentsInfo);
+
+        String variableCountsString = getVariableCountsString(assignmentsProperties.get(AssignmentParser.DATAINPUT),
+                                                              assignmentsProperties.get(AssignmentParser.DATAINPUTSET),
+                                                              assignmentsProperties.get(AssignmentParser.DATAOUTPUT),
+                                                              assignmentsProperties.get(AssignmentParser.DATAOUTPUTSET),
+                                                              getProcessVariables(),
+                                                              assignmentsProperties.get(AssignmentParser.ASSIGNMENTS),
+                                                              getDisallowedPropertyNames());
+        assignmentsTextBox.setText(variableCountsString);
+    }
+
+    protected String getVariableCountsString(final String datainput,
+                                             final String datainputset,
+                                             final String dataoutput,
+                                             final String dataoutputset,
+                                             final String processvars,
+                                             final String assignments,
+                                             final String disallowedpropertynames) {
+        String inputvars = null;
+        if (datainput != null) {
+            inputvars = datainput;
+        }
+        if (datainputset != null) {
+            inputvars = datainputset;
+        }
+        String outputvars = null;
+        if (dataoutput != null) {
+            outputvars = dataoutput;
+        }
+        if (dataoutputset != null) {
+            outputvars = dataoutputset;
+        }
+        AssignmentData assignmentData = new AssignmentData(inputvars,
+                                                           outputvars,
+                                                           processvars,
+                                                           assignments,
+                                                           disallowedpropertynames);
+        return assignmentData.getVariableCountsString(hasInputVars,
+                                                      isSingleInputVar,
+                                                      hasOutputVars,
+                                                      isSingleOutputVar);
+    }
+
+    protected String getProcessVariables() {
+        Diagram diagram = canvasSessionManager.getCurrentSession().getCanvasHandler().getDiagram();
+        Node selectedElement = getSelectedElement();
+        String variables = VariableUtils.encodeProcessVariables(diagram, selectedElement);
+        StringBuffer sb = new StringBuffer();
+        if (!variables.isEmpty()) {
+            sb.append(variables);
+        }
+
+        String dataObjects =
+                findDataObjects().stream()
+                        .map(elm -> dataObjectToProcessVariableFormat(elm))
+                        .collect(Collectors.joining(","));
+
+        if(!dataObjects.isEmpty()) {
+            sb.append(dataObjects);
+        }
+
+        return sb.toString();
+    }
+
+    protected String getDisallowedPropertyNames() {
+        if (bpmnModel instanceof BaseUserTask) {
+            return DEFAULT_IGNORED_PROPERTY_NAMES;
+        } else {
+            return "";
+        }
+    }
+
+    protected Node getSelectedElement() {
+        String elementUUID = getSelectedElementUUID(canvasSessionManager.getCurrentSession());
+        if (elementUUID != null) {
+            return canvasSessionManager.getCurrentSession().getCanvasHandler().getDiagram().getGraph().getNode(elementUUID);
+        }
+        return null;
+    }
+
+    private Set<DataObject> findDataObjects() {
+        Iterable<Node> nodes = canvasSessionManager.getCurrentSession()
+                .getCanvasHandler()
+                .getDiagram()
+                .getGraph()
+                .nodes();
+
+        return StreamSupport.stream(nodes.spliterator(), false)
+                .filter(this::isBPMNDefinition)
+                .map(elm -> (Node<View<BPMNDefinition>, Edge>) elm)
+                .filter(elm -> elm.getContent().getDefinition() instanceof DataObject)
+                .map(elm -> ((DataObject) elm.getContent().getDefinition()))
+                .collect(Collectors.toSet());
+    }
+
+    private String dataObjectToProcessVariableFormat(DataObject dataObject) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(dataObject.getName().getValue());
+        stringBuffer.append(":");
+        stringBuffer.append(dataObject.getType().getValue().getType());
+        stringBuffer.append(":");
+        stringBuffer.append(Boolean.FALSE.toString());
+        return stringBuffer.toString();
+    }
+
+    protected String getSelectedElementUUID(ClientSession clientSession) {
+        if (clientSession instanceof EditorSession) {
+            final SelectionControl selectionControl = ((EditorSession) clientSession).getSelectionControl();
+            if (null != selectionControl) {
+                final Collection<String> selectedItems = selectionControl.getSelectedItems();
+                if (null != selectedItems && !selectedItems.isEmpty()) {
+                    return selectedItems.iterator().next();
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isBPMNDefinition(Node node) {
+        return node.getContent() instanceof View &&
+                ((View) node.getContent()).getDefinition() instanceof BPMNDefinition;
+    }
+
     protected void setBPMNModel(final BPMNDefinition bpmnModel) {
         this.bpmnModel = bpmnModel;
 
@@ -157,18 +289,6 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
             hasOutputVars = false;
             isSingleOutputVar = false;
         }
-    }
-
-    protected void initTextBox() {
-        Map<String, String> assignmentsProperties = AssignmentParser.parseAssignmentsInfo(assignmentsInfo);
-        String variableCountsString = getVariableCountsString(assignmentsProperties.get(AssignmentParser.DATAINPUT),
-                                                              assignmentsProperties.get(AssignmentParser.DATAINPUTSET),
-                                                              assignmentsProperties.get(AssignmentParser.DATAOUTPUT),
-                                                              assignmentsProperties.get(AssignmentParser.DATAOUTPUTSET),
-                                                              getProcessVariables(),
-                                                              assignmentsProperties.get(AssignmentParser.ASSIGNMENTS),
-                                                              getDisallowedPropertyNames());
-        assignmentsTextBox.setText(variableCountsString);
     }
 
     @Override
@@ -253,15 +373,17 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                          true);
             }
         };
-        activityDataIOEditor.setCallback(callback);
 
+        activityDataIOEditor.setCallback(callback);
         activityDataIOEditor.setAssignmentData(assignmentData);
         activityDataIOEditor.setDisallowedPropertyNames(assignmentData.getDisallowedPropertyNames());
         activityDataIOEditor.setInputAssignmentRows(assignmentData.getAssignmentRows(Variable.VariableType.INPUT));
         activityDataIOEditor.setOutputAssignmentRows(assignmentData.getAssignmentRows(Variable.VariableType.OUTPUT));
         activityDataIOEditor.setDataTypes(assignmentData.getDataTypes(),
                                           assignmentData.getDataTypeDisplayNames());
-        activityDataIOEditor.setProcessVariables(assignmentData.getProcessVariableNames());
+        activityDataIOEditor.setProcessVariables(assignmentData.getProcessVariableNames().stream()
+                                                         .distinct()
+                                                         .collect(Collectors.toList()));
         activityDataIOEditor.configureDialog(taskName,
                                              hasInputVars,
                                              isSingleInputVar,
@@ -284,33 +406,6 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
             }
         }
         return taskName;
-    }
-
-    protected String getProcessVariables() {
-        Diagram diagram = canvasSessionManager.getCurrentSession().getCanvasHandler().getDiagram();
-        Node selectedElement = getSelectedElement();
-        return VariableUtils.encodeProcessVariables(diagram, selectedElement);
-    }
-
-    protected Node getSelectedElement() {
-        String elementUUID = getSelectedElementUUID(canvasSessionManager.getCurrentSession());
-        if (elementUUID != null) {
-            return canvasSessionManager.getCurrentSession().getCanvasHandler().getDiagram().getGraph().getNode(elementUUID);
-        }
-        return null;
-    }
-
-    protected String getSelectedElementUUID(ClientSession clientSession) {
-        if (clientSession instanceof EditorSession) {
-            final SelectionControl selectionControl = ((EditorSession) clientSession).getSelectionControl();
-            if (null != selectionControl) {
-                final Collection<String> selectedItems = selectionControl.getSelectedItems();
-                if (null != selectedItems && !selectedItems.isEmpty()) {
-                    return selectedItems.iterator().next();
-                }
-            }
-        }
-        return null;
     }
 
     protected String formatDataTypes(final List<String> dataTypes) {
@@ -359,43 +454,4 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         return sb.toString();
     }
 
-    protected String getVariableCountsString(final String datainput,
-                                             final String datainputset,
-                                             final String dataoutput,
-                                             final String dataoutputset,
-                                             final String processvars,
-                                             final String assignments,
-                                             final String disallowedpropertynames) {
-        String inputvars = null;
-        if (datainput != null) {
-            inputvars = datainput;
-        }
-        if (datainputset != null) {
-            inputvars = datainputset;
-        }
-        String outputvars = null;
-        if (dataoutput != null) {
-            outputvars = dataoutput;
-        }
-        if (dataoutputset != null) {
-            outputvars = dataoutputset;
-        }
-        AssignmentData assignmentData = new AssignmentData(inputvars,
-                                                           outputvars,
-                                                           processvars,
-                                                           assignments,
-                                                           disallowedpropertynames);
-        return assignmentData.getVariableCountsString(hasInputVars,
-                                                      isSingleInputVar,
-                                                      hasOutputVars,
-                                                      isSingleOutputVar);
-    }
-
-    protected String getDisallowedPropertyNames() {
-        if (bpmnModel instanceof BaseUserTask) {
-            return DEFAULT_IGNORED_PROPERTY_NAMES;
-        } else {
-            return "";
-        }
-    }
 }

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.List;
 
 import com.google.gwt.safehtml.shared.UriUtils;
@@ -84,7 +85,8 @@ public class InitializedVariableTest {
                         "",
                         varScope,
                         varDeclaration,
-                        SOURCE_VAR
+                        SOURCE_VAR,
+                        new HashSet<>()
                 );
 
         DataInput dataInput = initializedInputVar.getDataInput();
@@ -126,7 +128,8 @@ public class InitializedVariableTest {
                         "",
                         varScope,
                         varDeclaration,
-                        TARGET_VAR
+                        TARGET_VAR,
+                        new HashSet<>()
                 );
 
         DataOutput dataOuput = initializedOutputVar.getDataOutput();

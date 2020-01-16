@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.bpmn2.Assignment;
@@ -84,7 +85,8 @@ public class InitializedVariableTest {
                         "",
                         varScope,
                         varDeclaration,
-                        SOURCE_VAR
+                        SOURCE_VAR,
+                        new HashSet<>()
                 );
 
         DataInput dataInput = initializedInputVar.getDataInput();
@@ -126,7 +128,8 @@ public class InitializedVariableTest {
                         "",
                         varScope,
                         varDeclaration,
-                        TARGET_VAR
+                        TARGET_VAR,
+                        new HashSet<>()
                 );
 
         DataOutput dataOuput = initializedOutputVar.getDataOutput();

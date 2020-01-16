@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,37 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.textannotation;
+package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.artifacts;
 
+import org.eclipse.bpmn2.DataObjectReference;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.DataObjectPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.TextAnnotationPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
-import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
 
-public class TextAnnotationConverter {
+public class DataObjectConverter {
 
     private final PropertyWriterFactory propertyWriterFactory;
 
-    public TextAnnotationConverter(PropertyWriterFactory propertyWriterFactory) {
+    public DataObjectConverter(PropertyWriterFactory propertyWriterFactory) {
         this.propertyWriterFactory = propertyWriterFactory;
     }
 
-    public PropertyWriter toElement(Node<View<TextAnnotation>, ?> node) {
+    public PropertyWriter toElement(Node<View<DataObject>, ?> node) {
+        final DataObject def = node.getContent().getDefinition();
+        if (def instanceof DataObject) {
+            DataObjectReference element = bpmn2.createDataObjectReference();
 
-        final TextAnnotation def = node.getContent().getDefinition();
-        if (def instanceof TextAnnotation) {
-            TextAnnotation definition = node.getContent().getDefinition();
+            DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
-            org.eclipse.bpmn2.TextAnnotation element = bpmn2.createTextAnnotation();
-            element.setId(node.getUUID());
-
-            TextAnnotationPropertyWriter writer = propertyWriterFactory.of(element);
-
-            BPMNGeneralSet general = definition.getGeneral();
-            writer.setName(general.getName().getValue());
-            writer.setDocumentation(general.getDocumentation().getValue());
+            DataObject definition = node.getContent().getDefinition();
+            writer.setName(definition.getName().getValue());
+            writer.setType(definition.getType().getValue().getType());
             writer.setAbsoluteBounds(node);
 
             return writer;
@@ -56,3 +52,4 @@ public class TextAnnotationConverter {
         return ConverterUtils.notSupported(def);
     }
 }
+

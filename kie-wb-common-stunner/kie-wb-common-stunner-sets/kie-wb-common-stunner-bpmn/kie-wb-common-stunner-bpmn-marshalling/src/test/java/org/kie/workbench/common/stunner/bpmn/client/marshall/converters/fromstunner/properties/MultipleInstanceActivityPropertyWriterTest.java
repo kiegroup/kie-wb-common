@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class MultipleInstanceActivityPropertyWriterTest {
         when(variableScope.lookup(PROPERTY_ID)).thenReturn(Optional.of(variable));
         Property property = mockProperty(PROPERTY_ID, ITEM_ID);
         when(variable.getTypedIdentifier()).thenReturn(property);
-        writer = new MultipleInstanceActivityPropertyWriter(activity, variableScope);
+        writer = new MultipleInstanceActivityPropertyWriter(activity, variableScope, new HashSet<>());
     }
 
     @Test

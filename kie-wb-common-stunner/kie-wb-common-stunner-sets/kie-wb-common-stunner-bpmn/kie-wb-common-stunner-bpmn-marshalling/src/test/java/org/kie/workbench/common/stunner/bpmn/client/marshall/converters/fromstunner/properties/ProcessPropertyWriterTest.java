@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties;
 
+import java.util.HashSet;
+
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.ProcessType;
 import org.eclipse.bpmn2.di.BPMNEdge;
@@ -68,10 +70,10 @@ public class ProcessPropertyWriterTest {
         Process process = p.getProcess();
 
         BoundaryEventPropertyWriter boundaryEventPropertyWriter =
-                new BoundaryEventPropertyWriter(bpmn2.createBoundaryEvent(), variableScope);
+                new BoundaryEventPropertyWriter(bpmn2.createBoundaryEvent(), variableScope, new HashSet<>());
 
         UserTaskPropertyWriter userTaskPropertyWriter =
-                new UserTaskPropertyWriter(bpmn2.createUserTask(), variableScope);
+                new UserTaskPropertyWriter(bpmn2.createUserTask(), variableScope, new HashSet<>());
 
         p.addChildElement(boundaryEventPropertyWriter);
         p.addChildElement(userTaskPropertyWriter);

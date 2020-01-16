@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.textannotation;
+package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.artifacts;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.NodeConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TextAnnotationPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.NodeConverter;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.TextAnnotationPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;

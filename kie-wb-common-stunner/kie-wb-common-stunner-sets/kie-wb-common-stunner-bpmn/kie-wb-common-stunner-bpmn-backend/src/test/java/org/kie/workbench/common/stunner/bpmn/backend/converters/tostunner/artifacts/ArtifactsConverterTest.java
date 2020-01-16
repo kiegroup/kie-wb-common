@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.textannotation;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.artifacts;
 
 import org.eclipse.bpmn2.Bpmn2Factory;
 import org.eclipse.bpmn2.TextAnnotation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.TextAnnotationPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TextAnnotationPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -36,12 +36,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TextAnnotationConverterTest {
+public class ArtifactsConverterTest {
 
-    private TextAnnotationConverter tested;
+    private ArtifactsConverter tested;
 
     @Mock
     private TypedFactoryManager typedFactoryManager;
@@ -66,7 +66,7 @@ public class TextAnnotationConverterTest {
     @Before
     public void setUp() {
         element = Bpmn2Factory.eINSTANCE.createTextAnnotation();
-        tested = new TextAnnotationConverter(typedFactoryManager, propertyReaderFactory);
+        tested = new ArtifactsConverter(typedFactoryManager, propertyReaderFactory);
 
         when(typedFactoryManager.newNode(anyString(),
                                          eq(org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation.class))).thenReturn(node);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,46 +14,44 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.textannotation;
+package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.artifacts;
 
+import org.eclipse.bpmn2.DataObjectReference;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.NodeConverter;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.DataObjectPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.TextAnnotationPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class TextAnnotationConverter implements NodeConverter<org.eclipse.bpmn2.TextAnnotation> {
+public class DataObjectConverter implements NodeConverter<org.eclipse.bpmn2.DataObjectReference> {
 
     private final TypedFactoryManager typedFactoryManager;
     private PropertyReaderFactory propertyReaderFactory;
 
-    public TextAnnotationConverter(TypedFactoryManager typedFactoryManager, PropertyReaderFactory propertyReaderFactory) {
+    public DataObjectConverter(TypedFactoryManager typedFactoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.typedFactoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
     }
 
     @Override
-    public Result<BpmnNode> convert(org.eclipse.bpmn2.TextAnnotation element) {
+    public Result<BpmnNode> convert(org.eclipse.bpmn2.DataObjectReference element) {
         return convert(element, propertyReaderFactory.of(element));
     }
 
-    private Result<BpmnNode> convert(org.eclipse.bpmn2.TextAnnotation element, TextAnnotationPropertyReader p) {
-        Node<View<TextAnnotation>, Edge> node = typedFactoryManager.newNode(element.getId(), TextAnnotation.class);
-        TextAnnotation definition = node.getContent().getDefinition();
-
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
-        ));
-
+    private Result<BpmnNode> convert(DataObjectReference element, DataObjectPropertyReader p) {
+        Node<View<DataObject>, Edge> node = typedFactoryManager.newNode(element.getId(),
+                                                                        DataObject.class);
+        DataObject definition = node.getContent().getDefinition();
+        definition.setName(new Name(p.getName()));
+        definition.setType(new DataObjectType(new DataObjectTypeValue(p.getType())));
         node.getContent().setBounds(p.getBounds());
 
         definition.setDimensionsSet(p.getRectangleDimensionsSet());
@@ -63,3 +61,4 @@ public class TextAnnotationConverter implements NodeConverter<org.eclipse.bpmn2.
         return Result.success(BpmnNode.of(node, p));
     }
 }
+

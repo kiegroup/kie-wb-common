@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.textannotation;
+package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.artifacts;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.TextAnnotationPropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.TextAnnotationPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -77,4 +77,3 @@ public class TextAnnotationConverterTest {
         assertEquals(writer, propertyWriter);
     }
 }
-

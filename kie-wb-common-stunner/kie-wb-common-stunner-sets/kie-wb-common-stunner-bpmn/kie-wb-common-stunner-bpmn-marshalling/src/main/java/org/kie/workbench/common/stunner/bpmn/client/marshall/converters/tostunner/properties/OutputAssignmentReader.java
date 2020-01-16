@@ -16,8 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties;
 
+import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
+import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.AssociationDeclaration;
 
@@ -27,13 +29,13 @@ public class OutputAssignmentReader {
 
     public static OutputAssignmentReader fromAssociation(DataOutputAssociation out) {
         String sourceName = ((DataOutput) out.getSourceRef().get(0)).getName();
-        if (out.getTargetRef() instanceof Property) {
-            return new OutputAssignmentReader(sourceName, (Property) out.getTargetRef());
+        if (out.getTargetRef() instanceof ItemAwareElement) {
+            return new OutputAssignmentReader(sourceName, out.getTargetRef());
         }
         return null;
     }
 
-    OutputAssignmentReader(String sourceName, Property target) {
+    OutputAssignmentReader(String sourceName, ItemAwareElement target) {
         String propertyName = getPropertyName(target);
         this.associationDeclaration = new AssociationDeclaration(
                 AssociationDeclaration.Direction.Output,
@@ -47,7 +49,12 @@ public class OutputAssignmentReader {
     }
 
     // fallback to ID for https://issues.jboss.org/browse/JBPM-6708
-    private static String getPropertyName(Property prop) {
-        return prop.getName() == null ? prop.getId() : prop.getName();
+    private static String getPropertyName(ItemAwareElement prop) {
+        if(prop instanceof Property) {
+            return ((Property)prop).getName() == null ? prop.getId() : ((Property)prop).getName();
+        } else if(prop instanceof DataObject) {
+            return ((DataObject)prop).getName() == null ? prop.getId() : ((DataObject)prop).getName();
+        }
+        return null;
     }
 }

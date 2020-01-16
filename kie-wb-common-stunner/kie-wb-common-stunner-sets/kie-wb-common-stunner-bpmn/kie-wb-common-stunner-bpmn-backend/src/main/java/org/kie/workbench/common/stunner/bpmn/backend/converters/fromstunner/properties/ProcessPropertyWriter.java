@@ -22,12 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import bpsim.BPSimDataType;
 import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
 import bpsim.ScenarioParameters;
+import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
@@ -57,6 +59,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseP
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpsim;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.util.DataObjectUtils.maybeAddDataObjectToItemDefinitions;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.util.DataObjectUtils.maybeAddDataObjects;
 
 public class ProcessPropertyWriter extends BasePropertyWriter implements ElementContainer {
 
@@ -66,16 +70,20 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     private final BPMNPlane bpmnPlane;
     private Map<String, BasePropertyWriter> childElements = new HashMap<>();
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
+    private final Set<DataObject> dataObjects;
 
-    public ProcessPropertyWriter(Process process, VariableScope variableScope) {
+
+    public ProcessPropertyWriter(Process process, VariableScope variableScope, Set<DataObject> dataObjects) {
         super(process, variableScope);
         this.process = process;
+        this.dataObjects = dataObjects;
 
         this.bpmnDiagram = di.createBPMNDiagram();
         bpmnDiagram.setId(process.getId());
 
         this.bpmnPlane = di.createBPMNPlane();
         bpmnDiagram.setPlane(bpmnPlane);
+
     }
 
     public void setId(String value) {
@@ -88,31 +96,32 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         return process;
     }
 
-    public void addChildShape(BPMNShape shape) {
-        if (shape == null) {
-            return;
-        }
-        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
-        if (planeElement.contains(shape)) {
-            throw new IllegalArgumentException("Cannot add the same shape twice: " + shape.getId());
-        }
-        planeElement.add(shape);
-    }
-
-    public void addChildEdge(BPMNEdge edge) {
-        if (edge == null) {
-            return;
-        }
-        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
-        if (planeElement.contains(edge)) {
-            throw new IllegalArgumentException("Cannot add the same edge twice: " + edge.getId());
-        }
-        planeElement.add(edge);
-    }
-
     public BPMNDiagram getBpmnDiagram() {
         bpmnDiagram.getPlane().setBpmnElement(process);
         return bpmnDiagram;
+    }
+
+    // recursively add all child shapes and edges (`di:` namespace)
+    // because these DO NOT nest (as opposed to `bpmn2:` namespace where subProcesses nest)
+    private void addSubProcess(SubProcessPropertyWriter p) {
+        Collection<BasePropertyWriter> childElements =
+                p.getChildElements();
+
+        childElements.forEach(el -> {
+            if (el instanceof DataObjectPropertyWriter) {
+                maybeAddDataObjects(process, dataObjects);
+            }
+            addChildShape(el.getShape());
+            addChildEdge(el.getEdge());
+            if (el instanceof SubProcessPropertyWriter) {
+                addSubProcess((SubProcessPropertyWriter) el);
+            }
+        });
+    }
+
+    public BasePropertyWriter getChildElement(String id) {
+        BasePropertyWriter propertyWriter = this.childElements.get(id);
+        return propertyWriter;
     }
 
     public void addChildElement(BasePropertyWriter p) {
@@ -129,22 +138,11 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
 
         if (p instanceof SubProcessPropertyWriter) {
             addSubProcess((SubProcessPropertyWriter) p);
+        } else if (p instanceof DataObjectPropertyWriter) {
+            DataObject dataObject = ((DataObjectPropertyWriter) p).getElement().getDataObjectRef();
+            maybeAddDataObjectToItemDefinitions(itemDefinitions, dataObject);
         }
-    }
-
-    // recursively add all child shapes and edges (`di:` namespace)
-    // because these DO NOT nest (as opposed to `bpmn2:` namespace where subProcesses nest)
-    private void addSubProcess(SubProcessPropertyWriter p) {
-        Collection<BasePropertyWriter> childElements =
-                p.getChildElements();
-
-        childElements.forEach(el -> {
-            addChildShape(el.getShape());
-            addChildEdge(el.getEdge());
-            if (el instanceof SubProcessPropertyWriter) {
-                addSubProcess((SubProcessPropertyWriter) el);
-            }
-        });
+        maybeAddDataObjectToItemDefinitions(itemDefinitions, dataObjects);
     }
 
     @Override
@@ -152,9 +150,40 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         return this.childElements.values();
     }
 
-    public BasePropertyWriter getChildElement(String id) {
-        BasePropertyWriter propertyWriter = this.childElements.get(id);
-        return propertyWriter;
+    public void addChildEdge(BPMNEdge edge) {
+        if (edge == null) {
+            return;
+        }
+        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
+        if (planeElement.contains(edge)) {
+            throw new IllegalArgumentException("Cannot add the same edge twice: " + edge.getId());
+        }
+        planeElement.add(edge);
+    }
+
+    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
+        if (lanes.isEmpty()) {
+            return;
+        }
+        LaneSet laneSet = bpmn2.createLaneSet();
+        List<org.eclipse.bpmn2.Lane> laneList = laneSet.getLanes();
+        lanes.forEach(l -> laneList.add(l.getElement()));
+        process.getLaneSets().add(laneSet);
+        lanes.forEach(l -> {
+            this.childElements.put(l.getElement().getId(), l);
+            addChildShape(l.getShape());
+        });
+    }
+
+    public void addChildShape(BPMNShape shape) {
+        if (shape == null) {
+            return;
+        }
+        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
+        if (planeElement.contains(shape)) {
+            throw new IllegalArgumentException("Cannot add the same shape twice: " + shape.getId());
+        }
+        planeElement.add(shape);
     }
 
     public void setName(String value) {
@@ -188,7 +217,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     public void setProcessVariables(BaseProcessVariables processVariables) {
         String value = processVariables.getValue();
         DeclarationList declarationList = DeclarationList.fromString(value);
-
         List<Property> properties = process.getProperties();
         declarationList.getDeclarations().forEach(decl -> {
             VariableScope.Variable variable =
@@ -236,20 +264,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         CustomElement.slaDueDate.of(process).set(slaDueDate.getValue());
     }
 
-    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
-        if (lanes.isEmpty()) {
-            return;
-        }
-        LaneSet laneSet = bpmn2.createLaneSet();
-        List<org.eclipse.bpmn2.Lane> laneList = laneSet.getLanes();
-        lanes.forEach(l -> laneList.add(l.getElement()));
-        process.getLaneSets().add(laneSet);
-        lanes.forEach(l -> {
-            this.childElements.put(l.getElement().getId(), l);
-            addChildShape(l.getShape());
-        });
-    }
-
     public Collection<ElementParameters> getSimulationParameters() {
         return simulationParameters;
     }
@@ -274,5 +288,9 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         defaultScenario.getElementParameters().addAll(simulationParameters);
 
         return relationship;
+    }
+
+    public Set<DataObject> getDataObjects() {
+        return dataObjects;
     }
 }
