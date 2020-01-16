@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.Tree
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
+import org.kie.workbench.common.stunner.core.validation.DomainValidator;
 import org.kie.workbench.common.stunner.core.validation.ModelValidator;
 
 @Specializes
@@ -49,6 +51,7 @@ public class DelegatingClientDiagramValidator extends ClientDiagramValidator {
              null,
              null,
              null,
+             null,
              null);
     }
 
@@ -57,11 +60,13 @@ public class DelegatingClientDiagramValidator extends ClientDiagramValidator {
                                             final RuleManager ruleManager,
                                             final TreeWalkTraverseProcessor treeWalkTraverseProcessor,
                                             final ModelValidator modelValidator,
-                                            final Caller<ValidationService> validationService) {
+                                            final Caller<ValidationService> validationService,
+                                            final Instance<DomainValidator> validators) {
         super(definitionManager,
               ruleManager,
               treeWalkTraverseProcessor,
-              modelValidator);
+              modelValidator,
+              validators);
         this.validationService = validationService;
     }
 
