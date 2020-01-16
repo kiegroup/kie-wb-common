@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.validation.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +26,10 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.enterprise.inject.Instance;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -34,6 +40,8 @@ import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramValidator;
+import org.kie.workbench.common.stunner.core.validation.DomainValidator;
+import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.core.validation.ModelValidator;
 
 /**
@@ -46,14 +54,38 @@ public abstract class AbstractDiagramValidator
     private final GraphValidatorImpl graphValidator;
     private final ModelValidator modelValidator;
 
+    private final Instance<DomainValidator> validators;
+
     protected AbstractDiagramValidator(final DefinitionManager definitionManager,
                                        final RuleManager ruleManager,
                                        final TreeWalkTraverseProcessor treeWalkTraverseProcessor,
-                                       final ModelValidator modelValidator) {
+                                       final ModelValidator modelValidator,
+                                       final Instance<DomainValidator> validators) {
+
         this.graphValidator = new GraphValidatorImpl(definitionManager,
                                                      ruleManager,
                                                      treeWalkTraverseProcessor);
         this.modelValidator = modelValidator;
+        this.validators = validators;
+    }
+
+    private Collection<DiagramElementViolation<RuleViolation>> validateDomain(Diagram diagram) {
+        return domainViolations(diagram).stream()
+                .filter(v -> Objects.nonNull(v.getUUID()))
+                .filter(v -> !"null".equals(v.getUUID()))
+                .map(v -> new ElementViolationImpl.Builder().setUuid(v.getUUID()).setDomainViolations(Collections.singletonList(v)).build())
+                .collect(Collectors.toList());
+    }
+
+    private Collection<DomainViolation> domainViolations(Diagram diagram) {
+        return StreamSupport.stream(validators.spliterator(), false)
+                .filter(validator -> Objects.equals(validator.getDefinitionSetId(), diagram.getMetadata().getDefinitionSetId()))
+                .findFirst()
+                .map(validator -> {
+                    final List<DomainViolation> domainViolations = new ArrayList<>();
+                    validator.validate(diagram, domainViolations::addAll);
+                    return domainViolations;
+                }).orElseGet(Collections::emptyList);
     }
 
     @Override
@@ -62,6 +94,10 @@ public abstract class AbstractDiagramValidator
                          final Consumer<Collection<DiagramElementViolation<RuleViolation>>> resultConsumer) {
         final Graph graph = diagram.getGraph();
         final List<DiagramElementViolation<RuleViolation>> violations = new LinkedList<>();
+
+        final Collection<DiagramElementViolation<RuleViolation>> diagramElementViolations = validateDomain(diagram);
+        violations.addAll(diagramElementViolations);
+
         graphValidator.validate(graph,
                                 Optional.empty(),
                                 Optional.of((g, v) -> consumeBeanAndViolations(() -> violations).accept(g, v)),
@@ -69,7 +105,9 @@ public abstract class AbstractDiagramValidator
                                 Optional.of((e, v) -> consumeBeanAndViolations(() -> violations).accept(e, v)),
                                 // At this point all violations have been already consumed, so no need
                                 // to use the resulting ones here.
-                                vs -> resultConsumer.accept(violations)
+                                vs -> {
+                                    resultConsumer.accept(violations);
+                                }
         );
     }
 
@@ -79,6 +117,7 @@ public abstract class AbstractDiagramValidator
                 // If the underlying bean is a Definition, it accomplishes JSR303 validations.
                 modelValidator.validate(element,
                                         modelViolations -> {
+
                                             if ((Objects.nonNull(ruleViolations) && !ruleViolations.isEmpty()) || (Objects.nonNull(modelViolations) && !modelViolations.isEmpty())) {
                                                 //Don't add a ElementViolation if there are no rule or model violations
                                                 violations.get().add(new ElementViolationImpl.Builder()

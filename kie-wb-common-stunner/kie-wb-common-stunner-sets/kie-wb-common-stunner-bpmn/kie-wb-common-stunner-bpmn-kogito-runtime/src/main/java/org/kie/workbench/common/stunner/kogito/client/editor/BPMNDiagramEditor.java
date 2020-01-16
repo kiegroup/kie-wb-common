@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.stunner.kogito.client.editor;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -43,9 +46,13 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasDiagramValidator;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
+import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.forms.client.event.FormPropertiesOpened;
 import org.kie.workbench.common.stunner.forms.client.widgets.FormsFlushManager;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
@@ -96,6 +103,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     protected final FormsFlushManager formsFlushManager;
     private final CanvasFileExport canvasFileExport;
     private final Promises promises;
+    private final CanvasDiagramValidator<AbstractCanvasHandler> validator;
 
     protected String formElementUUID;
 
@@ -122,7 +130,8 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                              final AbstractKogitoClientDiagramService diagramServices,
                              final FormsFlushManager formsFlushManager,
                              final CanvasFileExport canvasFileExport,
-                             final Promises promises) {
+                             final Promises promises,
+                             final CanvasDiagramValidator<AbstractCanvasHandler> validator) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -146,6 +155,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         this.canvasFileExport = canvasFileExport;
         this.formsFlushManager = formsFlushManager;
         this.promises = promises;
+        this.validator = validator;
     }
 
     @OnStartup
@@ -259,10 +269,31 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         return EDITOR_ID;
     }
 
+    private void displayNotifications(final boolean displayNotifications) {
+        if (getEditor().getSessionPresenter() != null) {
+            getEditor().getSessionPresenter().displayNotifications(t -> displayNotifications);
+        }
+    }
     @GetContent
     @Override
     public Promise getContent() {
         flush();
+        displayNotifications(false);
+        AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) getCanvasHandler();
+        validator.validate(canvasHandler, violations -> {
+
+            if (!violations.isEmpty()) {
+                List<String> violationMessages = new ArrayList<>();
+                for (DiagramElementViolation<RuleViolation> next : violations) {
+                    final Collection<DomainViolation> domainViolations = next.getDomainViolations();
+
+                    domainViolations.forEach(item -> violationMessages.add("Error: " + item.getUUID() + " - " + item.getMessage() + " - " + item.getViolationType()));
+                }
+
+                getEditor().getSessionPresenter().getView().showWarning("Errors: " + violationMessages);
+            }
+        });
+        displayNotifications(true);
         return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
 

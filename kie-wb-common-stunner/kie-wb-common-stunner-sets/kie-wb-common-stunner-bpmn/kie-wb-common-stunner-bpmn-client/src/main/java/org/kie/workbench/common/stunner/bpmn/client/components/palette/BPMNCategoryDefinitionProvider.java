@@ -76,9 +76,8 @@ public class BPMNCategoryDefinitionProvider extends DefaultPaletteDefinitionProv
                 .put(BPMNCategories.SERVICE_TASKS,
                      category -> category
                              .useGlyph(SvgDataUriGlyph.Builder.build(BPMNImageResources.INSTANCE.categoryServiceTasks().getSafeUri())))
-                .put(BPMNCategories.TEXT_ANNOTATION,
+                .put(BPMNCategories.ARTIFACTS,
                      category -> category
-                             .useGlyph(SvgDataUriGlyph.Builder.build(BPMNImageResources.INSTANCE.categoryTextAnnotation().getSafeUri())));
-        ;
+                             .useGlyph(SvgDataUriGlyph.Builder.build(BPMNImageResources.INSTANCE.categoryArtifacts().getSafeUri())));
     }
 }

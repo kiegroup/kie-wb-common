@@ -1,18 +1,20 @@
 /**
  * <copyright>
- * 
+ *
  * Copyright (c) 2010 SAP AG.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    Reiner Hille-Doering (SAP AG) - initial API and implementation and/or initial documentation
- * 
+ *
  * </copyright>
  */
 package org.eclipse.bpmn2.impl;
+
+import java.util.Objects;
 
 import com.google.gwt.user.client.rpc.GwtTransient;
 
@@ -377,4 +379,20 @@ public class DataObjectImpl extends FlowElementImpl implements DataObject {
 		return result.toString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof DataObjectImpl)) {
+			return false;
+		}
+		DataObjectImpl that = (DataObjectImpl) o;
+		return Objects.equals(getId(), that.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
+	}
 } //DataObjectImpl
