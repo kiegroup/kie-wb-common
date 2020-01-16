@@ -59,7 +59,7 @@ public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPre
         this.presenter = presenter;
 
         this.modal = new CommonModalBuilder()
-                .addHeader(ts.format(LibraryConstants.Squash))
+                .addHeader(ts.format(LibraryConstants.SquashAndMerge))
                 .addBody(body)
                 .addFooter(footer())
                 .build();

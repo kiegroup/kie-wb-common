@@ -780,5 +780,5 @@ public class LibraryConstants {
     public static final String SpacePermissionsChanged = "SpacePermissionsChanged";
 
     @TranslationKey(defaultValue = "")
-    public static final String Squash = "Squash";
+    public static final String SquashAndMerge = "SquashAndMerge";
 }
