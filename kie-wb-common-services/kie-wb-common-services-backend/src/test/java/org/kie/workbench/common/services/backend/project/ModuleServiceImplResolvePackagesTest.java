@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 
+import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
