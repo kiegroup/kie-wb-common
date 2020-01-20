@@ -250,6 +250,34 @@ public class BPMNClientDiagramServiceTest {
     }
 
     @Test
+    public void testNameAndIdAsDefaultIfNotEmpty() {
+
+        when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
+        when(marshalling.unmarshall(any(), any())).thenReturn(graph);
+        when(graph.nodes()).thenReturn(nodes);
+        diagramSet.getName().setValue("somePreviousName");
+        diagramSet.getId().setValue("somePreviousId");
+
+        service.transform(BPMNClientDiagramService.DEFAULT_PROCESS_ID, xml,
+
+                          new ServiceCallback<Diagram>() {
+
+                              @Override
+                              public void onSuccess(Diagram item) {
+
+                              }
+
+                              @Override
+                              public void onError(ClientRuntimeError error) {
+
+                              }
+                          });
+
+        assertEquals("somePreviousName", diagramSet.getName().getValue());
+        assertEquals("somePreviousId", diagramSet.getId().getValue());
+    }
+
+    @Test
     public void testNameAndIdDefaultOnNewDiagram() {
 
         when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
