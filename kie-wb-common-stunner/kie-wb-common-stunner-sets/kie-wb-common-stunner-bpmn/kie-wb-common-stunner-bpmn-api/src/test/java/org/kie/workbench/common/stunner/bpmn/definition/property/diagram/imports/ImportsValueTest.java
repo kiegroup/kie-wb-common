@@ -21,9 +21,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ImportsValueTest {
 
     private static final String CLASS_NAME = "ClassName";
@@ -77,7 +80,7 @@ public class ImportsValueTest {
     }
 
     @Test
-    public void testAddImport() {
+    public void addImport() {
         ImportsValue tested = new ImportsValue();
         for (int i = 0; i < DEFAULT_IMPORTS_QTY; i++) {
             tested.addImport(new DefaultImport(CLASS_NAME + i));
@@ -91,7 +94,7 @@ public class ImportsValueTest {
     }
 
     @Test
-    public void testEquals() {
+    public void equalsTest() {
         ImportsValue tested1 = new ImportsValue();
         ImportsValue tested2 = new ImportsValue();
         assertEquals(tested1, tested2);
@@ -102,7 +105,7 @@ public class ImportsValueTest {
     }
 
     @Test
-    public void testHashCode() {
+    public void hashCodeTest() {
         ImportsValue tested1 = new ImportsValue();
         ImportsValue tested2 = new ImportsValue();
         assertEquals(tested1.hashCode(), tested2.hashCode());
@@ -113,7 +116,7 @@ public class ImportsValueTest {
     }
 
     @Test
-    public void testToString() {
+    public void toStringTest() {
         ImportsValue tested1 = new ImportsValue();
         assertEquals(STRING_EMPTY, tested1.toString());
 

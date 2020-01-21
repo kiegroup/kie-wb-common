@@ -30,6 +30,7 @@ public class StringUtils {
     public static final String ALPHA_NUM_REGEXP = "^[a-zA-Z0-9\\-\\_]*$";
     public static final String ALPHA_NUM_UNDERSCORE_DOT_REGEXP = "^[a-zA-Z0-9\\_\\.]*$";
     public static final String ALPHA_NUM_SPACE_REGEXP = "^[a-zA-Z0-9\\-\\_\\ ]*$";
+    public static final String JAVA_IDENTIFIER_REGEXP = "^([a-zA-Z\\_][a-zA-Z0-9\\_]*)*$";
     public static final RegExp EXPRESSION = RegExp.compile(Patterns.EXPRESSION);
 
     private static URL url = new URL();
@@ -39,6 +40,7 @@ public class StringUtils {
 
     /**
      * Creates a string for a list by concatenating each object's String separated by commas
+     *
      * @param objects
      * @return
      */
@@ -48,6 +50,7 @@ public class StringUtils {
 
     /**
      * Creates a string for a list by concatenating each object's String separated by a custom delimiter
+     *
      * @param objects
      * @param delimiter
      * @return
@@ -77,6 +80,7 @@ public class StringUtils {
      * Url encoding is not supported on the Engine side use this method for the internal communication
      * or to UI/Marshaller communications only.
      * For storing data in XML use {@link org.kie.workbench.common.stunner.core.util.StringUtils#replaceIllegalCharsAttribute}
+     *
      * @param s
      * @return
      */
@@ -89,6 +93,7 @@ public class StringUtils {
 
     /**
      * Decode a url parameters see {@link URL#decodeQueryString(String)}
+     *
      * @param s
      * @return
      */
@@ -106,6 +111,7 @@ public class StringUtils {
      * Url encoding is not supported on the jBPM Engine side use this method for the internal communication
      * or to UI/Marshaller communications only.
      * For storing data in XML use {@link org.kie.workbench.common.stunner.core.util.StringUtils#replaceIllegalCharsAttribute}
+     *
      * @param s a string to encode on the client side
      * @return an encoded string
      */
@@ -118,6 +124,7 @@ public class StringUtils {
 
     /**
      * Equivalent of {@link java.net.URLDecoder#decode(String, String)} in UTF-8 decoding on server side
+     *
      * @param s a string to decode on the client side
      * @return a decoded string
      */
@@ -148,6 +155,7 @@ public class StringUtils {
 
     /**
      * Create display name for a datatype, e.g. for "org.test.Person", returns "Person [org.test]"
+     *
      * @param dataType
      * @return
      */
@@ -162,6 +170,7 @@ public class StringUtils {
     /**
      * This method is for test purposes only. It needed to replace client side native code by
      * the mock.
+     *
      * @param u - mocked {@link URL} object
      */
     public static void setURL(URL u) {
