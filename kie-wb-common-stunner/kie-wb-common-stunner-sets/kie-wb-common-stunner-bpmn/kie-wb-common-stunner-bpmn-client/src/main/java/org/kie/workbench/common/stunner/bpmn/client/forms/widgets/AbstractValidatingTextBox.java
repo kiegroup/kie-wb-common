@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -44,25 +43,13 @@ public abstract class AbstractValidatingTextBox extends TextBox {
         this.addKeyPressHandler(new KeyPressHandler() {
 
             public void onKeyPress(final KeyPressEvent event) {
-                // Permit navigation
-                int keyCode = getKeyCodeFromKeyPressEvent(event);
                 if (event.isControlKeyDown()) {
                     return;
                 }
-                if (!event.isShiftKeyDown()) {
-                    if (keyCode == KeyCodes.KEY_BACKSPACE
-                            || keyCode == KeyCodes.KEY_DELETE
-                            || keyCode == KeyCodes.KEY_LEFT
-                            || keyCode == KeyCodes.KEY_RIGHT
-                            || keyCode == KeyCodes.KEY_ENTER
-                            || keyCode == KeyCodes.KEY_TAB
-                            || keyCode == KeyCodes.KEY_HOME
-                            || keyCode == KeyCodes.KEY_END) {
-                        return;
-                    }
-                }
+
                 // Get new value and validate
                 int charCode = event.getCharCode();
+
                 String oldValue = me.getValue();
                 String newValue = oldValue.substring(0,
                                                      me.getCursorPos());

@@ -117,23 +117,13 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
 
     String Data_Type_Imports();
 
-    String Data_Type_Imports_Title();
-
     String No_WSDL_Import();
 
     String WSDL_Import();
 
     String WSDL_Imports();
 
-    String WSDL_Imports_Title();
-
     String Duplicate_Import(String location, String namespace);
-
-    String Location();
-
-    String Namespace();
-
-    String ClassName();
 
     String Language();
 
