@@ -38,6 +38,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Fact
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -90,6 +91,16 @@ public class MultipleInstanceActivityPropertyWriterTest {
     @Test
     public void setSetInputAndDontAddAssociation() {
         testSetInput(false);
+    }
+
+    @Test
+    public void testSetInputNotFailed() {
+        writer.setInput(null, false);
+        writer.setInput("", false);
+
+        assertNull(activity.getIoSpecification());
+        assertTrue(activity.getDataInputAssociations().isEmpty());
+        assertNull(activity.getLoopCharacteristics());
     }
 
     private void testSetInput(boolean addAssociation) {
