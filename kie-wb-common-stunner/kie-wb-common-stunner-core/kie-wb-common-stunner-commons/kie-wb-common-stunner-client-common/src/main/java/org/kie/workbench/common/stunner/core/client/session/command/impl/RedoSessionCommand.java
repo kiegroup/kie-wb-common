@@ -21,12 +21,13 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.appformer.kogito.bridge.client.stateControl.KogitoStateControlInitializer;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandUndoneEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
-import org.kie.workbench.common.stunner.core.client.command.ClientRedoCommandHandler;
+import org.kie.workbench.common.stunner.core.client.command.RedoCommandHandler;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
@@ -44,26 +45,34 @@ import static org.kie.workbench.common.stunner.core.client.canvas.controls.keybo
 public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSession> {
 
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final ClientRedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler;
+    private final RedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler;
+    private final KogitoStateControlInitializer stateControlInitializer;
 
     protected RedoSessionCommand() {
-        this(null,
-             null);
+        this(null, null, null);
     }
 
     @Inject
     public RedoSessionCommand(final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                              final ClientRedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler) {
+                              final RedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler,
+                              final KogitoStateControlInitializer stateControlInitializer) {
         super(false);
         this.redoCommandHandler = redoCommandHandler;
         this.sessionCommandManager = sessionCommandManager;
+        this.stateControlInitializer = stateControlInitializer;
     }
 
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         redoCommandHandler.setSession(getSession());
+
+        //If running in Kogito we should initialize the Kogito StateControl undo/redo commands. Otherwise we should keep the key binding.
+        if(stateControlInitializer.isKogitoEnabled()) {
+            stateControlInitializer.setRedoCommand(this::execute);
+        } else {
+            session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        }
     }
 
     @Override

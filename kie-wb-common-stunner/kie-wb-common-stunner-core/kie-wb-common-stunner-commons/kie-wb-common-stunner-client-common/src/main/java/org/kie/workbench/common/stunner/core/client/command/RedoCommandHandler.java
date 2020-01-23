@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.core.command.util;
+package org.kie.workbench.common.stunner.core.client.command;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.appformer.kogito.bridge.client.stateControl.registry.CommandRegistry;
+import org.appformer.kogito.bridge.client.stateControl.registry.DefaultCommandRegistry;
+import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
-import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
 
 /**
  * This handler is an util class that achieves command "re-do" features.
@@ -43,15 +47,17 @@ import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
 @Dependent
 public class RedoCommandHandler<C extends Command> {
 
-    private final CommandRegistry<C> registry;
+    private final DefaultCommandRegistry<C> registry;
+    private final Event<RegisterChangedEvent> registerChangedEvent;
 
     protected RedoCommandHandler() {
-        this(null);
+        this(null, null);
     }
 
     @Inject
-    public RedoCommandHandler(final CommandRegistry<C> commandRegistry) {
-        this.registry = commandRegistry;
+    public RedoCommandHandler(final DefaultCommandRegistry<C> registry, final Event<RegisterChangedEvent> registerChangedEvent) {
+        this.registry = registry;
+        this.registerChangedEvent = registerChangedEvent;
     }
 
     public boolean onUndoCommandExecuted(final C command) {
@@ -85,6 +91,10 @@ public class RedoCommandHandler<C extends Command> {
         final C last = registry.peek();
         return commandManager.execute(context,
                                       last);
+    }
+
+    public void setSession(final ClientSession clientSession) {
+        this.registry.setRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(clientSession.getCanvasHandler())));
     }
 
     public boolean isEnabled() {
