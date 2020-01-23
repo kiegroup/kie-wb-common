@@ -49,7 +49,6 @@ public class KieSelectElement implements KieSelectElementBase,
     @PostConstruct
     public void init() {
         view.init(this);
-        view.initSelect();
     }
 
     public void setup(final List<KieSelectOption> options,
@@ -62,7 +61,7 @@ public class KieSelectElement implements KieSelectElementBase,
                 (item, presenter) -> presenter.setup(item, this));
 
         view.setValue(initialValue);
-
+        view.initSelect();
         this.onChange = onChange;
     }
 

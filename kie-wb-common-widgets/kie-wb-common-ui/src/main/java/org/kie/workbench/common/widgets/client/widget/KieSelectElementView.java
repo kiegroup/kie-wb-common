@@ -19,7 +19,6 @@ package org.kie.workbench.common.widgets.client.widget;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLSelectElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -29,10 +28,6 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated
 public class KieSelectElementView implements KieSelectElement.View,
                                              IsElement {
-
-    @Inject
-    @DataField("root")
-    private HTMLDivElement root;
 
     @Inject
     @DataField("select")
@@ -65,7 +60,7 @@ public class KieSelectElementView implements KieSelectElement.View,
     }
 
     private native void clear(final HTMLSelectElement select)/*-{
-        $wnd.jQuery(select).empty().selectpicker('refresh');
+       $wnd.jQuery(select).empty().selectpicker('refresh');
     }-*/;
 
     @Override
