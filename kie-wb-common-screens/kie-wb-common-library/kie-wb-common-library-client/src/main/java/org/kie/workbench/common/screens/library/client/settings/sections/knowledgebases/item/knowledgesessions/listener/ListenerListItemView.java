@@ -35,7 +35,7 @@ public class ListenerListItemView implements ListenerListItemPresenter.View {
 
     @Inject
     @DataField("kind-select-container")
-    private KieEnumSelectElement<ListenerModel.Kind> kindSelectContainer;
+    private KieEnumSelectElement<ListenerModel.Kind> kindSelect;
 
     @Inject
     @DataField("type")
@@ -71,7 +71,7 @@ public class ListenerListItemView implements ListenerListItemPresenter.View {
     @Override
     public void setupKindSelect(final ListenerModel model,
                                 final KnowledgeSessionListItemPresenter parentPresenter) {
-        kindSelectContainer.setup(
+        kindSelect.setup(
                 ListenerModel.Kind.values(),
                 model.getKind(),
                 kind -> {

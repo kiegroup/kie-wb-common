@@ -65,11 +65,11 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
 
     @Inject
     @DataField("equals-behavior-select-container")
-    private KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelectContainer;
+    private KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect;
 
     @Inject
     @DataField("event-processing-model-select-container")
-    private KieEnumSelectElement<EventProcessingOption> eventProcessingModelSelectContainer;
+    private KieEnumSelectElement<EventProcessingOption> eventProcessingModelSelect;
 
     @Inject
     @DataField("packages-list")
@@ -144,7 +144,7 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
 
     @Override
     public void setupEqualBehaviorSelect(final KBaseModel kBaseModel) {
-        equalsBehaviorSelectContainer.setup(
+        equalsBehaviorSelect.setup(
                 AssertBehaviorOption.values(),
                 kBaseModel.getEqualsBehavior(),
                 equalsBehavior -> {
@@ -155,7 +155,7 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
 
     @Override
     public void setupEventProcessingModelSelect(final KBaseModel kBaseModel) {
-        eventProcessingModelSelectContainer.setup(
+        eventProcessingModelSelect.setup(
                 EventProcessingOption.values(),
                 kBaseModel.getEventProcessingMode(),
                 eventProcessingMode -> {

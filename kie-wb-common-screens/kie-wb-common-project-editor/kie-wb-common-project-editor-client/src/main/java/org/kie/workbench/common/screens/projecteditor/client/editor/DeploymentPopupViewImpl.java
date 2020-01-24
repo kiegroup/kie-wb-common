@@ -89,7 +89,7 @@ public class DeploymentPopupViewImpl implements DeploymentPopupView, IsElement {
 
     @Inject
     @DataField
-    private KieSelectElement serverTemplateDropdownContainer;
+    private KieSelectElement serverTemplateDropdownSelect;
 
     @Inject
     private KieSelectElement serverTemplateDropdown;

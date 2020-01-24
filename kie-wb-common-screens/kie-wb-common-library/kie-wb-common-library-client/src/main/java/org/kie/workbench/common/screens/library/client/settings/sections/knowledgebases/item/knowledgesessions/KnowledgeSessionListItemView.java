@@ -51,7 +51,7 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
 
     @Inject
     @DataField("clock-select-container")
-    private KieEnumSelectElement<ClockTypeOption> clockSelectContainer;
+    private KieEnumSelectElement<ClockTypeOption> clockSelect;
 
     @Inject
     @DataField("listeners-button")
@@ -231,7 +231,7 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     @Override
     public void setupClockElement(final KSessionModel kSessionModel,
                                   final KnowledgeSessionsModal parentPresenter) {
-        clockSelectContainer.setup(
+        clockSelect.setup(
                 ClockTypeOption.values(),
                 kSessionModel.getClockType(),
                 clockTypeOption -> {
