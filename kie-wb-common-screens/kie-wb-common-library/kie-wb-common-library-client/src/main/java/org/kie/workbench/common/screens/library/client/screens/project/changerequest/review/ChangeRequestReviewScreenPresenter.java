@@ -244,7 +244,9 @@ public class ChangeRequestReviewScreenPresenter {
                                  .map(commit -> commit.getMessage())
                                  .collect(Collectors.joining("\n"));
         ParameterizedCommand<String> command = message -> {
-            doActionIfAllowed(() -> squashChangeRequestAction(message));
+            if (message != null && !message.isEmpty()) {
+                doActionIfAllowed(() -> squashChangeRequestAction(message));
+            }
         };
         squashChangeRequestPopUpPresenter.show(messages, command);
     }
