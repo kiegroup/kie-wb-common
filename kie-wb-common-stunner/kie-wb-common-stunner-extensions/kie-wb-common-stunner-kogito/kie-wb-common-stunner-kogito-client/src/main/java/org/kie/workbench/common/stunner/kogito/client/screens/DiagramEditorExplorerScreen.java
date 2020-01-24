@@ -28,11 +28,16 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.client.widgets.canvas.StunnerBoundsProviderFactory;
+import org.kie.workbench.common.stunner.client.widgets.event.SessionLostFocusEvent;
 import org.kie.workbench.common.stunner.client.widgets.explorer.tree.TreeExplorer;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionDiagramPreview;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionViewer;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramModelUnSelectedEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramPropertiesSwitchingSessionsEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMinimizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMaximizedStateEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMinimizedStateEvent;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDestroyedEvent;
@@ -40,6 +45,7 @@ import org.kie.workbench.common.stunner.core.client.session.event.SessionDiagram
 import org.kie.workbench.common.stunner.core.client.session.event.SessionOpenedEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -76,6 +82,10 @@ public class DiagramEditorExplorerScreen {
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final ErrorPopupPresenter errorPopupPresenter;
     private final Event<ScreenPreMaximizedStateEvent> screenStateEvent;
+    private final Event<ScreenDiagramModelUnSelectedEvent> screenDiagramModelUnSelectedEvent;
+    private final Event<ScreenDiagramPropertiesSwitchingSessionsEvent> screenDiagramPropertiesSwitchingSessionsEvent;
+    private final Event<ScreenPreMinimizedStateEvent> screenPreMinimizedStateEvent;
+
     private final View view;
 
     private PlaceRequest placeRequest;
@@ -85,6 +95,9 @@ public class DiagramEditorExplorerScreen {
 
     protected DiagramEditorExplorerScreen() {
         this(null,
+             null,
+             null,
+             null,
              null,
              null,
              null,
@@ -100,7 +113,10 @@ public class DiagramEditorExplorerScreen {
                                        final @Any @Default ManagedInstance<SessionDiagramPreview<AbstractSession>> sessionPreviews,
                                        final ErrorPopupPresenter errorPopupPresenter,
                                        final View view,
-                                       final Event<ScreenPreMaximizedStateEvent> screenStateEvent) {
+                                       final Event<ScreenPreMaximizedStateEvent> screenStateEvent,
+                                       final Event<ScreenDiagramModelUnSelectedEvent> screenDiagramModelUnSelectedEvent,
+                                       final Event<ScreenDiagramPropertiesSwitchingSessionsEvent> screenDiagramPropertiesSwitchingSessionsEvent,
+                                       final Event<ScreenPreMinimizedStateEvent> screenPreMinimizedStateEvent) {
         this.clientSessionManager = clientSessionManager;
         this.treeExplorers = treeExplorers;
         this.changeTitleNotificationEvent = changeTitleNotificationEvent;
@@ -108,6 +124,9 @@ public class DiagramEditorExplorerScreen {
         this.errorPopupPresenter = errorPopupPresenter;
         this.view = view;
         this.screenStateEvent = screenStateEvent;
+        this.screenDiagramModelUnSelectedEvent = screenDiagramModelUnSelectedEvent;
+        this.screenDiagramPropertiesSwitchingSessionsEvent = screenDiagramPropertiesSwitchingSessionsEvent;
+        this.screenPreMinimizedStateEvent = screenPreMinimizedStateEvent;
     }
 
     @OnStartup
@@ -204,6 +223,18 @@ public class DiagramEditorExplorerScreen {
 
     protected void onPlaceMaximizedEvent(@Observes PlaceMaximizedEvent event) {
         screenStateEvent.fire(new ScreenPreMaximizedStateEvent(true));
+    }
+
+    public void onDiagramFocusEvent(final @Observes OnDiagramFocusEvent event) {
+        screenDiagramModelUnSelectedEvent.fire(new ScreenDiagramModelUnSelectedEvent(this.clientSessionManager.getCurrentSession(), true));
+    }
+
+    public void onSessionLostFocusEvent(@Observes SessionLostFocusEvent event) {
+        screenDiagramPropertiesSwitchingSessionsEvent.fire(new ScreenDiagramPropertiesSwitchingSessionsEvent(this.clientSessionManager.getCurrentSession(), true));
+    }
+
+    public void onScreenMinimizedEvent(@Observes ScreenMinimizedEvent event) {
+        screenPreMinimizedStateEvent.fire(new ScreenPreMinimizedStateEvent(true));
     }
 
     private void showPreview(final ClientSession session) {

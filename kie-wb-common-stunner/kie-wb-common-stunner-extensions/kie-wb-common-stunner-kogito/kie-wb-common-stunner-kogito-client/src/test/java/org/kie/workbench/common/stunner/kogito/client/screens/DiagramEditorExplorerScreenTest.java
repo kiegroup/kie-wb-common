@@ -28,7 +28,10 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.Sessio
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramModelUnSelectedEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramPropertiesSwitchingSessionsEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMaximizedStateEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMinimizedStateEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -65,6 +68,15 @@ public class DiagramEditorExplorerScreenTest {
 
     @Mock
     private EventSourceMock<ScreenPreMaximizedStateEvent> screenStateEvent;
+
+    @Mock
+    private EventSourceMock<ScreenDiagramModelUnSelectedEvent> screenDiagramModelUnSelectedEvent;
+
+    @Mock
+    private EventSourceMock<ScreenDiagramPropertiesSwitchingSessionsEvent> screenDiagramPropertiesSwitchingSessionsEvent;
+
+    @Mock
+    private EventSourceMock<ScreenPreMinimizedStateEvent> screenPreMinimizedStateEvent;
 
     @Mock
     private Widget treeExplorerWidget;
@@ -111,7 +123,10 @@ public class DiagramEditorExplorerScreenTest {
                                                       sessionPreviews,
                                                       errorPopupPresenter,
                                                       view,
-                                                      screenStateEvent);
+                                                      screenStateEvent,
+                                                      screenDiagramModelUnSelectedEvent,
+                                                      screenDiagramPropertiesSwitchingSessionsEvent,
+                                                      screenPreMinimizedStateEvent);
     }
 
     @Test

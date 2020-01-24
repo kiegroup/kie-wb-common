@@ -24,6 +24,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -33,9 +35,12 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.S
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramModelUnSelectedEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramPropertiesSwitchingSessionsEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMinimizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMaximizedStateEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMinimizedStateEvent;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
@@ -84,6 +89,10 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
     private boolean isMigrating = false;
     private boolean isPropertiesOpenedBeforeMaximize = false;
     private boolean isExplorerOpenedBeforeMaximize = false;
+    private boolean isPropertiesOpenedWhenModelSelected = false;
+    private boolean isExplorerOpenedWhenModelSelected = false;
+    private boolean isPropertiesOpenedBeforeSwitchingSessions = false;
+    private boolean isExplorerOpenedBeforeSwitchingSessions = false;
 
     @Inject
     public BPMNDiagramEditor(final View view,
@@ -142,10 +151,50 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         super.doOpen();
     }
 
+    @Override
+    public void onOverviewSelected() {
+        fireDiagramFocusEvent();
+    }
+
+    private boolean isInTabs = false;
+
+    @Override
+    public void onEditTabSelected() {
+        fireDiagramFocusEvent();
+        isInTabs = false;
+        if (isPropertiesOpenedWhenModelSelected) {
+            openPropertiesDocks();
+        } else if (isExplorerOpenedWhenModelSelected) {
+            openExplorerDocks();
+        }
+    }
+
+    @Override
+    public void onEditTabUnselected() {
+        isPropertiesOpenedWhenModelSelected = false;
+        isExplorerOpenedWhenModelSelected = false;
+    }
+
+    public void onScreenDiagramModelUnSelectedEvent(final @Observes ScreenDiagramModelUnSelectedEvent event) {
+        final boolean wasInTabs = isInTabs;
+        isInTabs = true;
+        // If Event Fired, it means the properties panel is active, hence it was open before Clicked on Tab
+        if (getClientSession() == event.getSession()) {
+            isPropertiesOpenedWhenModelSelected = !event.isExplorerScreen();
+            isExplorerOpenedWhenModelSelected = event.isExplorerScreen();
+            if (wasInTabs) {
+                if (isPropertiesOpenedWhenModelSelected) {
+                    openPropertiesDocks();
+                } else if (isExplorerOpenedWhenModelSelected) {
+                    openExplorerDocks();
+                }
+            }
+        }
+    }
+
     private void performDockOperation(final String id, final Consumer<? super UberfireDock> action) {
         String currentPerspectiveIdentifier = perspectiveManager.getCurrentPerspective().getIdentifier();
         Collection<UberfireDock> stunnerDocks = stunnerDocksHandler.provideDocks(currentPerspectiveIdentifier);
-
         stunnerDocks.stream()
                 .filter(dock -> dock.getPlaceRequest().getIdentifier().compareTo(id) == 0)
                 .forEach(action);
@@ -178,6 +227,14 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         isExplorerOpenedBeforeMaximize = event.isExplorerScreen();
     }
 
+    public void onScreenMinimizedEvent(@Observes ScreenPreMinimizedStateEvent event) {
+        if (event.isExplorerScreen()) {
+            openExplorerDocks();
+        } else {
+            openPropertiesDocks();
+        }
+    }
+
     public void onScreenMinimizedEvent(@Observes ScreenMinimizedEvent event) {
         if (isPropertiesOpenedBeforeMaximize) {
             openPropertiesDocks();
@@ -192,13 +249,43 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         super.doClose();
     }
 
+    public void onScreenDiagramPropertiesSwitchingSessionsEvent(@Observes ScreenDiagramPropertiesSwitchingSessionsEvent event) {
+        if (getClientSession() == event.getSession()) {
+            isPropertiesOpenedBeforeSwitchingSessions = !event.isExplorerScreen();
+            isExplorerOpenedBeforeSwitchingSessions = event.isExplorerScreen();
+        }
+    }
+
+    protected void deferOpenDocks(final Command command) {
+        new Timer() {
+            @Override
+            public void run() {
+                command.execute();
+            }
+        }.schedule(10);
+    }
+
     @OnFocus
     public void onFocus() {
+        final boolean shouldOpenProperties = isPropertiesOpenedBeforeSwitchingSessions;
+        final boolean shouldOpenExplorer = isExplorerOpenedBeforeSwitchingSessions;
         super.doFocus();
+
+        if (shouldOpenProperties) {
+            deferOpenDocks(this::openPropertiesDocks);
+        } else if (shouldOpenExplorer) {
+            deferOpenDocks(this::openExplorerDocks);
+        }
     }
 
     @OnLostFocus
     public void onLostFocus() {
+        isPropertiesOpenedBeforeMaximize = false;
+        isExplorerOpenedBeforeMaximize = false;
+        isPropertiesOpenedWhenModelSelected = false;
+        isExplorerOpenedWhenModelSelected = false;
+        isPropertiesOpenedBeforeSwitchingSessions = false;
+        isExplorerOpenedBeforeSwitchingSessions = false;
         super.doLostFocus();
     }
 

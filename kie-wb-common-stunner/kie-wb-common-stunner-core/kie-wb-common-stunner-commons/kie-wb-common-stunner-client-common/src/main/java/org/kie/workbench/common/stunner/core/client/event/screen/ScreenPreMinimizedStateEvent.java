@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.event.screen;
 
-public class ScreenPreMaximizedStateEvent extends ScreenResizeEvent {
+public class ScreenPreMinimizedStateEvent extends ScreenResizeEvent {
 
     private final boolean isExplorerScreen;
 
-    public ScreenPreMaximizedStateEvent(final boolean isExplorerScreen) {
+    public ScreenPreMinimizedStateEvent(final boolean isExplorerScreen) {
         super(true);
         this.isExplorerScreen = isExplorerScreen;
     }

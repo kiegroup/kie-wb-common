@@ -16,12 +16,15 @@
 
 package org.kie.workbench.common.stunner.core.client.event.screen;
 
-public class ScreenPreMaximizedStateEvent extends ScreenResizeEvent {
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.event.BaseSessionEvent;
+
+public class ScreenDiagramModelUnSelectedEvent extends BaseSessionEvent {
 
     private final boolean isExplorerScreen;
 
-    public ScreenPreMaximizedStateEvent(final boolean isExplorerScreen) {
-        super(true);
+    public ScreenDiagramModelUnSelectedEvent(final ClientSession session, final boolean isExplorerScreen) {
+        super(session);
         this.isExplorerScreen = isExplorerScreen;
     }
 
@@ -30,12 +33,7 @@ public class ScreenPreMaximizedStateEvent extends ScreenResizeEvent {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public String toString() {
+        return "ScreenDiagramModelUnSelectedEvent [session=" + session + "]";
     }
 }

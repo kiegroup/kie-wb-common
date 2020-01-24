@@ -418,10 +418,13 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     public void showDocks() {
         // Docks are shown by AppFormer before the session/diagram has been opened. It is therefore impossible to use
         // the ideal getDiagram().getMetadata().getDefinitionSetId() and use that as the qualifier for docks.
-        onDiagramFocusEvent.fire(new OnDiagramFocusEvent(getDockQualifiers()));
+        fireDiagramFocusEvent();
         super.showDocks();
     }
 
+    public void fireDiagramFocusEvent() {
+        onDiagramFocusEvent.fire(new OnDiagramFocusEvent(getDockQualifiers()));
+    }
     @Override
     //Override visibility from KieEditor to allow inner class ProjectDiagramEditorCore access
     public abstract String getEditorIdentifier();
@@ -514,6 +517,10 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     protected boolean isSameSession(final ClientSession other) {
         return null != other && null != getSession() && other.equals(getSession());
+    }
+
+    public ClientSession getClientSession() {
+        return getSession();
     }
 
     @Override
@@ -632,7 +639,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                     addPage(new DocumentationPage(documentationView.initialize(diagram),
                                                   label,
                                                   //firing the OnDiagramFocusEvent will force the docks to be minimized
-                                                  () -> onDiagramFocusEvent.fire(new OnDiagramFocusEvent(getDockQualifiers())),
+                                                  () -> fireDiagramFocusEvent(),
                                                   //check the DocumentationPage is active, the index is 2
                                                   () -> Objects.equals(2, kieView.getSelectedTabIndex())));
                 });

@@ -27,12 +27,18 @@ import javax.inject.Inject;
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
+import org.kie.workbench.common.stunner.client.widgets.event.SessionLostFocusEvent;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramModelUnSelectedEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramPropertiesSwitchingSessionsEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMinimizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMaximizedStateEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMinimizedStateEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDiagramOpenedEvent;
 import org.kie.workbench.common.stunner.forms.client.event.FormPropertiesOpened;
 import org.kie.workbench.common.stunner.forms.client.widgets.FormPropertiesWidget;
+import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.view.DiagramEditorScreenView;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -62,6 +68,9 @@ public class DiagramEditorPropertiesScreen {
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final DiagramEditorScreenView view;
     private final Event<ScreenPreMaximizedStateEvent> screenStateEvent;
+    private final Event<ScreenDiagramModelUnSelectedEvent> screenDiagramModelUnSelectedEvent;
+    private final Event<ScreenDiagramPropertiesSwitchingSessionsEvent> screenDiagramPropertiesSwitchingSessionsEvent;
+    private final Event<ScreenPreMinimizedStateEvent> screenPreMinimizedStateEvent;
 
     private PlaceRequest placeRequest;
     private ClientSession session;
@@ -73,6 +82,9 @@ public class DiagramEditorPropertiesScreen {
              null,
              null,
              null,
+             null,
+             null,
+             null,
              null);
     }
 
@@ -81,12 +93,18 @@ public class DiagramEditorPropertiesScreen {
                                          final SessionManager clientSessionManager,
                                          final Event<ChangeTitleWidgetEvent> changeTitleNotification,
                                          final DiagramEditorScreenView view,
-                                         final Event<ScreenPreMaximizedStateEvent> screenStateEvent) {
+                                         final Event<ScreenPreMaximizedStateEvent> screenStateEvent,
+                                         final Event<ScreenDiagramModelUnSelectedEvent> screenDiagramModelUnSelectedEvent,
+                                         final Event<ScreenDiagramPropertiesSwitchingSessionsEvent> screenDiagramPropertiesSwitchingSessionsEvent,
+                                         final Event<ScreenPreMinimizedStateEvent> screenPreMinimizedStateEvent) {
         this.formPropertiesWidget = formPropertiesWidget;
         this.clientSessionManager = clientSessionManager;
         this.changeTitleNotificationEvent = changeTitleNotification;
         this.view = view;
         this.screenStateEvent = screenStateEvent;
+        this.screenDiagramModelUnSelectedEvent = screenDiagramModelUnSelectedEvent;
+        this.screenDiagramPropertiesSwitchingSessionsEvent = screenDiagramPropertiesSwitchingSessionsEvent;
+        this.screenPreMinimizedStateEvent = screenPreMinimizedStateEvent;
     }
 
     @PostConstruct
@@ -120,7 +138,19 @@ public class DiagramEditorPropertiesScreen {
         screenStateEvent.fire(new ScreenPreMaximizedStateEvent(false));
     }
 
-    @SuppressWarnings("unchecked")
+    public void onDiagramFocusEvent(final @Observes OnDiagramFocusEvent event) {
+        screenDiagramModelUnSelectedEvent.fire(new ScreenDiagramModelUnSelectedEvent(this.session, false));
+    }
+
+    public void onSessionLostFocusEvent(@Observes SessionLostFocusEvent event) {
+        screenDiagramPropertiesSwitchingSessionsEvent.fire(new ScreenDiagramPropertiesSwitchingSessionsEvent(event.getSession(), false));
+    }
+
+    public void onScreenMinimizedEvent(@Observes ScreenMinimizedEvent event) {
+        screenPreMinimizedStateEvent.fire(new ScreenPreMinimizedStateEvent(false));
+    }
+
+        @SuppressWarnings("unchecked")
     private void handleSession(final ClientSession session) {
         boolean done = false;
         view.showLoading();

@@ -31,11 +31,16 @@ import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramReso
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramModelUnSelectedEvent;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenDiagramPropertiesSwitchingSessionsEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMinimizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenPreMaximizedStateEvent;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
@@ -62,6 +67,8 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -313,6 +320,340 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         diagramEditor.onScreenMinimizedEvent(minimizedEvent);
 
         // explore should be opened since it was opened before maximized
+        verify(uberfireDocks, times(2)).open(explorerDock);
+
+        diagramEditor.onScreenMaximizedEvent(maximizedEvent);
+        when(preMaximizedStateEvent.isExplorerScreen()).thenReturn(true);
+        diagramEditor.onScreenPreMaximizedStateEvent(preMaximizedStateEvent);
+
+        // now open properties panel
+        diagramEditor.openPropertiesDocks();
+        // verify properties panel is now open
+        verify(uberfireDocks, times(5)).open(propertiesDock);
+        diagramEditor.onScreenMinimizedEvent(minimizedEvent);
+
+        // verify explore panel is now closed
+        verify(uberfireDocks, times(3)).open(explorerDock);
+
+        // verify properties remains opened after minimize
+        verify(uberfireDocks, times(5)).open(propertiesDock);
+
+        diagramEditor.onScreenMaximizedEvent(maximizedEvent);
+        when(preMaximizedStateEvent.isExplorerScreen()).thenReturn(false);
+        diagramEditor.onScreenPreMaximizedStateEvent(preMaximizedStateEvent);
+
+        // now open properties panel
+        diagramEditor.openExplorerDocks();
+        // verify properties panel is now open
+        verify(uberfireDocks, times(4)).open(explorerDock);
+        diagramEditor.onScreenMinimizedEvent(minimizedEvent);
+
+        // verify explore panel is now closed
+        verify(uberfireDocks, times(6)).open(propertiesDock);
+
+        // verify properties remains opened after minimize
+        verify(uberfireDocks, times(4)).open(explorerDock);
+    }
+
+    @Test
+    public void testSwitchingViews() {
+        Collection<UberfireDock> stunnerDocks = new ArrayList<>();
+        stunnerDocks.add(propertiesDock);
+        stunnerDocks.add(explorerDock);
+
+        String perspectiveIdentifier = "Test Perspective ID";
+
+        when(perspectiveManagerMock.getCurrentPerspective()).thenReturn(currentPerspective);
+        when(currentPerspective.getIdentifier()).thenReturn(perspectiveIdentifier);
+
+        when(stunnerDocksHandler.provideDocks(perspectiveIdentifier)).thenReturn(stunnerDocks);
+
+        when(propertiesDock.getPlaceRequest()).thenReturn(propertiesPlace);
+        when(propertiesPlace.getIdentifier()).thenReturn(DiagramEditorPropertiesScreen.SCREEN_ID);
+
+        when(explorerDock.getPlaceRequest()).thenReturn(explorerPlace);
+        when(explorerPlace.getIdentifier()).thenReturn(DiagramEditorExplorerScreen.SCREEN_ID);
+
+        diagramEditor.onOpen();
+        verify(uberfireDocks, times(1)).open(propertiesDock);
+
+        // Properties Panel
+        // close properties
+        diagramEditor.onOverviewSelected();
+        diagramEditor.closePropertiesDocks();
+
+        verify(uberfireDocks, times(1)).close(propertiesDock);
+        diagramEditor.fireDiagramFocusEvent(); // Simulate Documentation
+
+        verify(uberfireDocks, times(1)).close(propertiesDock); // Should remain closed
+
+        ScreenDiagramModelUnSelectedEvent screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(diagramEditor.getClientSession(), false);
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+        diagramEditor.onEditTabSelected(); // open properties
+
+        // properties should now be opened since it was opened before switching tabs
+        verify(uberfireDocks, times(2)).open(propertiesDock);
+
+        diagramEditor.closePropertiesDocks(); // close properties
+        verify(uberfireDocks, times(2)).close(propertiesDock);
+
+        // close properties
+        diagramEditor.onOverviewSelected();
+        diagramEditor.closePropertiesDocks();
+
+        diagramEditor.fireDiagramFocusEvent(); // Simulate Documentation
+
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(new ClientSession() {
+            @Override
+            public String getSessionUUID() {
+                return "test";
+            }
+
+            @Override
+            public Canvas getCanvas() {
+                return null;
+            }
+
+            @Override
+            public CanvasHandler getCanvasHandler() {
+                return null;
+            }
+        }, false);
+
+        // Simulate not firing this Event, meaning properties is closed
+        diagramEditor.onEditTabUnselected();
+        //diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+        diagramEditor.onEditTabSelected();
+
+        // properties should not be opened it was closed before switching tabs
+        verify(uberfireDocks, times(2)).open(propertiesDock);
+
+        // Explore Panel
+
+        // close properties
+        diagramEditor.openExplorerDocks();
+        verify(uberfireDocks, times(1)).open(explorerDock);
+
+        // close properties
+        diagramEditor.onOverviewSelected();
+        diagramEditor.closeExplorerDocks();
+
+        verify(uberfireDocks, times(1)).close(explorerDock);
+        diagramEditor.fireDiagramFocusEvent(); // Simulate Documentation
+
+        verify(uberfireDocks, times(1)).close(explorerDock); // Should remain closed
+
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(diagramEditor.getClientSession(), true);
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+        diagramEditor.onEditTabSelected(); // open explorer
+
+        // explorer should now be opened since it was opened before switching tabs
+        verify(uberfireDocks, times(2)).open(explorerDock);
+
+        diagramEditor.closeExplorerDocks(); // close explorer
+        verify(uberfireDocks, times(2)).close(explorerDock);
+
+        // close properties
+        diagramEditor.onOverviewSelected();
+        diagramEditor.closeExplorerDocks();
+
+        diagramEditor.fireDiagramFocusEvent(); // Simulate Documentation
+
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(new ClientSession() {
+            @Override
+            public String getSessionUUID() {
+                return "test";
+            }
+
+            @Override
+            public Canvas getCanvas() {
+                return null;
+            }
+
+            @Override
+            public CanvasHandler getCanvasHandler() {
+                return null;
+            }
+        }, true);
+
+        // Simulate not firing this Event, meaning explorer is closed
+        diagramEditor.onEditTabUnselected();
+        //diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+        diagramEditor.onEditTabSelected();
+
+        // explorer should not be opened it was closed before switching tabs
+        verify(uberfireDocks, times(2)).open(explorerDock);
+
+        // Verify changing states
+
+        // Properties Panel
+        diagramEditor.openPropertiesDocks();
+        verify(uberfireDocks, times(3)).close(propertiesDock);
+
+        verify(uberfireDocks, times(3)).open(propertiesDock);
+        diagramEditor.onOverviewSelected();
+        diagramEditor.closePropertiesDocks();
+
+        verify(uberfireDocks, times(4)).close(propertiesDock);
+
+        diagramEditor.fireDiagramFocusEvent(); // Simulate Documentation
+        diagramEditor.closePropertiesDocks();
+
+        verify(uberfireDocks, times(5)).close(propertiesDock); // Should remain closed
+
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(diagramEditor.getClientSession(), true);
+        diagramEditor.openExplorerDocks(); // open explore panel
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+
+        verify(uberfireDocks, times(3)).open(explorerDock);
+
+        diagramEditor.onEditTabSelected(); // open edit
+
+        // properties should now not be opened since explore panel was opened during Documentation / Overview
+        verify(uberfireDocks, times(3)).open(propertiesDock);
+        verify(uberfireDocks, times(4)).open(explorerDock);
+
+        // Explore Panel
+        verify(uberfireDocks, times(3)).close(explorerDock);
+
+        diagramEditor.openExplorerDocks();
+        verify(uberfireDocks, times(5)).open(explorerDock);
+        verify(uberfireDocks, times(3)).open(propertiesDock);
+
+        diagramEditor.onOverviewSelected();
+        diagramEditor.closeExplorerDocks();
+
+        verify(uberfireDocks, times(4)).close(explorerDock);
+
+        diagramEditor.fireDiagramFocusEvent(); // Simulate Documentation
+        diagramEditor.closeExplorerDocks();
+
+        verify(uberfireDocks, times(5)).close(explorerDock); // Should remain closed
+
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(diagramEditor.getClientSession(), false);
+        diagramEditor.openPropertiesDocks(); // open properties panel
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+
+        verify(uberfireDocks, times(4)).open(propertiesDock);
+
+        diagramEditor.onEditTabSelected(); // open properties
+
+        // properties should now not be opened since explore panel was opened during Documentation / Overview
+        verify(uberfireDocks, times(5)).open(propertiesDock);
+        verify(uberfireDocks, times(5)).open(explorerDock);
+    }
+
+    @Test
+    public void testSimulateSessionSwitch() {
+        Collection<UberfireDock> stunnerDocks = new ArrayList<>();
+        stunnerDocks.add(propertiesDock);
+        stunnerDocks.add(explorerDock);
+
+        String perspectiveIdentifier = "Test Perspective ID";
+
+        when(perspectiveManagerMock.getCurrentPerspective()).thenReturn(currentPerspective);
+        when(currentPerspective.getIdentifier()).thenReturn(perspectiveIdentifier);
+
+        when(stunnerDocksHandler.provideDocks(perspectiveIdentifier)).thenReturn(stunnerDocks);
+
+        when(propertiesDock.getPlaceRequest()).thenReturn(propertiesPlace);
+        when(propertiesPlace.getIdentifier()).thenReturn(DiagramEditorPropertiesScreen.SCREEN_ID);
+
+        when(explorerDock.getPlaceRequest()).thenReturn(explorerPlace);
+        when(explorerPlace.getIdentifier()).thenReturn(DiagramEditorExplorerScreen.SCREEN_ID);
+
+        diagramEditor.onOpen();
+        verify(uberfireDocks, times(1)).open(propertiesDock);
+
+        diagramEditor.onLostFocus();
+        // Simulate Event Fired by FormProperties being opened
+        ScreenDiagramPropertiesSwitchingSessionsEvent screenDiagramPropertiesSwitchingSessionsEvent = new ScreenDiagramPropertiesSwitchingSessionsEvent(diagramEditor.getClientSession(), false);
+
+        diagramEditor.onScreenDiagramPropertiesSwitchingSessionsEvent(screenDiagramPropertiesSwitchingSessionsEvent);
+        doAnswer(i -> {
+            ((com.google.gwt.user.client.Command) i.getArguments()[0]).execute();
+            return null;
+        }).when(diagramEditor).deferOpenDocks(any());
+        diagramEditor.onFocus();
+
+        verify(uberfireDocks, times(2)).open(propertiesDock);
+
+        diagramEditor.onLostFocus();
+        // Since no event fired, form properties was not opened
+        diagramEditor.onFocus();
+
+        verify(uberfireDocks, times(2)).open(propertiesDock);
+
+        diagramEditor.onLostFocus();
+
+        screenDiagramPropertiesSwitchingSessionsEvent = new ScreenDiagramPropertiesSwitchingSessionsEvent(new ClientSession() {
+            @Override
+            public String getSessionUUID() {
+                return "test";
+            }
+
+            @Override
+            public Canvas getCanvas() {
+                return null;
+            }
+
+            @Override
+            public CanvasHandler getCanvasHandler() {
+                return null;
+            }
+        }, false);
+
+        diagramEditor.onScreenDiagramPropertiesSwitchingSessionsEvent(screenDiagramPropertiesSwitchingSessionsEvent);
+        diagramEditor.onFocus();
+
+        verify(uberfireDocks, times(2)).open(propertiesDock);
+
+        // Explore Panel
+
+        diagramEditor.openExplorerDocks();
+        verify(uberfireDocks, times(1)).open(explorerDock);
+
+        diagramEditor.onLostFocus();
+        // Simulate Event Fired by FormProperties being opened
+        screenDiagramPropertiesSwitchingSessionsEvent = new ScreenDiagramPropertiesSwitchingSessionsEvent(diagramEditor.getClientSession(), true);
+
+        diagramEditor.onScreenDiagramPropertiesSwitchingSessionsEvent(screenDiagramPropertiesSwitchingSessionsEvent);
+        doAnswer(i -> {
+            ((com.google.gwt.user.client.Command) i.getArguments()[0]).execute();
+            return null;
+        }).when(diagramEditor).deferOpenDocks(any());
+        diagramEditor.onFocus();
+
+        verify(uberfireDocks, times(2)).open(explorerDock);
+
+        diagramEditor.onLostFocus();
+        // Since no event fired, form properties was not opened
+        diagramEditor.onFocus();
+
+        verify(uberfireDocks, times(2)).open(explorerDock);
+
+        diagramEditor.onLostFocus();
+
+        screenDiagramPropertiesSwitchingSessionsEvent = new ScreenDiagramPropertiesSwitchingSessionsEvent(new ClientSession() {
+            @Override
+            public String getSessionUUID() {
+                return "test";
+            }
+
+            @Override
+            public Canvas getCanvas() {
+                return null;
+            }
+
+            @Override
+            public CanvasHandler getCanvasHandler() {
+                return null;
+            }
+        }, true);
+
+        diagramEditor.onScreenDiagramPropertiesSwitchingSessionsEvent(screenDiagramPropertiesSwitchingSessionsEvent);
+        diagramEditor.onFocus();
+
         verify(uberfireDocks, times(2)).open(explorerDock);
     }
 }
