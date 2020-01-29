@@ -117,8 +117,8 @@ public class DMNDesignerKogitoSeleniumIT {
         final String expected = loadResource("basic-model.xml");
         setContent(expected);
 
-        assertDiagramNodeIsPresent("CurrentIndex");
-        assertDiagramNodeIsPresent("NextIndex");
+        assertDiagramNodeIsPresentInDecisionNavigator("CurrentIndex");
+        assertDiagramNodeIsPresentInDecisionNavigator("NextIndex");
 
         final String actual = getContent();
         assertThat(actual).isNotBlank();
@@ -199,7 +199,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .areIdentical();
     }
 
-    private void assertDiagramNodeIsPresent(final String nodeName) {
+    private void assertDiagramNodeIsPresentInDecisionNavigator(final String nodeName) {
         expandDecisionNavigatorDock();
         final By nodeLocator = By.xpath(String.format(".//ul/li[@title='%s']", nodeName));
         final WebElement node = waitOperation()
