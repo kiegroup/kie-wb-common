@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.dmn.feel.lang.Type;
-import org.kie.dmn.feel.parser.feel11.ParserHelper;
+import org.kie.dmn.feel.lang.impl.JavaBackedType;
 import org.kie.soup.project.datamodel.oracle.DataType;
 import org.kie.soup.project.datamodel.oracle.ModelField;
 import org.kie.soup.project.datamodel.oracle.ModuleDataModelOracle;
@@ -148,7 +148,7 @@ public class DataObjectsServiceImpl implements DataObjectsService {
     }
 
     private BuiltInType determineBuiltInTypeFromClass(final Class<?> clazz) {
-        final Type type = ParserHelper.determineTypeFromClass(clazz);
+        final Type type = JavaBackedType.determineTypeFromClass(clazz);
         if (type instanceof org.kie.dmn.feel.lang.types.BuiltInType) {
             org.kie.dmn.feel.lang.types.BuiltInType builtIn = (org.kie.dmn.feel.lang.types.BuiltInType) type;
             switch (builtIn) {
