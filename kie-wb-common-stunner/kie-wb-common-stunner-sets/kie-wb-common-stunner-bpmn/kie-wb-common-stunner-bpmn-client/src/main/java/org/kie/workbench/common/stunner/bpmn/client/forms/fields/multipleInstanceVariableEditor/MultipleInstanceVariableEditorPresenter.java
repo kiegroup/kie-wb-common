@@ -37,17 +37,16 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.UberElement;
 
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.View.simpleDataTypes;
+import static java.util.stream.Collectors.toMap;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.createDataTypeDisplayName;
 
 public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresenter<String> {
 
     public interface View extends UberElement<MultipleInstanceVariableEditorPresenter>,
-            HasModel<Variable> {
+                                  HasModel<Variable> {
 
         String CUSTOM_PROMPT = "Custom" + ListBoxValues.EDIT_SUFFIX;
         String ENTER_TYPE_PROMPT = "Enter type" + ListBoxValues.EDIT_SUFFIX;
-        List<String> simpleDataTypes = Arrays.asList("Boolean", "Float", "Integer", "Object", "String");
 
         void setVariableName(String variableName);
 
@@ -68,7 +67,9 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
 
     private final SessionManager sessionManager;
 
-    private final static Map<String, String> mapDataTypeNamesToDisplayNames = createMapForSimpleDataTypes();
+    private static final Map<String, String> mapDataTypeNamesToDisplayNames = createMapForSimpleDataTypes();
+
+    static final List<String> simpleDataTypes = Arrays.asList("Boolean", "Float", "Integer", "Object", "String");
 
     @Inject
     public MultipleInstanceVariableEditorPresenter(final View view,
@@ -94,6 +95,10 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
         view.setModel(variable);
     }
 
+    public List<String> getSimpleDataTypes() {
+        return simpleDataTypes;
+    }
+
     @Override
     public void setReadOnly(boolean readOnly) {
         view.setReadOnly(readOnly);
@@ -115,14 +120,13 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
     }
 
     private static Map<String, String> createMapForSimpleDataTypes() {
-        Map<String, String> mapDataTypeNamesToDisplayNames = new HashMap<>();
-        for (String simpleDataType : simpleDataTypes) {
-            mapDataTypeNamesToDisplayNames.put(simpleDataType, simpleDataType);
+        if (simpleDataTypes == null) {
+            return new HashMap<>();
         }
-        return mapDataTypeNamesToDisplayNames;
+        return simpleDataTypes.stream().collect(toMap(x -> x, x -> x));
     }
 
-    public static IThenable.ThenOnFulfilledCallbackFn<List<String>, Object> getListObjectThenOnFulfilledCallbackFn(List<String> simpleDataTypes, ListBoxValues dataTypeListBoxValues) {
+    static IThenable.ThenOnFulfilledCallbackFn<List<String>, Object> getListObjectThenOnFulfilledCallbackFn(List<String> simpleDataTypes, ListBoxValues dataTypeListBoxValues) {
         return serverDataTypes -> {
             List<String> mergedList = new ArrayList<>(simpleDataTypes);
 
@@ -140,7 +144,7 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
         };
     }
 
-    public static String getDisplayName(String realType) {
+    static String getDisplayName(String realType) {
         if (getMapDataTypeNamesToDisplayNames().containsKey(realType)) {
             return getMapDataTypeNamesToDisplayNames().get(realType);
         }
@@ -148,7 +152,7 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
         return realType;
     }
 
-    public static String getRealType(String value) {
+    static String getRealType(String value) {
         if (isNullOrEmpty(value)) {
             return "";
         }
@@ -161,7 +165,7 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
         return value;
     }
 
-    public static String getDataType(Variable variable) {
+    static String getDataType(Variable variable) {
         if (!isNullOrEmpty(variable.getCustomDataType())) {
             return variable.getCustomDataType();
         }
@@ -175,11 +179,11 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
         return value == null || value.isEmpty();
     }
 
-    public static String getNonNullName(String name) {
+    static String getNonNullName(String name) {
         return name == null ? "" : name;
     }
 
-    public static String getFirstIfExistsOrSecond(String first, String second) {
+    static String getFirstIfExistsOrSecond(String first, String second) {
         return isNullOrEmpty(first) ? second : first;
     }
 }

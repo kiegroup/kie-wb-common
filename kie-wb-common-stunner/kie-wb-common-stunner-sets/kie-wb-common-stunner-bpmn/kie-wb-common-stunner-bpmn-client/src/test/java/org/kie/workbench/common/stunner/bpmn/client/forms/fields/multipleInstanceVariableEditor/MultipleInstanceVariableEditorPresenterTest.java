@@ -29,7 +29,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.View.simpleDataTypes;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getDataType;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getDisplayName;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getFirstIfExistsOrSecond;
@@ -37,6 +36,7 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multiple
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getMapDataTypeNamesToDisplayNames;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getNonNullName;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getRealType;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.simpleDataTypes;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -108,16 +108,12 @@ public class MultipleInstanceVariableEditorPresenterTest
     public void testFullListOfTypes() {
         List<String> testData = new ArrayList<>();
         testData.add("org.test.Person");
-        testData.add("java.util.List");
+        testData.add("net.second.Test");
 
         getListObjectThenOnFulfilledCallbackFn(simpleDataTypes, new ListBoxValues("Custom", "Edit", null)).onInvoke(testData);
 
         assertEquals("org.test.Person", getMapDataTypeNamesToDisplayNames().get("Person [org.test]"));
-        assertEquals("java.util.List", getMapDataTypeNamesToDisplayNames().get("List [java.util]"));
-
-        // Clean up
-        getMapDataTypeNamesToDisplayNames().remove("Person [org.test]");
-        getMapDataTypeNamesToDisplayNames().remove("List [java.util]");
+        assertEquals("net.second.Test", getMapDataTypeNamesToDisplayNames().get("Test [net.second]"));
     }
 
     @Test

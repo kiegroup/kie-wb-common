@@ -90,6 +90,20 @@ public class MultipleInstanceActivityPropertyReaderTest {
     }
 
     @Test
+    public void testGetEmptyDataInput() {
+        DataInput item = mockDataInput(ITEM_ID, null);
+        when(miloop.getInputDataItem()).thenReturn(item);
+        assertEquals(ITEM_ID + DELIMITER + DATA_TYPE, reader.getDataInput());
+    }
+
+    @Test
+    public void testGetEmptyDataOutput() {
+        DataOutput item = mockDataOutput(ITEM_ID, null);
+        when(miloop.getOutputDataItem()).thenReturn(item);
+        assertEquals(ITEM_ID + DELIMITER + DATA_TYPE, reader.getDataOutput());
+    }
+
+    @Test
     public void testGetCollectionOutput() {
         ItemAwareElement item = mockItemAwareElement(ITEM_ID);
         when(miloop.getLoopDataOutputRef()).thenReturn(item);

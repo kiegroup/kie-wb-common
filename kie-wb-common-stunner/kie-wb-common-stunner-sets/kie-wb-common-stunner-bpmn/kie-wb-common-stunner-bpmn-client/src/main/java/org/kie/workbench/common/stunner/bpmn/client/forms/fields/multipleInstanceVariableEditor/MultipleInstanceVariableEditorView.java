@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -73,7 +72,7 @@ public class MultipleInstanceVariableEditorView
     @DataField
     private ValueListBox<String> dataType = new ValueListBox<>(new Renderer<String>() {
         public String render(final String value) {
-            return (value != null) ? value : "";
+            return getNonNullName(value);
         }
 
         public void render(final String value,
@@ -102,15 +101,13 @@ public class MultipleInstanceVariableEditorView
                 StunnerFormsClientFieldsConstants.INSTANCE.Removed_invalid_characters_from_name(),
                 StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
 
-        List<String> simpleDataTypes = MultipleInstanceVariableEditorPresenter.View.simpleDataTypes;
-
         ListBoxValues dataTypeListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT, "Edit ", null);
 
         clientDataTypesService
                 .call(presenter.getDiagramPath())
-                .then(getListObjectThenOnFulfilledCallbackFn(simpleDataTypes, dataTypeListBoxValues))
+                .then(getListObjectThenOnFulfilledCallbackFn(presenter.getSimpleDataTypes(), dataTypeListBoxValues))
                 .catch_(exception -> {
-                    dataTypeListBoxValues.addValues(simpleDataTypes);
+                    dataTypeListBoxValues.addValues(presenter.getSimpleDataTypes());
                     return null;
                 });
 

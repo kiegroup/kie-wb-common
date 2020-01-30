@@ -103,6 +103,18 @@ public class MultipleInstanceActivityPropertyWriterTest {
         assertNull(activity.getLoopCharacteristics());
     }
 
+    @Test
+    public void testSetEmptyVariable() {
+        final String emptyName = "";
+        writer.setInput(":", false);
+
+        assertInputsInitialized();
+        String inputId = ACTIVITY_ID + "_" + "InputX";
+        String itemSubjectRef = ACTIVITY_ID + "_multiInstanceItemType_";
+        assertHasDataInput(activity.getIoSpecification(), inputId, itemSubjectRef, emptyName);
+        assertDontHasDataInputAssociation(activity, INPUT_VARIABLE_ID, inputId);
+    }
+
     private void testSetInput(boolean addAssociation) {
         writer.setInput(INPUT_VARIABLE_ID, addAssociation);
         assertInputsInitialized();

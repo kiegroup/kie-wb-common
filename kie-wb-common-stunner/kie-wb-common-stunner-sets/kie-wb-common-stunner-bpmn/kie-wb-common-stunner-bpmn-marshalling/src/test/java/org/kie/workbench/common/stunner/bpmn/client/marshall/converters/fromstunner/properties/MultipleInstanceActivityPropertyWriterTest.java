@@ -85,6 +85,18 @@ public class MultipleInstanceActivityPropertyWriterTest {
     }
 
     @Test
+    public void testSetEmptyVariable() {
+        final String emptyName = "";
+        writer.setInput(":", false);
+
+        assertInputsInitialized();
+        String inputId = ACTIVITY_ID + "_" + "InputX";
+        String itemSubjectRef = ACTIVITY_ID + "_multiInstanceItemType_";
+        assertHasDataInput(activity.getIoSpecification(), inputId, itemSubjectRef, emptyName);
+        assertDontHasDataInputAssociation(activity, INPUT_VARIABLE_ID, inputId);
+    }
+
+    @Test
     public void testSetCollectionInput() {
         writer.setCollectionInput(PROPERTY_ID);
         assertInputsInitialized();
