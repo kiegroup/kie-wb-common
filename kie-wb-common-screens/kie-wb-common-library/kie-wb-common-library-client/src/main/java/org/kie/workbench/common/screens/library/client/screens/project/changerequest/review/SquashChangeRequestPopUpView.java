@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens.project.changere
 
 import javax.inject.Inject;
 
+import org.gwtbootstrap3.client.ui.HelpBlock;
 import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.Button;
@@ -26,6 +27,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.uberfire.client.views.pfly.widgets.ValidationState;
 import org.uberfire.ext.editor.commons.client.file.popups.CommonModalBuilder;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.GenericModalFooter;
@@ -51,8 +53,9 @@ public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPre
     @DataField("commitMessage")
     HTMLTextAreaElement commitMessage;
 
-    public SquashChangeRequestPopUpView() {
-    }
+    @Inject
+    @DataField("message-input-help-inline")
+    HelpBlock messageInputHelpInline;
 
     @Override
     public void init(final SquashChangeRequestPopUpPresenter presenter) {
@@ -95,5 +98,17 @@ public class SquashChangeRequestPopUpView implements SquashChangeRequestPopUpPre
     @Override
     public void hide() {
         modal.hide();
+    }
+
+    @Override
+    public void showMessageInputError() {
+        body.classList.add(ValidationState.ERROR.getCssName());
+        messageInputHelpInline.setText(ts.getTranslation(LibraryConstants.InvalidCommitMessage));
+    }
+
+    @Override
+    public void clearMessageInputError() {
+        body.classList.remove(ValidationState.ERROR.getCssName());
+        messageInputHelpInline.clearError();
     }
 }

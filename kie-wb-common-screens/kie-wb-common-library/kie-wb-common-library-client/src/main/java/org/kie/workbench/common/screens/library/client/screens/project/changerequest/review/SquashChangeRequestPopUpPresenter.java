@@ -27,6 +27,8 @@ public class SquashChangeRequestPopUpPresenter {
     public interface View extends UberElemental<SquashChangeRequestPopUpPresenter> {
         void show(String messages);
         void hide();
+        void showMessageInputError();
+        void clearMessageInputError();
     }
 
     private View view;
@@ -42,14 +44,20 @@ public class SquashChangeRequestPopUpPresenter {
         view.init(SquashChangeRequestPopUpPresenter.this);
     }
 
-    public void show(String messages, ParameterizedCommand<String> command) {
+    public void show(final String messages,
+                     final ParameterizedCommand<String> command) {
         this.command = command;
+        view.clearMessageInputError();
         view.show(messages);
     }
 
-    public void squash(String message) {
-        view.hide();
-        command.execute(message);
+    public void squash(final String message) {
+        if (message == null || message.trim().isEmpty()) {
+            view.showMessageInputError();
+        } else {
+            view.hide();
+            command.execute(message);
+        }
     }
 
     public void cancel() {

@@ -212,11 +212,10 @@ public class ChangeRequestReviewScreenPresenter {
     }
 
     public void squash() {
-        changeRequestService.call((final List<ChangeRequestCommit> commits) -> {
-            showSquashPopUp(commits);
-        }).getCommits(workspaceProject.getSpace().getName(),
-                      repository.getAlias(),
-                      currentChangeRequestId);
+        changeRequestService.call((RemoteCallback<List<ChangeRequestCommit>>) this::showSquashPopUp)
+                .getCommits(workspaceProject.getSpace().getName(),
+                            repository.getAlias(),
+                            currentChangeRequestId);
     }
 
     public void merge() {
@@ -241,12 +240,10 @@ public class ChangeRequestReviewScreenPresenter {
 
     private void showSquashPopUp(final List<ChangeRequestCommit> commits) {
         String messages = commits.stream()
-                                 .map(commit -> commit.getMessage())
+                                 .map(ChangeRequestCommit::getMessage)
                                  .collect(Collectors.joining("\n"));
         ParameterizedCommand<String> command = message -> {
-            if (message != null && !message.isEmpty()) {
-                doActionIfAllowed(() -> squashChangeRequestAction(message));
-            }
+            doActionIfAllowed(() -> squashChangeRequestAction(message));
         };
         squashChangeRequestPopUpPresenter.show(messages, command);
     }
