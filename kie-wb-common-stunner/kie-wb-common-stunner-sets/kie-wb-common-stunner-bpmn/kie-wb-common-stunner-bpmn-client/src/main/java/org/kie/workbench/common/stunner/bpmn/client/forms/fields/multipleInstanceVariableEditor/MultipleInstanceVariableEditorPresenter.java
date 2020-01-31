@@ -119,7 +119,7 @@ public class MultipleInstanceVariableEditorPresenter extends FieldEditorPresente
         return mapDataTypeNamesToDisplayNames;
     }
 
-    private static Map<String, String> createMapForSimpleDataTypes() {
+    static Map<String, String> createMapForSimpleDataTypes() {
         if (simpleDataTypes == null) {
             return new HashMap<>();
         }

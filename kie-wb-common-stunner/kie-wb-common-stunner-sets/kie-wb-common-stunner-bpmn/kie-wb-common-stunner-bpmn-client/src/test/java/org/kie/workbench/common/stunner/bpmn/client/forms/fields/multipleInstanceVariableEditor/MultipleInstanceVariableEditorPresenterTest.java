@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstan
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
@@ -29,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.createMapForSimpleDataTypes;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getDataType;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getDisplayName;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.multipleInstanceVariableEditor.MultipleInstanceVariableEditorPresenter.getFirstIfExistsOrSecond;
@@ -102,6 +104,15 @@ public class MultipleInstanceVariableEditorPresenterTest
 
         first = "new value";
         assertEquals(first, getFirstIfExistsOrSecond(first, second));
+    }
+
+    @Test
+    public void testCreateMapForSimpleDataTypes() {
+        Map<String, String> tested = createMapForSimpleDataTypes();
+        assertEquals(simpleDataTypes.size(), tested.size());
+        for (String type : simpleDataTypes) {
+            assertEquals(type, tested.get(type));
+        }
     }
 
     @Test
