@@ -165,10 +165,5 @@ public class DMNFlowActionsToolboxFactoryTest {
                times(1)).setNodeId(eq(NODE_ID));
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
-        // TODO
-        /*verify(viewInstance,
-               times(2)).addButton(any(Glyph.class),
-                                   anyString(),
-                                   any(Consumer.class));*/
     }
 }

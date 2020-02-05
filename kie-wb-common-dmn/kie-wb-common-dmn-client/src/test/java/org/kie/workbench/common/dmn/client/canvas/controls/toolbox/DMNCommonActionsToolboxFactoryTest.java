@@ -134,11 +134,6 @@ public class DMNCommonActionsToolboxFactoryTest {
                      actionsToolbox.iterator().next());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
-        // TODO
-        /*verify(viewInstance,
-               times(1)).addButton(any(Glyph.class),
-                                   anyString(),
-                                   any(Consumer.class));*/
     }
 
     @Test
@@ -169,11 +164,6 @@ public class DMNCommonActionsToolboxFactoryTest {
         assertFalse(actionsIt.hasNext());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
-        // TODO
-        /*verify(viewInstance,
-               times(2)).addButton(any(Glyph.class),
-                                   anyString(),
-                                   any(Consumer.class));*/
     }
 
     @Test
@@ -204,11 +194,6 @@ public class DMNCommonActionsToolboxFactoryTest {
         assertFalse(actionsIt.hasNext());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
-        // TODO
-        /*verify(viewInstance,
-               times(2)).addButton(any(Glyph.class),
-                                   anyString(),
-                                   any(Consumer.class));*/
     }
 
     @Test
