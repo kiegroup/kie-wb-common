@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.core.client.command;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -32,9 +31,9 @@ public class CanvasCommandResultBuilder extends CommandResultBuilder<CanvasViola
                                                                                          new LinkedList<>()
     );
 
-    public static CommandResult<CanvasViolation> failed() {
-        return new CommandResultImpl<>(CommandResult.Type.ERROR, Collections.emptyList());
-    }
+    public static final CommandResult<CanvasViolation> FAILED = new CommandResultImpl<>(CommandResult.Type.ERROR,
+                                                                                        new LinkedList<>()
+    );
 
     @Override
     public CommandResult.Type getType(final CanvasViolation violation) {

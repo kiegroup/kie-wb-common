@@ -63,9 +63,4 @@ public class DeferredCommand<T, V>
         }
         return command;
     }
-
-    @Override
-    public String toString() {
-        return "[" + getClass().getSimpleName() + "] " + command;
-    }
 }

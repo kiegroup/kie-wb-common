@@ -16,34 +16,26 @@
 
 package org.kie.workbench.common.stunner.core.client.components.toolbox.actions;
 
-import java.lang.annotation.Annotation;
 import java.util.function.Predicate;
 
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.resources.StunnerCommonIconsGlyphFactory;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
-import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-
-import static org.kie.workbench.common.stunner.core.client.session.impl.InstanceUtils.lookup;
 
 /**
  * A toolbox action/operation for deleting an Element.
@@ -54,35 +46,30 @@ public class DeleteNodeToolboxAction implements ToolboxAction<AbstractCanvasHand
 
     private final ClientTranslationService translationService;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final ManagedInstance<DefaultCanvasCommandFactory> commandFactories;
-    private final DefinitionUtils definitionUtils;
+    private final CanvasCommandFactory<AbstractCanvasHandler> commandFactory;
     private final Predicate<DeleteNodeToolboxAction> confirmDelete;
     private final Event<CanvasClearSelectionEvent> clearSelectionEvent;
 
     @Inject
     public DeleteNodeToolboxAction(final ClientTranslationService translationService,
-                                   final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                   final @Any ManagedInstance<DefaultCanvasCommandFactory> commandFactories,
-                                   final DefinitionUtils definitionUtils,
+                                   final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                   final CanvasCommandFactory<AbstractCanvasHandler> commandFactory,
                                    final Event<CanvasClearSelectionEvent> clearSelectionEvent) {
         this(translationService,
              sessionCommandManager,
-             commandFactories,
-             definitionUtils,
+             commandFactory,
              deleteNodeAction -> true,
              clearSelectionEvent);
     }
 
     DeleteNodeToolboxAction(final ClientTranslationService translationService,
                             final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                            final ManagedInstance<DefaultCanvasCommandFactory> commandFactories,
-                            final DefinitionUtils definitionUtils,
+                            final CanvasCommandFactory<AbstractCanvasHandler> commandFactory,
                             final Predicate<DeleteNodeToolboxAction> confirmDelete,
                             final Event<CanvasClearSelectionEvent> clearSelectionEvent) {
         this.translationService = translationService;
         this.sessionCommandManager = sessionCommandManager;
-        this.commandFactories = commandFactories;
-        this.definitionUtils = definitionUtils;
+        this.commandFactory = commandFactory;
         this.confirmDelete = confirmDelete;
         this.clearSelectionEvent = clearSelectionEvent;
     }
@@ -105,11 +92,6 @@ public class DeleteNodeToolboxAction implements ToolboxAction<AbstractCanvasHand
                                                              final String uuid,
                                                              final MouseClickEvent event) {
         if (confirmDelete.test(this)) {
-
-            final Metadata metadata = canvasHandler.getDiagram().getMetadata();
-            final Annotation qualifier = definitionUtils.getQualifier(metadata.getDefinitionSetId());
-            final CanvasCommandFactory<AbstractCanvasHandler> commandFactory = lookup(commandFactories, qualifier);
-
             final Node<?, Edge> node = CanvasLayoutUtils.getElement(canvasHandler, uuid).asNode();
 
             clearSelectionEvent.fire(new CanvasClearSelectionEvent(canvasHandler));
@@ -117,10 +99,5 @@ public class DeleteNodeToolboxAction implements ToolboxAction<AbstractCanvasHand
             sessionCommandManager.execute(canvasHandler, commandFactory.deleteNode(node));
         }
         return this;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        commandFactories.destroyAll();
     }
 }

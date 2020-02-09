@@ -36,15 +36,13 @@ public abstract class DelegateWiresShapeControl implements WiresShapeControl,
     public abstract WiresShapeControlImpl getDelegate();
 
     @Override
-    public WiresShapeControl useIndex(Supplier<WiresLayerIndex> index) {
+    public void useIndex(Supplier<WiresLayerIndex> index) {
         getDelegate().useIndex(index);
-        return this;
     }
 
     @Override
-    public WiresShapeControl setAlignAndDistributeControl(AlignAndDistributeControl control) {
+    public void setAlignAndDistributeControl(AlignAndDistributeControl control) {
         getDelegate().setAlignAndDistributeControl(control);
-        return this;
     }
 
     @Override
@@ -80,11 +78,6 @@ public abstract class DelegateWiresShapeControl implements WiresShapeControl,
     @Override
     public boolean accept() {
         return getDelegate().accept();
-    }
-
-    @Override
-    public boolean isAccepted() {
-        return getDelegate().isAccepted();
     }
 
     @Override

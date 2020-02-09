@@ -52,6 +52,7 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -100,7 +101,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
                             final DMNEditorSearchIndex editorSearchIndex,
                             final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                             final SessionManager sessionManager,
-                            final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                            final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final DecisionNavigatorDock decisionNavigatorDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,

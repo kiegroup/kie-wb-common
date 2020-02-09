@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.core.client.shape;
 public interface HasShapeState {
 
     /**
-     * Applies some pre-defined visual appearance, which is given by the <code>shapeState</code>.
+     * Apply a state to a given shape.
      */
     void applyState(ShapeState shapeState);
 }

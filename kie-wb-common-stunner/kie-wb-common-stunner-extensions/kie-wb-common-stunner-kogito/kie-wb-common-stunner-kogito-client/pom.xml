@@ -74,10 +74,6 @@
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-core-editors</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons-editor-client</artifactId>
     </dependency>
     <dependency>
@@ -86,6 +82,10 @@
     </dependency>
 
     <!-- UberFire Kogito dependencies -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-core-editors</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.google.elemental2</groupId>
       <artifactId>elemental2-promise</artifactId>

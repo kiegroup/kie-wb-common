@@ -31,13 +31,9 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
-import org.kie.workbench.common.stunner.core.client.components.proxies.ElementProxy;
-import org.kie.workbench.common.stunner.core.client.components.proxies.NodeProxy;
-import org.kie.workbench.common.stunner.core.client.components.proxies.ShapeProxyView;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseMoveEvent;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -59,7 +55,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -138,12 +133,10 @@ public class CreateNodeToolboxActionTest {
     private Annotation qualifier;
 
     private CreateNodeToolboxAction tested;
-    private NodeProxy nodeProxy;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        nodeProxy = spy(new NodeProxy(mock(ElementProxy.class), mock(ShapeProxyView.class)));
         actions = new ManagedInstanceStub<>(action);
         when(canvasHandler.getGraphIndex()).thenReturn(graphIndex);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
@@ -182,11 +175,9 @@ public class CreateNodeToolboxActionTest {
                                              eq(TARGET_NODE_ID)))
                 .thenReturn((Element) targetNode);
 
-        this.tested = new CreateNodeToolboxAction(actions,
-                                                  definitionUtils,
+        this.tested = new CreateNodeToolboxAction(definitionUtils,
                                                   translationService,
-                                                  clientFactoryManager,
-                                                  nodeProxy)
+                                                  actions)
                 .setEdgeId(EDGE_ID)
                 .setNodeId(TARGET_NODE_ID);
     }
@@ -216,7 +207,8 @@ public class CreateNodeToolboxActionTest {
     }
 
     @Test
-    public void testOnMouseClick() {
+    @SuppressWarnings("unchecked")
+    public void testAction() {
         when(canvasLayoutUtils.getNext(eq(canvasHandler),
                                        eq(element),
                                        eq(targetNode)))
@@ -236,18 +228,5 @@ public class CreateNodeToolboxActionTest {
                                      NODE_UUID,
                                      TARGET_NODE_ID,
                                      EDGE_ID);
-    }
-
-    @Test
-    public void testOnMoveStart() {
-        final MouseMoveEvent event = mock(MouseMoveEvent.class);
-        when(event.getX()).thenReturn(100d);
-        when(event.getY()).thenReturn(500d);
-        tested.onMoveStart(canvasHandler, NODE_UUID, event);
-        verify(nodeProxy, times(1)).setCanvasHandler(eq(canvasHandler));
-        verify(nodeProxy, times(1)).setSourceNode(eq(element));
-        verify(nodeProxy, times(1)).setEdge(eq(edge));
-        verify(nodeProxy, times(1)).setTargetNode(eq(targetNode));
-        verify(nodeProxy, times(1)).start(eq(event));
     }
 }

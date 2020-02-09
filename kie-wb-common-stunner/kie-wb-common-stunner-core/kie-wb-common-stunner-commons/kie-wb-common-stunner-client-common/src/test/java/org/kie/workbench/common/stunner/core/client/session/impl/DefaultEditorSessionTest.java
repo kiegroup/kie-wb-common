@@ -69,6 +69,9 @@ public class DefaultEditorSessionTest {
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
+    private SessionCommandManager<AbstractCanvasHandler> requestCommandManage;
+
+    @Mock
     private ClientCommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> clientCommandRegistry;
 
     private DefaultEditorSession tested;
@@ -89,6 +92,7 @@ public class DefaultEditorSessionTest {
         tested = new DefaultEditorSession(managedSession,
                                           canvasCommandManager,
                                           sessionCommandManager,
+                                          requestCommandManage,
                                           clientCommandRegistry);
     }
 

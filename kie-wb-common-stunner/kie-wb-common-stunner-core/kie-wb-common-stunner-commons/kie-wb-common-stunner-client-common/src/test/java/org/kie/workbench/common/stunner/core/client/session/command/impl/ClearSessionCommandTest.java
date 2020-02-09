@@ -106,7 +106,7 @@ public class ClearSessionCommandTest {
     public void setUp() {
         when(session.getCommandManager()).thenReturn(sessionCommandManager);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
-        when(session.getCommandRegistry()).thenReturn(commandRegistry);
+        when(sessionCommandManager.getRegistry()).thenReturn(commandRegistry);
         when(canvasCommandFactory.clearCanvas()).thenReturn(clearCanvasCommand);
 
         when(canvasHandler.getDiagram()).thenReturn(diagram);

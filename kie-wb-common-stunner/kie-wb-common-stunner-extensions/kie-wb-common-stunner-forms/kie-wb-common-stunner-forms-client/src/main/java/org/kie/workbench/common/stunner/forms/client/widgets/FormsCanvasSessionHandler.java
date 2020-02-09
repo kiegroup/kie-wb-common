@@ -40,6 +40,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -73,7 +74,7 @@ public class FormsCanvasSessionHandler {
     @Inject
     public FormsCanvasSessionHandler(final DefinitionManager definitionManager,
                                      final CanvasCommandFactory<AbstractCanvasHandler> commandFactory,
-                                     final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
+                                     final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
         this.definitionManager = definitionManager;
         this.commandFactory = commandFactory;
         this.canvasListener = getFormsCanvasListener();

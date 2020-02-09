@@ -66,6 +66,9 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
+    private SessionCommandManager<AbstractCanvasHandler> requestCommandManager;
+
+    @Mock
     private ClientCommandRegistry<Command<AbstractCanvasHandler, CanvasViolation>> clientCommandRegistry;
 
     @Mock
@@ -123,6 +126,7 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
         final DMNEditorSession session = new DMNEditorSession(managedSession,
                                                               canvasCommandManager,
                                                               sessionCommandManager,
+                                                              requestCommandManager,
                                                               clientCommandRegistry);
         session.constructInstance();
         return session;

@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
@@ -61,7 +62,7 @@ public class MorphNodeToolboxAction extends AbstractToolboxAction {
 
     @Inject
     public MorphNodeToolboxAction(final DefinitionUtils definitionUtils,
-                                  final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                  final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                   final CanvasCommandFactory<AbstractCanvasHandler> commandFactory,
                                   final ClientTranslationService translationService,
                                   final Event<CanvasSelectionEvent> selectionEvent,

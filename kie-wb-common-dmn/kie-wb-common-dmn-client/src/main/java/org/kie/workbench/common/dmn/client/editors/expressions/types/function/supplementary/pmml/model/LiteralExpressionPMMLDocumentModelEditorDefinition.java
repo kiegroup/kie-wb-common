@@ -60,6 +60,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -81,7 +82,7 @@ public class LiteralExpressionPMMLDocumentModelEditorDefinition extends BaseEdit
     @Inject
     public LiteralExpressionPMMLDocumentModelEditorDefinition(final DefinitionUtils definitionUtils,
                                                               final SessionManager sessionManager,
-                                                              final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                                              final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                                               final @DMNEditor DefaultCanvasCommandFactory canvasCommandFactory,
                                                               final Event<ExpressionEditorChanged> editorSelectedEvent,
                                                               final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,

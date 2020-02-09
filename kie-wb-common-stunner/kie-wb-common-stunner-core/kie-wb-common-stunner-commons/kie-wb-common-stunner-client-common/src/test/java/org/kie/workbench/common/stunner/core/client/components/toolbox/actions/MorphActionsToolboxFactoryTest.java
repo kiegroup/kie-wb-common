@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.client.components.toolbox.actions;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -32,6 +33,7 @@ import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapte
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.definition.adapter.MorphAdapter;
 import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
+import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -174,11 +176,10 @@ public class MorphActionsToolboxFactoryTest {
                times(1)).setTargetDefinitionId(eq(MORPH_TARGET_ID));
         verify(view,
                times(1)).init(eq(actionsToolbox));
-        // TODO: fix properly.
-        /*verify(view,
+        verify(view,
                times(1)).addButton(any(Glyph.class),
                                    anyString(),
-                                   any(Consumer.class));*/
+                                   any(Consumer.class));
     }
 
     @Test

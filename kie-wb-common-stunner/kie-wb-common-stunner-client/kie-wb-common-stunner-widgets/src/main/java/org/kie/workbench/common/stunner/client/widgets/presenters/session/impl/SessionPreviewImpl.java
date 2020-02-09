@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.client.widgets.presenters.session.impl;
 
 import java.lang.annotation.Annotation;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
@@ -52,8 +51,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasC
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
-import org.kie.workbench.common.stunner.core.client.command.CommandRequestLifecycle;
-import org.kie.workbench.common.stunner.core.client.command.MouseRequestLifecycle;
 import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistries;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.InstanceUtils;
@@ -78,8 +75,7 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull
 @Default
 public class SessionPreviewImpl<S extends AbstractSession>
         extends AbstractSessionViewer<S>
-        implements SessionDiagramPreview<S>,
-                   CommandRequestLifecycle {
+        implements SessionDiagramPreview<S> {
 
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 300;
@@ -88,7 +84,6 @@ public class SessionPreviewImpl<S extends AbstractSession>
     private final GraphUtils graphUtils;
     private final ShapeManager shapeManager;
     private final TextPropertyProviderFactory textPropertyProviderFactory;
-    private final MouseRequestLifecycle requestLifecycle;
     private final ManagedInstance<WiresCanvas> canvases;
     private final ManagedInstance<PreviewLienzoPanel> canvasPanels;
     private final ManagedInstance<BaseCanvasHandler> canvasHandlers;
@@ -113,7 +108,6 @@ public class SessionPreviewImpl<S extends AbstractSession>
                               final GraphUtils graphUtils,
                               final ShapeManager shapeManager,
                               final TextPropertyProviderFactory textPropertyProviderFactory,
-                              final MouseRequestLifecycle requestLifecycle,
                               final @Any ManagedInstance<WiresCanvas> canvases,
                               final @Any ManagedInstance<PreviewLienzoPanel> canvasPanels,
                               final @Any ManagedInstance<BaseCanvasHandler> canvasHandlers,
@@ -127,7 +121,6 @@ public class SessionPreviewImpl<S extends AbstractSession>
         this.graphUtils = graphUtils;
         this.shapeManager = shapeManager;
         this.textPropertyProviderFactory = textPropertyProviderFactory;
-        this.requestLifecycle = requestLifecycle;
         this.canvases = canvases;
         this.canvasPanels = canvasPanels;
         this.canvasHandlers = canvasHandlers;
@@ -201,25 +194,6 @@ public class SessionPreviewImpl<S extends AbstractSession>
                 };
         this.canvas = null;
         this.mediatorsControl = null;
-    }
-
-    @PostConstruct
-    public void init() {
-        requestLifecycle.listen(() -> this);
-    }
-
-    @Override
-    public void start() {
-        getCanvas().getView().getLayer().setSkipDraw(true);
-    }
-
-    @Override
-    public void rollback() {
-    }
-
-    @Override
-    public void complete() {
-        getCanvas().getView().getLayer().setSkipDraw(false);
     }
 
     public SessionPreviewImpl setCommandAllowed(final Predicate<Command<AbstractCanvasHandler, CanvasViolation>> isCommandAllowed) {

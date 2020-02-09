@@ -68,6 +68,7 @@ import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.event.OnSessionErrorEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
@@ -149,7 +150,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     @Inject
     public DMNDiagramEditor(final SessionManager sessionManager,
-                            final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                            final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final SessionEditorPresenter<EditorSession> presenter,
                             final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                             final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,

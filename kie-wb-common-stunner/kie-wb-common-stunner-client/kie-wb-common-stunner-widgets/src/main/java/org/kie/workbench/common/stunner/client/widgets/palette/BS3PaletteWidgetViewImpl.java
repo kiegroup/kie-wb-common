@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.widgets.palette;
 
+import java.util.Objects;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -27,7 +29,9 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.soup.commons.validation.PortablePreconditions;
-import org.kie.workbench.common.stunner.client.lienzo.components.glyph.ShapeGlyphDragHandler;
+import org.kie.workbench.common.stunner.core.client.components.drag.DragProxy;
+import org.kie.workbench.common.stunner.core.client.components.drag.DragProxyCallback;
+import org.kie.workbench.common.stunner.core.client.components.glyph.ShapeGlyphDragHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 
 @Templated
@@ -47,6 +51,8 @@ public class BS3PaletteWidgetViewImpl implements BS3PaletteWidgetView,
 
     private BS3PaletteWidget presenter;
 
+    private DragProxy itemDragProxy;
+
     @Override
     public void init(BS3PaletteWidget presenter) {
         this.presenter = presenter;
@@ -65,49 +71,49 @@ public class BS3PaletteWidgetViewImpl implements BS3PaletteWidgetView,
                               double width,
                               double height) {
         final Glyph glyph = presenter.getShapeDragProxyGlyph(itemId);
-        shapeGlyphDragHandler.show(new ShapeGlyphDragHandler.Item() {
-                                       @Override
-                                       public Glyph getShape() {
-                                           return glyph;
-                                       }
+        itemDragProxy = shapeGlyphDragHandler.show(new ShapeGlyphDragHandler.Item() {
+                                                       @Override
+                                                       public Glyph getShape() {
+                                                           return glyph;
+                                                       }
 
-                                       @Override
-                                       public int getWidth() {
-                                           return (int) width;
-                                       }
+                                                       @Override
+                                                       public int getWidth() {
+                                                           return (int) width;
+                                                       }
 
-                                       @Override
-                                       public int getHeight() {
-                                           return (int) height;
-                                       }
-                                   },
-                                   (int) x,
-                                   (int) y,
-                                   new ShapeGlyphDragHandler.Callback() {
-                                       @Override
-                                       public void onStart(int x,
-                                                           int y) {
-                                           presenter.onDragStart(itemId,
-                                                                 x,
-                                                                 y);
-                                       }
+                                                       @Override
+                                                       public int getHeight() {
+                                                           return (int) height;
+                                                       }
+                                                   },
+                                                   (int) x,
+                                                   (int) y,
+                                                   new DragProxyCallback() {
+                                                       @Override
+                                                       public void onStart(int x,
+                                                                           int y) {
+                                                           presenter.onDragStart(itemId,
+                                                                                 x,
+                                                                                 y);
+                                                       }
 
-                                       @Override
-                                       public void onMove(int x,
-                                                          int y) {
-                                           presenter.onDragProxyMove(itemId,
-                                                                     (double) x,
-                                                                     (double) y);
-                                       }
+                                                       @Override
+                                                       public void onMove(int x,
+                                                                          int y) {
+                                                           presenter.onDragProxyMove(itemId,
+                                                                                     (double) x,
+                                                                                     (double) y);
+                                                       }
 
-                                       @Override
-                                       public void onComplete(int x,
-                                                              int y) {
-                                           presenter.onDragProxyComplete(itemId,
-                                                                         (double) x,
-                                                                         (double) y);
-                                       }
-                                   });
+                                                       @Override
+                                                       public void onComplete(int x,
+                                                                              int y) {
+                                                           presenter.onDragProxyComplete(itemId,
+                                                                                         (double) x,
+                                                                                         (double) y);
+                                                       }
+                                                   });
     }
 
     @Override
@@ -124,14 +130,23 @@ public class BS3PaletteWidgetViewImpl implements BS3PaletteWidgetView,
     @Override
     public void clear() {
         DOMUtil.removeAllChildren(ul);
-        shapeGlyphDragHandler.clear();
+        if (Objects.nonNull(itemDragProxy)) {
+            itemDragProxy.clear();
+        }
     }
 
     @Override
     public void destroy() {
         DOMUtil.removeAllChildren(ul);
         DOMUtil.removeAllChildren(palette);
-        shapeGlyphDragHandler.destroy();
+        if (Objects.nonNull(itemDragProxy)) {
+            itemDragProxy.destroy();
+            itemDragProxy = null;
+        }
+        if (Objects.nonNull(shapeGlyphDragHandler)) {
+            shapeGlyphDragHandler.destroy();
+            shapeGlyphDragHandler = null;
+        }
         presenter = null;
     }
 

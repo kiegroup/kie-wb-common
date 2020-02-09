@@ -27,7 +27,6 @@ import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoLayer.LienzoCustomLayer;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
@@ -47,7 +46,7 @@ import static org.mockito.Mockito.when;
 public class LienzoLayerTest {
 
     @Mock
-    private LienzoCustomLayer layer;
+    private Layer layer;
     @Mock
     private Layer emptyLayer;
     @Mock
@@ -110,11 +109,11 @@ public class LienzoLayerTest {
 
     @Test
     public void testIsReady() {
-        LienzoCustomLayer layer1 = mock(LienzoCustomLayer.class);
+        Layer layer1 = mock(Layer.class);
         LienzoLayer tested1 = new LienzoLayer(layer1);
         when(layer1.getScene()).thenReturn(scene);
 
-        LienzoCustomLayer layer2 = mock(LienzoCustomLayer.class);
+        Layer layer2 = mock(Layer.class);
         LienzoLayer tested2 = new LienzoLayer(layer2);
         when(layer2.getScene()).thenReturn(null);
 

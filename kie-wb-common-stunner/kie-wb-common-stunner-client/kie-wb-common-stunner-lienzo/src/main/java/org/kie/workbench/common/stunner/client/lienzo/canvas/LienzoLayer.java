@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 
-import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Viewport;
@@ -35,30 +34,13 @@ public class LienzoLayer {
 
     private static Logger LOGGER = Logger.getLogger(LienzoLayer.class.getName());
 
-    private final LienzoCustomLayer layer;
-
-    static class LienzoCustomLayer extends Layer {
-
-        private boolean skipDraw = false;
-
-        @Override
-        public Layer draw(final Context2D context) {
-            if (skipDraw) {
-                return this;
-            }
-            return super.draw(context);
-        }
-    }
-
-    public void setSkipDraw(final boolean skipDraw) {
-        layer.skipDraw = skipDraw;
-    }
+    private final Layer layer;
 
     public LienzoLayer() {
-        this(new LienzoCustomLayer());
+        this(new Layer());
     }
 
-    LienzoLayer(final LienzoCustomLayer layer) {
+    LienzoLayer(final Layer layer) {
         this.layer = layer;
     }
 
