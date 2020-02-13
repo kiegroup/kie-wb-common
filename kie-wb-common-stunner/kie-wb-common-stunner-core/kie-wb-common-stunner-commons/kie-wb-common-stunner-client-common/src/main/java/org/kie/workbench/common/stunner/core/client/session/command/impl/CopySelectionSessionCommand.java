@@ -25,11 +25,13 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -80,7 +82,22 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            @Override
+            public String getKeyCombination() {
+                return "ctrl+c";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Copy";
+            }
+
+            @Override
+            public void onKeyShortcut(Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
         this.clipboardControl = session.getClipboardControl();
     }
 
@@ -96,6 +113,13 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     }
 
     private void handleCtrlC(final Key[] keys) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            this.execute();
+            return;
+        }
+
         if (doKeysMatch(keys,
                         Key.CONTROL,
                         Key.C)) {

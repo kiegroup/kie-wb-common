@@ -37,12 +37,14 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.appformer.client.stateControl.registry.Registry;
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.EdgeClipboard;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
@@ -122,7 +124,22 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            @Override
+            public String getKeyCombination() {
+                return "ctrl+v";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Paste";
+            }
+
+            @Override
+            public void onKeyShortcut(Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
         this.clipboardControl = session.getClipboardControl();
         this.canvasCommandFactory = this.loadCanvasFactory(canvasCommandFactoryInstance, definitionUtils);
     }
@@ -139,6 +156,13 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     }
 
     private void handleCtrlV(final Key[] keys) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            this.execute();
+            return;
+        }
+
         if (doKeysMatch(keys,
                         Key.CONTROL,
                         Key.V)) {

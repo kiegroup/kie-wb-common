@@ -26,6 +26,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 
 import com.google.gwt.user.client.Timer;
+import elemental2.dom.DomGlobal;
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyDownEvent;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyUpEvent;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -44,6 +46,7 @@ public class KeyEventHandler {
 
     private final Set<KeyboardEvent.Key> keys = new HashSet<>();
     private final List<KeyboardControl.KeyShortcutCallback> shortcutCallbacks = new ArrayList<>();
+    private final List<Integer> registeredShortcutsIds = new ArrayList<>();
 
     private boolean enabled = true;
     private KeyboardEvent.Key[] _keys;
@@ -52,8 +55,30 @@ public class KeyEventHandler {
 
     public KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
         this.shortcutCallbacks.add(shortcutCallback);
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName());
+            if (!shortcutCallback.getKeyCombination().isEmpty()) {
+                int id = registerShortcut(shortcutCallback.getKeyCombination(), shortcutCallback.getLabel(), shortcutCallback::onKeyShortcut, this);
+                registeredShortcutsIds.add(id);
+            }
+        }
+
         return this;
     }
+
+    public native int registerShortcut(final String keyCombination, String label, final Runnable action, final Object thisRef) /*-{
+        return $wnd.envelope.keyBindingService.register(keyCombination, label, function () {
+            if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
+                action.@java.lang.Runnable::run()();
+            }
+        });
+    }-*/;
+
+    public native int deregisterShortcut(final Integer id) /*-{
+        return $wnd.envelope.keyBindingService.deregister(id);
+    }-*/;
 
     public KeyEventHandler setTimerDelay(final int millis) {
         this.delay = millis;
@@ -66,6 +91,7 @@ public class KeyEventHandler {
             timer.cancel();
         }
         shortcutCallbacks.clear();
+        registeredShortcutsIds.forEach(this::deregisterShortcut);
         reset();
     }
 

@@ -86,6 +86,11 @@ public class KeyboardControlImpl
             }
         }
 
+        @Override
+        public String getKeyCombination() {
+            return delegate.getKeyCombination();
+        }
+
         public KeyShortcutCallback getDelegate() {
             return delegate;
         }

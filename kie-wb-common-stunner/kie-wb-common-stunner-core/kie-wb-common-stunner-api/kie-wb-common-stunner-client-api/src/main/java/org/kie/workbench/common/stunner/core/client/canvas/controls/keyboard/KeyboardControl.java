@@ -28,6 +28,14 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
     interface KeyShortcutCallback {
 
+        default String getKeyCombination() {
+            return "";
+        }
+
+        default String getLabel() {
+            return "";
+        }
+
         void onKeyShortcut(final KeyboardEvent.Key... keys);
 
         default void onKeyUp(final KeyboardEvent.Key key) {

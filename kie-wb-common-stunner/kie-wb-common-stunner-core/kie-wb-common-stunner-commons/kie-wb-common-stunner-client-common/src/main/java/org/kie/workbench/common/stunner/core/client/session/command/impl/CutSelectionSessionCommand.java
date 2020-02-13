@@ -23,9 +23,11 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -66,7 +68,22 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
 
     @Override
     public void bind(final EditorSession session) {
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            @Override
+            public String getKeyCombination() {
+                return "ctrl+x";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Cut";
+            }
+
+            @Override
+            public void onKeyShortcut(Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
 
         super.bind(session);
         this.clipboardControl = session.getClipboardControl();
@@ -88,10 +105,17 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
     }
 
     private void handleCtrlX(final Key[] keys) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            this.execute();
+            return;
+        }
+
         if (doKeysMatch(keys,
                         Key.CONTROL,
                         Key.X)) {
-            this.execute();
+        this.execute();
         }
     }
 

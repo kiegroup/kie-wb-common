@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.client.widgets.canvas;
 
 import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanel;
+import org.jboss.errai.bus.client.util.BusToolsCli;
 
 public class ScrollableLienzoPanelView
         extends ScrollablePanel
@@ -33,6 +34,12 @@ public class ScrollableLienzoPanelView
 
     @Override
     public void setPresenter(final StunnerLienzoBoundsPanel presenter) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            return;
+        }
+
         presenter.register(
                 addKeyDownHandler(event -> presenter.onKeyDown(event.getNativeKeyCode()))
         );
