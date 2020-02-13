@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -32,10 +33,12 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator;
+import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.HitPolicy;
+import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
@@ -315,7 +318,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             commandBuilder.addCommand(new DeleteHasNameCommand(wrapOutputClauseIntoHasName(oc),
                                                                () -> {/*Nothing*/}));
             if (updateStunnerTitle) {
-                getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
+                getUpdateStunnerTitleCommand(new Name()).ifPresent(commandBuilder::addCommand);
             }
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           commandBuilder.build());
@@ -340,7 +343,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                             name,
                                                             () -> {/*Nothing*/}));
             if (updateStunnerTitle) {
-                getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
+                getUpdateStunnerTitleCommand(name).ifPresent(commandBuilder::addCommand);
             }
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           commandBuilder.build());
@@ -778,6 +781,13 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                             if (base instanceof DomainObject) {
                                 fireDomainObjectSelectionEvent((DomainObject) base);
                                 return;
+                            } else if (base instanceof ContextEntry) {
+                                final ContextEntry contextEntry = (ContextEntry) base;
+                                final InformationItem variable = contextEntry.getVariable();
+                                if (Objects.nonNull(variable)) {
+                                    fireDomainObjectSelectionEvent(variable);
+                                    return;
+                                }
                             }
                         }
                     }

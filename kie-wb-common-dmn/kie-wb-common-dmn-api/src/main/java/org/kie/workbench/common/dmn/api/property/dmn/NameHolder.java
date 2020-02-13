@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,46 @@
 package org.kie.workbench.common.dmn.api.property.dmn;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.DMNProperty;
+import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
+import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
+import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
+import org.kie.workbench.common.stunner.core.definition.annotation.Property;
+import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
+import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
+import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
+import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
-public class Name implements DMNProperty {
+@Bindable
+@Property(meta = PropertyMetaTypes.NAME)
+@FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
+public class NameHolder implements DMNProperty {
 
     public static final transient String DEFAULT_NAME = "";
 
-    private String value;
+    @Type
+    public static final PropertyType type = new NamePropertyType();
 
-    public Name() {
-        this(DEFAULT_NAME);
+    @Value
+    @FieldValue
+    private Name value;
+
+    public NameHolder() {
+        this(new Name(DEFAULT_NAME));
     }
 
-    public Name(final String value) {
+    public NameHolder(final Name value) {
         this.value = value;
     }
 
-    public String getValue() {
+    public Name getValue() {
         return value;
     }
 
-    public void setValue(final String value) {
+    public void setValue(final Name value) {
         this.value = value;
     }
 
@@ -47,11 +64,11 @@ public class Name implements DMNProperty {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Name)) {
+        if (!(o instanceof NameHolder)) {
             return false;
         }
 
-        final Name name = (Name) o;
+        final NameHolder name = (NameHolder) o;
 
         return value != null ? value.equals(name.value) : name.value == null;
     }
