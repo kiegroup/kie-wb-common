@@ -75,12 +75,9 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
         final Diagram diagram = canvasHandler.getDiagram();
         final String name = diagram.getName();
         final String title = diagram.getMetadata().getTitle();
-
-        // See {@link Stream#anyMatch(Predicate)}. "...If the stream is empty then {@code false} is returned..."
-        // Therefore we also need to check if there are any violations at all.
         final Stream<ElementViolation> violationsStream = getElementViolationsStream(elementViolations);
         final List<ElementViolation> violationsList = violationsStream.collect(Collectors.toList());
-        final boolean valid = violationsList.size() == 0 || violationsList
+        final boolean valid = violationsList
                 .stream()
                 .noneMatch(v -> applyViolation(canvasHandler, v));
 
