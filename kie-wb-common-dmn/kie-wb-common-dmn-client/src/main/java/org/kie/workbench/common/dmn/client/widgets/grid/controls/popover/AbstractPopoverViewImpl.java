@@ -57,6 +57,7 @@ public class AbstractPopoverViewImpl implements PopoverView {
         options.setContent((element) -> popoverContentElement);
         options.setAnimation(false);
         options.setHtml(true);
+        options.setPlacement("auto top");
 
         editorTitle.ifPresent(t -> popoverElement.setAttribute("title", t));
         popover = jQueryPopover.wrap(this.getElement());
