@@ -76,7 +76,7 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
 
             @Override
             public String getLabel() {
-                return "Cut";
+                return "Cut selection";
             }
 
             @Override

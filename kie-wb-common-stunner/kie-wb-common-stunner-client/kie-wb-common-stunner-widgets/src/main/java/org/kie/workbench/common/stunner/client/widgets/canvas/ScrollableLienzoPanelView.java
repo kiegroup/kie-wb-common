@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.client.widgets.canvas;
 
 import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanel;
+import elemental2.dom.DomGlobal;
 import org.jboss.errai.bus.client.util.BusToolsCli;
 
 public class ScrollableLienzoPanelView
@@ -37,6 +38,7 @@ public class ScrollableLienzoPanelView
 
         // This means that we're in the Kogito environment
         if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            DomGlobal.console.info("Kogito environment detected. Skipping default event handling.");
             return;
         }
 

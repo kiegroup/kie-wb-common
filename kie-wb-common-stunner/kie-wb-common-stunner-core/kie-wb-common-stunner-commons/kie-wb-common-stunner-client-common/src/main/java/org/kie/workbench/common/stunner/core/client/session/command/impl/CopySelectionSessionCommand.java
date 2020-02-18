@@ -90,7 +90,7 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
 
             @Override
             public String getLabel() {
-                return "Copy";
+                return "Copy selection";
             }
 
             @Override

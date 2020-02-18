@@ -57,21 +57,43 @@ public class KeyEventHandler {
         this.shortcutCallbacks.add(shortcutCallback);
 
         // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName());
-            if (!shortcutCallback.getKeyCombination().isEmpty()) {
-                int id = registerShortcut(shortcutCallback.getKeyCombination(), shortcutCallback.getLabel(), shortcutCallback::onKeyShortcut, this);
-                registeredShortcutsIds.add(id);
-            }
+        if (BusToolsCli.isRemoteCommunicationEnabled()) {
+            return this;
+        }
+
+        if (shortcutCallback.getKeyCombination().isEmpty()) {
+            return this;
+        }
+
+        DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() +" - " + shortcutCallback.getLabel());
+
+        if (shortcutCallback instanceof KeyboardControl.KeyShortcutDownThenUp) {
+            int id = registerKeyDownThenUp(shortcutCallback.getKeyCombination(), shortcutCallback.getLabel(), shortcutCallback::onKeyShortcut, () -> shortcutCallback.onKeyUp(null), this);
+            registeredShortcutsIds.add(id);
+        } else {
+            int id = registerKeyPress(shortcutCallback.getKeyCombination(), shortcutCallback.getLabel(), shortcutCallback::onKeyShortcut, this);
+            registeredShortcutsIds.add(id);
         }
 
         return this;
     }
 
-    public native int registerShortcut(final String keyCombination, String label, final Runnable action, final Object thisRef) /*-{
-        return $wnd.envelope.keyBindingService.register(keyCombination, label, function () {
+    public native int registerKeyPress(final String combination, final String label, final Runnable onKeyPressed, final Object thisRef) /*-{
+        return $wnd.envelope.keyBindingService.registerKeyPress(combination, label, function () {
             if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
-                action.@java.lang.Runnable::run()();
+                onKeyPressed.@java.lang.Runnable::run()();
+            }
+        });
+    }-*/;
+
+    public native int registerKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final Object thisRef) /*-{
+        return $wnd.envelope.keyBindingService.registerKeyDownThenUp(combination, label, function () {
+            if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
+                onKeyDown.@java.lang.Runnable::run()();
+            }
+        }, function () {
+            if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
+                onKeyUp.@java.lang.Runnable::run()();
             }
         });
     }-*/;

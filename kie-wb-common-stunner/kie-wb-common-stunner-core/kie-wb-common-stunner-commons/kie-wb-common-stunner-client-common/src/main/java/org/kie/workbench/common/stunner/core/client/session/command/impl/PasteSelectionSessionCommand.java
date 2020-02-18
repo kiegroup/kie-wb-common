@@ -132,7 +132,7 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
 
             @Override
             public String getLabel() {
-                return "Paste";
+                return "Paste selection";
             }
 
             @Override

@@ -74,6 +74,72 @@ public class LienzoCanvasMediators {
     }
 
     public void init(final Supplier<LienzoCanvas> canvas) {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KeyShortcutDownThenUp() {
+            @Override
+            public void onKeyShortcut(Key... keys) {
+                enablePan();
+            }
+
+            @Override
+            public void onKeyUp(Key key) {
+                clear();
+            }
+
+            @Override
+            public String getKeyCombination() {
+                return "alt";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Hold to and drag Pan";
+            }
+        });
+
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KeyShortcutDownThenUp() {
+            @Override
+            public void onKeyShortcut(Key... keys) {
+                enableZoom();
+            }
+
+            @Override
+            public void onKeyUp(Key key) {
+                clear();
+            }
+
+            @Override
+            public String getKeyCombination() {
+                return "ctrl";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Hold and scroll to Zoom";
+            }
+        });
+
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KeyShortcutDownThenUp() {
+            @Override
+            public void onKeyShortcut(Key... keys) {
+                enablePreview();
+            }
+
+            @Override
+            public void onKeyUp(Key key) {
+                clear();
+            }
+
+            @Override
+            public String getKeyCombination() {
+                return "ctrl+alt";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Hold to Preview";
+            }
+        });
+
         keyEventHandler
                 .setTimerDelay(150)
                 .addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {

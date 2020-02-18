@@ -40,6 +40,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.LocationControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
@@ -117,9 +118,26 @@ public class LocationControlImpl
     public void bind(final EditorSession session) {
         // Keyboard event handling.
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            @Override
+            public String getKeyCombination() {
+                return "esc";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Reset / unselect";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                getWiresManager().resetContext();
+            }
+        });
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
+
         if (KeysMatcher.doKeysMatch(keys,
                                     KeyboardEvent.Key.ESC)) {
             getWiresManager().resetContext();

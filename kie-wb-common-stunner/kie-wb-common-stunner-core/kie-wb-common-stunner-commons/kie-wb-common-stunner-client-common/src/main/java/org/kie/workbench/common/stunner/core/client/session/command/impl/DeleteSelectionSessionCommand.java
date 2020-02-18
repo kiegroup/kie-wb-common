@@ -27,10 +27,12 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -104,7 +106,40 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+
+            @Override
+            public String getKeyCombination() {
+                return "backspace";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Delete selection";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+
+            @Override
+            public String getKeyCombination() {
+                return "delete";
+            }
+
+            @Override
+            public String getLabel() {
+                return "Delete selection";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
         this.canvasCommandFactory = this.loadCanvasFactory(canvasCommandFactoryInstance, definitionUtils);
     }
 
@@ -155,6 +190,14 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     }
 
     private void handleDelete(final KeyboardEvent.Key... keys) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            this.execute();
+            return;
+        }
+
+
         if ((doKeysMatch(keys, KeyboardEvent.Key.DELETE)) || doKeysMatch(keys, KeyboardEvent.Key.KEY_BACKSPACE)) {
             this.execute();
         }

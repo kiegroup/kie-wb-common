@@ -91,6 +91,18 @@ public class KeyboardControlImpl
             return delegate.getKeyCombination();
         }
 
+        @Override
+        public String getLabel() {
+            return delegate.getLabel();
+        }
+
+        @Override
+        public void onKeyUp(KeyboardEvent.Key key) {
+            if (isSameSession(session)) {
+                delegate.onKeyUp(key);
+            }
+        }
+
         public KeyShortcutCallback getDelegate() {
             return delegate;
         }
