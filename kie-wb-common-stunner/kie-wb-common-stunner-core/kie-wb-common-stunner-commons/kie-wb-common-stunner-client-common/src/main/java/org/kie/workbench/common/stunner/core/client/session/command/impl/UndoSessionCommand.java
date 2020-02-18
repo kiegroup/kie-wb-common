@@ -21,7 +21,6 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.appformer.kogito.bridge.client.stateControl.KogitoStateControlInitializer;
 import org.appformer.kogito.bridge.client.stateControl.registry.CommandRegistry;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
@@ -43,26 +42,22 @@ import static org.kie.workbench.common.stunner.core.client.canvas.controls.keybo
 public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSession> {
 
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final KogitoStateControlInitializer stateControlInitializer;
 
     @Inject
-    public UndoSessionCommand(final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                              final KogitoStateControlInitializer stateControlInitializer) {
+    public UndoSessionCommand(final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
         super(false);
         this.sessionCommandManager = sessionCommandManager;
-        this.stateControlInitializer = stateControlInitializer;
     }
 
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
 
-        //If running in Kogito we should initialize the Kogito StateControl undo/redo commands. Otherwise we should keep the key binding.
-        if(stateControlInitializer.isKogitoEnabled()) {
-            stateControlInitializer.setUndoCommand(this::execute);
-        } else {
-            session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        }
+        bindCommand();
+    }
+
+    protected void bindCommand() {
+        getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
     }
 
     @Override

@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
-import org.appformer.kogito.bridge.client.stateControl.KogitoStateControlInitializer;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -37,9 +35,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -57,21 +53,10 @@ public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
     @Mock
     private CanvasHandlerImpl canvasHandler;
 
-    @Mock
-    private KogitoStateControlInitializer stateControlInitializer;
-
-    @Before
-    @SuppressWarnings("unchecked")
-    public void setup() {
-        super.setup();
-        when(stateControlInitializer.isKogitoEnabled()).thenReturn(false);
-    }
-
     @Override
     protected AbstractClientSessionCommand<EditorSession> getCommand() {
         return new RedoSessionCommand(sessionCommandManager,
-                                      redoCommandHandler,
-                                      stateControlInitializer);
+                                      redoCommandHandler);
     }
 
     @Override
@@ -87,7 +72,7 @@ public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testNotifyRedoSuccess() {
-        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler, stateControlInitializer));
+        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler));
 
         doCallRealMethod().when(command).onCommandUndoExecuted(any(CanvasCommandUndoneEvent.class));
         doCallRealMethod().when(command).bind(any(EditorSession.class));
@@ -107,7 +92,7 @@ public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testNotifyRedoFails() {
-        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler, stateControlInitializer));
+        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler));
 
         doCallRealMethod().when(command).onCommandUndoExecuted(any(CanvasCommandUndoneEvent.class));
         doCallRealMethod().when(command).bind(any(EditorSession.class));
@@ -137,7 +122,7 @@ public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
 
     @Test
     public void testOnCommandExecutedSuccess() {
-        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler, stateControlInitializer));
+        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler));
 
         doCallRealMethod().when(command).onCommandExecuted(any(CanvasCommandExecutedEvent.class));
         doCallRealMethod().when(command).bind(any(EditorSession.class));
@@ -154,36 +139,8 @@ public class RedoSessionCommandTest extends BaseSessionCommandKeyboardTest {
         verify(redoCommandHandler, times(1)).onCommandExecuted(event.getCommand());
     }
 
-    @Test
-    public void testBindCommandInKogito() {
-        when(stateControlInitializer.isKogitoEnabled()).thenReturn(true);
-
-        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler, stateControlInitializer));
-
-        command.bind(session);
-
-        verify(redoCommandHandler).setSession(eq(session));
-
-        verify(keyboardControl, never()).addKeyShortcutCallback(any());
-        verify(stateControlInitializer).setRedoCommand(any());
-    }
-
-    @Test
-    public void testBindCommandOutsideKogito() {
-        when(stateControlInitializer.isKogitoEnabled()).thenReturn(false);
-
-        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler, stateControlInitializer));
-
-        command.bind(session);
-
-        verify(redoCommandHandler).setSession(eq(session));
-
-        verify(keyboardControl).addKeyShortcutCallback(any());
-        verify(stateControlInitializer, never()).setRedoCommand(any());
-    }
-
     public void testOnCommandExecutedFails() {
-        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler, stateControlInitializer));
+        RedoSessionCommand command = spy(new RedoSessionCommand(sessionCommandManager, redoCommandHandler));
 
         doCallRealMethod().when(command).onCommandExecuted(any(CanvasCommandExecutedEvent.class));
         doCallRealMethod().when(command).bind(any(EditorSession.class));

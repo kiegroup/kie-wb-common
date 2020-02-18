@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.core.client.session.command.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.appformer.kogito.bridge.client.stateControl.KogitoStateControlInitializer;
 import org.appformer.kogito.bridge.client.stateControl.registry.CommandRegistry;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +39,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -60,9 +58,6 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
 
     @Mock
     private CommandRegistry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
-
-    @Mock
-    private KogitoStateControlInitializer stateControlInitializer;
 
     @Mock
     private CommandResult commandResult;
@@ -85,12 +80,11 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(session.getCommandRegistry()).thenReturn(commandRegistry);
         when(sessionManager.getCurrentSession()).thenReturn(session);
-        when(stateControlInitializer.isKogitoEnabled()).thenReturn(false);
     }
 
     @Override
     protected AbstractClientSessionCommand<EditorSession> getCommand() {
-        return new UndoSessionCommand(sessionCommandManager, stateControlInitializer);
+        return new UndoSessionCommand(sessionCommandManager);
     }
 
     @Override
@@ -173,12 +167,12 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
         verify(commandRegistry,
                never()).clear();
     }
-
+/*
     @Test
     public void testBindCommandInKogito() {
         when(stateControlInitializer.isKogitoEnabled()).thenReturn(true);
 
-        UndoSessionCommand command = new UndoSessionCommand(sessionCommandManager, stateControlInitializer);
+        UndoSessionCommand command = new UndoSessionCommand(sessionCommandManager);
 
         command.bind(session);
 
@@ -190,11 +184,11 @@ public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
     public void testBindCommandOutsideKogito() {
         when(stateControlInitializer.isKogitoEnabled()).thenReturn(false);
 
-        UndoSessionCommand command = new UndoSessionCommand(sessionCommandManager, stateControlInitializer);
+        UndoSessionCommand command = new UndoSessionCommand(sessionCommandManager);
 
         command.bind(session);
 
         verify(keyboardControl).addKeyShortcutCallback(any());
         verify(stateControlInitializer, never()).setUndoCommand(any());
-    }
+    }*/
 }

@@ -21,7 +21,6 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.appformer.kogito.bridge.client.stateControl.KogitoStateControlInitializer;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
@@ -46,20 +45,17 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
 
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final RedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler;
-    private final KogitoStateControlInitializer stateControlInitializer;
 
     protected RedoSessionCommand() {
-        this(null, null, null);
+        this(null, null);
     }
 
     @Inject
     public RedoSessionCommand(final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                              final RedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler,
-                              final KogitoStateControlInitializer stateControlInitializer) {
+                              final RedoCommandHandler<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandHandler) {
         super(false);
         this.redoCommandHandler = redoCommandHandler;
         this.sessionCommandManager = sessionCommandManager;
-        this.stateControlInitializer = stateControlInitializer;
     }
 
     @Override
@@ -67,12 +63,11 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
         super.bind(session);
         redoCommandHandler.setSession(getSession());
 
-        //If running in Kogito we should initialize the Kogito StateControl undo/redo commands. Otherwise we should keep the key binding.
-        if(stateControlInitializer.isKogitoEnabled()) {
-            stateControlInitializer.setRedoCommand(this::execute);
-        } else {
-            session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        }
+        bindCommand();
+    }
+
+    protected void bindCommand() {
+        getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
     }
 
     @Override
