@@ -1770,7 +1770,7 @@ public class DecisionTableGridTest {
 
         grid.selectHeaderCell(0, DEFAULT_OUTPUT_CLAUSE_COLUMN_INDEX, false, false);
 
-        assertDomainObjectSelection(hasExpression);
+        assertNOPDomainObjectSelection();
 
         reset(domainObjectSelectionEvent);
 

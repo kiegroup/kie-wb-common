@@ -31,8 +31,8 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator;
-import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.HitPolicy;
@@ -78,7 +78,6 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
-import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
@@ -774,11 +773,8 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                     final List<GridColumn.HeaderMetaData> headerMetaData = model.getColumns().get(uiHeaderColumnIndex).getHeaderMetaData();
                     if (headerMetaData.size() > 1) {
                         if (uiHeaderRowIndex == 0) {
-                            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-                            if (base instanceof DomainObject) {
-                                fireDomainObjectSelectionEvent((DomainObject) base);
-                                return;
-                            }
+                            fireDomainObjectSelectionEvent(new NOPDomainObject());
+                            return;
                         }
                     }
                     final int ocIndex = DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable, uiHeaderColumnIndex);
