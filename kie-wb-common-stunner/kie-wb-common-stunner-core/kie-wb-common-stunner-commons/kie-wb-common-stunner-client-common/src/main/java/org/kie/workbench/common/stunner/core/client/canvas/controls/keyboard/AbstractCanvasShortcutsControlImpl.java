@@ -31,8 +31,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
 public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
-        implements CanvasControl.SessionAware<EditorSession>,
-                   KeyboardControl.KeyShortcutCallback {
+        implements CanvasControl.SessionAware<EditorSession> {
 
     final private Instance<KeyboardShortcut> keyboardShortcutActions;
 
@@ -47,13 +46,35 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     public void register(Element element) {
     }
 
-    @Override
     public void bind(final EditorSession session) {
         this.editorSession = session;
-        session.getKeyboardControl().addKeyShortcutCallback(this);
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyShortcut);
+
+        for (final KeyboardShortcut action : keyboardShortcutActions) {
+            session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+                @Override
+                public String getKeyCombination() {
+                    return action.getCombination();
+                }
+
+                @Override
+                public String getLabel() {
+                    return action.getLabel();
+                }
+
+                @Override
+                public void onKeyShortcut(final KeyboardEvent.Key... keys) {
+                    if (selectedNodeId() != null) {
+                        if (action.matchesSelectedElement(selectedNodeElement())) {
+                            action.executeAction(canvasHandler, selectedNodeId());
+                        }
+                    }
+                }
+            });
+
+        }
     }
 
-    @Override
     public void onKeyShortcut(final KeyboardEvent.Key... keys) {
         if (selectedNodeId() != null) {
             final Iterator<KeyboardShortcut> keyboardShortcutActionsIterator = keyboardShortcutActions.iterator();

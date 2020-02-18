@@ -23,10 +23,8 @@ import javax.inject.Inject;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.InputData;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.AbstractAppendNodeShortcut;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -37,7 +35,7 @@ import static org.kie.workbench.common.stunner.core.util.DefinitionUtils.getElem
 
 @DMNEditor
 @Dependent
-public class AppendDecisionShortcut extends AbstractAppendNodeShortcut implements KeyboardShortcut<AbstractCanvasHandler> {
+public class AppendDecisionShortcut extends AbstractAppendNodeShortcut {
 
     @Inject
     public AppendDecisionShortcut(final ToolboxDomainLookups toolboxDomainLookups,
@@ -67,5 +65,16 @@ public class AppendDecisionShortcut extends AbstractAppendNodeShortcut implement
     @Override
     public boolean canAppendNodeOfDefinition(final Object definition) {
         return definition instanceof Decision;
+    }
+
+
+    @Override
+    public String getCombination() {
+        return "d";
+    }
+
+    @Override
+    public String getLabel() {
+        return "Append Decision";
     }
 }

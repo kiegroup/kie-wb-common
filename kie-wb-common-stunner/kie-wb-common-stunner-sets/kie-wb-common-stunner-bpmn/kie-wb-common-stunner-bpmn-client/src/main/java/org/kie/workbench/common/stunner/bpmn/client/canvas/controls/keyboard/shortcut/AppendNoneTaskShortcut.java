@@ -61,4 +61,15 @@ public class AppendNoneTaskShortcut extends AbstractAppendNodeShortcut {
     public boolean canAppendNodeOfDefinition(final Object definition) {
         return definition instanceof NoneTask;
     }
+
+
+    @Override
+    public String getCombination() {
+        return "t";
+    }
+
+    @Override
+    public String getLabel() {
+        return "Append None Task";
+    }
 }

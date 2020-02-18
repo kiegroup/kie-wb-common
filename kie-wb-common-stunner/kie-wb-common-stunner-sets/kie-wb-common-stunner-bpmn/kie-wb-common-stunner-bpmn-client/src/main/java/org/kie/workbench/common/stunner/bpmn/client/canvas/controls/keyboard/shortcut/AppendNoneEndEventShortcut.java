@@ -61,4 +61,15 @@ public class AppendNoneEndEventShortcut extends AbstractAppendNodeShortcut {
     public boolean canAppendNodeOfDefinition(final Object definition) {
         return definition instanceof EndNoneEvent;
     }
+
+
+    @Override
+    public String getCombination() {
+        return "e";
+    }
+
+    @Override
+    public String getLabel() {
+        return "Append None End Event";
+    }
 }

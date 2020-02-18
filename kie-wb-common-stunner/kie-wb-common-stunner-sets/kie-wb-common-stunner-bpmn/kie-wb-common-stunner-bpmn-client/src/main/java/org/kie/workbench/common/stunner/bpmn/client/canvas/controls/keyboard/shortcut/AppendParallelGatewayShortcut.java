@@ -61,4 +61,14 @@ public class AppendParallelGatewayShortcut extends AbstractAppendNodeShortcut {
     public boolean canAppendNodeOfDefinition(final Object definition) {
         return definition instanceof ParallelGateway;
     }
+
+    @Override
+    public String getCombination() {
+        return "g";
+    }
+
+    @Override
+    public String getLabel() {
+        return "Append Parallel Gateway";
+    }
 }

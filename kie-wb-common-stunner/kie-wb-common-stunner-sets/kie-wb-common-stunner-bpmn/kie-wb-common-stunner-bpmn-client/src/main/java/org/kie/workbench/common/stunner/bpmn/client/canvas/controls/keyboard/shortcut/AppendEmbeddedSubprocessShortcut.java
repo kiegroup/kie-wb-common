@@ -61,4 +61,15 @@ public class AppendEmbeddedSubprocessShortcut extends AbstractAppendNodeShortcut
     public boolean canAppendNodeOfDefinition(final Object definition) {
         return definition instanceof EmbeddedSubprocess;
     }
+
+
+    @Override
+    public String getCombination() {
+        return "s";
+    }
+
+    @Override
+    public String getLabel() {
+        return "Append Embedded Subprocess";
+    }
 }

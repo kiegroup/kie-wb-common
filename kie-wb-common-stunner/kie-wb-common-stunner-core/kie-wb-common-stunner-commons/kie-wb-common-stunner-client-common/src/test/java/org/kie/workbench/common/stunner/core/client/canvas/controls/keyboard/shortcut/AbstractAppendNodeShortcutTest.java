@@ -169,5 +169,15 @@ public class AbstractAppendNodeShortcutTest {
             // tested per AbstractAppendNodeShortcut implementations
             return false;
         }
+
+        @Override
+        public String getCombination() {
+            return null;
+        }
+
+        @Override
+        public String getLabel() {
+            return null;
+        }
     }
 }
