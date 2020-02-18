@@ -82,14 +82,15 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "ctrl+c";
             }
 
             @Override
-            public String getLabel() {
+            public String getKogitoLabel() {
                 return "Copy selection";
             }
 

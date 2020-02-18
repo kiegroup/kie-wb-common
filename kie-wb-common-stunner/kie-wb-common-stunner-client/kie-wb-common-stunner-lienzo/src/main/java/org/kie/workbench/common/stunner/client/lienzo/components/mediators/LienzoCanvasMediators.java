@@ -74,7 +74,7 @@ public class LienzoCanvasMediators {
     }
 
     public void init(final Supplier<LienzoCanvas> canvas) {
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KeyShortcutDownThenUp() {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutDownThenUp() {
             @Override
             public void onKeyShortcut(Key... keys) {
                 enablePan();
@@ -86,17 +86,17 @@ public class LienzoCanvasMediators {
             }
 
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "alt";
             }
 
             @Override
-            public String getLabel() {
-                return "Hold to and drag Pan";
+            public String getKogitoLabel() {
+                return "Hold and drag to Pan";
             }
         });
 
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KeyShortcutDownThenUp() {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutDownThenUp() {
             @Override
             public void onKeyShortcut(Key... keys) {
                 enableZoom();
@@ -108,17 +108,17 @@ public class LienzoCanvasMediators {
             }
 
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "ctrl";
             }
 
             @Override
-            public String getLabel() {
+            public String getKogitoLabel() {
                 return "Hold and scroll to Zoom";
             }
         });
 
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KeyShortcutDownThenUp() {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutDownThenUp() {
             @Override
             public void onKeyShortcut(Key... keys) {
                 enablePreview();
@@ -130,12 +130,12 @@ public class LienzoCanvasMediators {
             }
 
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "ctrl+alt";
             }
 
             @Override
-            public String getLabel() {
+            public String getKogitoLabel() {
                 return "Hold to Preview";
             }
         });

@@ -22,7 +22,9 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.appformer.client.stateControl.registry.Registry;
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
@@ -52,12 +54,27 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-
         bindCommand();
     }
 
     protected void bindCommand() {
         getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "ctrl+z";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Undo";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
     }
 
     @Override
@@ -66,6 +83,13 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     }
 
     void onKeyDownEvent(final KeyboardEvent.Key... keys) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            this.execute();
+            return;
+        }
+
         if (isEnabled()) {
             handleCtrlZ(keys);
         }

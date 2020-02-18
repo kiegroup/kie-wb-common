@@ -21,8 +21,10 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandUndoneEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -61,6 +63,23 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "ctrl+shift+z";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Redo";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                onKeyDownEvent(keys);
+            }
+        });
         redoCommandHandler.setSession(getSession());
 
         bindCommand();
@@ -82,6 +101,13 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     }
 
     private void handleCtrlShiftZ(final KeyboardEvent.Key[] keys) {
+
+        // This means that we're in the Kogito environment
+        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+            this.execute();
+            return;
+        }
+
         if (doKeysMatch(keys,
                         KeyboardEvent.Key.CONTROL,
                         KeyboardEvent.Key.SHIFT,

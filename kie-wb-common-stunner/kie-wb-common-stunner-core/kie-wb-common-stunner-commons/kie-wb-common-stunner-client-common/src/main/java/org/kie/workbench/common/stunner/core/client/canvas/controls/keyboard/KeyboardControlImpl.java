@@ -87,13 +87,13 @@ public class KeyboardControlImpl
         }
 
         @Override
-        public String getKeyCombination() {
-            return delegate.getKeyCombination();
+        public String getKogitoKeyCombination() {
+            return delegate.getKogitoKeyCombination();
         }
 
         @Override
-        public String getLabel() {
-            return delegate.getLabel();
+        public String getKogitoLabel() {
+            return delegate.getKogitoLabel();
         }
 
         @Override

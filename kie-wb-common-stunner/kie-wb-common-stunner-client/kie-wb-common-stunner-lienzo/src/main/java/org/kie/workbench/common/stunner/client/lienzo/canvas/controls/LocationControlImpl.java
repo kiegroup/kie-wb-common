@@ -120,18 +120,265 @@ public class LocationControlImpl
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "esc";
             }
 
             @Override
-            public String getLabel() {
+            public String getKogitoLabel() {
                 return "Reset / unselect";
             }
 
             @Override
             public void onKeyShortcut(KeyboardEvent.Key... keys) {
                 getWiresManager().resetContext();
+            }
+        });
+
+        //Normal moves
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "up";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection up";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(0, -NORMAL_DISTANCE);
+            }
+
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "down";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection down";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(0, NORMAL_DISTANCE);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "left";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection left";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(-NORMAL_DISTANCE, 0);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "right";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection right";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(NORMAL_DISTANCE, 0);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+
+        //Shift moves
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "shift+up";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection up";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(0, -SHORT_DISTANCE);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "shift+down";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection down";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(0, SHORT_DISTANCE);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "shift+left";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection left";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(-SHORT_DISTANCE, 0);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "shift+right";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection right";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(SHORT_DISTANCE, 0);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+
+        //Ctrl moves
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "ctrl+up";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection up";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(0, -LARGE_DISTANCE);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "ctrl+down";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection down";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(0, LARGE_DISTANCE);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "ctrl+left";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection left";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(-LARGE_DISTANCE, 0);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
+            }
+        });
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
+            @Override
+            public String getKogitoKeyCombination() {
+                return "ctrl+right";
+            }
+
+            @Override
+            public String getKogitoLabel() {
+                return "Move selection right";
+            }
+
+            @Override
+            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                moveNode(LARGE_DISTANCE, 0);
+            }
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
             }
         });
     }
@@ -180,10 +427,14 @@ public class LocationControlImpl
             return;
         }
 
-        List<Element> moveNodes = new ArrayList<>();
-        List<Point2D> movePositions = new ArrayList<>();
+        moveNode(horizontalDistance, verticalDistance);
+    }
 
-        for (String uuid : selectedIDs) {
+    private void moveNode(final double horizontalDistance, final double verticalDistance) {
+        final List<Element> moveNodes = new ArrayList<>();
+        final List<Point2D> movePositions = new ArrayList<>();
+
+        for (final String uuid : selectedIDs) {
             final Node<View<?>, Edge> node = canvasHandler.getGraphIndex().getNode(uuid);
             if (node != null) {
                 final Point2D nodePosition = GraphUtils.getPosition(node.getContent());

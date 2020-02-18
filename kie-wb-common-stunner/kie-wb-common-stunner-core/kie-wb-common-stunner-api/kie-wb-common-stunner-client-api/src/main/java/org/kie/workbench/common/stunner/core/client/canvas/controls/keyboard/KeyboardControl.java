@@ -28,11 +28,11 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
     interface KeyShortcutCallback {
 
-        default String getKeyCombination() {
+        default String getKogitoKeyCombination() {
             return "";
         }
 
-        default String getLabel() {
+        default String getKogitoLabel() {
             return "";
         }
 
@@ -42,7 +42,32 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
     }
 
-    interface KeyShortcutDownThenUp extends KeyShortcutCallback {
+    class KogitoOpts {
+
+        public static final KogitoOpts DEFAULT = new KogitoOpts(false);
+        public final boolean repeat;
+
+        public KogitoOpts(final boolean repeat) {
+            this.repeat = repeat;
+        }
+
+        public boolean getRepeat() {
+            return repeat;
+        }
+    }
+
+    interface KogitoKeyShortcutCallback extends KeyShortcutCallback {
+
+        default KogitoOpts getOpts() {
+            return KogitoOpts.DEFAULT;
+        }
+    }
+
+    interface KogitoKeyPress extends KogitoKeyShortcutCallback {
+
+    }
+
+    interface KogitoKeyShortcutDownThenUp extends KogitoKeyShortcutCallback {
 
     }
 }

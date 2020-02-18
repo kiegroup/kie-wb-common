@@ -124,14 +124,15 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "ctrl+v";
             }
 
             @Override
-            public String getLabel() {
+            public String getKogitoLabel() {
                 return "Paste selection";
             }
 

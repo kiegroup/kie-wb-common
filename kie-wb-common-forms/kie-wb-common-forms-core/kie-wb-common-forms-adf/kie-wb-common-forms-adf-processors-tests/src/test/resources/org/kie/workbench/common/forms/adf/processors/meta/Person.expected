@@ -151,7 +151,7 @@ public class ModuleFormGenerationResourcesProvider implements FormGenerationReso
         @Override
         public void modifyFieldStatus(FieldDefinition field, org.kie.workbench.common.forms.adf.processors.meta.Married model) {
             if (model != null) {
-                field.setLabel(model.getLabel());
+                field.setLabel(model.getKogitoLabel());
                 field.setHelpMessage(model.getHelp());
                 field.setReadOnly(Boolean.TRUE.equals(model.getReadOnly()));
                 field.setRequired(Boolean.TRUE.equals(model.getRequired()));

@@ -28,6 +28,9 @@ import javax.enterprise.event.Observes;
 import com.google.gwt.user.client.Timer;
 import elemental2.dom.DomGlobal;
 import org.jboss.errai.bus.client.util.BusToolsCli;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyShortcutDownThenUp;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControlImpl.SessionKeyShortcutCallback;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyDownEvent;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyUpEvent;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -61,32 +64,48 @@ public class KeyEventHandler {
             return this;
         }
 
-        if (shortcutCallback.getKeyCombination().isEmpty()) {
+        if (shortcutCallback.getKogitoKeyCombination().isEmpty()) {
             return this;
         }
 
-        DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() +" - " + shortcutCallback.getLabel());
+        DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + shortcutCallback.getKogitoLabel());
 
-        if (shortcutCallback instanceof KeyboardControl.KeyShortcutDownThenUp) {
-            int id = registerKeyDownThenUp(shortcutCallback.getKeyCombination(), shortcutCallback.getLabel(), shortcutCallback::onKeyShortcut, () -> shortcutCallback.onKeyUp(null), this);
+        //Normal
+        if (shortcutCallback instanceof KogitoKeyShortcutDownThenUp) {
+            int id = registerKeyDownThenUp(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, () -> shortcutCallback.onKeyUp(null), ((KogitoKeyShortcutDownThenUp) shortcutCallback).getOpts(), this);
             registeredShortcutsIds.add(id);
-        } else {
-            int id = registerKeyPress(shortcutCallback.getKeyCombination(), shortcutCallback.getLabel(), shortcutCallback::onKeyShortcut, this);
+        } else if (shortcutCallback instanceof KogitoKeyPress) {
+            int id = registerKeyPress(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, ((KogitoKeyPress) shortcutCallback).getOpts(), this);
+            registeredShortcutsIds.add(id);
+        }
+
+        //Session
+        else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyShortcutDownThenUp) {
+            int id = registerKeyDownThenUp(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, () -> shortcutCallback.onKeyUp(null), ((KogitoKeyShortcutDownThenUp) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate()).getOpts(), this);
+            registeredShortcutsIds.add(id);
+        } else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyPress) {
+            int id = registerKeyPress(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, ((KogitoKeyPress) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate()).getOpts(), this);
+            registeredShortcutsIds.add(id);
+        }
+
+        //Default
+        else {
+            int id = registerKeyPress(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, KeyboardControl.KogitoOpts.DEFAULT, this);
             registeredShortcutsIds.add(id);
         }
 
         return this;
     }
 
-    public native int registerKeyPress(final String combination, final String label, final Runnable onKeyPressed, final Object thisRef) /*-{
+    public native int registerKeyPress(final String combination, final String label, final Runnable onKeyPressed, final KeyboardControl.KogitoOpts opts, final Object thisRef) /*-{
         return $wnd.envelope.keyBindingService.registerKeyPress(combination, label, function () {
             if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
                 onKeyPressed.@java.lang.Runnable::run()();
             }
-        });
+        }, {repeat: opts.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts::getRepeat()()});
     }-*/;
 
-    public native int registerKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final Object thisRef) /*-{
+    public native int registerKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KeyboardControl.KogitoOpts opts, final Object thisRef) /*-{
         return $wnd.envelope.keyBindingService.registerKeyDownThenUp(combination, label, function () {
             if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
                 onKeyDown.@java.lang.Runnable::run()();
@@ -95,7 +114,7 @@ public class KeyEventHandler {
             if (thisRef.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler::enabled) {
                 onKeyUp.@java.lang.Runnable::run()();
             }
-        });
+        }, {repeat: opts.@org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts::getRepeat()()});
     }-*/;
 
     public native int deregisterShortcut(final Integer id) /*-{

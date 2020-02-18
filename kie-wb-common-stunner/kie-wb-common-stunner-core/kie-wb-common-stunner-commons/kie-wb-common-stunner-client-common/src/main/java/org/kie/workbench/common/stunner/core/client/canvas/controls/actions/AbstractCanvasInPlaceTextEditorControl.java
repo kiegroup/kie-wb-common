@@ -76,12 +76,12 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
             @Override
-            public String getKeyCombination() {
+            public String getKogitoKeyCombination() {
                 return "esc";
             }
 
             @Override
-            public String getLabel() {
+            public String getKogitoLabel() {
                 return "Hide";
             }
 
