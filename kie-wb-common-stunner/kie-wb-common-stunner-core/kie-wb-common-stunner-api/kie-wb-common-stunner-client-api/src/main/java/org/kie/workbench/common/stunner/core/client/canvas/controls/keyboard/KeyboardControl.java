@@ -79,7 +79,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         void onKeyDown();
     }
 
-    interface KogitoKeyShortcutDownThenUp extends KogitoKeyShortcutCallback {
+    interface KogitoKeyShortcutKeyDownThenUp extends KogitoKeyShortcutCallback {
 
         @Override
         default void onKeyShortcut(final KeyboardEvent.Key... keys) {

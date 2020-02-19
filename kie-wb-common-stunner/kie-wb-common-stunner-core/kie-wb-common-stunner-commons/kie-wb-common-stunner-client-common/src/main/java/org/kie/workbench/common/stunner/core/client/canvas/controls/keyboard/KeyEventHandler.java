@@ -30,7 +30,6 @@ import com.google.gwt.user.client.Timer;
 import elemental2.dom.DomGlobal;
 import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyShortcutDownThenUp;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControlImpl.SessionKeyShortcutCallback;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyDownEvent;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyUpEvent;
@@ -83,7 +82,7 @@ public class KeyEventHandler {
         DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + kogitoShortcutCallback.getLabel());
 
         //Normal
-        if (shortcutCallback instanceof KogitoKeyShortcutDownThenUp) {
+        if (shortcutCallback instanceof KeyboardControl.KogitoKeyShortcutKeyDownThenUp) {
             registeredShortcutsIds.add(registerKeyDownThenUp(
                     kogitoShortcutCallback.getKeyCombination(),
                     kogitoShortcutCallback.getLabel(),
@@ -101,7 +100,7 @@ public class KeyEventHandler {
         }
 
         //Session
-        else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyShortcutDownThenUp) {
+        else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KeyboardControl.KogitoKeyShortcutKeyDownThenUp) {
             registeredShortcutsIds.add(registerKeyDownThenUp(
                     kogitoShortcutCallback.getKeyCombination(),
                     kogitoShortcutCallback.getLabel(),

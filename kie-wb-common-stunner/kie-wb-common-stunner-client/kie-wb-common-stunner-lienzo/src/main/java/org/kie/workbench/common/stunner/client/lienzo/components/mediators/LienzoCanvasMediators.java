@@ -74,7 +74,7 @@ public class LienzoCanvasMediators {
     }
 
     public void init(final Supplier<LienzoCanvas> canvas) {
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutDownThenUp() {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutKeyDownThenUp() {
             @Override
             public void onKeyDown() {
                 enablePan();
@@ -96,7 +96,7 @@ public class LienzoCanvasMediators {
             }
         });
 
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutDownThenUp() {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutKeyDownThenUp() {
             @Override
             public void onKeyDown() {
                 enableZoom();
@@ -118,7 +118,7 @@ public class LienzoCanvasMediators {
             }
         });
 
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutDownThenUp() {
+        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutKeyDownThenUp() {
             @Override
             public void onKeyDown() {
                 enablePreview();
