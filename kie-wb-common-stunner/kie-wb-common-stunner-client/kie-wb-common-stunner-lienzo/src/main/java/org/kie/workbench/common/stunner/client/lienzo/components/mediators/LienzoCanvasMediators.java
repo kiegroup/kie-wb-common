@@ -86,12 +86,12 @@ public class LienzoCanvasMediators {
             }
 
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "alt";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Hold and drag to Pan";
             }
         });
@@ -108,12 +108,12 @@ public class LienzoCanvasMediators {
             }
 
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Hold and scroll to Zoom";
             }
         });
@@ -130,12 +130,12 @@ public class LienzoCanvasMediators {
             }
 
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+alt";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Hold to Preview";
             }
         });

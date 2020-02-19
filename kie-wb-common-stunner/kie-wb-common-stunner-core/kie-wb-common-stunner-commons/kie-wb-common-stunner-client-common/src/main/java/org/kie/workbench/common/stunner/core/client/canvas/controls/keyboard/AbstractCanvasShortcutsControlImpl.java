@@ -53,12 +53,12 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         for (final KeyboardShortcut action : keyboardShortcutActions) {
             session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
                 @Override
-                public String getKogitoKeyCombination() {
+                public String getKeyCombination() {
                     return action.getKogitoCombination();
                 }
 
                 @Override
-                public String getKogitoLabel() {
+                public String getLabel() {
                     return action.getKogitoLabel();
                 }
 

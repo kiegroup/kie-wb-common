@@ -67,7 +67,6 @@ public class AppendDecisionShortcut extends AbstractAppendNodeShortcut {
         return definition instanceof Decision;
     }
 
-
     @Override
     public String getKogitoCombination() {
         return "d";

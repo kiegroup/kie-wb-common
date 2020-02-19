@@ -59,9 +59,9 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
             return KogitoOpts.DEFAULT;
         }
 
-        String getKogitoKeyCombination();
+        String getKeyCombination();
 
-        String getKogitoLabel();
+        String getLabel();
     }
 
     interface KogitoKeyPress extends KogitoKeyShortcutCallback {

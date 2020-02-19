@@ -109,12 +109,12 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
 
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "backspace";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Delete selection";
             }
 
@@ -128,12 +128,12 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
 
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "delete";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Delete selection";
             }
 

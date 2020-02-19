@@ -70,12 +70,12 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+x";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Cut selection";
             }
 

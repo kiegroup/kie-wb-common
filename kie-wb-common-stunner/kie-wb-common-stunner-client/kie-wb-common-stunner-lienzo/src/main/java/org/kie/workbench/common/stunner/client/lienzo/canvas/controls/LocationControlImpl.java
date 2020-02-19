@@ -121,12 +121,12 @@ public class LocationControlImpl
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "esc";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Reset / unselect";
             }
 
@@ -139,12 +139,12 @@ public class LocationControlImpl
         //Normal moves
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "up";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection up";
             }
 
@@ -160,12 +160,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "down";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection down";
             }
 
@@ -181,12 +181,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "left";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection left";
             }
 
@@ -202,12 +202,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "right";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection right";
             }
 
@@ -225,12 +225,12 @@ public class LocationControlImpl
         //Shift moves
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "shift+up";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection up";
             }
 
@@ -246,12 +246,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "shift+down";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection down";
             }
 
@@ -267,12 +267,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "shift+left";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection left";
             }
 
@@ -288,12 +288,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "shift+right";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection right";
             }
 
@@ -311,12 +311,12 @@ public class LocationControlImpl
         //Ctrl moves
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+up";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection up";
             }
 
@@ -332,12 +332,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+down";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection down";
             }
 
@@ -353,12 +353,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+left";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection left";
             }
 
@@ -374,12 +374,12 @@ public class LocationControlImpl
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+right";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Move selection right";
             }
 

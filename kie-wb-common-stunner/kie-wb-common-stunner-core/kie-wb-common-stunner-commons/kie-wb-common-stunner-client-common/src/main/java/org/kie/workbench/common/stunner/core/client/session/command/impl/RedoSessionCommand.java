@@ -65,12 +65,12 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
-            public String getKogitoKeyCombination() {
+            public String getKeyCombination() {
                 return "ctrl+shift+z";
             }
 
             @Override
-            public String getKogitoLabel() {
+            public String getLabel() {
                 return "Redo";
             }
 
