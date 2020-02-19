@@ -63,6 +63,11 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
                 }
 
                 @Override
+                public KeyboardControl.KogitoOpts getOpts() {
+                    return action.getKogitoOpts();
+                }
+
+                @Override
                 public void onKeyDown() {
                     if (selectedNodeId() != null) {
                         if (action.matchesSelectedElement(selectedNodeElement())) {

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut;
 
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
@@ -44,4 +45,8 @@ public interface KeyboardShortcut<H extends CanvasHandler> {
     String getKogitoCombination();
 
     String getKogitoLabel();
+
+    default KeyboardControl.KogitoOpts getKogitoOpts() {
+        return KeyboardControl.KogitoOpts.DEFAULT;
+    }
 }
