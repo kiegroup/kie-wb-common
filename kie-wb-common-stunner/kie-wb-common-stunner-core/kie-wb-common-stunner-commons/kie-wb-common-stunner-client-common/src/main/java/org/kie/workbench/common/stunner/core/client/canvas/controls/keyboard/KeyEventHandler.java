@@ -59,7 +59,7 @@ public class KeyEventHandler {
     public KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
         this.shortcutCallbacks.add(shortcutCallback);
 
-        // This means that we're in the Kogito environment
+        // This means that we're NOT in the Kogito environment
         if (BusToolsCli.isRemoteCommunicationEnabled()) {
             return this;
         }
