@@ -18,6 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.model;
 
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.isEmpty;
+
 public class Assignment {
 
     private Variable variable;
@@ -172,7 +174,9 @@ public class Assignment {
                 sb.append(INPUT_ASSIGNMENT_PREFIX).append(ASSIGNMENT_OPERATOR_TOVARIABLE).append(getName());
             }
         } else {
-            if (getProcessVarName() != null && !getProcessVarName().isEmpty()) {
+            if (!isEmpty(getConstant())) {
+                sb.append(OUTPUT_ASSIGNMENT_PREFIX).append(StringUtils.urlEncode(getConstant())).append(ASSIGNMENT_OPERATOR_TOCONSTANT).append(getName());
+            } else if (getProcessVarName() != null && !getProcessVarName().isEmpty()) {
                 sb.append(OUTPUT_ASSIGNMENT_PREFIX).append(getName()).append(ASSIGNMENT_OPERATOR_TOVARIABLE).append(getProcessVarName());
             } else {
                 sb.append(OUTPUT_ASSIGNMENT_PREFIX).append(getName()).append(ASSIGNMENT_OPERATOR_TOVARIABLE);
@@ -217,9 +221,13 @@ public class Assignment {
             }
         } else if (sAssignment.contains(ASSIGNMENT_OPERATOR_TOCONSTANT)) {
             int i = sAssignment.indexOf(ASSIGNMENT_OPERATOR_TOCONSTANT);
-            variableName = sAssignment.substring(0,
-                                                 i);
-            constant = StringUtils.urlDecode(sAssignment.substring(i + ASSIGNMENT_OPERATOR_TOCONSTANT.length()));
+            if (assignmentType == Variable.VariableType.INPUT) {
+                variableName = sAssignment.substring(0, i);
+                constant = StringUtils.urlDecode(sAssignment.substring(i + ASSIGNMENT_OPERATOR_TOCONSTANT.length()));
+            } else {
+                variableName = sAssignment.substring(i + ASSIGNMENT_OPERATOR_TOCONSTANT.length());
+                constant = StringUtils.urlDecode(sAssignment.substring(0, i));
+            }
         }
         // Create the new assignment
         return new Assignment(assignmentData,

@@ -451,8 +451,8 @@ public class AssignmentData {
      * @return
      */
     public List<AssignmentRow> getAssignmentRows(final Variable.VariableType varType) {
-        List<AssignmentRow> rows = new ArrayList<AssignmentRow>();
-        List<Variable> handledVariables = new ArrayList<Variable>();
+        List<AssignmentRow> rows = new ArrayList<>();
+        List<Variable> handledVariables = new ArrayList<>();
         // Create an AssignmentRow for each Assignment
         for (Assignment assignment : assignments) {
             if (assignment.getVariableType() == varType) {
@@ -632,7 +632,7 @@ public class AssignmentData {
         return result;
     }
 
-    private String getStringForList(final List<? extends Object> objects) {
+    private String getStringForList(final List<?> objects) {
         StringBuilder sb = new StringBuilder();
         for (Object o : objects) {
             sb.append(o.toString()).append(',');

@@ -109,7 +109,7 @@ public class ActivityDataIOEditorWidget implements ActivityDataIOEditorWidgetVie
     }
 
     private boolean getShowConstants() {
-        return (this.variableType == VariableType.INPUT) ? true : false;
+        return true;
     }
 
     private void addAssignment() {
@@ -169,7 +169,7 @@ public class ActivityDataIOEditorWidget implements ActivityDataIOEditorWidgetVie
     }
 
     public List<AssignmentRow> getData() {
-        List<AssignmentRow> rows = new ArrayList<AssignmentRow>();
+        List<AssignmentRow> rows = new ArrayList<>();
         if (!view.getAssignmentRows().isEmpty()) {
             rows.addAll(view.getAssignmentRows());
         }

@@ -62,12 +62,30 @@ public abstract class InitializedVariable {
                 if (associationDeclaration.getTarget() == null) {
                     return new InputEmpty(parentId, varDecl);
                 } else {
-                    return new InputConstant(parentId, varDecl, associationDeclaration.getSource());
+                    return createCustomInput(parentId, varDecl, associationDeclaration.getSource());
                 }
             case SourceTarget:
                 return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource());
             default:
                 throw new IllegalArgumentException("Unknown type " + type);
+        }
+    }
+
+    public static InitializedInputVariable createCustomInput(String parentId, VariableDeclaration varDecl, String expression) {
+        String isExpressionPattern = "^#\\{(.+)}$";
+        String decodedExpression = decode(expression);
+        if (decodedExpression.matches(isExpressionPattern)) {
+            return new InputExpression(parentId, varDecl, decodedExpression);
+        } else {
+            return new InputConstant(parentId, varDecl, decodedExpression);
+        }
+    }
+
+    private static String decode(String text) {
+        try {
+            return URLDecoder.decode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(text, e);
         }
     }
 
@@ -86,7 +104,7 @@ public abstract class InitializedVariable {
                 if (associationDeclaration.getTarget() == null) {
                     return new OutputEmpty(parentId, varDecl);
                 } else {
-                    throw new IllegalArgumentException("Cannot assign constant to output variable");
+                    return new OutputExpression(parentId, varDecl, associationDeclaration.getTarget());
                 }
             case SourceTarget:
                 return new OutputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getTarget());
@@ -234,9 +252,7 @@ public abstract class InitializedVariable {
             assignment.setTo(toExpr);
 
             FormalExpression fromExpr = bpmn2.createFormalExpression();
-            // this should be handled **outside** the marshallers!
-            String decodedExpression = decode(expression);
-            String cdataExpression = asCData(decodedExpression);
+            String cdataExpression = asCData(expression);
             fromExpr.setBody(cdataExpression);
             assignment.setFrom(fromExpr);
 
@@ -247,13 +263,67 @@ public abstract class InitializedVariable {
                     .setTargetRef(getDataInput());
             return dataInputAssociation;
         }
+    }
 
-        private String decode(String text) {
-            try {
-                return URLDecoder.decode(text, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException(text, e);
-            }
+    public static class InputExpression extends InitializedInputVariable {
+
+        final String expression;
+
+        public InputExpression(String parentId, VariableDeclaration varDecl, String expression) {
+            super(parentId, varDecl);
+            this.expression = expression;
+        }
+
+        @Override
+        public DataInputAssociation getDataInputAssociation() {
+            DataInputAssociation dataInputAssociation = bpmn2.createDataInputAssociation();
+
+            Assignment assignment = bpmn2.createAssignment();
+            String id = getDataInput().getId();
+
+            FormalExpression fromExpr = bpmn2.createFormalExpression();
+            fromExpr.setBody(expression);
+            assignment.setFrom(fromExpr);
+
+            FormalExpression toExpr = bpmn2.createFormalExpression();
+            toExpr.setBody(id);
+            assignment.setTo(toExpr);
+
+            dataInputAssociation.getAssignment().add(assignment);
+
+            dataInputAssociation.setTargetRef(getDataInput());
+            return dataInputAssociation;
+        }
+    }
+
+    public static class OutputExpression extends InitializedOutputVariable {
+
+        final String expression;
+
+        public OutputExpression(String parentId, VariableDeclaration varDecl, String expression) {
+            super(parentId, varDecl);
+            this.expression = decode(expression);
+        }
+
+        @Override
+        public DataOutputAssociation getDataOutputAssociation() {
+            DataOutputAssociation dataOutputAssociation = bpmn2.createDataOutputAssociation();
+
+            Assignment assignment = bpmn2.createAssignment();
+            String id = getDataOutput().getId();
+
+            FormalExpression toExpr = bpmn2.createFormalExpression();
+            toExpr.setBody(id);
+            assignment.setFrom(toExpr);
+
+            FormalExpression fromExpr = bpmn2.createFormalExpression();
+            fromExpr.setBody(expression);
+            assignment.setTo(fromExpr);
+
+            dataOutputAssociation.getAssignment().add(assignment);
+
+            dataOutputAssociation.setTargetRef(getDataOutput());
+            return dataOutputAssociation;
         }
     }
 

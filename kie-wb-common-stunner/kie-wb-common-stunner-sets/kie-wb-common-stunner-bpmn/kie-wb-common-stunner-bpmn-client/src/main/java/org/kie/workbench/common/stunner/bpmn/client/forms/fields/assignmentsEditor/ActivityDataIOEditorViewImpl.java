@@ -173,7 +173,8 @@ public class ActivityDataIOEditorViewImpl extends BaseModal implements ActivityD
     public void setPossibleOutputAssignmentsDataTypes(final List<String> dataTypeDisplayNames) {
         ListBoxValues dataTypeListBoxValues = new ListBoxValues(AssignmentListItemWidgetView.CUSTOM_PROMPT,
                                                                 StunnerFormsClientFieldsConstants.INSTANCE.Edit() + " ",
-                                                                presenter.dataTypesTester());
+                                                                presenter.dataTypesTester(),
+                                                                CONSTANT_MAX_DISPLAY_LENGTH);
         dataTypeListBoxValues.addValues(dataTypeDisplayNames);
         outputAssignmentsWidget.setDataTypes(dataTypeListBoxValues);
     }

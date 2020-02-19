@@ -102,6 +102,27 @@ public class AssignmentTest extends AssignmentBaseTest {
                      deserializedConstant);
     }
 
+    @Test
+    public void testSerialization() {
+        Assignment a = new Assignment(ad,
+                                      "input1",
+                                      Variable.VariableType.INPUT,
+                                      "String",
+                                      null,
+                                      null,
+                                      "#{variableName}");
+        assertEquals("[din]input1=%23%7BvariableName%7D", a.toString());
+
+        a = new Assignment(ad,
+                           "output1",
+                           Variable.VariableType.OUTPUT,
+                           "String",
+                           null,
+                           null,
+                           "#{variableName}");
+        assertEquals("[dout]%23%7BvariableName%7D=output1", a.toString());
+    }
+
     /**
      * Uses prepared examples of constants encoded by com.google.gwt.http.client.URL, which is mocked
      * in the tests.

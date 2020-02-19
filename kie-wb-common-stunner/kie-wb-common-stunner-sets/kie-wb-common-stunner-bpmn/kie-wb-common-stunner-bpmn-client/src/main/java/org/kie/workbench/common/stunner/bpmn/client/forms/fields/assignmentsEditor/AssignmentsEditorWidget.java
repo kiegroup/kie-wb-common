@@ -276,7 +276,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
 
     protected String getTaskName() {
         String taskName = "Task";
-        if (bpmnModel != null && bpmnModel instanceof BaseTask) {
+        if (bpmnModel instanceof BaseTask) {
             BaseTask task = (BaseTask) bpmnModel;
             if (task.getGeneral() != null && task.getGeneral().getName() != null &&
                     task.getGeneral().getName().getValue() != null && task.getGeneral().getName().getValue().length() > 0) {
@@ -316,12 +316,9 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
     protected String formatDataTypes(final List<String> dataTypes) {
         StringBuilder sb = new StringBuilder();
         if (dataTypes != null && !dataTypes.isEmpty()) {
-            List<String> formattedDataTypes = new ArrayList<String>(dataTypes.size());
+            List<String> formattedDataTypes = new ArrayList<>(dataTypes.size());
             for (String dataType : dataTypes) {
-                int i = dataType.lastIndexOf('.');
-                StringBuilder formattedDataType = new StringBuilder(StringUtils.createDataTypeDisplayName(dataType));
-                formattedDataType.append(":").append(dataType);
-                formattedDataTypes.add(formattedDataType.toString());
+                formattedDataTypes.add(StringUtils.createDataTypeDisplayName(dataType) + ":" + dataType);
             }
             Collections.sort(formattedDataTypes);
             for (String formattedDataType : formattedDataTypes) {

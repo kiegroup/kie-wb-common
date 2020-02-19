@@ -36,7 +36,11 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.createCustomInput;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class InitializedVariableTest {
 
@@ -48,7 +52,7 @@ public class InitializedVariableTest {
         String encoded = URLEncoder.encode(expected, "UTF-8");
 
         VariableDeclaration variable = new VariableDeclaration("PARENT_ID", "Object");
-        InputConstant c = new InputConstant("PARENT", variable, encoded);
+        InputConstant c = (InputConstant) createCustomInput("PARENT", variable, encoded);
 
         Assignment assignment = c.getDataInputAssociation().getAssignment().get(0);
 
@@ -64,6 +68,19 @@ public class InitializedVariableTest {
         varScope = new FlatVariableScope();
         varScope.declare("", "BooleanSource", "Boolean");
         varScope.declare("", "BooleanTarget", "Boolean");
+    }
+
+    @Test
+    public void testInputCustomVariable() {
+        VariableDeclaration declaration = mock(VariableDeclaration.class);
+        org.eclipse.bpmn2.Property property = mock(org.eclipse.bpmn2.Property.class);
+        when(declaration.getTypedIdentifier()).thenReturn(property);
+
+        InitializedVariable.InitializedInputVariable input = createCustomInput("parent", declaration, "#{expression}");
+        assertTrue(input instanceof InitializedVariable.InputExpression);
+
+        input = createCustomInput("parent", declaration, "constant");
+        assertTrue(input instanceof InitializedVariable.InputConstant);
     }
 
     @Test
