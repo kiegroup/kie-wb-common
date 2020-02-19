@@ -25,7 +25,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -83,7 +82,7 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
             public String getKogitoKeyCombination() {
                 return "ctrl+c";
@@ -95,8 +94,10 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
             }
 
             @Override
-            public void onKeyShortcut(Key... keys) {
-                onKeyDownEvent(keys);
+            public void onKeyDown() {
+                if (isEnabled()) {
+                    execute();
+                }
             }
         });
         this.clipboardControl = session.getClipboardControl();
@@ -114,13 +115,6 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     }
 
     private void handleCtrlC(final Key[] keys) {
-
-        // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            this.execute();
-            return;
-        }
-
         if (doKeysMatch(keys,
                         Key.CONTROL,
                         Key.C)) {

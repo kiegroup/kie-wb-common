@@ -64,12 +64,12 @@ public class AppendEmbeddedSubprocessShortcut extends AbstractAppendNodeShortcut
 
 
     @Override
-    public String getCombination() {
+    public String getKogitoCombination() {
         return "s";
     }
 
     @Override
-    public String getLabel() {
+    public String getKogitoLabel() {
         return "Append Embedded Subprocess";
     }
 }

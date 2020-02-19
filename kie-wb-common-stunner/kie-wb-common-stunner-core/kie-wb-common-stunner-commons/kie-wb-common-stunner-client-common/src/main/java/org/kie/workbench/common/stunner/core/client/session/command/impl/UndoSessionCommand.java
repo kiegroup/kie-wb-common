@@ -59,7 +59,7 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
 
     protected void bindCommand() {
         getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
             public String getKogitoKeyCombination() {
                 return "ctrl+z";
@@ -71,8 +71,15 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
-                onKeyDownEvent(keys);
+            public void onKeyDown() {
+                if (isEnabled()) {
+                    execute();
+                }
+            }
+
+            @Override
+            public KeyboardControl.KogitoOpts getOpts() {
+                return new KeyboardControl.KogitoOpts(true);
             }
         });
     }
@@ -83,13 +90,6 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     }
 
     void onKeyDownEvent(final KeyboardEvent.Key... keys) {
-
-        // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            this.execute();
-            return;
-        }
-
         if (isEnabled()) {
             handleCtrlZ(keys);
         }

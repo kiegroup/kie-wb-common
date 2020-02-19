@@ -64,12 +64,12 @@ public class AppendNoneEndEventShortcut extends AbstractAppendNodeShortcut {
 
 
     @Override
-    public String getCombination() {
+    public String getKogitoCombination() {
         return "e";
     }
 
     @Override
-    public String getLabel() {
+    public String getKogitoLabel() {
         return "Append None End Event";
     }
 }

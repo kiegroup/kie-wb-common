@@ -171,12 +171,12 @@ public class AbstractAppendNodeShortcutTest {
         }
 
         @Override
-        public String getCombination() {
+        public String getKogitoCombination() {
             return null;
         }
 
         @Override
-        public String getLabel() {
+        public String getKogitoLabel() {
             return null;
         }
     }

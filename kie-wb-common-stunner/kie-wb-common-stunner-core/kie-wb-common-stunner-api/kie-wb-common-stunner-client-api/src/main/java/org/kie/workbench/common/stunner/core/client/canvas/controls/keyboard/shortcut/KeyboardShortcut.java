@@ -41,7 +41,7 @@ public interface KeyboardShortcut<H extends CanvasHandler> {
     void executeAction(final H canvasHandler,
                        final String selectedNodeId);
 
-    String getCombination();
+    String getKogitoCombination();
 
-    String getLabel();
+    String getKogitoLabel();
 }

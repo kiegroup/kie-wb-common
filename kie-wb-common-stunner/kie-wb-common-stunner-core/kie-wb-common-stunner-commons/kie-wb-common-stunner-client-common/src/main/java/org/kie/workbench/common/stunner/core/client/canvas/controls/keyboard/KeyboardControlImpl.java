@@ -87,16 +87,6 @@ public class KeyboardControlImpl
         }
 
         @Override
-        public String getKogitoKeyCombination() {
-            return delegate.getKogitoKeyCombination();
-        }
-
-        @Override
-        public String getKogitoLabel() {
-            return delegate.getKogitoLabel();
-        }
-
-        @Override
         public void onKeyUp(KeyboardEvent.Key key) {
             if (isSameSession(session)) {
                 delegate.onKeyUp(key);

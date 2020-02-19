@@ -23,7 +23,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
@@ -69,7 +68,7 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
     @Override
     public void bind(final EditorSession session) {
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
             public String getKogitoKeyCombination() {
                 return "ctrl+x";
@@ -81,8 +80,10 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
             }
 
             @Override
-            public void onKeyShortcut(Key... keys) {
-                onKeyDownEvent(keys);
+            public void onKeyDown() {
+                if (isEnabled()) {
+                    execute();
+                }
             }
         });
 
@@ -106,17 +107,10 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
     }
 
     private void handleCtrlX(final Key[] keys) {
-
-        // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            this.execute();
-            return;
-        }
-
         if (doKeysMatch(keys,
                         Key.CONTROL,
                         Key.X)) {
-        this.execute();
+            this.execute();
         }
     }
 

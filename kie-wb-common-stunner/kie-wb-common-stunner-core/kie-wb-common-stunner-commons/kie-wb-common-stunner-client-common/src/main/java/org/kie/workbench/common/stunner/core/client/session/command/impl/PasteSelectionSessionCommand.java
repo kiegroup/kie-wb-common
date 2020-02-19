@@ -125,7 +125,7 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
             public String getKogitoKeyCombination() {
                 return "ctrl+v";
@@ -137,8 +137,10 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
             }
 
             @Override
-            public void onKeyShortcut(Key... keys) {
-                onKeyDownEvent(keys);
+            public void onKeyDown() {
+                if (isEnabled()) {
+                    execute();
+                }
             }
         });
         this.clipboardControl = session.getClipboardControl();
@@ -157,13 +159,6 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     }
 
     private void handleCtrlV(final Key[] keys) {
-
-        // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            this.execute();
-            return;
-        }
-
         if (doKeysMatch(keys,
                         Key.CONTROL,
                         Key.V)) {

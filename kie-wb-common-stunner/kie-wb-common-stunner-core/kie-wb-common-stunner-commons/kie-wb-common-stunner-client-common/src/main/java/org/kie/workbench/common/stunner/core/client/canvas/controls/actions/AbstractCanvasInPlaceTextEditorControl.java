@@ -74,7 +74,7 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
     @Override
     public void bind(final EditorSession session) {
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
             public String getKogitoKeyCombination() {
                 return "esc";
@@ -86,7 +86,7 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 hide();
             }
         });

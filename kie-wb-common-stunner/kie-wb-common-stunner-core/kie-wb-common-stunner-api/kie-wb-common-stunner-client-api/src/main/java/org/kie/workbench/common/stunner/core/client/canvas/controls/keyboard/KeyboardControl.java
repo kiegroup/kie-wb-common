@@ -28,24 +28,21 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
     interface KeyShortcutCallback {
 
-        default String getKogitoKeyCombination() {
-            return "";
-        }
-
-        default String getKogitoLabel() {
-            return "";
-        }
-
         void onKeyShortcut(final KeyboardEvent.Key... keys);
 
         default void onKeyUp(final KeyboardEvent.Key key) {
         }
     }
 
+    //
+    //
+    //Kogito
+
     class KogitoOpts {
 
         public static final KogitoOpts DEFAULT = new KogitoOpts(false);
-        public final boolean repeat;
+
+        private final boolean repeat;
 
         public KogitoOpts(final boolean repeat) {
             this.repeat = repeat;
@@ -61,13 +58,41 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         default KogitoOpts getOpts() {
             return KogitoOpts.DEFAULT;
         }
+
+        String getKogitoKeyCombination();
+
+        String getKogitoLabel();
     }
 
     interface KogitoKeyPress extends KogitoKeyShortcutCallback {
 
+        @Override
+        default void onKeyShortcut(final KeyboardEvent.Key... keys) {
+            onKeyDown();
+        }
+
+        @Override
+        default void onKeyUp(final KeyboardEvent.Key key) {
+            throw new RuntimeException("Keyup shouldn't be called on KeyPress events");
+        }
+
+        void onKeyDown();
     }
 
     interface KogitoKeyShortcutDownThenUp extends KogitoKeyShortcutCallback {
 
+        @Override
+        default void onKeyShortcut(final KeyboardEvent.Key... keys) {
+            onKeyDown();
+        }
+
+        @Override
+        default void onKeyUp(final KeyboardEvent.Key key) {
+            onKeyUp();
+        }
+
+        void onKeyUp();
+
+        void onKeyDown();
     }
 }

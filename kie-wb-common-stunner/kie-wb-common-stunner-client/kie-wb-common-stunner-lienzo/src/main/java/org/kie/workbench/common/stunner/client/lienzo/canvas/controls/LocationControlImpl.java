@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanv
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.LocationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
@@ -118,7 +119,7 @@ public class LocationControlImpl
     public void bind(final EditorSession session) {
         // Keyboard event handling.
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
             @Override
             public String getKogitoKeyCombination() {
                 return "esc";
@@ -130,7 +131,7 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 getWiresManager().resetContext();
             }
         });
@@ -148,13 +149,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(0, -NORMAL_DISTANCE);
             }
 
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -169,12 +170,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(0, NORMAL_DISTANCE);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -189,12 +191,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(-NORMAL_DISTANCE, 0);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -209,12 +212,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(NORMAL_DISTANCE, 0);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
 
@@ -231,12 +235,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(0, -SHORT_DISTANCE);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -251,12 +256,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(0, SHORT_DISTANCE);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -271,12 +277,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(-SHORT_DISTANCE, 0);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -291,12 +298,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(SHORT_DISTANCE, 0);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
 
@@ -313,12 +321,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(0, -LARGE_DISTANCE);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -333,12 +342,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(0, LARGE_DISTANCE);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -353,12 +363,13 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(-LARGE_DISTANCE, 0);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
         session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
@@ -373,18 +384,18 @@ public class LocationControlImpl
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
+            public void onKeyDown() {
                 moveNode(LARGE_DISTANCE, 0);
             }
+
             @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
+            public KogitoOpts getOpts() {
+                return new KogitoOpts(true);
             }
         });
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
-
         if (KeysMatcher.doKeysMatch(keys,
                                     KeyboardEvent.Key.ESC)) {
             getWiresManager().resetContext();

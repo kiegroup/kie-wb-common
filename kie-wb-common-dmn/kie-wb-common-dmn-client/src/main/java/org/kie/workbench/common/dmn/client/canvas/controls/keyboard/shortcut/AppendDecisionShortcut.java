@@ -69,12 +69,12 @@ public class AppendDecisionShortcut extends AbstractAppendNodeShortcut {
 
 
     @Override
-    public String getCombination() {
+    public String getKogitoCombination() {
         return "d";
     }
 
     @Override
-    public String getLabel() {
+    public String getKogitoLabel() {
         return "Append Decision";
     }
 }

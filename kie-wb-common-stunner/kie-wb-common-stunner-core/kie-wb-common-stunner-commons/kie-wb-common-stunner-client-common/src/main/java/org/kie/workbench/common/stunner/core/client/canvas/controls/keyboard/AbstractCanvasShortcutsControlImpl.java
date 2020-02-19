@@ -51,19 +51,19 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyShortcut);
 
         for (final KeyboardShortcut action : keyboardShortcutActions) {
-            session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
                 @Override
                 public String getKogitoKeyCombination() {
-                    return action.getCombination();
+                    return action.getKogitoCombination();
                 }
 
                 @Override
                 public String getKogitoLabel() {
-                    return action.getLabel();
+                    return action.getKogitoLabel();
                 }
 
                 @Override
-                public void onKeyShortcut(final KeyboardEvent.Key... keys) {
+                public void onKeyDown() {
                     if (selectedNodeId() != null) {
                         if (action.matchesSelectedElement(selectedNodeElement())) {
                             action.executeAction(canvasHandler, selectedNodeId());

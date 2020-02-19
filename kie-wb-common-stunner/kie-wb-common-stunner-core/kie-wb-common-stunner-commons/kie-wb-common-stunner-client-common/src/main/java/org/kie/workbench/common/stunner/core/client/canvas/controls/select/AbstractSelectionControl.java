@@ -188,7 +188,7 @@ public abstract class AbstractSelectionControl<H extends AbstractCanvasHandler>
     public void bind(final ClientSession session) {
         if (session instanceof EditorSession) {
             ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-            ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+            ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
                 @Override
                 public String getKogitoKeyCombination() {
                     return "esc";
@@ -200,7 +200,7 @@ public abstract class AbstractSelectionControl<H extends AbstractCanvasHandler>
                 }
 
                 @Override
-                public void onKeyShortcut(KeyboardEvent.Key... keys) {
+                public void onKeyDown() {
                     clearSelection();
                 }
             });

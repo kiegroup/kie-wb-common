@@ -62,14 +62,13 @@ public class AppendNoneTaskShortcut extends AbstractAppendNodeShortcut {
         return definition instanceof NoneTask;
     }
 
-
     @Override
-    public String getCombination() {
+    public String getKogitoCombination() {
         return "t";
     }
 
     @Override
-    public String getLabel() {
+    public String getKogitoLabel() {
         return "Append None Task";
     }
 }

@@ -27,7 +27,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -106,7 +105,8 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
 
             @Override
             public String getKogitoKeyCombination() {
@@ -119,11 +119,13 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
-                onKeyDownEvent(keys);
+            public void onKeyDown() {
+                if (isEnabled()) {
+                    execute();
+                }
             }
         });
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
 
             @Override
             public String getKogitoKeyCombination() {
@@ -136,8 +138,10 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
             }
 
             @Override
-            public void onKeyShortcut(KeyboardEvent.Key... keys) {
-                onKeyDownEvent(keys);
+            public void onKeyDown() {
+                if (isEnabled()) {
+                    execute();
+                }
             }
         });
         this.canvasCommandFactory = this.loadCanvasFactory(canvasCommandFactoryInstance, definitionUtils);
@@ -190,14 +194,6 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     }
 
     private void handleDelete(final KeyboardEvent.Key... keys) {
-
-        // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            this.execute();
-            return;
-        }
-
-
         if ((doKeysMatch(keys, KeyboardEvent.Key.DELETE)) || doKeysMatch(keys, KeyboardEvent.Key.KEY_BACKSPACE)) {
             this.execute();
         }

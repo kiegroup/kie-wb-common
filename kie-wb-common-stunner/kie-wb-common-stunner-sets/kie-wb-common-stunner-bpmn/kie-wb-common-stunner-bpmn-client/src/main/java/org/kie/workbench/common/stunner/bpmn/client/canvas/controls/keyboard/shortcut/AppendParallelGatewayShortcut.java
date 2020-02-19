@@ -63,12 +63,12 @@ public class AppendParallelGatewayShortcut extends AbstractAppendNodeShortcut {
     }
 
     @Override
-    public String getCombination() {
+    public String getKogitoCombination() {
         return "g";
     }
 
     @Override
-    public String getLabel() {
+    public String getKogitoLabel() {
         return "Append Parallel Gateway";
     }
 }

@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PreDestroy;
@@ -64,34 +65,67 @@ public class KeyEventHandler {
             return this;
         }
 
-        if (shortcutCallback.getKogitoKeyCombination().isEmpty()) {
+        Optional<KeyboardControl.KogitoKeyShortcutCallback> possibleKogitoShortcutCallback;
+        if (shortcutCallback instanceof KeyboardControl.KogitoKeyShortcutCallback) {
+            possibleKogitoShortcutCallback = Optional.of((KeyboardControl.KogitoKeyShortcutCallback) shortcutCallback);
+        } else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KeyboardControl.KogitoKeyShortcutCallback) {
+            possibleKogitoShortcutCallback = Optional.of((KeyboardControl.KogitoKeyShortcutCallback) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate());
+        } else {
+            possibleKogitoShortcutCallback = Optional.empty();
+        }
+
+        if (!possibleKogitoShortcutCallback.isPresent() || possibleKogitoShortcutCallback.get().getKogitoKeyCombination().isEmpty()) {
             return this;
         }
 
-        DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + shortcutCallback.getKogitoLabel());
+        final KeyboardControl.KogitoKeyShortcutCallback kogitoShortcutCallback = possibleKogitoShortcutCallback.get();
+
+        DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + kogitoShortcutCallback.getKogitoLabel());
 
         //Normal
         if (shortcutCallback instanceof KogitoKeyShortcutDownThenUp) {
-            int id = registerKeyDownThenUp(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, () -> shortcutCallback.onKeyUp(null), ((KogitoKeyShortcutDownThenUp) shortcutCallback).getOpts(), this);
-            registeredShortcutsIds.add(id);
+            registeredShortcutsIds.add(registerKeyDownThenUp(
+                    kogitoShortcutCallback.getKogitoKeyCombination(),
+                    kogitoShortcutCallback.getKogitoLabel(),
+                    shortcutCallback::onKeyShortcut,
+                    () -> shortcutCallback.onKeyUp(null),
+                    kogitoShortcutCallback.getOpts(),
+                    this));
         } else if (shortcutCallback instanceof KogitoKeyPress) {
-            int id = registerKeyPress(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, ((KogitoKeyPress) shortcutCallback).getOpts(), this);
-            registeredShortcutsIds.add(id);
+            registeredShortcutsIds.add(registerKeyPress(
+                    kogitoShortcutCallback.getKogitoKeyCombination(),
+                    kogitoShortcutCallback.getKogitoLabel(),
+                    shortcutCallback::onKeyShortcut,
+                    kogitoShortcutCallback.getOpts(),
+                    this));
         }
 
         //Session
         else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyShortcutDownThenUp) {
-            int id = registerKeyDownThenUp(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, () -> shortcutCallback.onKeyUp(null), ((KogitoKeyShortcutDownThenUp) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate()).getOpts(), this);
-            registeredShortcutsIds.add(id);
+            registeredShortcutsIds.add(registerKeyDownThenUp(
+                    kogitoShortcutCallback.getKogitoKeyCombination(),
+                    kogitoShortcutCallback.getKogitoLabel(),
+                    shortcutCallback::onKeyShortcut,
+                    () -> shortcutCallback.onKeyUp(null),
+                    kogitoShortcutCallback.getOpts(),
+                    this));
         } else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyPress) {
-            int id = registerKeyPress(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, ((KogitoKeyPress) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate()).getOpts(), this);
-            registeredShortcutsIds.add(id);
+            registeredShortcutsIds.add(registerKeyPress(
+                    kogitoShortcutCallback.getKogitoKeyCombination(),
+                    kogitoShortcutCallback.getKogitoLabel(),
+                    shortcutCallback::onKeyShortcut,
+                    kogitoShortcutCallback.getOpts(),
+                    this));
         }
 
         //Default
         else {
-            int id = registerKeyPress(shortcutCallback.getKogitoKeyCombination(), shortcutCallback.getKogitoLabel(), shortcutCallback::onKeyShortcut, KeyboardControl.KogitoOpts.DEFAULT, this);
-            registeredShortcutsIds.add(id);
+            registeredShortcutsIds.add(registerKeyPress(
+                    kogitoShortcutCallback.getKogitoKeyCombination(),
+                    kogitoShortcutCallback.getKogitoLabel(),
+                    shortcutCallback::onKeyShortcut,
+                    KeyboardControl.KogitoOpts.DEFAULT,
+                    this));
         }
 
         return this;
