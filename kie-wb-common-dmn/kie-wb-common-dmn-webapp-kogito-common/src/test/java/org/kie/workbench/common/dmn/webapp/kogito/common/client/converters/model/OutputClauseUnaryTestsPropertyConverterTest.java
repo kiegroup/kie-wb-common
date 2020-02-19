@@ -78,6 +78,14 @@ public class OutputClauseUnaryTestsPropertyConverterTest {
     }
 
     @Test
+    public void testDMNFromWBWhenTextIsNull() {
+        final OutputClauseUnaryTests wb = new OutputClauseUnaryTests();
+        wb.setText(null);
+        final JSITUnaryTests dmn = OutputClauseUnaryTestsPropertyConverter.dmnFromWB(wb);
+        assertThat(dmn).isNull();
+    }
+
+    @Test
     public void testDMNFromWBWhenNonNullWithEmptyString() {
         final OutputClauseUnaryTests wb = new OutputClauseUnaryTests();
         wb.getText().setValue("");

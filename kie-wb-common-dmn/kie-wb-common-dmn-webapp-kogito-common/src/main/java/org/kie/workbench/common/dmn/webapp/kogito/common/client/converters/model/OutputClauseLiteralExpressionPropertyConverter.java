@@ -63,6 +63,8 @@ public class OutputClauseLiteralExpressionPropertyConverter {
     public static JSITLiteralExpression dmnFromWB(final OutputClauseLiteralExpression wb) {
         if (Objects.isNull(wb)) {
             return null;
+        } else if (Objects.isNull(wb.getText())) {
+            return null;
         } else if (StringUtils.isEmpty(wb.getText().getValue())) {
             return null;
         }

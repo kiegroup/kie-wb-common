@@ -62,9 +62,12 @@ public class OutputClauseUnaryTestsPropertyConverter {
     public static JSITUnaryTests dmnFromWB(final OutputClauseUnaryTests wb) {
         if (Objects.isNull(wb)) {
             return null;
+        } else if (Objects.isNull(wb.getText())) {
+            return null;
         } else if (StringUtils.isEmpty(wb.getText().getValue())) {
             return null;
         }
+
         return UnaryTestsPropertyConverter.dmnFromWB(wb);
     }
 }

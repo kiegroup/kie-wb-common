@@ -56,6 +56,14 @@ public class OutputClauseLiteralExpressionPropertyConverterTest {
     }
 
     @Test
+    public void testDMNFromWBWhenTextIsNull() {
+        final OutputClauseLiteralExpression wb = new OutputClauseLiteralExpression();
+        wb.setText(null);
+        final JSITLiteralExpression dmn = OutputClauseLiteralExpressionPropertyConverter.dmnFromWB(wb);
+        assertThat(dmn).isNull();
+    }
+
+    @Test
     public void testDMNFromWBWhenNonNullWithEmptyString() {
         final OutputClauseLiteralExpression wb = new OutputClauseLiteralExpression();
         wb.getText().setValue("");
