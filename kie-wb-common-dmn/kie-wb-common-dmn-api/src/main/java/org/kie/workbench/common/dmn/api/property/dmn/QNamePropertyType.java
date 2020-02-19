@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.api.property.dmn;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
 public class QNamePropertyType implements PropertyType {
@@ -36,21 +38,18 @@ public class QNamePropertyType implements PropertyType {
             return false;
         }
         QNamePropertyType that = (QNamePropertyType) o;
-        if (!NAME.equals(that.NAME)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(getName(), that.getName());
     }
 
     @Override
     public int hashCode() {
-        return ~~NAME.hashCode();
+        return ~~getName().hashCode();
     }
 
     @Override
     public String toString() {
         return "QNamePropertyType{" +
-                "name='" + NAME + '\'' +
+                "name='" + getName() + '\'' +
                 '}';
     }
 }

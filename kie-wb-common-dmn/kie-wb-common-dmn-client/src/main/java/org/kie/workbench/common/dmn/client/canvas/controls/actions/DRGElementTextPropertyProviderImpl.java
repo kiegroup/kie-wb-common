@@ -62,8 +62,7 @@ public class DRGElementTextPropertyProviderImpl implements TextPropertyProvider 
     @Override
     public String getText(final Element<? extends Definition> element) {
         final DRGElement drgElement = (DRGElement) element.getContent().getDefinition();
-        final String text = drgElement.getNameHolder().getValue().getValue();
-        return text;
+        return drgElement.getNameHolder().getValue().getValue();
     }
 
     @Override

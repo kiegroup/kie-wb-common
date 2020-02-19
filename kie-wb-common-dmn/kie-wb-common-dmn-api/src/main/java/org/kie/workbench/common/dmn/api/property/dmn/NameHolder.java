@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class NameHolder implements DMNProperty {
 
-    public static final transient String DEFAULT_NAME = "";
+    public static final String DEFAULT_NAME = "";
 
     @Type
     public static final PropertyType type = new NamePropertyType();

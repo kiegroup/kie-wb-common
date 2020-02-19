@@ -27,11 +27,11 @@ import org.kie.workbench.common.forms.model.FieldDefinition;
 @Bindable
 public class NameFieldDefinition extends AbstractFieldDefinition {
 
+    public static final NameFieldType FIELD_TYPE = new NameFieldType();
+
     public NameFieldDefinition() {
         super(Name.class.getName());
     }
-
-    public static NameFieldType FIELD_TYPE = new NameFieldType();
 
     @Override
     protected void doCopyFrom(final FieldDefinition other) {

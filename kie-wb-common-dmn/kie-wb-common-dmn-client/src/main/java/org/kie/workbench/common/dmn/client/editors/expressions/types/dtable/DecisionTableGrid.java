@@ -769,34 +769,50 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             final DecisionTableUIModelMapperHelper.DecisionTableSection section = DecisionTableUIModelMapperHelper.getSection(dtable, uiHeaderColumnIndex);
             switch (section) {
                 case INPUT_CLAUSES:
-                    final int icIndex = DecisionTableUIModelMapperHelper.getInputEntryIndex(dtable, uiHeaderColumnIndex);
-                    final InputClause inputClause = dtable.getInput().get(icIndex);
-                    fireDomainObjectSelectionEvent(inputClause);
+                    doAfterHeaderInputClauseSelectionChange(dtable, uiHeaderColumnIndex);
                     return;
                 case OUTPUT_CLAUSES:
-                    final List<GridColumn.HeaderMetaData> headerMetaData = model.getColumns().get(uiHeaderColumnIndex).getHeaderMetaData();
-                    if (headerMetaData.size() > 1) {
-                        if (uiHeaderRowIndex == 0) {
-                            final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-                            if (base instanceof DomainObject) {
-                                fireDomainObjectSelectionEvent((DomainObject) base);
-                                return;
-                            } else if (base instanceof ContextEntry) {
-                                final ContextEntry contextEntry = (ContextEntry) base;
-                                final InformationItem variable = contextEntry.getVariable();
-                                if (Objects.nonNull(variable)) {
-                                    fireDomainObjectSelectionEvent(variable);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                    final int ocIndex = DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable, uiHeaderColumnIndex);
-                    final OutputClause outputClause = dtable.getOutput().get(ocIndex);
-                    fireDomainObjectSelectionEvent(outputClause);
+                    doAfterHeaderOutputClauseSelectionChange(dtable, uiHeaderRowIndex, uiHeaderColumnIndex);
                     return;
             }
         }
         super.doAfterHeaderSelectionChange(uiHeaderRowIndex, uiHeaderColumnIndex);
+    }
+
+    protected void doAfterHeaderInputClauseSelectionChange(final DecisionTable dtable,
+                                                           final int uiHeaderColumnIndex) {
+        final int icIndex = DecisionTableUIModelMapperHelper.getInputEntryIndex(dtable, uiHeaderColumnIndex);
+        final InputClause inputClause = dtable.getInput().get(icIndex);
+        fireDomainObjectSelectionEvent(inputClause);
+    }
+
+    protected void doAfterHeaderOutputClauseSelectionChange(final DecisionTable dtable,
+                                                            final int uiHeaderRowIndex,
+                                                            final int uiHeaderColumnIndex) {
+        final List<GridColumn.HeaderMetaData> headerMetaData = model.getColumns().get(uiHeaderColumnIndex).getHeaderMetaData();
+        if (uiHeaderRowIndex == 0 && headerMetaData.size() > 1) {
+            if (doFireDomainObjectSelectionEventForHasExpression()) {
+                return;
+            }
+        }
+        final int ocIndex = DecisionTableUIModelMapperHelper.getOutputEntryIndex(dtable, uiHeaderColumnIndex);
+        final OutputClause outputClause = dtable.getOutput().get(ocIndex);
+        fireDomainObjectSelectionEvent(outputClause);
+    }
+
+    protected boolean doFireDomainObjectSelectionEventForHasExpression() {
+        final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+        if (base instanceof DomainObject) {
+            fireDomainObjectSelectionEvent((DomainObject) base);
+            return true;
+        } else if (base instanceof ContextEntry) {
+            final ContextEntry contextEntry = (ContextEntry) base;
+            final InformationItem variable = contextEntry.getVariable();
+            if (Objects.nonNull(variable)) {
+                fireDomainObjectSelectionEvent(variable);
+                return true;
+            }
+        }
+        return false;
     }
 }

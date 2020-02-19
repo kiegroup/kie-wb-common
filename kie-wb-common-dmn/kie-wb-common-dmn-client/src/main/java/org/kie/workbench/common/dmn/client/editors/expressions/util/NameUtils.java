@@ -25,6 +25,10 @@ public class NameUtils {
 
     private static final String NORMALIZE_TO_SINGLE_WHITE_SPACE = "\\s+";
 
+    private NameUtils() {
+        //Private constructor as recommended by Sonarcloud
+    }
+
     public static String normaliseName(final String name) {
         if (Objects.isNull(name)) {
             return "";
