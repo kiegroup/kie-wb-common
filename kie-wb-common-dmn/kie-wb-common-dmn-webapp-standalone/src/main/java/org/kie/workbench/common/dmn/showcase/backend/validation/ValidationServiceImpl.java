@@ -27,6 +27,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.user.client.Window;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.showcase.api.ValidationService;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -69,7 +71,9 @@ public class ValidationServiceImpl implements ValidationService {
                 .findFirst()
                 .map(validator -> {
                     final List<DomainViolation> domainViolations = new ArrayList<>();
-                    validator.validate(diagram, domainViolations::addAll);
+                    validator.validate(diagram,
+                                       Window.Location.getParameter(LocaleInfo.getLocaleQueryParam()),
+                                       domainViolations::addAll);
                     return domainViolations;
                 }).orElseGet(Collections::emptyList);
     }

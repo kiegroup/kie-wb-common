@@ -67,11 +67,11 @@ public class ProjectClientDiagramValidator extends ClientDiagramValidator {
     }
 
     @Override
-    public void validate(Diagram diagram, Consumer<Collection<DiagramElementViolation<RuleViolation>>> resultConsumer) {
-        super.validate(diagram, diagramElementViolations -> {
+    public void validate(Diagram diagram, String locale, Consumer<Collection<DiagramElementViolation<RuleViolation>>> resultConsumer) {
+        super.validate(diagram, locale, diagramElementViolations -> {
             final List<DiagramElementViolation<RuleViolation>> violations =
                     (Objects.nonNull(diagramElementViolations) ? new LinkedList<>(diagramElementViolations) : new LinkedList<>());
-            backendValidation(diagram, backendViolations -> {
+            backendValidation(diagram, locale, backendViolations -> {
                 violations.addAll(backendViolations);
                 resultConsumer.accept(violations);
             });
@@ -79,11 +79,13 @@ public class ProjectClientDiagramValidator extends ClientDiagramValidator {
     }
 
     @SuppressWarnings("unchecked")
-    private void backendValidation(Diagram diagram, final Consumer<Collection<DiagramElementViolation<RuleViolation>>> callback) {
+    private void backendValidation(final Diagram diagram,
+                                   final String locale,
+                                   final Consumer<Collection<DiagramElementViolation<RuleViolation>>> callback) {
         validationService.call(result -> callback.accept((Collection<DiagramElementViolation<RuleViolation>>) result),
                                (msg, error) -> {
                                    callback.accept(Collections.emptyList());
                                    return false;
-                               }).validate(diagram);
+                               }).validate(diagram, locale);
     }
 }

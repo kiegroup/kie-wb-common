@@ -26,6 +26,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.user.client.Window;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
@@ -61,6 +63,7 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
     public void validate(final H canvasHandler,
                          final Consumer<Collection<DiagramElementViolation<RuleViolation>>> callback) {
         diagramValidator.validate(canvasHandler.getDiagram(),
+                                  Window.Location.getParameter(LocaleInfo.getLocaleQueryParam()),
                                   violations -> {
                                       checkViolations(canvasHandler,
                                                       violations);

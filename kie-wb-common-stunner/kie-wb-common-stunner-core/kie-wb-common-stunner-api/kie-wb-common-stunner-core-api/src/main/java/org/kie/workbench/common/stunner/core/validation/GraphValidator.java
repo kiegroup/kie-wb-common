@@ -37,6 +37,7 @@ public interface GraphValidator<G extends Graph, V extends ElementViolation>
      * and provides the different violations, if any.
      */
     void validate(Graph graph,
+                  String locale,
                   RuleSet ruleSet,
                   Consumer<Collection<V>> resultConsumer);
 }

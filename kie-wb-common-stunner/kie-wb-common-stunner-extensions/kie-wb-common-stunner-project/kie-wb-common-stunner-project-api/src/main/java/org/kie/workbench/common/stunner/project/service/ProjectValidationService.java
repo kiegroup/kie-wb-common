@@ -26,5 +26,5 @@ import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 @Remote
 public interface ProjectValidationService {
 
-    Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram);
+    Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram, String locale);
 }

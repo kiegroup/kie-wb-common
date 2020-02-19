@@ -140,7 +140,7 @@ public class CanvasDiagramValidatorTest {
         final ArgumentCaptor<CanvasValidationFailEvent> captorEvent = ArgumentCaptor.forClass(CanvasValidationFailEvent.class);
 
         tested.validate(canvasHandler, callback);
-        verify(diagramValidator).validate(eq(diagram), captor.capture());
+        verify(diagramValidator).validate(eq(diagram), "en", captor.capture());
         captor.getValue().accept(violations);
         verify(callback).accept(violations);
         verify(failEvent).fire(captorEvent.capture());
@@ -161,7 +161,7 @@ public class CanvasDiagramValidatorTest {
         ArgumentCaptor<CanvasValidationSuccessEvent> captorEvent = ArgumentCaptor.forClass(CanvasValidationSuccessEvent.class);
 
         tested.validate(canvasHandler, callback);
-        verify(diagramValidator).validate(eq(diagram), captor.capture());
+        verify(diagramValidator).validate(eq(diagram),"en", captor.capture());
         captor.getValue().accept(violations);
         verify(callback).accept(violations);
         verify(successEvent).fire(captorEvent.capture());
@@ -179,7 +179,7 @@ public class CanvasDiagramValidatorTest {
 
         tested.validate(canvasHandler, callback);
 
-        verify(diagramValidator).validate(eq(diagram), captor.capture());
+        verify(diagramValidator).validate(eq(diagram),"en", captor.capture());
 
         captor.getValue().accept(violations);
 
@@ -204,7 +204,7 @@ public class CanvasDiagramValidatorTest {
 
         tested.validate(canvasHandler, callback);
 
-        verify(diagramValidator).validate(eq(diagram), captor.capture());
+        verify(diagramValidator).validate(eq(diagram), "en", captor.capture());
 
         captor.getValue().accept(violations);
 

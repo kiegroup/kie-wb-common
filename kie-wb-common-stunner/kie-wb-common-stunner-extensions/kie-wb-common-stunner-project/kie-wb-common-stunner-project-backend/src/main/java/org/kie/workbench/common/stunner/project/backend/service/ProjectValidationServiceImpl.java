@@ -53,21 +53,21 @@ public class ProjectValidationServiceImpl implements ProjectValidationService {
     }
 
     @Override
-    public Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram) {
-        return domainViolations(diagram).stream()
+    public Collection<DiagramElementViolation<RuleViolation>> validate(Diagram diagram, String locale) {
+        return domainViolations(diagram, locale).stream()
                 .filter(v -> Objects.nonNull(v.getUUID()))
                 .filter(v -> !"null".equals(v.getUUID()))
                 .map(v -> new ElementViolationImpl.Builder().setUuid(v.getUUID()).setDomainViolations(Collections.singletonList(v)).build())
                 .collect(Collectors.toList());
     }
 
-    private Collection<DomainViolation> domainViolations(Diagram diagram) {
+    private Collection<DomainViolation> domainViolations(Diagram diagram, String locale) {
         return StreamSupport.stream(validators.spliterator(), false)
                 .filter(validator -> Objects.equals(validator.getDefinitionSetId(), diagram.getMetadata().getDefinitionSetId()))
                 .findFirst()
                 .map(validator -> {
                     final List<DomainViolation> domainViolations = new ArrayList<>();
-                    validator.validate(diagram, domainViolations::addAll);
+                    validator.validate(diagram, locale, domainViolations::addAll);
                     return domainViolations;
                 }).orElseGet(Collections::emptyList);
     }

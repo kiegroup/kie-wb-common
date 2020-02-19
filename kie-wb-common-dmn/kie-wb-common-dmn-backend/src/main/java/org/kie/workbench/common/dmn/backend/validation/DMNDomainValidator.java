@@ -95,6 +95,7 @@ public class DMNDomainValidator implements DomainValidator {
     @Override
     @SuppressWarnings("unchecked")
     public void validate(final Diagram diagram,
+                         final String locale,
                          final Consumer<Collection<DomainViolation>> resultConsumer) {
         final List<Reader> dmnXMLReaders = new ArrayList<>();
         try {
@@ -119,6 +120,7 @@ public class DMNDomainValidator implements DomainValidator {
                                    DMNValidator.Validation.VALIDATE_COMPILATION,
                                    DMNValidator.Validation.ANALYZE_DECISION_TABLE)
                     .usingImports(getValidatorImportReaderResolver(metadata))
+                    .usingLocale(locale)
                     .theseModels(dmnXMLReaders.toArray(aDMNXMLReaders));
 
             resultConsumer.accept(convert(messages));

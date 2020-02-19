@@ -25,6 +25,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.user.client.Window;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -59,6 +61,7 @@ public abstract class AbstractDiagramValidator
     @Override
     @SuppressWarnings("unchecked")
     public void validate(final Diagram diagram,
+                         final String locale,
                          final Consumer<Collection<DiagramElementViolation<RuleViolation>>> resultConsumer) {
         final Graph graph = diagram.getGraph();
         final List<DiagramElementViolation<RuleViolation>> violations = new LinkedList<>();
@@ -78,6 +81,7 @@ public abstract class AbstractDiagramValidator
             if (Optional.ofNullable(element.getContent()).isPresent()) {
                 // If the underlying bean is a Definition, it accomplishes JSR303 validations.
                 modelValidator.validate(element,
+                                        Window.Location.getParameter(LocaleInfo.getLocaleQueryParam()),
                                         modelViolations -> {
                                             if ((Objects.nonNull(ruleViolations) && !ruleViolations.isEmpty()) || (Objects.nonNull(modelViolations) && !modelViolations.isEmpty())) {
                                                 //Don't add a ElementViolation if there are no rule or model violations

@@ -44,6 +44,7 @@ public abstract class AbstractModelBeanValidator implements ModelValidator {
 
     @Override
     public void validate(final Element element,
+                         final String locale,
                          final Consumer<Collection<ModelBeanViolation>> callback) {
         LOGGER.log(Level.INFO,
                    "Performing model bean validation.");

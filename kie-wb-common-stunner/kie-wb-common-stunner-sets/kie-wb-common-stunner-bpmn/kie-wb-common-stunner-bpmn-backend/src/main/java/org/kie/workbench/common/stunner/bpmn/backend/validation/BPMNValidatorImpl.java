@@ -79,7 +79,7 @@ public class BPMNValidatorImpl implements BPMNValidator {
     }
 
     @Override
-    public void validate(Diagram diagram, Consumer<Collection<DomainViolation>> resultConsumer) {
+    public void validate(Diagram diagram, String locale, Consumer<Collection<DomainViolation>> resultConsumer) {
         String rawContent = diagramService.getRawContent(diagram);
         if (Objects.nonNull(rawContent)) {
             resultConsumer.accept(validate(rawContent, diagram.getMetadata().getTitle()).stream().collect(Collectors.toSet()));

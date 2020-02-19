@@ -66,8 +66,10 @@ public class DelegatingClientDiagramValidator extends ClientDiagramValidator {
     }
 
     @Override
-    public void validate(Diagram diagram, Consumer<Collection<DiagramElementViolation<RuleViolation>>> resultConsumer) {
-        super.validate(diagram, diagramElementViolations -> {
+    public void validate(Diagram diagram,
+                         String locale,
+                         Consumer<Collection<DiagramElementViolation<RuleViolation>>> resultConsumer) {
+        super.validate(diagram, locale, diagramElementViolations -> {
             final List<DiagramElementViolation<RuleViolation>> violations =
                     (Objects.nonNull(diagramElementViolations) ? new LinkedList<>(diagramElementViolations) : new LinkedList<>());
             backendValidation(diagram, backendViolations -> {

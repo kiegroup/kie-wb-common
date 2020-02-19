@@ -94,24 +94,31 @@ public class DiagramValidatorTest {
         final TestingGraphInstanceBuilder.TestGraph1 graph1 = TestingGraphInstanceBuilder.newGraph1(graphTestHandler);
         when(diagram.getGraph()).thenReturn(graphTestHandler.graph);
         tested.validate(diagram,
+                        "en",
                         this::assertNoErrors);
         verify(modelValidator,
                times(1)).validate(eq(graph1.startNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.intermNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.endNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge1),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge2),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graphTestHandler.graph),
+                                  "en",
                                   any(Consumer.class));
     }
 
@@ -131,6 +138,7 @@ public class DiagramValidatorTest {
             validationsConsumer.accept(Collections.singleton(beanViolation));
             return null;
         }).when(modelValidator).validate(eq(graph1.intermNode),
+                                         "en",
                                          any(Consumer.class));
 
         //graph violation
@@ -141,25 +149,32 @@ public class DiagramValidatorTest {
                                                         any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations().addViolation(ruleViolation));
 
         tested.validate(diagram,
+                        "en",
                         violations -> assertElementError(violations,
                                                          TestingGraphInstanceBuilder.INTERM_NODE_UUID));
         verify(modelValidator,
                times(1)).validate(eq(graph1.startNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.intermNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.endNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge1),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge2),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graphTestHandler.graph),
+                                  "en",
                                   any(Consumer.class));
     }
 
@@ -176,6 +191,7 @@ public class DiagramValidatorTest {
             validationsConsumer.accept(Collections.emptyList());
             return null;
         }).when(modelValidator).validate(eq(graph1.intermNode),
+                                         "en",
                                          any(Consumer.class));
 
         //graph violation
@@ -186,26 +202,33 @@ public class DiagramValidatorTest {
                                                         any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations().addViolation(ruleViolation));
 
         tested.validate(diagram,
+                        "en",
                         violations -> assertElementError(violations,
                                                          TestingGraphInstanceBuilder.INTERM_NODE_UUID));
 
         verify(modelValidator,
                times(1)).validate(eq(graph1.startNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.intermNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.endNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge1),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge2),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graphTestHandler.graph),
+                                  "en",
                                   any(Consumer.class));
     }
 
@@ -222,39 +245,45 @@ public class DiagramValidatorTest {
             validationsConsumer.accept(Collections.emptyList());
             return null;
         }).when(modelValidator).validate(eq(graph1.intermNode),
+                                         "en",
                                          any(Consumer.class));
 
         tested.validate(diagram,
+                        "en",
                         violations -> assertTrue(violations.isEmpty()));
 
         verify(modelValidator,
                times(1)).validate(eq(graph1.startNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.intermNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.endNode),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge1),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graph1.edge2),
+                                  "en",
                                   any(Consumer.class));
         verify(modelValidator,
                times(1)).validate(eq(graphTestHandler.graph),
+                                  "en",
                                   any(Consumer.class));
     }
 
-    private void assertNoErrors(final
-                                Collection<DiagramElementViolation<RuleViolation>> violations) {
+    private void assertNoErrors(final Collection<DiagramElementViolation<RuleViolation>> violations) {
         assertNotNull(violations);
         assertFalse(violations.stream().anyMatch(v -> Violation.Type.ERROR.equals(v.getViolationType())));
     }
 
-    private void assertElementError(final
-                                    Collection<DiagramElementViolation<RuleViolation>> violations,
+    private void assertElementError(final Collection<DiagramElementViolation<RuleViolation>> violations,
                                     final String uuid) {
         assertNotNull(violations);
 
@@ -281,6 +310,6 @@ public class DiagramValidatorTest {
         final Node nullNode = graphTestHandler.newNode(UUID.uuid(), Optional.empty());
         nullNode.setContent(null);
         when(diagram.getGraph()).thenReturn(graphTestHandler.graph);
-        tested.validate(diagram, this::assertNoErrors);
+        tested.validate(diagram, "en", this::assertNoErrors);
     }
 }

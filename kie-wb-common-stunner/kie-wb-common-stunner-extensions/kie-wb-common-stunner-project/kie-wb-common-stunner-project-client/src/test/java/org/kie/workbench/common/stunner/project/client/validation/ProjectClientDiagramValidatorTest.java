@@ -76,7 +76,7 @@ public class ProjectClientDiagramValidatorTest {
         Collection<DiagramElementViolation<RuleViolation>> violations = Collections.singletonList(backendViolation);
         when(diagram.getName()).thenReturn("Test diagram");
         when(diagram.getMetadata()).thenReturn(metadata);
-        when(validationService.validate(diagram)).thenReturn(violations);
+        when(validationService.validate(diagram, "en")).thenReturn(violations);
         clientDiagramValidator = new ProjectClientDiagramValidator(graphTestHandler.getDefinitionManager(),
                                                                    graphTestHandler.getRuleManager(),
                                                                    treeWalkTraverseProcessor,
@@ -87,7 +87,7 @@ public class ProjectClientDiagramValidatorTest {
     @Test
     public void validate() {
         when(diagram.getGraph()).thenReturn(graphTestHandler.graph);
-        clientDiagramValidator.validate(diagram, result -> assertTrue(result.stream().anyMatch(v -> Objects.equals(backendViolation, v))));
-        verify(validationService).validate(diagram);
+        clientDiagramValidator.validate(diagram, "en", result -> assertTrue(result.stream().anyMatch(v -> Objects.equals(backendViolation, v))));
+        verify(validationService).validate(diagram,"en");
     }
 }

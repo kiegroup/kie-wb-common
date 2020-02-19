@@ -74,14 +74,17 @@ public class GraphValidatorImpl
     @Override
     @SuppressWarnings("unchecked")
     public void validate(final Graph graph,
+                         final String locale,
                          final Consumer<Collection<RuleViolation>> callback) {
         validate(graph,
+                 locale,
                  null,
                  callback);
     }
 
     @Override
     public void validate(final Graph graph,
+                         final String locale,
                          final RuleSet ruleSet,
                          final Consumer<Collection<RuleViolation>> callback) {
         this.validate(graph,

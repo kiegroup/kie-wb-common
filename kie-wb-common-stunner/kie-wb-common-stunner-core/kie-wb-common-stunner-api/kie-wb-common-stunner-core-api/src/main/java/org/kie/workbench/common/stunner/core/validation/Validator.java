@@ -32,5 +32,6 @@ public interface Validator<T, V extends Violation> {
      * the <code>resultConsumer</code> consumer
      */
     void validate(T entity,
+                  String locale,
                   Consumer<Collection<V>> resultConsumer);
 }

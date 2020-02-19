@@ -140,6 +140,7 @@ public class DMNDomainValidatorTest {
         when(dmnDiagramUtils.getDefinitions(diagram)).thenReturn(definitions);
         when(dmnValidator.validateUsing(anyVararg())).thenReturn(dmnValidatorBuilder);
         when(dmnValidatorBuilder.usingImports(resolver)).thenReturn(dmnValidatorBuilder);
+        when(dmnValidatorBuilder.usingLocale(any())).thenReturn(dmnValidatorBuilder);
         when(dmnValidatorBuilder.theseModels(any(Reader.class))).thenReturn(validationMessages);
         when(diagram.getMetadata()).thenReturn(metadata);
     }
@@ -203,6 +204,7 @@ public class DMNDomainValidatorTest {
         when(domainValidator.getStringReader(anyString())).thenReturn(stringReader);
 
         domainValidator.validate(diagram,
+                                 "de",
                                  resultConsumer);
 
         verify(dmnMarshaller).marshall(diagram);
@@ -212,6 +214,7 @@ public class DMNDomainValidatorTest {
                                            DMNValidator.Validation.ANALYZE_DECISION_TABLE);
         verify(domainValidator).getStringReader(DMN_XML);
         verify(dmnValidatorBuilder).usingImports(resolver);
+        verify(dmnValidatorBuilder).usingLocale("de");
         verify(dmnValidatorBuilder).theseModels(readerArgumentCaptor.capture());
         assertThat(readerArgumentCaptor.getAllValues()).containsExactly(stringReader);
 
@@ -238,6 +241,7 @@ public class DMNDomainValidatorTest {
         });
 
         domainValidator.validate(diagram,
+                                 "en",
                                  resultConsumer);
 
         verify(dmnMarshaller).marshall(diagram);
@@ -248,6 +252,7 @@ public class DMNDomainValidatorTest {
         verify(domainValidator).getStringReader(DMN_XML);
         verify(domainValidator).getStringReader(IMPORTED_DMN_XML);
         verify(dmnValidatorBuilder).usingImports(resolver);
+        verify(dmnValidatorBuilder).usingLocale("en");
         verify(dmnValidatorBuilder).theseModels(readerArgumentCaptor.capture());
         assertThat(readerArgumentCaptor.getAllValues()).containsExactly(stringReader1, stringReader2);
 
@@ -272,6 +277,7 @@ public class DMNDomainValidatorTest {
         validationMessages.add(makeDMNMessage(DMNMessage.Severity.INFO, "info", dmnElement2));
 
         domainValidator.validate(diagram,
+                                 "en",
                                  resultConsumer);
 
         verify(resultConsumer).accept(domainViolationsArgumentCaptor.capture());

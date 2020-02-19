@@ -96,6 +96,7 @@ public class ModelBeanValidatorTest {
         Set<ConstraintViolation<Object>> violations = spy(new HashSet<>());
         when(beanValidator.validate(bean)).thenReturn(violations);
         tested.validate(element,
+                        "en",
                         this::assertNoViolations);
         //assert the assertNoViolations was called
         assertTrue(called.get());
@@ -105,6 +106,7 @@ public class ModelBeanValidatorTest {
     public void testValidateBean1Failed() {
         when(beanValidator.validate(bean)).thenReturn(Collections.singleton(violation1));
         tested.validate(element,
+                        "en",
                         v -> assertViolation(v,
                                              violation1));
         //assert the assertViolation was called
@@ -115,7 +117,7 @@ public class ModelBeanValidatorTest {
     public void testValidateBeanDefinitionSet() {
         when(element.getContent()).thenReturn(new DefinitionSetImpl("id"));
         Consumer<Collection<ModelBeanViolation>> consumer = mock(Consumer.class);
-        tested.validate(element, consumer);
+        tested.validate(element,"en", consumer);
         verify(consumer, never()).accept(anyCollection());
     }
 
@@ -123,7 +125,7 @@ public class ModelBeanValidatorTest {
     public void testValidateNullBean() {
         when(element.getContent()).thenReturn(null);
         Consumer<Collection<ModelBeanViolation>> consumer = mock(Consumer.class);
-        tested.validate(element, consumer);
+        tested.validate(element, "en", consumer);
         verify(consumer, never()).accept(anyCollection());
     }
 

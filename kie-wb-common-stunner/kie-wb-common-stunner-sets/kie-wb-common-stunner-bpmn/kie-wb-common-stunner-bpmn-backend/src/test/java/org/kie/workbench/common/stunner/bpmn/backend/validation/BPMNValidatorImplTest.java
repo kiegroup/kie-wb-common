@@ -109,7 +109,7 @@ public class BPMNValidatorImplTest {
     @Test
     public void validateWithViolation() {
         when(diagramService.getRawContent(diagram)).thenReturn(getSerializedProcess(BPMN_VALIDATION_ISSUES));
-        bpmnValidador.validate(diagram, result -> {
+        bpmnValidador.validate(diagram, "en", result -> {
             assertNotNull(result);
             assertEquals(10, result.size());
             assertTrue(result.stream().map(DomainViolation::getViolationType).allMatch(t -> Violation.Type.WARNING.equals(t)));
@@ -143,7 +143,7 @@ public class BPMNValidatorImplTest {
     @Test
     public void validateNoViolations() {
         when(diagramService.getRawContent(diagram)).thenReturn(getSerializedProcess(BPMN_VALID));
-        bpmnValidador.validate(diagram, result -> {
+        bpmnValidador.validate(diagram, "en", result -> {
             assertNotNull(result);
             assertTrue(result.isEmpty());
         });

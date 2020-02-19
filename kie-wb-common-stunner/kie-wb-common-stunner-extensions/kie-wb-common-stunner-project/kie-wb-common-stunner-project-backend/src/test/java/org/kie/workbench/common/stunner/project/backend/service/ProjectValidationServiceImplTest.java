@@ -101,7 +101,7 @@ public class ProjectValidationServiceImplTest {
             }
 
             @Override
-            public void validate(Diagram entity, Consumer<Collection<DomainViolation>> resultConsumer) {
+            public void validate(Diagram entity, String locale, Consumer<Collection<DomainViolation>> resultConsumer) {
                 resultConsumer.accept(domainViolationList);
             }
         };
@@ -133,7 +133,7 @@ public class ProjectValidationServiceImplTest {
 
     @Test
     public void validate() {
-        final Collection<DiagramElementViolation<RuleViolation>> violations = validationService.validate(diagram);
+        final Collection<DiagramElementViolation<RuleViolation>> violations = validationService.validate(diagram, "en");
         verify(diagram).getMetadata();
         verify(metadata).getDefinitionSetId();
         assertEquals(violations.size(), 4);

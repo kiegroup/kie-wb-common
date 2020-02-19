@@ -89,6 +89,7 @@ public class GraphValidatorImplTest {
         final Graph<DefinitionSet, Node> graph = graphTestHandler.graph;
         final TestingGraphInstanceBuilder.TestGraph1 testGraph1 = TestingGraphInstanceBuilder.newGraph1(graphTestHandler);
         tested.validate(graph,
+                        "en",
                         ruleSet,
                         this::assertNoError);
         final int evalCount = testGraph1.evaluationsCount + 10;
@@ -153,6 +154,7 @@ public class GraphValidatorImplTest {
         final Graph<DefinitionSet, Node> graph = graphTestHandler.graph;
         final TestingGraphInstanceBuilder.TestGraph2 testGraph2 = TestingGraphInstanceBuilder.newGraph2(graphTestHandler);
         tested.validate(getGraph(),
+                        "en",
                         graphTestHandler.ruleSet,
                         this::assertNoError);
         final int evalCount = testGraph2.evaluationsCount + 11;
@@ -222,6 +224,7 @@ public class GraphValidatorImplTest {
         // From this point, a validation error is expected.
         graphTestHandler.removeTargetConnection(testGraph1.edge2);
         tested.validate(graph,
+                        "en",
                         ruleSet,
                         ruleViolations -> {
                             assertEquals(1,
