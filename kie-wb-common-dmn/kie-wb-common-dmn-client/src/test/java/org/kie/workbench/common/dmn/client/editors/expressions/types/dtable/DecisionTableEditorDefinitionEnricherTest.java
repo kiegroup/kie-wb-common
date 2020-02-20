@@ -118,8 +118,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(0).getInputExpression().getTypeRef()).isEqualTo(DECISION_QNAME_1);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -144,8 +144,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(1).getInputExpression().getTypeRef()).isEqualTo(INPUT_DATA_QNAME_1);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 2, 1);
-        assertParentHierarchyEnrichment(model, 2, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -174,8 +174,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(2).getInputExpression().getTypeRef()).isEqualTo(INPUT_DATA_QNAME_1);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 3, 1);
-        assertParentHierarchyEnrichment(model, 3, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -212,8 +212,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(1).getInputExpression().getTypeRef()).isEqualTo(simpleItemDefinitionTypeRef);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 2, 1);
-        assertParentHierarchyEnrichment(model, 2, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -264,8 +264,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(2).getInputExpression().getTypeRef()).isEqualTo(complexItemDefinitionPart2TypeRef);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 3, 1);
-        assertParentHierarchyEnrichment(model, 3, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -325,8 +325,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(3).getInputExpression().getTypeRef()).isEqualTo(parentCustomType);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 4, 1);
-        assertParentHierarchyEnrichment(model, 4, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -391,17 +391,15 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(input.get(3).getInputExpression().getTypeRef()).isEqualTo(dateBuiltInType);
 
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 4, 1);
-        assertParentHierarchyEnrichment(model, 4, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
-    private Node<Definition, Edge> setupGraphWithDiagram() {
+    private void setupGraphWithDiagram() {
         final Node<Definition, Edge> diagramNode = new NodeImpl<>(UUID.uuid());
         final Definition<DMNDiagram> diagramDefinition = new DefinitionImpl<>(diagram);
         diagramNode.setContent(diagramDefinition);
         graph.addNode(diagramNode);
-
-        return diagramNode;
     }
 
     @SuppressWarnings("unchecked")
@@ -481,8 +479,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertBasicEnrichment(model);
         assertStandardInputClauseEnrichment(model);
         assertStandardOutputClauseEnrichment(model);
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -509,8 +507,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(output.get(0).getName()).isEqualTo(name);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -540,8 +538,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(output.get(0).getName()).isEqualTo(name);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -576,8 +574,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(output.get(0).getName()).isEqualTo(name);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -597,8 +595,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(output.get(0).getName()).isEqualTo("output-1");
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
@@ -616,8 +614,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertThat(output.get(0).getName()).isEqualTo("output-1");
         assertThat(output.get(0).getTypeRef()).isEqualTo(BuiltInType.UNDEFINED.asQName());
 
-        assertStandardDecisionRuleEnrichment(model, 1, 1);
-        assertParentHierarchyEnrichment(model, 1, 1);
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
     }
 
     @Test
