@@ -97,7 +97,7 @@ public class BPMNDiagramTest {
         BPMNDiagramImpl BPMNDiagramImpl = createValidBpmnDiagram();
         BPMNDiagramImpl.getDiagramSet().setId(new Id(ID_INVALID));
         Set<ConstraintViolation<BPMNDiagramImpl>> violations = this.validator.validate(BPMNDiagramImpl);
-        assertEquals(1,
+        assertEquals(2,
                      violations.size());
     }
 
