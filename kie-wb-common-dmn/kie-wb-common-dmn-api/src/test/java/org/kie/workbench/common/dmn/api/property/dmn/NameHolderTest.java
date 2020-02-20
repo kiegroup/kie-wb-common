@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class NameHolderTest {
 
@@ -32,11 +33,20 @@ public class NameHolderTest {
 
     private NameHolder holder3;
 
+    private NameHolder holder4;
+
     @Before
     public void setup() {
         this.holder1 = new NameHolder(new Name(NAME));
         this.holder2 = new NameHolder(new Name(NAME));
         this.holder3 = new NameHolder(new Name());
+        this.holder4 = new NameHolder();
+    }
+
+    @Test
+    public void testDefaultConstructor() {
+        assertNotNull(holder4.getValue());
+        assertEquals(NameHolder.DEFAULT_NAME, holder4.getValue().getValue());
     }
 
     @Test
@@ -52,9 +62,11 @@ public class NameHolderTest {
 
     @Test
     public void testEquals() {
+        assertEquals(holder1, holder1);
         assertEquals(holder1, holder2);
         assertNotEquals(holder1, holder3);
         assertNotEquals(holder2, holder3);
+        assertNotEquals(holder1, "Cheese");
     }
 
     @Test
