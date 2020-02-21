@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
+import org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi;
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -38,52 +39,30 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
     //
     //Kogito
 
-    class KogitoOpts {
-
-        public static enum Repeat {
-            REPEAT,
-            NO_REPEAT
-        }
-
-        public static final KogitoOpts DEFAULT = new KogitoOpts(Repeat.NO_REPEAT);
-
-        private final Repeat repeat;
-
-        public KogitoOpts(final Repeat repeat) {
-            this.repeat = repeat;
-        }
-
-        public boolean getRepeat() {
-            return Repeat.REPEAT.equals(repeat);
-        }
-    }
-
     interface KogitoKeyShortcutCallback extends KeyShortcutCallback {
 
-        default KogitoOpts getOpts() {
-            return KogitoOpts.DEFAULT;
-        }
+        KeyboardShortcutsApi.Opts getOpts();
 
         String getKeyCombination();
 
         String getLabel();
     }
 
-    public static class KogitoKeyPress implements KogitoKeyShortcutCallback {
+    class KogitoKeyPress implements KogitoKeyShortcutCallback {
 
         private String combination;
         private String label;
         private Runnable onKeyDown;
-        private KogitoOpts opts;
+        private KeyboardShortcutsApi.Opts opts;
 
         public KogitoKeyPress() {
         }
 
         public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown) {
-            this(combination, label, onKeyDown, KogitoOpts.DEFAULT);
+            this(combination, label, onKeyDown, KeyboardShortcutsApi.Opts.DEFAULT);
         }
 
-        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown, final KogitoOpts opts) {
+        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown, final KeyboardShortcutsApi.Opts opts) {
             this.combination = combination;
             this.label = label;
             this.onKeyDown = onKeyDown;
@@ -115,24 +94,24 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
 
         @Override
-        public KogitoOpts getOpts() {
+        public KeyboardShortcutsApi.Opts getOpts() {
             return opts;
         }
     }
 
-    public static class KogitoKeyShortcutKeyDownThenUp implements KogitoKeyShortcutCallback {
+    class KogitoKeyShortcutKeyDownThenUp implements KogitoKeyShortcutCallback {
 
         private final String combination;
         private final String label;
         private final Runnable onKeyDown;
         private final Runnable onKeyUp;
-        private final KogitoOpts opts;
+        private final KeyboardShortcutsApi.Opts opts;
 
         public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp) {
-            this(combination, label, onKeyDown, onKeyUp, KogitoOpts.DEFAULT);
+            this(combination, label, onKeyDown, onKeyUp, KeyboardShortcutsApi.Opts.DEFAULT);
         }
 
-        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KogitoOpts opts) {
+        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KeyboardShortcutsApi.Opts opts) {
             this.combination = combination;
             this.label = label;
             this.onKeyDown = onKeyDown;
@@ -169,7 +148,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
 
         @Override
-        public KogitoOpts getOpts() {
+        public KeyboardShortcutsApi.Opts getOpts() {
             return opts;
         }
     }

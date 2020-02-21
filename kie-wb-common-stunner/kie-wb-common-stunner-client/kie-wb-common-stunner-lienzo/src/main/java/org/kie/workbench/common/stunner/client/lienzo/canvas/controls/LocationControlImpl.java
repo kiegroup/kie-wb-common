@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import com.ait.lienzo.client.core.shape.wires.ILocationAcceptor;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
+import org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -41,7 +42,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanv
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.LocationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
@@ -75,8 +75,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
+import static org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi.Opts.Repeat.REPEAT;
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
-import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts.Repeat.REPEAT;
 
 @Dependent
 @Default
@@ -127,22 +127,22 @@ public class LocationControlImpl
         session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("esc", "Reset / unselect", () -> getWiresManager().resetContext()));
 
         //Kogito: Normal moves
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("up", "Move selection down", () -> moveNode(0, -NORMAL_DISTANCE), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("down", "Move selection down", () -> moveNode(0, NORMAL_DISTANCE), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("left", "Move selection left", () -> moveNode(-NORMAL_DISTANCE, 0), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("right", "Move selection right", () -> moveNode(NORMAL_DISTANCE, 0), new KogitoOpts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("up", "Move selection down", () -> moveNode(0, -NORMAL_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("down", "Move selection down", () -> moveNode(0, NORMAL_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("left", "Move selection left", () -> moveNode(-NORMAL_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("right", "Move selection right", () -> moveNode(NORMAL_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
 
         //Kogito: Short moves
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+up", "Move selection up", () -> moveNode(0, -SHORT_DISTANCE), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+down", "Move selection down", () -> moveNode(0, SHORT_DISTANCE), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+left", "Move selection left", () -> moveNode(-SHORT_DISTANCE, 0), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+right", "Move selection right", () -> moveNode(SHORT_DISTANCE, 0), new KogitoOpts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+up", "Move selection up", () -> moveNode(0, -SHORT_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+down", "Move selection down", () -> moveNode(0, SHORT_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+left", "Move selection left", () -> moveNode(-SHORT_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+right", "Move selection right", () -> moveNode(SHORT_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
 
         //Kogito: Large moves
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+up", "Move selection up", () -> moveNode(0, -LARGE_DISTANCE), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+down", "Move selection down", () -> moveNode(0, LARGE_DISTANCE), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+left", "Move selection left", () -> moveNode(-LARGE_DISTANCE, 0), new KogitoOpts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+right", "Move selection right", () -> moveNode(LARGE_DISTANCE, 0), new KogitoOpts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+up", "Move selection up", () -> moveNode(0, -LARGE_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+down", "Move selection down", () -> moveNode(0, LARGE_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+left", "Move selection left", () -> moveNode(-LARGE_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+right", "Move selection right", () -> moveNode(LARGE_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
