@@ -16,8 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.command;
 
-import org.appformer.kogito.bridge.client.stateControl.registry.CommandRegistry;
-import org.appformer.kogito.bridge.client.stateControl.registry.impl.CommandRegistryImpl;
+import org.appformer.kogito.api.stateControl.registry.CommandRegistry;
+import org.appformer.kogito.api.stateControl.registry.impl.DefaultCommandRegistryImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +59,7 @@ public class RegistryAwareCommandManagerTest {
     @Before
     public void setUp() {
         commandManager = spy(new CanvasCommandManagerStub());
-        commandRegistry = spy(new CommandRegistryImpl<>());
+        commandRegistry = spy(new DefaultCommandRegistryImpl<>());
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(session.getCommandManager()).thenReturn(commandManager);
         when(session.getCommandRegistry()).thenReturn(commandRegistry);

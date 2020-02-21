@@ -147,6 +147,12 @@
       <artifactId>elemental2-dom</artifactId>
     </dependency>
 
+    <!-- Appformer Kogito -->
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>appformer-kogito-api</artifactId>
+    </dependency>
+
     <!-- Test scope. -->
     <dependency>
       <groupId>org.assertj</groupId>

@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.core.client.session.command.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.appformer.kogito.bridge.client.stateControl.registry.CommandRegistry;
+import org.appformer.kogito.api.stateControl.registry.CommandRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

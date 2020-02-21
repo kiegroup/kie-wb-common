@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.kogito.bridge.client.stateControl.registry.CommandRegistry;
+import org.appformer.kogito.api.stateControl.registry.CommandRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

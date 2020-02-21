@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.kogito.client.session.command.impl;
+package org.kie.workbench.common.stunner.kogito.runtime.client.session.command.impl;
 
 import java.util.function.Supplier;
 

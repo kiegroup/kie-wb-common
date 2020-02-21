@@ -17,8 +17,8 @@ package org.kie.workbench.common.stunner.core.client.command;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.kogito.bridge.client.stateControl.registry.DefaultCommandRegistry;
-import org.appformer.kogito.bridge.client.stateControl.registry.impl.CommandRegistryImpl;
+import org.appformer.kogito.api.stateControl.registry.DefaultCommandRegistry;
+import org.appformer.kogito.api.stateControl.registry.impl.DefaultCommandRegistryImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +63,7 @@ public class RedoCommandHandlerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        commandRegistry = spy(new CommandRegistryImpl<>());
+        commandRegistry = spy(new DefaultCommandRegistryImpl<>());
         this.tested = new RedoCommandHandler(commandRegistry, registerChangedEvent);
     }
 
