@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.client.lienzo.components.views.LienzoCan
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyShortcutKeyDownThenUp;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
@@ -74,71 +75,9 @@ public class LienzoCanvasMediators {
     }
 
     public void init(final Supplier<LienzoCanvas> canvas) {
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutKeyDownThenUp() {
-            @Override
-            public void onKeyDown() {
-                enablePan();
-            }
-
-            @Override
-            public void onKeyUp() {
-                clear();
-            }
-
-            @Override
-            public String getKeyCombination() {
-                return "alt";
-            }
-
-            @Override
-            public String getLabel() {
-                return "Hold and drag to Pan";
-            }
-        });
-
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutKeyDownThenUp() {
-            @Override
-            public void onKeyDown() {
-                enableZoom();
-            }
-
-            @Override
-            public void onKeyUp() {
-                clear();
-            }
-
-            @Override
-            public String getKeyCombination() {
-                return "ctrl";
-            }
-
-            @Override
-            public String getLabel() {
-                return "Hold and scroll to Zoom";
-            }
-        });
-
-        keyEventHandler.addKeyShortcutCallback(new KeyboardControl.KogitoKeyShortcutKeyDownThenUp() {
-            @Override
-            public void onKeyDown() {
-                enablePreview();
-            }
-
-            @Override
-            public void onKeyUp() {
-                clear();
-            }
-
-            @Override
-            public String getKeyCombination() {
-                return "ctrl+alt";
-            }
-
-            @Override
-            public String getLabel() {
-                return "Hold to Preview";
-            }
-        });
+        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("alt", "Hold and drag to Pan", this::enablePan, this::clear));
+        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("ctrl", "Hold and scroll to Zoom", this::enableZoom, this::clear));
+        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("ctrl+alt", "Hold to Preview", this::enablePreview, this::clear));
 
         keyEventHandler
                 .setTimerDelay(150)

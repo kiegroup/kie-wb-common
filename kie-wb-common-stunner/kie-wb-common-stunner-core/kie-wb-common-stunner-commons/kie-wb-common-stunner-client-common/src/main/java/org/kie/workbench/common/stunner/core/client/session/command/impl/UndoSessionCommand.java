@@ -22,9 +22,9 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.appformer.client.stateControl.registry.Registry;
-import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
@@ -37,6 +37,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts.Repeat.REPEAT;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 
 @Dependent
@@ -59,29 +60,11 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
 
     protected void bindCommand() {
         getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
-            @Override
-            public String getKeyCombination() {
-                return "ctrl+z";
+        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+z", "Undo", () -> {
+            if (isEnabled()) {
+                execute();
             }
-
-            @Override
-            public String getLabel() {
-                return "Undo";
-            }
-
-            @Override
-            public void onKeyDown() {
-                if (isEnabled()) {
-                    execute();
-                }
-            }
-
-            @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
-            }
-        });
+        }, new KogitoOpts(REPEAT)));
     }
 
     @Override

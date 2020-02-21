@@ -31,7 +31,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -106,44 +106,16 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
-
-            @Override
-            public String getKeyCombination() {
-                return "backspace";
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("backspace", "Delete selection", () -> {
+            if (isEnabled()) {
+                execute();
             }
-
-            @Override
-            public String getLabel() {
-                return "Delete selection";
+        }));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("delete", "Delete selection", () -> {
+            if (isEnabled()) {
+                execute();
             }
-
-            @Override
-            public void onKeyDown() {
-                if (isEnabled()) {
-                    execute();
-                }
-            }
-        });
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
-
-            @Override
-            public String getKeyCombination() {
-                return "delete";
-            }
-
-            @Override
-            public String getLabel() {
-                return "Delete selection";
-            }
-
-            @Override
-            public void onKeyDown() {
-                if (isEnabled()) {
-                    execute();
-                }
-            }
-        });
+        }));
         this.canvasCommandFactory = this.loadCanvasFactory(canvasCommandFactoryInstance, definitionUtils);
     }
 

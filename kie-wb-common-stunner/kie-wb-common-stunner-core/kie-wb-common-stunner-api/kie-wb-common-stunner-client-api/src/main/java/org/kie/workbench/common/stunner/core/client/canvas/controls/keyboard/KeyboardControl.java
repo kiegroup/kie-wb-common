@@ -40,16 +40,21 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
     class KogitoOpts {
 
-        public static final KogitoOpts DEFAULT = new KogitoOpts(false);
+        public static enum Repeat {
+            REPEAT,
+            NO_REPEAT
+        }
 
-        private final boolean repeat;
+        public static final KogitoOpts DEFAULT = new KogitoOpts(Repeat.NO_REPEAT);
 
-        public KogitoOpts(final boolean repeat) {
+        private final Repeat repeat;
+
+        public KogitoOpts(final Repeat repeat) {
             this.repeat = repeat;
         }
 
         public boolean getRepeat() {
-            return repeat;
+            return Repeat.REPEAT.equals(repeat);
         }
     }
 
@@ -64,35 +69,108 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         String getLabel();
     }
 
-    interface KogitoKeyPress extends KogitoKeyShortcutCallback {
+    public static class KogitoKeyPress implements KogitoKeyShortcutCallback {
+
+        private String combination;
+        private String label;
+        private Runnable onKeyDown;
+        private KogitoOpts opts;
+
+        public KogitoKeyPress() {
+        }
+
+        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown) {
+            this(combination, label, onKeyDown, KogitoOpts.DEFAULT);
+        }
+
+        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown, final KogitoOpts opts) {
+            this.combination = combination;
+            this.label = label;
+            this.onKeyDown = onKeyDown;
+            this.opts = opts;
+        }
 
         @Override
-        default void onKeyShortcut(final KeyboardEvent.Key... keys) {
+        public final void onKeyShortcut(final KeyboardEvent.Key... keys) {
             onKeyDown();
         }
 
         @Override
-        default void onKeyUp(final KeyboardEvent.Key key) {
+        public final void onKeyUp(final KeyboardEvent.Key key) {
             throw new RuntimeException("Keyup shouldn't be called on KeyPress events");
         }
 
-        void onKeyDown();
-    }
-
-    interface KogitoKeyShortcutKeyDownThenUp extends KogitoKeyShortcutCallback {
+        @Override
+        public String getKeyCombination() {
+            return combination;
+        }
 
         @Override
-        default void onKeyShortcut(final KeyboardEvent.Key... keys) {
+        public String getLabel() {
+            return label;
+        }
+
+        public void onKeyDown() {
+            onKeyDown.run();
+        }
+
+        @Override
+        public KogitoOpts getOpts() {
+            return opts;
+        }
+    }
+
+    public static class KogitoKeyShortcutKeyDownThenUp implements KogitoKeyShortcutCallback {
+
+        private final String combination;
+        private final String label;
+        private final Runnable onKeyDown;
+        private final Runnable onKeyUp;
+        private final KogitoOpts opts;
+
+        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp) {
+            this(combination, label, onKeyDown, onKeyUp, KogitoOpts.DEFAULT);
+        }
+
+        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KogitoOpts opts) {
+            this.combination = combination;
+            this.label = label;
+            this.onKeyDown = onKeyDown;
+            this.onKeyUp = onKeyUp;
+            this.opts = opts;
+        }
+
+        @Override
+        public final void onKeyShortcut(final KeyboardEvent.Key... keys) {
             onKeyDown();
         }
 
         @Override
-        default void onKeyUp(final KeyboardEvent.Key key) {
+        public final void onKeyUp(final KeyboardEvent.Key key) {
             onKeyUp();
         }
 
-        void onKeyUp();
+        @Override
+        public String getKeyCombination() {
+            return combination;
+        }
 
-        void onKeyDown();
+        @Override
+        public String getLabel() {
+            return label;
+        }
+
+        public void onKeyDown() {
+            onKeyDown.run();
+        }
+
+        public void onKeyUp() {
+            onKeyUp.run();
+        }
+
+        @Override
+        public KogitoOpts getOpts() {
+            return opts;
+        }
     }
 }

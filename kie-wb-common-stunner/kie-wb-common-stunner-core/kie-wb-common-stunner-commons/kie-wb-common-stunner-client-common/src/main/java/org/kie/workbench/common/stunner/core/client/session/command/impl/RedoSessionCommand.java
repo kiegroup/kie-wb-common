@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandUndoneEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -38,6 +39,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoOpts.Repeat.REPEAT;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 
 @Dependent
@@ -63,29 +65,11 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
-            @Override
-            public String getKeyCombination() {
-                return "ctrl+shift+z";
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+shift+z", "Redo", () -> {
+            if (isEnabled()) {
+                execute();
             }
-
-            @Override
-            public String getLabel() {
-                return "Redo";
-            }
-
-            @Override
-            public void onKeyDown() {
-                if (isEnabled()) {
-                    execute();
-                }
-            }
-
-            @Override
-            public KeyboardControl.KogitoOpts getOpts() {
-                return new KeyboardControl.KogitoOpts(true);
-            }
-        });
+        }, new KogitoOpts(REPEAT)));
         redoCommandHandler.setSession(getSession());
 
         bindCommand();

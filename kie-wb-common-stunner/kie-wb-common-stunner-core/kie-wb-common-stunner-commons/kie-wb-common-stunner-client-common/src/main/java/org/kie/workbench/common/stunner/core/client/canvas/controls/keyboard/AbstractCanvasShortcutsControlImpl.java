@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -51,32 +52,15 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyShortcut);
 
         for (final KeyboardShortcut action : keyboardShortcutActions) {
-            session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress() {
-                @Override
-                public String getKeyCombination() {
-                    return action.getKogitoCombination();
-                }
+            session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(action.getKogitoCombination(), action.getKogitoLabel(), () -> executeAction(action), action.getKogitoOpts()));
+        }
+    }
 
-                @Override
-                public String getLabel() {
-                    return action.getKogitoLabel();
-                }
-
-                @Override
-                public KeyboardControl.KogitoOpts getOpts() {
-                    return action.getKogitoOpts();
-                }
-
-                @Override
-                public void onKeyDown() {
-                    if (selectedNodeId() != null) {
-                        if (action.matchesSelectedElement(selectedNodeElement())) {
-                            action.executeAction(canvasHandler, selectedNodeId());
-                        }
-                    }
-                }
-            });
-
+    private void executeAction(final KeyboardShortcut action) {
+        if (selectedNodeId() != null) {
+            if (action.matchesSelectedElement(selectedNodeElement())) {
+                action.executeAction(canvasHandler, selectedNodeId());
+            }
         }
     }
 
