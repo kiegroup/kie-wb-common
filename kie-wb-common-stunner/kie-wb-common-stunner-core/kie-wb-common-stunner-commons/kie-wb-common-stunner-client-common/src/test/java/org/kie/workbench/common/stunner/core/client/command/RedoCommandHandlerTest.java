@@ -130,6 +130,6 @@ public class RedoCommandHandlerTest {
     public void testSetSession() {
         ClientSession session = mock(ClientSession.class);
         tested.setSession(session);
-        verify(commandRegistry, times(1)).setRegistryChangeListener(any());
+        verify(commandRegistry, times(1)).setCommandRegistryChangeListener(any());
     }
 }

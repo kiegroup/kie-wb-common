@@ -85,7 +85,7 @@ public class DefaultEditorSession
                 .onCanvasHandlerControlRegistered(this::onCanvasHandlerControlRegistered)
                 .onCanvasControlDestroyed(AbstractSession::onControlDestroyed)
                 .onCanvasHandlerControlDestroyed(AbstractSession::onControlDestroyed);
-        commandRegistry.setRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler())));
+        commandRegistry.setCommandRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler())));
     }
 
     @Override

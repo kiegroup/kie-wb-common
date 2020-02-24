@@ -94,7 +94,7 @@ public class RedoCommandHandler<C extends Command> {
     }
 
     public void setSession(final ClientSession clientSession) {
-        this.registry.setRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(clientSession.getCanvasHandler())));
+        this.registry.setCommandRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(clientSession.getCanvasHandler())));
     }
 
     public boolean isEnabled() {

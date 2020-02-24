@@ -107,7 +107,7 @@ public class DefaultEditorSessionTest {
         verify(managedSession, times(1)).onCanvasControlDestroyed(any(Consumer.class));
         verify(managedSession, times(1)).onCanvasHandlerControlRegistered(any(Consumer.class));
         verify(managedSession, times(1)).onCanvasHandlerControlDestroyed(any(Consumer.class));
-        verify(commandRegistry).setRegistryChangeListener(any());
+        verify(commandRegistry).setCommandRegistryChangeListener(any());
     }
 
     @Test
