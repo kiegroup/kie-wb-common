@@ -122,7 +122,7 @@ public class ReassignmentEditorWidgetTest extends ReflectionUtilsTest {
         doCallRealMethod().when(view).setReadOnly(any(boolean.class));
         doCallRealMethod().when(view).initTypeSelector();
         doCallRealMethod().when(view).createOrEdit(any(ReassignmentWidgetView.class), any(ReassignmentRow.class));
-        doCallRealMethod().when(view).save();
+        doCallRealMethod().when(view).ok();
 
         setFieldValue(view, "modal", modal);
         setFieldValue(view, "customerBinder", customerBinder);
@@ -181,7 +181,7 @@ public class ReassignmentEditorWidgetTest extends ReflectionUtilsTest {
         when(multipleLiveSearchSelectionHandlerGroups.getSelectedValues()).thenReturn(Collections.EMPTY_LIST);
         when(multipleLiveSearchSelectionHandlerUsers.getSelectedValues()).thenReturn(Collections.EMPTY_LIST);
         view.createOrEdit(reassignmentWidgetViewImpl, test);
-        view.save();
+        view.ok();
 
         ReassignmentRow result = getFieldValue(ReassignmentEditorWidgetViewImpl.class, view, "current");
         Assert.assertEquals(result, test);
@@ -204,7 +204,7 @@ public class ReassignmentEditorWidgetTest extends ReflectionUtilsTest {
         when(multipleLiveSearchSelectionHandlerGroups.getSelectedValues()).thenReturn(groups);
         when(multipleLiveSearchSelectionHandlerUsers.getSelectedValues()).thenReturn(users);
         view.createOrEdit(reassignmentWidgetViewImpl, test);
-        view.save();
+        view.ok();
 
         Assert.assertEquals(ReassignmentType.NotCompletedReassign, test.getType());
         Assert.assertEquals(groups, test.getGroups());

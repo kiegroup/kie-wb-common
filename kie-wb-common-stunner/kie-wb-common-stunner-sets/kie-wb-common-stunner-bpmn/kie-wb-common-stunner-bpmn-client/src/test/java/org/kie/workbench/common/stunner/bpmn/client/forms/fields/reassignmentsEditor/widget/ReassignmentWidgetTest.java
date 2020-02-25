@@ -75,6 +75,6 @@ public class ReassignmentWidgetTest extends ReflectionUtilsTest {
         reassignmentWidget.setReadOnly(false);
         boolean readOnly = getFieldValue(ReassignmentWidgetViewImpl.class, reassignmentWidgetView, "readOnly");
         Assert.assertEquals(false, readOnly);
-        reassignmentWidget.save();
+        reassignmentWidget.ok();
     }
 }

@@ -75,6 +75,6 @@ public class NotificationWidgetTest extends ReflectionUtilsTest {
         notificationWidget.setReadOnly(false);
         boolean readOnly = getFieldValue(NotificationWidgetViewImpl.class, notificationWidgetView, "readOnly");
         Assert.assertEquals(false, readOnly);
-        notificationWidget.save();
+        notificationWidget.ok();
     }
 }

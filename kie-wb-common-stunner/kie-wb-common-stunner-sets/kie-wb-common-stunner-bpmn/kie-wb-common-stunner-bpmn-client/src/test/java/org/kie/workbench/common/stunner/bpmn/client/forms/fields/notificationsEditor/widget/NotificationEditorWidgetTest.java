@@ -154,7 +154,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
         doCallRealMethod().when(view).setReadOnly(any(boolean.class));
         doCallRealMethod().when(view).createOrEdit(any(NotificationWidgetView.class), any(NotificationRow.class));
-        doCallRealMethod().when(view).save();
+        doCallRealMethod().when(view).ok();
 
         setFieldValue(view, "modal", modal);
         setFieldValue(view, "body", body);
@@ -231,7 +231,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         when(multipleLiveSearchSelectionHandlerGroups.getSelectedValues()).thenReturn(Collections.EMPTY_LIST);
         when(multipleLiveSearchSelectionHandlerUsers.getSelectedValues()).thenReturn(Collections.EMPTY_LIST);
         view.createOrEdit(notificationWidgetViewImpl, test);
-        view.save();
+        view.ok();
 
         NotificationRow result = getFieldValue(NotificationEditorWidgetViewImpl.class, view, "current");
         Assert.assertEquals(result, test);
@@ -261,7 +261,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         when(multipleLiveSearchSelectionHandlerGroups.getSelectedValues()).thenReturn(groups);
         when(multipleLiveSearchSelectionHandlerUsers.getSelectedValues()).thenReturn(users);
         view.createOrEdit(notificationWidgetViewImpl, test);
-        view.save();
+        view.ok();
 
         Assert.assertEquals("QWERTY!", test.getSubject());
         Assert.assertEquals("QWERTY!", test.getBody());
