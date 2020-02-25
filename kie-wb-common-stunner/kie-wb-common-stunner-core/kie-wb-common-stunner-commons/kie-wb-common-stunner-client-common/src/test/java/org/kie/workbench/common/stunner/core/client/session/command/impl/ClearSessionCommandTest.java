@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
 import java.lang.annotation.Annotation;
 
-import org.appformer.kogito.api.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.CommandRegistry;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;

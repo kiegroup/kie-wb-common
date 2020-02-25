@@ -147,10 +147,10 @@
       <artifactId>elemental2-dom</artifactId>
     </dependency>
 
-    <!-- Appformer Kogito -->
+    <!-- Appformer -->
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>appformer-kogito-api</artifactId>
+      <artifactId>appformer-client-api</artifactId>
     </dependency>
 
     <!-- Test scope. -->

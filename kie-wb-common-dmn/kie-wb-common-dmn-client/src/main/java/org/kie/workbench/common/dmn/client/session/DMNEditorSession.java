@@ -20,7 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.kogito.api.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.CommandRegistry;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.canvas.controls.resize.DecisionServiceMoveDividerControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorControl;

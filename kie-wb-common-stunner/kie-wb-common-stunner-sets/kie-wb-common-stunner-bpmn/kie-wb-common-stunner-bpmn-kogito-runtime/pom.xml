@@ -629,7 +629,7 @@
     <!--  Appformer Kogito -->
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>appformer-kogito-api</artifactId>
+      <artifactId>appformer-client-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -801,11 +801,9 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-kogito-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-kogito-runtime-common</compileSourcesArtifact>
 
-            <!-- Appformer JS Bridge -->
+            <!-- Appformer -->
             <compileSourcesArtifact>org.uberfire:appformer-js-bridge</compileSourcesArtifact>
-
-            <!-- Appformer Kogito Bridge -->
-            <compileSourcesArtifact>org.uberfire:appformer-kogito-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:appformer-client-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:appformer-kogito-bridge</compileSourcesArtifact>
 
           </compileSourcesArtifacts>

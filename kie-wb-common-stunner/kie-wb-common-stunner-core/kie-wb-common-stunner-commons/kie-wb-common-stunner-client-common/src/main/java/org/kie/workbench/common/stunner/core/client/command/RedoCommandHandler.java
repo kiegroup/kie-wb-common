@@ -19,8 +19,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.kogito.api.stateControl.registry.CommandRegistry;
-import org.appformer.kogito.api.stateControl.registry.DefaultCommandRegistry;
+import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.DefaultCommandRegistry;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;

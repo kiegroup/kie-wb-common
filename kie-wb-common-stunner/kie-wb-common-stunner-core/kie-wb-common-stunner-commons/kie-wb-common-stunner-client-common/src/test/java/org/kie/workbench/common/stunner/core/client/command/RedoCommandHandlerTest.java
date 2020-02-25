@@ -17,8 +17,8 @@ package org.kie.workbench.common.stunner.core.client.command;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.kogito.api.stateControl.registry.DefaultCommandRegistry;
-import org.appformer.kogito.api.stateControl.registry.impl.DefaultCommandRegistryImpl;
+import org.appformer.client.stateControl.registry.DefaultCommandRegistry;
+import org.appformer.client.stateControl.registry.impl.DefaultCommandRegistryImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

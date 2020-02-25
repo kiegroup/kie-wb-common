@@ -524,7 +524,7 @@
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>appformer-kogito-api</artifactId>
+      <artifactId>appformer-client-api</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -826,7 +826,7 @@
             <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-kogito-client</compileSourcesArtifact>
 
             <compileSourcesArtifact>org.uberfire:appformer-js-bridge</compileSourcesArtifact>
-            <compileSourcesArtifact>org.uberfire:appformer-kogito-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:appformer-client-api</compileSourcesArtifact>
 
           </compileSourcesArtifacts>
         </configuration>
