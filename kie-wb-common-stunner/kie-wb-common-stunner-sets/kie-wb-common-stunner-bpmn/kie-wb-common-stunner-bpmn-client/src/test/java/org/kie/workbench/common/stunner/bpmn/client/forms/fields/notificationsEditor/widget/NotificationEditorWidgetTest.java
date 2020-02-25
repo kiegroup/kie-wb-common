@@ -169,7 +169,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         setFieldValue(view, "notificationEvent", notificationEvent);
         setFieldValue(view, "validator", validator);
         setFieldValue(view, "closeButton", new HTMLButtonElement());
-        setFieldValue(view, "saveButton", new HTMLButtonElement());
+        setFieldValue(view, "okButton", new HTMLButtonElement());
         setFieldValue(view, "customerBinder", customerBinder);
         setFieldValue(view, "typeSelect", typeSelect);
         setFieldValue(view, "notStarted", notStarted);
@@ -202,12 +202,12 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         HTMLButtonElement closeButton = getFieldValue(NotificationEditorWidgetViewImpl.class,
                                                       view,
                                                       "closeButton");
-        HTMLButtonElement saveButton = getFieldValue(NotificationEditorWidgetViewImpl.class,
+        HTMLButtonElement okButton = getFieldValue(NotificationEditorWidgetViewImpl.class,
                                                      view,
-                                                     "saveButton");
+                                                     "okButton");
 
         Assert.assertFalse(closeButton.disabled);
-        Assert.assertTrue(saveButton.disabled);
+        Assert.assertTrue(okButton.disabled);
     }
 
     @Test

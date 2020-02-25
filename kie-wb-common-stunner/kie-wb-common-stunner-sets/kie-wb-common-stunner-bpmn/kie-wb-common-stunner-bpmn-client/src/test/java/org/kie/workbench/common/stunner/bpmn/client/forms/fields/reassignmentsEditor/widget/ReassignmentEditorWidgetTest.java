@@ -131,7 +131,7 @@ public class ReassignmentEditorWidgetTest extends ReflectionUtilsTest {
         setFieldValue(view, "reassignmentEvent", reassignmentEvent);
         setFieldValue(view, "validator", validator);
         setFieldValue(view, "closeButton", new HTMLButtonElement());
-        setFieldValue(view, "saveButton", new HTMLButtonElement());
+        setFieldValue(view, "okButton", new HTMLButtonElement());
         setFieldValue(view, "customerBinder", customerBinder);
         setFieldValue(view, "typeSelect", typeSelect);
         setFieldValue(view, "notStarted", notStarted);
@@ -156,12 +156,12 @@ public class ReassignmentEditorWidgetTest extends ReflectionUtilsTest {
         HTMLButtonElement closeButton = getFieldValue(ReassignmentEditorWidgetViewImpl.class,
                                                       view,
                                                       "closeButton");
-        HTMLButtonElement saveButton = getFieldValue(ReassignmentEditorWidgetViewImpl.class,
+        HTMLButtonElement okButton = getFieldValue(ReassignmentEditorWidgetViewImpl.class,
                                                      view,
-                                                     "saveButton");
+                                                     "okButton");
 
         Assert.assertFalse(closeButton.disabled);
-        Assert.assertTrue(saveButton.disabled);
+        Assert.assertTrue(okButton.disabled);
     }
 
     @Test
