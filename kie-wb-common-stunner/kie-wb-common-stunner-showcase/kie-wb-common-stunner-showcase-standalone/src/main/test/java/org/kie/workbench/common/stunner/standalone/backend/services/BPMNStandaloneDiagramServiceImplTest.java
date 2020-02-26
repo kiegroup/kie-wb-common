@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalV
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
@@ -106,6 +107,8 @@ public class BPMNStandaloneDiagramServiceImplTest {
 
     private Documentation processDocumentation;
 
+    private ProcessType processType;
+
     private Id processId;
 
     private Package packageProperty;
@@ -142,6 +145,7 @@ public class BPMNStandaloneDiagramServiceImplTest {
         //DiagramSet
         processName = new Name("someName");
         processDocumentation = new Documentation("someDocumentation");
+        processType = new ProcessType();
         packageProperty = new Package("some.package");
         version = new Version("1.0");
         adHoc = new AdHoc(false);
@@ -155,6 +159,7 @@ public class BPMNStandaloneDiagramServiceImplTest {
                                     processDocumentation,
                                     processId,
                                     packageProperty,
+                                    processType,
                                     version,
                                     adHoc,
                                     processInstanceDescription,
