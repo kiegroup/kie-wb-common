@@ -19,6 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.forms.validation.process;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.kie.workbench.common.stunner.core.util.StringUtils;
+
 import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.isNcNameCharacter;
 import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.isNcNameStartCharacter;
 
@@ -31,7 +33,7 @@ public class ProcessIdValueValidator implements ConstraintValidator<ValidProcess
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isEmpty()) {
+        if (StringUtils.isEmpty(value)) {
             return false;
         }
 
