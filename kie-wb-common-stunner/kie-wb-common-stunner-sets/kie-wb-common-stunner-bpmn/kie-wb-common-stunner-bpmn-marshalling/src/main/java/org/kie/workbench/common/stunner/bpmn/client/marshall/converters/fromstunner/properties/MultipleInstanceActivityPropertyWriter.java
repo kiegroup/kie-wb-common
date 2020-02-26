@@ -58,8 +58,6 @@ public class MultipleInstanceActivityPropertyWriter extends ActivityPropertyWrit
             return;
         }
 
-
-
         setUpLoopCharacteristics();
         String suffix = "IN_COLLECTION";
         String id = Ids.dataInput(activity.getId(), suffix);

@@ -17,60 +17,61 @@
 package org.kie.workbench.common.stunner.bpmn.definition;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
-import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class DataObjectTest {
+public class TextAnnotationTest {
 
-    private DataObject dataObject = new DataObject();
+    private TextAnnotation tested = new TextAnnotation();
 
     @Test
     public void getLabels() {
-        assertEquals(1, dataObject.getLabels().size());
-        assertEquals("all", dataObject.getLabels().iterator().next());
+        assertEquals(3, tested.getLabels().size());
+        assertTrue(tested.getLabels().contains("all"));
+        assertTrue(tested.getLabels().contains("lane_child"));
+        assertTrue(tested.getLabels().contains("text_annotation"));
     }
 
     @Test
     public void getGeneral() {
-        assertNotNull(dataObject.getGeneral());
+        assertNotNull(tested.getGeneral());
     }
 
     @Test
     public void setGeneral() {
         BPMNGeneralSet general = new BPMNGeneralSet();
-        dataObject.setGeneral(general);
-        assertEquals(general, dataObject.getGeneral());
+        tested.setGeneral(general);
+        assertEquals(general, tested.getGeneral());
     }
 
     @Test
     public void setName() {
         Name name = new Name(this.getClass().getSimpleName());
-        dataObject.setName(name);
-        assertEquals(name, dataObject.getName());
+        tested.getGeneral().setName(name);
+        assertEquals(name, tested.getGeneral().getName());
     }
 
     @Test
-    public void setType() {
-        DataObjectType type = new DataObjectType(new DataObjectTypeValue(this.getClass().getSimpleName()));
-        dataObject.setType(type);
-        assertEquals(type, dataObject.getType());
+    public void setDocumentation() {
+        Documentation documentation = new Documentation(this.getClass().getSimpleName());
+        tested.getGeneral().setDocumentation(documentation);
+        assertEquals(documentation, tested.getGeneral().getDocumentation());
     }
 
     @Test
     public void testHashCode() {
-        assertEquals(new DataObject().hashCode(), dataObject.hashCode());
-
+        assertEquals(new TextAnnotation().hashCode(), tested.hashCode());
     }
 
     @Test
     public void testEquals() {
-        assertEquals(new DataObject(), dataObject);
-        assertNotEquals(new DataObject(), new Object());
+        assertEquals(new TextAnnotation(), tested);
+        assertNotEquals(new TextAnnotation(), new Object());
     }
 }

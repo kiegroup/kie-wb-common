@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.FormalExpressionBodyHandler;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,6 +45,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class MultipleInstanceActivityPropertyWriterTest {
@@ -105,6 +108,13 @@ public class MultipleInstanceActivityPropertyWriterTest {
         assertHasDataInput(activity.getIoSpecification(), inputId, ITEM_ID, IN_COLLECTION);
         assertHasDataInputAssociation(activity, PROPERTY_ID, inputId);
         assertEquals(inputId, ((MultiInstanceLoopCharacteristics) activity.getLoopCharacteristics()).getLoopDataInputRef().getId());
+    }
+
+    @Test
+    public void testSetCollectionInputEmpty() {
+        writer = spy(writer);
+        writer.setCollectionInput(null);
+        verify(writer, Mockito.times(0)).setUpLoopCharacteristics();
     }
 
     @Test

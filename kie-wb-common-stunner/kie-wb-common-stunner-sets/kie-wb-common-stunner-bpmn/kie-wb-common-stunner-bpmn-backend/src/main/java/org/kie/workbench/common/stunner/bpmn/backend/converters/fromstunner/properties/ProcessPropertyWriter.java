@@ -72,7 +72,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
     private final Set<DataObject> dataObjects;
 
-
     public ProcessPropertyWriter(Process process, VariableScope variableScope, Set<DataObject> dataObjects) {
         super(process, variableScope);
         this.process = process;
@@ -96,32 +95,31 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         return process;
     }
 
+    public void addChildShape(BPMNShape shape) {
+        if (shape == null) {
+            return;
+        }
+        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
+        if (planeElement.contains(shape)) {
+            throw new IllegalArgumentException("Cannot add the same shape twice: " + shape.getId());
+        }
+        planeElement.add(shape);
+    }
+
+    public void addChildEdge(BPMNEdge edge) {
+        if (edge == null) {
+            return;
+        }
+        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
+        if (planeElement.contains(edge)) {
+            throw new IllegalArgumentException("Cannot add the same edge twice: " + edge.getId());
+        }
+        planeElement.add(edge);
+    }
+
     public BPMNDiagram getBpmnDiagram() {
         bpmnDiagram.getPlane().setBpmnElement(process);
         return bpmnDiagram;
-    }
-
-    // recursively add all child shapes and edges (`di:` namespace)
-    // because these DO NOT nest (as opposed to `bpmn2:` namespace where subProcesses nest)
-    private void addSubProcess(SubProcessPropertyWriter p) {
-        Collection<BasePropertyWriter> childElements =
-                p.getChildElements();
-
-        childElements.forEach(el -> {
-            if (el instanceof DataObjectPropertyWriter) {
-                maybeAddDataObjects(process, dataObjects);
-            }
-            addChildShape(el.getShape());
-            addChildEdge(el.getEdge());
-            if (el instanceof SubProcessPropertyWriter) {
-                addSubProcess((SubProcessPropertyWriter) el);
-            }
-        });
-    }
-
-    public BasePropertyWriter getChildElement(String id) {
-        BasePropertyWriter propertyWriter = this.childElements.get(id);
-        return propertyWriter;
     }
 
     public void addChildElement(BasePropertyWriter p) {
@@ -145,45 +143,32 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         maybeAddDataObjectToItemDefinitions(itemDefinitions, dataObjects);
     }
 
+    // recursively add all child shapes and edges (`di:` namespace)
+    // because these DO NOT nest (as opposed to `bpmn2:` namespace where subProcesses nest)
+    private void addSubProcess(SubProcessPropertyWriter p) {
+        Collection<BasePropertyWriter> childElements =
+                p.getChildElements();
+
+        childElements.forEach(el -> {
+            if (el instanceof DataObjectPropertyWriter) {
+                maybeAddDataObjects(process, dataObjects);
+            }
+            addChildShape(el.getShape());
+            addChildEdge(el.getEdge());
+            if (el instanceof SubProcessPropertyWriter) {
+                addSubProcess((SubProcessPropertyWriter) el);
+            }
+        });
+    }
+
     @Override
     public Collection<BasePropertyWriter> getChildElements() {
         return this.childElements.values();
     }
 
-    public void addChildEdge(BPMNEdge edge) {
-        if (edge == null) {
-            return;
-        }
-        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
-        if (planeElement.contains(edge)) {
-            throw new IllegalArgumentException("Cannot add the same edge twice: " + edge.getId());
-        }
-        planeElement.add(edge);
-    }
-
-    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
-        if (lanes.isEmpty()) {
-            return;
-        }
-        LaneSet laneSet = bpmn2.createLaneSet();
-        List<org.eclipse.bpmn2.Lane> laneList = laneSet.getLanes();
-        lanes.forEach(l -> laneList.add(l.getElement()));
-        process.getLaneSets().add(laneSet);
-        lanes.forEach(l -> {
-            this.childElements.put(l.getElement().getId(), l);
-            addChildShape(l.getShape());
-        });
-    }
-
-    public void addChildShape(BPMNShape shape) {
-        if (shape == null) {
-            return;
-        }
-        List<DiagramElement> planeElement = bpmnPlane.getPlaneElement();
-        if (planeElement.contains(shape)) {
-            throw new IllegalArgumentException("Cannot add the same shape twice: " + shape.getId());
-        }
-        planeElement.add(shape);
+    public BasePropertyWriter getChildElement(String id) {
+        BasePropertyWriter propertyWriter = this.childElements.get(id);
+        return propertyWriter;
     }
 
     public void setName(String value) {
@@ -262,6 +247,20 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
 
     public void setSlaDueDate(SLADueDate slaDueDate) {
         CustomElement.slaDueDate.of(process).set(slaDueDate.getValue());
+    }
+
+    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
+        if (lanes.isEmpty()) {
+            return;
+        }
+        LaneSet laneSet = bpmn2.createLaneSet();
+        List<org.eclipse.bpmn2.Lane> laneList = laneSet.getLanes();
+        lanes.forEach(l -> laneList.add(l.getElement()));
+        process.getLaneSets().add(laneSet);
+        lanes.forEach(l -> {
+            this.childElements.put(l.getElement().getId(), l);
+            addChildShape(l.getShape());
+        });
     }
 
     public Collection<ElementParameters> getSimulationParameters() {

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.artifacts;
 
 import org.eclipse.bpmn2.Bpmn2Factory;
+import org.eclipse.bpmn2.DataObjectReference;
 import org.eclipse.bpmn2.TextAnnotation;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.DataObjectPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TextAnnotationPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -49,37 +51,64 @@ public class ArtifactsConverterTest {
     @Mock
     private PropertyReaderFactory propertyReaderFactory;
 
-    private TextAnnotation element;
+    @Mock
+    private Node<View<org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation>, Edge> nodeTextAnnotation;
 
     @Mock
-    private Node<View<org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation>, Edge> node;
+    private Node<View<org.kie.workbench.common.stunner.bpmn.definition.DataObject>, Edge> nodeDataObject;
 
     @Mock
-    private View<org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation> content;
+    private View<org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation> contentTextAnnotation;
 
     @Mock
-    private org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation def;
+    private View<org.kie.workbench.common.stunner.bpmn.definition.DataObject> contentDataObject;
 
     @Mock
-    private TextAnnotationPropertyReader reader;
+    private org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation defTextAnnotation;
+
+    @Mock
+    private org.kie.workbench.common.stunner.bpmn.definition.DataObject defDataObject;
+
+    @Mock
+    private TextAnnotationPropertyReader readerTextAnnotation;
+
+    @Mock
+    private DataObjectPropertyReader readerDataObject;
 
     @Before
     public void setUp() {
-        element = Bpmn2Factory.eINSTANCE.createTextAnnotation();
         tested = new ArtifactsConverter(typedFactoryManager, propertyReaderFactory);
-
-        when(typedFactoryManager.newNode(anyString(),
-                                         eq(org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation.class))).thenReturn(node);
-        when(node.getContent()).thenReturn(content);
-        when(content.getDefinition()).thenReturn(def);
-        when(propertyReaderFactory.of(element)).thenReturn(reader);
     }
 
     @Test
-    public void convert() {
+    public void convertTextAnnotation() {
+        TextAnnotation element = Bpmn2Factory.eINSTANCE.createTextAnnotation();
+
+
+        when(typedFactoryManager.newNode(anyString(),
+                                         eq(org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation.class))).thenReturn(nodeTextAnnotation);
+        when(nodeTextAnnotation.getContent()).thenReturn(contentTextAnnotation);
+        when(contentTextAnnotation.getDefinition()).thenReturn(defTextAnnotation);
+        when(propertyReaderFactory.of(element)).thenReturn(readerTextAnnotation);
+
         final Result<BpmnNode> node = tested.convert(element);
         final Node<? extends View<? extends BPMNViewDefinition>, ?> value = node.value().value();
-        assertEquals(content, value.getContent());
-        assertEquals(def, value.getContent().getDefinition());
+        assertEquals(contentTextAnnotation, value.getContent());
+        assertEquals(defTextAnnotation, value.getContent().getDefinition());
+    }
+
+    @Test
+    public void convertDataObject() {
+        DataObjectReference element = Bpmn2Factory.eINSTANCE.createDataObjectReference();
+        when(typedFactoryManager.newNode(anyString(),
+                                         eq(org.kie.workbench.common.stunner.bpmn.definition.DataObject.class))).thenReturn(nodeDataObject);
+        when(nodeDataObject.getContent()).thenReturn(contentDataObject);
+        when(contentDataObject.getDefinition()).thenReturn(defDataObject);
+        when(propertyReaderFactory.of(element)).thenReturn(readerDataObject);
+
+        final Result<BpmnNode> node = tested.convert(element);
+        final Node<? extends View<? extends BPMNViewDefinition>, ?> value = node.value().value();
+        assertEquals(contentDataObject, value.getContent());
+        assertEquals(defDataObject, value.getContent().getDefinition());
     }
 }

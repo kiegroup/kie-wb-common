@@ -152,12 +152,15 @@ public class FlowElementConverterTest {
         TextAnnotation textAnnotation = mock(TextAnnotation.class);
         tested.convertNode(textAnnotation);
         verify(textAnnotationConverter).convert(textAnnotation);
+
+        DataObjectReference dataObjectReference = mock(DataObjectReference.class);
+        tested.convertNode(dataObjectReference);
+        verify(dataObjectConverter).convert(dataObjectReference);
     }
 
     // TODO: Kogito - @Test
     public void convertUnsupported() {
         assertUnsupported(DataStoreReference.class);
-        assertUnsupported(DataObjectReference.class);
         assertUnsupported(DataObject.class);
     }
 
