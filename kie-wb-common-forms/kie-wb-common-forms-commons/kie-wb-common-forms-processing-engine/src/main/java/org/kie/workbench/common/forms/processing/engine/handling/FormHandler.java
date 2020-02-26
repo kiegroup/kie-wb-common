@@ -138,4 +138,7 @@ public interface FormHandler<T> {
     void setReadOnly(boolean readOnly);
 
     Form getForm();
+
+    void maybeFlush();
+
 }

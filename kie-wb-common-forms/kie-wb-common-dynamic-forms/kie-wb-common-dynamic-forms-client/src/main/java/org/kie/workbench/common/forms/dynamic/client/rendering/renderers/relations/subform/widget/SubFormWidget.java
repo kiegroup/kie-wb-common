@@ -29,10 +29,12 @@ import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContex
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.IsNestedModel;
+import org.kie.workbench.common.forms.processing.engine.handling.NeedsFlush;
 
 @Templated
 public class SubFormWidget extends Composite implements TakesValue<Object>,
-                                                        IsNestedModel {
+                                                        IsNestedModel,
+                                                        NeedsFlush {
 
     @Inject
     private DynamicFormRenderer formRenderer;
@@ -53,13 +55,9 @@ public class SubFormWidget extends Composite implements TakesValue<Object>,
         formRenderer.render(renderingContext);
     }
 
-    protected void render() {
-        formRenderer.render(renderingContext);
-    }
-
     @Override
     public Object getValue() {
-        return renderingContext != null ? renderingContext.getModel() : null;
+        return formRenderer.getModel();
     }
 
     @Override
@@ -70,6 +68,11 @@ public class SubFormWidget extends Composite implements TakesValue<Object>,
     @Override
     public void clear() {
         formRenderer.unBind();
+    }
+
+    @Override
+    public void flush() {
+        formRenderer.flush();
     }
 
     @Override

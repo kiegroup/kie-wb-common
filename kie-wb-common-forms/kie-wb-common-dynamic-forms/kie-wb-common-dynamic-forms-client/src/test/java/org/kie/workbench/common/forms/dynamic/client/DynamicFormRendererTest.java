@@ -41,6 +41,7 @@ import org.uberfire.mvp.Command;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -140,6 +141,23 @@ public class DynamicFormRendererTest extends TestCase {
         verify(formHandler).clear();
         verify(view).clear();
     }
+
+    @Test
+    public void testFlush() {
+        doBind(1);
+
+        renderer.flush();
+
+        verify(formHandler).maybeFlush();
+    }
+
+    @Test
+    public void testFlushWithoutInitializing() {
+        renderer.flush();
+
+        verify(formHandler, never()).maybeFlush();
+    }
+
 
     protected void doBind(int times) {
         Command callback = mock(Command.class);
