@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.dmn.api.property.dmn;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.DMNProperty;
@@ -70,7 +72,7 @@ public class NameHolder implements DMNProperty {
 
         final NameHolder name = (NameHolder) o;
 
-        return value != null ? value.equals(name.value) : name.value == null;
+        return Objects.equals(value, name.value);
     }
 
     @Override

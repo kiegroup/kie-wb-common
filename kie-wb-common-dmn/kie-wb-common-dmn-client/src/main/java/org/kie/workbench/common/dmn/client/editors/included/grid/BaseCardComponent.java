@@ -94,7 +94,7 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
 
             getIncludedModel().setName(NameUtils.normaliseName(newName));
 
-            if (getIncludedModel().isValid()) {/**/
+            if (getIncludedModel().isValid()) {
                 getIncludedModel().update();
                 getGrid().refresh();
                 refreshDecisionComponents();

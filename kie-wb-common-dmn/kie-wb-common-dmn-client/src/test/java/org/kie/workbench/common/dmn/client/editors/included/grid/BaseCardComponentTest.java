@@ -158,7 +158,7 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
         final DMNIncludedModelActiveRecord includedModel = spy(new DMNIncludedModelActiveRecord(null));
 
         doReturn(true).when(includedModel).isValid();
-        doReturn(emptyList()).when(includedModel).update();/**/
+        doReturn(emptyList()).when(includedModel).update();
         doReturn(includedModel).when(card).getIncludedModel();
         doReturn(grid).when(card).getGrid();
 

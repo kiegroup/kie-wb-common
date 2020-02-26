@@ -26,8 +26,7 @@ import org.kie.workbench.common.forms.model.TypeInfo;
 @Dependent
 public class NameFieldProvider extends BasicTypeFieldProvider<NameFieldDefinition> {
 
-    //Arbitrary 'magic' number
-    static final int PRIORITY = 975;
+    static final int PRIORITY = 0;
 
     @Override
     public int getPriority() {
