@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.dmn.client.editors.documentation;
 
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class DMNDocumentationViewButtonsVisibilitySupplier {
 
     public boolean isButtonsVisible() {

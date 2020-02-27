@@ -18,8 +18,10 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
 import java.util.Objects;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
+import javax.inject.Inject;
 
 import org.appformer.kogito.bridge.client.context.EditorContextProvider;
 
@@ -27,10 +29,12 @@ import static org.appformer.kogito.bridge.client.context.KogitoChannel.VSCODE;
 
 @Dependent
 @Alternative
+@ApplicationScoped
 public class DMNDocumentationViewButtonsVisibilitySupplier extends org.kie.workbench.common.dmn.client.editors.documentation.DMNDocumentationViewButtonsVisibilitySupplier {
 
     private final EditorContextProvider contextProvider;
 
+    @Inject
     public DMNDocumentationViewButtonsVisibilitySupplier(final EditorContextProvider contextProvider) {
         this.contextProvider = contextProvider;
     }
