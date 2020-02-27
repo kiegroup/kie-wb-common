@@ -48,21 +48,6 @@ import static org.kie.workbench.common.stunner.core.util.StringUtils.nonEmpty;
 @ApplicationScoped
 public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService {
 
-    private static final String DEFAULT_ICON_DATA = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAADVklEQVQ4EYVUbWhTVxg+UAR/" +
-                                                    "DP8oBX+4bsiYWpfOqggbosQfU1c3k9E6sTqVaFtxoKi0kwk1Rrkmy2rpjDVt0y/aZtckDTakTWckSW9tb9fsXvNxiSzWln" +
-                                                    "vBdgkiVdrR2jzjBFrmJvrC4Xy8z/vwfh5C3iIs2Jz1WmPhWyBvVp35IrRaHJnIx8upgit6zrluv0m+XM0F52cVdZgb2172" +
-                                                    "vXfDmy0JIQBWOMZ5w8l6R+zDPYxAvtKLZOdPM0RdjTW7zAtbSgzS2hJj/PBp1yO2PWwEsOq/ZMs6mkeZJlaYPq53YmtJG5" +
-                                                    "rtaQw/VFBvk1EnyrjpTGFrcQtKj7tgY4WXrrFh42skFd2ezbrzruShYy6UVvgy7N0YnqUFCJE+dHV6wUV7MTUSwZ1gFEd/" +
-                                                    "7s2UXnLihMXxqKz4X6Hxswn1llKjtO3HFth7JEzGOUixPNhrV+CuZzd8de9h0puP59Mx2INPUKhpxqZ9xjjHj21f8mb++b" +
-                                                    "i68EuDdEtIIf1XBEn7Rtxp3wEINgAhxMM2+IY+wFPPWUzyU/jF+RSflRgkzCrqJRKa/fc15oUaqwx/ax8iHgLM38ZsaBCY" +
-                                                    "+w0YHEJ8qBK+WgIu1odaUcaOXeYFXzUXzJKotDWFy/ebZFoFmsQu1oseaxH+5ngMBIN4FQhkFzgebmtRVk9xFE/tVLSPWJ" +
-                                                    "bNuXY/4Pz0hGmmpl6Bv8OHqJUAI5WYC4zg1UAACPCI/16JexaCgY5+1DUqUOlMM9SOLWZzst7MQSkge/XisJjGs1QE/raP" +
-                                                    "wVtWIjFUhcyNUSQeVOGeZSWCiVz8oYhoaEhj4wG9CGq3KAjJqg1FjHj4h1b86paQlAYxkciF5SZBtPprWG4TPG5fhzFpEI" +
-                                                    "3uOD7/tg25GkYQ70/kL3IQ/zl/3qnybukbxoFD13szLncciiKC7exHyOlFV6cPSEXQ75Zw5Hpv5juzA0fKXLGLZ0Krl0jo" +
-                                                    "ob0pfLW7R5i+YHZg04FWWBrSuNWo4AbtWKuMASGFg1UtOMg4YOsRpllb2PAaAb3Q2fmzKXyVKe+WiJYRacyf6EzZ2SnQmB" +
-                                                    "dIkUH6SGOUdOWuZIdtlKH4/5EsPmjP+fOiIVlFk0azvzTFL8bVfDCp1lV4NhNCli3i37nT8hNtzTv/k38Ask842m9tZx8A" +
-                                                    "AAAASUVORK5CYII=";
-
     private static Logger LOGGER = Logger.getLogger(BaseCanvasHandler.class.getName());
     private static final String RESOURCE_ALL_WID_PATTERN = "**/*.wid";
 
@@ -180,15 +165,16 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
                                          .then(iconData -> {
                                              log("Content for icon = [" + iconData + "]");
                                              if (nonEmpty(iconData)) {
-                                                 wid.getIconDefinition().setIconData(iconDataUri(iconUri, iconData));
+                                                 String iconDataUri = iconDataUri(iconUri, iconData);
+                                                wid.getIconDefinition().setIconData(iconDataUri);
                                              }
-                                             return promises.resolve(DEFAULT_ICON_DATA);
+                                             return promises.resolve();
                                          }).catch_(error -> {
                                              log("Not able to load icon for URI " + iconUri);
-                                             return Promise.resolve(DEFAULT_ICON_DATA);
+                                             return Promise.resolve("");
                                          });
         }
-        return promises.resolve(DEFAULT_ICON_DATA);
+        return promises.resolve();
     }
 
     private String iconDataUri(String iconUri, String iconData) {
@@ -198,7 +184,7 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
             String fileType = iconUriParts[fileTypeIndex];
             return "data:image/" + fileType + ";base64, " + iconData;
         }
-        return DEFAULT_ICON_DATA;
+        return "";
     }
 
     private static void log(String s) {
