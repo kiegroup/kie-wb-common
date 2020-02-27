@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
 import java.lang.annotation.Annotation;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +74,7 @@ public class ClearSessionCommandTest {
     private ClearSessionCommand command;
 
     @Mock
-    private CommandRegistry commandRegistry;
+    private Registry commandRegistry;
 
     @Mock
     private CanvasCommand clearCanvasCommand;

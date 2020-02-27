@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +104,7 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    private CommandRegistry commandRegistry;
+    private Registry commandRegistry;
 
     @Mock
     private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;

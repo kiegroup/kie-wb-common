@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
@@ -59,7 +59,7 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    private CommandRegistry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
+    private Registry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
 
     private EventSourceMock<RegisterChangedEvent> registerChangedEvent = new EventSourceMock<>();
 

@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class CutSelectionSessionCommandTest extends BaseSessionCommandKeyboardSe
     private ClientSessionCommand.Callback mainCallback;
 
     @Mock
-    private CommandRegistry commandRegistry;
+    private Registry commandRegistry;
 
     @Mock
     private DeleteNodeCommand deleteNodeCommand;

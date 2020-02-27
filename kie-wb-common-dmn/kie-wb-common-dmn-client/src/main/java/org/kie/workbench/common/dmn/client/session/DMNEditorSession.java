@@ -20,7 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.canvas.controls.resize.DecisionServiceMoveDividerControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorControl;
@@ -70,7 +70,7 @@ public class DMNEditorSession extends DefaultEditorSession implements DMNSession
     public DMNEditorSession(final ManagedSession session,
                             final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager,
                             final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                            final CommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
+                            final Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
                             final Event<RegisterChangedEvent> registerChangedEvent) {
         super(session,
               canvasCommandManager,

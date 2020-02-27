@@ -21,7 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -85,7 +85,7 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
 
         checkNotNull("callback",
                      callback);
-        final CommandRegistry<Command<AbstractCanvasHandler, CanvasViolation>> registry = getSession().getCommandRegistry();
+        final Registry<Command<AbstractCanvasHandler, CanvasViolation>> registry = getSession().getCommandRegistry();
         if (!registry.isEmpty()) {
             final CommandResult<CanvasViolation> result = sessionCommandManager.undo(getSession().getCanvasHandler());
             checkState();
@@ -110,7 +110,7 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
 
     private void checkState() {
         if (getSession() != null) {
-            setEnabled(!getSession().getCommandRegistry().getCommandHistory().isEmpty());
+            setEnabled(!getSession().getCommandRegistry().getHistory().isEmpty());
             fire();
         }
     }

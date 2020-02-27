@@ -23,7 +23,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
@@ -63,14 +63,14 @@ public class DefaultEditorSession
     private final ManagedSession session;
     private final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final CommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
+    private final Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
     private final Event<RegisterChangedEvent> registerChangedEvent;
 
     @Inject
     public DefaultEditorSession(final ManagedSession session,
                                 final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager,
                                 final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                final CommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
+                                final Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
                                 final Event<RegisterChangedEvent> registerChangedEvent) {
         this.session = session;
         this.commandRegistry = commandRegistry;
@@ -85,7 +85,7 @@ public class DefaultEditorSession
                 .onCanvasHandlerControlRegistered(this::onCanvasHandlerControlRegistered)
                 .onCanvasControlDestroyed(AbstractSession::onControlDestroyed)
                 .onCanvasHandlerControlDestroyed(AbstractSession::onControlDestroyed);
-        commandRegistry.setCommandRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler())));
+        commandRegistry.setRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(session.getCanvasHandler())));
     }
 
     @Override
@@ -159,7 +159,7 @@ public class DefaultEditorSession
     }
 
     @Override
-    public CommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> getCommandRegistry() {
+    public Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> getCommandRegistry() {
         return commandRegistry;
     }
 

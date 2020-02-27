@@ -17,8 +17,8 @@ package org.kie.workbench.common.stunner.core.client.command;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.client.stateControl.registry.DefaultCommandRegistry;
-import org.appformer.client.stateControl.registry.impl.DefaultCommandRegistryImpl;
+import org.appformer.client.stateControl.registry.DefaultRegistry;
+import org.appformer.client.stateControl.registry.impl.DefaultRegistryImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,14 +56,14 @@ public class RedoCommandHandlerTest {
     @Mock
     private Event<RegisterChangedEvent> registerChangedEvent;
 
-    private DefaultCommandRegistry commandRegistry;
+    private DefaultRegistry commandRegistry;
 
     private RedoCommandHandler tested;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
-        commandRegistry = spy(new DefaultCommandRegistryImpl<>());
+        commandRegistry = spy(new DefaultRegistryImpl<>());
         this.tested = new RedoCommandHandler(commandRegistry, registerChangedEvent);
     }
 
@@ -130,6 +130,6 @@ public class RedoCommandHandlerTest {
     public void testSetSession() {
         ClientSession session = mock(ClientSession.class);
         tested.setSession(session);
-        verify(commandRegistry, times(1)).setCommandRegistryChangeListener(any());
+        verify(commandRegistry, times(1)).setRegistryChangeListener(any());
     }
 }

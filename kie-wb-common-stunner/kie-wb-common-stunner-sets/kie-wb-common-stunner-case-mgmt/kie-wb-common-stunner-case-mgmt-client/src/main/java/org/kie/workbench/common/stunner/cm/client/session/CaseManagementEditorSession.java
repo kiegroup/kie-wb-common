@@ -20,7 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
@@ -58,7 +58,7 @@ public class CaseManagementEditorSession
     public CaseManagementEditorSession(final ManagedSession session,
                                        final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager,
                                        final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                       final CommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
+                                       final Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
                                        final Event<RegisterChangedEvent> registerChangedEvent) {
         super(session,
               canvasCommandManager,

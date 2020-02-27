@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 import javax.enterprise.event.Event;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,7 +72,7 @@ public class DefaultEditorSessionTest {
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    private CommandRegistry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
+    private Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
 
     @Mock
     private Event<RegisterChangedEvent> registerChangedEvent;
@@ -107,7 +107,7 @@ public class DefaultEditorSessionTest {
         verify(managedSession, times(1)).onCanvasControlDestroyed(any(Consumer.class));
         verify(managedSession, times(1)).onCanvasHandlerControlRegistered(any(Consumer.class));
         verify(managedSession, times(1)).onCanvasHandlerControlDestroyed(any(Consumer.class));
-        verify(commandRegistry).setCommandRegistryChangeListener(any());
+        verify(commandRegistry).setRegistryChangeListener(any());
     }
 
     @Test

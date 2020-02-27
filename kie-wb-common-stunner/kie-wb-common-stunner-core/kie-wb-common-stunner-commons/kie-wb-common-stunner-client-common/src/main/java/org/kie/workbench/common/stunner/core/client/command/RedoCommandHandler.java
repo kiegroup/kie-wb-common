@@ -19,8 +19,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
-import org.appformer.client.stateControl.registry.DefaultCommandRegistry;
+import org.appformer.client.stateControl.registry.DefaultRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
@@ -47,7 +47,7 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBui
 @Dependent
 public class RedoCommandHandler<C extends Command> {
 
-    private final DefaultCommandRegistry<C> registry;
+    private final DefaultRegistry<C> registry;
     private final Event<RegisterChangedEvent> registerChangedEvent;
 
     protected RedoCommandHandler() {
@@ -55,7 +55,7 @@ public class RedoCommandHandler<C extends Command> {
     }
 
     @Inject
-    public RedoCommandHandler(final DefaultCommandRegistry<C> registry, final Event<RegisterChangedEvent> registerChangedEvent) {
+    public RedoCommandHandler(final DefaultRegistry<C> registry, final Event<RegisterChangedEvent> registerChangedEvent) {
         this.registry = registry;
         this.registerChangedEvent = registerChangedEvent;
     }
@@ -94,7 +94,7 @@ public class RedoCommandHandler<C extends Command> {
     }
 
     public void setSession(final ClientSession clientSession) {
-        this.registry.setCommandRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(clientSession.getCanvasHandler())));
+        this.registry.setRegistryChangeListener(() -> registerChangedEvent.fire(new RegisterChangedEvent(clientSession.getCanvasHandler())));
     }
 
     public boolean isEnabled() {
@@ -105,7 +105,7 @@ public class RedoCommandHandler<C extends Command> {
         registry.clear();
     }
 
-    protected CommandRegistry<C> getRegistry() {
+    protected Registry<C> getRegistry() {
         return registry;
     }
 }

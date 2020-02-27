@@ -36,7 +36,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.appformer.client.stateControl.registry.CommandRegistry;
+import org.appformer.client.stateControl.registry.Registry;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
@@ -226,7 +226,7 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     }
 
     private void updateCommandsRegistry() {
-        final CommandRegistry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry = getSession().getCommandRegistry();
+        final Registry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry = getSession().getCommandRegistry();
         Command<AbstractCanvasHandler, CanvasViolation> connectorsExecutedCommand = commandRegistry.pop();
         Command<AbstractCanvasHandler, CanvasViolation> nodesExecutedCommand = commandRegistry.pop();
         commandRegistry.register(new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
