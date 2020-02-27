@@ -43,15 +43,12 @@ public class SubFormWidget extends Composite implements TakesValue<Object>,
     @DataField
     private FlowPanel formContent;
 
-    private FormRenderingContext renderingContext;
-
     @PostConstruct
     protected void init() {
         formContent.add(formRenderer);
     }
 
     public void render(FormRenderingContext renderingContext) {
-        this.renderingContext = renderingContext;
         formRenderer.render(renderingContext);
     }
 

@@ -98,7 +98,7 @@ public class SubFormWidgetTest {
         FieldChangeHandler handler = mock(FieldChangeHandler.class);
 
         subFormWidget.addFieldChangeHandler(handler);
-        formRenderer.addFieldChangeHandler(same(handler));
+        verify(formRenderer).addFieldChangeHandler(same(handler));
     }
 
     @Test

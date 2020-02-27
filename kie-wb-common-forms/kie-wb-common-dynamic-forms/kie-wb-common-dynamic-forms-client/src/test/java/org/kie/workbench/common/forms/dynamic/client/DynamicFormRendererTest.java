@@ -158,6 +158,21 @@ public class DynamicFormRendererTest extends TestCase {
         verify(formHandler, never()).maybeFlush();
     }
 
+    @Test
+    public void testGetModel() {
+        doBind(1);
+
+        renderer.getModel();
+
+        verify(formHandler).getModel();
+    }
+
+    @Test
+    public void testGetModelWithoutInitializing() {
+        renderer.getModel();
+
+        verify(formHandler, never()).getModel();
+    }
 
     protected void doBind(int times) {
         Command callback = mock(Command.class);
