@@ -248,7 +248,7 @@ public class DynamicFormRenderer implements IsWidget,
     }
 
     public void flush() {
-        if(isInitialized()) {
+        if (isInitialized()) {
             formHandler.maybeFlush();
         }
     }

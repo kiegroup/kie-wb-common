@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.forms.processing.engine.handling;
 
+/**
+ * Represents a form control that is bound to a nested model
+ */
 public interface IsNestedModel {
 
     /**

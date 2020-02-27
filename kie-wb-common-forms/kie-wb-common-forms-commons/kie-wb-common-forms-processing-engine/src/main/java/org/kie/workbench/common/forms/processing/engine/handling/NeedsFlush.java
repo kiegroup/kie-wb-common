@@ -16,7 +16,13 @@
 
 package org.kie.workbench.common.forms.processing.engine.handling;
 
+/**
+ * Represent a form control that requires flushing the changes on UI.
+ */
 public interface NeedsFlush {
 
+    /**
+     * Flushes the changes on the UI into the bound model.
+     */
     void flush();
 }

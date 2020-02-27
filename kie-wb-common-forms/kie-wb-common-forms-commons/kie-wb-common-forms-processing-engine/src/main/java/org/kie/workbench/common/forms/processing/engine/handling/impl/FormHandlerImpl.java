@@ -65,25 +65,6 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
     }
 
     @Override
-    public void setUp(DataBinder<T> binder) {
-        setUp(binder,
-              false);
-    }
-
-    @Override
-    public void setUp(DataBinder<T> binder,
-                      boolean bindInputs) {
-        Assert.notNull("DataBinder cannot be null",
-                       binder);
-
-        clear();
-
-        this.form = new Form();
-
-        this.binder = binder;
-    }
-
-    @Override
     public void setUp(T model) {
         Assert.notNull("Model cannot be null",
                        model);
@@ -157,7 +138,7 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
     }
 
     protected void processFieldChange(FormField formField, Object newValue) {
-        if(enabledOnChangeValidations) {
+        if (enabledOnChangeValidations) {
             fieldChangeManager.processFieldChange(formField.getFieldName(), newValue, getModel());
         } else {
             notifyFieldChange(formField.getFieldName(), newValue);
@@ -262,30 +243,28 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
     @Override
     public void maybeFlush() {
 
-        if(binder == null) {
+        if (binder == null) {
             return;
         }
 
         setEnabledOnChangeValidations(false);
 
-        try {
-            flushNestedForms();
+        flushNestedForms();
 
-            BindableProxy<T> proxy = (BindableProxy<T>) getModel();
+        BindableProxy<T> proxy = (BindableProxy<T>) getModel();
 
-            T model = proxy.deepUnwrap();
+        T model = proxy.deepUnwrap();
 
-            T backupModel = proxy.deepUnwrap();
+        T backupModel = proxy.deepUnwrap();
 
-            binder.setModel(model, StateSync.FROM_UI, true);
+        binder.setModel(model, StateSync.FROM_UI, true);
 
-            if (!validate()) {
-                binder.setModel(backupModel, StateSync.FROM_MODEL, true);
-                validate();
-            }
-        } finally {
-            setEnabledOnChangeValidations(true);
+        if (!validate()) {
+            binder.setModel(backupModel, StateSync.FROM_MODEL, true);
+            validate();
         }
+
+        setEnabledOnChangeValidations(true);
     }
 
     protected void setEnabledOnChangeValidations(boolean enabledOnChangeValidations) {
@@ -293,7 +272,7 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
     }
 
     public T getModel() {
-        if(binder != null) {
+        if (binder != null) {
             return binder.getModel();
         }
 

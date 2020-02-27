@@ -95,23 +95,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
     }
 
     @Test
-    public void testHandlerDataBinderSetupWithBindings() {
-        formHandler.setUp(binder,
-                          true);
-
-        checkBindings = true;
-        runSetupTest();
-    }
-
-    @Test
-    public void testHandlerDataBinderSetupWithoutBindings() {
-        formHandler.setUp(binder);
-
-        checkBindings = false;
-        runSetupTest();
-    }
-
-    @Test
     public void testHandlerModelSetup() {
         formHandler.setUp(model);
 
@@ -155,18 +138,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
     }
 
     @Test
-    public void testHandlerDataBinderCorrectValidationBindings() {
-        testHandlerDataBinderSetupWithBindings();
-        runCorrectValidationTest(false);
-    }
-
-    @Test
-    public void testHandlerDataBinderCorrectValidationWithoutBindings() {
-        testHandlerDataBinderSetupWithoutBindings();
-        runCorrectValidationTest(false);
-    }
-
-    @Test
     public void testHandlerModelCorrectValidation() {
         testHandlerModelSetup();
         runCorrectValidationTest(true);
@@ -196,18 +167,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
         verify(proxy,
                times(7)).deepUnwrap();
-    }
-
-    @Test
-    public void testHandlerDataBinderWrongValidationWithBindings() {
-        testHandlerDataBinderSetupWithBindings();
-        runWrongValidationTest(false);
-    }
-
-    @Test
-    public void testHandlerDataBinderWrongValidationWithoutBindings() {
-        testHandlerDataBinderSetupWithBindings();
-        runWrongValidationTest(false);
     }
 
     @Test
