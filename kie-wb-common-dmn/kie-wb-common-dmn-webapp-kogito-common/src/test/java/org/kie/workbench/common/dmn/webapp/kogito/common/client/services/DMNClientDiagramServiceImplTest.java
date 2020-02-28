@@ -46,9 +46,8 @@ public class DMNClientDiagramServiceImplTest {
         final String fileName = "file.dmn";
         final String xml = "";
         final ServiceCallback<Diagram> callback = mock(ServiceCallback.class);
-        final String title = "title";
+        final String title = "file";
 
-        doReturn(title).when(service).getDiagramTitle(fileName);
         doNothing().when(service).doNewDiagram(title, callback);
 
         service.transform(fileName, xml, callback);
@@ -63,7 +62,6 @@ public class DMNClientDiagramServiceImplTest {
         final ServiceCallback<Diagram> callback = mock(ServiceCallback.class);
         final String title = "title";
 
-        doReturn(title).when(service).getDiagramTitle(fileName);
         doNothing().when(service).doNewDiagram(title, callback);
 
         service.transform(fileName, xml, callback);

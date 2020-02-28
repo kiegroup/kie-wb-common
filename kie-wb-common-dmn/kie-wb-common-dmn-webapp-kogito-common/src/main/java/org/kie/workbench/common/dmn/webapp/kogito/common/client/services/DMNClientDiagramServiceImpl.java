@@ -95,7 +95,9 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
     //Kogito requirements
 
     @Override
-    public void transform(final String fileName, final String xml, final ServiceCallback<Diagram> callback) {
+    public void transform(final String fileName,
+                          final String xml,
+                          final ServiceCallback<Diagram> callback) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
             doNewDiagram(getDiagramTitle(fileName), callback);
         } else {
@@ -127,7 +129,8 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
         transform(UUID.uuid(), xml, callback);
     }
 
-    void doNewDiagram(final String title, final ServiceCallback<Diagram> callback) {
+    void doNewDiagram(final String title,
+                      final ServiceCallback<Diagram> callback) {
         final Metadata metadata = buildMetadataInstance();
 
         try {
