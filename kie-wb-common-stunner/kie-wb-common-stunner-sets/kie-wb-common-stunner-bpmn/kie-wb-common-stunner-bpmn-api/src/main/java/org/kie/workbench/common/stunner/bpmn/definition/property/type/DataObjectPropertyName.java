@@ -23,11 +23,11 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Portable
 public class DataObjectPropertyName implements PropertyType {
 
-    public static final String name = "stunner.bpmn.DataObjectPropertyName";
+    public static final String NAME = "stunner.bpmn.DataObjectPropertyName";
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DataObjectPropertyName implements PropertyType {
             return false;
         }
         DataObjectPropertyName that = (DataObjectPropertyName) o;
-        if (!name.equals(that.name)) {
+        if (!NAME.equals(that.NAME)) {
             return false;
         }
         return true;
@@ -47,13 +47,13 @@ public class DataObjectPropertyName implements PropertyType {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(name.hashCode());
+        return HashUtil.combineHashCodes(NAME.hashCode());
     }
 
     @Override
     public String toString() {
         return "DataObjectPropertyName{" +
-                "name='" + name + '\'' +
+                "name='" + NAME + '\'' +
                 '}';
     }
 }

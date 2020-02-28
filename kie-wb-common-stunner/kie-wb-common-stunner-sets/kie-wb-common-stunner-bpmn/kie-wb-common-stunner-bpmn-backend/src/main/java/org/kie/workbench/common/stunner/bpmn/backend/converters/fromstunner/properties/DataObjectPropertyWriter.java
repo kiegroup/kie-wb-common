@@ -48,8 +48,8 @@ public class DataObjectPropertyWriter extends PropertyWriter {
     }
 
     private void addDataObjectToProcess(DataObject dataObject) {
-        if (!dataObjects.stream()
-                .anyMatch(elm -> elm.getId()
+        if (dataObjects.stream()
+                .noneMatch(elm -> elm.getId()
                 .equals(dataObject.getId()))) {
             dataObjects.add(dataObject);
         }

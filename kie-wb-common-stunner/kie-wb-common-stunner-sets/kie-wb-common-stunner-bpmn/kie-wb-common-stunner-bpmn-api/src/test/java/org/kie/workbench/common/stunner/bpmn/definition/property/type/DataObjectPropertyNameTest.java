@@ -27,7 +27,7 @@ public class DataObjectPropertyNameTest {
 
     @Test
     public void getName() {
-        assertEquals(dataObjectPropertyName.getName(), DataObjectPropertyName.name);
+        assertEquals(dataObjectPropertyName.getName(), DataObjectPropertyName.NAME);
     }
 
     @Test

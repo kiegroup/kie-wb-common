@@ -73,7 +73,7 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
         addOrEdit.addEventListener("keyup", this::onKeyup);
     }
 
-    private void onKeyup(Event e) {
+    void onKeyup(Event e) {
         KeyboardEvent event = (KeyboardEvent) e;
         if (event.key.equals("Enter")) {
             event.preventDefault();
@@ -126,7 +126,7 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
                                                      NotificationType.ERROR));
     }
 
-    private void onChange(Event event) {
+    protected void onChange(Event event) {
         HTMLOptionElement selected = (HTMLOptionElement) select.options.item(select.selectedIndex);
         if (isAddCustom(selected)) {
             onAdd();
@@ -209,7 +209,7 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
         }
     }
 
-    private boolean checkIfNotExists(String name) {
+    protected boolean checkIfNotExists(String name) {
         for (int i = 0; (double) i < select.options.length; ++i) {
             if (((HTMLOptionElement) select.options.item(i)).text.equals(name)) {
                 return false;
@@ -218,16 +218,20 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
         return true;
     }
 
-    private void addDataTypeToSelect(String name, String value, DataObjectTypeSelect.Mode mode, boolean custom, boolean editable, boolean selected) {
+    protected void addDataTypeToSelect(String name, String value, DataObjectTypeSelect.Mode mode, boolean custom, boolean editable, boolean selected) {
         if (!checkForDuplicates(name)) {
-            select.add((new DataObjectType(name, value, mode.toString(), custom, editable, selected)).asElement());
             if (editable) {
-                select.add((new DataObjectType(createEditPrompt(name), value, Mode.EDIT.toString(), true, false, false)).asElement());
+                name = createEditPrompt(name);
+                mode = Mode.EDIT;
+                custom = true;
+                editable = false;
+                selected = false;
             }
+            select.add(createDataObjectType(name, value, mode, custom, editable, selected));
         }
     }
 
-    private HTMLOptionElement getOptionByText(String text) {
+    protected HTMLOptionElement getOptionByText(String text) {
         for (int i = 0; (double) i < select.options.length; ++i) {
             if (((HTMLOptionElement) select.options.item(i)).text.equals(text)) {
                 return (HTMLOptionElement) select.options.item(i);
@@ -249,6 +253,10 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
         return EDIT_PROMPT + name + " ...";
     }
 
+    protected HTMLOptionElement createDataObjectType(String name, String value, DataObjectTypeSelect.Mode mode, boolean custom, boolean editable, boolean selected) {
+        return new DataObjectType(name, value, mode.toString(), custom, editable, selected).asElement();
+    }
+
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }
@@ -257,7 +265,7 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
         select.disabled = readOnly;
     }
 
-    private enum Mode {
+    enum Mode {
         LABEL,
         EDIT,
         ADD,

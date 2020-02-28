@@ -21,7 +21,7 @@ import elemental2.dom.HTMLOptionElement;
 
 public class DataObjectType {
 
-    private HTMLOptionElement option;
+    HTMLOptionElement option;
 
     public DataObjectType(String name, String value, String role, boolean custom, boolean editable, boolean selected) {
         createOptionElement();
@@ -31,18 +31,19 @@ public class DataObjectType {
         setAttribute("role", role);
         setAttribute("custom", String.valueOf(custom));
         setAttribute("editable", String.valueOf(editable));
-        option.selected = selected ? option.selected = true : false;
+        option.selected = selected;
     }
 
-    private void createOptionElement() {
+    protected void createOptionElement() {
         option = (HTMLOptionElement) DomGlobal.document.createElement("option");
     }
 
-    private void setAttribute(String name, String value) {
+    protected void setAttribute(String name, String value) {
         option.setAttribute(name, value);
     }
 
     public HTMLOptionElement asElement() {
         return option;
     }
+
 }

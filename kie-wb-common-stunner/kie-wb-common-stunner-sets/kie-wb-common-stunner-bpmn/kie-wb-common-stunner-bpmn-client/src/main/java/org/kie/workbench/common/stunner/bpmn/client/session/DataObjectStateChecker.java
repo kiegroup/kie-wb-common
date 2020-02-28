@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.session;
 
-import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -47,36 +46,44 @@ public class DataObjectStateChecker {
         Command command = commandExecutedEvent.getCommand();
 
         if (command instanceof CompositeCommand) {
-            CompositeCommand cc = (CompositeCommand) command;
-            if (cc.size() == 2 && (cc.getCommands().get(0) instanceof AddChildNodeCommand)) {
-                AddChildNodeCommand addChildNodeCommand = (AddChildNodeCommand) cc.getCommands().get(0);
-                Element<View<?>> element = addChildNodeCommand.getCandidate();
-                if (null != element.asNode()) {
-                    Object bean = element.getContent().getDefinition();
-                    if ((bean instanceof DataObject)) {
-                        setTypeToNewNode(((DataObject) bean), commandExecutedEvent.getCanvasHandler());
-                    }
-                }
-            }
+            onCompositeCommand(commandExecutedEvent, (CompositeCommand) command);
         } else if (command instanceof UpdateElementPropertyCommand) {
-            UpdateElementPropertyCommand propertyCommand = (UpdateElementPropertyCommand) command;
-            Element<View<?>> element = propertyCommand.getElement();
+            onUpdateElementPropertyCommand(commandExecutedEvent, (UpdateElementPropertyCommand) command);
+        }
+    }
+
+    private void onUpdateElementPropertyCommand(CanvasCommandExecutedEvent commandExecutedEvent, UpdateElementPropertyCommand command) {
+        UpdateElementPropertyCommand propertyCommand = command;
+        Element<View<?>> element = propertyCommand.getElement();
+        if (null != element.asNode()) {
+            Object bean = element.getContent().getDefinition();
+            if (bean instanceof DataObject) {
+                maybeUpdateTypes((DataObject) bean, commandExecutedEvent.getCanvasHandler());
+            }
+        }
+    }
+
+    private void onCompositeCommand(CanvasCommandExecutedEvent commandExecutedEvent, CompositeCommand command) {
+        CompositeCommand cc = command;
+        if (cc.size() == 2 && (cc.getCommands().get(0) instanceof AddChildNodeCommand)) {
+            AddChildNodeCommand addChildNodeCommand = (AddChildNodeCommand) cc.getCommands().get(0);
+            Element<View<?>> element = addChildNodeCommand.getCandidate();
             if (null != element.asNode()) {
                 Object bean = element.getContent().getDefinition();
-                if (bean instanceof DataObject) {
-                    maybeUpdateTypes((DataObject) bean, commandExecutedEvent.getCanvasHandler());
+                if ((bean instanceof DataObject)) {
+                    setTypeToNewNode(((DataObject) bean), commandExecutedEvent.getCanvasHandler());
                 }
             }
         }
     }
 
     private void maybeUpdateTypes(DataObject dataObject, CanvasHandler canvasHandler) {
-        ((BiConsumer<Stream<DataObject>, DataObject>) (nodeStream, dataObject1)
-                -> nodeStream.forEach(candidate -> {
-            if (candidate.getName().getValue().equals(dataObject1.getName().getValue())) {
-                candidate.getType().getValue().setType(dataObject1.getType().getValue().getType());
+        Stream<DataObject> nodeStream = getDataObjectsAsStream(canvasHandler);
+        nodeStream.forEach(candidate -> {
+            if (candidate.getName().getValue().equals(dataObject.getName().getValue())) {
+                candidate.getType().getValue().setType(dataObject.getType().getValue().getType());
             }
-        })).accept(getDataObjectsAsStream(canvasHandler), dataObject);
+        });
     }
 
     private Stream<DataObject> getDataObjectsAsStream(CanvasHandler canvasHandler) {
