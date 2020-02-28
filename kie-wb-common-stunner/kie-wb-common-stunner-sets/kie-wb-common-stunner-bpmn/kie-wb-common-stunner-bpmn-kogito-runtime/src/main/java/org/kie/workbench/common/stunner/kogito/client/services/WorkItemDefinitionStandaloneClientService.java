@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceContentOptions;
-import org.jboss.errai.common.client.logging.util.Console;
 import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
@@ -156,7 +155,6 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     }
 
     private Promise workItemIconLoader(final WorkItemDefinition wid) {
-        Console.log("RUNING MY CODE MAN");
         final String iconUri = wid.getIconDefinition().getUri();
         log("Loading icon for URI [" + iconUri + "]");
         if (nonEmpty(iconUri)) {
@@ -165,8 +163,10 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
                                          .then(iconData -> {
                                              log("Content for icon = [" + iconData + "]");
                                              if (nonEmpty(iconData)) {
-                                                 String iconDataUri = iconDataUri(iconUri, iconData);
-                                                wid.getIconDefinition().setIconData(iconDataUri);
+                                                 if (!isIconDataUri(iconData)) {
+                                                     iconData = iconDataUri(iconUri, iconData);
+                                                 }
+                                                 wid.getIconDefinition().setIconData(iconData);
                                              }
                                              return promises.resolve();
                                          }).catch_(error -> {
@@ -177,14 +177,18 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         return promises.resolve();
     }
 
-    private String iconDataUri(String iconUri, String iconData) {
+    protected static boolean isIconDataUri(String iconData) {
+        return iconData.startsWith("data:");
+    }
+
+    protected static String iconDataUri(String iconUri, String iconData) {
         String[] iconUriParts = iconUri.split("\\.");
-        if (iconUriParts.length > 0) {
+        if (iconUriParts.length > 1) {
             int fileTypeIndex = iconUriParts.length - 1;
             String fileType = iconUriParts[fileTypeIndex];
             return "data:image/" + fileType + ";base64, " + iconData;
         }
-        return "";
+        return iconData;
     }
 
     private static void log(String s) {
