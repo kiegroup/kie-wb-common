@@ -226,7 +226,8 @@ public class Assignment {
                 constant = StringUtils.urlDecode(sAssignment.substring(i + ASSIGNMENT_OPERATOR_TOCONSTANT.length()));
             } else {
                 variableName = sAssignment.substring(i + ASSIGNMENT_OPERATOR_TOCONSTANT.length());
-                constant = StringUtils.urlDecode(sAssignment.substring(0, i));
+                String value = StringUtils.urlDecode(sAssignment.substring(0, i));
+                constant = value.equals("null") ? null : value;
             }
         }
         // Create the new assignment

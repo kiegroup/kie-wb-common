@@ -39,8 +39,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.createCustomInput;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class InitializedVariableTest {
 
@@ -72,9 +70,7 @@ public class InitializedVariableTest {
 
     @Test
     public void testInputCustomVariable() {
-        VariableDeclaration declaration = mock(VariableDeclaration.class);
-        org.eclipse.bpmn2.Property property = mock(org.eclipse.bpmn2.Property.class);
-        when(declaration.getTypedIdentifier()).thenReturn(property);
+        VariableDeclaration declaration = new VariableDeclaration("Identifier", "type");
 
         InitializedVariable.InitializedInputVariable input = createCustomInput("parent", declaration, "#{expression}");
         assertTrue(input instanceof InitializedVariable.InputExpression);
