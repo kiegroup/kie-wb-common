@@ -95,17 +95,39 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
     //Kogito requirements
 
     @Override
-    public void transform(final String xml,
-                          final ServiceCallback<Diagram> callback) {
+    public void transform(final String fileName, final String xml, final ServiceCallback<Diagram> callback) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
-            doNewDiagram(callback);
+            doNewDiagram(getDiagramTitle(fileName), callback);
         } else {
             doTransformation(xml, callback);
         }
     }
 
-    private void doNewDiagram(final ServiceCallback<Diagram> callback) {
-        final String title = UUID.uuid();
+    String getDiagramTitle(final String fileName) {
+        final String diagramTitle;
+        if (StringUtils.isEmpty(fileName)) {
+            diagramTitle = generateDiagramTitle();
+        } else {
+            if (fileName.contains(".")) {
+                diagramTitle = fileName.substring(0, fileName.lastIndexOf('.'));
+            } else {
+                diagramTitle = fileName;
+            }
+        }
+        return diagramTitle;
+    }
+
+    String generateDiagramTitle() {
+        return UUID.uuid();
+    }
+
+    @Override
+    public void transform(final String xml,
+                          final ServiceCallback<Diagram> callback) {
+        transform(UUID.uuid(), xml, callback);
+    }
+
+    void doNewDiagram(final String title, final ServiceCallback<Diagram> callback) {
         final Metadata metadata = buildMetadataInstance();
 
         try {
@@ -140,8 +162,8 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
     }
 
     @SuppressWarnings("unchecked")
-    private void doTransformation(final String xml,
-                                  final ServiceCallback<Diagram> callback) {
+    void doTransformation(final String xml,
+                          final ServiceCallback<Diagram> callback) {
         final Metadata metadata = buildMetadataInstance();
 
         try {
