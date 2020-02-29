@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
+import static org.kie.workbench.common.stunner.core.util.Patterns.isExpression;
 
 public abstract class InitializedVariable {
 
@@ -72,9 +73,8 @@ public abstract class InitializedVariable {
     }
 
     public static InitializedInputVariable createCustomInput(String parentId, VariableDeclaration varDecl, String expression) {
-        String isExpressionPattern = "^#\\{(.+)}$";
         String decodedExpression = decode(expression);
-        if (decodedExpression.matches(isExpressionPattern)) {
+        if (isExpression(decodedExpression)) {
             return new InputExpression(parentId, varDecl, decodedExpression);
         } else {
             return new InputConstant(parentId, varDecl, decodedExpression);
@@ -125,7 +125,7 @@ public abstract class InitializedVariable {
         return itemDefinition;
     }
 
-    public static abstract class InitializedInputVariable extends InitializedVariable {
+    public abstract static class InitializedInputVariable extends InitializedVariable {
 
         private final DataInput dataInput;
 
@@ -146,7 +146,7 @@ public abstract class InitializedVariable {
         public abstract DataInputAssociation getDataInputAssociation();
     }
 
-    public static abstract class InitializedOutputVariable extends InitializedVariable {
+    public abstract static class InitializedOutputVariable extends InitializedVariable {
 
         private final DataOutput dataOutput;
 
@@ -208,6 +208,7 @@ public abstract class InitializedVariable {
                     getItemDefinition());
         }
 
+        @Override
         public DataOutput getDataOutput() {
             return dataOutput;
         }

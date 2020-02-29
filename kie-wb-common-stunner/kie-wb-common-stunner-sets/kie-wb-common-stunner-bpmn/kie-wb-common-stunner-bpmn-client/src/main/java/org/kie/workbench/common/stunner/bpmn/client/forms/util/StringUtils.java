@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.util;
 
 import java.util.List;
 
-import com.google.gwt.http.client.URL;
 
 /**
  * String utility functions
@@ -28,6 +27,8 @@ public class StringUtils {
     public static final String ALPHA_NUM_REGEXP = "^[a-zA-Z0-9\\-\\_]*$";
     public static final String ALPHA_NUM_UNDERSCORE_DOT_REGEXP = "^[a-zA-Z0-9\\_\\.]*$";
     public static final String ALPHA_NUM_SPACE_REGEXP = "^[a-zA-Z0-9\\-\\_\\ ]*$";
+
+    private static URL url = new URL();
 
     /**
      * Creates a string for a list by concatenating each object's String separated by commas
@@ -57,7 +58,7 @@ public class StringUtils {
         if (s == null || s.isEmpty()) {
             return s;
         }
-        return URL.encodeQueryString(s);
+        return url.encodeQueryString(s);
     }
 
     /**
@@ -69,7 +70,7 @@ public class StringUtils {
         if (s == null || s.isEmpty()) {
             return s;
         }
-        return URL.decodeQueryString(s);
+        return url.decodeQueryString(s);
     }
 
     /**
@@ -88,5 +89,14 @@ public class StringUtils {
 
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
+    }
+
+    /**
+     * This method is for test purposes only. It needed to replace client side native code by
+     * the mock.
+     * @param u - mocked {@link URL} object
+     */
+    public static void setURL(URL u) {
+        url = u;
     }
 }

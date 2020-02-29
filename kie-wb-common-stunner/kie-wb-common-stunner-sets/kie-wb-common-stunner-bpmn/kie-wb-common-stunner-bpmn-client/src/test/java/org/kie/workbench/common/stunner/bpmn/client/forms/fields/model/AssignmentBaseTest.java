@@ -25,12 +25,12 @@ import java.net.URLEncoder;
 import com.google.gwt.junit.GWTMockUtilities;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerFormsClientFieldsConstants;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
-import org.mockito.Mockito;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.URL;
 import org.mockito.stubbing.Answer;
 
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AssignmentBaseTest {
 
@@ -43,18 +43,18 @@ public class AssignmentBaseTest {
                                                                  answer);
         setFinalStaticField(StunnerFormsClientFieldsConstants.class.getDeclaredField("INSTANCE"),
                             constants);
-        // Mock StringUtils URL Encoding methods
-        mockStatic(StringUtils.class);
-        when(StringUtils.urlEncode(Mockito.anyString())).thenAnswer(invocation -> {
-            Object[] args = invocation.getArguments();
-            return urlEncode((String) args[0]);
-        });
-        when(StringUtils.urlDecode(Mockito.anyString())).thenAnswer(invocation -> {
+
+        // Prevent GWT calls in StringUtils
+        URL url = mock(URL.class);
+        when(url.decodeQueryString(anyString())).thenAnswer(invocation -> {
             Object[] args = invocation.getArguments();
             return urlDecode((String) args[0]);
         });
-        when(StringUtils.createDataTypeDisplayName(Mockito.anyString())).thenCallRealMethod();
-        when(StringUtils.isEmpty(Mockito.any())).thenCallRealMethod();
+        when(url.encodeQueryString(anyString())).thenAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            return urlEncode((String) args[0]);
+        });
+        StringUtils.setURL(url);
     }
 
     public void tearDown() {
