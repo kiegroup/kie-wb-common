@@ -16,25 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.util;
 
-import java.util.regex.Pattern;
-
 /**
  * Regular expressions for testing common patterns
  */
 public class Patterns {
 
-    private static final Pattern EXPRESSION = Pattern.compile("^#\\{(.+)}$");
+    public static final String EXPRESSION = "^#\\{(.+)}$";
 
     private Patterns() {
-    }
-
-    /**
-     * Test is string a variable expression
-     * Example: #{name}
-     * @param s - string to be tested
-     * @return is string a variable expression
-     */
-    public static boolean isExpression(String s) {
-        return EXPRESSION.matcher(s).matches();
     }
 }

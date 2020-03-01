@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.custompropertie
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.regex.Pattern;
 
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
@@ -29,16 +30,17 @@ import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.VariableScope;
+import org.kie.workbench.common.stunner.core.util.Patterns;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
-import static org.kie.workbench.common.stunner.core.util.Patterns.isExpression;
 
 public abstract class InitializedVariable {
 
     private final String identifier;
     private final String type;
     private ItemDefinition itemDefinition;
+    private static final Pattern EXPRESSION = Pattern.compile(Patterns.EXPRESSION);
 
     public InitializedVariable(String parentId, VariableDeclaration varDecl) {
         this.identifier = varDecl.getIdentifier();
@@ -74,7 +76,7 @@ public abstract class InitializedVariable {
 
     public static InitializedInputVariable createCustomInput(String parentId, VariableDeclaration varDecl, String expression) {
         String decodedExpression = decode(expression);
-        if (isExpression(decodedExpression)) {
+        if (EXPRESSION.matcher(decodedExpression).matches()) {
             return new InputExpression(parentId, varDecl, decodedExpression);
         } else {
             return new InputConstant(parentId, varDecl, decodedExpression);
