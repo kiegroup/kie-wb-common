@@ -32,7 +32,7 @@ PR process
 - Before pushing to Github execute `mvn clean package -Dfull` to execute checkstyle and spotbug plugins locally.
 - When creating multi-repository PR ensure that all repositories have the same branch name otherwise our Jenkins will build PRs separately.
 - Create [Draft PR](https://github.blog/2019-02-14-introducing-draft-pull-requests/) instead of regular.
-- If you need to check some particular points (on the code or runtime level) to finish the task or ensure that everything is fine, ask a particular person in the commit messages before you will perform final runtime tests.
+- If you need to check some particular points (on the code or runtime level) to finish the task or ensure that everything is fine, ask a particular person in the PR comments before you will perform final runtime tests.
 - When PR is created and if you are a part of the [kiegroup](https://github.com/orgs/kiegroup/people) put a comment with content `Jenkins execute full downstream build`.
   - Wait for the results of project Jenkins and full downstream build Jenkins results.
   - If Jenkins results are not green, check the results and if the issues are related to your changes, fix them and re-trigger builds.
