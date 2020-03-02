@@ -90,6 +90,26 @@ public class DMNClientDiagramServiceImplTest {
     }
 
     @Test
+    public void testGetDiagramTitleWhenIsWindowsPath() {
+        final String fileName = "C:\\my path\\folder\\file.dmn";
+        final String expected = "file";
+
+        final String actual = service.getDiagramTitle(fileName);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetDiagramTitleWhenIsUnixPath() {
+        final String fileName = "/users/user/file.dmn";
+        final String expected = "file";
+
+        final String actual = service.getDiagramTitle(fileName);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testGetDiagramTitleWhenIsNotFileNameOrEmpty() {
         final String fileName = "Something";
         final String expected = "Something";
