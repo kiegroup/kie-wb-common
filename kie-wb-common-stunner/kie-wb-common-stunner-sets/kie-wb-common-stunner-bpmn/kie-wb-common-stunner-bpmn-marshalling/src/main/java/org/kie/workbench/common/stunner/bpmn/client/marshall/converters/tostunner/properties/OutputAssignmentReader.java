@@ -37,7 +37,7 @@ public class OutputAssignmentReader {
             return new OutputAssignmentReader(sourceName, (Property) out.getTargetRef());
         }
 
-        if (!out.getAssignment().isEmpty() && out.getTargetRef() instanceof DataOutput) {
+        if (out.getAssignment() != null && !out.getAssignment().isEmpty() && out.getTargetRef() instanceof DataOutput) {
             String targetName = ((DataOutput) out.getTargetRef()).getName();
             return new OutputAssignmentReader(out.getAssignment().get(0), targetName);
         }
