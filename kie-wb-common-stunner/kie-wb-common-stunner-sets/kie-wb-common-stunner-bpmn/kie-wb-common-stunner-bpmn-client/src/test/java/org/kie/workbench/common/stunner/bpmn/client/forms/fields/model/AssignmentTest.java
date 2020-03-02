@@ -94,7 +94,7 @@ public class AssignmentTest extends AssignmentBaseTest {
         String s = assignment.toString();
         Assignment newA = Assignment.deserialize(ad,
                                                  s);
-        String deserializedConstant = newA.getConstant();
+        String deserializedConstant = newA.getExpression();
         assertEquals(constant,
                      deserializedConstant);
     }
@@ -192,7 +192,7 @@ public class AssignmentTest extends AssignmentBaseTest {
                       jsonEncodedConstant);
         Assignment newA = Assignment.deserialize(ad,
                                                  s);
-        String deserializedConstant = newA.getConstant();
+        String deserializedConstant = newA.getExpression();
         assertEquals(constant,
                      deserializedConstant);
     }

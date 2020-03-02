@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties;
 
-import com.google.gwt.regexp.shared.RegExp;
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -28,9 +27,9 @@ import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Ids;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.VariableScope;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.FormalExpressionBodyHandler;
-import org.kie.workbench.common.stunner.core.util.Patterns;
 
 import static com.google.gwt.http.client.URL.decodeQueryString;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.EXPRESSION;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.Scripts.asCData;
 
@@ -39,7 +38,6 @@ public abstract class InitializedVariable {
     private final String identifier;
     private final String type;
     private ItemDefinition itemDefinition;
-    private static final RegExp EXPRESSION = RegExp.compile(Patterns.EXPRESSION);
 
     public InitializedVariable(String parentId, VariableDeclaration varDecl) {
         this.identifier = varDecl.getIdentifier();

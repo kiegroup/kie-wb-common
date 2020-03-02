@@ -18,6 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.util;
 
 import java.util.List;
 
+import com.google.gwt.regexp.shared.RegExp;
+import org.kie.workbench.common.stunner.core.util.Patterns;
 
 /**
  * String utility functions
@@ -27,6 +29,7 @@ public class StringUtils {
     public static final String ALPHA_NUM_REGEXP = "^[a-zA-Z0-9\\-\\_]*$";
     public static final String ALPHA_NUM_UNDERSCORE_DOT_REGEXP = "^[a-zA-Z0-9\\_\\.]*$";
     public static final String ALPHA_NUM_SPACE_REGEXP = "^[a-zA-Z0-9\\-\\_\\ ]*$";
+    public static final RegExp EXPRESSION = RegExp.compile(Patterns.EXPRESSION);
 
     private static URL url = new URL();
 
@@ -82,13 +85,16 @@ public class StringUtils {
         int i = dataType.lastIndexOf('.');
         StringBuilder formattedDataType = new StringBuilder();
         formattedDataType.append(dataType.substring(i + 1));
-        formattedDataType.append(" [").append(dataType.substring(0,
-                                                                 i)).append("]");
+        formattedDataType.append(" [").append(dataType, 0, i).append("]");
         return formattedDataType.toString();
     }
 
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
+    }
+
+    public static boolean nonEmpty(String s) {
+        return !isEmpty(s);
     }
 
     /**

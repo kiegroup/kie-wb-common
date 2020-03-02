@@ -120,14 +120,14 @@ public class AssignmentListItemWidgetViewImplTest {
         view.deleteButton = deleteButton;
         view.customDataType = customDataType;
         view.dataType = dataType;
-        view.constant = constant;
+        view.expression = constant;
         view.processVar = processVar;
         view.dataTypeComboBox = dataTypeComboBox;
         view.processVarComboBox = processVarComboBox;
         view.notification = notification;
         doCallRealMethod().when(view).init();
-        doCallRealMethod().when(view).getConstant();
-        doCallRealMethod().when(view).setConstant(anyString());
+        doCallRealMethod().when(view).getExpression();
+        doCallRealMethod().when(view).setExpression(anyString());
         doCallRealMethod().when(view).getCustomDataType();
         doCallRealMethod().when(view).setCustomDataType(anyString());
         doCallRealMethod().when(view).getModel();
@@ -147,7 +147,7 @@ public class AssignmentListItemWidgetViewImplTest {
         doCallRealMethod().when(view).setParentWidget(any(ActivityDataIOEditorWidget.class));
         doCallRealMethod().when(view).isDuplicateName(anyString());
         doCallRealMethod().when(view).isMultipleInstanceVariable(anyString());
-        doCallRealMethod().when(view).setShowConstants(anyBoolean());
+        doCallRealMethod().when(view).setShowExpressions(anyBoolean());
         doCallRealMethod().when(view).setDisallowedNames(anySet(),
                                                          anyString());
         doCallRealMethod().when(view).handleDeleteButton(any(ClickEvent.class));
@@ -160,7 +160,7 @@ public class AssignmentListItemWidgetViewImplTest {
     public void testSetModelInputCustomProcessVar() {
         AssignmentRow row = new AssignmentRow();
         row.setProcessVar(VARIABLE_NAME);
-        row.setConstant(null);
+        row.setExpression(null);
         row.setName(VARIABLE_NAME);
         row.setCustomDataType(CUST_DATA_TYPE_NAME);
         row.setDataType(null);
@@ -187,7 +187,7 @@ public class AssignmentListItemWidgetViewImplTest {
     public void testSetModelOutputNormalConstant() {
         AssignmentRow row = new AssignmentRow();
         row.setProcessVar(null);
-        row.setConstant(CONSTANT_NAME);
+        row.setExpression(CONSTANT_NAME);
         row.setName(VARIABLE_NAME);
         row.setCustomDataType(null);
         row.setDataType(DATA_TYPE_NAME);
@@ -215,18 +215,18 @@ public class AssignmentListItemWidgetViewImplTest {
                                   "abc");
         assertEquals("abc",
                      view.getModel().getCustomDataType());
-        assertNull(view.getModel().getConstant());
+        assertNull(view.getModel().getExpression());
         assertEquals("abc",
                      view.getModelValue(dataType));
     }
 
     @Test
     public void testSetTextBoxModelValueConstant() {
-        assertNull(view.getModel().getConstant());
+        assertNull(view.getModel().getExpression());
         view.setTextBoxModelValue(constant,
                                   "abc");
         assertEquals("abc",
-                     view.getModel().getConstant());
+                     view.getModel().getExpression());
         assertNull(view.getModel().getCustomDataType());
         assertEquals("abc",
                      view.getModelValue(processVar));
@@ -252,7 +252,7 @@ public class AssignmentListItemWidgetViewImplTest {
                                   "abc");
         assertEquals("abc",
                      view.getModel().getProcessVar());
-        assertNull(view.getModel().getConstant());
+        assertNull(view.getModel().getExpression());
         assertNull(view.getModel().getDataType());
         assertEquals("abc",
                      view.getModelValue(processVar));
@@ -321,13 +321,13 @@ public class AssignmentListItemWidgetViewImplTest {
 
     @Test
     public void testSetShowConstantsTrue() {
-        view.setShowConstants(true);
+        view.setShowExpressions(true);
         verify(processVarComboBox).setShowCustomValues(true);
     }
 
     @Test
     public void testSetShowConstantsFalse() {
-        view.setShowConstants(false);
+        view.setShowExpressions(false);
         verify(processVarComboBox).setShowCustomValues(false);
     }
 

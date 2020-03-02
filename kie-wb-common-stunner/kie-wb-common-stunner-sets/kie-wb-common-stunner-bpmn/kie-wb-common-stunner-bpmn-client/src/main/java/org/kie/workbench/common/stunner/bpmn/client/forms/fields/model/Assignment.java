@@ -122,7 +122,7 @@ public class Assignment {
         this.processVar = assignmentData.findProcessVariable(processVarName);
     }
 
-    public String getConstant() {
+    public String getExpression() {
         return constant;
     }
 
@@ -145,14 +145,14 @@ public class Assignment {
         if (processVar != null ? !processVar.equals(that.processVar) : that.processVar != null) {
             return false;
         }
-        return getConstant() != null ? getConstant().equals(that.getConstant()) : that.getConstant() == null;
+        return getExpression() != null ? getExpression().equals(that.getExpression()) : that.getExpression() == null;
     }
 
     @Override
     public int hashCode() {
         int result = getVariable() != null ? getVariable().hashCode() : 0;
         result = 31 * result + (processVar != null ? processVar.hashCode() : 0);
-        result = 31 * result + (getConstant() != null ? getConstant().hashCode() : 0);
+        result = 31 * result + (getExpression() != null ? getExpression().hashCode() : 0);
         return result;
     }
 
@@ -165,17 +165,17 @@ public class Assignment {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (getVariableType() == Variable.VariableType.INPUT) {
-            if (getConstant() != null && !getConstant().isEmpty()) {
+            if (getExpression() != null && !getExpression().isEmpty()) {
                 sb.append(INPUT_ASSIGNMENT_PREFIX).append(getName()).append(ASSIGNMENT_OPERATOR_TOCONSTANT).append(
-                        StringUtils.urlEncode(getConstant()));
+                        StringUtils.urlEncode(getExpression()));
             } else if (getProcessVarName() != null && !getProcessVarName().isEmpty()) {
                 sb.append(INPUT_ASSIGNMENT_PREFIX).append(getProcessVarName()).append(ASSIGNMENT_OPERATOR_TOVARIABLE).append(getName());
             } else {
                 sb.append(INPUT_ASSIGNMENT_PREFIX).append(ASSIGNMENT_OPERATOR_TOVARIABLE).append(getName());
             }
         } else {
-            if (!isEmpty(getConstant())) {
-                sb.append(OUTPUT_ASSIGNMENT_PREFIX).append(StringUtils.urlEncode(getConstant())).append(ASSIGNMENT_OPERATOR_TOCONSTANT).append(getName());
+            if (!isEmpty(getExpression())) {
+                sb.append(OUTPUT_ASSIGNMENT_PREFIX).append(StringUtils.urlEncode(getExpression())).append(ASSIGNMENT_OPERATOR_TOCONSTANT).append(getName());
             } else if (getProcessVarName() != null && !getProcessVarName().isEmpty()) {
                 sb.append(OUTPUT_ASSIGNMENT_PREFIX).append(getName()).append(ASSIGNMENT_OPERATOR_TOVARIABLE).append(getProcessVarName());
             } else {

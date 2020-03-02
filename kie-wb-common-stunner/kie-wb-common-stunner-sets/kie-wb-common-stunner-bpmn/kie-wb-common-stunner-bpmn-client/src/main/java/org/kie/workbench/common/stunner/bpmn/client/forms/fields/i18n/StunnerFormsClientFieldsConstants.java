@@ -31,7 +31,7 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
 
     String Cancel();
 
-    String Constant();
+    String Expression();
 
     String Custom();
 
@@ -57,7 +57,7 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
 
     String Edit();
 
-    String Enter_constant();
+    String Enter_expression();
 
     String Enter_type();
 
@@ -72,6 +72,8 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
     String No_Data_Output();
 
     String Only_single_entry_allowed();
+
+    String Only_expressions_allowed_for_output();
 
     String Ok();
 

@@ -49,6 +49,10 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.CustomDataType
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTextBox;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType.OUTPUT;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.EXPRESSION;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.nonEmpty;
+
 /**
  * A templated widget that will be used to display a row in a table of
  * {@link AssignmentRow}s.
@@ -126,7 +130,7 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
 
     @Inject
     @DataField
-    protected TextBox constant;
+    protected TextBox expression;
 
     @Inject
     @DataField
@@ -147,8 +151,8 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
                                      final String value) {
         if (textBox == customDataType) {
             setCustomDataType(value);
-        } else if (textBox == constant) {
-            setConstant(value);
+        } else if (textBox == expression) {
+            setExpression(value);
         }
     }
 
@@ -171,7 +175,7 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
             }
             return value;
         } else if (listBox == processVar) {
-            String value = getConstant();
+            String value = getExpression();
             if (value == null || value.isEmpty()) {
                 value = getProcessVar();
             }
@@ -220,11 +224,11 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
         processVarComboBox.init(this,
                                 false,
                                 processVar,
-                                constant,
+                                expression,
                                 true,
                                 true,
-                                CONSTANT_PROMPT,
-                                ENTER_CONSTANT_PROMPT);
+                                EXPRESSION_PROMPT,
+                                ENTER_EXPRESSION_PROMPT);
     }
 
     @Override
@@ -274,13 +278,18 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
     }
 
     @Override
-    public String getConstant() {
-        return getModel().getConstant();
+    public String getExpression() {
+        return getModel().getExpression();
     }
 
     @Override
-    public void setConstant(final String constant) {
-        getModel().setConstant(constant);
+    public void setExpression(final String expression) {
+        if (getModel().getVariableType() == OUTPUT && !EXPRESSION.test(expression)) {
+            notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Only_expressions_allowed_for_output(),
+                                                    NotificationEvent.NotificationType.ERROR));
+            return;
+        }
+        getModel().setExpression(expression);
     }
 
     @Override
@@ -299,17 +308,17 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
         processVarComboBox.setCurrentTextValue(EMPTY_VALUE);
         ListBoxValues copyProcessVarListBoxValues = new ListBoxValues(processVarListBoxValues, false);
         processVarComboBox.setListBoxValues(copyProcessVarListBoxValues);
-        String con = getConstant();
+        String exp = getExpression();
         // processVar set here because the ListBoxValues must already have been set
-        if (con != null && !con.isEmpty()) {
-            String displayValue = processVarComboBox.addCustomValueToListBoxValues(con, EMPTY_VALUE);
+        if (nonEmpty(exp)) {
+            String displayValue = processVarComboBox.addCustomValueToListBoxValues(exp, EMPTY_VALUE);
             processVar.setValue(displayValue);
         }
     }
 
     @Override
-    public void setShowConstants(final boolean showConstants) {
-        processVarComboBox.setShowCustomValues(showConstants);
+    public void setShowExpressions(final boolean showExpressions) {
+        processVarComboBox.setShowCustomValues(showExpressions);
     }
 
     @Override
@@ -356,8 +365,8 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
      */
     private void initAssignmentControls() {
         deleteButton.setIcon(IconType.TRASH);
-        if (getVariableType() == VariableType.OUTPUT) {
-            constant.setVisible(false);
+        if (getVariableType() == OUTPUT) {
+            expression.setVisible(false);
         }
         String cdt = getCustomDataType();
         if (cdt != null && !cdt.isEmpty()) {
@@ -366,10 +375,10 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
         } else if (getDataType() != null) {
             dataType.setValue(getDataType());
         }
-        String con = getConstant();
-        if (con != null && !con.isEmpty()) {
+        String exp = getExpression();
+        if (exp != null && !exp.isEmpty()) {
             // processVar ListBox is set in setProcessVariables because its ListBoxValues are required
-            constant.setValue(con);
+            expression.setValue(exp);
         } else if (getProcessVar() != null) {
             processVar.setValue(getProcessVar());
         }

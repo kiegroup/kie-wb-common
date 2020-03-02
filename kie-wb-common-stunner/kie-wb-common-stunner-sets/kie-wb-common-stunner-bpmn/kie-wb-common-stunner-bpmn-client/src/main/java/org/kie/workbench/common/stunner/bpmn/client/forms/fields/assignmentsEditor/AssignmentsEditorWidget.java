@@ -243,15 +243,12 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                                                hasOutputVars,
                                                isSingleOutputVar);
 
-        ActivityDataIOEditor.GetDataCallback callback = new ActivityDataIOEditor.GetDataCallback() {
-            @Override
-            public void getData(String assignmentDataJson) {
-                AssignmentData assignmentData = Marshalling.fromJSON(assignmentDataJson,
-                                                                     AssignmentData.class);
-                String assignmentsInfoString = createAssignmentsInfoString(assignmentData);
-                setValue(assignmentsInfoString,
-                         true);
-            }
+        ActivityDataIOEditor.GetDataCallback callback = assignmentDataJson -> {
+            AssignmentData assignmentData1 = Marshalling.fromJSON(assignmentDataJson,
+                                                                  AssignmentData.class);
+            String assignmentsInfoString = createAssignmentsInfoString(assignmentData1);
+            setValue(assignmentsInfoString,
+                     true);
         };
         activityDataIOEditor.setCallback(callback);
 
