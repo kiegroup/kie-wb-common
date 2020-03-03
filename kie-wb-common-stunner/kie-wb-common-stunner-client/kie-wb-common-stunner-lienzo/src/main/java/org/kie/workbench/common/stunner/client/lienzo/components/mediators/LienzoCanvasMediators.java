@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.ait.lienzo.client.widget.panel.mediators.PanelMediators;
+import org.appformer.kogito.bridge.client.context.EditorContextProvider;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.lienzo.components.views.LienzoCanvasNotification;
@@ -37,6 +38,10 @@ import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 
+import static com.ait.lienzo.client.core.mediator.EventFilter.ALT;
+import static com.ait.lienzo.client.core.mediator.EventFilter.CONTROL;
+import static com.ait.lienzo.client.core.mediator.EventFilter.META;
+import static org.appformer.kogito.bridge.client.context.KogitoOperatingSystem.MACOS;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 
 @Dependent
@@ -57,11 +62,18 @@ public class LienzoCanvasMediators {
     @Inject
     public LienzoCanvasMediators(final KeyEventHandler keyEventHandler,
                                  final ClientTranslationService translationService,
-                                 final LienzoCanvasNotification notification) {
+                                 final LienzoCanvasNotification notification,
+                                 final EditorContextProvider editorContextProvider) {
         this(keyEventHandler,
              translationService,
              notification,
-             PanelMediators::build);
+             getMediatorsBuilder(editorContextProvider));
+    }
+
+    private static Function<LienzoBoundsPanel, PanelMediators> getMediatorsBuilder(final EditorContextProvider editorContextProvider) {
+        return editorContextProvider.getOperatingSystem().equals(MACOS)
+                ? panel -> PanelMediators.build(panel, META, ALT)
+                : panel -> PanelMediators.build(panel, CONTROL, ALT);
     }
 
     LienzoCanvasMediators(final KeyEventHandler keyEventHandler,
