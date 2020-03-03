@@ -79,7 +79,11 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
 
     String Source();
 
+    String assignment_source_help();
+
     String Target();
+
+    String assignment_target_help();
 
     String This_input_should_be_entered_as_a_property_for_the_task();
 
