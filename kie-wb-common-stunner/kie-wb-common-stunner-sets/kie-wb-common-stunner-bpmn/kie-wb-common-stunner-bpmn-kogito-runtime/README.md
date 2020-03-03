@@ -7,7 +7,7 @@ the [Stunner directory README documentation](../../../).
 Building
 --------
  
-* Before building this webapp, you should build whole the Stunner project before
+* Before building this webapp, you should build the whole of the Stunner project before
   * change to the `kie-wb-common/kie-wb-common-stunner` root folder
   * run `mvn clean install -DskipTests -Dgwt.compiler.skip=true`
 * Build the webapp:
