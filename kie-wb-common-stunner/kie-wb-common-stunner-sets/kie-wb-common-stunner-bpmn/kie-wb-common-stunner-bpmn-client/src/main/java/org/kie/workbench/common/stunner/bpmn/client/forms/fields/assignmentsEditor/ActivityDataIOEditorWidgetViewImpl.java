@@ -131,17 +131,17 @@ public class ActivityDataIOEditorWidgetViewImpl extends Composite implements Act
 
     @Override
     public void setProcessVarAsSource() {
-        processvarorexpressionth.setInnerText(StunnerFormsClientFieldsConstants.INSTANCE.Source());
         sourceTargetHelp.setAttribute(DATA_CONTENT_ATTR,
                                       StunnerFormsClientFieldsConstants.INSTANCE.assignment_source_help());
+        processvarorexpressionth.setInnerHTML(StunnerFormsClientFieldsConstants.INSTANCE.Source() + sourceTargetHelp.getOuterHTML());
         sourceTargetHelpPopover.wrap(sourceTargetHelp).popover();
     }
 
     @Override
     public void setProcessVarAsTarget() {
-        processvarorexpressionth.setInnerText(StunnerFormsClientFieldsConstants.INSTANCE.Target());
         sourceTargetHelp.setAttribute(DATA_CONTENT_ATTR,
                                       StunnerFormsClientFieldsConstants.INSTANCE.assignment_target_help());
+        processvarorexpressionth.setInnerHTML(StunnerFormsClientFieldsConstants.INSTANCE.Target() + sourceTargetHelp.getOuterHTML());
         sourceTargetHelpPopover.wrap(sourceTargetHelp).popover();
     }
 
