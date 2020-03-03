@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
+import org.kie.workbench.common.stunner.bpmn.util.XmlUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.impl.BindableDiagramFactory;
@@ -30,11 +31,13 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public abstract class AbstractBPMNDiagramFactory<M extends Metadata, D extends Diagram<Graph, M>>
         extends BindableDiagramFactory<M, D> {
 
     private Class<? extends BPMNDiagram> diagramType;
+    static String DEFAULT_NAME = "NewProcess";
 
     protected abstract D doBuild(final String name,
                                  final M metadata,
@@ -48,17 +51,39 @@ public abstract class AbstractBPMNDiagramFactory<M extends Metadata, D extends D
     public D build(final String name,
                    final M metadata,
                    final Graph<DefinitionSet, ?> graph) {
-        final D diagram = doBuild(name,
+        String validName = createValidName(name);
+        final D diagram = doBuild(validName,
                                   metadata,
                                   graph);
         final Node<Definition<BPMNDiagram>, ?> diagramNode = diagramProvider.apply(graph);
         if (null == diagramNode) {
             throw new IllegalStateException("A BPMN Diagram is expected to be present on BPMN Diagram graphs.");
         }
-        updateProperties(name,
+        updateProperties(validName,
                          diagramNode,
                          metadata);
         return diagram;
+    }
+
+    static String createValidName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return DEFAULT_NAME;
+        }
+
+        StringBuilder resultId = new StringBuilder();
+
+        for (int i = 0; i < name.length(); i++) {
+            if (XmlUtils.isNcNameCharacter(name.charAt(i))) {
+                resultId.append(name.charAt(i));
+            }
+        }
+
+        String result = resultId.toString();
+        if (StringUtils.isEmpty(result)) {
+            return DEFAULT_NAME;
+        }
+
+        return result;
     }
 
     protected void updateDiagramProperties(final String name,
