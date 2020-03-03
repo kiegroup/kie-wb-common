@@ -248,7 +248,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
 
     private String dataObjectToProcessVariableFormat(DataObject dataObject) {
         StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(dataObject.getName().getValue());
+        stringBuffer.append(dataObject.getDataObjectName().getValue());
         stringBuffer.append(":");
         stringBuffer.append(dataObject.getType().getValue().getType());
         stringBuffer.append(":");

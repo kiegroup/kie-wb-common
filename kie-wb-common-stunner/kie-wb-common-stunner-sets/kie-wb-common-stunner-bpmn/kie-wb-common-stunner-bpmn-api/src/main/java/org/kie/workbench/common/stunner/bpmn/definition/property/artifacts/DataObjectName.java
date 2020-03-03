@@ -18,38 +18,41 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.artifacts;
 
 import java.util.Objects;
 
-import org.jboss.errai.common.client.api.annotations.MapsTo;
+import javax.validation.constraints.Pattern;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
-import org.kie.workbench.common.stunner.bpmn.definition.property.type.DataObjectPropertyType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.type.DataObjectPropertyName;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
+import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
-@Property//(meta = PropertyMetaTypes.NAME)
+@Property(meta = PropertyMetaTypes.NAME)
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
-public class DataObjectType implements BPMNProperty {
+public class DataObjectName implements BPMNProperty {
 
     @Type
-    public static final PropertyType type = new DataObjectPropertyType();
+    public static final PropertyType type = new DataObjectPropertyName();
 
     @Value
     @FieldValue
-    private DataObjectTypeValue value;
+    @Pattern(regexp = "^$|[a-zA-Z0-9_]+", message = "A Data object's name can only contain letters (A to Z), digits (0 to 9) or underscores (_).")
+    private String value;
 
-    public DataObjectType() {
-        this(new DataObjectTypeValue());
+    public DataObjectName() {
+        this("DataObjectName");
     }
 
-    public DataObjectType(@MapsTo("value") final DataObjectTypeValue value) {
+    public DataObjectName(String value) {
         this.value = value;
     }
 
@@ -57,11 +60,11 @@ public class DataObjectType implements BPMNProperty {
         return type;
     }
 
-    public DataObjectTypeValue getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(final DataObjectTypeValue value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -72,11 +75,12 @@ public class DataObjectType implements BPMNProperty {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof DataObjectType) {
-            DataObjectType other = (DataObjectType) o;
+        if (o instanceof DataObjectName) {
+            DataObjectName other = (DataObjectName) o;
             return Objects.equals(value,
                                   other.value);
         }
         return false;
     }
 }
+

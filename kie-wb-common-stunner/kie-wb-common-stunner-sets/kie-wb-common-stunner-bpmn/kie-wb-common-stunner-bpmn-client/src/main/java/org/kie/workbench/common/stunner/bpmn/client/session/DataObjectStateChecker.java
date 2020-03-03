@@ -46,32 +46,30 @@ public class DataObjectStateChecker {
         Command command = commandExecutedEvent.getCommand();
 
         if (command instanceof CompositeCommand) {
-            onCompositeCommand(commandExecutedEvent, (CompositeCommand) command);
+            onCompositeCommand(commandExecutedEvent.getCanvasHandler(), (CompositeCommand) command);
         } else if (command instanceof UpdateElementPropertyCommand) {
-            onUpdateElementPropertyCommand(commandExecutedEvent, (UpdateElementPropertyCommand) command);
+            onUpdateElementPropertyCommand(commandExecutedEvent.getCanvasHandler(), (UpdateElementPropertyCommand) command);
         }
     }
 
-    private void onUpdateElementPropertyCommand(CanvasCommandExecutedEvent commandExecutedEvent, UpdateElementPropertyCommand command) {
-        UpdateElementPropertyCommand propertyCommand = command;
+    private void onUpdateElementPropertyCommand(CanvasHandler canvasHandler, UpdateElementPropertyCommand propertyCommand) {
         Element<View<?>> element = propertyCommand.getElement();
         if (null != element.asNode()) {
             Object bean = element.getContent().getDefinition();
             if (bean instanceof DataObject) {
-                maybeUpdateTypes((DataObject) bean, commandExecutedEvent.getCanvasHandler());
+                maybeUpdateTypes((DataObject) bean, canvasHandler);
             }
         }
     }
 
-    private void onCompositeCommand(CanvasCommandExecutedEvent commandExecutedEvent, CompositeCommand command) {
-        CompositeCommand cc = command;
-        if (cc.size() == 2 && (cc.getCommands().get(0) instanceof AddChildNodeCommand)) {
-            AddChildNodeCommand addChildNodeCommand = (AddChildNodeCommand) cc.getCommands().get(0);
+    private void onCompositeCommand(CanvasHandler canvasHandler, CompositeCommand command) {
+        if (command.size() == 2 && (command.getCommands().get(0) instanceof AddChildNodeCommand)) {
+            AddChildNodeCommand addChildNodeCommand = (AddChildNodeCommand) command.getCommands().get(0);
             Element<View<?>> element = addChildNodeCommand.getCandidate();
             if (null != element.asNode()) {
                 Object bean = element.getContent().getDefinition();
                 if ((bean instanceof DataObject)) {
-                    setTypeToNewNode(((DataObject) bean), commandExecutedEvent.getCanvasHandler());
+                    setTypeToNewNode(((DataObject) bean), canvasHandler);
                 }
             }
         }
@@ -80,7 +78,7 @@ public class DataObjectStateChecker {
     private void maybeUpdateTypes(DataObject dataObject, CanvasHandler canvasHandler) {
         Stream<DataObject> nodeStream = getDataObjectsAsStream(canvasHandler);
         nodeStream.forEach(candidate -> {
-            if (candidate.getName().getValue().equals(dataObject.getName().getValue())) {
+            if (candidate.getDataObjectName().getValue().equals(dataObject.getDataObjectName().getValue())) {
                 candidate.getType().getValue().setType(dataObject.getType().getValue().getType());
             }
         });
@@ -106,7 +104,8 @@ public class DataObjectStateChecker {
 
     private void setTypeToNewNode(DataObject dataObject, CanvasHandler canvasHandler) {
         getDataObjectsAsStream(canvasHandler)
-                .filter(elm -> !dataObject.equals(elm))
+                .filter(elm -> !dataObject.equals(elm) &&
+                        dataObject.getDataObjectName().equals(elm.getDataObjectName()))
                 .findFirst()
                 .ifPresent(elm -> dataObject.setType(new DataObjectType(
                         new DataObjectTypeValue(elm.getType().getValue().getType()))));

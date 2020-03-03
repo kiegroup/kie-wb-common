@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TextAnnotationPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -80,7 +81,7 @@ public class ArtifactsConverter implements NodeConverter<org.eclipse.bpmn2.FlowE
                                                                         DataObject.class);
 
         DataObject definition = node.getContent().getDefinition();
-        definition.setName(new Name(p.getName()));
+        definition.setDataObjectName(new DataObjectName(p.getName()));
         definition.setType(new DataObjectType(new DataObjectTypeValue(p.getType())));
         node.getContent().setBounds(p.getBounds());
 

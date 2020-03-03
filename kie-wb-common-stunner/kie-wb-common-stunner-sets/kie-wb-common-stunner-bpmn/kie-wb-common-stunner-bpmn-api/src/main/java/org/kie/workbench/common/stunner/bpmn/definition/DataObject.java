@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
@@ -59,35 +60,53 @@ public class DataObject extends BaseArtifacts {
             .build();
 
     protected BPMNGeneralSet general;
-
     @Property
-    @Valid
-    @FormField
-    private Name name;
-
+    private Name fakeName;
     @Property
     @FormField
     private DataObjectType type;
+    @Property
+    @FormField
+    @Valid
+    private DataObjectName dataObjectName;
 
     public DataObject() {
         this(new Name("DataObject"),
+             new DataObjectName(),
              new DataObjectType(),
              new BPMNGeneralSet(),
              new BackgroundSet(),
              new FontSet(),
              new RectangleDimensionsSet());
     }
-
-    public DataObject(final @MapsTo("name") Name name,
+    public DataObject(final @MapsTo("fakeName") Name fakeName,
+                      final @MapsTo("dataObjectName") DataObjectName dataObjectName,
                       final @MapsTo("type") DataObjectType type,
                       final @MapsTo("general") BPMNGeneralSet general,
                       final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                       final @MapsTo("fontSet") FontSet fontSet,
                       final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet) {
         super(backgroundSet, fontSet, dimensionsSet);
-        this.name = name;
+        this.fakeName = fakeName;
         this.type = type;
         this.general = general;
+        this.dataObjectName = dataObjectName;
+    }
+
+    public Name getFakeName() {
+        return fakeName;
+    }
+
+    public void setFakeName(Name fakeName) {
+        this.fakeName = fakeName;
+    }
+
+    public DataObjectName getDataObjectName() {
+        return dataObjectName;
+    }
+
+    public void setDataObjectName(DataObjectName dataObjectName) {
+        this.dataObjectName = dataObjectName;
     }
 
     public Set<String> getLabels() {
@@ -102,14 +121,6 @@ public class DataObject extends BaseArtifacts {
         this.general = general;
     }
 
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
     public DataObjectType getType() {
         return type;
     }
@@ -120,7 +131,7 @@ public class DataObject extends BaseArtifacts {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(name.hashCode(),
+        return HashUtil.combineHashCodes(dataObjectName.hashCode(),
                                          type.hashCode(),
                                          general.hashCode(),
                                          backgroundSet.hashCode(),
@@ -132,7 +143,7 @@ public class DataObject extends BaseArtifacts {
     public boolean equals(Object o) {
         if (o instanceof DataObject) {
             DataObject other = (DataObject) o;
-            return name.equals(other.name) &&
+            return dataObjectName.equals(other.dataObjectName) &&
                     type.equals(other.type) &&
                     general.equals(other.general) &&
                     backgroundSet.equals(other.backgroundSet) &&
@@ -141,5 +152,4 @@ public class DataObject extends BaseArtifacts {
         }
         return false;
     }
-
 }

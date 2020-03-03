@@ -95,7 +95,7 @@ public class VariablesProvider
     private void processNode(Node<View<BPMNDefinition>, Edge> elm, Collection<Pair<Object, String>> result) {
             if(elm.getContent().getDefinition() instanceof DataObject) {
                 DataObject dataObject = (DataObject)elm.getContent().getDefinition();
-                String name = dataObject.getName().getValue();
+                String name = dataObject.getDataObjectName().getValue();
                 result.add(new Pair(name, name));
             }
     }

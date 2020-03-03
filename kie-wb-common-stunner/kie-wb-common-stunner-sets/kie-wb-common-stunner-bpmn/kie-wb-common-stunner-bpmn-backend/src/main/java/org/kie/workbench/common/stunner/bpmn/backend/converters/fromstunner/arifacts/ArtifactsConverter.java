@@ -70,7 +70,7 @@ public class ArtifactsConverter {
         DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
         DataObject definition = node.getContent().getDefinition();
-        writer.setName(definition.getName().getValue());
+        writer.setName(definition.getDataObjectName().getValue());
         writer.setType(definition.getType().getValue().getType());
         writer.setAbsoluteBounds(node);
 

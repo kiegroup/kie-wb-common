@@ -17,10 +17,10 @@
 package org.kie.workbench.common.stunner.bpmn.definition;
 
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -50,9 +50,9 @@ public class DataObjectTest {
 
     @Test
     public void setName() {
-        Name name = new Name(this.getClass().getSimpleName());
-        dataObject.setName(name);
-        assertEquals(name, dataObject.getName());
+        DataObjectName name = new DataObjectName(this.getClass().getSimpleName());
+        dataObject.setDataObjectName(name);
+        assertEquals(name, dataObject.getDataObjectName());
     }
 
     @Test
@@ -65,7 +65,6 @@ public class DataObjectTest {
     @Test
     public void testHashCode() {
         assertEquals(new DataObject().hashCode(), dataObject.hashCode());
-
     }
 
     @Test

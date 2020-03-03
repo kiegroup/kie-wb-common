@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.bpmn2.Definitions;
@@ -82,7 +83,7 @@ public class ProcessPropertyReaderTest {
     @Test
     public void getProcessType() {
         ProcessPropertyWriter writer = new ProcessPropertyWriter(
-                bpmn2.createProcess(), null);
+                bpmn2.createProcess(), null, new HashSet<>());
         writer.setType(ProcessType.PRIVATE.getName());
 
         tested = new ProcessPropertyReader(writer.getProcess(),

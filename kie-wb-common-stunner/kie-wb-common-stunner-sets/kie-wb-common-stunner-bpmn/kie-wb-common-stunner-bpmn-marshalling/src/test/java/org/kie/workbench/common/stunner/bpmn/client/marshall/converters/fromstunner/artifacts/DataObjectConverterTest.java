@@ -23,9 +23,9 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstun
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -61,7 +61,7 @@ public class DataObjectConverterTest {
     @Before
     public void setUp() {
         dataObject = new DataObject();
-        dataObject.setName(new Name(NAME));
+        dataObject.setDataObjectName(new DataObjectName(NAME));
         dataObject.setType(new DataObjectType(new DataObjectTypeValue(TYPE)));
 
         node = new NodeImpl<>(UUID.uuid());
