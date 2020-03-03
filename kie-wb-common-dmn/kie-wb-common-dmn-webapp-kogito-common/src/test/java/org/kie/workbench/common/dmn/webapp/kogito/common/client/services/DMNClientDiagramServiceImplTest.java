@@ -110,6 +110,36 @@ public class DMNClientDiagramServiceImplTest {
     }
 
     @Test
+    public void testGetDiagramTitleWhenIsWindowsPathMoreWords() {
+        final String fileName = "C:\\my path\\folder\\file a.dmn";
+        final String expected = "file a";
+
+        final String actual = service.getDiagramTitle(fileName);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetDiagramTitleWhenIsUnixPathMoreWords() {
+        final String fileName = "/users/user/file a.dmn";
+        final String expected = "file a";
+
+        final String actual = service.getDiagramTitle(fileName);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetDiagramTitleWhenMoreDotsContained() {
+        final String fileName = "/users/user/file.template.dmn";
+        final String expected = "file.template";
+
+        final String actual = service.getDiagramTitle(fileName);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testGetDiagramTitleWhenIsNotFileNameOrEmpty() {
         final String fileName = "Something";
         final String expected = "Something";
