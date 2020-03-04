@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.model;
 
 import org.jboss.errai.databinding.client.api.Bindable;
+
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.nonEmpty;
 
 /**
  * Class which is bound to rows in the DataIOEditor
@@ -112,15 +115,15 @@ public class AssignmentRow {
     }
 
     public boolean isComplete() {
-        if (name == null || name.isEmpty()) {
+        if (isEmpty(name)) {
             return false;
-        } else if ((dataType == null || dataType.isEmpty())
-                && (customDataType == null || customDataType.isEmpty())) {
-            return false;
-        } else {
-            return (processVar != null && !processVar.isEmpty())
-                    || (expression != null && !expression.isEmpty());
         }
+
+        if (isEmpty(dataType) && isEmpty(customDataType)) {
+            return false;
+        }
+
+        return nonEmpty(processVar) || nonEmpty(expression);
     }
 
     @Override

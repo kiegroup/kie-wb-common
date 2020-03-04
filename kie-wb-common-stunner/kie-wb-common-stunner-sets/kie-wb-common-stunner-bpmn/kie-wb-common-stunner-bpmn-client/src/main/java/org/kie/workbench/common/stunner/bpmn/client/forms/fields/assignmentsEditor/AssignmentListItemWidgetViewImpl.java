@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
 
     private static final String EMPTY_VALUE = "";
 
-    private final static String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
+    private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
 
     /**
      * Errai's data binding module will automatically bind the provided instance
@@ -171,19 +171,15 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
     public String getModelValue(final ValueListBox<String> listBox) {
         if (listBox == dataType) {
             String value = getCustomDataType();
-            if (value == null || value.isEmpty()) {
-                value = getDataType();
-            }
-            return value;
-        } else if (listBox == processVar) {
-            String value = getExpression();
-            if (value == null || value.isEmpty()) {
-                value = getProcessVar();
-            }
-            return value;
-        } else {
-            return EMPTY_VALUE;
+            return isEmpty(value) ? getDataType() : value;
         }
+
+        if (listBox == processVar) {
+            String value = getExpression();
+            return isEmpty(value) ? getProcessVar() : value;
+        }
+
+        return EMPTY_VALUE;
     }
 
     @PostConstruct
@@ -376,14 +372,14 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
             expression.setVisible(false);
         }
         String cdt = getCustomDataType();
-        if (cdt != null && !cdt.isEmpty()) {
+        if (nonEmpty(cdt)) {
             customDataType.setValue(cdt);
             dataType.setValue(cdt);
         } else if (getDataType() != null) {
             dataType.setValue(getDataType());
         }
         String exp = getExpression();
-        if (exp != null && !exp.isEmpty()) {
+        if (nonEmpty(exp)) {
             // processVar ListBox is set in setProcessVariables because its ListBoxValues are required
             expression.setValue(exp);
         } else if (getProcessVar() != null) {

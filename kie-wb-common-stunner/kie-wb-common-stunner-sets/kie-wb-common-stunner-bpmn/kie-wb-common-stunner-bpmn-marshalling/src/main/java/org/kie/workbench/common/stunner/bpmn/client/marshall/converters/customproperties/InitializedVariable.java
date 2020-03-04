@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.For
 
 import static com.google.gwt.http.client.URL.decodeQueryString;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.EXPRESSION;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.urlDecode;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.Scripts.asCData;
 
@@ -72,7 +73,7 @@ public abstract class InitializedVariable {
     }
 
     public static InitializedInputVariable createCustomInput(String parentId, VariableDeclaration varDecl, String expression) {
-        String decodedExpression = decodeQueryString(expression);
+        String decodedExpression = urlDecode(expression);
         if (EXPRESSION.test(decodedExpression)) {
             return new InputExpression(parentId, varDecl, decodedExpression);
         } else {

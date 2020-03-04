@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType.OUTPUT;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType.PROCESS;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AssignmentTest extends AssignmentBaseTest {
@@ -90,7 +93,7 @@ public class AssignmentTest extends AssignmentBaseTest {
     public void serializeDeserialize(AssignmentData ad,
                                      Assignment assignment,
                                      String constant) {
-        assignment.setConstant(constant);
+        assignment.setExpression(constant);
         String s = assignment.toString();
         Assignment newA = Assignment.deserialize(ad,
                                                  s);
@@ -112,7 +115,7 @@ public class AssignmentTest extends AssignmentBaseTest {
 
         a = new Assignment(ad,
                            "output1",
-                           Variable.VariableType.OUTPUT,
+                           OUTPUT,
                            "String",
                            null,
                            null,
@@ -185,7 +188,7 @@ public class AssignmentTest extends AssignmentBaseTest {
                             String constant,
                             String jsonEncodedConstant,
                             String bpmn2EncodedConstant) {
-        assignment.setConstant(constant);
+        assignment.setExpression(constant);
         String s = assignment.toString();
         // replace the mocked encoded constant with the one that would occur at runtime
         s = s.replace(bpmn2EncodedConstant,
@@ -195,5 +198,41 @@ public class AssignmentTest extends AssignmentBaseTest {
         String deserializedConstant = newA.getExpression();
         assertEquals(constant,
                      deserializedConstant);
+    }
+
+    @Test
+    public void testEquals() {
+        AssignmentData data = new AssignmentData();
+        Variable v1 = new Variable("processVar", PROCESS);
+        Variable v2 = new Variable("variable2", PROCESS);
+        data.addVariable(v1);
+
+        Assignment tested = new Assignment(data, "varName", OUTPUT, v1.getName(), null);
+        assertNotEquals(tested, new Object());
+        assertEquals(tested, tested);
+
+        Assignment b = new Assignment(data, "varName2", OUTPUT, v1.getName(), null);
+        assertNotEquals(tested, b);
+        b = new Assignment(data, "varName", OUTPUT, "processVar", null);
+        assertEquals(tested, b);
+
+        b.setProcessVarName(null);
+        assertNotEquals(tested, b);
+        tested.setProcessVarName(null);
+        assertEquals(tested, b);
+        b.setExpression("#{expression}");
+        assertNotEquals(tested, b);
+        tested.setExpression("#{expression}");
+        assertEquals(tested, b);
+    }
+
+    @Test
+    public void testOutputExpression() {
+        AssignmentData data = new AssignmentData();
+        Assignment tested = new Assignment(data, "newVariable", OUTPUT, null, "#{expression}");
+        String serialized = tested.toString();
+        assertEquals("[dout]#{expression}=newVariable", serialized);
+
+        assertEquals(tested, Assignment.deserialize(data, serialized));
     }
 }

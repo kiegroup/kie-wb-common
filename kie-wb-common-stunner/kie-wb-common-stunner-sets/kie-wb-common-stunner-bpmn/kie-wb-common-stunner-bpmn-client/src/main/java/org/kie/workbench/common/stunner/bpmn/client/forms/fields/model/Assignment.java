@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.model;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 
 import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.isEmpty;
@@ -30,7 +32,7 @@ public class Assignment {
         Assignments have either a processVar or a constant
      */
     private Variable processVar;
-    private String constant;
+    private String expression;
 
     private static final String INPUT_ASSIGNMENT_PREFIX = "[din]";
     private static final String OUTPUT_ASSIGNMENT_PREFIX = "[dout]";
@@ -46,7 +48,7 @@ public class Assignment {
                       final String dataType,
                       final String customDataType,
                       final String processVarName,
-                      final String constant) {
+                      final String expression) {
         this.assignmentData = assignmentData;
         variable = assignmentData.findVariable(variableName,
                                                variableType);
@@ -58,14 +60,14 @@ public class Assignment {
             assignmentData.addVariable(variable);
         }
         this.processVar = assignmentData.findProcessVariable(processVarName);
-        this.constant = constant;
+        this.expression = expression;
     }
 
     public Assignment(final AssignmentData assignmentData,
                       final String variableName,
                       final Variable.VariableType variableType,
                       final String processVarName,
-                      final String constant) {
+                      final String expression) {
         this.assignmentData = assignmentData;
         variable = assignmentData.findVariable(variableName,
                                                variableType);
@@ -75,7 +77,7 @@ public class Assignment {
             assignmentData.addVariable(variable);
         }
         processVar = assignmentData.findProcessVariable(processVarName);
-        this.constant = constant;
+        this.expression = expression;
     }
 
     public String getName() {
@@ -123,11 +125,11 @@ public class Assignment {
     }
 
     public String getExpression() {
-        return constant;
+        return expression;
     }
 
-    public void setConstant(final String constant) {
-        this.constant = constant;
+    public void setExpression(final String expression) {
+        this.expression = expression;
     }
 
     @Override
@@ -139,27 +141,21 @@ public class Assignment {
             return false;
         }
         Assignment that = (Assignment) o;
-        if (getVariable() != null ? !getVariable().equals(that.getVariable()) : that.getVariable() != null) {
-            return false;
-        }
-        if (processVar != null ? !processVar.equals(that.processVar) : that.processVar != null) {
-            return false;
-        }
-        return getExpression() != null ? getExpression().equals(that.getExpression()) : that.getExpression() == null;
+
+        return Objects.equals(expression, that.expression)
+                && Objects.equals(variable, that.variable)
+                && Objects.equals(processVar, that.processVar);
     }
 
     @Override
     public int hashCode() {
-        int result = getVariable() != null ? getVariable().hashCode() : 0;
-        result = 31 * result + (processVar != null ? processVar.hashCode() : 0);
-        result = 31 * result + (getExpression() != null ? getExpression().hashCode() : 0);
-        return result;
+        return Objects.hash(variable, processVar, expression);
     }
 
     /**
      * Serializes assignment
      * e.g. e.g. [din]str1->inStr, [din]inStrConst=TheString, [dout]outStr1->str1
-     * @return
+     * @return serialized Assignment
      */
     @Override
     public String toString() {
@@ -188,7 +184,8 @@ public class Assignment {
     /**
      * Deserializes an assignment string
      * e.g. [din]str1->inStr, [din]inStrConst=TheString, [dout]outStr1->str1
-     * @param sAssignment
+     * @param assignmentData context of assignment
+     * @param sAssignment serialized Assignment
      * @return Assignment
      */
     public static Assignment deserialize(final AssignmentData assignmentData,
