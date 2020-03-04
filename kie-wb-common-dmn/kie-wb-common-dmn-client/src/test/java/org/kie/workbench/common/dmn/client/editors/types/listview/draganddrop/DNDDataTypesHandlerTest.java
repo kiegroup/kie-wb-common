@@ -193,7 +193,7 @@ public class DNDDataTypesHandlerTest {
         handler.shiftCurrentByReference(current, reference, strategy);
 
         verify(cloneItem).collapse();
-        verify(oldItem).destroyWithoutDependentTypes();
+        verify(oldItem).destroyWithoutDependentTypes(false);
         verify(referenceItem).insertNestedField(clone);
         verify(dataTypeList).highlightLevel(cloneHTMLElement);
         verify(cloneParent1Item).expand();
@@ -333,7 +333,7 @@ public class DNDDataTypesHandlerTest {
 
         handler.deleteKeepingReferences(existing);
 
-        verify(dtListItem).destroyWithoutDependentTypes();
+        verify(dtListItem).destroyWithoutDependentTypes(false);
     }
 
     @Test
@@ -346,6 +346,6 @@ public class DNDDataTypesHandlerTest {
 
         handler.deleteKeepingReferences(existing);
 
-        verify(dtListItem, never()).destroyWithoutDependentTypes();
+        verify(dtListItem, never()).destroyWithoutDependentTypes(false);
     }
 }
