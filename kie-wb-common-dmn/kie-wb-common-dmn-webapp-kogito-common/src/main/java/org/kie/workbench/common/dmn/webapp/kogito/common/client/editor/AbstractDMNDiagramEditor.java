@@ -117,7 +117,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final KogitoClientDiagramService diagramServices;
     protected final MonacoFEELInitializer feelInitializer;
 
-<<<<<<< HEAD
+    private CanvasFileExport canvasFileExport;
+
     // --- Workaround : Start ---
     // This is a workaround for kogito-tooling that calls setContent(..) twice; once with a _valid_ DMN model (a new one) and
     // then again with whatever content is in the file being opened. If the content is _invalid_ we open an XML Text Editor.
@@ -150,9 +151,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
     private Consumer<Diagram> openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
     // --- Workaround : End ---
-=======
-    private CanvasFileExport canvasFileExport;
->>>>>>> KOGITO-1236: Preview Support in Editors
 
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,
