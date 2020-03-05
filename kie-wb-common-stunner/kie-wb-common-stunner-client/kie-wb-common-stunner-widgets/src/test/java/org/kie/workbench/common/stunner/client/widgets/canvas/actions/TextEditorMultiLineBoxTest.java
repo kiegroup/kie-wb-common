@@ -45,6 +45,7 @@ public class TextEditorMultiLineBoxTest {
 
     public static final String NAME = "name";
     public static final String MODIFIED_NAME = "modified_name";
+    public static final String OLD_NAME = "old_name";
     public static final String ID = "id";
 
     protected TextEditorMultiLineBox presenter;
@@ -173,7 +174,8 @@ public class TextEditorMultiLineBoxTest {
         verify(canvasCommandFactory,
                never()).updatePropertyValue(element,
                                             ID,
-                                            MODIFIED_NAME);
+                                            MODIFIED_NAME,
+                                            OLD_NAME);
 
         verify(commandProvider,
                never()).getCommandManager();
@@ -195,7 +197,8 @@ public class TextEditorMultiLineBoxTest {
         verify(canvasCommandFactory,
                never()).updatePropertyValue(element,
                                             ID,
-                                            MODIFIED_NAME);
+                                            MODIFIED_NAME,
+                                            OLD_NAME);
 
         verify(commandProvider,
                never()).getCommandManager();
@@ -223,7 +226,8 @@ public class TextEditorMultiLineBoxTest {
         verify(definitionUtils).getNameIdentifier(objectDefinition);
         verify(canvasCommandFactory).updatePropertyValue(element,
                                                          ID,
-                                                         MODIFIED_NAME);
+                                                         MODIFIED_NAME,
+                                                         NAME);
 
         verify(commandProvider).getCommandManager();
         verify(canvasCommandManager).execute(any(),

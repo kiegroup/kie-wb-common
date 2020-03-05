@@ -20,12 +20,17 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
+import com.google.gwt.regexp.shared.RegExp;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
+import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AddChildNodeCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
@@ -37,10 +42,16 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.uberfire.commons.services.cdi.Startup;
+import org.uberfire.workbench.events.NotificationEvent;
 
 @Startup
 @ApplicationScoped
 public class DataObjectStateChecker {
+
+    @Inject
+    private Event<NotificationEvent> event;
+    private RegExp regExp = RegExp.compile("^[a-zA-Z0-9_]+$");
+
 
     void onCommandExecuted(final @Observes CanvasCommandExecutedEvent commandExecutedEvent) {
         Command command = commandExecutedEvent.getCommand();
@@ -57,7 +68,24 @@ public class DataObjectStateChecker {
         if (null != element.asNode()) {
             Object bean = element.getContent().getDefinition();
             if (bean instanceof DataObject) {
+                validateDataObjectName(propertyCommand, canvasHandler);
                 maybeUpdateTypes((DataObject) bean, canvasHandler);
+            }
+        }
+    }
+
+    private void validateDataObjectName(UpdateElementPropertyCommand propertyCommand, CanvasHandler canvasHandler) {
+        if (propertyCommand.getPropertyId().equals(DataObjectName.class.getCanonicalName())) {
+            if(!regExp.test(propertyCommand.getValue().toString())) {
+                if (null != propertyCommand.getElement().asNode()) {
+                    Object bean = ((View) propertyCommand.getElement().getContent()).getDefinition();
+                    if ((bean instanceof DataObject)) {
+                        ((DataObject) bean).setDataObjectName(new DataObjectName(propertyCommand.getOldValue().toString()));
+                        NotificationEvent notificationEvent = new NotificationEvent("A Data object's name can only contain letters (A to Z), digits (0 to 9) or underscores (_).", NotificationEvent.NotificationType.ERROR);
+                        event.fire(notificationEvent);
+                        propertyCommand.undo((AbstractCanvasHandler)canvasHandler);
+                    }
+                }
             }
         }
     }

@@ -28,13 +28,23 @@ public class UpdateElementPropertyCommand extends AbstractCanvasGraphCommand {
     private final Element element;
     private final String propertyId;
     private final Object value;
+    private final Object oldValue;
 
     public UpdateElementPropertyCommand(final Element element,
                                         final String propertyId,
                                         final Object value) {
+        this(element, propertyId, value, null);
+
+    }
+
+    public UpdateElementPropertyCommand(final Element element,
+                                        final String propertyId,
+                                        final Object value,
+                                        final Object oldValue) {
         this.element = element;
         this.propertyId = propertyId;
         this.value = value;
+        this.oldValue = oldValue;
     }
 
     @Override
@@ -43,7 +53,8 @@ public class UpdateElementPropertyCommand extends AbstractCanvasGraphCommand {
         return (element instanceof Node ?
                 new UpdateElementPropertyValueCommand(element,
                                                       propertyId,
-                                                      value) :
+                                                      value,
+                                                      oldValue) :
                 new UpdateElementPropertyValueCommand(element.getUUID(),
                                                       propertyId,
                                                       value));
@@ -64,6 +75,10 @@ public class UpdateElementPropertyCommand extends AbstractCanvasGraphCommand {
 
     public Object getValue() {
         return value;
+    }
+
+    public Object getOldValue() {
+        return oldValue;
     }
 
     @Override

@@ -209,6 +209,17 @@ public abstract class DefaultCanvasCommandFactory implements CanvasCommandFactor
     }
 
     @Override
+    public CanvasCommand<AbstractCanvasHandler> updatePropertyValue(final Element element,
+                                                                    final String propertyId,
+                                                                    final Object value,
+                                                                    final Object oldValue) {
+        return new UpdateElementPropertyCommand(element,
+                                                propertyId,
+                                                value,
+                                                oldValue);
+    }
+
+    @Override
     public CanvasCommand<AbstractCanvasHandler> updateDomainObjectPropertyValue(final DomainObject domainObject,
                                                                                 final String propertyId,
                                                                                 final Object value) {

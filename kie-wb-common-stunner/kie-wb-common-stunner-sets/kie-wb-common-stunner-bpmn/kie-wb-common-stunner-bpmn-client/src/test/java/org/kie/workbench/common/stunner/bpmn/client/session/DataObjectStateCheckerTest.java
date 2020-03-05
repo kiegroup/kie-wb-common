@@ -19,7 +19,9 @@ package org.kie.workbench.common.stunner.bpmn.client.session;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
+import javax.enterprise.event.Event;
+
+import com.google.gwt.regexp.shared.RegExp;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
-import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AddChildNodeCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
@@ -37,17 +39,26 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.workbench.events.NotificationEvent;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataObjectStateCheckerTest {
 
     @Mock
-    private CanvasHandler canvasHandler;
+    private AbstractCanvasHandler canvasHandler;
     private DataObjectStateChecker tested = new DataObjectStateChecker();
     @Mock
     private Element<View<?>> element;
@@ -60,14 +71,23 @@ public class DataObjectStateCheckerTest {
     @Mock
     private Node node;
     private List<Node> nodes;
+    @Mock
+    private RegExp regExp;
+    @Mock
+    private Event<NotificationEvent> event;
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setUp() {
+    public void setUp() throws NoSuchFieldException {
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getGraph()).thenReturn(graph);
         when(element.asNode()).thenReturn(node);
         when(element.getContent()).thenReturn(view);
+        when(element.getUUID()).thenReturn("UUID");
+        when(regExp.test("one aaa")).thenReturn(false);
+
+        new FieldSetter(tested, DataObjectStateChecker.class.getDeclaredField("regExp")).set(regExp);
+        new FieldSetter(tested, DataObjectStateChecker.class.getDeclaredField("event")).set(event);
     }
 
     @Test
@@ -88,21 +108,24 @@ public class DataObjectStateCheckerTest {
         when(view.getDefinition()).thenReturn(do1);
 
         CanvasCommandExecutedEvent command = new CanvasCommandExecutedEvent(canvasHandler,
-                                                                            new UpdateElementPropertyCommand(element, "any", "one"),
+                                                                            new UpdateElementPropertyCommand(element,
+                                                                                                             "any",
+                                                                                                             "one",
+                                                                                                             "old"),
                                                                             null);
         tested.onCommandExecuted(command);
 
-        Assert.assertEquals("DO1", do1.getDataObjectName().getValue());
-        Assert.assertEquals("TYPE2", do1.getType().getValue().getType());
+        assertEquals("DO1", do1.getDataObjectName().getValue());
+        assertEquals("TYPE2", do1.getType().getValue().getType());
 
-        Assert.assertEquals("DO1", do2.getDataObjectName().getValue());
-        Assert.assertEquals("TYPE2", do2.getType().getValue().getType());
+        assertEquals("DO1", do2.getDataObjectName().getValue());
+        assertEquals("TYPE2", do2.getType().getValue().getType());
 
-        Assert.assertEquals("DO1", do3.getDataObjectName().getValue());
-        Assert.assertEquals("TYPE2", do3.getType().getValue().getType());
+        assertEquals("DO1", do3.getDataObjectName().getValue());
+        assertEquals("TYPE2", do3.getType().getValue().getType());
 
-        Assert.assertEquals("DO3", do4.getDataObjectName().getValue());
-        Assert.assertEquals("TYPE1", do4.getType().getValue().getType());
+        assertEquals("DO3", do4.getDataObjectName().getValue());
+        assertEquals("TYPE1", do4.getType().getValue().getType());
     }
 
     private DataObject createDataObject(String name, String type) {
@@ -119,6 +142,28 @@ public class DataObjectStateCheckerTest {
         when(view.getDefinition()).thenReturn(definition);
         when(node.asNode()).thenReturn(node);
         return node;
+    }
+
+    @Test
+    public void testWrongCanvasNodeName() {
+        nodes = new ArrayList<>();
+        DataObject do1 = createDataObject("DO1", "TYPE2");
+        nodes.add(mockNode(do1));
+
+        when(graph.nodes()).thenReturn(nodes);
+        when(view.getDefinition()).thenReturn(do1);
+
+        UpdateElementPropertyCommand updateElementPropertyCommand = spy(new UpdateElementPropertyCommand(element,
+                                                                                                     DataObjectName.class.getCanonicalName(),
+                                                                                                     "one aaa",
+                                                                                                     "old"));
+        CanvasCommandExecutedEvent command = new CanvasCommandExecutedEvent(canvasHandler,
+                                                                            updateElementPropertyCommand,
+                                                                            null);
+
+        tested.onCommandExecuted(command);
+        verify(event).fire(any(NotificationEvent.class));
+        verify(updateElementPropertyCommand).undo(eq(canvasHandler));
     }
 
     @Test
@@ -141,7 +186,7 @@ public class DataObjectStateCheckerTest {
                                                                           null);
         tested.onCommandExecuted(event);
 
-        Assert.assertEquals("TYPE1", test.getType().getValue().getType());
+        assertEquals("TYPE1", test.getType().getValue().getType());
 
         nodes.add(mockNode(test));
         DataObject test2 = createDataObject("DataObjectName", "TYPE3");
@@ -155,6 +200,6 @@ public class DataObjectStateCheckerTest {
                                                command,
                                                null);
         tested.onCommandExecuted(event);
-        Assert.assertEquals("TYPE1", test2.getType().getValue().getType());
+        assertEquals("TYPE1", test2.getType().getValue().getType());
     }
 }

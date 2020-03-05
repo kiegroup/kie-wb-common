@@ -66,10 +66,14 @@ public class DefaultTextPropertyProviderImpl implements TextPropertyProvider {
                         final String text) {
         final Object def = element.getContent().getDefinition();
         final String nameId = definitionUtils.getNameIdentifier(def);
+        final String oldName = definitionUtils.getName(def);
+
+
         if (null != nameId) {
             final CanvasCommand<AbstractCanvasHandler> command = canvasCommandFactory.updatePropertyValue(element,
                                                                                                           nameId,
-                                                                                                          text);
+                                                                                                          text,
+                                                                                                          oldName);
             commandManager.execute(canvasHandler,
                                    command);
         }

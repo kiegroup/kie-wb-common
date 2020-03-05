@@ -54,10 +54,21 @@ public final class UpdateElementPropertyValueCommand extends AbstractGraphComman
     public UpdateElementPropertyValueCommand(final Element<?> element,
                                              final String propertyId,
                                              final Object value) {
+        this(element,
+             propertyId,
+             value,
+             null);
+    }
+
+    public UpdateElementPropertyValueCommand(final Element<?> element,
+                                             final String propertyId,
+                                             final Object value,
+                                             final Object oldValue) {
         this(element.getUUID(),
              propertyId,
              value);
         this.element = element;
+        this.oldValue = oldValue;
     }
 
     @Override
@@ -84,7 +95,8 @@ public final class UpdateElementPropertyValueCommand extends AbstractGraphComman
     public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext context) {
         final UpdateElementPropertyValueCommand undoCommand = new UpdateElementPropertyValueCommand(getNullSafeElement(context),
                                                                                                     propertyId,
-                                                                                                    oldValue);
+                                                                                                    oldValue,
+                                                                                                    value);
         return undoCommand.execute(context);
     }
 

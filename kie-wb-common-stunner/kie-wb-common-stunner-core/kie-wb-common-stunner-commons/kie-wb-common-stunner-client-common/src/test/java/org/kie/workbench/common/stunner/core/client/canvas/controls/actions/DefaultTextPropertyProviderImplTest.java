@@ -72,7 +72,9 @@ public class DefaultTextPropertyProviderImplTest {
         when(element.getContent()).thenReturn(content);
         when(content.getDefinition()).thenReturn(definition);
         when(definitionUtils.getNameIdentifier(eq(definition))).thenReturn("name");
+        when(definitionUtils.getName(eq(definition))).thenReturn("oldvalue");
         when(canvasCommandFactory.updatePropertyValue(eq(element),
+                                                      anyString(),
                                                       anyString(),
                                                       anyString())).thenReturn(command);
     }
@@ -105,7 +107,8 @@ public class DefaultTextPropertyProviderImplTest {
 
         verify(canvasCommandFactory).updatePropertyValue(eq(element),
                                                          eq("name"),
-                                                         eq("text"));
+                                                         eq("text"),
+                                                         eq("oldvalue"));
         verify(commandManager).execute(eq(canvasHandler),
                                        eq(command));
     }

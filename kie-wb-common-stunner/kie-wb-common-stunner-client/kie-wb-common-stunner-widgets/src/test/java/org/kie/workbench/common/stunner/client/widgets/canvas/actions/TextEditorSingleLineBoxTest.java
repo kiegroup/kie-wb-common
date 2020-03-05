@@ -173,7 +173,8 @@ public class TextEditorSingleLineBoxTest {
         verify(canvasCommandFactory,
                never()).updatePropertyValue(element,
                                             ID,
-                                            MODIFIED_NAME);
+                                            MODIFIED_NAME,
+                                            NAME);
 
         verify(commandProvider,
                never()).getCommandManager();
@@ -195,7 +196,8 @@ public class TextEditorSingleLineBoxTest {
         verify(canvasCommandFactory,
                never()).updatePropertyValue(element,
                                             ID,
-                                            MODIFIED_NAME);
+                                            MODIFIED_NAME,
+                                            NAME);
 
         verify(commandProvider,
                never()).getCommandManager();
@@ -223,7 +225,8 @@ public class TextEditorSingleLineBoxTest {
         verify(definitionUtils).getNameIdentifier(objectDefinition);
         verify(canvasCommandFactory).updatePropertyValue(element,
                                                          ID,
-                                                         MODIFIED_NAME);
+                                                         MODIFIED_NAME,
+                                                         NAME);
 
         verify(commandProvider).getCommandManager();
         verify(canvasCommandManager).execute(any(),
