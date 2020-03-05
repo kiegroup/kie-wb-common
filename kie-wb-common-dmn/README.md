@@ -56,3 +56,5 @@ To run this module launch the `gwt` plugin; i.e. `mvn clean process-resources gw
 11) `kie-wb-common-dmn-webapp-standalone`
 
 Webapp used for development of Business Central integration.
+
+!!! testing changes !!!
