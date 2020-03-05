@@ -162,7 +162,8 @@ public class ItemDefinitionRecordEngineTest {
         final List<DataType> actualDependentDataTypes = recordEngine.destroyWithoutDependentTypes(dataType);
         final List<DataType> expectedDependentDataTypes = singletonList(dataType);
 
-        verify(recordEngine).doDestroy(dataType, false);
+        verify(dataTypeDestroyHandler).destroy(dataType);
+        verify(itemDefinitionDestroyHandler).destroy(dataType, false);
         assertEquals(expectedDependentDataTypes, actualDependentDataTypes);
     }
 

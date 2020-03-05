@@ -398,9 +398,9 @@ public class DataTypeListItem {
         destroy(destroyedDataTypes, true);
     }
 
-    public void destroyWithoutDependentTypes(final boolean fireDataChangedEvent) {
+    public void destroyWithoutDependentTypes() {
         final List<DataType> destroyedDataTypes = getDataType().destroyWithoutDependentTypes();
-        destroy(destroyedDataTypes, fireDataChangedEvent);
+        destroy(destroyedDataTypes, false);
     }
 
     void destroy(final List<DataType> destroyedDataTypes, final boolean fireDataChangedEvent) {

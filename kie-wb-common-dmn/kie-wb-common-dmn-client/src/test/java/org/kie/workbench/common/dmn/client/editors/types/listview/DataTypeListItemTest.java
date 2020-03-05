@@ -816,7 +816,7 @@ public class DataTypeListItemTest {
         doReturn(dataType).when(listItem).getDataType();
         doNothing().when(listItem).destroy(any(), eq(false));
 
-        listItem.destroyWithoutDependentTypes(false);
+        listItem.destroyWithoutDependentTypes();
 
         verify(listItem).destroy(removedDataTypes, false);
     }

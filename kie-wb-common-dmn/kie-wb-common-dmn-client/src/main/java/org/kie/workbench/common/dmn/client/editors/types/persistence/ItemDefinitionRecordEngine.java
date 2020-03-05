@@ -151,7 +151,7 @@ public class ItemDefinitionRecordEngine implements DataTypeRecordEngine {
         doDestroy(dataType, true);
     }
 
-    public void doDestroy(final DataType dataType, final boolean notifyPropertiesPanel) {
+    private void doDestroy(final DataType dataType, final boolean notifyPropertiesPanel) {
 
         dataTypeDestroyHandler.destroy(dataType);
         itemDefinitionDestroyHandler.destroy(dataType, notifyPropertiesPanel);

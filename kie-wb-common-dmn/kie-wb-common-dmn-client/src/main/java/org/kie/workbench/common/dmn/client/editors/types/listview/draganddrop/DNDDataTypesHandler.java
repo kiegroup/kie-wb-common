@@ -85,7 +85,7 @@ public class DNDDataTypesHandler {
         // destroy current data type
         currentItem.ifPresent(item -> {
             if (isTopLevelShiftOperation(current, shiftStrategy)) {
-                item.destroyWithoutDependentTypes(false);
+                item.destroyWithoutDependentTypes();
             } else {
                 item.destroyWithDependentTypes();
             }
@@ -127,7 +127,7 @@ public class DNDDataTypesHandler {
 
         final Optional<DataTypeListItem> currentItem = getDataTypeList().findItem(existing);
         currentItem.ifPresent(item -> {
-            item.destroyWithoutDependentTypes(false);
+            item.destroyWithoutDependentTypes();
         });
     }
 
