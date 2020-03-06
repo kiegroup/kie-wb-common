@@ -44,7 +44,7 @@ public class ScrollableLienzoPanelView
 
         // This means that we're in the Kogito environment
         if (!BusToolsCli.isRemoteCommunicationEnabled()) {
-            DomGlobal.console.info("Kogito environment detected. Skipping default event handling.");
+            DomGlobal.console.debug("Kogito environment detected. Skipping default event handling.");
             return;
         }
 
