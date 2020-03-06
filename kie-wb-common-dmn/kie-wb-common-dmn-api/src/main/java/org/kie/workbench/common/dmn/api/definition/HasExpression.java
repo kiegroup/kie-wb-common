@@ -15,6 +15,10 @@
  */
 package org.kie.workbench.common.dmn.api.definition;
 
+import java.util.Objects;
+
+import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 
@@ -32,6 +36,35 @@ public interface HasExpression {
      */
     default boolean isClearSupported() {
         return true;
+    }
+
+    @Portable
+    class WrappedHasExpression implements HasExpression {
+
+        private Expression expression;
+
+        private WrappedHasExpression(@MapsTo("expression") final Expression expression) {
+            this.expression = expression;
+        }
+
+        @Override
+        public Expression getExpression() {
+            return expression;
+        }
+
+        @Override
+        public void setExpression(final Expression expression) {
+            this.expression = expression;
+        }
+
+        @Override
+        public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
+            return Objects.nonNull(expression) ? expression.asDMNModelInstrumentedBase() : null;
+        }
+    }
+
+    static HasExpression wrap(final Expression expression) {
+        return new WrappedHasExpression(expression);
     }
 
     HasExpression NOP = new HasExpression() {

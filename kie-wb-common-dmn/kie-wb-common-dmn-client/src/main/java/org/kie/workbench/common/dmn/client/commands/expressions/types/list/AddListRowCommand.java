@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.dmn.client.commands.expressions.types.list;
 
-package org.kie.workbench.common.dmn.client.commands.expressions.types.relation;
-
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
-import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
-import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
 import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.list.ListUIModelMapper;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.list.ListUIModelMapperHelper;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
@@ -37,34 +36,37 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AbstractGraphCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 
-public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
-                                                                                 VetoUndoCommand {
+public class AddListRowCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
+                                                                             VetoUndoCommand {
 
-    private final Relation relation;
-    private final List row;
+    private final List list;
+    private final HasExpression hasExpression;
     private final GridData uiModel;
     private final GridRow uiModelRow;
     private final int uiRowIndex;
-    private final RelationUIModelMapper uiModelMapper;
+    private final ListUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
+    private GridCell<?> uiExpressionEditor;
 
-    public AddRelationRowCommand(final Relation relation,
-                                 final List row,
-                                 final GridData uiModel,
-                                 final GridRow uiModelRow,
-                                 final int uiRowIndex,
-                                 final RelationUIModelMapper uiModelMapper,
-                                 final org.uberfire.mvp.Command canvasOperation) {
-        this.relation = relation;
-        this.row = row;
+    public AddListRowCommand(final List list,
+                             final HasExpression hasExpression,
+                             final GridData uiModel,
+                             final GridRow uiModelRow,
+                             final int uiRowIndex,
+                             final ListUIModelMapper uiModelMapper,
+                             final org.uberfire.mvp.Command canvasOperation) {
+        this.list = list;
+        this.hasExpression = hasExpression;
         this.uiModel = uiModel;
         this.uiModelRow = uiModelRow;
         this.uiRowIndex = uiRowIndex;
         this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
+        this.uiExpressionEditor = null;
     }
 
     @Override
@@ -77,24 +79,16 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                relation.getRow().add(uiRowIndex,
-                                      row);
-                relation.getColumn().forEach(ii -> {
-                    final LiteralExpression le = new LiteralExpression();
-                    final HasExpression hasExpression = HasExpression.wrap(le);
-                    row.getExpression().add(hasExpression);
-                    le.setParent(row);
-                });
-
-                row.setParent(relation);
+                list.getExpression().add(uiRowIndex, hasExpression);
+                hasExpression.asDMNModelInstrumentedBase().setParent(list);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
 
             @Override
             public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext gce) {
-                relation.getRow().remove(row);
-
+                list.getExpression().remove(uiRowIndex);
+                hasExpression.asDMNModelInstrumentedBase().setParent(null);
                 return GraphCommandResultBuilder.SUCCESS;
             }
         };
@@ -105,14 +99,24 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler handler) {
-                int columnIndex = 0;
                 uiModel.insertRow(uiRowIndex,
                                   uiModelRow);
                 uiModelMapper.fromDMNModel(uiRowIndex,
-                                           columnIndex++);
-                for (int ii = 0; ii < relation.getColumn().size(); ii++) {
+                                           ListUIModelMapperHelper.ROW_COLUMN_INDEX);
+
+                // Other commands (e.g. LiteralExpression text) are bound to the Editor created by
+                // the UIModelMapper. Therefore we need to store the editor instance so, should this command
+                // be undone, then re-done the same editor instance is re-used. If a new instance is created
+                // the other commands are bound to the wrong instance and re-do does not work on the canvas.
+                if (Objects.isNull(uiExpressionEditor)) {
                     uiModelMapper.fromDMNModel(uiRowIndex,
-                                               columnIndex++);
+                                               ListUIModelMapperHelper.EXPRESSION_COLUMN_INDEX);
+                    uiExpressionEditor = uiModel.getCell(uiRowIndex,
+                                                         ListUIModelMapperHelper.EXPRESSION_COLUMN_INDEX);
+                } else {
+                    uiModel.setCell(uiRowIndex,
+                                    ListUIModelMapperHelper.EXPRESSION_COLUMN_INDEX,
+                                    () -> uiExpressionEditor);
                 }
 
                 updateRowNumbers();

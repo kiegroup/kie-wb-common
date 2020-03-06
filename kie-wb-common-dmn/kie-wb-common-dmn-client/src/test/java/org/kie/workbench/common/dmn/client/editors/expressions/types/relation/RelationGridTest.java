@@ -31,6 +31,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.NOPDomainObject;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
@@ -361,14 +362,14 @@ public class RelationGridTest {
         final String firstRowValue = "first column value 1";
         final String secondRowValue = "first column value 2";
         relation.getRow().add(new List() {{
-            getExpression().add(new LiteralExpression() {{
+            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
                 getText().setValue(firstRowValue);
-            }});
+            }}));
         }});
         relation.getRow().add(new List() {{
-            getExpression().add(new LiteralExpression() {{
+            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
                 getText().setValue(secondRowValue);
-            }});
+            }}));
         }});
 
         expression = Optional.of(relation);
@@ -968,7 +969,7 @@ public class RelationGridTest {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
         final DomainObjectSelectionEvent event1 = domainObjectSelectionEventCaptor.getValue();
-        assertThat(event1.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0));
+        assertThat(event1.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0).getExpression());
 
         //Reset DomainObjectSelectionEvent tested above.
         reset(domainObjectSelectionEvent);
@@ -1001,7 +1002,7 @@ public class RelationGridTest {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
         final DomainObjectSelectionEvent event2 = domainObjectSelectionEventCaptor.getValue();
-        assertThat(event2.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0));
+        assertThat(event2.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0).getExpression());
     }
 
     @Test
@@ -1013,7 +1014,7 @@ public class RelationGridTest {
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionEventCaptor.capture());
 
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionEventCaptor.getValue();
-        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0));
+        assertThat(domainObjectSelectionEvent.getDomainObject()).isEqualTo(expression.get().getRow().get(0).getExpression().get(0).getExpression());
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kie.workbench.common.dmn.client.editors.expressions.types.relation;
+package org.kie.workbench.common.dmn.client.editors.expressions.types.list;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +26,12 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
+import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
-import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
-import org.kie.workbench.common.dmn.client.editors.types.ValueAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
@@ -62,7 +62,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
-public class RelationEditorDefinitionTest {
+public class ListEditorDefinitionTest {
 
     @Mock
     private DMNGridPanel gridPanel;
@@ -95,6 +95,9 @@ public class RelationEditorDefinitionTest {
     private TranslationService translationService;
 
     @Mock
+    private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+
+    @Mock
     private GridCellTuple parent;
 
     @Mock
@@ -109,15 +112,9 @@ public class RelationEditorDefinitionTest {
     @Mock
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
-    @Mock
-    private ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
-
-    @Mock
-    private ValueAndDataTypePopoverView.Presenter headerEditor;
-
     private Optional<HasName> hasName = Optional.empty();
 
-    private RelationEditorDefinition definition;
+    private ListEditorDefinition definition;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -127,60 +124,53 @@ public class RelationEditorDefinitionTest {
         when(session.getGridLayer()).thenReturn(gridLayer);
         when(session.getCellEditorControls()).thenReturn(cellEditorControls);
 
-        when(headerEditors.get()).thenReturn(headerEditor);
+        this.definition = new ListEditorDefinition(definitionUtils,
+                                                   sessionManager,
+                                                   sessionCommandManager,
+                                                   canvasCommandFactory,
+                                                   editorSelectedEvent,
+                                                   refreshFormPropertiesEvent,
+                                                   domainObjectSelectionEvent,
+                                                   listSelector,
+                                                   translationService,
+                                                   expressionEditorDefinitionsSupplier);
 
-        this.definition = new RelationEditorDefinition(definitionUtils,
-                                                       sessionManager,
-                                                       sessionCommandManager,
-                                                       canvasCommandFactory,
-                                                       editorSelectedEvent,
-                                                       refreshFormPropertiesEvent,
-                                                       domainObjectSelectionEvent,
-                                                       listSelector,
-                                                       translationService,
-                                                       headerEditors);
+        final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
+        expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
+
+        when(expressionEditorDefinitionsSupplier.get()).thenReturn(expressionEditorDefinitions);
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
     }
 
     @Test
     public void testType() {
-        assertThat(definition.getType()).isEqualTo(ExpressionType.RELATION);
+        assertThat(definition.getType()).isEqualTo(ExpressionType.LIST);
     }
 
     @Test
     public void testName() {
-        assertThat(definition.getName()).isEqualTo(DMNEditorConstants.ExpressionEditor_RelationType);
+        assertThat(definition.getName()).isEqualTo(DMNEditorConstants.ExpressionEditor_ListType);
     }
 
     @Test
     public void testModelDefinition() {
-        final Optional<Relation> oModel = definition.getModelClass();
+        final Optional<List> oModel = definition.getModelClass();
         assertThat(oModel).isPresent();
     }
 
     @Test
     public void testModelEnrichment() {
-        final Optional<Relation> oModel = definition.getModelClass();
+        final Optional<List> oModel = definition.getModelClass();
         definition.enrich(Optional.empty(), hasExpression, oModel);
 
-        final Relation model = oModel.get();
+        final List model = oModel.get();
 
-        assertNotNull(model.getRow());
-        assertNotNull(model.getRow().get(0).getId());
-        assertNotNull(model.getRow().get(0).getExpression().get(0));
-        assertTrue(model.getRow().get(0).getExpression().get(0).getExpression() instanceof LiteralExpression);
-
-        assertNotNull(model.getColumn());
-        assertEquals(1, model.getColumn().size());
-        assertEquals(RelationDefaultValueUtilities.PREFIX + "1",
-                     model.getColumn().get(0).getName().getValue());
+        assertNotNull(model.getExpression());
+        assertNotNull(model.getExpression().get(0).getExpression());
+        assertTrue(model.getExpression().get(0).getExpression() instanceof LiteralExpression);
 
         assertEquals(model,
-                     model.getRow().get(0).getParent());
-        assertEquals(model,
-                     model.getColumn().get(0).getParent());
-        assertEquals(model.getRow().get(0),
-                     model.getRow().get(0).getExpression().get(0).getExpression().getParent());
+                     model.getExpression().get(0).getExpression().getParent());
     }
 
     @Test
@@ -196,7 +186,7 @@ public class RelationEditorDefinitionTest {
         assertThat(oEditor).isPresent();
 
         final GridWidget editor = oEditor.get();
-        assertThat(editor).isInstanceOf(RelationGrid.class);
+        assertThat(editor).isInstanceOf(ListGrid.class);
     }
 
     @Test

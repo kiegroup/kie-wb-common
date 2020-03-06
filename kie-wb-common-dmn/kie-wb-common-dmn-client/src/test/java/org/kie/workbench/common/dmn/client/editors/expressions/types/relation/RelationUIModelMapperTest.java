@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
@@ -82,20 +83,20 @@ public class RelationUIModelMapperTest {
         this.relation.getColumn().add(new InformationItem());
         this.relation.getColumn().add(new InformationItem());
         this.relation.getRow().add(new List() {{
-            getExpression().add(new LiteralExpression() {{
+            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
                 getText().setValue("le(1,0)");
-            }});
-            getExpression().add(new LiteralExpression() {{
+            }}));
+            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
                 getText().setValue("le(2,0)");
-            }});
+            }}));
         }});
         this.relation.getRow().add(new List() {{
-            getExpression().add(new LiteralExpression() {{
+            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
                 getText().setValue("le(1,1)");
-            }});
-            getExpression().add(new LiteralExpression() {{
+            }}));
+            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
                 getText().setValue("le(2,1)");
-            }});
+            }}));
         }});
 
         this.mapper = new RelationUIModelMapper(() -> uiModel,
@@ -167,7 +168,8 @@ public class RelationUIModelMapperTest {
                         .getRow()
                         .get(uiRowIndex)
                         .getExpression()
-                        .get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT);
+                        .get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT)
+                        .getExpression();
 
                 assertNull(le.getText().getValue());
             }
@@ -185,7 +187,8 @@ public class RelationUIModelMapperTest {
                         .getRow()
                         .get(uiRowIndex)
                         .getExpression()
-                        .get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT);
+                        .get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT)
+                        .getExpression();
 
                 assertEquals("",
                              le.getText().getValue());
@@ -206,7 +209,8 @@ public class RelationUIModelMapperTest {
                         .getRow()
                         .get(uiRowIndex)
                         .getExpression()
-                        .get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT);
+                        .get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT)
+                        .getExpression();
 
                 assertEquals(value,
                              le.getText().getValue());

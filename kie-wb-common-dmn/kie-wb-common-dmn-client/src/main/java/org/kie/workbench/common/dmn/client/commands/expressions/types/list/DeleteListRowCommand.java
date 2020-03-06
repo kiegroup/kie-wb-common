@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kie.workbench.common.dmn.client.commands.expressions.types.relation;
+package org.kie.workbench.common.dmn.client.commands.expressions.types.list;
 
 import java.util.stream.IntStream;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
-import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
-import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
 import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
@@ -40,31 +36,28 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 
-public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
-                                                                                 VetoUndoCommand {
+public class DeleteListRowCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
+                                                                                VetoUndoCommand {
 
-    private final Relation relation;
-    private final List row;
+    private final List list;
     private final GridData uiModel;
-    private final GridRow uiModelRow;
     private final int uiRowIndex;
-    private final RelationUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
 
-    public AddRelationRowCommand(final Relation relation,
-                                 final List row,
-                                 final GridData uiModel,
-                                 final GridRow uiModelRow,
-                                 final int uiRowIndex,
-                                 final RelationUIModelMapper uiModelMapper,
-                                 final org.uberfire.mvp.Command canvasOperation) {
-        this.relation = relation;
-        this.row = row;
+    private final HasExpression oldHasExpression;
+    private final GridRow oldUiModelRow;
+
+    public DeleteListRowCommand(final List list,
+                                final GridData uiModel,
+                                final int uiRowIndex,
+                                final org.uberfire.mvp.Command canvasOperation) {
+        this.list = list;
         this.uiModel = uiModel;
-        this.uiModelRow = uiModelRow;
         this.uiRowIndex = uiRowIndex;
-        this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
+
+        this.oldHasExpression = list.getExpression().get(uiRowIndex);
+        this.oldUiModelRow = uiModel.getRow(uiRowIndex);
     }
 
     @Override
@@ -77,23 +70,14 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                relation.getRow().add(uiRowIndex,
-                                      row);
-                relation.getColumn().forEach(ii -> {
-                    final LiteralExpression le = new LiteralExpression();
-                    final HasExpression hasExpression = HasExpression.wrap(le);
-                    row.getExpression().add(hasExpression);
-                    le.setParent(row);
-                });
-
-                row.setParent(relation);
+                list.getExpression().remove(uiRowIndex);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
 
             @Override
             public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext gce) {
-                relation.getRow().remove(row);
+                list.getExpression().add(uiRowIndex, oldHasExpression);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
@@ -105,15 +89,7 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler handler) {
-                int columnIndex = 0;
-                uiModel.insertRow(uiRowIndex,
-                                  uiModelRow);
-                uiModelMapper.fromDMNModel(uiRowIndex,
-                                           columnIndex++);
-                for (int ii = 0; ii < relation.getColumn().size(); ii++) {
-                    uiModelMapper.fromDMNModel(uiRowIndex,
-                                               columnIndex++);
-                }
+                uiModel.deleteRow(uiRowIndex);
 
                 updateRowNumbers();
                 updateParentInformation();
@@ -125,8 +101,7 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler handler) {
-                final int rowIndex = uiModel.getRows().indexOf(uiModelRow);
-                uiModel.deleteRow(rowIndex);
+                uiModel.insertRow(uiRowIndex, oldUiModelRow);
 
                 updateRowNumbers();
                 updateParentInformation();
