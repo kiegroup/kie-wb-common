@@ -77,7 +77,7 @@ public class KeyEventHandler {
         }
 
         final KogitoKeyShortcutCallback kogitoShortcutCallback = possibleKogitoShortcutCallback.get();
-        DomGlobal.console.info("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + kogitoShortcutCallback.getLabel());
+        DomGlobal.console.debug("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + kogitoShortcutCallback.getLabel());
 
         //Normal
         if (shortcutCallback instanceof KogitoKeyShortcutKeyDownThenUp) {
