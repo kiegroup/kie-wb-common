@@ -56,12 +56,12 @@ public class DMNDiagramTextPropertyProviderImpl implements TextPropertyProvider 
 
     @Override
     public boolean supports(final Element<? extends Definition> element) {
-        return element.getContent().getDefinition() instanceof DMNDiagram;
+        return DefinitionUtils.getElementDefinition(element) instanceof DMNDiagram;
     }
 
     @Override
     public String getText(final Element<? extends Definition> element) {
-        final DMNDiagram dmnDiagram = (DMNDiagram) element.getContent().getDefinition();
+        final DMNDiagram dmnDiagram = (DMNDiagram) DefinitionUtils.getElementDefinition(element);
         return dmnDiagram.getDefinitions().getNameHolder().getValue().getValue();
     }
 
@@ -70,7 +70,7 @@ public class DMNDiagramTextPropertyProviderImpl implements TextPropertyProvider 
                         final CanvasCommandManager<AbstractCanvasHandler> commandManager,
                         final Element<? extends Definition> element,
                         final String text) {
-        final Object definition = ((DMNDiagram) element.getContent().getDefinition()).getDefinitions();
+        final Object definition = ((DMNDiagram) DefinitionUtils.getElementDefinition(element)).getDefinitions();
         final CanvasCommand<AbstractCanvasHandler> command =
                 canvasCommandFactory.updatePropertyValue(element,
                                                          definitionUtils.getNameIdentifier(definition),

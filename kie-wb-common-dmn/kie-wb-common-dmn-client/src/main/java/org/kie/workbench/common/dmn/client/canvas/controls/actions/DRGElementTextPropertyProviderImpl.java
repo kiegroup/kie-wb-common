@@ -56,12 +56,12 @@ public class DRGElementTextPropertyProviderImpl implements TextPropertyProvider 
 
     @Override
     public boolean supports(final Element<? extends Definition> element) {
-        return element.getContent().getDefinition() instanceof DRGElement;
+        return DefinitionUtils.getElementDefinition(element) instanceof DRGElement;
     }
 
     @Override
     public String getText(final Element<? extends Definition> element) {
-        final DRGElement drgElement = (DRGElement) element.getContent().getDefinition();
+        final DRGElement drgElement = (DRGElement) DefinitionUtils.getElementDefinition(element);
         return drgElement.getNameHolder().getValue().getValue();
     }
 
@@ -70,7 +70,7 @@ public class DRGElementTextPropertyProviderImpl implements TextPropertyProvider 
                         final CanvasCommandManager<AbstractCanvasHandler> commandManager,
                         final Element<? extends Definition> element,
                         final String text) {
-        final Object definition = element.getContent().getDefinition();
+        final Object definition = DefinitionUtils.getElementDefinition(element);
         final CanvasCommand<AbstractCanvasHandler> command =
                 canvasCommandFactory.updatePropertyValue(element,
                                                          definitionUtils.getNameIdentifier(definition),
