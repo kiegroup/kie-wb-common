@@ -18,17 +18,50 @@ package org.kie.workbench.common.dmn.api.definition;
 
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 
-public interface HasName {
+/**
+ * Implementations have a {@link Name} property.
+ */
+public interface HasName extends HasValue<Name> {
 
+    /**
+     * Returns the {@link Name}
+     * Convenience method replicating {@link HasValue#getValue()} to honour DMN model semantics.
+     * @return
+     */
     Name getName();
 
+    /**
+     * Sets the {@link Name}
+     * Convenience method replicating {@link HasValue#setValue(Object)} to honour DMN model semantics.
+     * @param name
+     */
     void setName(final Name name);
+
+    /**
+     * Returns the {@link Name}
+     * @return
+     */
+    @Override
+    default Name getValue() {
+        return getName();
+    }
+
+    /**
+     * Sets the {@link Name}
+     * @param name
+     */
+    @Override
+    default void setValue(final Name name) {
+        setName(name);
+    }
 
     HasName NOP = new HasName() {
 
+        private final Name NAME = new Name();
+
         @Override
         public Name getName() {
-            return new Name("");
+            return NAME;
         }
 
         @Override

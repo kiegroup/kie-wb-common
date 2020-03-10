@@ -215,6 +215,9 @@ public class DMNEditorConstants {
     public static final String DecisionTableEditor_BuiltinAggregatorLabel = "DecisionTableEditor.BuiltinAggregatorLabel";
 
     @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_InputClauseColumnHeaderMetaData_ValueLabel = "DecisionTableEditor.InputClauseColumnHeaderMetaData.ValueLabel";
+
+    @TranslationKey(defaultValue = "")
     public static final String UndefinedExpressionEditor_SelectorTitle = "UndefinedExpressionEditor.SelectorTitle";
 
     @TranslationKey(defaultValue = "")
@@ -450,9 +453,6 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DMNDocumentationI18n_URLPlaceholder = "DMNDocumentationI18n.URLPlaceholder";
-
-    @TranslationKey(defaultValue = "")
-    public static final String DMNDocumentationFactory_NoFileName = "DMNDocumentationFactory.NoFileName";
 
     @TranslationKey(defaultValue = "")
     public static final String DMNDocumentationFactory_Constraints = "DMNDocumentationFactory.Constraints";

@@ -392,7 +392,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     @Override
     @SetContent
     public void setContent(final String path, final String value) {
-        diagramServices.transform(value,
+        superOnClose();
+        diagramServices.transform(path,
+                                  value,
                                   new ServiceCallback<Diagram>() {
 
                                       @Override
