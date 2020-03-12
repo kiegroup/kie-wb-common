@@ -22,9 +22,7 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.appformer.client.stateControl.registry.Registry;
-import org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
@@ -36,7 +34,6 @@ import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 
-import static org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi.Opts.Repeat.REPEAT;
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 
@@ -55,16 +52,12 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
+
         bindCommand();
     }
 
     protected void bindCommand() {
         getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+z", "Section 1 | Undo", () -> {
-            if (isEnabled()) {
-                execute();
-            }
-        }, new KeyboardShortcutsApi.Opts(REPEAT)));
     }
 
     @Override

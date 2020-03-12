@@ -68,7 +68,7 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
     @Override
     public void bind(final EditorSession session) {
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+x", "Section 1 | Cut selection", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+x", "Edit | Cut selection", () -> {
             if (isEnabled()) {
                 execute();
             }

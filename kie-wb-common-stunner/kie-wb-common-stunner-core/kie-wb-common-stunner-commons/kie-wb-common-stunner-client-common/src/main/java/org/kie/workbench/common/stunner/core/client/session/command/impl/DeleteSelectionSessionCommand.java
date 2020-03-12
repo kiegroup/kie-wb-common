@@ -106,12 +106,12 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("backspace", "Section 1 | Delete selection", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("backspace", "Edit | Delete selection", () -> {
             if (isEnabled()) {
                 execute();
             }
         }));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("delete", "Section 1 | Delete selection", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("delete", "Edit | Delete selection", () -> {
             if (isEnabled()) {
                 execute();
             }
