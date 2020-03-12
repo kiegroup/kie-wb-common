@@ -188,7 +188,7 @@ public abstract class AbstractSelectionControl<H extends AbstractCanvasHandler>
     public void bind(final ClientSession session) {
         if (session instanceof EditorSession) {
             ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-            ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("esc", "Unselect", this::clearSelection));
+            ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("esc", "Section 1 | Unselect", this::clearSelection));
             selectionControl.setReadonly(false);
         }
     }

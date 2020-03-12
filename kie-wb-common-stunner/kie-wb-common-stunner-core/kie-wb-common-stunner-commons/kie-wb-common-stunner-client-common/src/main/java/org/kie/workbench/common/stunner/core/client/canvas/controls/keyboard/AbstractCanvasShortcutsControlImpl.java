@@ -52,7 +52,11 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyShortcut);
 
         for (final KeyboardShortcut action : keyboardShortcutActions) {
-            session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(action.getKogitoCombination(), action.getKogitoLabel(), () -> executeAction(action), action.getKogitoOpts()));
+            session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(
+                    action.getKogitoCombination(),
+                    "Append Node | " + action.getKogitoLabel(),
+                    () -> executeAction(action),
+                    action.getKogitoOpts()));
         }
     }
 

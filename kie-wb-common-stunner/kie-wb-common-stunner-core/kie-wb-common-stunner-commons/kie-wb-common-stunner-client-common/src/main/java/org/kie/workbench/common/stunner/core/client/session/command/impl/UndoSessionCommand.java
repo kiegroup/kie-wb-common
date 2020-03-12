@@ -60,7 +60,7 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
 
     protected void bindCommand() {
         getSession().getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+z", "Undo", () -> {
+        getSession().getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+z", "Section 1 | Undo", () -> {
             if (isEnabled()) {
                 execute();
             }

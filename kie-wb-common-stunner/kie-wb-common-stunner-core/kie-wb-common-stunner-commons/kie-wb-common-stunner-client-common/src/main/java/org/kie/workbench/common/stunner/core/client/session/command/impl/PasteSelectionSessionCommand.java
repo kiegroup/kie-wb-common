@@ -124,7 +124,7 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+v", "Paste selection", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+v", "Section 1 | Paste selection", () -> {
             if (isEnabled()) {
                 execute();
             }

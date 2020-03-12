@@ -65,7 +65,7 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+shift+z", "Redo", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+shift+z", "Section 1 | Redo", () -> {
             if (isEnabled()) {
                 execute();
             }

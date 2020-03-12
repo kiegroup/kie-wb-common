@@ -124,25 +124,25 @@ public class LocationControlImpl
         //KOGITO
 
         //Kogito: Esc
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("esc", "Reset / unselect", () -> getWiresManager().resetContext()));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("esc", "Section 1 | Reset / unselect", () -> getWiresManager().resetContext()));
 
         //Kogito: Normal moves
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("up", "Move selection down", () -> moveNode(0, -NORMAL_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("down", "Move selection down", () -> moveNode(0, NORMAL_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("left", "Move selection left", () -> moveNode(-NORMAL_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("right", "Move selection right", () -> moveNode(NORMAL_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("up", "Section 1 | Move selection down", () -> moveNode(0, -NORMAL_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("down", "Section 1 | Move selection down", () -> moveNode(0, NORMAL_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("left", "Section 1 | Move selection left", () -> moveNode(-NORMAL_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("right", "Section 1 | Move selection right", () -> moveNode(NORMAL_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
 
         //Kogito: Short moves
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+up", "Move selection up", () -> moveNode(0, -SHORT_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+down", "Move selection down", () -> moveNode(0, SHORT_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+left", "Move selection left", () -> moveNode(-SHORT_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+right", "Move selection right", () -> moveNode(SHORT_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+up", "Section 1 | Move selection up", () -> moveNode(0, -SHORT_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+down", "Section 1 | Move selection down", () -> moveNode(0, SHORT_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+left", "Section 1 | Move selection left", () -> moveNode(-SHORT_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("shift+right", "Section 1 | Move selection right", () -> moveNode(SHORT_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
 
         //Kogito: Large moves
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+up", "Move selection up", () -> moveNode(0, -LARGE_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+down", "Move selection down", () -> moveNode(0, LARGE_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+left", "Move selection left", () -> moveNode(-LARGE_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+right", "Move selection right", () -> moveNode(LARGE_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+up", "Section 1 | Move selection up", () -> moveNode(0, -LARGE_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+down", "Section 1 | Move selection down", () -> moveNode(0, LARGE_DISTANCE), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+left", "Section 1 | Move selection left", () -> moveNode(-LARGE_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+right", "Section 1 | Move selection right", () -> moveNode(LARGE_DISTANCE, 0), new KeyboardShortcutsApi.Opts(REPEAT)));
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
