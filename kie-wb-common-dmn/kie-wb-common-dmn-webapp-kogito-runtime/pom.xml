@@ -32,6 +32,8 @@
   <properties>
     <skipITs>false</skipITs>
     <org.kie.dmn.kogito.browser.headless>true</org.kie.dmn.kogito.browser.headless>
+    <!-- We do not want to run selenium tests in default profile -->
+    <kogito.it.tests.excludes>**/*IT.java</kogito.it.tests.excludes>
   </properties>
 
   <dependencies>
@@ -513,6 +515,19 @@
           </excludes>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>${kogito.it.tests.excludes}</exclude>
+          </excludes>
+          <systemPropertyVariables>
+            <org.kie.dmn.kogito.browser.headless>${org.kie.dmn.kogito.browser.headless}</org.kie.dmn.kogito.browser.headless>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
     </plugins>
 
   </build>
@@ -741,19 +756,23 @@
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <!-- https://issues.redhat.com/browse/KOGITO-1107 -->
-            <!-- Integration Tests are disabled by default. Enable them with -DskipITs=false -->
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <skipITs>${skipITs}</skipITs>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
     </profile>
 
+    <profile>
+      <id>kogito-it-tests</id>
+      <activation>
+        <property>
+          <name>integration-tests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <!-- We want to run selenium tests in kogito-tests profile -->
+        <kogito.it.tests.excludes></kogito.it.tests.excludes>
+      </properties>
+    </profile>
   </profiles>
 
 </project>
