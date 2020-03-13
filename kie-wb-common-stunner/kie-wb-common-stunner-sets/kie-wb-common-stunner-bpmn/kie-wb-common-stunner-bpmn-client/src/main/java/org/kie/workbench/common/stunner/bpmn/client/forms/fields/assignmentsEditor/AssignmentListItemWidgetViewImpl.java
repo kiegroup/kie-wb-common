@@ -288,8 +288,8 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
         if (getModel().getVariableType() == OUTPUT && isConstant(expression)) {
             notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Only_expressions_allowed_for_output(),
                                                     NotificationEvent.NotificationType.ERROR));
-            processVarComboBox.setTextBoxValue(EMPTY_VALUE);
-            processVarComboBox.setCurrentTextValue("");
+            processVarComboBox.textBoxValueChanged("");
+
             return;
         }
         getModel().setExpression(expression);

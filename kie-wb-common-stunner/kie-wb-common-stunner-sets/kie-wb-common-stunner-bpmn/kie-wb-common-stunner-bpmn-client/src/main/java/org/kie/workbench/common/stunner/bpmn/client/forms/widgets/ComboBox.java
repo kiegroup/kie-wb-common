@@ -166,9 +166,9 @@ public class ComboBox implements ComboBoxView.ComboBoxPresenter {
                     String oldValue = currentTextValue;
                     String displayValue = addCustomValueToListBoxValues(newValue,
                                                                         oldValue);
-                    setTextBoxValue(newValue);
                     currentTextValue = newValue;
                     setListBoxValue(displayValue);
+                    setTextBoxValue(newValue);
                 }
             } else {
                 // Set the value even if it's ""

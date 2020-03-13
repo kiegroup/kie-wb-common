@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.HeadingElement;
+import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
@@ -68,6 +69,10 @@ public class ActivityDataIOEditorWidgetViewImpl extends Composite implements Act
 
     @DataField
     private final TableCellElement processvarorexpressionth = Document.get().createTHElement();
+
+    @Inject
+    @DataField("pop-up")
+    ParagraphElement popup;
 
     @Inject
     private JQueryProducer.JQuery<Popover> sourceTargetHelpPopover;
@@ -133,7 +138,7 @@ public class ActivityDataIOEditorWidgetViewImpl extends Composite implements Act
     public void setProcessVarAsSource() {
         sourceTargetHelp.setAttribute(DATA_CONTENT_ATTR,
                                       StunnerFormsClientFieldsConstants.INSTANCE.assignment_source_help());
-        processvarorexpressionth.setInnerHTML(StunnerFormsClientFieldsConstants.INSTANCE.Source() + sourceTargetHelp.getOuterHTML());
+        popup.setInnerText(StunnerFormsClientFieldsConstants.INSTANCE.Source());
         sourceTargetHelpPopover.wrap(sourceTargetHelp).popover();
     }
 
@@ -141,7 +146,7 @@ public class ActivityDataIOEditorWidgetViewImpl extends Composite implements Act
     public void setProcessVarAsTarget() {
         sourceTargetHelp.setAttribute(DATA_CONTENT_ATTR,
                                       StunnerFormsClientFieldsConstants.INSTANCE.assignment_target_help());
-        processvarorexpressionth.setInnerHTML(StunnerFormsClientFieldsConstants.INSTANCE.Target() + sourceTargetHelp.getOuterHTML());
+        popup.setInnerText(StunnerFormsClientFieldsConstants.INSTANCE.Target());
         sourceTargetHelpPopover.wrap(sourceTargetHelp).popover();
     }
 
