@@ -22,11 +22,18 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.text.shared.Renderer;
+import elemental2.dom.CSSProperties;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.Node;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
@@ -50,6 +57,8 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTe
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static jsinterop.annotations.JsPackage.GLOBAL;
+
 /**
  * A templated widget that will be used to display a row in a table of
  * {@link VariableRow}s.
@@ -58,7 +67,7 @@ import org.uberfire.workbench.events.NotificationEvent;
  * they use a combination of ListBox and TextBox to implement a drop-down combo
  * to hold the values.
  */
-@Templated("VariablesEditorWidget.html#variableRow")
+@Templated(value = "VariablesEditorWidget.html#variableRow", stylesheet = "VariablesEditorWidget.css")
 public class VariableListItemWidgetViewImpl implements VariableListItemWidgetView,
                                                        ComboBoxView.ModelPresenter {
 
@@ -84,6 +93,26 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     private String currentValue;
     private String currentName;
+
+    @Inject
+    @DataField("variable-tags-settings")
+    private HTMLAnchorElement variableTagsSettings;
+
+    @Inject
+    @DataField("tags-div")
+    HTMLDivElement tagsDiv;
+
+    @Inject
+    @DataField("some-check")
+    protected HTMLInputElement somecheck;
+
+    @Inject
+    @DataField
+    protected Button closeButton;
+
+
+    // @Inject
+   // private JQueryProducer.JQuery<Popover> durationTimerHelpPopover;
 
     @DataField
     protected ValueListBox<String> dataType = new ValueListBox<>(new Renderer<String>() {
@@ -195,8 +224,24 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
         kpi.addEventListener("change", (evt) -> notifyModelChanged());
 
+        PopOver.$(variableTagsSettings).popovers();
+
+        variableTagsSettings.onclick = e -> {
+            GWT.log("Item has been clicked");
+            GWT.log("Next Sibling: " + variableTagsSettings.nextElementSibling.innerHTML);
+            GWT.log("Next Sibling Child Count: " + variableTagsSettings.nextElementSibling.childElementCount);
+            Element lastNode = variableTagsSettings.nextElementSibling.lastElementChild;
+            GWT.log("Last Sibling Child Count: " + lastNode);
+            GWT.log("some check value is: " + somecheck.checked);
+            lastNode.innerHTML= "";
+            lastNode.appendChild(tagsDiv);
+            tagsDiv.style.display = "block";
+            return null;
+        };
+
     }
 
+    private static boolean initialized = false;
     @Override
     public VariableRow getModel() {
         return variableRow.getModel();
@@ -268,6 +313,12 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         parentWidget.removeVariable(getModel());
     }
 
+    @EventHandler("closeButton")
+    public void handleCloseButton(final ClickEvent e) {
+        variableTagsSettings.click();
+    }
+
+
     /**
      * Updates the display of this row according to the state of the
      * corresponding {@link VariableRow}.
@@ -303,4 +354,16 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         this.kpi.remove();
         this.kpiTD.remove();
     }
+
+
+
+    @JsType(isNative = true)
+    private static abstract class PopOver {
+
+        @JsMethod(namespace = GLOBAL, name = "jQuery")
+        public native static PopOver $(final elemental2.dom.Node selector);
+
+        public native void popovers();
+    }
+
 }
