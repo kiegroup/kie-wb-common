@@ -306,6 +306,21 @@ public class DataTypePickerWidgetTest {
     }
 
     @Test
+    //See https://issues.redhat.com/browse/DROOLS-5170
+    public void testSetValueMultipleTimes() {
+        picker.setValue(VALUE);
+
+        verify(typeSelector).setValue(eq(WIDGET_VALUE), eq(false));
+        verify(picker, never()).fireValueChangeEvent(any());
+
+        //Check successive calls to setValue(..) with the same value do not trigger more updates.
+        reset(typeSelector, picker);
+        picker.setValue(VALUE);
+        verify(typeSelector, never()).setValue(anyString(), anyBoolean());
+        verify(picker, never()).fireValueChangeEvent(any());
+    }
+
+    @Test
     public void testSetValueFireEvent() {
         picker.setValue(VALUE, true);
 

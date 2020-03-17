@@ -249,6 +249,9 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     @Override
     public void setValue(final QName value,
                          final boolean fireEvents) {
+        if (Objects.equals(value, type)) {
+            return;
+        }
         final QName oldValue = type;
         type = value;
         typeSelector.setValue(qNameConverter.toWidgetValue(type), false);
