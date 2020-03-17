@@ -77,9 +77,10 @@ public abstract class BaseMoveCommandsTest<C extends AbstractCanvasGraphCommand>
         final List row = new List();
         for (int index = 0; index < relation.getColumn().size(); index++) {
             final String ii = makeIdentifier(identifier, index);
-            row.getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                setId(new Id(ii));
-            }}));
+            row.getExpression().add(HasExpression.wrap(row,
+                                                       new LiteralExpression() {{
+                                                           setId(new Id(ii));
+                                                       }}));
         }
         relation.getRow().add(row);
     }

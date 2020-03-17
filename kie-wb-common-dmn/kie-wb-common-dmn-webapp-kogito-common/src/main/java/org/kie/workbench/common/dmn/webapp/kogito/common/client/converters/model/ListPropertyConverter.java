@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
-import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -51,26 +50,7 @@ public class ListPropertyConverter {
             final Expression eConverted = ExpressionPropertyConverter.wbFromDMN(jsitExpression,
                                                                                 Js.uncheckedCast(dmn),
                                                                                 hasComponentWidthsConsumer);
-            final HasExpression hasExpression = new HasExpression() {
-
-                private Expression e;
-
-                @Override
-                public Expression getExpression() {
-                    return e;
-                }
-
-                @Override
-                public void setExpression(final Expression expression) {
-                    this.e = expression;
-                }
-
-                @Override
-                public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
-                    return Objects.nonNull(e) ? e.asDMNModelInstrumentedBase() : null;
-                }
-            };
-            hasExpression.setExpression(eConverted);
+            final HasExpression hasExpression = HasExpression.wrap(result, eConverted);
             expression.add(hasExpression);
         }
 

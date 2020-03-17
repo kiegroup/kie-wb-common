@@ -41,9 +41,12 @@ public interface HasExpression {
     @Portable
     class WrappedHasExpression implements HasExpression {
 
+        private DMNModelInstrumentedBase parent;
         private Expression expression;
 
-        private WrappedHasExpression(@MapsTo("expression") final Expression expression) {
+        private WrappedHasExpression(@MapsTo("parent") final DMNModelInstrumentedBase parent,
+                                     @MapsTo("expression") final Expression expression) {
+            this.parent = Objects.requireNonNull(parent);
             this.expression = expression;
         }
 
@@ -59,12 +62,13 @@ public interface HasExpression {
 
         @Override
         public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
-            return Objects.nonNull(expression) ? expression.asDMNModelInstrumentedBase() : null;
+            return parent;
         }
     }
 
-    static HasExpression wrap(final Expression expression) {
-        return new WrappedHasExpression(expression);
+    static HasExpression wrap(final DMNModelInstrumentedBase parent,
+                              final Expression expression) {
+        return new WrappedHasExpression(parent, expression);
     }
 
     HasExpression NOP = new HasExpression() {

@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRefs;
+import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 
 import static java.util.Arrays.asList;
@@ -80,8 +81,9 @@ public class HasTypeRefHelperTest {
     public void testGetFlatHasTypeRefsFromExpressions() {
         final Expression expression1 = mock(Expression.class);
         final Expression expression2 = mock(Expression.class);
-        final HasExpression hasExpression1 = HasExpression.wrap(expression1);
-        final HasExpression hasExpression2 = HasExpression.wrap(expression2);
+        final DMNModelInstrumentedBase parent = mock(DMNModelInstrumentedBase.class);
+        final HasExpression hasExpression1 = HasExpression.wrap(parent, expression1);
+        final HasExpression hasExpression2 = HasExpression.wrap(parent, expression2);
         final List<HasExpression> hasExpressions = asList(hasExpression1, hasExpression2);
 
         final HasTypeRef hasTypeRef1 = mock(HasTypeRef.class);

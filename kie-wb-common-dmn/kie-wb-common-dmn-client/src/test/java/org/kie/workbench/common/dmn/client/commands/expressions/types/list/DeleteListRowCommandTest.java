@@ -81,7 +81,7 @@ public class DeleteListRowCommandTest {
         this.uiModel.appendColumn(uiExpressionEditorColumn);
 
         this.uiModel.appendRow(new BaseGridRow());
-        this.list.getExpression().add(HasExpression.wrap(new LiteralExpression()));
+        this.list.getExpression().add(HasExpression.wrap(list, new LiteralExpression()));
 
         doReturn(ruleManager).when(handler).getRuleManager();
         doReturn(0).when(uiRowNumberColumn).getIndex();
@@ -121,8 +121,8 @@ public class DeleteListRowCommandTest {
     public void testGraphCommandExecuteRemoveMiddle() {
         uiModel.appendRow(new BaseGridRow());
         uiModel.appendRow(new BaseGridRow());
-        final HasExpression firstRow = HasExpression.wrap(new LiteralExpression());
-        final HasExpression lastRow = HasExpression.wrap(new LiteralExpression());
+        final HasExpression firstRow = HasExpression.wrap(list, new LiteralExpression());
+        final HasExpression lastRow = HasExpression.wrap(list, new LiteralExpression());
         list.getExpression().add(0, firstRow);
         list.getExpression().add(lastRow);
 
@@ -144,7 +144,7 @@ public class DeleteListRowCommandTest {
     public void testGraphCommandUndo() {
         final LiteralExpression literalExpression = new LiteralExpression();
         literalExpression.getText().setValue(VALUE);
-        list.getExpression().add(HasExpression.wrap(literalExpression));
+        list.getExpression().add(HasExpression.wrap(list, literalExpression));
 
         makeCommand(0);
 
@@ -194,8 +194,8 @@ public class DeleteListRowCommandTest {
         final GridRow lastRow = new BaseGridRow();
         uiModel.insertRow(0, firstRow);
         uiModel.appendRow(lastRow);
-        list.getExpression().add(0, HasExpression.wrap(null));
-        list.getExpression().add(HasExpression.wrap(null));
+        list.getExpression().add(0, HasExpression.wrap(list, null));
+        list.getExpression().add(HasExpression.wrap(list, null));
 
         makeCommand(1);
 

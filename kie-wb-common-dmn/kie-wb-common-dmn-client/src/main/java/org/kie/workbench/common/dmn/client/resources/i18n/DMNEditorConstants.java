@@ -146,6 +146,9 @@ public class DMNEditorConstants {
     public static final String ListEditor_DeleteRow = "ListEditor.DeleteRow";
 
     @TranslationKey(defaultValue = "")
+    public static final String ListEditor_EditExpression = "ListEditor.EditExpression";
+
+    @TranslationKey(defaultValue = "")
     public static final String FunctionEditor_FEEL = "FunctionEditor.FEEL";
 
     @TranslationKey(defaultValue = "")

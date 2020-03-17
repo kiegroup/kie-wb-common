@@ -137,7 +137,7 @@ public class ListUIModelMapperTest {
                                                            anyInt())).thenReturn(Optional.of(undefinedExpressionEditor));
 
         this.list = new List();
-        this.list.getExpression().add(HasExpression.wrap(expression));
+        this.list.getExpression().add(HasExpression.wrap(list, expression));
 
         this.mapper = new ListUIModelMapper(gridWidget,
                                             () -> uiModel,
@@ -162,7 +162,7 @@ public class ListUIModelMapperTest {
     @Test
     public void testFromDMNModelUndefinedExpression() {
         setup(null, false);
-        list.getExpression().add(HasExpression.wrap(null));
+        list.getExpression().add(HasExpression.wrap(list, null));
 
         mapper.fromDMNModel(0, EXPRESSION_COLUMN_INDEX);
 
@@ -172,7 +172,7 @@ public class ListUIModelMapperTest {
     @Test
     public void testFromDMNModelUndefinedExpressionWhenOnlyVisualChangeAllowed() {
         setup(null, true);
-        list.getExpression().add(HasExpression.wrap(null));
+        list.getExpression().add(HasExpression.wrap(list, null));
 
         mapper.fromDMNModel(0, EXPRESSION_COLUMN_INDEX);
 
@@ -200,7 +200,7 @@ public class ListUIModelMapperTest {
     @Test
     public void testFromDMNModelLiteralExpression() {
         setup(new LiteralExpression(), false);
-        list.getExpression().add(HasExpression.wrap(new LiteralExpression()));
+        list.getExpression().add(HasExpression.wrap(list, new LiteralExpression()));
 
         mapper.fromDMNModel(0, EXPRESSION_COLUMN_INDEX);
 
@@ -210,7 +210,7 @@ public class ListUIModelMapperTest {
     @Test
     public void testFromDMNModelLiteralExpressionWhenOnlyVisualChangeAllowed() {
         setup(new LiteralExpression(), true);
-        list.getExpression().add(HasExpression.wrap(new LiteralExpression()));
+        list.getExpression().add(HasExpression.wrap(list, new LiteralExpression()));
 
         mapper.fromDMNModel(0, EXPRESSION_COLUMN_INDEX);
 

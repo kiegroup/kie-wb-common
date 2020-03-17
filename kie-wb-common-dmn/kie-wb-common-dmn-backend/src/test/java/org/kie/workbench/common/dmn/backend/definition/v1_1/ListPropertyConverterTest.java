@@ -97,7 +97,7 @@ public class ListPropertyConverterTest {
     public void testDMNFromWB() {
         final List wb = new List();
         final LiteralExpression literalExpression = new LiteralExpression();
-        final HasExpression hasExpression = HasExpression.wrap(literalExpression);
+        final HasExpression hasExpression = HasExpression.wrap(wb, literalExpression);
         literalExpression.getComponentWidths().set(0, 200.0);
         literalExpression.getId().setValue(EXPRESSION_UUID);
 

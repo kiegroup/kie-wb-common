@@ -118,7 +118,7 @@ public class AddListRowCommandTest {
     @SuppressWarnings("unchecked")
     public void setup() {
         this.list = new List();
-        this.hasExpression = HasExpression.wrap(new LiteralExpression());
+        this.hasExpression = HasExpression.wrap(list, new LiteralExpression());
         this.uiModel = new BaseGridData();
         this.uiModelRow = new BaseGridRow();
 
@@ -193,7 +193,7 @@ public class AddListRowCommandTest {
 
     @Test
     public void testGraphCommandExecuteMultipleEntriesPresent() {
-        final HasExpression firstEntry = HasExpression.wrap(new LiteralExpression());
+        final HasExpression firstEntry = HasExpression.wrap(list, new LiteralExpression());
         list.getExpression().add(0, firstEntry);
 
         makeCommand();
@@ -232,7 +232,7 @@ public class AddListRowCommandTest {
 
     @Test
     public void testGraphCommandUndoMultipleEntriesPresent() {
-        final HasExpression firstEntry = HasExpression.wrap(new LiteralExpression());
+        final HasExpression firstEntry = HasExpression.wrap(list, new LiteralExpression());
         list.getExpression().add(0, firstEntry);
 
         makeCommand();
@@ -308,7 +308,7 @@ public class AddListRowCommandTest {
         verify(command).updateParentInformation();
 
         // second row
-        final HasExpression secondRowEntry = HasExpression.wrap(new LiteralExpression());
+        final HasExpression secondRowEntry = HasExpression.wrap(list, new LiteralExpression());
         final GridRow uiSecondModelRow = new BaseGridRow();
         command = spy(new AddListRowCommand(list,
                                             secondRowEntry,

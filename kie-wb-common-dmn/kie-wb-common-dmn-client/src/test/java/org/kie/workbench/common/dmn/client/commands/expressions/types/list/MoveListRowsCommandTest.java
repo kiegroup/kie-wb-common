@@ -98,10 +98,11 @@ public class MoveListRowsCommandTest {
     }
 
     private void addHasExpression(final String expressionText) {
-        list.getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-            getText().setValue(makeLiteralExpression(expressionText,
-                                                     list.getExpression().size()));
-        }}));
+        list.getExpression().add(HasExpression.wrap(list,
+                                                    new LiteralExpression() {{
+                                                        getText().setValue(makeLiteralExpression(expressionText,
+                                                                                                 list.getExpression().size()));
+                                                    }}));
     }
 
     private String makeLiteralExpression(final String base,

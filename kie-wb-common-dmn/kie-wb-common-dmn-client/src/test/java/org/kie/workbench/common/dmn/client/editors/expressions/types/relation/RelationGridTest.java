@@ -361,16 +361,19 @@ public class RelationGridTest {
         }});
         final String firstRowValue = "first column value 1";
         final String secondRowValue = "first column value 2";
-        relation.getRow().add(new List() {{
-            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                getText().setValue(firstRowValue);
-            }}));
-        }});
-        relation.getRow().add(new List() {{
-            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                getText().setValue(secondRowValue);
-            }}));
-        }});
+        final List rowList1 = new List();
+        rowList1.getExpression().add(HasExpression.wrap(rowList1,
+                                                        new LiteralExpression() {{
+                                                            getText().setValue(firstRowValue);
+                                                        }}));
+        final List rowList2 = new List();
+        rowList2.getExpression().add(HasExpression.wrap(rowList2,
+                                                        new LiteralExpression() {{
+                                                            getText().setValue(secondRowValue);
+                                                        }}));
+
+        relation.getRow().add(rowList1);
+        relation.getRow().add(rowList2);
 
         expression = Optional.of(relation);
 

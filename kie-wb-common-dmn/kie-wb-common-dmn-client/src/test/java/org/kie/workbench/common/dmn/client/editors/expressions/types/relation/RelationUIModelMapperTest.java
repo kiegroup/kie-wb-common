@@ -82,22 +82,27 @@ public class RelationUIModelMapperTest {
         this.relation = new Relation();
         this.relation.getColumn().add(new InformationItem());
         this.relation.getColumn().add(new InformationItem());
-        this.relation.getRow().add(new List() {{
-            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                getText().setValue("le(1,0)");
-            }}));
-            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                getText().setValue("le(2,0)");
-            }}));
-        }});
-        this.relation.getRow().add(new List() {{
-            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                getText().setValue("le(1,1)");
-            }}));
-            getExpression().add(HasExpression.wrap(new LiteralExpression() {{
-                getText().setValue("le(2,1)");
-            }}));
-        }});
+        final List rowList1 = new List();
+        rowList1.getExpression().add(HasExpression.wrap(rowList1,
+                                                        new LiteralExpression() {{
+                                                            getText().setValue("le(1,0)");
+                                                        }}));
+        rowList1.getExpression().add(HasExpression.wrap(rowList1,
+                                                        new LiteralExpression() {{
+                                                            getText().setValue("le(2,0)");
+                                                        }}));
+        final List rowList2 = new List();
+        rowList2.getExpression().add(HasExpression.wrap(rowList2,
+                                                        new LiteralExpression() {{
+                                                            getText().setValue("le(1,1)");
+                                                        }}));
+        rowList2.getExpression().add(HasExpression.wrap(rowList2,
+                                                        new LiteralExpression() {{
+                                                            getText().setValue("le(2,1)");
+                                                        }}));
+
+        this.relation.getRow().add(rowList1);
+        this.relation.getRow().add(rowList2);
 
         this.mapper = new RelationUIModelMapper(() -> uiModel,
                                                 () -> Optional.of(relation),

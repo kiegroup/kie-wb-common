@@ -113,7 +113,7 @@ public class RelationPropertyConverterTest {
         final InformationItem informationItem = new InformationItem();
         final List list = new List();
         final LiteralExpression literalExpression = new LiteralExpression();
-        final HasExpression hasExpression = HasExpression.wrap(literalExpression);
+        final HasExpression hasExpression = HasExpression.wrap(wb, literalExpression);
         literalExpression.getComponentWidths().set(0, 200.0);
         literalExpression.getId().setValue(EXPRESSION_UUID);
         list.getExpression().add(hasExpression);

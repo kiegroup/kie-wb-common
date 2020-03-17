@@ -16,14 +16,22 @@
 package org.kie.workbench.common.dmn.api.definition;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
+import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+@RunWith(MockitoJUnitRunner.class)
 public class HasExpressionTest {
+
+    @Mock
+    private DMNModelInstrumentedBase parent;
 
     @Test
     public void testNOP() {
@@ -41,33 +49,33 @@ public class HasExpressionTest {
 
     @Test
     public void testWrapNull() {
-        final HasExpression hasExpression = HasExpression.wrap(null);
+        final HasExpression hasExpression = HasExpression.wrap(parent, null);
 
         assertNull(hasExpression.getExpression());
-        assertNull(hasExpression.asDMNModelInstrumentedBase());
+        assertEquals(parent, hasExpression.asDMNModelInstrumentedBase());
 
         final Context context = new Context();
         hasExpression.setExpression(context);
 
         assertNotNull(hasExpression.getExpression());
         assertEquals(context, hasExpression.getExpression());
-        assertEquals(context, hasExpression.asDMNModelInstrumentedBase());
+        assertEquals(parent, hasExpression.asDMNModelInstrumentedBase());
     }
 
     @Test
     public void testWrapNonNull() {
         final LiteralExpression le = new LiteralExpression();
-        final HasExpression hasExpression = HasExpression.wrap(le);
+        final HasExpression hasExpression = HasExpression.wrap(parent, le);
 
         assertNotNull(hasExpression.getExpression());
         assertEquals(le, hasExpression.getExpression());
-        assertEquals(le, hasExpression.asDMNModelInstrumentedBase());
+        assertEquals(parent, hasExpression.asDMNModelInstrumentedBase());
 
         final Context context = new Context();
         hasExpression.setExpression(context);
 
         assertNotNull(hasExpression.getExpression());
         assertEquals(context, hasExpression.getExpression());
-        assertEquals(context, hasExpression.asDMNModelInstrumentedBase());
+        assertEquals(parent, hasExpression.asDMNModelInstrumentedBase());
     }
 }

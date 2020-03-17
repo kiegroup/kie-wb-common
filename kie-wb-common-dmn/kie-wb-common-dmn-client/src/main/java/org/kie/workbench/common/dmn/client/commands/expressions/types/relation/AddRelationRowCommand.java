@@ -81,7 +81,7 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
                                       row);
                 relation.getColumn().forEach(ii -> {
                     final LiteralExpression le = new LiteralExpression();
-                    final HasExpression hasExpression = HasExpression.wrap(le);
+                    final HasExpression hasExpression = HasExpression.wrap(ii, le);
                     row.getExpression().add(hasExpression);
                     le.setParent(row);
                 });

@@ -165,7 +165,7 @@ public class AddRelationColumnCommandTest {
         relation.getRow().add(row);
 
         final LiteralExpression existingLiteralExpression = new LiteralExpression();
-        row.getExpression().add(0, HasExpression.wrap(existingLiteralExpression));
+        row.getExpression().add(0, HasExpression.wrap(row, existingLiteralExpression));
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -208,8 +208,8 @@ public class AddRelationColumnCommandTest {
 
         final LiteralExpression existingLiteralExpressionFirst = new LiteralExpression();
         final LiteralExpression existingLiteralExpressionLast = new LiteralExpression();
-        row.getExpression().add(HasExpression.wrap(existingLiteralExpressionFirst));
-        row.getExpression().add(HasExpression.wrap(existingLiteralExpressionLast));
+        row.getExpression().add(HasExpression.wrap(row, existingLiteralExpressionFirst));
+        row.getExpression().add(HasExpression.wrap(row, existingLiteralExpressionLast));
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 

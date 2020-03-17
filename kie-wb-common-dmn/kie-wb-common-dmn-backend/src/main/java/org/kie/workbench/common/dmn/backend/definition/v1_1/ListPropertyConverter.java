@@ -39,14 +39,14 @@ public class ListPropertyConverter {
         QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef(), dmn);
 
         final java.util.List<HasExpression> expression = new ArrayList<>();
+        final List result = new List(id, description, typeRef, expression);
         for (org.kie.dmn.model.api.Expression e : dmn.getExpression()) {
             final Expression eConverted = ExpressionPropertyConverter.wbFromDMN(e,
                                                                                 hasComponentWidthsConsumer);
-            final HasExpression hasExpression = HasExpression.wrap(eConverted);
+            final HasExpression hasExpression = HasExpression.wrap(result, eConverted);
             expression.add(hasExpression);
         }
 
-        final List result = new List(id, description, typeRef, expression);
         for (HasExpression hasExpression : expression) {
             final Expression e = hasExpression.getExpression();
             if (Objects.nonNull(e)) {

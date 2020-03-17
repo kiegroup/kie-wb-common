@@ -33,6 +33,7 @@ import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommand
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+import org.kie.workbench.common.dmn.client.editors.types.ValueAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -52,6 +53,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridData;
 public class ListEditorDefinition extends BaseEditorDefinition<List, ListGridData> {
 
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+    private ValueAndDataTypePopoverView.Presenter headerEditor;
 
     public ListEditorDefinition() {
         //CDI proxy
@@ -67,7 +69,8 @@ public class ListEditorDefinition extends BaseEditorDefinition<List, ListGridDat
                                 final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                 final ListSelectorView.Presenter listSelector,
                                 final TranslationService translationService,
-                                final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
+                                final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
+                                final ValueAndDataTypePopoverView.Presenter headerEditor) {
         super(definitionUtils,
               sessionManager,
               sessionCommandManager,
@@ -78,6 +81,7 @@ public class ListEditorDefinition extends BaseEditorDefinition<List, ListGridDat
               listSelector,
               translationService);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
+        this.headerEditor = headerEditor;
     }
 
     @Override
@@ -101,7 +105,7 @@ public class ListEditorDefinition extends BaseEditorDefinition<List, ListGridDat
                        final Optional<List> expression) {
         expression.ifPresent(list -> {
             final LiteralExpression literalExpression = new LiteralExpression();
-            list.getExpression().add(HasExpression.wrap(literalExpression));
+            list.getExpression().add(HasExpression.wrap(list, literalExpression));
             literalExpression.setParent(list);
         });
     }
@@ -133,7 +137,8 @@ public class ListEditorDefinition extends BaseEditorDefinition<List, ListGridDat
                                         translationService,
                                         isOnlyVisualChangeAllowed,
                                         nesting,
-                                        expressionEditorDefinitionsSupplier));
+                                        expressionEditorDefinitionsSupplier,
+                                        headerEditor));
     }
 
     @Override

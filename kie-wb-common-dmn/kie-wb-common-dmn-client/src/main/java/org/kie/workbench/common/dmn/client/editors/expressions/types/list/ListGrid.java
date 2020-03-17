@@ -16,7 +16,6 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.list;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -26,18 +25,22 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.list.AddListRowCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.list.ClearExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.list.DeleteListRowCommand;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextGridRowNumberColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.editors.expressions.util.SelectionUtils;
+import org.kie.workbench.common.dmn.client.editors.types.ValueAndDataTypePopoverView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridRenderer;
@@ -59,9 +62,11 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
+import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
 
 public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModelMapper> implements HasListSelectorControl {
+
+    private final ValueAndDataTypePopoverView.Presenter headerEditor;
 
     private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
 
@@ -84,7 +89,8 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
                     final TranslationService translationService,
                     final boolean isOnlyVisualChangeAllowed,
                     final int nesting,
-                    final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
+                    final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
+                    final ValueAndDataTypePopoverView.Presenter headerEditor) {
         super(parent,
               nodeUUID,
               hasExpression,
@@ -106,6 +112,7 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
               isOnlyVisualChangeAllowed,
               nesting);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
+        this.headerEditor = headerEditor;
 
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
@@ -121,7 +128,7 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
     @Override
     public ListUIModelMapper makeUiModelMapper() {
         return new ListUIModelMapper(this,
-                                     this::getModel,
+                                     this::getModel,/**/
                                      getExpression(),
                                      () -> isOnlyVisualChangeAllowed,
                                      expressionEditorDefinitionsSupplier,
@@ -131,19 +138,30 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
 
     @Override
     public void initialiseUiColumns() {
-        final RowNumberColumn rowNumberColumn = new RowNumberColumn();
-        rowNumberColumn.setWidth(getAndSetInitialWidth(ListUIModelMapperHelper.ROW_COLUMN_INDEX,
-                                                       rowNumberColumn.getWidth()));
+        final java.util.List<GridColumn.HeaderMetaData> headerMetaData = new ArrayList<>();
+        final ContextGridRowNumberColumn rowNumberColumn = new ContextGridRowNumberColumn(headerMetaData,
+                                                                                          getAndSetInitialWidth(ListUIModelMapperHelper.ROW_COLUMN_INDEX,
+                                                                                                                ContextGridRowNumberColumn.DEFAULT_WIDTH));
 
-        if (getExpression().get().isPresent()) {
-            model.appendColumn(rowNumberColumn);
-            final GridColumn listColumn = new ExpressionEditorColumn(gridLayer,
-                                                                     Collections.emptyList(),
+        if (nesting == 0) {
+            rowNumberColumn.getHeaderMetaData().add(new BaseHeaderMetaData("#"));
+            headerMetaData.add(new ListExpressionColumnHeaderMetaData(hasExpression,
+                                                                      hasName,
+                                                                      clearValueConsumer(true, new Name()),
+                                                                      setValueConsumer(true),
+                                                                      setTypeRefConsumer(),
+                                                                      translationService,
+                                                                      cellEditorControls,
+                                                                      headerEditor));
+        }
+
+        final GridColumn listColumn = new ListExpressionEditorColumn(gridLayer,
+                                                                     headerMetaData,
                                                                      getAndSetInitialWidth(ListUIModelMapperHelper.EXPRESSION_COLUMN_INDEX,
                                                                                            ExpressionEditorColumn.DEFAULT_WIDTH),
                                                                      this);
-            model.appendColumn(listColumn);
-        }
+        model.appendColumn(rowNumberColumn);
+        model.appendColumn(listColumn);
 
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> true);
     }
@@ -232,7 +250,7 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
     void addRow(final int index) {
         getExpression().get().ifPresent(list -> {
             final GridRow listRow = new ExpressionEditorGridRow();
-            final HasExpression hasExpression = HasExpression.wrap(new LiteralExpression());
+            final HasExpression hasExpression = HasExpression.wrap(list, new LiteralExpression());
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new AddListRowCommand(list,
                                                                 hasExpression,
@@ -299,5 +317,21 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
             }
         }
         super.doAfterSelectionChange(uiRowIndex, uiColumnIndex);
+    }
+
+    @Override
+    public void doAfterHeaderSelectionChange(final int uiHeaderRowIndex,
+                                             final int uiHeaderColumnIndex) {
+        if (getExpression().get().isPresent()) {
+            final ListUIModelMapperHelper.ListSection section = ListUIModelMapperHelper.getSection(uiHeaderColumnIndex);
+            if (section == ListUIModelMapperHelper.ListSection.EXPRESSION) {
+                final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+                if (base instanceof DomainObject) {
+                    fireDomainObjectSelectionEvent((DomainObject) base);
+                    return;
+                }
+            }
+        }
+        super.doAfterHeaderSelectionChange(uiHeaderRowIndex, uiHeaderColumnIndex);
     }
 }

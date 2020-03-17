@@ -47,7 +47,7 @@ public class ListTest {
     public void testGetHasTypeRefs() {
         final Expression expression1 = mock(Expression.class); //added
         final Expression expression2 = mock(Expression.class); //added
-        final List<HasExpression> hasExpressions = asList(HasExpression.wrap(expression1), HasExpression.wrap(expression2));
+        final List<HasExpression> hasExpressions = asList(HasExpression.wrap(list, expression1), HasExpression.wrap(list, expression2));
         final HasTypeRef hasTypeRef1 = mock(HasTypeRef.class);
         final HasTypeRef hasTypeRef2 = mock(HasTypeRef.class);
 

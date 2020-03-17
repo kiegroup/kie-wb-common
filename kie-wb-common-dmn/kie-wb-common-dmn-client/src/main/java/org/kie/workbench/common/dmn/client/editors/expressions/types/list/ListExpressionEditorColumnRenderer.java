@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kie.workbench.common.dmn.client.widgets.grid.columns;
+package org.kie.workbench.common.dmn.client.editors.expressions.types.list;
 
 import java.util.List;
 
 import com.ait.lienzo.client.core.shape.Group;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
-import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumnRenderer;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
-import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridHeaderColumnRenderContext;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.impl.BaseGridColumnRenderer;
+import org.uberfire.ext.wires.core.grids.client.widget.layer.GridWidgetRegistry;
 
 import static org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderUtilities.getEditableHeaderContent;
 
-public class NameAndDataTypeColumnRenderer extends BaseGridColumnRenderer<InformationItemCell.HasNameCell> {
+public class ListExpressionEditorColumnRenderer extends ExpressionEditorColumnRenderer {
 
-    public NameAndDataTypeColumnRenderer() {
-        super();
+    public ListExpressionEditorColumnRenderer(final GridWidgetRegistry registry) {
+        super(registry);
     }
 
     @Override
@@ -50,16 +47,5 @@ public class NameAndDataTypeColumnRenderer extends BaseGridColumnRenderer<Inform
                                         headerRowIndex,
                                         blockWidth,
                                         rowHeight);
-    }
-
-    @Override
-    public Group renderCell(final GridCell<InformationItemCell.HasNameCell> cell,
-                            final GridBodyCellRenderContext context) {
-        if (cell == null || cell.getValue() == null) {
-            return null;
-        }
-
-        final InformationItemCell.HasNameCell hasNameCell = cell.getValue().getValue();
-        return hasNameCell.render(context);
     }
 }

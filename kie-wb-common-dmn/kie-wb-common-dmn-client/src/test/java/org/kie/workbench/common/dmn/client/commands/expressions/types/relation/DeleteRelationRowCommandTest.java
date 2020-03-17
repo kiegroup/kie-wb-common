@@ -80,6 +80,8 @@ public class DeleteRelationRowCommandTest {
 
     private Relation relation;
 
+    private List rowList;
+
     private GridData uiModel;
 
     private RelationUIModelMapper uiModelMapper;
@@ -89,7 +91,8 @@ public class DeleteRelationRowCommandTest {
     @Before
     public void setup() {
         this.relation = new Relation();
-        this.relation.getRow().add(new List());
+        this.rowList = new List();
+        this.relation.getRow().add(rowList);
         this.uiModel = new BaseGridData();
         this.uiModel.appendRow(new BaseGridRow());
         this.uiModel.appendColumn(uiRowNumberColumn);
@@ -123,7 +126,7 @@ public class DeleteRelationRowCommandTest {
     @Test
     public void testGraphCommandExecuteWithColumns() {
         relation.getColumn().add(new InformationItem());
-        relation.getRow().get(0).getExpression().add(HasExpression.wrap(new LiteralExpression()));
+        relation.getRow().get(0).getExpression().add(HasExpression.wrap(rowList, new LiteralExpression()));
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -145,7 +148,7 @@ public class DeleteRelationRowCommandTest {
         relation.getRow().add(lastRow);
 
         relation.getColumn().add(new InformationItem());
-        relation.getRow().get(0).getExpression().add(HasExpression.wrap(new LiteralExpression()));
+        relation.getRow().get(0).getExpression().add(HasExpression.wrap(rowList, new LiteralExpression()));
 
         makeCommand(1);
 
@@ -178,7 +181,7 @@ public class DeleteRelationRowCommandTest {
         relation.getColumn().add(new InformationItem());
         final LiteralExpression literalExpression = new LiteralExpression();
         literalExpression.getText().setValue(VALUE);
-        relation.getRow().get(0).getExpression().add(HasExpression.wrap(literalExpression));
+        relation.getRow().get(0).getExpression().add(HasExpression.wrap(rowList, literalExpression));
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -302,7 +305,7 @@ public class DeleteRelationRowCommandTest {
         relation.getColumn().add(new InformationItem());
         final LiteralExpression literalExpression = new LiteralExpression();
         literalExpression.getText().setValue(VALUE);
-        relation.getRow().get(0).getExpression().add(HasExpression.wrap(literalExpression));
+        relation.getRow().get(0).getExpression().add(HasExpression.wrap(rowList, literalExpression));
         uiModel.appendColumn(uiModelColumn);
         uiModelMapper.fromDMNModel(0, 0);
         uiModelMapper.fromDMNModel(0, 1);
