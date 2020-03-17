@@ -231,7 +231,7 @@ public class AssignmentTest extends AssignmentBaseTest {
         AssignmentData data = new AssignmentData();
         Assignment tested = new Assignment(data, "newVariable", OUTPUT, null, "#{expression}");
         String serialized = tested.toString();
-        assertEquals("[dout]#{expression}=newVariable", serialized);
+        assertEquals("[dout]%23%7Bexpression%7D=newVariable", serialized);
 
         assertEquals(tested, Assignment.deserialize(data, serialized));
     }

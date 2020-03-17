@@ -77,7 +77,9 @@ public class OutputAssignmentReaderTest {
         OutputAssignmentReader outputReader = OutputAssignmentReader.fromAssociation(out);
         assertNull(outputReader);
 
-        when(out.getTargetRef()).thenReturn(output);
+        List<ItemAwareElement> outputs = new ArrayList<>();
+        outputs.add(output);
+        when(out.getSourceRef()).thenReturn(outputs);
 
         outputReader = OutputAssignmentReader.fromAssociation(out);
         assertResult(TARGET_NAME, SOURCE_NAME, AssociationDeclaration.Type.FromTo, outputReader.getAssociationDeclaration());

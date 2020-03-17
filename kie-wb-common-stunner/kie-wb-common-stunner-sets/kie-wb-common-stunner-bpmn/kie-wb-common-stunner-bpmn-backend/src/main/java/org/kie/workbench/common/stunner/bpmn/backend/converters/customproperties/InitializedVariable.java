@@ -325,7 +325,7 @@ public abstract class InitializedVariable {
 
             dataOutputAssociation.getAssignment().add(assignment);
 
-            dataOutputAssociation.setTargetRef(getDataOutput());
+            dataOutputAssociation.getSourceRef().add(getDataOutput());
             return dataOutputAssociation;
         }
     }

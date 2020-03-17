@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ public class OutputAssignmentReader {
             return new OutputAssignmentReader(sourceName, (Property) out.getTargetRef());
         }
 
-        if (out.getAssignment() != null && !out.getAssignment().isEmpty() && out.getTargetRef() instanceof DataOutput) {
-            String targetName = ((DataOutput) out.getTargetRef()).getName();
-            return new OutputAssignmentReader(out.getAssignment().get(0), targetName);
+        if (out.getAssignment() != null && !out.getAssignment().isEmpty() && out.getSourceRef() != null && !out.getSourceRef().isEmpty()) {
+            DataOutput target = (DataOutput) out.getSourceRef().get(0);
+            return new OutputAssignmentReader(out.getAssignment().get(0), target.getName());
         }
 
         return null;

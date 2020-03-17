@@ -88,7 +88,10 @@ public class OutputAssignmentReaderTest {
         OutputAssignmentReader outputReader = OutputAssignmentReader.fromAssociation(out);
         assertNull(outputReader);
 
-        when(out.getTargetRef()).thenReturn(output);
+        EList<ItemAwareElement> outputs = mock(EList.class);
+        when(outputs.get(0)).thenReturn(output);
+        when(outputs.isEmpty()).thenReturn(false);
+        when(out.getSourceRef()).thenReturn(outputs);
 
         outputReader = OutputAssignmentReader.fromAssociation(out);
         assertResult(TARGET_NAME, "", AssociationDeclaration.Type.FromTo, outputReader.getAssociationDeclaration());
