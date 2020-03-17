@@ -136,10 +136,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @SuppressWarnings("unused")
     public void onStartup(final PlaceRequest place) {
         superDoStartUp(place);
-
-        diagramPreviewAndExplorerDock.init(AuthoringPerspective.PERSPECTIVE_ID);
-        diagramPropertiesDock.init(AuthoringPerspective.PERSPECTIVE_ID);
-
+        initDocks();
         getWidget().init(this);
     }
 
@@ -163,8 +160,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @SuppressWarnings("unused")
     public void onClose() {
         superOnClose();
-        diagramPreviewAndExplorerDock.close();
-        diagramPropertiesDock.close();
+        closeDocks();
     }
 
     void superOnClose() {
@@ -178,8 +174,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         canvasHandler.ifPresent(c -> {
             final Metadata metadata = c.getDiagram().getMetadata();
             metadata.setPath(makeMetadataPath(metadata.getRoot(), metadata.getTitle()));
-            diagramPreviewAndExplorerDock.open();
-            diagramPropertiesDock.open();
+            openDocks();
         });
     }
 
@@ -282,4 +277,20 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     public void resetContentHash() {
         setOriginalContentHash(getCurrentDiagramHash());
     }
+
+    void initDocks() {
+        diagramPropertiesDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+        diagramPreviewAndExplorerDock.init(AuthoringPerspective.PERSPECTIVE_ID);
+    }
+
+    void openDocks() {
+        diagramPropertiesDock.open();
+        diagramPreviewAndExplorerDock.open();
+    }
+
+    void closeDocks() {
+        diagramPropertiesDock.close();
+        diagramPreviewAndExplorerDock.close();
+    }
+
 }
