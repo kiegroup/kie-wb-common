@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.guvnor.structure.backend.repositories.ConfiguredRepositoriesImpl;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.server.repositories.RepositoryFactory;
+import org.uberfire.ext.editor.commons.backend.version.CurrentBranch;
 
 @Migration
 @ApplicationScoped
@@ -33,8 +34,10 @@ public class MigrationConfiguredRepositories extends ConfiguredRepositoriesImpl 
 
     @Inject
     public MigrationConfiguredRepositories(final RepositoryFactory repositoryFactory,
-                                           final SpaceConfigStorageRegistry spaceConfigStorage) {
+                                           final SpaceConfigStorageRegistry spaceConfigStorage,
+                                           final CurrentBranch currentBranch) {
         super(repositoryFactory,
-              spaceConfigStorage);
+              spaceConfigStorage,
+              currentBranch);
     }
 }
