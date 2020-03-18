@@ -94,7 +94,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
 
         formGroup.render(view.asWidget(), field);
 
-        checkKPINotEnabled();
+        checkTagsNotEnabled();
 
         if (field != null && field.isCaseFileVariable()) {
             findVariableUsagesFlags = EnumSet.of(CASE_FILE_VARIABLE);
@@ -125,7 +125,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         VariableListItemWidgetView widget = view.getVariableWidget(view.getVariableRowsCount() - 1);
         widget.setDataTypes(dataTypeListBoxValues);
         widget.setParentWidget(this);
-        checkKPINotEnabled();
+        checkTagsNotEnabled();
     }
 
     @Override
@@ -259,9 +259,9 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         return path;
     }
 
-    private void checkKPINotEnabled() {
+    private void checkTagsNotEnabled() {
         if (this.field != null && !this.field.getId().equals("processVariables")) {
-            this.view.setKPINotEnabled();
+            this.view.setTagsNotEnabled();
         }
     }
 

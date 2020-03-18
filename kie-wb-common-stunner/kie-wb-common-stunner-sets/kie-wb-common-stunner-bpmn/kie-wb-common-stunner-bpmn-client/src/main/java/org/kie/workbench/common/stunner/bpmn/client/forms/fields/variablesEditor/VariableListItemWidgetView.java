@@ -46,5 +46,5 @@ public interface VariableListItemWidgetView extends HasModel<VariableRow> {
 
     void setReadOnly(final boolean readOnly);
 
-    void setKPINotEnabled();
+    void setTagsNotEnabled();
 }

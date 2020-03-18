@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.HTMLInputElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
@@ -43,7 +44,6 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTe
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -61,7 +61,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class VariableListItemWidgetViewImplTest {
 
     private static final String VARIABLE_NAME = "variableName";
@@ -122,7 +122,7 @@ public class VariableListItemWidgetViewImplTest {
         view.name = name;
         view.deleteButton = deleteButton;
         kpi = mock(HTMLInputElement.class);
-        view.kpi = kpi;
+       // view.kpi = kpi;
         view.customDataType = customDataType;
         view.dataType = dataType;
         view.dataTypeComboBox = dataTypeComboBox;
@@ -145,7 +145,7 @@ public class VariableListItemWidgetViewImplTest {
         doCallRealMethod().when(view).handleDeleteButton(any(ClickEvent.class));
         doCallRealMethod().when(view).setReadOnly(anyBoolean());
         doCallRealMethod().when(view).notifyModelChanged();
-        doCallRealMethod().when(view).setKPINotEnabled();
+        doCallRealMethod().when(view).setTagsNotEnabled();
 
         VariableRow row = new VariableRow();
         doReturn(row).when(variableRow).getModel();

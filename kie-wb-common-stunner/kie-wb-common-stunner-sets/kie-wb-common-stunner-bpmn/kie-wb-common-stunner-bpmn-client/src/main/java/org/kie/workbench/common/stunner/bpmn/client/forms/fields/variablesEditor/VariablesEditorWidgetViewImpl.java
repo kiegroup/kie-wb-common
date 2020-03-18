@@ -78,13 +78,13 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
     private DataTypeNamesService clientDataTypesService;
 
     @DataField
-    protected TableCellElement kpith = Document.get().createTHElement();
+    protected TableCellElement tagsth = Document.get().createTHElement();
 
     List<String> dataTypes;
     List<String> dataTypeDisplayNames;
     boolean readOnly = false;
 
-    private boolean kpiDisabled = false;
+    private boolean tagsDisabled = false;
 
     /**
      * The list of variableRows that currently exist.
@@ -244,7 +244,6 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
         addVarButton.setIcon(IconType.PLUS);
         nameth.setInnerText("Name");
         datatypeth.setInnerText("Data Type");
-        kpith.setInnerText("KPI");
     }
 
     @Override
@@ -254,7 +253,7 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
         for (int i = 0; i < getVariableRowsCount(); i++) {
             getVariableWidget(i).setReadOnly(readOnly);
         }
-        checkKPINotEnabled();
+        checkTagsNotEnabled();
     }
 
     @Override
@@ -312,16 +311,16 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
     }
 
     @Override
-    public void setKPINotEnabled() {
-        kpiDisabled = true;
-        checkKPINotEnabled();
+    public void setTagsNotEnabled() {
+        tagsDisabled = true;
+        checkTagsNotEnabled();
     }
 
-    private void checkKPINotEnabled() {
-        if (kpiDisabled) {
-            kpith.removeFromParent();
+    private void checkTagsNotEnabled() {
+        if (tagsDisabled) {
+            tagsth.removeFromParent();
             for (int i = 0; i < getVariableRowsCount(); i++) {
-                getVariableWidget(i).setKPINotEnabled();
+                getVariableWidget(i).setTagsNotEnabled();
             }
         }
 

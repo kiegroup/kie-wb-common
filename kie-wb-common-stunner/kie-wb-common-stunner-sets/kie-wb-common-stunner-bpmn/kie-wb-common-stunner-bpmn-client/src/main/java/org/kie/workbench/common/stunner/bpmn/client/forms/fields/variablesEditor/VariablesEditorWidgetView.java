@@ -77,5 +77,5 @@ public interface VariablesEditorWidgetView extends IsWidget {
 
     void setReadOnly(final boolean readOnly);
 
-    void setKPINotEnabled();
+    void setTagsNotEnabled();
 }

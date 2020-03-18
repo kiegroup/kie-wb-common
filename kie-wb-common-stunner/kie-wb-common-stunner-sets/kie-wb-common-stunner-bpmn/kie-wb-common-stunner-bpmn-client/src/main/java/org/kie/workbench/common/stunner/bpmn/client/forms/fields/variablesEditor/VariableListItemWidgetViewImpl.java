@@ -26,12 +26,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.text.shared.Renderer;
-import elemental2.dom.CSSProperties;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
-import elemental2.dom.Node;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.gwtbootstrap3.client.ui.Button;
@@ -147,12 +145,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Inject
     @DataField
-    @Bound
-    protected HTMLInputElement kpi;
-
-    @Inject
-    @DataField
-    protected HTMLDivElement kpiTD;
+    protected HTMLDivElement tagsTD;
 
     /**
      * Required for implementation of Delete button.
@@ -222,22 +215,23 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             }
         });
 
-        kpi.addEventListener("change", (evt) -> notifyModelChanged());
 
         PopOver.$(variableTagsSettings).popovers();
 
-        variableTagsSettings.onclick = e -> {
-            GWT.log("Item has been clicked");
-            GWT.log("Next Sibling: " + variableTagsSettings.nextElementSibling.innerHTML);
-            GWT.log("Next Sibling Child Count: " + variableTagsSettings.nextElementSibling.childElementCount);
-            Element lastNode = variableTagsSettings.nextElementSibling.lastElementChild;
-            GWT.log("Last Sibling Child Count: " + lastNode);
-            GWT.log("some check value is: " + somecheck.checked);
-            lastNode.innerHTML= "";
-            lastNode.appendChild(tagsDiv);
-            tagsDiv.style.display = "block";
-            return null;
-        };
+        if (variableTagsSettings != null) {
+            variableTagsSettings.onclick = e -> {
+                GWT.log("Item has been clicked");
+                GWT.log("Next Sibling: " + variableTagsSettings.nextElementSibling.innerHTML);
+                GWT.log("Next Sibling Child Count: " + variableTagsSettings.nextElementSibling.childElementCount);
+                Element lastNode = variableTagsSettings.nextElementSibling.lastElementChild;
+                GWT.log("Last Sibling Child Count: " + lastNode);
+                GWT.log("some check value is: " + somecheck.checked);
+                lastNode.innerHTML = "";
+                lastNode.appendChild(tagsDiv);
+                tagsDiv.style.display = "block";
+                return null;
+            };
+        }
 
     }
 
@@ -297,7 +291,6 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         deleteButton.setEnabled(!readOnly);
         dataTypeComboBox.setReadOnly(readOnly);
         name.setEnabled(!readOnly);
-        kpi.disabled = readOnly;
     }
 
     private boolean isDuplicateName(final String name) {
@@ -349,13 +342,9 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     }
 
     @Override
-    public void setKPINotEnabled() {
-        this.kpi.disabled = true;
-        this.kpi.remove();
-        this.kpiTD.remove();
+    public void setTagsNotEnabled() {
+        this.tagsTD.remove();
     }
-
-
 
     @JsType(isNative = true)
     private static abstract class PopOver {

@@ -91,7 +91,6 @@ public class VariableListItemWidgetTest {
         widget.name = name;
         widget.deleteButton = deleteButton;
         widget.variableRow = variable;
-        widget.kpi = kpi;
         Mockito.doCallRealMethod().when(widget).setTextBoxModelValue(any(TextBox.class),
                                                                      anyString());
         Mockito.doCallRealMethod().when(widget).setListBoxModelValue(any(ValueListBox.class),
@@ -225,9 +224,9 @@ public class VariableListItemWidgetTest {
         String returnedDataType2 = widget.getModelValue(widget.dataType);
         assertEquals(sDataType,
                      returnedDataType2);
-        boolean returnedDataType3 = widget.kpi.checked;
-        assertEquals(true,
-                     returnedDataType3);
+   //     boolean returnedDataType3 = widget.kpi.checked;
+   //     assertEquals(true,
+  //                   returnedDataType3);
 
     }
 }

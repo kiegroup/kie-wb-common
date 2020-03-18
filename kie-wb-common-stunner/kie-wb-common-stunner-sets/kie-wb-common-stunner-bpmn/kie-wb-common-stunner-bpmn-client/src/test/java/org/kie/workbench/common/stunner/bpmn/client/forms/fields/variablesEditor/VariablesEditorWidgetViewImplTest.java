@@ -114,7 +114,7 @@ public class VariablesEditorWidgetViewImplTest {
         view.nameth = nameth;
         view.datatypeth = datatypeth;
         view.notification = notification;
-        view.kpith = kpith;
+        view.tagsth = kpith;
         doCallRealMethod().when(view).setVariableRows(any(List.class));
         doCallRealMethod().when(view).init(any(VariablesEditorWidgetView.Presenter.class));
         doCallRealMethod().when(view).handleAddVarButton(any(ClickEvent.class));
