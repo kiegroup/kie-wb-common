@@ -128,7 +128,7 @@ public class ListGrid extends BaseExpressionGrid<List, ListGridData, ListUIModel
     @Override
     public ListUIModelMapper makeUiModelMapper() {
         return new ListUIModelMapper(this,
-                                     this::getModel,/**/
+                                     this::getModel,
                                      getExpression(),
                                      () -> isOnlyVisualChangeAllowed,
                                      expressionEditorDefinitionsSupplier,
