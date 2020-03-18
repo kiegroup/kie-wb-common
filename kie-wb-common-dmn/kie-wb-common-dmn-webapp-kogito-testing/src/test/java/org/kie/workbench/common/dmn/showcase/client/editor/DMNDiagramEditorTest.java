@@ -36,6 +36,7 @@ import org.uberfire.ext.editor.commons.client.file.popups.CopyPopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.DeletePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.RenamePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilderImpl;
+import org.uberfire.ext.editor.commons.client.menu.CurrentBranchProvider;
 import org.uberfire.ext.editor.commons.client.menu.RestoreVersionCommandProvider;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mvp.Command;
@@ -80,6 +81,9 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
     private BasicFileMenuBuilderImpl basicFileMenuBuilder;
 
     @Mock
+    private CurrentBranchProvider currentBranchProvider;
+
+    @Mock
     private DMNVFSService vfsService;
     
     @Mock
@@ -107,7 +111,8 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                                                  renamePopUpPresenter,
                                                                  busyIndicatorView,
                                                                  notificationEventSourceMock,
-                                                                 restoreVersionCommandProvider);
+                                                                 restoreVersionCommandProvider,
+                                                                 currentBranchProvider);
         doAnswer(i -> {
             DMNDiagramEditorTest.this.basicFileMenuBuilder.addSave(saveMenuItem);
             return fileMenuBuilder;

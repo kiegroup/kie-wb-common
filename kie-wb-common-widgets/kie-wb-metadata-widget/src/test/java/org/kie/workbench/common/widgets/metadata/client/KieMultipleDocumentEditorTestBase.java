@@ -43,6 +43,7 @@ import org.uberfire.ext.editor.commons.client.file.popups.RenamePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
 import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilder;
 import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilderImpl;
+import org.uberfire.ext.editor.commons.client.menu.CurrentBranchProvider;
 import org.uberfire.ext.editor.commons.client.menu.DownloadMenuItemBuilder;
 import org.uberfire.ext.editor.commons.client.menu.RestoreVersionCommandProvider;
 import org.uberfire.ext.editor.commons.client.validation.DefaultFileNameValidator;
@@ -153,6 +154,9 @@ abstract class KieMultipleDocumentEditorTestBase {
     protected Command concurrentRenameCommand;
     protected Command concurrentDeleteCommand;
 
+    @Mock
+    protected CurrentBranchProvider currentBranchProvider;
+
     @Before
     public void setup() {
         concurrentRenameCommand = null;
@@ -259,7 +263,8 @@ abstract class KieMultipleDocumentEditorTestBase {
                                                                                        renamePopUpPresenter,
                                                                                        busyIndicatorView,
                                                                                        notification,
-                                                                                       restoreVersionCommandProvider);
+                                                                                       restoreVersionCommandProvider,
+                                                                                       currentBranchProvider);
         setField(basicFileMenuBuilder,
                  "restoreVersionCommandProvider",
                  restoreVersionCommandProvider);
