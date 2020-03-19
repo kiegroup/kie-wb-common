@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.service;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -49,6 +50,8 @@ import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramReso
 import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
+
+import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.createValidId;
 
 @ApplicationScoped
 public class BPMNClientDiagramService implements KogitoClientDiagramService {
@@ -127,7 +130,7 @@ public class BPMNClientDiagramService implements KogitoClientDiagramService {
                                 final String xml) {
 
         if (Objects.isNull(xml) || xml.isEmpty()) {
-            return createNewDiagram();
+            return createNewDiagram(fileName);
         }
         return parse(fileName, xml);
     }
@@ -136,12 +139,15 @@ public class BPMNClientDiagramService implements KogitoClientDiagramService {
         return marshalling.marshall(convert(diagram));
     }
 
-    private Diagram createNewDiagram() {
-        final String title = DEFAULT_PROCESS_ID;
+    private static Logger LOGGER = Logger.getLogger(BPMNClientDiagramService.class.getName());
+
+    private Diagram createNewDiagram(String fileName) {
+        LOGGER.severe("HELLOOO FROM JUL");
+        LOGGER.severe("file name is: " + fileName);
         final String defSetId = BPMNClientMarshalling.getDefinitionSetId();
         final Metadata metadata = createMetadata();
-        metadata.setTitle(title);
-        final Diagram diagram = factoryManager.newDiagram(title,
+        metadata.setTitle(fileName);
+        final Diagram diagram = factoryManager.newDiagram(fileName,
                                                           defSetId,
                                                           metadata);
         updateClientMetadata(diagram);
@@ -164,7 +170,7 @@ public class BPMNClientDiagramService implements KogitoClientDiagramService {
         }
 
         if (diagramSet.getId().getValue().isEmpty()) {
-            diagramSet.getId().setValue(fileName);
+            diagramSet.getId().setValue(createValidId(fileName));
         }
 
         final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();

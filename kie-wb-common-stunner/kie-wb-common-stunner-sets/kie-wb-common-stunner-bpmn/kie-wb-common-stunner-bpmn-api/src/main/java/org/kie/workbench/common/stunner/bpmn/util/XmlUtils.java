@@ -18,6 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.util;
 
 import java.util.Arrays;
 
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
+
 public class XmlUtils {
 
     private static final byte[] CHARS = new byte[65536];
@@ -646,7 +648,8 @@ public class XmlUtils {
         Arrays.fill(CHARS, 57344, 65534, (byte) 33); // Fill 8190 of value (byte) 33
     }
 
-    private XmlUtils() {}
+    private XmlUtils() {
+    }
 
     public static boolean isNcNameStartCharacter(char ch) {
         byte b = CHARS[ch];
@@ -655,5 +658,30 @@ public class XmlUtils {
 
     public static boolean isNcNameCharacter(char ch) {
         return CHARS[ch] < 0;
+    }
+
+    public static String createValidId(String value) {
+        if (isEmpty(value)) {
+            return "_";
+        }
+
+        StringBuilder resultId = new StringBuilder();
+
+        for (int i = 0; i < value.length(); i++) {
+            if (isNcNameCharacter(value.charAt(i))) {
+                resultId.append(value.charAt(i));
+            }
+        }
+
+        String result = resultId.toString();
+        if (isEmpty(result)) {
+            return "_";
+        }
+
+        if (isNcNameStartCharacter(result.charAt(0))) {
+            return result;
+        }
+
+        return "_" + result;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ public class StringUtils {
     public static final RegExp EXPRESSION = RegExp.compile(Patterns.EXPRESSION);
 
     private static URL url = new URL();
+
+    private StringUtils() {
+    }
 
     /**
      * Creates a string for a list by concatenating each object's String separated by commas
@@ -70,29 +73,53 @@ public class StringUtils {
     }
 
     /**
-     * URLEncode a string
+     * Encode a url parameters see {@link URL#encodeQueryString(String)}
      *
      * @param s
      * @return
      */
     public static String urlEncode(String s) {
-        if (s == null || s.isEmpty()) {
+        if (isEmpty(s)) {
             return s;
         }
         return url.encodeQueryString(s);
     }
 
     /**
-     * URLDecode a string
+     * Decode a url parameters see {@link URL#decodeQueryString(String)}
      *
      * @param s
      * @return
      */
     public static String urlDecode(String s) {
-        if (s == null || s.isEmpty()) {
+        if (isEmpty(s)) {
             return s;
         }
         return url.decodeQueryString(s);
+    }
+
+    /**
+     * Equivalent of {@link java.net.URLDecoder#decode(String, String)} in UTF-8 decoding on server side
+     * @param s
+     * @return
+     */
+    public static String encode(String s) {
+        if (isEmpty(s)) {
+            return s;
+        }
+        return URL.encode(s);
+    }
+
+    /**
+     * Equivalent of {@link java.net.URLEncoder#encode(String, String)} in UTF-8 encoding on server side
+     * @param s
+     * @return
+     */
+    public static String decode(String s) {
+        if (isEmpty(s)) {
+            return s;
+        }
+        return URL.decode(s);
     }
 
     /**

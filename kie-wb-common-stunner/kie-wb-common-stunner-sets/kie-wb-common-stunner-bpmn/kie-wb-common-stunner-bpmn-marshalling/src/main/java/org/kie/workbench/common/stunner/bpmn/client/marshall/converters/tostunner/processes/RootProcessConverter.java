@@ -45,7 +45,9 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, AdvancedData> {
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.decode;
+
+public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData> {
 
     public RootProcessConverter(TypedFactoryManager typedFactoryManager,
                                 PropertyReaderFactory propertyReaderFactory,
@@ -61,9 +63,9 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
 
     @Override
     protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader e, DefinitionsPropertyReader d) {
-        return new DiagramSet(new Name(process.getName()),
+        return new DiagramSet(new Name(decode(process.getName())),
                               new Documentation(e.getDocumentation()),
-                              new Id(process.getId()),
+                              new Id(decode(process.getId())),
                               new Package(e.getPackage()),
                               new ProcessType(e.getProcessType()),
                               new Version(e.getVersion()),

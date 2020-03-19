@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
@@ -65,9 +68,9 @@ public class RootProcessConverter {
 
         BaseDiagramSet diagramSet = definition.getDiagramSet();
 
-        p.setName(diagramSet.getName().getValue());
+        p.setName(encode(diagramSet.getName().getValue()));
         p.setDocumentation(diagramSet.getDocumentation().getValue());
-        p.setId(diagramSet.getId().getValue());
+        p.setId(encode(diagramSet.getId().getValue()));
         p.setPackage(diagramSet.getPackageProperty().getValue());
         p.setType(diagramSet.getProcessType().getValue());
         p.setVersion(diagramSet.getVersion().getValue());
@@ -96,5 +99,13 @@ public class RootProcessConverter {
         p.setCaseFileVariables(caseFileVariables);
 
         return p;
+    }
+
+    private static String encode(String text) {
+        try {
+            return URLEncoder.encode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(text, e);
+        }
     }
 }

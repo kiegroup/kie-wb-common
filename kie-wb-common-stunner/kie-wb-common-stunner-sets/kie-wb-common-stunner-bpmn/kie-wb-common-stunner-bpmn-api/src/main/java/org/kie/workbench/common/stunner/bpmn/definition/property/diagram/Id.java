@@ -25,7 +25,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.Fiel
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
-import org.kie.workbench.common.stunner.bpmn.forms.validation.process.ValidProcessIdValue;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
@@ -40,7 +39,6 @@ public class Id implements BPMNProperty {
     @NotNull
     @NotEmpty
     @FieldValue
-    @ValidProcessIdValue
     private String value;
 
     public Id() {

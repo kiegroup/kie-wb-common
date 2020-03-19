@@ -18,8 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.util;
 
 import org.junit.Test;
 
+import static org.jgroups.util.Util.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.createValidId;
 
 public class XmlUtilsTest {
 
@@ -56,5 +58,27 @@ public class XmlUtilsTest {
         assertTrue(XmlUtils.isNcNameCharacter('a'));
         assertTrue(XmlUtils.isNcNameCharacter('Ф'));
         assertTrue(XmlUtils.isNcNameCharacter('月'));
+    }
+
+    @Test
+    public void testDefaultValidName() {
+        assertEquals("_", createValidId(""));
+        assertEquals("_", createValidId(null));
+        assertEquals("_", createValidId("&"));
+        assertEquals("_", createValidId("#"));
+        assertEquals("_", createValidId(" "));
+        assertEquals("_", createValidId("£"));
+    }
+
+    @Test
+    public void testFullyValidName() {
+        String name = "SomeValidNameForTheПроцесс";
+        assertEquals(name, createValidId(name));
+    }
+
+    @Test
+    public void testSomeSymbolsCleared() {
+        String name = "Hello $& Name";
+        assertEquals("HelloName", createValidId(name));
     }
 }

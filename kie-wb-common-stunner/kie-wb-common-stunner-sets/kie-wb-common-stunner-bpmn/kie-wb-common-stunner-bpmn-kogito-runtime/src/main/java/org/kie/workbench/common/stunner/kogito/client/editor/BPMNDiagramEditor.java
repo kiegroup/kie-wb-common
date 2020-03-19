@@ -290,7 +290,8 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         Promise<Void> promise =
                 promises.create((success, failure) -> {
                     superOnClose();
-                    diagramServices.transform(value,
+                    diagramServices.transform(path,
+                                              value,
                                               new ServiceCallback<Diagram>() {
 
                                                   @Override
