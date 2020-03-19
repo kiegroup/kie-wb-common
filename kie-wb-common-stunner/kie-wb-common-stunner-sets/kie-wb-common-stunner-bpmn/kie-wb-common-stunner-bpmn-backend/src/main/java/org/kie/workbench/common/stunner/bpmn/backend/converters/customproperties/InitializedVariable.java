@@ -254,10 +254,7 @@ public abstract class InitializedVariable {
             toExpr.setBody(id);
             assignment.setTo(toExpr);
 
-            FormalExpression fromExpr = bpmn2.createFormalExpression();
-            String cdataExpression = asCData(expression);
-            fromExpr.setBody(cdataExpression);
-            assignment.setFrom(fromExpr);
+            assignment.setFrom(createCdataExpression(expression));
 
             dataInputAssociation
                     .getAssignment().add(assignment);
@@ -284,9 +281,7 @@ public abstract class InitializedVariable {
             Assignment assignment = bpmn2.createAssignment();
             String id = getDataInput().getId();
 
-            FormalExpression fromExpr = bpmn2.createFormalExpression();
-            fromExpr.setBody(expression);
-            assignment.setFrom(fromExpr);
+            assignment.setFrom(createCdataExpression(expression));
 
             FormalExpression toExpr = bpmn2.createFormalExpression();
             toExpr.setBody(id);
@@ -319,9 +314,7 @@ public abstract class InitializedVariable {
             toExpr.setBody(id);
             assignment.setFrom(toExpr);
 
-            FormalExpression fromExpr = bpmn2.createFormalExpression();
-            fromExpr.setBody(expression);
-            assignment.setTo(fromExpr);
+            assignment.setTo(createCdataExpression(expression));
 
             dataOutputAssociation.getAssignment().add(assignment);
 
@@ -358,6 +351,12 @@ public abstract class InitializedVariable {
         dataOutput.setItemSubjectRef(itemDefinition);
         CustomAttribute.dtype.of(dataOutput).set(itemDefinition.getStructureRef());
         return dataOutput;
+    }
+
+    private static FormalExpression createCdataExpression(String value) {
+        FormalExpression expression = bpmn2.createFormalExpression();
+        expression.setBody(asCData(value));
+        return expression;
     }
 
     private static DataOutputAssociation associationOf(Property source, DataOutput dataOutput) {

@@ -275,7 +275,8 @@ public abstract class InitializedVariable {
             String id = getDataInput().getId();
 
             FormalExpression fromExpr = bpmn2.createFormalExpression();
-            FormalExpressionBodyHandler.of(fromExpr).setBody(expression);
+            String cdataExpression = asCData(expression);
+            FormalExpressionBodyHandler.of(fromExpr).setBody(cdataExpression);
             assignment.setFrom(fromExpr);
 
             FormalExpression toExpr = bpmn2.createFormalExpression();
@@ -310,7 +311,8 @@ public abstract class InitializedVariable {
             assignment.setFrom(toExpr);
 
             FormalExpression fromExpr = bpmn2.createFormalExpression();
-            FormalExpressionBodyHandler.of(fromExpr).setBody(expression);
+            String cdataExpression = asCData(expression);
+            FormalExpressionBodyHandler.of(fromExpr).setBody(cdataExpression);
             assignment.setTo(fromExpr);
 
             dataOutputAssociation.getAssignment().add(assignment);
