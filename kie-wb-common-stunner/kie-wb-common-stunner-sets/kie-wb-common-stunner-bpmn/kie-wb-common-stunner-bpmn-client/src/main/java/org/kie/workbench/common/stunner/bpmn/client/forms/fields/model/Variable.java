@@ -164,6 +164,7 @@ public class Variable {
                             var.setCustomDataType(dataType);
                         }
                     }
+                    //kṕi, this is where it needs to be saved
                     if (varParts.length == 3) {
                         var.kpi = Boolean.parseBoolean(varParts[2]);
                     }

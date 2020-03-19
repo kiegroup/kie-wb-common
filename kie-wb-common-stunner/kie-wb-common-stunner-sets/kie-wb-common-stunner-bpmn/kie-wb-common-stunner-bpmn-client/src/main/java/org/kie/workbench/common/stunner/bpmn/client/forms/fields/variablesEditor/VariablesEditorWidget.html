@@ -35,16 +35,16 @@
                             <th data-field="nameth" style="width:32%">
                                 Name
                             </th>
-                            <th data-field="datatypeth" style="width:40%">
+                            <th data-field="datatypeth" style="width:43%">
                                 Data Type
                             </th>
 
-                            <th style="width:24%" data-field="tagsth">
+                            <th style="width:22%" data-field="tagsth">
                                 Tags
                                 <i class="fa fa-info-circle" title = "Variable Tags Info Go Here"/>
                             </th>
 
-                            <td style="width:4%">
+                            <td style="width:3%">
                                 <button type="button" class="center-block" data-field="addVarButton"></button>
                             </td>
                         </tr>
@@ -54,7 +54,7 @@
                             <td style="width:32%">
                                 <input type="text" class="form-control" data-field="name"/>
                             </td>
-                            <td style="width:40%">
+                            <td style="width:43%">
                                 <select data-field="dataType" class="form-control">
                                     <option value="Integer">Integer</option>
                                     <option value="String">String</option>
@@ -62,18 +62,22 @@
                                 <input type="text" class="form-control" data-field="customDataType"/>
                             </td>
 
-                            <td style="width:24%" data-field="tagsTD">
-                                <div class = "containerDiv">
-                                    <a class = "tagAnchor tagsSVG" data-field="variable-tags-settings" data-placement="bottom" data-toggle="popover" data-html="true" data-content="Something Before <button>Sample Pop Over Text</button> Something After">
-                                        <span id = "tagCount" class = "tagSpan">4</span>
+                            <td style="width:22%" data-field="tagsTD" title = "These are the tags included 2" >
+                                <div class = "containerDiv" title = "These are the tags included 3">
+                                    <a class = "tagAnchor tagsSVG" data-field="variable-tags-settings" data-placement="bottom" data-toggle="popover" data-html="true" data-content="S">
+                                        <span data-field ="tagCount"  title = "These are the tags included " class = "tagSpan">4</span>
                                     </a>
                                 </div>
 
-                                <div data-field = "tags-div" style = "display: none; ">
+                                <div data-field = "tags-div" style = "width: 250px; display: none; ">
 
                                     <button type="button" class ="close" data-field="closeButton">x</button>
 
-                                    Variable tags                                      .
+                                    Variable tags     Information                                 .
+
+                                    <select data-field="defaultClassNames" class="form-control"/>
+                                    <input class="form-control" data-field="customClassName" type="text"/>
+
 
                                     <input type="checkbox" class="center-block" data-field="some-check"/>
 
@@ -84,7 +88,7 @@
                                 </div>
                             </td>
 
-                            <td style="width:4%">
+                            <td style="width:3%">
                                 <button type="button" class="center-block" data-field="deleteButton"></button>
                             </td>
                         </tr>
