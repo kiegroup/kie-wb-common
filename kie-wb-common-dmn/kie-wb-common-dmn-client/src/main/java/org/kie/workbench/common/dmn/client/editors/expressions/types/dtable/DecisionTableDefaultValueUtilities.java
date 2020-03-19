@@ -22,6 +22,7 @@ import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.InputClauseLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
+import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClause;
 import org.kie.workbench.common.dmn.client.property.dmn.DefaultValueUtilities;
 
 public class DecisionTableDefaultValueUtilities {
@@ -36,6 +37,10 @@ public class DecisionTableDefaultValueUtilities {
 
     public static final String RULE_DESCRIPTION = "";
 
+    public static final String RULE_ANNOTATION_CLAUSE_PREFIX = "annotation-";
+
+    public static final String RULE_ANNOTATION_CLAUSE_EXPRESSION_TEXT = "";
+
     public static String getNewInputClauseName(final DecisionTable dtable) {
         return INPUT_CLAUSE_PREFIX + getMaxUnusedInputClauseIndex(dtable);
     }
@@ -49,6 +54,21 @@ public class DecisionTableDefaultValueUtilities {
                 if (index.isPresent()) {
                     maxIndex = Math.max(maxIndex, index.get());
                 }
+            }
+        }
+        return maxIndex + 1;
+    }
+
+    public static String getNewRuleAnnotationClauseName(final DecisionTable decisionTable) {
+        return RULE_ANNOTATION_CLAUSE_PREFIX + getMaxUnusedRuleAnnotationClauseIndex(decisionTable);
+    }
+
+    private static int getMaxUnusedRuleAnnotationClauseIndex(final DecisionTable decisionTable) {
+        int maxIndex = 0;
+        for (final RuleAnnotationClause ac : decisionTable.getAnnotations()) {
+            final Optional<Integer> index = DefaultValueUtilities.extractIndex(ac.getName().getValue(), RULE_ANNOTATION_CLAUSE_PREFIX);
+            if (index.isPresent()) {
+                maxIndex = Math.max(maxIndex, index.get());
             }
         }
         return maxIndex + 1;

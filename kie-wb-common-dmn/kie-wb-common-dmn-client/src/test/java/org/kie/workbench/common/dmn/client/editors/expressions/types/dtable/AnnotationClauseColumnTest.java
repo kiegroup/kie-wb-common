@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,26 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.gwtbootstrap3.client.ui.TextArea;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.client.editors.expressions.mocks.MockHasDOMElementResourcesHeaderMetaData;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.BaseDOMElementSingletonColumnTest;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextAreaDOMElement;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
-public class DescriptionColumnTest extends BaseDOMElementSingletonColumnTest<TextAreaSingletonDOMElementFactory, TextAreaDOMElement, TextArea, DescriptionColumn, DecisionTableGrid> {
+public class AnnotationClauseColumnTest extends BaseDOMElementSingletonColumnTest<TextAreaSingletonDOMElementFactory, TextAreaDOMElement, TextArea, RuleAnnotationClauseColumn, DecisionTableGrid> {
 
     @Mock
     private TextAreaSingletonDOMElementFactory factory;
@@ -59,10 +67,22 @@ public class DescriptionColumnTest extends BaseDOMElementSingletonColumnTest<Tex
     }
 
     @Override
-    protected DescriptionColumn getColumn() {
-        return new DescriptionColumn(headerMetaData,
-                                     factory,
-                                     DescriptionColumn.DEFAULT_WIDTH,
-                                     gridWidget);
+    protected RuleAnnotationClauseColumn getColumn() {
+        final List<GridColumn.HeaderMetaData> headerMetaData = new ArrayList<>();
+        headerMetaData.add(this.headerMetaData);
+        return new RuleAnnotationClauseColumn(() -> headerMetaData,
+                                              factory,
+                                              DMNGridColumn.DEFAULT_WIDTH,
+                                              gridWidget);
+    }
+
+    @Test
+    public void checkHeaderDOMElementsAreDestroyed() {
+        final MockHasDOMElementResourcesHeaderMetaData mockHeaderMetaData = mock(MockHasDOMElementResourcesHeaderMetaData.class);
+        column.getHeaderMetaData().add(mockHeaderMetaData);
+
+        column.destroyResources();
+
+        verify(mockHeaderMetaData).destroyResources();
     }
 }

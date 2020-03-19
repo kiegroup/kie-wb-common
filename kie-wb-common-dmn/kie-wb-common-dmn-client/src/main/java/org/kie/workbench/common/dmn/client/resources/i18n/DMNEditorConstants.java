@@ -173,6 +173,9 @@ public class DMNEditorConstants {
     public static final String FunctionEditor_SelectFunctionKind = "FunctionEditor.SelectFunctionKind";
 
     @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_SelectRuleAnnotationName = "DecisionTableEditor.SelectRuleAnnotationName";
+
+    @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_DescriptionColumnHeader = "DecisionTableEditor.DescriptionColumnHeader";
 
     @TranslationKey(defaultValue = "")
@@ -204,6 +207,18 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_OutputClauseHeader = "DecisionTableEditor.OutputClauseHeader";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_RuleAnnotationClauseHeader = "DecisionTableEditor.RuleAnnotationClauseHeader";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_InsertRuleAnnotationClauseLeft = "DecisionTableEditor.InsertRuleAnnotationClauseLeft";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_InsertRuleAnnotationClauseRight = "DecisionTableEditor.InsertRuleAnnotationClauseRight";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DecisionTableEditor_DeleteRuleAnnotationClause = "DecisionTableEditor.DeleteRuleAnnotationClause";
 
     @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_InsertOutputClauseLeft = "DecisionTableEditor.InsertOutputClauseLeft";
@@ -270,6 +285,9 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String NameAndDataTypePopover_DataTypeLabel = "NameAndDataTypePopover.DataTypeLabel";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ValuePopover_ValueLabel = "ValuePopover.ValueLabel";
 
     @TranslationKey(defaultValue = "")
     public static final String DataTypeNameIsBlankErrorMessage_StrongMessage = "DataTypeNameIsBlankErrorMessage.StrongMessage";

@@ -158,7 +158,8 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
                                                             headerEditors,
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
                                                                                                       new DMNGraphUtils(sessionManager, new DMNDiagramUtils()),
-                                                                                                      itemDefinitionUtils));
+                                                                                                      itemDefinitionUtils),
+                                                            null);
 
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);

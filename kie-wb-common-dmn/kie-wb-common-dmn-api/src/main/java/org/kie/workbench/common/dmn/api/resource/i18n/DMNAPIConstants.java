@@ -51,4 +51,7 @@ public class DMNAPIConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DecisionService_DomainObjectName = "DecisionService.DomainObjectName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String RuleAnnotationClause_DomainObjectName = "RuleAnnotationClause.DomainObjectName";
 }

@@ -350,7 +350,8 @@ public class DecisionTableGridTest {
                                                             headerEditors,
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
                                                                                                       new DMNGraphUtils(sessionManager, dmnDiagramUtils),
-                                                                                                      itemDefinitionUtils));
+                                                                                                      itemDefinitionUtils),
+                                                            null);
 
         expression = definition.getModelClass();
         definition.enrich(Optional.empty(), hasExpression, expression);
@@ -417,7 +418,7 @@ public class DecisionTableGridTest {
         assertTrue(uiModel.getColumns().get(0) instanceof DecisionTableRowNumberColumn);
         assertTrue(uiModel.getColumns().get(1) instanceof InputClauseColumn);
         assertTrue(uiModel.getColumns().get(2) instanceof OutputClauseColumn);
-        assertTrue(uiModel.getColumns().get(3) instanceof DescriptionColumn);
+        assertTrue(uiModel.getColumns().get(3) instanceof RuleAnnotationClauseColumn);
 
         assertEquals(1,
                      uiModel.getRowCount());

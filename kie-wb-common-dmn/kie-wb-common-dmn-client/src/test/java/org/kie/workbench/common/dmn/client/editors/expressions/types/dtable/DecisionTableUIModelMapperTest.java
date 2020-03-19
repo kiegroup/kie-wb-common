@@ -54,7 +54,7 @@ public class DecisionTableUIModelMapperTest {
     private OutputClauseColumn uiOutputClauseColumn;
 
     @Mock
-    private DescriptionColumn uiDescriptionColumn;
+    private RuleAnnotationClauseColumn uiAnnotationClauseColumn;
 
     @Mock
     private ListSelectorView.Presenter listSelector;
@@ -74,11 +74,11 @@ public class DecisionTableUIModelMapperTest {
         this.uiModel.appendColumn(uiRowNumberColumn);
         this.uiModel.appendColumn(uiInputClauseColumn);
         this.uiModel.appendColumn(uiOutputClauseColumn);
-        this.uiModel.appendColumn(uiDescriptionColumn);
+        this.uiModel.appendColumn(uiAnnotationClauseColumn);
         doReturn(0).when(uiRowNumberColumn).getIndex();
         doReturn(1).when(uiInputClauseColumn).getIndex();
         doReturn(2).when(uiOutputClauseColumn).getIndex();
-        doReturn(3).when(uiDescriptionColumn).getIndex();
+        doReturn(3).when(uiAnnotationClauseColumn).getIndex();
 
         this.dtable = new DecisionTable();
         this.dtable.getInput().add(new InputClause());
