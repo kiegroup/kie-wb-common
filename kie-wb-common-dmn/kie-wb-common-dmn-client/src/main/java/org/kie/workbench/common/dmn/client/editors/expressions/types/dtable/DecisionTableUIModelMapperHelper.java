@@ -89,6 +89,26 @@ public class DecisionTableUIModelMapperHelper {
 
         final int inputClauseColumnCount = dtable.getInput().size();
         final int outputClauseColumnCount = dtable.getOutput().size();
-        return columnIndex - inputClauseColumnCount - outputClauseColumnCount - 1;
+        final int annotationClauseColumnCount = dtable.getAnnotations().size();
+
+        int _columnIndex = columnIndex;
+        if ((_columnIndex = _columnIndex - ROW_INDEX_COLUMN_COUNT) < 0) {
+            throw new IllegalArgumentException("columnIndex referenced 'Row index' column. Should be a valid AnnotationEntry column.");
+        }
+        if ((_columnIndex = _columnIndex - inputClauseColumnCount) < 0) {
+            throw new IllegalArgumentException("columnIndex referenced an InputEntry column. Should be a valid AnnotationEntry column.");
+        }
+        if ((_columnIndex = _columnIndex - outputClauseColumnCount) < 0) {
+            throw new IllegalArgumentException("columnIndex referenced an OutputEntry column. Should be a valid AnnotationEntry column.");
+        }
+        if (_columnIndex > annotationClauseColumnCount - 1) {
+            throw new IllegalArgumentException("columnIndex did not reference a valid AnnotationEntry column.");
+        }
+
+        return _columnIndex;
+//        final int annotationIndex = columnIndex - inputClauseColumnCount - outputClauseColumnCount - 1;
+//        if (annotationIndex > outputClauseColumnCount - 1) {
+//            throw new IllegalArgumentException("columnIndex did not reference a valid OutputEntry column.");
+//        }
     }
 }
