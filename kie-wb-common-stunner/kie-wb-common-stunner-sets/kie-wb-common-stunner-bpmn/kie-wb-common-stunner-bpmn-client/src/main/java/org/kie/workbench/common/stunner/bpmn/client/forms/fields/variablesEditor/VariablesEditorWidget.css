@@ -27,7 +27,34 @@
 
 }
 
-.popov {
-    max-width: 320px;
+.tagsDiv {
+    width: 200px;
+    display: none;
 }
 
+.acceptButton {
+    color: #00659c;
+}
+
+.tagBadges {
+    adding-right: .6em;
+    padding-left: .6em;
+    border-radius: 10rem;
+}
+
+.tagCloseButton {
+    font-size:13px;
+    cursor: pointer;
+    color: #0060B6;
+}
+
+
+.tagBadge {
+    font-size:15px;
+    padding-right: 10px;
+    color: #0060B6;
+    background-color: #F5F5F5;
+    font-family: "Open Sans",Helvetica,Arial,sans-serif;
+    font-style: normal;
+    font-weight: 400;
+}

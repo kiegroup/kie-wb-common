@@ -18,27 +18,30 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEdito
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.AnchorElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.Timer;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLLabelElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
@@ -60,12 +63,10 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.ComboBox;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.ComboBoxView;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.CustomDataTypeTextBox;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTextBox;
-import org.kie.workbench.common.stunner.lienzo.primitive.PrimitiveTooltip;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.createDataTypeDisplayName;
 
 /**
  * A templated widget that will be used to display a row in a table of
@@ -102,6 +103,11 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     private String currentValue;
     private String currentName;
 
+    protected Set<String> tagSet = new HashSet<>();
+
+    @Inject
+    private org.jboss.errai.common.client.dom.Document document;
+
     @Inject
     @DataField("variable-tags-settings")
     private HTMLAnchorElement variableTagsSettings;
@@ -109,6 +115,10 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     @Inject
     @DataField("tags-div")
     HTMLDivElement tagsDiv;
+
+    @Inject
+    @DataField
+    HTMLDivElement tagsContainer;
 
     @Inject
     @DataField("some-check")
@@ -120,19 +130,20 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Inject
     @DataField
+    private Span acceptButton;
+
+    @Inject
+    @DataField
     protected Span tagCount;
 
     @Inject
     @DataField
-    protected CustomDataTypeTextBox customClassName;
+    protected CustomDataTypeTextBox customTagName;
 
     @Inject
-    protected ComboBox classNamesComboBox;
+    protected ComboBox tagNamesComboBox;
 
-    protected Map<String, String> dataTypes = new TreeMap<>();
-
-    // @Inject
-   // private JQueryProducer.JQuery<Popover> durationTimerHelpPopover;
+    protected List<String> tagNamesList = new ArrayList<>();
 
     @DataField
     protected ValueListBox<String> dataType = new ValueListBox<>(new Renderer<String>() {
@@ -170,7 +181,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     protected HTMLDivElement tagsTD;
 
     @DataField
-    protected ValueListBox<String> defaultClassNames = new ValueListBox<>(new Renderer<String>() {
+    protected ValueListBox<String> defaultTagNames = new ValueListBox<>(new Renderer<String>() {
         public String render(final String object) {
             return object != null ? object : "";
         }
@@ -250,7 +261,6 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             }
         });
 
-
         PopOver.$(variableTagsSettings).popovers();
 
         setTagTittle("This is a new title");
@@ -258,7 +268,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             variableTagsSettings.onclick = e -> {
                 GWT.log("Item has been clicked");
                 GWT.log("Next Sibling: " + variableTagsSettings.nextElementSibling.innerHTML);
-                ((HTMLDivElement) variableTagsSettings.nextElementSibling).style.left = "200px";
+                ((HTMLDivElement) variableTagsSettings.nextElementSibling).style.left = "130px";
 
                 GWT.log("Next Sibling Child Count: " + variableTagsSettings.nextElementSibling.childElementCount);
                 Element lastNode = variableTagsSettings.nextElementSibling.lastElementChild;
@@ -266,92 +276,63 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
                 GWT.log("some check value is: " + somecheck.checked);
                 lastNode.innerHTML = "";
                 lastNode.appendChild(tagsDiv);
-               // ((HTMLDivElement) variableTagsSettings.nextElementSibling.lastElementChild).style.maxWidth = CSSProperties.MaxWidthUnionType.of("320px");
+                // ((HTMLDivElement) variableTagsSettings.nextElementSibling.lastElementChild).style.maxWidth = CSSProperties.MaxWidthUnionType.of("320px");
 
-                new Timer() {
-                    @Override
-                    public void run() {
+                GWT.log("Inner Html: " + variableTagsSettings.nextElementSibling.lastElementChild.innerHTML);
+                GWT.log("Style: " + variableTagsSettings.nextElementSibling.lastElementChild.getAttribute("style"));
+                GWT.log("Style: " + variableTagsSettings.nextElementSibling.lastElementChild.getAttribute("class"));
 
-                        GWT.log("Inner Html: " +variableTagsSettings.nextElementSibling.lastElementChild.innerHTML);
-                        GWT.log("Style: " +variableTagsSettings.nextElementSibling.lastElementChild.getAttribute("style"));
-                        GWT.log("Style: " +variableTagsSettings.nextElementSibling.lastElementChild.getAttribute("class"));
-
-                        //variableTagsSettings.nextElementSibling.lastElementChild.setAttribute("style", "max-width: 300px;");
-
-                    //    variableTagsSettings.nextElementSibling.setAttribute("style", "max-width: 300px;");
-
-                        ((HTMLDivElement) variableTagsSettings.nextElementSibling).style.maxWidth = CSSProperties.MaxWidthUnionType.of("300px");
-                    }
-                }.schedule(100);
-
+                ((HTMLDivElement) variableTagsSettings.nextElementSibling).style.maxWidth = CSSProperties.MaxWidthUnionType.of("280px");
 
                 tagsDiv.style.display = "block";
                 return null;
             };
         }
 
-        customClassName.addKeyDownHandler(event -> {
+        customTagName.addKeyDownHandler(event -> {
             int iChar = event.getNativeKeyCode();
             if (iChar == ' ') {
                 event.preventDefault();
             }
         });
 
-        loadDefaultDataTypes();
-        setListItems();
+        loadDefaultTagNames();
+        setTagsListItems();
     }
 
-
-    protected void loadDefaultDataTypes() {
-        List<String> dataTypes = new ArrayList<>();
-        dataTypes.add("internal");
-        dataTypes.add("required");
-        dataTypes.add("readonly");
-        dataTypes.add("input");
-        dataTypes.add("output");
-        dataTypes.add("business relevant");
-
-        addDataTypes(dataTypes);
+    protected void loadDefaultTagNames() {
+        List<String> tagNames = new ArrayList<>();
+        tagNames.add("internal");
+        tagNames.add("required");
+        tagNames.add("readonly");
+        tagNames.add("input");
+        tagNames.add("output");
+        tagNames.add("business relevant");
+        tagNamesList.addAll(tagNames);
     }
 
-    protected void addDataTypes(List<String> dataTypesList) {
-        for (String dataType : dataTypesList) {
-            String displayName = dataType;
-            dataTypes.put(dataType, displayName);
-        }
-    }
-
-    private void setListItems() {
-        Map<String, String> dataTypes = this.dataTypes;
+    private void setTagsListItems() {
 
         ListBoxValues classNameListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT,
                                                                  "Edit" + " ",
                                                                  null);
 
-        List<String> displayNames = new ArrayList<>(dataTypes.values());
-        classNameListBoxValues.addValues(displayNames);
-        classNamesComboBox.setShowCustomValues(true);
-        classNamesComboBox.setListBoxValues(classNameListBoxValues);
+        classNameListBoxValues.addValues(tagNamesList);
+        tagNamesComboBox.setShowCustomValues(true);
+        tagNamesComboBox.setListBoxValues(classNameListBoxValues);
 
-        String className = "MyClass";
-        if (className == null) {
-            className = "";
-        }
+        defaultTagNames.setValue("");
 
-        String displayName = dataTypes.getOrDefault(className, "");
-        defaultClassNames.setValue(displayName);
-
-        classNamesComboBox.init(this,
-                                true,
-                                defaultClassNames,
-                                customClassName,
-                                false,
-                                true,
-                                CUSTOM_PROMPT,
-                                ENTER_TYPE_PROMPT);
-
-
+        tagNamesComboBox.init(this,
+                              true,
+                              defaultTagNames,
+                              customTagName,
+                              false,
+                              true,
+                              CUSTOM_PROMPT,
+                              ENTER_TYPE_PROMPT);
     }
+
     private void setTagTittle(final String title) {
         variableTagsSettings.setAttribute("title", title);
         tagCount.setAttribute("title", title);
@@ -432,6 +413,57 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         variableTagsSettings.click();
     }
 
+    @EventHandler("acceptButton")
+    public void handleAcceptButton(final ClickEvent e) {
+        final String tag = tagNamesComboBox.getValue();
+        if (tag != null && !tag.isEmpty() && !tagSet.contains(tag)) {
+            GWT.log("Adding Message: " + tag);
+
+            final Span tagSpan = (Span) document.createElement("Span");
+            tagSpan.setTextContent(tag);
+            tagSpan.setClassName("badge tagBadge  tagBadges");
+
+            final Span closeSpan = (Span) document.createElement("Span");
+            closeSpan.setTextContent("x");
+            closeSpan.setClassName("close tagCloseButton tagBadges");
+
+            final org.jboss.errai.common.client.dom.Button closeSpan2 = (org.jboss.errai.common.client.dom.Button) document.createElement("button");
+            closeSpan2.setTextContent("x");
+            closeSpan2.setClassName("close tagCloseButton tagBadges");
+
+            tagSpan.appendChild(closeSpan);
+            tagSpan.appendChild(closeSpan2);
+
+
+            closeSpan2.setOnclick(ex ->     {
+                GWT.log("Item has been clicked");
+                ex.preventDefault();
+                //tagSet.remove(tag);
+                //tagSpan.getParentElement().removeChild(tagSpan);
+            });
+
+            HTMLAnchorElement someButton = (HTMLAnchorElement) document.createElement("a");
+
+            someButton.textContent = "XXX";
+
+            someButton.onclick = ex -> {
+                GWT.log("Item has been clicked 2");
+                ex.preventDefault();
+                tagSet.remove(tag);
+          //      tagSpan.getParentElement().removeChild(tagSpan);
+                tagsContainer.innerHTML = "";
+                return null;
+            };
+
+            tagsContainer.innerHTML += tagSpan.getOuterHTML();
+            tagsContainer.appendChild(someButton);
+
+
+
+            tagSet.add(tag);
+
+        }
+    }
 
     /**
      * Updates the display of this row according to the state of the
@@ -475,5 +507,4 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
         public native void popovers();
     }
-
 }
