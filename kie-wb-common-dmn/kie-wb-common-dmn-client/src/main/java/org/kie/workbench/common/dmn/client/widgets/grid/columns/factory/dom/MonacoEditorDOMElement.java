@@ -24,6 +24,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -191,7 +192,12 @@ public class MonacoEditorDOMElement extends BaseDOMElement<String, MonacoEditorW
     }
 
     MonacoStandaloneCodeEditor.CallbackFunction getWidgetTrigger(final NativeEvent nativeEvent) {
-        return (e) -> DomEvent.fireNativeEvent(nativeEvent, widget);
+        return (e) -> fireNativeEvent(nativeEvent, widget);
+    }
+
+    void fireNativeEvent(final NativeEvent nativeEvent,
+                         final HasHandlers handlerSource) {
+        DomEvent.fireNativeEvent(nativeEvent, handlerSource);
     }
 
     NativeEvent getBlurEvent() {

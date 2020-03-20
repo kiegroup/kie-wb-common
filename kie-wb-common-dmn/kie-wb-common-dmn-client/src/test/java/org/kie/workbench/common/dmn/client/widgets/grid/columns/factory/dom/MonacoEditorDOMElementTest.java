@@ -179,6 +179,17 @@ public class MonacoEditorDOMElementTest extends BaseDOMElementTest<MonacoEditorW
     }
 
     @Test
+    public void testGetWidgetTrigger() {
+
+        final NativeEvent triggeredBlur = mock(NativeEvent.class);
+        final NativeEvent monacoBlur = mock(NativeEvent.class);
+
+        domElement.getWidgetTrigger(triggeredBlur).call(monacoBlur);
+
+        verify(domElement).fireNativeEvent(triggeredBlur, widget);
+    }
+
+    @Test
     public void testGetOnKeyDownWhenSuggestWidgetIsVisibleAndKeyCodeIsEsc() {
 
         final MonacoStandaloneCodeEditor codeEditor = mock(MonacoStandaloneCodeEditor.class);
