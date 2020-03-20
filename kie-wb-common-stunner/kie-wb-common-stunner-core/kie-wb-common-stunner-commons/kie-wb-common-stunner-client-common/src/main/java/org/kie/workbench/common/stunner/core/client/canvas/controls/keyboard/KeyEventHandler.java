@@ -64,15 +64,16 @@ public class KeyEventHandler {
     private int delay = KEYS_TIMER_DELAY;
 
     public KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
-        this.shortcutCallbacks.add(shortcutCallback);
-
-        // This means that we're NOT in the Kogito environment
-        if (BusToolsCli.isRemoteCommunicationEnabled()) {
-            return this;
-        }
 
         final Optional<KogitoKeyShortcutCallback> possibleKogitoShortcutCallback = getAssociatedKogitoKeyShortcutCallback(shortcutCallback);
         if (!possibleKogitoShortcutCallback.isPresent() || possibleKogitoShortcutCallback.get().getKeyCombination().isEmpty()) {
+            //This means we're registering a non-Kogito keyboard shortcut
+            this.shortcutCallbacks.add(shortcutCallback);
+            return this;
+        }
+
+        // This means that we're NOT in the Kogito environment
+        if (BusToolsCli.isRemoteCommunicationEnabled()) {
             return this;
         }
 
