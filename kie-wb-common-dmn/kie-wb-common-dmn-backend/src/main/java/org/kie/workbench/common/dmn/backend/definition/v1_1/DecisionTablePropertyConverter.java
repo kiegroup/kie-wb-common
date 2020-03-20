@@ -47,12 +47,14 @@ public class DecisionTablePropertyConverter {
             ruleAnnotationClause.setParent(result);
             result.getAnnotations().add(ruleAnnotationClause);
         }
-        for (final org.kie.dmn.model.api.RuleAnnotationClause ruleAnnotationClause : dmn.getAnnotation()) {
-            final RuleAnnotationClause converted = RuleAnnotationClauseConverter.wbFromDMN(ruleAnnotationClause);
-            if (converted != null) {
-                converted.setParent(result);
+        if (!(dmn instanceof org.kie.dmn.model.v1_1.TDecisionTable)) {
+            for (final org.kie.dmn.model.api.RuleAnnotationClause ruleAnnotationClause : dmn.getAnnotation()) {
+                final RuleAnnotationClause converted = RuleAnnotationClauseConverter.wbFromDMN(ruleAnnotationClause);
+                if (converted != null) {
+                    converted.setParent(result);
+                }
+                result.getAnnotations().add(converted);
             }
-            result.getAnnotations().add(converted);
         }
         for (org.kie.dmn.model.api.InputClause input : dmn.getInput()) {
             final InputClause inputClauseConverted = InputClausePropertyConverter.wbFromDMN(input);

@@ -113,7 +113,6 @@ import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseBounds;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
-import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellEditContext;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
@@ -260,6 +259,12 @@ public class DecisionTableGridTest {
     private ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
 
     @Mock
+    private ManagedInstance<ValuePopoverView.Presenter> valueEditors;
+
+    @Mock
+    private ValuePopoverView.Presenter valueEditor;
+
+    @Mock
     private ValueAndDataTypePopoverView.Presenter headerEditor;
 
     @Mock
@@ -351,7 +356,7 @@ public class DecisionTableGridTest {
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
                                                                                                       new DMNGraphUtils(sessionManager, dmnDiagramUtils),
                                                                                                       itemDefinitionUtils),
-                                                            null);
+                                                            valueEditors);
 
         expression = definition.getModelClass();
         definition.enrich(Optional.empty(), hasExpression, expression);
@@ -385,6 +390,7 @@ public class DecisionTableGridTest {
 
         when(headerEditors.get()).thenReturn(headerEditor);
         when(gridBodyCellEditContext.getRelativeLocation()).thenReturn(Optional.empty());
+        when(valueEditors.get()).thenReturn(valueEditor);
 
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).getTranslation(anyString());
@@ -549,10 +555,10 @@ public class DecisionTableGridTest {
 
         assertEquals(1,
                      header.size());
-        assertTrue(header.get(0) instanceof BaseHeaderMetaData);
+        assertTrue(header.get(0) instanceof RuleAnnotationClauseColumnHeaderMetaData);
 
-        final BaseHeaderMetaData md = (BaseHeaderMetaData) header.get(0);
-        assertEquals(DMNEditorConstants.DecisionTableEditor_DescriptionColumnHeader,
+        final RuleAnnotationClauseColumnHeaderMetaData md = (RuleAnnotationClauseColumnHeaderMetaData) header.get(0);
+        assertEquals(DecisionTableDefaultValueUtilities.RULE_ANNOTATION_CLAUSE_PREFIX + "1",
                      md.getTitle());
     }
 
@@ -586,10 +592,15 @@ public class DecisionTableGridTest {
     }
 
     @Test
-    public void testGetItemsDescriptionColumn() {
+    public void testGetItemsRuleAnnotationColumn() {
         setupGrid(makeHasNameForDecision(), 0);
 
-        assertDefaultListItems(grid.getItems(0, 3), true);
+
+        final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 3);
+
+        assertThat(items.size()).isEqualTo(10);
+        assertRuleAnnotationClauseItems(items.subList(0, 4));
+        assertDefaultListItems(items.subList(5, 10), true);
     }
 
     @Test
@@ -787,6 +798,30 @@ public class DecisionTableGridTest {
         verify(grid).deleteInputClause(eq(1));
     }
 
+    private void assertRuleAnnotationClauseItems(final List<HasListSelectorControl.ListSelectorItem> items) {
+        assertThat(items.size()).isEqualTo(4);
+        assertListSelectorHeaderItem(items.get(COLUMN_HEADER),
+                                     DMNEditorConstants.DecisionTableEditor_RuleAnnotationClauseHeader);
+        assertListSelectorTextItem(items.get(INSERT_COLUMN_BEFORE),
+                                   DMNEditorConstants.DecisionTableEditor_InsertRuleAnnotationClauseLeft,
+                                   true);
+        assertListSelectorTextItem(items.get(INSERT_COLUMN_AFTER),
+                                   DMNEditorConstants.DecisionTableEditor_InsertRuleAnnotationClauseRight,
+                                   true);
+        assertListSelectorTextItem(items.get(DELETE_COLUMN),
+                                   DMNEditorConstants.DecisionTableEditor_DeleteRuleAnnotationClause,
+                                   false);
+
+        grid.onItemSelected(items.get(INSERT_COLUMN_BEFORE));
+        verify(grid).addRuleAnnotationClause(eq(3));
+
+        grid.onItemSelected(items.get(INSERT_COLUMN_AFTER));
+        verify(grid).addRuleAnnotationClause(eq(4));
+
+        grid.onItemSelected(items.get(DELETE_COLUMN));
+        verify(grid).deleteRuleAnnotationClause(eq(3));
+    }
+
     private void assertOutputClauseItems(final List<HasListSelectorControl.ListSelectorItem> items) {
         assertThat(items.size()).isEqualTo(4);
         assertListSelectorHeaderItem(items.get(COLUMN_HEADER),
@@ -828,6 +863,7 @@ public class DecisionTableGridTest {
         assertListSelectorTextItem(items.get(DEFAULT_DUPLICATE_RULE),
                                    DMNEditorConstants.DecisionTableEditor_DuplicateDecisionRule,
                                    enabled);
+
     }
 
     private void assertListSelectorHeaderItem(final HasListSelectorControl.ListSelectorItem item,

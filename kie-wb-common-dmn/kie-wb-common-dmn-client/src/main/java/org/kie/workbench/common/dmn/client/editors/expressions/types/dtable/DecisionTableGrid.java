@@ -215,7 +215,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                                                       final RuleAnnotationClause ruleAnnotationClause) {
         final RuleAnnotationClauseColumn column = new RuleAnnotationClauseColumn(ruleAnnotationClauseHeaderMetaData(ruleAnnotationClause),
                                                                                  textAreaFactory,
-                                                                                 DMNGridColumn.DEFAULT_WIDTH,
+                                                                                 getAndSetInitialWidth(index, DMNGridColumn.DEFAULT_WIDTH),
                                                                                  this);
         return column;
     }

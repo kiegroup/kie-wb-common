@@ -39,13 +39,14 @@ public class DecisionRulePropertyConverter {
             annotationEntryText.setParent(result);
             result.getAnnotationEntry().add(annotationEntryText);
         }
-
-        for (final org.kie.dmn.model.api.RuleAnnotation ruleAnnotation : dmn.getAnnotationEntry()) {
-            final RuleAnnotationClauseText annotationEntryConverted = RuleAnnotationClauseTextConverter.wbFromDMN(ruleAnnotation);
-            if (annotationEntryConverted != null) {
-                annotationEntryConverted.setParent(result);
+        if (!(dmn instanceof org.kie.dmn.model.v1_1.TDecisionRule)) {
+            for (final org.kie.dmn.model.api.RuleAnnotation ruleAnnotation : dmn.getAnnotationEntry()) {
+                final RuleAnnotationClauseText annotationEntryConverted = RuleAnnotationClauseTextConverter.wbFromDMN(ruleAnnotation);
+                if (annotationEntryConverted != null) {
+                    annotationEntryConverted.setParent(result);
+                }
+                result.getAnnotationEntry().add(annotationEntryConverted);
             }
-            result.getAnnotationEntry().add(annotationEntryConverted);
         }
         for (final org.kie.dmn.model.api.UnaryTests ie : dmn.getInputEntry()) {
             final UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(ie);

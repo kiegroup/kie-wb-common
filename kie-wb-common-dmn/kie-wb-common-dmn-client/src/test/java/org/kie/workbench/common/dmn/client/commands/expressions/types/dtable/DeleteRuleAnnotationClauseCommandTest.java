@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.commands.expressions.types.dtable;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
@@ -36,7 +37,6 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class DeleteRuleAnnotationClauseCommandTest {
 
     @Mock
@@ -91,10 +91,10 @@ public class DeleteRuleAnnotationClauseCommandTest {
         final int outputSize = 5;
         final List input = mock(List.class);
         final List output = mock(List.class);
-        final DeleteRuleAnnotationClauseCommand command = mock(DeleteRuleAnnotationClauseCommand.class);
-        doCallRealMethod().when(command).getRuleAnnotationClauseIndex();
-        when(command.getDecisionTable()).thenReturn(decisionTable);
-        when(command.getUiColumnIndex()).thenReturn(columnIndex);
+        final DeleteRuleAnnotationClauseCommand deleteCommand = mock(DeleteRuleAnnotationClauseCommand.class);
+        doCallRealMethod().when(deleteCommand).getRuleAnnotationClauseIndex();
+        when(deleteCommand.getDecisionTable()).thenReturn(decisionTable);
+        when(deleteCommand.getUiColumnIndex()).thenReturn(columnIndex);
         when(input.size()).thenReturn(inputSize);
         when(output.size()).thenReturn(outputSize);
         when(decisionTable.getInput()).thenReturn(input);
@@ -102,7 +102,7 @@ public class DeleteRuleAnnotationClauseCommandTest {
 
         final int expected = columnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT - inputSize - outputSize;
 
-        final int actual = command.getRuleAnnotationClauseIndex();
+        final int actual = deleteCommand.getRuleAnnotationClauseIndex();
 
         assertEquals(expected, actual);
     }

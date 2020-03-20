@@ -25,6 +25,7 @@ import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
+import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClause;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionRuleFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableDefaultValueUtilities;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapper;
@@ -290,6 +291,7 @@ public class AddDecisionRuleCommandTest {
     public void testCanvasCommandAddRuleAndThenUndo() throws Exception {
         dtable.getInput().add(new InputClause());
         dtable.getOutput().add(new OutputClause());
+        dtable.getAnnotations().add(new RuleAnnotationClause());
 
         makeCommand(0);
 
@@ -325,6 +327,7 @@ public class AddDecisionRuleCommandTest {
 
         dtable.getInput().add(new InputClause());
         dtable.getOutput().add(new OutputClause());
+        dtable.getAnnotations().add(new RuleAnnotationClause());
 
         makeCommand(1);
 
@@ -384,6 +387,6 @@ public class AddDecisionRuleCommandTest {
         assertEquals(uiRowIndex + 1, uiGridRow.getCells().get(0).getValue().getValue());
         assertEquals(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT, uiGridRow.getCells().get(1).getValue().getValue());
         assertEquals(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT, uiGridRow.getCells().get(2).getValue().getValue());
-        assertEquals(DecisionTableDefaultValueUtilities.RULE_DESCRIPTION, uiGridRow.getCells().get(3).getValue().getValue());
+        assertEquals(DecisionTableDefaultValueUtilities.RULE_ANNOTATION_CLAUSE_EXPRESSION_TEXT, uiGridRow.getCells().get(3).getValue().getValue());
     }
 }
