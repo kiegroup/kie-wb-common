@@ -15,11 +15,13 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
@@ -39,6 +41,7 @@ import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoFEELInitializer;
 import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
 import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
+import org.kie.workbench.common.stunner.client.widgets.presenters.Viewer;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -68,6 +71,7 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -101,23 +105,18 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final SessionManager sessionManager;
     protected final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     protected final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
-
     protected final DecisionNavigatorDock decisionNavigatorDock;
     protected final DiagramEditorPropertiesDock diagramPropertiesDock;
     protected final PreviewDiagramDock diagramPreviewAndExplorerDock;
-
     protected final LayoutHelper layoutHelper;
     protected final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
-
     protected final DataTypesPage dataTypesPage;
-
     protected final DMNEditorSearchIndex editorSearchIndex;
     protected final SearchBarComponent<DMNSearchableElement> searchBarComponent;
-
     protected final KogitoClientDiagramService diagramServices;
     protected final MonacoFEELInitializer feelInitializer;
-
-    private CanvasFileExport canvasFileExport;
+    protected final CanvasFileExport canvasFileExport;
+    protected final Promises promises;
 
     // --- Workaround : Start ---
     // This is a workaround for kogito-tooling that calls setContent(..) twice; once with a _valid_ DMN model (a new one) and
@@ -129,12 +128,12 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     // the model is _valid_. However it is set to a NOP implementation if there was an error opening the model, so that
     // when the asynchronous call completes the editor does not have unnecessary components added/initialised.
     // See https://github.com/kiegroup/kogito-tooling/blob/master/packages/microeditor-envelope/src/EditorEnvelopeController.tsx#L61
-    private final Consumer<Diagram> INVALID_DIAGRAM_PROXY = (diagram) -> {/*NOP*/};
+    private final BiConsumer<Diagram, Viewer.Callback> INVALID_DIAGRAM_PROXY = (diagram, callback) -> {/*NOP*/};
 
-    private final Consumer<Diagram> VALID_DIAGRAM_PROXY = (diagram) -> {
+    private final BiConsumer<Diagram, Viewer.Callback> VALID_DIAGRAM_PROXY = (diagram, callback) -> {
         getLayoutHelper().applyLayout(diagram, getOpenDiagramLayoutExecutor());
         getFEELInitializer().initializeFEELEditor();
-        super.open(diagram);
+        super.open(diagram, callback);
     };
 
     private LayoutHelper getLayoutHelper() {
@@ -149,7 +148,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         return this.feelInitializer;
     }
 
-    private Consumer<Diagram> openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
+    private BiConsumer<Diagram, Viewer.Callback> openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
     // --- Workaround : End ---
 
     public AbstractDMNDiagramEditor(final View view,
@@ -180,7 +179,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                     final DataTypesPage dataTypesPage,
                                     final KogitoClientDiagramService diagramServices,
                                     final MonacoFEELInitializer feelInitializer,
-                                    final CanvasFileExport canvasFileExport) {
+                                    final CanvasFileExport canvasFileExport,
+                                    final Promises promises) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -199,22 +199,18 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
-
         this.decisionNavigatorDock = decisionNavigatorDock;
         this.diagramPropertiesDock = diagramPropertiesDock;
         this.diagramPreviewAndExplorerDock = diagramPreviewAndExplorerDock;
-
         this.layoutHelper = layoutHelper;
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
-
         this.dataTypesPage = dataTypesPage;
-
         this.editorSearchIndex = editorSearchIndex;
         this.searchBarComponent = searchBarComponent;
-
         this.diagramServices = diagramServices;
         this.feelInitializer = feelInitializer;
         this.canvasFileExport = canvasFileExport;
+        this.promises = promises;
     }
 
     @OnStartup
@@ -280,8 +276,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     @Override
-    public void open(final Diagram diagram) {
-        openDiagramMethodProxy.accept(diagram);
+    public void open(final Diagram diagram,
+                     final Viewer.Callback callback) {
+        openDiagramMethodProxy.accept(diagram, callback);
     }
 
     @OnOpen
@@ -432,23 +429,48 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     @SetContent
     public void setContent(final String path,
                            final String value) {
-        superOnClose();
-        diagramServices.transform(path,
-                                  value,
-                                  new ServiceCallback<Diagram>() {
+        Promise promise =
+                promises.create((success, failure) -> {
+                    superOnClose();
+                    diagramServices.transform(path,
+                                              value,
+                                              new ServiceCallback<Diagram>() {
 
-                                      @Override
-                                      public void onSuccess(final Diagram diagram) {
-                                          openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
-                                          AbstractDMNDiagramEditor.this.open(diagram);
-                                      }
+                                                  @Override
+                                                  public void onSuccess(final Diagram diagram) {
+                                                      openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
+                                                      AbstractDMNDiagramEditor.this.open(diagram,
+                                                                                         new Viewer.Callback() {
+                                                                                             @Override
+                                                                                             public void onSuccess() {
+                                                                                                 success.onInvoke((Object) null);
+                                                                                             }
 
-                                      @Override
-                                      public void onError(final ClientRuntimeError error) {
-                                          openDiagramMethodProxy = INVALID_DIAGRAM_PROXY;
-                                          AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
-                                      }
-                                  });
+                                                                                             @Override
+                                                                                             public void onError(ClientRuntimeError error) {
+                                                                                                 openDiagramMethodProxy = INVALID_DIAGRAM_PROXY;
+                                                                                                 AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
+                                                                                                 // TODO: [TiagoBento] Are you also managing the error bus?
+                                                                                                 failure.onInvoke(error);
+                                                                                             }
+                                                                                         });
+                                                  }
+
+                                                  @Override
+                                                  public void onError(final ClientRuntimeError error) {
+                                                      openDiagramMethodProxy = INVALID_DIAGRAM_PROXY;
+                                                      AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
+                                                      // TODO: [TiagoBento] Are you also managing the error bus?
+                                                      failure.onInvoke(error);
+                                                  }
+                                              });
+                });
+
+        // TODO: [TiagoBento] Return the promise instance when API changed. Remove code below.
+        promise.then(nothing -> {
+            GWT.log("DMNDiagramEditor READY TO USE!");
+            return null;
+        });
     }
 
     @Override
