@@ -65,6 +65,7 @@ import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.uberfire.client.annotations.WorkbenchClientEditor;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.client.views.pfly.multipage.MultiPageEditorSelectedPageEvent;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -80,7 +81,6 @@ import org.uberfire.workbench.events.NotificationEvent;
 public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements KogitoScreen {
 
     private static final PlaceRequest DMN_KOGITO_RUNTIME_SCREEN_DEFAULT_REQUEST = new DefaultPlaceRequest(AbstractDMNDiagramEditor.EDITOR_ID);
-
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -111,7 +111,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
                             final DataTypesPage dataTypesPage,
                             final KogitoClientDiagramService diagramServices,
                             final MonacoFEELInitializer feelInitializer,
-                            final CanvasFileExport canvasFileExport) {
+                            final CanvasFileExport canvasFileExport,
+                            final Promises promises) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -140,7 +141,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
               dataTypesPage,
               diagramServices,
               feelInitializer,
-              canvasFileExport);
+              canvasFileExport,
+              promises);
     }
 
     @Override
