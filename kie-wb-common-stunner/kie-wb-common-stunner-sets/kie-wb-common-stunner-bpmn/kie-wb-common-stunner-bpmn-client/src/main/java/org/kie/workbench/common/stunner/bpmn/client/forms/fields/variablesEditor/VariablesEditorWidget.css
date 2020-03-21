@@ -34,6 +34,8 @@
 
 .acceptButton {
     color: #00659c;
+    padding-left: 10px;
+    cursor: pointer;
 }
 
 .tagBadges {

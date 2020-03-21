@@ -27,18 +27,13 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.AnchorElement;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.text.shared.Renderer;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLLabelElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -119,10 +114,6 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     @Inject
     @DataField
     HTMLDivElement tagsContainer;
-
-    @Inject
-    @DataField("some-check")
-    protected HTMLInputElement somecheck;
 
     @Inject
     @DataField
@@ -273,7 +264,6 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
                 GWT.log("Next Sibling Child Count: " + variableTagsSettings.nextElementSibling.childElementCount);
                 Element lastNode = variableTagsSettings.nextElementSibling.lastElementChild;
                 GWT.log("Last Sibling Child Count: " + lastNode);
-                GWT.log("some check value is: " + somecheck.checked);
                 lastNode.innerHTML = "";
                 lastNode.appendChild(tagsDiv);
                 // ((HTMLDivElement) variableTagsSettings.nextElementSibling.lastElementChild).style.maxWidth = CSSProperties.MaxWidthUnionType.of("320px");
@@ -283,6 +273,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
                 GWT.log("Style: " + variableTagsSettings.nextElementSibling.lastElementChild.getAttribute("class"));
 
                 ((HTMLDivElement) variableTagsSettings.nextElementSibling).style.maxWidth = CSSProperties.MaxWidthUnionType.of("280px");
+                ((HTMLDivElement) variableTagsSettings.nextElementSibling).style.minHeight = CSSProperties.MinHeightUnionType.of("280px");
 
                 tagsDiv.style.display = "block";
                 return null;
@@ -419,49 +410,32 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         if (tag != null && !tag.isEmpty() && !tagSet.contains(tag)) {
             GWT.log("Adding Message: " + tag);
 
-            final Span tagSpan = (Span) document.createElement("Span");
-            tagSpan.setTextContent(tag);
-            tagSpan.setClassName("badge tagBadge  tagBadges");
+            final HTMLLabelElement tagLabel = (HTMLLabelElement) document.createElement("label");
+            tagLabel.textContent = tag;
+            tagLabel.className = "badge tagBadge  tagBadges";
+            tagLabel.htmlFor = "closeButton";
 
-            final Span closeSpan = (Span) document.createElement("Span");
-            closeSpan.setTextContent("x");
-            closeSpan.setClassName("close tagCloseButton tagBadges");
+            final HTMLAnchorElement closeButton = (HTMLAnchorElement) document.createElement("a");
+            closeButton.id = "closeButton";
+            closeButton.textContent = "x";
+            closeButton.className = "close tagCloseButton tagBadges";
 
-            final org.jboss.errai.common.client.dom.Button closeSpan2 = (org.jboss.errai.common.client.dom.Button) document.createElement("button");
-            closeSpan2.setTextContent("x");
-            closeSpan2.setClassName("close tagCloseButton tagBadges");
-
-            tagSpan.appendChild(closeSpan);
-            tagSpan.appendChild(closeSpan2);
-
-
-            closeSpan2.setOnclick(ex ->     {
-                GWT.log("Item has been clicked");
-                ex.preventDefault();
-                //tagSet.remove(tag);
-                //tagSpan.getParentElement().removeChild(tagSpan);
-            });
-
-            HTMLAnchorElement someButton = (HTMLAnchorElement) document.createElement("a");
-
-            someButton.textContent = "XXX";
-
-            someButton.onclick = ex -> {
+            closeButton.onclick = ex -> {
                 GWT.log("Item has been clicked 2");
-                ex.preventDefault();
                 tagSet.remove(tag);
-          //      tagSpan.getParentElement().removeChild(tagSpan);
-                tagsContainer.innerHTML = "";
+                tagLabel.remove();
+                closeButton.remove();
+                ex.preventDefault();
+                tagCount.setTextContent(tagSet.size() != 0 ? String.valueOf(tagSet.size()) : "");
+                setTagTittle("Tags: " + tagSet.toString());
                 return null;
             };
 
-            tagsContainer.innerHTML += tagSpan.getOuterHTML();
-            tagsContainer.appendChild(someButton);
-
-
-
+            tagLabel.appendChild(closeButton);
+            tagsContainer.appendChild(tagLabel);
             tagSet.add(tag);
-
+            tagCount.setTextContent(tagSet.size() != 0 ? String.valueOf(tagSet.size()) : "");
+            setTagTittle("Tags: " + tagSet.toString());
         }
     }
 
