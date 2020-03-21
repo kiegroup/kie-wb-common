@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.processes;
 
 import org.eclipse.bpmn2.Process;
-import org.eclipse.bpmn2.ProcessType;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.ProcessPropertyWriter;
@@ -59,12 +58,6 @@ public class RootProcessConverter {
 
     private ProcessPropertyWriter convertProcessNode(Node<Definition<BPMNDiagram>, ?> node) {
         Process process = bpmn2.createProcess();
-
-        //FIXME: Important
-        //ProcessType is hard coded to "Public" because this is necessary on kogito runtime
-        //to expose the REST endpoints
-        //when the property is configured see https://issues.jboss.org/browse/JBPM-8749 this should be removed
-        process.setProcessType(ProcessType.PUBLIC);
 
         ProcessPropertyWriter p = propertyWriterFactory.of(process);
         BPMNDiagram definition = node.getContent().getDefinition();
