@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
@@ -223,14 +222,12 @@ public abstract class AbstractCanvasHandler<D extends Diagram, C extends Abstrac
      * @param fireEvents If canvas and canvas handled registration events must be fired.
      */
     @SuppressWarnings("unchecked")
-    private static Logger LOGGER = Logger.getLogger(AbstractCanvasHandler.class.getName());
     public void register(final ShapeFactory<Object, Shape> factory,
                          final Element<View<?>> candidate,
                          final boolean fireEvents) {
         assert factory != null && candidate != null;
         final Shape shape = factory.newShape(candidate.getContent().getDefinition());
 
-        LOGGER.severe("AbstractCanvasHandler logg");
         if (shape == null) {
             return;
         }

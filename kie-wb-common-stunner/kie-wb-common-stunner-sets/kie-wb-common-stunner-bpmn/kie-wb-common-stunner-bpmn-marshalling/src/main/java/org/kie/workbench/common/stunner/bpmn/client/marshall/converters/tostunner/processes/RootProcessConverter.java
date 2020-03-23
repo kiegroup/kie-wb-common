@@ -47,7 +47,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.decode;
 
-public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData> {
+public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, AdvancedData> {
 
     public RootProcessConverter(TypedFactoryManager typedFactoryManager,
                                 PropertyReaderFactory propertyReaderFactory,

@@ -80,7 +80,7 @@ public class DiagramSetTest {
     public void testIDInvalid() {
         tested.setId(new Id(ID_INVALID));
         Set<ConstraintViolation<DiagramSet>> violations = this.validator.validate(tested);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
     }
 
     @Test

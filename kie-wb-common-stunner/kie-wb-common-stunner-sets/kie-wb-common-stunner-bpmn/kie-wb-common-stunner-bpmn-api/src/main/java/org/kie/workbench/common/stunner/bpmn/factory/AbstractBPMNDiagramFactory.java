@@ -31,6 +31,8 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
+import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.createValidId;
+
 public abstract class AbstractBPMNDiagramFactory<M extends Metadata, D extends Diagram<Graph, M>>
         extends BindableDiagramFactory<M, D> {
 
@@ -74,7 +76,7 @@ public abstract class AbstractBPMNDiagramFactory<M extends Metadata, D extends D
         diagramSet
                 .map(BaseDiagramSet::getId)
                 .filter(id -> Objects.isNull(id.getValue()))
-                .ifPresent(id -> id.setValue(metadata.getTitle()));
+                .ifPresent(id -> id.setValue(createValidId(metadata.getTitle())));
 
         diagramSet
                 .map(BaseDiagramSet::getName)

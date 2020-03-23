@@ -50,6 +50,8 @@ import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClie
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
 
+import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.createValidId;
+
 @ApplicationScoped
 public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService {
 
@@ -134,6 +136,18 @@ public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService
         return marshalling.marshall(convert(diagram));
     }
 
+    private void updateDiagramSet(Node<Definition<BPMNDiagram>, ?> diagramNode, String name) {
+        final BaseDiagramSet diagramSet = diagramNode.getContent().getDefinition().getDiagramSet();
+
+        if (diagramSet.getName().getValue().isEmpty()) {
+            diagramSet.getName().setValue(name);
+        }
+
+        if (diagramSet.getId().getValue().isEmpty()) {
+            diagramSet.getId().setValue(createValidId(name));
+        }
+    }
+
     private Diagram createNewDiagram(String fileName) {
         final String title = createDiagramTitleFromFilePath(fileName);
         final String defSetId = BPMNClientMarshalling.getDefinitionSetId();
@@ -155,15 +169,7 @@ public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService
             throw new RuntimeException("No BPMN Diagram can be found.");
         }
 
-        final BaseDiagramSet diagramSet = diagramNode.getContent().getDefinition().getDiagramSet();
-
-        if (diagramSet.getName().getValue().isEmpty()) {
-            diagramSet.getName().setValue(fileName);
-        }
-
-        if (diagramSet.getId().getValue().isEmpty()) {
-            diagramSet.getId().setValue(createValidId(fileName));
-        }
+        updateDiagramSet(diagramNode, fileName);
 
         final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();
         metadata.setTitle(title);

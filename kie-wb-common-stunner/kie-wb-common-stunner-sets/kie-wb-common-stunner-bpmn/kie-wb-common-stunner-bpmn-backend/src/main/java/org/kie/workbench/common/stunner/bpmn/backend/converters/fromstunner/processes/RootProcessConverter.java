@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 public class RootProcessConverter {
 
@@ -102,6 +103,10 @@ public class RootProcessConverter {
     }
 
     private static String encode(String text) {
+        if (isEmpty(text)) {
+            return text;
+        }
+
         try {
             return URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException e) {

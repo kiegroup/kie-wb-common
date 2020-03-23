@@ -86,7 +86,7 @@ public class CaseManagementDiagramTest {
     public void testIDInvalid() {
         tested.getDiagramSet().setId(new Id(ID_INVALID));
         Set<ConstraintViolation<CaseManagementDiagram>> violations = this.validator.validate(tested);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
     }
 
     @Test

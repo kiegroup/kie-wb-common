@@ -48,7 +48,9 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData> {
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
+
+public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, AdvancedData> {
 
     public RootProcessConverter(TypedFactoryManager typedFactoryManager,
                                 PropertyReaderFactory propertyReaderFactory,
@@ -88,6 +90,9 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     }
 
     private static String decode(String text) {
+        if (isEmpty(text)) {
+            return text;
+        }
         try {
             return URLDecoder.decode(text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
