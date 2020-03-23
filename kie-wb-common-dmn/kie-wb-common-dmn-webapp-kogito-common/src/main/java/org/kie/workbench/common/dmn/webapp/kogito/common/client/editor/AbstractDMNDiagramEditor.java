@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -118,39 +117,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final CanvasFileExport canvasFileExport;
     protected final Promises promises;
 
-    // --- Workaround : Start ---
-    // This is a workaround for kogito-tooling that calls setContent(..) twice; once with a _valid_ DMN model (a new one) and
-    // then again with whatever content is in the file being opened. If the content is _invalid_ we open an XML Text Editor.
-    // However the call to open the _valid_ DMN model remains in progress as it initiates an asynchronous call. When the
-    // asynchronous call completes the `open(Diagram)` method is invoked that completes initialisation of the UI for a
-    // valid _Diagram_ including both Documentation and Data Types tabs that are not needed when the model is _invalid_.
-    // This work around uses a _proxy_ for the method. It's initial implementation performs the necessary actions for when
-    // the model is _valid_. However it is set to a NOP implementation if there was an error opening the model, so that
-    // when the asynchronous call completes the editor does not have unnecessary components added/initialised.
-    // See https://github.com/kiegroup/kogito-tooling/blob/master/packages/microeditor-envelope/src/EditorEnvelopeController.tsx#L61
-    private final BiConsumer<Diagram, Viewer.Callback> INVALID_DIAGRAM_PROXY = (diagram, callback) -> {/*NOP*/};
-
-    private final BiConsumer<Diagram, Viewer.Callback> VALID_DIAGRAM_PROXY = (diagram, callback) -> {
-        getLayoutHelper().applyLayout(diagram, getOpenDiagramLayoutExecutor());
-        getFEELInitializer().initializeFEELEditor();
-        super.open(diagram, callback);
-    };
-
-    private LayoutHelper getLayoutHelper() {
-        return this.layoutHelper;
-    }
-
-    private OpenDiagramLayoutExecutor getOpenDiagramLayoutExecutor() {
-        return this.openDiagramLayoutExecutor;
-    }
-
-    private MonacoFEELInitializer getFEELInitializer() {
-        return this.feelInitializer;
-    }
-
-    private BiConsumer<Diagram, Viewer.Callback> openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
-    // --- Workaround : End ---
-
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,
                                     final PlaceManager placeManager,
@@ -221,8 +187,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         decisionNavigatorDock.init(PERSPECTIVE_ID);
         diagramPropertiesDock.init(PERSPECTIVE_ID);
         diagramPreviewAndExplorerDock.init(PERSPECTIVE_ID);
-
-        openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
     }
 
     void superDoStartUp(final PlaceRequest place) {
@@ -278,7 +242,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     @Override
     public void open(final Diagram diagram,
                      final Viewer.Callback callback) {
-        openDiagramMethodProxy.accept(diagram, callback);
+        this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
+        feelInitializer.initializeFEELEditor();
+        super.open(diagram, callback);
     }
 
     @OnOpen
@@ -438,7 +404,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
                                                   @Override
                                                   public void onSuccess(final Diagram diagram) {
-                                                      openDiagramMethodProxy = VALID_DIAGRAM_PROXY;
                                                       AbstractDMNDiagramEditor.this.open(diagram,
                                                                                          new Viewer.Callback() {
                                                                                              @Override
@@ -448,7 +413,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
                                                                                              @Override
                                                                                              public void onError(ClientRuntimeError error) {
-                                                                                                 openDiagramMethodProxy = INVALID_DIAGRAM_PROXY;
                                                                                                  AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
                                                                                                  // TODO: [TiagoBento] Are you also managing the error bus?
                                                                                                  failure.onInvoke(error);
@@ -458,7 +422,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
                                                   @Override
                                                   public void onError(final ClientRuntimeError error) {
-                                                      openDiagramMethodProxy = INVALID_DIAGRAM_PROXY;
                                                       AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
                                                       // TODO: [TiagoBento] Are you also managing the error bus?
                                                       failure.onInvoke(error);
