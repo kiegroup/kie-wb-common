@@ -462,30 +462,6 @@ public abstract class AbstractDMNDiagramEditorTest {
     }
 
     @Test
-    // This is a test for the kogito-tooling workaround in AbstractDMNDiagramEditor
-    public void testSetContentFailureWithConcurrentSuccess() {
-        final String path = "path";
-        editor.setContent(path, CONTENT);
-
-        verify(clientDiagramService).transform(eq(path), eq(CONTENT), serviceCallbackArgumentCaptor.capture());
-
-        final ServiceCallback<Diagram> serviceCallback = serviceCallbackArgumentCaptor.getValue();
-        assertThat(serviceCallback).isNotNull();
-        serviceCallback.onError(clientRuntimeError);
-
-        verify(feelInitializer, never()).initializeFEELEditor();
-        verify(diagramClientErrorHandler).handleError(eq(clientRuntimeError), any());
-
-        //Emulate completion of an asynchronous callback when a _valid_ diagram was first set
-        editor.open(diagram, mock(Viewer.Callback.class));
-
-        verify(decisionNavigatorDock, never()).setupCanvasHandler(canvasHandler);
-        verify(layoutHelper, never()).applyLayout(any(Diagram.class), any());
-        verify(feelInitializer, never()).initializeFEELEditor();
-        verify(dataTypesPage, never()).reload();
-    }
-
-    @Test
     public void testResetContentHash() {
         openDiagram();
 
