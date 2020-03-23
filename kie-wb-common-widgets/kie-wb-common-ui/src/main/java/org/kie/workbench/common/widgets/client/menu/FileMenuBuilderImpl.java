@@ -45,6 +45,8 @@ public class FileMenuBuilderImpl implements FileMenuBuilder {
     @Inject
     private Caller<CopyService> copyService;
 
+    private CurrentBranchImpl currentBranch;
+
     @Override
     public Menus build() {
         return menuBuilder.build();
@@ -88,7 +90,7 @@ public class FileMenuBuilderImpl implements FileMenuBuilder {
 
     @Override
     public FileMenuBuilder addRestoreVersion(final Path path) {
-        menuBuilder.addRestoreVersion(path);
+        menuBuilder.addRestoreVersion(path, currentBranch);
         return this;
     }
 

@@ -40,6 +40,7 @@ import org.kie.workbench.common.widgets.client.callbacks.CommandDrivenErrorCallb
 import org.kie.workbench.common.widgets.client.docks.DefaultEditorDock;
 import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderPlace;
 import org.kie.workbench.common.widgets.client.docks.DockPlaceHolderBaseView;
+import org.kie.workbench.common.widgets.client.menu.CurrentBranchImpl;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateValidator;
@@ -118,6 +119,8 @@ public abstract class KieEditor<T>
     protected DefaultEditorDock docks;
     @Inject
     protected PerspectiveManager perspectiveManager;
+    @Inject
+    private CurrentBranchImpl currentBranch;
     private ViewDRLSourceWidget sourceWidget;
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
 
@@ -175,6 +178,7 @@ public abstract class KieEditor<T>
                    addFileChangeListeners,
                    displayShowMoreVersions,
                    menuItems);
+        setCurrentBranch(currentBranch);
     }
 
     public void onShowDiagramEditorDocks(@Observes PlaceGainFocusEvent event) {
