@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -32,9 +31,10 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
 public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
-        implements CanvasControl.SessionAware<EditorSession> {
+        implements CanvasControl.SessionAware<EditorSession>,
+                   KeyboardControl.KeyShortcutCallback {
 
-    final private Instance<KeyboardShortcut> keyboardShortcutActions;
+    protected final Instance<KeyboardShortcut> keyboardShortcutActions;
 
     protected EditorSession editorSession;
 
@@ -47,27 +47,13 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     public void register(Element element) {
     }
 
+    @Override
     public void bind(final EditorSession session) {
         this.editorSession = session;
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyShortcut);
-
-        for (final KeyboardShortcut action : keyboardShortcutActions) {
-            session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(
-                    action.getKogitoCombination(),
-                    "Append Node | " + action.getKogitoLabel(),
-                    () -> executeAction(action),
-                    action.getKogitoOpts()));
-        }
     }
 
-    private void executeAction(final KeyboardShortcut action) {
-        if (selectedNodeId() != null) {
-            if (action.matchesSelectedElement(selectedNodeElement())) {
-                action.executeAction(canvasHandler, selectedNodeId());
-            }
-        }
-    }
-
+    @Override
     public void onKeyShortcut(final KeyboardEvent.Key... keys) {
         if (selectedNodeId() != null) {
             final Iterator<KeyboardShortcut> keyboardShortcutActionsIterator = keyboardShortcutActions.iterator();

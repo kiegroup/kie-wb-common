@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.canvas.controls.keyboard;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -26,6 +27,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.sho
 
 @DMNEditor
 @Dependent
+@Alternative
 public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsControlImpl {
 
     @Inject
