@@ -26,6 +26,7 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
+import org.appformer.client.keyboardShortcuts.KeyboardShortcutsApiOpts;
 import org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
@@ -98,7 +99,7 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
                     kogitoShortcutCallback.getKeyCombination(),
                     kogitoShortcutCallback.getLabel(),
                     () -> runIfEnabled(shortcutCallback::onKeyShortcut),
-                    KeyboardShortcutsApi.Opts.DEFAULT));
+                    KeyboardShortcutsApiOpts.DEFAULT));
         }
 
         return this;

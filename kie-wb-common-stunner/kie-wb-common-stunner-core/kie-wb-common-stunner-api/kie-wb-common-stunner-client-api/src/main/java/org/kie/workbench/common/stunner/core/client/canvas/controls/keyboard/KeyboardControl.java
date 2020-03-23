@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
-import org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi;
+import org.appformer.client.keyboardShortcuts.KeyboardShortcutsApiOpts;
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -41,7 +41,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
     interface KogitoKeyShortcutCallback extends KeyShortcutCallback {
 
-        KeyboardShortcutsApi.Opts getOpts();
+        KeyboardShortcutsApiOpts getOpts();
 
         String getKeyCombination();
 
@@ -53,16 +53,16 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         private String combination;
         private String label;
         private Runnable onKeyDown;
-        private KeyboardShortcutsApi.Opts opts;
+        private KeyboardShortcutsApiOpts opts;
 
         public KogitoKeyPress() {
         }
 
         public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown) {
-            this(combination, label, onKeyDown, KeyboardShortcutsApi.Opts.DEFAULT);
+            this(combination, label, onKeyDown, KeyboardShortcutsApiOpts.DEFAULT);
         }
 
-        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown, final KeyboardShortcutsApi.Opts opts) {
+        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown, final KeyboardShortcutsApiOpts opts) {
             this.combination = combination;
             this.label = label;
             this.onKeyDown = onKeyDown;
@@ -94,7 +94,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
 
         @Override
-        public KeyboardShortcutsApi.Opts getOpts() {
+        public KeyboardShortcutsApiOpts getOpts() {
             return opts;
         }
     }
@@ -105,13 +105,13 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         private final String label;
         private final Runnable onKeyDown;
         private final Runnable onKeyUp;
-        private final KeyboardShortcutsApi.Opts opts;
+        private final KeyboardShortcutsApiOpts opts;
 
         public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp) {
-            this(combination, label, onKeyDown, onKeyUp, KeyboardShortcutsApi.Opts.DEFAULT);
+            this(combination, label, onKeyDown, onKeyUp, KeyboardShortcutsApiOpts.DEFAULT);
         }
 
-        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KeyboardShortcutsApi.Opts opts) {
+        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KeyboardShortcutsApiOpts opts) {
             this.combination = combination;
             this.label = label;
             this.onKeyDown = onKeyDown;
@@ -148,7 +148,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
 
         @Override
-        public KeyboardShortcutsApi.Opts getOpts() {
+        public KeyboardShortcutsApiOpts getOpts() {
             return opts;
         }
     }

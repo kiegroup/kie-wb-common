@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.ait.lienzo.client.widget.panel.mediators.PanelMediators;
-import org.appformer.kogito.bridge.client.context.EditorContextProvider;
+import org.appformer.client.context.EditorContextProvider;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.lienzo.components.views.LienzoCanvasNotification;
@@ -41,7 +41,7 @@ import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import static com.ait.lienzo.client.core.mediator.EventFilter.ALT;
 import static com.ait.lienzo.client.core.mediator.EventFilter.CONTROL;
 import static com.ait.lienzo.client.core.mediator.EventFilter.META;
-import static org.appformer.kogito.bridge.client.context.KogitoOperatingSystem.MACOS;
+import static org.appformer.client.context.OperatingSystem.MACOS;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 
 @Dependent
@@ -91,7 +91,7 @@ public class LienzoCanvasMediators {
         keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("ctrl", "Navigate | Hold and scroll to Zoom", this::enableZoom, this::clear));
         keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("ctrl+alt", "Navigate | Hold to Preview", this::enablePreview, this::clear));
 
-        keyEventHandler
+        keyEventHandlerDMNDocumentationViewButtonsVisibilitySupplier
                 .setTimerDelay(150)
                 .addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
                     @Override
