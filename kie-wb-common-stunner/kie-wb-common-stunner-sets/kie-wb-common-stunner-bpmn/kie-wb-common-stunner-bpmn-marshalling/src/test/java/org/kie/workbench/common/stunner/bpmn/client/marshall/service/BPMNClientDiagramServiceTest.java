@@ -271,7 +271,7 @@ public class BPMNClientDiagramServiceTest {
         when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
         when(marshalling.unmarshall(any(), any())).thenReturn(graph);
         when(graph.nodes()).thenReturn(nodes);
-        tested.transform(BPMNClientDiagramService.DEFAULT_PROCESS_ID, xml,
+        tested.transform(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, xml,
 
                          new ServiceCallback<Diagram>() {
 
@@ -286,8 +286,8 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getName().getValue());
-        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getId().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getId().getValue());
     }
 
     @Test
@@ -299,7 +299,7 @@ public class BPMNClientDiagramServiceTest {
         diagramSet.getName().setValue("somePreviousName");
         diagramSet.getId().setValue("somePreviousId");
 
-        tested.transform(BPMNClientDiagramService.DEFAULT_PROCESS_ID, xml,
+        tested.transform(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, xml,
 
                          new ServiceCallback<Diagram>() {
 
@@ -324,7 +324,7 @@ public class BPMNClientDiagramServiceTest {
         when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
         when(marshalling.unmarshall(any(), any())).thenReturn(graph);
         when(graph.nodes()).thenReturn(nodes);
-        tested.transform(BPMNClientDiagramService.DEFAULT_PROCESS_ID, xml,
+        tested.transform(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, xml,
 
                          new ServiceCallback<Diagram>() {
 
@@ -339,8 +339,8 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getName().getValue());
-        assertEquals(BPMNClientDiagramService.DEFAULT_PROCESS_ID, diagramSet.getId().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getId().getValue());
     }
 
     @Test

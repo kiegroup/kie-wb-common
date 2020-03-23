@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.service;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -47,16 +46,12 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramResourceImpl;
-import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClientDiagramService;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
 
-import static org.kie.workbench.common.stunner.bpmn.util.XmlUtils.createValidId;
-
 @ApplicationScoped
-public class BPMNClientDiagramService implements KogitoClientDiagramService {
-
-    static final String DEFAULT_PROCESS_ID = "default";
+public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService {
 
     private final DefinitionManager definitionManager;
     private final BPMNClientMarshalling marshalling;
@@ -91,14 +86,14 @@ public class BPMNClientDiagramService implements KogitoClientDiagramService {
     @Override
     public void transform(final String xml,
                           final ServiceCallback<Diagram> callback) {
-        doTransform(DEFAULT_PROCESS_ID, xml, callback);
+        doTransform(DEFAULT_DIAGRAM_ID, xml, callback);
     }
 
     @Override
     public void transform(final String fileName,
                           final String xml,
                           final ServiceCallback<Diagram> callback) {
-        doTransform(fileName, xml, callback);
+        doTransform(createDiagramTitleFromFilePath(fileName), xml, callback);
     }
 
     @Override
@@ -139,15 +134,12 @@ public class BPMNClientDiagramService implements KogitoClientDiagramService {
         return marshalling.marshall(convert(diagram));
     }
 
-    private static Logger LOGGER = Logger.getLogger(BPMNClientDiagramService.class.getName());
-
     private Diagram createNewDiagram(String fileName) {
-        LOGGER.severe("HELLOOO FROM JUL");
-        LOGGER.severe("file name is: " + fileName);
+        final String title = createDiagramTitleFromFilePath(fileName);
         final String defSetId = BPMNClientMarshalling.getDefinitionSetId();
         final Metadata metadata = createMetadata();
-        metadata.setTitle(fileName);
-        final Diagram diagram = factoryManager.newDiagram(fileName,
+        metadata.setTitle(title);
+        final Diagram diagram = factoryManager.newDiagram(title,
                                                           defSetId,
                                                           metadata);
         updateClientMetadata(diagram);
