@@ -1,0 +1,134 @@
+/*
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kie.workbench.common.stunner.kogito.runtime.client.session.command.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Alternative;
+import javax.inject.Inject;
+
+import elemental2.dom.DomGlobal;
+import org.appformer.kogito.bridge.client.keyboardshortcuts.KeyboardShortcutsApi;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyShortcutCallback;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyShortcutKeyDownThenUp;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControlImpl.SessionKeyShortcutCallback;
+
+/**
+ * A helper class for component that listen to keyboard events.
+ * It provides keyboard shortcuts support by listening for
+ * multiple key events.
+ */
+@Dependent
+@Alternative
+public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
+
+    @Inject
+    private KeyboardShortcutsApi keyboardShortcutsApi;
+
+    private final List<Integer> registeredShortcutsIds = new ArrayList<>();
+
+    private boolean enabled = true;
+
+    public KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
+
+        final Optional<KogitoKeyShortcutCallback> possibleKogitoShortcutCallback = getAssociatedKogitoKeyShortcutCallback(shortcutCallback);
+        if (!possibleKogitoShortcutCallback.isPresent() || possibleKogitoShortcutCallback.get().getKeyCombination().isEmpty()) {
+            return this;
+        }
+
+        final KogitoKeyShortcutCallback kogitoShortcutCallback = possibleKogitoShortcutCallback.get();
+        DomGlobal.console.debug("Registering: " + shortcutCallback.getClass().getCanonicalName() + " - " + kogitoShortcutCallback.getLabel());
+
+        //Normal
+        if (shortcutCallback instanceof KogitoKeyShortcutKeyDownThenUp) {
+            registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyDownThenUp(
+                    kogitoShortcutCallback.getKeyCombination(),
+                    kogitoShortcutCallback.getLabel(),
+                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    () -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
+                    kogitoShortcutCallback.getOpts()));
+        } else if (shortcutCallback instanceof KogitoKeyPress) {
+            registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyPress(
+                    kogitoShortcutCallback.getKeyCombination(),
+                    kogitoShortcutCallback.getLabel(),
+                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    kogitoShortcutCallback.getOpts()));
+        }
+
+        //Session
+        else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyShortcutKeyDownThenUp) {
+            registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyDownThenUp(
+                    kogitoShortcutCallback.getKeyCombination(),
+                    kogitoShortcutCallback.getLabel(),
+                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    () -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
+                    kogitoShortcutCallback.getOpts()));
+        } else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyPress) {
+            registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyPress(
+                    kogitoShortcutCallback.getKeyCombination(),
+                    kogitoShortcutCallback.getLabel(),
+                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    kogitoShortcutCallback.getOpts()));
+        }
+
+        //Default
+        else {
+            registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyPress(
+                    kogitoShortcutCallback.getKeyCombination(),
+                    kogitoShortcutCallback.getLabel(),
+                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    KeyboardShortcutsApi.Opts.DEFAULT));
+        }
+
+        return this;
+    }
+
+    private void runIfEnabled(final Runnable runnable) {
+        if (this.enabled) {
+            runnable.run();
+        }
+    }
+
+    private Optional<KogitoKeyShortcutCallback> getAssociatedKogitoKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
+        if (shortcutCallback instanceof KogitoKeyShortcutCallback) {
+            return Optional.of((KogitoKeyShortcutCallback) shortcutCallback);
+        }
+
+        if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyShortcutCallback) {
+            return Optional.of((KogitoKeyShortcutCallback) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate());
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @PreDestroy
+    public void clear() {
+        registeredShortcutsIds.forEach(keyboardShortcutsApi::deregister);
+    }
+}

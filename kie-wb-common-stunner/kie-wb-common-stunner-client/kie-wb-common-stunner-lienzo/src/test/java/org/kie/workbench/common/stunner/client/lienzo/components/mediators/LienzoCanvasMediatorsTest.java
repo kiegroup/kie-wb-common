@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.lienzo.components.views.LienzoCanvasNotification;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandlerImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
@@ -88,11 +88,11 @@ public class LienzoCanvasMediatorsTest {
     private Consumer<AbstractCanvas.Cursors> cursor;
 
     private LienzoCanvasMediators tested;
-    private KeyEventHandler keyEventHandler;
+    private KeyEventHandlerImpl keyEventHandler;
 
     @Before
     public void setUp() {
-        keyEventHandler = spy(new KeyEventHandler());
+        keyEventHandler = spy(new KeyEventHandlerImpl());
         when(canvas.getView()).thenReturn(canvasView);
         when(canvasView.getPanel()).thenReturn(panel);
         when(canvasView.getLienzoPanel()).thenReturn(panel);

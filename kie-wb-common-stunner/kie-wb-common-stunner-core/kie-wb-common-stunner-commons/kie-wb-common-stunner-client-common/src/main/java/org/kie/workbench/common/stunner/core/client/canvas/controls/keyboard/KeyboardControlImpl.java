@@ -71,7 +71,7 @@ public class KeyboardControlImpl
         this.session = session;
     }
 
-    class SessionKeyShortcutCallback implements KeyShortcutCallback {
+    public class SessionKeyShortcutCallback implements KeyShortcutCallback {
 
         private final KeyShortcutCallback delegate;
 
