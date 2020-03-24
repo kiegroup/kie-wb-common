@@ -18,60 +18,45 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-import org.kie.workbench.common.dmn.api.definition.HasValue;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditablePopupHeaderMetaData;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableTextHeaderMetaData;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextBoxDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
-import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
+import org.uberfire.ext.wires.core.grids.client.widget.dom.single.SingletonDOMElementFactory;
 
-public class RuleAnnotationClauseColumnHeaderMetaData extends EditablePopupHeaderMetaData<HasValueSelectorControl, ValuePopoverView.Presenter> implements HasListSelectorControl,
-                                                                                                                                                          HasCellEditorControls,
-                                                                                                                                                          HasValueSelectorControl {
+public class RuleAnnotationClauseColumnHeaderMetaData extends EditableTextHeaderMetaData<TextBox, TextBoxDOMElement> implements HasListSelectorControl,
+                                                                                                                                HasCellEditorControls {
 
     public static final String COLUMN_GROUP = "RuleAnnotationClauseColumnHeaderMetaData$RuleAnnotationClauseColumn";
 
     private final BiFunction<Integer, Integer, List<ListSelectorItem>> listSelectorItemsSupplier;
     private final ListSelectorView.Presenter listSelector;
     private final Consumer<ListSelectorItem> listSelectorItemConsumer;
-    private final HasValue<Name> hasValue;
-    private final BiConsumer<HasValue, Name> setValueConsumer;
+    private final Optional<String> placeHolder;
 
-    public RuleAnnotationClauseColumnHeaderMetaData(final HasValue<Name> hasValue,
+    public RuleAnnotationClauseColumnHeaderMetaData(final Supplier<String> titleGetter,
+                                                    final Consumer<String> titleSetter,
+                                                    final SingletonDOMElementFactory<TextBox, TextBoxDOMElement> factory,
+                                                    final Optional<String> placeHolder,
                                                     final BiFunction<Integer, Integer, List<ListSelectorItem>> listSelectorItemsSupplier,
                                                     final ListSelectorView.Presenter listSelector,
-                                                    final CellEditorControlsView.Presenter cellEditorControls,
-                                                    final ValuePopoverView.Presenter editor,
-                                                    final Consumer<HasListSelectorControl.ListSelectorItem> listSelectorItemConsumer,
-                                                    final BiConsumer<HasValue, Name> setValueConsumer) {
-        super(cellEditorControls, editor);
-        this.editor = editor;
+                                                    final Consumer<HasListSelectorControl.ListSelectorItem> listSelectorItemConsumer) {
+        super(titleGetter, titleSetter, factory, COLUMN_GROUP);
         this.listSelectorItemsSupplier = listSelectorItemsSupplier;
         this.listSelector = listSelector;
-        this.hasValue = hasValue;
         this.listSelectorItemConsumer = listSelectorItemConsumer;
-        this.setValueConsumer = setValueConsumer;
+        this.placeHolder = placeHolder;
     }
 
     @Override
-    public String getColumnGroup() {
-        return COLUMN_GROUP;
-    }
-
-    @Override
-    public String getTitle() {
-        return hasValue.getValue().getValue();
-    }
-
-    @Override
-    public List<ListSelectorItem> getItems(final int uiRowIndex,
-                                           final int uiColumnIndex) {
-        return listSelectorItemsSupplier.apply(uiRowIndex, uiColumnIndex);
+    public Optional<String> getPlaceHolder() {
+        return placeHolder;
     }
 
     @Override
@@ -80,19 +65,14 @@ public class RuleAnnotationClauseColumnHeaderMetaData extends EditablePopupHeade
     }
 
     @Override
-    protected HasValueSelectorControl getPresenter() {
-        return this;
+    public String getColumnGroup() {
+        return COLUMN_GROUP;
     }
 
     @Override
-    public void setValue(final String value) {
-        hasValue.getValue().setValue(value);
-        setValueConsumer.accept(hasValue, hasValue.getValue());
-    }
-
-    @Override
-    public String getValue() {
-        return hasValue.getValue().getValue();
+    public List<ListSelectorItem> getItems(final int uiRowIndex,
+                                           final int uiColumnIndex) {
+        return listSelectorItemsSupplier.apply(uiRowIndex, uiColumnIndex);
     }
 
     @Override

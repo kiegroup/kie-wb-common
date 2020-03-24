@@ -117,12 +117,10 @@ public class AddRuleAnnotationClauseCommandTest {
         final List<DecisionRule> rules = Arrays.asList(rule1, rule2);
         final int clauseIndex = 2;
         final Name ruleAnnotationClauseName = mock(Name.class);
-        final String clauseName = "clause name";
-        final List rule1AnnotationEntries = mock(List.class);
+                final List rule1AnnotationEntries = mock(List.class);
         final List rule2AnnotationEntries = mock(List.class);
 
         doReturn(clauseIndex).when(command).getClauseIndex();
-        doReturn(clauseName).when(command).getNewRuleAnnotationClauseName();
 
         when(rule1.getAnnotationEntry()).thenReturn(rule1AnnotationEntries);
         when(rule2.getAnnotationEntry()).thenReturn(rule2AnnotationEntries);
@@ -137,7 +135,6 @@ public class AddRuleAnnotationClauseCommandTest {
         verify(rule2AnnotationEntries).add(eq(clauseIndex), clauseTextCaptor.capture());
         verify(componentsWidths).add(uiColumnIndex, null);
         verify(annotations).add(clauseIndex, ruleAnnotationClause);
-        verify(ruleAnnotationClauseName).setValue(clauseName);
         verify(ruleAnnotationClause).setParent(decisionTable);
 
         final List<RuleAnnotationClauseText> capturedValues = clauseTextCaptor.getAllValues();

@@ -120,12 +120,6 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
     private ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
 
     @Mock
-    private ManagedInstance<ValuePopoverView.Presenter> valueEditors;
-
-    @Mock
-    private ValuePopoverView.Presenter valueEditor;
-
-    @Mock
     private ValueAndDataTypePopoverView.Presenter headerEditor;
 
     @Mock
@@ -150,7 +144,6 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
         when(session.getGridLayer()).thenReturn(gridLayer);
         when(session.getCellEditorControls()).thenReturn(cellEditorControls);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
-        when(valueEditors.get()).thenReturn(valueEditor);
 
         this.definition = new DecisionTableEditorDefinition(definitionUtils,
                                                             sessionManager,
@@ -165,8 +158,7 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
                                                             headerEditors,
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
                                                                                                       new DMNGraphUtils(sessionManager, new DMNDiagramUtils()),
-                                                                                                      itemDefinitionUtils),
-                                                            valueEditors);
+                                                                                                      itemDefinitionUtils));
 
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);

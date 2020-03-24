@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import javax.enterprise.event.Event;
 
 import com.ait.lienzo.shared.core.types.EventPropagationMode;
+import org.gwtbootstrap3.client.ui.TextBox;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
@@ -68,6 +69,7 @@ import org.kie.workbench.common.dmn.client.editors.types.ValueAndDataTypePopover
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextBoxDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -91,6 +93,7 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.util.CellContextUtilities;
+import org.uberfire.ext.wires.core.grids.client.widget.dom.single.SingletonDOMElementFactory;
 import org.uberfire.mvp.Command;
 
 import static org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils.getExpressionTextLineHeight;
@@ -102,9 +105,9 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
 
     private final HitPolicyPopoverView.Presenter hitPolicyEditor;
     private final ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
-    private final ManagedInstance<ValuePopoverView.Presenter> valueEditors;
 
     private final TextAreaSingletonDOMElementFactory textAreaFactory = getBodyTextAreaFactory();
+    private final SingletonDOMElementFactory<TextBox, TextBoxDOMElement> textBoxFactory = getHeaderTextBoxFactory();
 
     private class ListSelectorItemDefinition {
 
@@ -141,8 +144,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                              final boolean isOnlyVisualChangeAllowed,
                              final int nesting,
                              final HitPolicyPopoverView.Presenter hitPolicyEditor,
-                             final ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors,
-                             final ManagedInstance<ValuePopoverView.Presenter> valueEditors) {
+                             final ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors) {
         super(parent,
               nodeUUID,
               hasExpression,
@@ -165,7 +167,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
               nesting);
         this.hitPolicyEditor = hitPolicyEditor;
         this.headerEditors = headerEditors;
-        this.valueEditors = valueEditors;
 
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
@@ -223,13 +224,13 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     private Supplier<List<GridColumn.HeaderMetaData>> ruleAnnotationClauseHeaderMetaData(final RuleAnnotationClause ruleAnnotationClause) {
         return () -> {
             final List<GridColumn.HeaderMetaData> metaData = new ArrayList<>();
-            metaData.add(new RuleAnnotationClauseColumnHeaderMetaData(ruleAnnotationClause,
+            metaData.add(new RuleAnnotationClauseColumnHeaderMetaData(() -> ruleAnnotationClause.getName().getValue(),
+                                                                      (value) -> ruleAnnotationClause.getName().setValue(value),
+                                                                      textBoxFactory,
+                                                                      Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EnterAnnotation)),
                                                                       this::getHeaderItems,
                                                                       listSelector,
-                                                                      cellEditorControls,
-                                                                      valueEditors.get(),
-                                                                      this::onItemSelected,
-                                                                      setValueConsumer(false)));
+                                                                      this::onItemSelected));
             return metaData;
         };
     }

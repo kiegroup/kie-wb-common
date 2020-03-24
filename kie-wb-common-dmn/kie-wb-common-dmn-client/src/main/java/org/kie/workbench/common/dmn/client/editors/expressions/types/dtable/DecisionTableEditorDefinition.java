@@ -55,7 +55,6 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
 
     private HitPolicyPopoverView.Presenter hitPolicyEditor;
     private ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
-    private ManagedInstance<ValuePopoverView.Presenter> valueEditors;
     private DecisionTableEditorDefinitionEnricher enricher;
 
     public DecisionTableEditorDefinition() {
@@ -74,8 +73,7 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
                                          final TranslationService translationService,
                                          final HitPolicyPopoverView.Presenter hitPolicyEditor,
                                          final ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors,
-                                         final DecisionTableEditorDefinitionEnricher enricher,
-                                         final ManagedInstance<ValuePopoverView.Presenter> valueEditors) {
+                                         final DecisionTableEditorDefinitionEnricher enricher) {
         super(definitionUtils,
               sessionManager,
               sessionCommandManager,
@@ -88,7 +86,6 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
         this.hitPolicyEditor = hitPolicyEditor;
         this.headerEditors = headerEditors;
         this.enricher = enricher;
-        this.valueEditors = valueEditors;
     }
 
     @Override
@@ -141,8 +138,7 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
                                                  isOnlyVisualChangeAllowed,
                                                  nesting,
                                                  hitPolicyEditor,
-                                                 headerEditors,
-                                                 valueEditors));
+                                                 headerEditors));
     }
 
     @Override

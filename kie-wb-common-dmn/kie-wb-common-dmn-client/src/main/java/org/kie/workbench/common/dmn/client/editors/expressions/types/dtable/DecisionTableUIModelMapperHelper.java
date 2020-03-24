@@ -106,9 +106,5 @@ public class DecisionTableUIModelMapperHelper {
         }
 
         return _columnIndex;
-//        final int annotationIndex = columnIndex - inputClauseColumnCount - outputClauseColumnCount - 1;
-//        if (annotationIndex > outputClauseColumnCount - 1) {
-//            throw new IllegalArgumentException("columnIndex did not reference a valid OutputEntry column.");
-//        }
     }
 }

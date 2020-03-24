@@ -18,34 +18,43 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-import org.junit.Before;
+import com.ait.lienzo.client.core.shape.Text;
+import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import org.gwtbootstrap3.client.ui.TextBox;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.HasValue;
+import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseColumnHeaderMetaDataContextMenuTest;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextBoxDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
-import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.ext.wires.core.grids.client.widget.context.GridHeaderColumnRenderContext;
+import org.uberfire.ext.wires.core.grids.client.widget.dom.single.SingletonDOMElementFactory;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer;
+import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.themes.GridRendererTheme;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.RuleAnnotationClauseColumnHeaderMetaData.COLUMN_GROUP;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RuleAnnotationClauseColumnHeaderMetaDataTest {
+@RunWith(LienzoMockitoTestRunner.class)
+public class RuleAnnotationClauseColumnHeaderMetaDataTest extends BaseColumnHeaderMetaDataContextMenuTest<RuleAnnotationClauseColumnHeaderMetaData, Name, HasName> {
+
+    private static final double BLOCK_WIDTH = 10.0;
+
+    private static final double BLOCK_HEIGHT = 20.0;
 
     private RuleAnnotationClauseColumnHeaderMetaData column;
-    @Mock
-    private HasValue hasValue;
 
     @Mock
     private BiFunction<Integer, Integer, List<HasListSelectorControl.ListSelectorItem>> listSelectorItemsSupplier;
@@ -54,26 +63,48 @@ public class RuleAnnotationClauseColumnHeaderMetaDataTest {
     private ListSelectorView.Presenter listSelector;
 
     @Mock
-    private CellEditorControlsView.Presenter cellEditorControls;
-
-    @Mock
-    private ValuePopoverView.Presenter editor;
-
-    @Mock
     private Consumer<HasListSelectorControl.ListSelectorItem> listSelectorItemConsumer;
 
     @Mock
-    private BiConsumer<HasValue, Name> setValueConsumer;
+    private Supplier<String> titleGetter;
 
-    @Before
-    public void setup() {
-        column = new RuleAnnotationClauseColumnHeaderMetaData(hasValue,
+    @Mock
+    private Consumer<String> titleSetter;
+
+    @Mock
+    private SingletonDOMElementFactory<TextBox, TextBoxDOMElement> factory;
+
+    private Optional<String> placeHolder = Optional.empty();
+
+    @Mock
+    private GridHeaderColumnRenderContext context;
+
+    @Mock
+    private GridRenderer gridRendererMock;
+
+    @Mock
+    private GridRendererTheme gridRendererThemeMock;
+
+    @Mock
+    private Text textMock;
+
+    private String title = "annotation column";
+
+    @Override
+    protected RuleAnnotationClauseColumnHeaderMetaData getHeaderMetaData() {
+        when(context.getRenderer()).thenReturn(gridRendererMock);
+        when(gridRendererMock.getTheme()).thenReturn(gridRendererThemeMock);
+        when(gridRendererThemeMock.getBodyText()).thenReturn(textMock);
+        when(titleGetter.get()).thenReturn(title);
+
+        column = new RuleAnnotationClauseColumnHeaderMetaData(titleGetter,
+                                                              titleSetter,
+                                                              factory,
+                                                              placeHolder,
                                                               listSelectorItemsSupplier,
                                                               listSelector,
-                                                              cellEditorControls,
-                                                              editor,
-                                                              listSelectorItemConsumer,
-                                                              setValueConsumer);
+                                                              listSelectorItemConsumer);
+        return column;
     }
 
     @Test
@@ -82,20 +113,6 @@ public class RuleAnnotationClauseColumnHeaderMetaDataTest {
         final String actual = column.getColumnGroup();
 
         assertEquals(COLUMN_GROUP, actual);
-    }
-
-    @Test
-    public void testGetTitle() {
-
-        final String title = "the title";
-        final Name name = mock(Name.class);
-
-        when(hasValue.getValue()).thenReturn(name);
-        when(name.getValue()).thenReturn(title);
-
-        final String actual = column.getTitle();
-
-        assertEquals(actual, title);
     }
 
     @Test
@@ -121,35 +138,6 @@ public class RuleAnnotationClauseColumnHeaderMetaDataTest {
     }
 
     @Test
-    public void testSetValue() {
-
-        final Name name = mock(Name.class);
-
-        when(hasValue.getValue()).thenReturn(name);
-
-        final String value = "the value";
-
-        column.setValue(value);
-
-        verify(name).setValue(value);
-        verify(setValueConsumer).accept(hasValue, name);
-    }
-
-    @Test
-    public void testGetValue() {
-
-        final Name name = mock(Name.class);
-        final String value = "the value";
-
-        when(name.getValue()).thenReturn(value);
-        when(hasValue.getValue()).thenReturn(name);
-
-        final String actual = column.getValue();
-
-        assertEquals(value, actual);
-    }
-
-    @Test
     public void testOnItemSelected() {
 
         final HasListSelectorControl.ListSelectorItem item = mock(HasListSelectorControl.ListSelectorItem.class);
@@ -157,5 +145,10 @@ public class RuleAnnotationClauseColumnHeaderMetaDataTest {
         column.onItemSelected(item);
 
         verify(listSelectorItemConsumer).accept(item);
+    }
+
+    @Test
+    public void testGetPlaceHolder() {
+        assertThat(headerMetaData.getPlaceHolder()).isEqualTo(placeHolder);
     }
 }

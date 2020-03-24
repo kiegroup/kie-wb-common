@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
-import com.google.common.base.Strings;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClauseText;
@@ -33,12 +32,6 @@ public class DecisionRulePropertyConverter {
         final DecisionRule result = new DecisionRule();
         result.setId(id);
 
-        if (!Strings.isNullOrEmpty(description.getValue())) {
-            final RuleAnnotationClauseText annotationEntryText = new RuleAnnotationClauseText();
-            annotationEntryText.getText().setValue(description.getValue());
-            annotationEntryText.setParent(result);
-            result.getAnnotationEntry().add(annotationEntryText);
-        }
         if (!(dmn instanceof org.kie.dmn.model.v1_1.TDecisionRule)) {
             for (final org.kie.dmn.model.api.RuleAnnotation ruleAnnotation : dmn.getAnnotationEntry()) {
                 final RuleAnnotationClauseText annotationEntryConverted = RuleAnnotationClauseTextConverter.wbFromDMN(ruleAnnotation);
@@ -48,6 +41,15 @@ public class DecisionRulePropertyConverter {
                 result.getAnnotationEntry().add(annotationEntryConverted);
             }
         }
+
+        if (result.getAnnotationEntry().isEmpty()) {
+            // If it's empty, then there is none RuleAnnotation and the description was not converted yet to RuleAnnotation.
+            final RuleAnnotationClauseText annotationEntryText = new RuleAnnotationClauseText();
+            annotationEntryText.getText().setValue(description.getValue());
+            annotationEntryText.setParent(result);
+            result.getAnnotationEntry().add(annotationEntryText);
+        }
+
         for (final org.kie.dmn.model.api.UnaryTests ie : dmn.getInputEntry()) {
             final UnaryTests inputEntryConverted = UnaryTestsPropertyConverter.wbFromDMN(ie);
             if (inputEntryConverted != null) {

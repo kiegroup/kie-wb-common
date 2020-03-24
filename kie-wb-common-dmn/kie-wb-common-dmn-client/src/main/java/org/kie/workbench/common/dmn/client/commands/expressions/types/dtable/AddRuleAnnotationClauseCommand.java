@@ -40,7 +40,6 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AbstractGraphCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
 public class AddRuleAnnotationClauseCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
@@ -74,16 +73,14 @@ public class AddRuleAnnotationClauseCommand extends AbstractCanvasGraphCommand i
         this.uiModelMapper = uiModelMapper;
         this.executeCanvasOperation = executeCanvasOperation;
         this.undoCanvasOperation = undoCanvasOperation;
+        this.name = getNewRuleAnnotationClauseName();
     }
 
-    public Optional<RuleAnnotationClauseColumn> getUiModelColumn() {
+    Optional<RuleAnnotationClauseColumn> getUiModelColumn() {
         return uiModelColumn;
     }
 
-    public String getName() {
-        if (StringUtils.isEmpty(name)) {
-            this.name = getNewRuleAnnotationClauseName();
-        }
+    private String getName() {
         return this.name;
     }
 
@@ -108,10 +105,10 @@ public class AddRuleAnnotationClauseCommand extends AbstractCanvasGraphCommand i
                 ruleAnnotationClause.getName().setValue(getName());
 
                 decisionTable.getRule().forEach(rule -> {
-                    final RuleAnnotationClauseText le = new RuleAnnotationClauseText();
-                    le.getText().setValue(DecisionTableDefaultValueUtilities.RULE_ANNOTATION_CLAUSE_EXPRESSION_TEXT);
-                    rule.getAnnotationEntry().add(clauseIndex, le);
-                    le.setParent(rule);
+                    final RuleAnnotationClauseText ruleAnnotationClauseText = new RuleAnnotationClauseText();
+                    ruleAnnotationClauseText.getText().setValue(DecisionTableDefaultValueUtilities.RULE_ANNOTATION_CLAUSE_EXPRESSION_TEXT);
+                    rule.getAnnotationEntry().add(clauseIndex, ruleAnnotationClauseText);
+                    ruleAnnotationClauseText.setParent(rule);
                 });
 
                 ruleAnnotationClause.setParent(decisionTable);

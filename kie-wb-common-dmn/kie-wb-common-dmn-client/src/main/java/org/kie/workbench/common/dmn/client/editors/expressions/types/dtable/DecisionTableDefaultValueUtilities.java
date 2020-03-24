@@ -59,21 +59,6 @@ public class DecisionTableDefaultValueUtilities {
         return maxIndex + 1;
     }
 
-    public static String getNewRuleAnnotationClauseName(final DecisionTable decisionTable) {
-        return RULE_ANNOTATION_CLAUSE_PREFIX + getMaxUnusedRuleAnnotationClauseIndex(decisionTable);
-    }
-
-    private static int getMaxUnusedRuleAnnotationClauseIndex(final DecisionTable decisionTable) {
-        int maxIndex = 0;
-        for (final RuleAnnotationClause ac : decisionTable.getAnnotations()) {
-            final Optional<Integer> index = DefaultValueUtilities.extractIndex(ac.getName().getValue(), RULE_ANNOTATION_CLAUSE_PREFIX);
-            if (index.isPresent()) {
-                maxIndex = Math.max(maxIndex, index.get());
-            }
-        }
-        return maxIndex + 1;
-    }
-
     public static String getNewOutputClauseName(final DecisionTable dtable) {
         return OUTPUT_CLAUSE_PREFIX + getMaxUnusedOutputClauseIndex(dtable);
     }
@@ -82,6 +67,21 @@ public class DecisionTableDefaultValueUtilities {
         int maxIndex = 0;
         for (OutputClause oc : dtable.getOutput()) {
             final Optional<Integer> index = DefaultValueUtilities.extractIndex(oc.getName(), OUTPUT_CLAUSE_PREFIX);
+            if (index.isPresent()) {
+                maxIndex = Math.max(maxIndex, index.get());
+            }
+        }
+        return maxIndex + 1;
+    }
+
+    public static String getNewRuleAnnotationClauseName(final DecisionTable decisionTable) {
+        return RULE_ANNOTATION_CLAUSE_PREFIX + getMaxUnusedRuleAnnotationClauseIndex(decisionTable);
+    }
+
+    private static int getMaxUnusedRuleAnnotationClauseIndex(final DecisionTable decisionTable) {
+        int maxIndex = 0;
+        for (final RuleAnnotationClause ac : decisionTable.getAnnotations()) {
+            final Optional<Integer> index = DefaultValueUtilities.extractIndex(ac.getName().getValue(), RULE_ANNOTATION_CLAUSE_PREFIX);
             if (index.isPresent()) {
                 maxIndex = Math.max(maxIndex, index.get());
             }

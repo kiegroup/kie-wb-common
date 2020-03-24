@@ -259,12 +259,6 @@ public class DecisionTableGridTest {
     private ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
 
     @Mock
-    private ManagedInstance<ValuePopoverView.Presenter> valueEditors;
-
-    @Mock
-    private ValuePopoverView.Presenter valueEditor;
-
-    @Mock
     private ValueAndDataTypePopoverView.Presenter headerEditor;
 
     @Mock
@@ -355,8 +349,7 @@ public class DecisionTableGridTest {
                                                             headerEditors,
                                                             new DecisionTableEditorDefinitionEnricher(sessionManager,
                                                                                                       new DMNGraphUtils(sessionManager, dmnDiagramUtils),
-                                                                                                      itemDefinitionUtils),
-                                                            valueEditors);
+                                                                                                      itemDefinitionUtils));
 
         expression = definition.getModelClass();
         definition.enrich(Optional.empty(), hasExpression, expression);
@@ -390,7 +383,6 @@ public class DecisionTableGridTest {
 
         when(headerEditors.get()).thenReturn(headerEditor);
         when(gridBodyCellEditContext.getRelativeLocation()).thenReturn(Optional.empty());
-        when(valueEditors.get()).thenReturn(valueEditor);
 
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).getTranslation(anyString());
@@ -594,7 +586,6 @@ public class DecisionTableGridTest {
     @Test
     public void testGetItemsRuleAnnotationColumn() {
         setupGrid(makeHasNameForDecision(), 0);
-
 
         final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 3);
 
@@ -863,7 +854,6 @@ public class DecisionTableGridTest {
         assertListSelectorTextItem(items.get(DEFAULT_DUPLICATE_RULE),
                                    DMNEditorConstants.DecisionTableEditor_DuplicateDecisionRule,
                                    enabled);
-
     }
 
     private void assertListSelectorHeaderItem(final HasListSelectorControl.ListSelectorItem item,
