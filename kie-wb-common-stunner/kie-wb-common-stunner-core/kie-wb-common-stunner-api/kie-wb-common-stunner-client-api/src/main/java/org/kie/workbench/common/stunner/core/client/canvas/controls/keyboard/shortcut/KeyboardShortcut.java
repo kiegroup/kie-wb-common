@@ -42,11 +42,11 @@ public interface KeyboardShortcut<H extends CanvasHandler> {
     void executeAction(final H canvasHandler,
                        final String selectedNodeId);
 
-    String getKogitoCombination();
+    KeyboardEvent.Key[] getKeyCombination();
 
-    String getKogitoLabel();
+    String getLabel();
 
-    default KeyboardShortcutsApiOpts getKogitoOpts() {
+    default KeyboardShortcutsApiOpts getOpts() {
         return KeyboardShortcutsApiOpts.DEFAULT;
     }
 }

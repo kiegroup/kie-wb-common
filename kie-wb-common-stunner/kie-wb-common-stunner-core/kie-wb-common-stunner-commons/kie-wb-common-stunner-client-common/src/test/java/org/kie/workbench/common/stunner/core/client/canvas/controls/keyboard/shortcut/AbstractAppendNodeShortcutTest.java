@@ -171,12 +171,12 @@ public class AbstractAppendNodeShortcutTest {
         }
 
         @Override
-        public String getKogitoCombination() {
-            return null;
+        public KeyboardEvent.Key[] getKeyCombination() {
+            return new KeyboardEvent.Key[]{};
         }
 
         @Override
-        public String getKogitoLabel() {
+        public String getLabel() {
             return null;
         }
     }

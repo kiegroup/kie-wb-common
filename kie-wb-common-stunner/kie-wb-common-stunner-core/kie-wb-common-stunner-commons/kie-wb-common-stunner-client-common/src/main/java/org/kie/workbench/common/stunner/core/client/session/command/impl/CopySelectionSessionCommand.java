@@ -44,6 +44,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
+import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.C;
+import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.CONTROL;
 
 /**
  * This session command obtains the selected elements on session and copy the elements to a clipboard.
@@ -82,7 +84,7 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress("ctrl+c", "Edit | Copy selection", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{CONTROL, C}, "Edit | Copy selection", () -> {
             if (isEnabled()) {
                 execute();
             }
@@ -102,9 +104,7 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     }
 
     private void handleCtrlC(final Key[] keys) {
-        if (doKeysMatch(keys,
-                        Key.CONTROL,
-                        Key.C)) {
+        if (doKeysMatch(keys, CONTROL, C)) {
             this.execute();
         }
     }

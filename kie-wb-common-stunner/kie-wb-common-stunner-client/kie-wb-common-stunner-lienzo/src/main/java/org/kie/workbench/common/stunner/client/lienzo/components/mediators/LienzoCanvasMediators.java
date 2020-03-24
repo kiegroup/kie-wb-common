@@ -87,11 +87,11 @@ public class LienzoCanvasMediators {
     }
 
     public void init(final Supplier<LienzoCanvas> canvas) {
-        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("alt", "Navigate | Hold and drag to Pan", this::enablePan, this::clear));
-        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("ctrl", "Navigate | Hold and scroll to Zoom", this::enableZoom, this::clear));
-        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp("ctrl+alt", "Navigate | Hold to Preview", this::enablePreview, this::clear));
+        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp(new Key[]{Key.ALT}, "Navigate | Hold and drag to Pan", this::enablePan, this::clear));
+        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp(new Key[]{Key.CONTROL}, "Navigate | Hold and scroll to Zoom", this::enableZoom, this::clear));
+        keyEventHandler.addKeyShortcutCallback(new KogitoKeyShortcutKeyDownThenUp(new Key[]{Key.CONTROL, Key.ALT}, "Navigate | Hold to Preview", this::enablePreview, this::clear));
 
-        keyEventHandlerDMNDocumentationViewButtonsVisibilitySupplier
+        keyEventHandler
                 .setTimerDelay(150)
                 .addKeyShortcutCallback(new KeyboardControl.KeyShortcutCallback() {
                     @Override

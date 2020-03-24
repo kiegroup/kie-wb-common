@@ -43,7 +43,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.EdgeClipboard;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
@@ -70,6 +70,8 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
+import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.CONTROL;
+import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.V;
 
 /**
  * This session command obtains the selected elements on the clipboard and clone each one of them.
@@ -124,7 +126,7 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     public void bind(final EditorSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress("ctrl+v", "Edit | Paste selection", () -> {
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{CONTROL, V}, "Edit | Paste selection", () -> {
             if (isEnabled()) {
                 execute();
             }

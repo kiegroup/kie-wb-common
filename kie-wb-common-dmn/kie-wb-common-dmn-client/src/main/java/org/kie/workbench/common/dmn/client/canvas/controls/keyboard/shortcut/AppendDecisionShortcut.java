@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 
+import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.D;
 import static org.kie.workbench.common.stunner.core.util.DefinitionUtils.getElementDefinition;
 
 @DMNEditor
@@ -46,7 +47,7 @@ public class AppendDecisionShortcut extends AbstractAppendNodeShortcut {
 
     @Override
     public boolean matchesPressedKeys(final KeyboardEvent.Key... pressedKeys) {
-        return KeysMatcher.doKeysMatch(pressedKeys, KeyboardEvent.Key.D);
+        return KeysMatcher.doKeysMatch(pressedKeys, getKeyCombination());
     }
 
     @Override
@@ -68,12 +69,12 @@ public class AppendDecisionShortcut extends AbstractAppendNodeShortcut {
     }
 
     @Override
-    public String getKogitoCombination() {
-        return "d";
+    public KeyboardEvent.Key[] getKeyCombination() {
+        return new KeyboardEvent.Key[]{D};
     }
 
     @Override
-    public String getKogitoLabel() {
+    public String getLabel() {
         return "Append Decision";
     }
 }

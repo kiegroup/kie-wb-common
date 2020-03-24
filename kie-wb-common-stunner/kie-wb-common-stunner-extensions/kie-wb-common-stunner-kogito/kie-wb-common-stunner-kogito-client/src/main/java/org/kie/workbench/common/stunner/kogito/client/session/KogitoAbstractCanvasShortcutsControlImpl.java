@@ -19,9 +19,10 @@ package org.kie.workbench.common.stunner.kogito.client.session;
 import javax.enterprise.inject.Instance;
 
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+
+import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 
 public class KogitoAbstractCanvasShortcutsControlImpl extends AbstractCanvasShortcutsControlImpl {
 
@@ -33,11 +34,11 @@ public class KogitoAbstractCanvasShortcutsControlImpl extends AbstractCanvasShor
     public void bind(EditorSession session) {
         this.editorSession = session;
         for (final KeyboardShortcut action : keyboardShortcutActions) {
-            session.getKeyboardControl().addKeyShortcutCallback(new KeyboardControl.KogitoKeyPress(
-                    action.getKogitoCombination(),
-                    "Append Node | " + action.getKogitoLabel(),
+            session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(
+                    action.getKeyCombination(),
+                    "Append Node | " + action.getLabel(),
                     () -> executeAction(action),
-                    action.getKogitoOpts()));
+                    action.getOpts()));
         }
     }
 

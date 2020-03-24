@@ -43,14 +43,14 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
         KeyboardShortcutsApiOpts getOpts();
 
-        String getKeyCombination();
+        KeyboardEvent.Key[] getKeyCombination();
 
         String getLabel();
     }
 
     class KogitoKeyPress implements KogitoKeyShortcutCallback {
 
-        private String combination;
+        private KeyboardEvent.Key[] combination;
         private String label;
         private Runnable onKeyDown;
         private KeyboardShortcutsApiOpts opts;
@@ -58,11 +58,11 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         public KogitoKeyPress() {
         }
 
-        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown) {
+        public KogitoKeyPress(final KeyboardEvent.Key[] combination, final String label, final Runnable onKeyDown) {
             this(combination, label, onKeyDown, KeyboardShortcutsApiOpts.DEFAULT);
         }
 
-        public KogitoKeyPress(final String combination, final String label, final Runnable onKeyDown, final KeyboardShortcutsApiOpts opts) {
+        public KogitoKeyPress(final KeyboardEvent.Key[] combination, final String label, final Runnable onKeyDown, final KeyboardShortcutsApiOpts opts) {
             this.combination = combination;
             this.label = label;
             this.onKeyDown = onKeyDown;
@@ -80,7 +80,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
 
         @Override
-        public String getKeyCombination() {
+        public KeyboardEvent.Key[] getKeyCombination() {
             return combination;
         }
 
@@ -101,17 +101,17 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
     class KogitoKeyShortcutKeyDownThenUp implements KogitoKeyShortcutCallback {
 
-        private final String combination;
+        private final KeyboardEvent.Key[] combination;
         private final String label;
         private final Runnable onKeyDown;
         private final Runnable onKeyUp;
         private final KeyboardShortcutsApiOpts opts;
 
-        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp) {
+        public KogitoKeyShortcutKeyDownThenUp(final KeyboardEvent.Key[] combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp) {
             this(combination, label, onKeyDown, onKeyUp, KeyboardShortcutsApiOpts.DEFAULT);
         }
 
-        public KogitoKeyShortcutKeyDownThenUp(final String combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KeyboardShortcutsApiOpts opts) {
+        public KogitoKeyShortcutKeyDownThenUp(final KeyboardEvent.Key[] combination, final String label, final Runnable onKeyDown, final Runnable onKeyUp, final KeyboardShortcutsApiOpts opts) {
             this.combination = combination;
             this.label = label;
             this.onKeyDown = onKeyDown;
@@ -130,7 +130,7 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
         }
 
         @Override
-        public String getKeyCombination() {
+        public KeyboardEvent.Key[] getKeyCombination() {
             return combination;
         }
 
