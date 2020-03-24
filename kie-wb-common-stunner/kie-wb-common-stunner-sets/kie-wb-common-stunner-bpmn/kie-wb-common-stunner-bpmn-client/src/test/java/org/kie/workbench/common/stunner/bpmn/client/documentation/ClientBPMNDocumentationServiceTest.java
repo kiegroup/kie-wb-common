@@ -167,9 +167,9 @@ public class ClientBPMNDocumentationServiceTest {
     public static final String ON_ENTRY_CAPTION = "ONENTRY_CAPTION";
     public static final String TEMPLATE = "documentationTemplate";
     public static final String ASSIGNEMNTS = "assignemnts";
-    private static final String VARIABLES = "PV1:java.lang.String:false,PV2:java.lang.Boolean:false";
-    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String:false,GL2:java.lang.Boolean:false";
-    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String:false,SUBPV2:java.lang.Boolean:false";
+    private static final String VARIABLES = "PV1:java.lang.String:[internal;input],PV2:java.lang.Boolean:[customTag;output]";
+    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String:[],GL2:java.lang.Boolean:[]";
+    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String:[internal],SUBPV2:java.lang.Boolean:[readonly;customTag]";
     private static final String ISASYNC_CAPTION = "ISASYNC_CAPTION";
     private static final String ON_EXIT_CAPTION = "ONEXIT_CAPTION";
     private static final String ICON_HTML = "icon image";
@@ -543,27 +543,27 @@ public class ClientBPMNDocumentationServiceTest {
         final ProcessVariablesTotal.VariableTriplets[] variables = dataTotal.getVariablesAsTriplets();
         assertEquals(variables[0].name, "GL1");
         assertEquals(variables[0].type, String.class.getName());
-        assertEquals(variables[0].kpi, "false");
+        assertEquals(variables[0].tags, "[]");
 
         assertEquals(variables[1].name, "GL2");
         assertEquals(variables[1].type, Boolean.class.getName());
-        assertEquals(variables[1].kpi, "false");
+        assertEquals(variables[1].tags, "[]");
 
         assertEquals(variables[2].name, "PV1");
         assertEquals(variables[2].type, String.class.getName());
-        assertEquals(variables[2].kpi, "false");
+        assertEquals(variables[2].tags, "[internal;input]");
 
         assertEquals(variables[3].name, "PV2");
         assertEquals(variables[3].type, Boolean.class.getName());
-        assertEquals(variables[3].kpi, "false");
+        assertEquals(variables[3].tags, "[customTag;output]");
 
         assertEquals(variables[4].name, "SUBPV1");
         assertEquals(variables[4].type, String.class.getName());
-        assertEquals(variables[4].kpi, "false");
+        assertEquals(variables[4].tags, "[internal]");
 
         assertEquals(variables[5].name, "SUBPV2");
         assertEquals(variables[5].type, Boolean.class.getName());
-        assertEquals(variables[5].kpi, "false");
+        assertEquals(variables[5].tags, "[readonly;customTag]");
 
         final ElementTotal[] totals = bpmnDocumentation.getElementsDetails().getTotals();
         assertEquals(totals.length, 2);

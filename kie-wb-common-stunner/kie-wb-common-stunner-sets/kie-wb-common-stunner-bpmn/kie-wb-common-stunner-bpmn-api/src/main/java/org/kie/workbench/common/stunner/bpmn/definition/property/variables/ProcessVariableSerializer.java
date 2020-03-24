@@ -38,17 +38,17 @@ public class ProcessVariableSerializer {
             throw new IllegalArgumentException("Variable identifier cannot be empty. Given: '" + encoded + "'");
         }
 
-        String kpi = split[2];
-        return new AbstractMap.SimpleEntry<>(identifier, new ProcessVariableSerializer.VariableInfo(type, kpi));
+        String tags = split[2];
+        return new AbstractMap.SimpleEntry<>(identifier, new ProcessVariableSerializer.VariableInfo(type, tags));
     }
 
     static public class VariableInfo {
         public String type;
-        public String kpi;
+        public String tags;
 
-        VariableInfo(String type, String kpi) {
+        VariableInfo(String type, String tags) {
             this.type = type;
-            this.kpi = kpi;
+            this.tags = tags;
         }
     }
 }

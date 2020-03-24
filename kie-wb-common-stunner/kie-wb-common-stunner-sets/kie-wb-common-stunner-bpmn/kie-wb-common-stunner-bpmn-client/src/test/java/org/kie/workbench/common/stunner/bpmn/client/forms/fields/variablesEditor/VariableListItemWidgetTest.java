@@ -61,7 +61,7 @@ public class VariableListItemWidgetTest {
 
     ComboBox dataTypeComboBox;
 
-    HTMLInputElement kpi;
+    ComboBox tagNamesComboBox;
 
     @GwtMock
     VariableNameTextBox name;
@@ -82,7 +82,7 @@ public class VariableListItemWidgetTest {
         dataType = mock(ValueListBox.class);
         customDataType = mock(CustomDataTypeTextBox.class);
         dataTypeComboBox = mock(ComboBox.class);
-        kpi = mock(HTMLInputElement.class);
+        tagNamesComboBox = mock(ComboBox.class);
         widget = GWT.create(VariableListItemWidgetViewImpl.class);
         VariableRow variableRow = new VariableRow();
         widget.dataType = dataType;
@@ -217,16 +217,16 @@ public class VariableListItemWidgetTest {
         String sDataType = "Boolean";
         widget.setListBoxModelValue(widget.dataType,
                                     sDataType);
-        kpi.checked = true;
+        tagNamesComboBox.setTextBoxValue("output");
         String returnedDataType1 = widget.getDataTypeDisplayName();
         assertEquals(sDataType,
                      returnedDataType1);
         String returnedDataType2 = widget.getModelValue(widget.dataType);
         assertEquals(sDataType,
                      returnedDataType2);
-   //     boolean returnedDataType3 = widget.kpi.checked;
-   //     assertEquals(true,
-  //                   returnedDataType3);
+        String returnedTag = widget.tagNamesComboBox.getValue();
+        assertEquals("output",
+                     returnedTag);
 
     }
 }

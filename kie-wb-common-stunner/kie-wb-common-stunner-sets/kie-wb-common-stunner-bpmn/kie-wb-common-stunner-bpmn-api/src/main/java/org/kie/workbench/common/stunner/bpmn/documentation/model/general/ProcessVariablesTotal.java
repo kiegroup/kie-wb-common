@@ -64,7 +64,7 @@ public class ProcessVariablesTotal {
             final ProcessVariableSerializer.VariableInfo info = (ProcessVariableSerializer.VariableInfo) variables[i].getValue();
             triplets[i] = VariableTriplets.create(variables[i].getKey(),
                                                info.type,
-                                               info.kpi == null || info.kpi.isEmpty() ? "false" : info.kpi);
+                                               info.tags == null || info.tags.isEmpty() ? "false" : info.tags);
         }
         return triplets;
     }
@@ -73,17 +73,17 @@ public class ProcessVariablesTotal {
     public static class VariableTriplets {
         public Object name;
         public Object type;
-        public Object kpi;
+        public Object tags;
 
         private VariableTriplets() {
         }
 
         @JsOverlay
-        public static final VariableTriplets create(final Object name, final Object type, final Object kpi) {
+        public static final VariableTriplets create(final Object name, final Object type, final Object tags) {
             final VariableTriplets instance = new VariableTriplets();
             instance.name = name;
             instance.type = type;
-            instance.kpi = kpi;
+            instance.tags = tags;
             return instance;
         }
     }

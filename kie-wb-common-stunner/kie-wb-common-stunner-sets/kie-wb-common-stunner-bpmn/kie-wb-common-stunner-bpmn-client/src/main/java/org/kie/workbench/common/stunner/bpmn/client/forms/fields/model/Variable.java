@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class Variable {
 
     private String customDataType;
 
-    private boolean kpi;
+    private List<String> tags;
 
     public Variable(VariableType variableType) {
         this.variableType = variableType;
@@ -62,12 +63,12 @@ public class Variable {
                     final VariableType variableType,
                     final String dataType,
                     final String customDataType,
-                    final boolean kpi) {
+                    final List<String> tags) {
         this.name = name;
         this.variableType = variableType;
         this.dataType = dataType;
         this.customDataType = customDataType;
-        this.kpi = kpi;
+        this.tags = tags;
     }
 
     public Variable(final VariableRow row,
@@ -80,7 +81,15 @@ public class Variable {
             this.dataType = row.getDataTypeDisplayName();
         }
         this.customDataType = row.getCustomDataType();
-        this.kpi = row.getKpi();
+        this.tags = row.getTags();
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public VariableType getVariableType() {
@@ -107,13 +116,6 @@ public class Variable {
         this.dataType = dataType;
     }
 
-    public boolean getKpi() {
-        return kpi;
-    }
-
-    public void setKpi(boolean kpi) {
-        this.kpi = kpi;
-    }
 
     public String getCustomDataType() {
         return customDataType;
@@ -131,9 +133,10 @@ public class Variable {
             } else if (dataType != null && !dataType.isEmpty()) {
                 sb.append(':').append(dataType);
             }
-            if (this.getVariableType() == Variable.VariableType.PROCESS && (customDataType != null || dataType != null)) {
-                sb.append(":").append(kpi);
+            if (tags != null && this.getVariableType() == Variable.VariableType.PROCESS && (customDataType != null || dataType != null)) {
+                sb.append(":").append("[").append(String.join(";", tags)).append("]");
             }
+
             return sb.toString();
         }
         return null;
@@ -164,9 +167,10 @@ public class Variable {
                             var.setCustomDataType(dataType);
                         }
                     }
-                    //kṕi, this is where it needs to be saved
+                    //tags, this is where it needs to be saved
                     if (varParts.length == 3) {
-                        var.kpi = Boolean.parseBoolean(varParts[2]);
+                        String[] elements = varParts[2].replace("[", "").replace("]", "").split(";");
+                        var.tags = Arrays.asList(elements);
                     }
                 }
             }
@@ -205,7 +209,7 @@ public class Variable {
         if (getDataType() != null ? !getDataType().equals(variable.getDataType()) : variable.getDataType() != null) {
             return false;
         }
-        if (kpi != variable.kpi) {
+        if (!tags.equals(variable.tags)) {
             return false;
         }
         return getCustomDataType() != null ? getCustomDataType().equals(variable.getCustomDataType()) : variable.getCustomDataType() == null;
@@ -217,7 +221,8 @@ public class Variable {
         result = 31 * result + (getName() != null ? getName().hashCode() : 0);
         result = 31 * result + (getDataType() != null ? getDataType().hashCode() : 0);
         result = 31 * result + (getCustomDataType() != null ? getCustomDataType().hashCode() : 0);
-        result = 31 * result +  Boolean.hashCode(kpi);
+        result = 31 * result +  (tags != null ? tags.hashCode() : 0);
+
         return result;
     }
 }

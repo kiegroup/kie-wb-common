@@ -222,7 +222,7 @@ public class VariablesEditorFieldRendererTest {
 
         variablesEditor.setDataTypes(dataTypes,
                                      dataTypeDisplayNames);
-        List<VariableRow> variableRows = variablesEditor.deserializeVariables("var1:String,var2:Integer,var3:org.stuff.Potato");
+        List<VariableRow> variableRows = variablesEditor.deserializeVariables("var1:String:[internal;input],var2:Integer:[output],var3:org.stuff.Potato");
         assertEquals(3,
                      variableRows.size());
         VariableRow var = variableRows.get(0);
@@ -232,6 +232,10 @@ public class VariablesEditorFieldRendererTest {
                      var.getDataTypeDisplayName());
         assertEquals(Variable.VariableType.PROCESS,
                      var.getVariableType());
+        assertEquals(2, var.getTags().size());
+        assertEquals("internal", var.getTags().get(0));
+        assertEquals("input", var.getTags().get(1));
+
         var = variableRows.get(1);
         assertEquals("var2",
                      var.getName());
@@ -239,6 +243,10 @@ public class VariablesEditorFieldRendererTest {
                      var.getDataTypeDisplayName());
         assertEquals(Variable.VariableType.PROCESS,
                      var.getVariableType());
+
+        assertEquals(1, var.getTags().size());
+        assertEquals("output", var.getTags().get(0));
+
         var = variableRows.get(2);
         assertEquals("var3",
                      var.getName());
@@ -246,6 +254,9 @@ public class VariablesEditorFieldRendererTest {
                      var.getCustomDataType());
         assertEquals(Variable.VariableType.PROCESS,
                      var.getVariableType());
+
+        assertEquals(null, var.getTags());
+
     }
 
     @Test
@@ -273,12 +284,12 @@ public class VariablesEditorFieldRendererTest {
                                          "org.veg.Potato",
                                          null));
         String s = variablesEditor.serializeVariables(variableRows);
-        assertEquals("var1:String:false,var2:Integer:false,var3:org.veg.Potato:false",
+        assertEquals("var1:String,var2:Integer,var3:org.veg.Potato",
                      s);
     }
 
     @Test
-    public void testSerializeVariablesWithKPI() {
+    public void testSerializeVariablesWithTags() {
         Map<String, String> mapDataTypeDisplayNamesToNames = new HashMap<String, String>();
         mapDataTypeDisplayNamesToNames.put("String",
                                            "String");
@@ -293,20 +304,20 @@ public class VariablesEditorFieldRendererTest {
                                          "var1",
                                          "String",
                                          null,
-                                         true));
+                                         Arrays.asList("internal")));
         variableRows.add(new VariableRow(Variable.VariableType.PROCESS,
                                          "var2",
                                          "Integer",
                                          null,
-                                         true
-        ));
+                                         Arrays.asList("input"
+        )));
         variableRows.add(new VariableRow(Variable.VariableType.PROCESS,
                                          "var3",
                                          "org.veg.Potato",
                                          null,
-                                         true));
+                                         Arrays.asList("input", "output")));
         String s = variablesEditor.serializeVariables(variableRows);
-        assertEquals("var1:String:true,var2:Integer:true,var3:org.veg.Potato:true",
+        assertEquals("var1:String:[internal],var2:Integer:[input],var3:org.veg.Potato:[input;output]",
                      s);
     }
 

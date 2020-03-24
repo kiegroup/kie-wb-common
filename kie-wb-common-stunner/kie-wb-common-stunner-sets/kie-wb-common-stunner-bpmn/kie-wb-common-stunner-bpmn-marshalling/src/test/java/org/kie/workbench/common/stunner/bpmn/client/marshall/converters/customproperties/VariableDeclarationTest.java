@@ -55,7 +55,7 @@ public class VariableDeclarationTest {
 
     @Test
     public void testKPI() {
-        String kpi = tested.getKpi();
+        String kpi = tested.getTags();
         assertEquals(kpi, VAR_KPI);
     }
 }

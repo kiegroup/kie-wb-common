@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEditor;
 
+import java.util.Arrays;
+
 import javax.enterprise.event.Event;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -81,7 +83,7 @@ public class VariableListItemWidgetViewImplTest {
     private Button deleteButton;
 
     @Mock
-    private HTMLInputElement kpi;
+    private ComboBox tagNamesComboBox;
 
     private CustomDataTypeTextBox customDataType;
 
@@ -121,8 +123,8 @@ public class VariableListItemWidgetViewImplTest {
         view.variableRow = variableRow;
         view.name = name;
         view.deleteButton = deleteButton;
-        kpi = mock(HTMLInputElement.class);
-       // view.kpi = kpi;
+        tagNamesComboBox = mock(ComboBox.class);
+        view.tagNamesComboBox = tagNamesComboBox;
         view.customDataType = customDataType;
         view.dataType = dataType;
         view.dataTypeComboBox = dataTypeComboBox;
@@ -177,8 +179,8 @@ public class VariableListItemWidgetViewImplTest {
         row.setCustomDataType(null);
         row.setDataTypeDisplayName(DATA_TYPE_NAME);
         row.setVariableType(Variable.VariableType.PROCESS);
-        row.setKpi(true);
-        kpi.click();
+        row.setTags(Arrays.asList("internal"));
+        tagNamesComboBox.setTextBoxValue("internal");
         doReturn(row).when(variableRow).getModel();
         view.setModel(row);
         verify(variableRow,
@@ -189,8 +191,8 @@ public class VariableListItemWidgetViewImplTest {
                never()).setValue(DATA_TYPE_NAME);
         verify(dataType,
                times(1)).setValue(DATA_TYPE_NAME);
-        verify(kpi,
-               times(1)).click();
+        verify(tagNamesComboBox,
+               times(1)).setTextBoxValue("internal");
     }
 
     @Test
