@@ -25,6 +25,7 @@ public interface VariableListItemWidgetView extends HasModel<VariableRow> {
 
     String CUSTOM_PROMPT = "Custom" + ListBoxValues.EDIT_SUFFIX;
     String ENTER_TYPE_PROMPT = "Enter type" + ListBoxValues.EDIT_SUFFIX;
+    String ENTER_TAG_PROMPT = "Enter tag" + ListBoxValues.EDIT_SUFFIX;
 
     void init();
 

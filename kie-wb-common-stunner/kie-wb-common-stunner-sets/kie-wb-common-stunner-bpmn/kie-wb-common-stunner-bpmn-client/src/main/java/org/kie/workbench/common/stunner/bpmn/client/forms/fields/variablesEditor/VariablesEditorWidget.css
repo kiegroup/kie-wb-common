@@ -1,5 +1,5 @@
 .containerDiv {
-    width: 40px;
+    width: 30px;
     height: 26px;
 }
 
@@ -23,7 +23,7 @@
     content: "";
     background-image: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAgMjAiIGRhdGEtdG9nZ2xlPSJ0b29sdGlwIiBjbGFzcz0iYmkgYmktdGFnLWZpbGwiIHdpZHRoPSIyNnB4IiBoZWlnaHQ9IjI2cHgiICBmaWxsPSJjdXJyZW50Q29sb3IiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00IDNhMSAxIDAgMDAtMSAxdjQuNTg2YTEgMSAwIDAwLjI5My43MDdsNyA3YTEgMSAwIDAwMS40MTQgMGw0LjU4Ni00LjU4NmExIDEgMCAwMDAtMS40MTRsLTctN0ExIDEgMCAwMDguNTg2IDNINHptNCAzLjVhMS41IDEuNSAwIDExLTMgMCAxLjUgMS41IDAgMDEzIDB6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjwvcGF0aD4KICAgIDwvc3ZnPgo=");
     background-repeat: no-repeat;
-    margin-left: 10px;
+    margin-left: 0px;
 
 }
 
