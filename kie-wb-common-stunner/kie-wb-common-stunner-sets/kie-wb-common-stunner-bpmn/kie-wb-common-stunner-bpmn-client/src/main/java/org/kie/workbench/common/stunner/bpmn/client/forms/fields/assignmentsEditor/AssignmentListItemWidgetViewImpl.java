@@ -285,10 +285,9 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
             notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Only_expressions_allowed_for_output(),
                                                     NotificationEvent.NotificationType.ERROR));
             processVarComboBox.textBoxValueChanged("");
-
-            return;
+        } else {
+            getModel().setExpression(expression);
         }
-        getModel().setExpression(expression);
     }
 
     private static boolean isConstant(String expression) {
