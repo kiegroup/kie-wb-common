@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
@@ -393,8 +392,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
     @Override
     @SetContent
-    public void setContent(final String path,
-                           final String value) {
+    public Promise setContent(final String path,
+                              final String value) {
         Promise promise =
                 promises.create((success, failure) -> {
                     superOnClose();
@@ -414,7 +413,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                                                                              @Override
                                                                                              public void onError(ClientRuntimeError error) {
                                                                                                  AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
-                                                                                                 // TODO: [TiagoBento] Are you also managing the error bus?
                                                                                                  failure.onInvoke(error);
                                                                                              }
                                                                                          });
@@ -423,17 +421,13 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                                   @Override
                                                   public void onError(final ClientRuntimeError error) {
                                                       AbstractDMNDiagramEditor.this.getEditor().onLoadError(error);
-                                                      // TODO: [TiagoBento] Are you also managing the error bus?
                                                       failure.onInvoke(error);
+
                                                   }
                                               });
                 });
 
-        // TODO: [TiagoBento] Return the promise instance when API changed. Remove code below.
-        promise.then(nothing -> {
-            GWT.log("DMNDiagramEditor READY TO USE!");
-            return null;
-        });
+        return promise;
     }
 
     @Override

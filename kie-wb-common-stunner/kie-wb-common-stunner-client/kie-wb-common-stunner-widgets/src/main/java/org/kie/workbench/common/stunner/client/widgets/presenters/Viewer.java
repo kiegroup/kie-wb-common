@@ -40,8 +40,6 @@ public interface Viewer<T, H, V extends IsWidget, C extends Viewer.Callback> {
         default void onSuccess() {
         }
 
-        ;
-
         /**
          * Called in case of any error during loading or displaying operations.
          */

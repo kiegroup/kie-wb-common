@@ -302,7 +302,7 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
 
     @Override
     // @SetContent
-    public void setContent(final String path, final String value) {
+    public Promise setContent(final String path, final String value) {
         diagramServices.transform(value,
                                   new ServiceCallback<Diagram>() {
                                       @Override
@@ -316,6 +316,7 @@ public class BPMNStandaloneDiagramEditor extends AbstractDiagramEditor {
                                           BPMNStandaloneDiagramEditor.this.getEditor().onLoadError(error);
                                       }
                                   });
+        return null;
     }
 
     @Override

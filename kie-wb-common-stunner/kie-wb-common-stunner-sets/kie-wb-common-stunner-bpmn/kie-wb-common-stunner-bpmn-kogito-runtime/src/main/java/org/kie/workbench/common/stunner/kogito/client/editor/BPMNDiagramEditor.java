@@ -22,7 +22,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -276,9 +275,8 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @SetContent
     @Override
     @SuppressWarnings("all")
-    public void setContent(final String path, final String value) {
-        // Create the promise that loads the content and the editor
-        Promise promise =
+    public Promise setContent(final String path, final String value) {
+        Promise<Void> promise =
                 promises.create((success, failure) -> {
                     superOnClose();
                     diagramServices.transform(value,
@@ -290,13 +288,12 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                                                                        new Viewer.Callback() {
                                                                            @Override
                                                                            public void onSuccess() {
-                                                                               success.onInvoke((Object) null);
+                                                                               success.onInvoke((Void) null);
                                                                            }
 
                                                                            @Override
                                                                            public void onError(ClientRuntimeError error) {
                                                                                BPMNDiagramEditor.this.getEditor().onLoadError(error);
-                                                                               // TODO: [TiagoBento] Are you also managing the error bus?
                                                                                failure.onInvoke(error);
                                                                            }
                                                                        });
@@ -305,17 +302,11 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                                                   @Override
                                                   public void onError(final ClientRuntimeError error) {
                                                       BPMNDiagramEditor.this.getEditor().onLoadError(error);
-                                                      // TODO: [TiagoBento] Are you also managing the error bus?
                                                       failure.onInvoke(error);
                                                   }
                                               });
                 });
-
-        // TODO: [TiagoBento] Return the promise instance when API changed. Remove code below.
-        promise.then(nothing -> {
-            GWT.log("BPMNDiagramEditor READY TO USE!");
-            return null;
-        });
+        return promise;
     }
 
     @Override
