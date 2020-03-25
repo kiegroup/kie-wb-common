@@ -134,7 +134,7 @@ public class Variable {
                 sb.append(':').append(dataType);
             }
             if (tags != null && this.getVariableType() == Variable.VariableType.PROCESS && (customDataType != null || dataType != null)) {
-                sb.append(":").append("[").append(String.join(";", tags)).append("]");
+                sb.append(":").append(String.join(";", tags));
             }
 
             return sb.toString();
@@ -169,7 +169,7 @@ public class Variable {
                     }
                     //tags, this is where it needs to be saved
                     if (varParts.length == 3) {
-                        String[] elements = varParts[2].replace("[", "").replace("]", "").split(";");
+                        String[] elements = varParts[2].split(";");
                         var.tags = Arrays.asList(elements);
                     }
                 }
@@ -209,7 +209,7 @@ public class Variable {
         if (getDataType() != null ? !getDataType().equals(variable.getDataType()) : variable.getDataType() != null) {
             return false;
         }
-        if (!tags.equals(variable.tags)) {
+        if (tags != null ? !tags.equals(variable.tags) : variable.getTags() != null) {
             return false;
         }
         return getCustomDataType() != null ? getCustomDataType().equals(variable.getCustomDataType()) : variable.getCustomDataType() == null;

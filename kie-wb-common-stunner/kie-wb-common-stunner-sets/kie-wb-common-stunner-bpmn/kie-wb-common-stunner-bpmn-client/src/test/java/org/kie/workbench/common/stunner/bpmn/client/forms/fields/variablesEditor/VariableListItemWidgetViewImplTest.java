@@ -28,11 +28,13 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLInputElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,6 +95,14 @@ public class VariableListItemWidgetViewImplTest {
 
     private ComboBox processVarComboBox;
 
+    private HTMLAnchorElement variableTagsSettings;
+
+    private Span tagCount;
+
+    private CustomDataTypeTextBox customTagName;
+
+    private ValueListBox<String> defaultTagNames;
+
     @GwtMock
     private KeyDownEvent keyDownEvent;
 
@@ -119,6 +129,10 @@ public class VariableListItemWidgetViewImplTest {
         dataType = mock(ValueListBox.class);
         dataTypeComboBox = mock(ComboBox.class);
         processVarComboBox = mock(ComboBox.class);
+        variableTagsSettings = mock(HTMLAnchorElement.class);
+        tagCount = mock(Span.class);
+        customTagName = mock(CustomDataTypeTextBox.class);
+        defaultTagNames = mock(ValueListBox.class);
         view = mock(VariableListItemWidgetViewImpl.class);
         view.variableRow = variableRow;
         view.name = name;
@@ -130,6 +144,10 @@ public class VariableListItemWidgetViewImplTest {
         view.dataTypeComboBox = dataTypeComboBox;
         view.notification = notification;
         view.errorPopupPresenter = errorPopupPresenter;
+        view.variableTagsSettings = variableTagsSettings;
+        view.tagCount = tagCount;
+        view.customTagName = customTagName;
+        view.defaultTagNames = defaultTagNames;
         doCallRealMethod().when(view).init();
         doCallRealMethod().when(view).getCustomDataType();
         doCallRealMethod().when(view).setCustomDataType(anyString());

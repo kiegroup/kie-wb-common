@@ -16,17 +16,23 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEditor;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
+import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLInputElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +48,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -52,7 +59,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests the data get/set methods of VariableListItemWidget
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class VariableListItemWidgetTest {
 
     ValueListBox<String> dataType;
@@ -62,6 +69,18 @@ public class VariableListItemWidgetTest {
     ComboBox dataTypeComboBox;
 
     ComboBox tagNamesComboBox;
+
+    @GwtMock
+    ValueListBox<String> defaultTagNames;
+
+    @GwtMock
+    CustomDataTypeTextBox customTagName;
+
+    @GwtMock
+    Span tagCount;
+
+    @GwtMock
+    HTMLAnchorElement variableTagsSettings;
 
     @GwtMock
     VariableNameTextBox name;
@@ -83,6 +102,10 @@ public class VariableListItemWidgetTest {
         customDataType = mock(CustomDataTypeTextBox.class);
         dataTypeComboBox = mock(ComboBox.class);
         tagNamesComboBox = mock(ComboBox.class);
+        customTagName = mock(CustomDataTypeTextBox.class);
+        variableTagsSettings = mock(HTMLAnchorElement.class);
+        defaultTagNames = mock(ValueListBox.class);
+        tagCount = mock(Span.class);
         widget = GWT.create(VariableListItemWidgetViewImpl.class);
         VariableRow variableRow = new VariableRow();
         widget.dataType = dataType;
@@ -91,6 +114,11 @@ public class VariableListItemWidgetTest {
         widget.name = name;
         widget.deleteButton = deleteButton;
         widget.variableRow = variable;
+        widget.variableTagsSettings = variableTagsSettings;
+        widget.tagCount = tagCount;
+        widget.customTagName = customTagName;
+        widget.tagNamesComboBox = tagNamesComboBox;
+        widget.defaultTagNames = defaultTagNames;
         Mockito.doCallRealMethod().when(widget).setTextBoxModelValue(any(TextBox.class),
                                                                      anyString());
         Mockito.doCallRealMethod().when(widget).setListBoxModelValue(any(ValueListBox.class),
@@ -103,6 +131,13 @@ public class VariableListItemWidgetTest {
         Mockito.doCallRealMethod().when(widget).setDataTypes(any(ListBoxValues.class));
         Mockito.doCallRealMethod().when(widget).init();
         Mockito.doCallRealMethod().when(widget).setModel(any(VariableRow.class));
+        Mockito.doCallRealMethod().when(widget).setCustomTags(any(List.class));
+        Mockito.doCallRealMethod().when(widget).getCustomTags();
+
+        Mockito.doCallRealMethod().when(tagNamesComboBox).setListBoxValues(any());
+        Mockito.doCallRealMethod().when(tagNamesComboBox).getListBoxValues();
+
+
         when(widget.getModel()).thenReturn(variableRow);
     }
 
@@ -213,20 +248,10 @@ public class VariableListItemWidgetTest {
     }
 
     @Test
-    public void testSetKPI() {
-        String sDataType = "Boolean";
-        widget.setListBoxModelValue(widget.dataType,
-                                    sDataType);
-        tagNamesComboBox.setTextBoxValue("output");
-        String returnedDataType1 = widget.getDataTypeDisplayName();
-        assertEquals(sDataType,
-                     returnedDataType1);
-        String returnedDataType2 = widget.getModelValue(widget.dataType);
-        assertEquals(sDataType,
-                     returnedDataType2);
-        String returnedTag = widget.tagNamesComboBox.getValue();
-        assertEquals("output",
-                     returnedTag);
-
+    public void testSetTags() {
+        List<String> tags = Arrays.asList("internal", "input", "customTag");
+        widget.setCustomTags(tags);
+        assertEquals(tags, tagNamesComboBox.getListBoxValues().getAcceptableValuesWithoutCustomValues());
+        verify(tagNamesComboBox, times(1)).setListBoxValues(any());
     }
 }

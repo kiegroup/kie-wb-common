@@ -193,10 +193,18 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         declarationList.getDeclarations().forEach(decl -> {
             VariableScope.Variable variable =
                     variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType(), decl.getTags());
-            if (decl.getTags() != null) {
+
+            final String tags = decl.getTags();
+
+            if (tags != null) {
+                if (tags.charAt(0) == '[' && tags.charAt(tags.length() - 1) == ']') {
+                    decl.setTags(tags.substring(1, tags.length() - 1));
+                }
                 CustomElement.customTags.of(variable.getTypedIdentifier()).set(decl.getTags());
+
             }
-            properties.add(variable.getTypedIdentifier());
+
+                properties.add(variable.getTypedIdentifier());
             this.itemDefinitions.add(variable.getTypeDeclaration());
         });
     }

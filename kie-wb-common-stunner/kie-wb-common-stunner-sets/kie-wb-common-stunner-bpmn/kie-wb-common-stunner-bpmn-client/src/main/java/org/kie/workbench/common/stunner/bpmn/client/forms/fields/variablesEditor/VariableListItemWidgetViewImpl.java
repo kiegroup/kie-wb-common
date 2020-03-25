@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
@@ -116,7 +117,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Inject
     @DataField("variable-tags-settings")
-    private HTMLAnchorElement variableTagsSettings;
+    protected HTMLAnchorElement variableTagsSettings;
 
     @Inject
     @DataField("tags-div")
@@ -273,7 +274,6 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         PopOver.$(variableTagsSettings).popovers();
 
         setTagTittle("Tags: ");
-        if (variableTagsSettings != null) {
 
                 variableTagsSettings.onclick = e -> {
                 // This is needed when opened
@@ -345,7 +345,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
                  return null;
             };
-        }
+
 
         customTagName.addFocusHandler(focusEvent -> {
             previousCustomValue = customTagName.getValue();
@@ -435,6 +435,18 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     @Override
     public void setCustomDataType(final String customDataType) {
         getModel().setCustomDataType(customDataType);
+    }
+
+    @Override
+    public void setCustomTags(final List<String> tags) {
+        getModel().setTags(tags);
+        tagNamesList = tags;
+        setTagsListItems();
+    }
+
+    @Override
+    public List<String> getCustomTags() {
+        return new ArrayList<>(tagSet);
     }
 
     @Override

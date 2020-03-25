@@ -152,7 +152,7 @@ public class BPMNStandaloneDiagramServiceImplTest {
         processInstanceDescription = new ProcessInstanceDescription("description");
         executable = new Executable(false);
         processId = new Id("someUUID");
-        globalVariables = new GlobalVariables("GL1:java.lang.String:false,GL2:java.lang.Boolean:false");
+        globalVariables = new GlobalVariables("GL1:java.lang.String:[],GL2:java.lang.Boolean:[]");
         slaDueDate = new SLADueDate("");
 
         diagramSet = new DiagramSet(processName,

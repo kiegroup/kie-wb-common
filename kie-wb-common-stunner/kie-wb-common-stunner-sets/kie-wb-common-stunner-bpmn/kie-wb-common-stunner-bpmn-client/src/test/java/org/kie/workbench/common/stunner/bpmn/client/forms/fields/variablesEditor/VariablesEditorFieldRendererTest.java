@@ -222,7 +222,7 @@ public class VariablesEditorFieldRendererTest {
 
         variablesEditor.setDataTypes(dataTypes,
                                      dataTypeDisplayNames);
-        List<VariableRow> variableRows = variablesEditor.deserializeVariables("var1:String:[internal;input],var2:Integer:[output],var3:org.stuff.Potato");
+        List<VariableRow> variableRows = variablesEditor.deserializeVariables("var1:String:internal;input,var2:Integer:output,var3:org.stuff.Potato");
         assertEquals(3,
                      variableRows.size());
         VariableRow var = variableRows.get(0);
@@ -317,7 +317,7 @@ public class VariablesEditorFieldRendererTest {
                                          null,
                                          Arrays.asList("input", "output")));
         String s = variablesEditor.serializeVariables(variableRows);
-        assertEquals("var1:String:[internal],var2:Integer:[input],var3:org.veg.Potato:[input;output]",
+        assertEquals("var1:String:internal,var2:Integer:input,var3:org.veg.Potato:input;output",
                      s);
     }
 

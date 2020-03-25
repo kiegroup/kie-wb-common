@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEditor;
 
+import java.util.List;
+
 import org.jboss.errai.ui.client.widget.HasModel;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.VariableRow;
@@ -44,6 +46,10 @@ public interface VariableListItemWidgetView extends HasModel<VariableRow> {
     String getCustomDataType();
 
     void setCustomDataType(final String customDataType);
+
+    void setCustomTags(final List<String> tags);
+
+    List<String> getCustomTags();
 
     void setReadOnly(final boolean readOnly);
 
